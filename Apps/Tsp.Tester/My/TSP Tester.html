@@ -1,0 +1,72 @@
+<HTML><HEAD>
+</HEAD>
+<body >
+<div><b><FONT FACE="trebuchet ms" SIZE=3>TSP Library Tester: Instructions</FONT></b></div>
+<div>&nbsp;</div>
+<b><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000"></FONT></b><div><b><u><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Description</FONT></u></b></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000"></FONT><div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The ISR TSP Library controls TSP-based devices. This program tests theLibrary.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2 BGCOLOR="#FFFFFF"><span style="background-color:#FFFFFF; color:# 000000";></SPAN></FONT><div><b><FONT FACE="trebuchet ms" SIZE=3 COLOR="#000000">Connecting to an instrument</FONT></b></div>
+<ul><li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Start the TSP Library Tester from Start, Programs, ISR, TSP Library 3.0.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The tester scans and displays the address of available resources.&nbsp; </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">If the tester finds resources it enables the Connect button:</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Select the resource address for the desired instrument.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Click Connect to connect to the instrument.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Connect one or more TSP instrument and click Refresh VISA.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The connect button should be enabled allowing you to connect.</FONT></li>
+</ul>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000"></FONT><div><b><FONT FACE="trebuchet ms" SIZE=3 COLOR="#000000">TSP Library Testing using a 26xx Instrument</FONT></b></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000"></FONT><div><u><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Entering Commands from the Console Tab</FONT></u></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The console tab allows entering commands and getting a response back. Commands entered in the Instrument Input edit box </FONT><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">are sent to the instrument upon hitting the Enter key. Responses are displayed in Instrument Output panel.&nbsp; The responses </FONT><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">are terminated by the TSP prompt depending on the status of the Enable Prompts check box located under the Instrument </FONT><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">tab.</FONT></div>
+<ul><li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Select the Console tab;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Type the command <br>
+</FONT><FONT FACE="Courier New" SIZE=2 COLOR="#000000">print(_VERSION)<br>
+</FONT><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">in the Instrument Input text box or place the cursor at the end of the command already in the edit box;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Press enter.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The output text box will display the response from the instrument:<br>
+</FONT><FONT FACE="Courier New" SIZE=2 COLOR="#000000">Lua 5.0.2</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">For other commands, check the instrument User's Guide.&nbsp; </FONT></li>
+</ul>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000"></FONT><div><u><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Loading and Executing functions</FONT></u></div>
+<ul><li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Select the Functions tab. </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">A TSP Script function calculating the sum of its arguments is already listed in the Function Code edit box.&nbsp; </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Click Load Function:</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">This loads the function script into the instrument.&nbsp; The message Function Loaded will be displayed in the status bar.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Click CALL:</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">This executes the function which name is specified in the Function Name text box. The CALL supplies to the </FONT><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">function the argument values from the Function Arguments edit box.&nbsp; </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The message 'Function Called Successfully' will be displayed in the status bar. </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The result of the calculation is displayed under the Console tab.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The output from the instrument is displayed in the Instrument Output panel under the Console tab:</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Click Console to open the console tab.&nbsp; </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The output from the instrument is displayed.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Below the result is the outcome of the Call command - true.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Enter a different set of argument and repeat the CALL command.</FONT></li>
+</ul>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000"></FONT><div><u><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Loading and Running Scripts</FONT></u></div>
+<ul><li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Select the Scripts tab.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Click the ellipsis and browse and select the product.tsp file located under the tester Scripts folder, which is a sibling </FONT><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">folder to the tester program folder.&nbsp; </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">This imports the script to the Script edit box and update the script name in the Script Name edit box.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Click Load. </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">This loads the script to the instrument.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The script name will be added to the User Scripts list box.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Click Run.&nbsp; </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">This compiles the script making its functions known to the instrument.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Or, click Load and Run to do both at once.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Select the Function tab.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Enter 'product' as the function name (the name is case sensitive).</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Enter 2 or more arguments separated with commas.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Click CALL.&nbsp; </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">This executes the function.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Click Console to open the console tab.&nbsp; </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The result of the calculation is displayed in the Instrument Output panel.&nbsp; </FONT></li>
+</ul>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000"></FONT><div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#869AA8">04-27-2010</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#869AA8">Copyright 2010 by Integrated Scientific Resources, Inc.<br>
+</FONT><FONT FACE="trebuchet ms" SIZE=2 COLOR="#869AA8">PRIVILEGED AND CONFIDENTIAL</FONT></div>
+</BODY></HTML>

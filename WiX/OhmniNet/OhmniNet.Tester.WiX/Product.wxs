@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?include ProductPreprocessor.wxi ?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'
+     xmlns:swid='http://schemas.microsoft.com/wix/TagExtension'
+     >
+
+    <Product Id='*' 
+             Name='$(var.ProductName)' 
+             Language='1033' 
+             Version='$(var.ProductVersion)'
+             Manufacturer='$(var.ProductManufacturer)'
+             UpgradeCode='{c4d09679-1be7-4464-b947-f93db0c38fe0}'>
+                <Package InstallerVersion='300' Manufacturer='$(var.ProductVendor)'
+                 Description='Visa Core Tester 2016'
+                 Compressed='yes' InstallScope='perMachine' />
+
+        <!-- Icon id must end with .ico or .exe -->
+        <Icon Id='Product.ico' SourceFile='$(env.My)\RESOURCES\Art\Icons\logo.ico' />
+
+        <!-- The AllowSameVersionUpgrade option causes warning LGHT1076: ICE61: 
+             This product should remove only older versions of itself. The Maximum version is not less than the current product...
+             Without this option, Without this option (defaults to 'no'), the control panel will have multiple entries if installing the same product version.  
+             with a new product ID but the same version. 
+             I prefer removing the last revision even if it has the same version. -->
+        <MajorUpgrade DowngradeErrorMessage='A newer version of $(var.ProductName) is already installed; please uninstall it and re-run setup.'
+                      AllowSameVersionUpgrades='yes' />
+
+        <!-- Sets the SAM id. -->
+        <swid:Tag Regid='isr.cc' InstallDirectory='EXEDIR' />
+
+        <!-- Reference links the fragment for checking the .NET version -->
+        <PropertyRef Id='VSDFrameworkVersion'/>
+
+        <!-- Directories: See DirectoryTree.wxs -->
+    
+        <!-- Features -->
+        <Feature Id='ProductFeature' Title='$(var.ProductName) Installer' Description='$(var.ProductName) Installer'>
+            <FeatureGroupRef Id='fgid.DirectoryTree'/>
+            <FeatureGroupRef Id='fgid.MStudioCommon45'/>
+            <FeatureGroupRef Id='fgid.MyAssembly'/>
+        </Feature>
+
+        <!-- Properties -->
+        <Property Id='ARPPRODUCTICON' Value='Product.ico' />
+        <Property Id='PREVIOUSVERSIONSINSTALLED' Secure='yes' />
+
+        <Property Id='WIXUI_INSTALLDIR' Value='APPLICATIONFOLDER' />
+
+        <!-- WiX Install Dir GUI -->
+        <UIRef Id='WixUI_InstallDir'/>
+
+        <!-- WiX GUI -->
+        <WixVariable Id='WixUILicenseRtf' Value='$(var.LicenseReadme)' />
+
+    </Product>
+
+</Wix>

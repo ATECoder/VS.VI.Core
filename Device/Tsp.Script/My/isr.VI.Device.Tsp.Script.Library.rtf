@@ -1,0 +1,95 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat{\fonttbl{\f0\fswiss\fcharset0 Trebuchet MS;}{\f1\fnil\fcharset0 Trebuchet MS;}{\f2\fnil\fcharset0 trebuchet ms;}{\f3\fswiss\fcharset0 Arial;}}
+{\colortbl ;\red0\green0\blue0;\red134\green154\blue168;\red0\green0\blue255;\red0\green102\blue204;\red255\green255\blue255;}
+{\*\generator Riched20 10.0.10586}\viewkind4\psz1
+{\*\jarte object RichPersist
+  Version = 2
+  LMarg = 1440
+  RMarg = 1440
+  TMarg = 1440
+  BMarg = 1440
+  Equal = True
+  Orient = 1
+  Size = 1
+  Width = 2159
+  Height = 2794
+  HdrMarg = 720
+  FtrMarg = 720
+  HdrFont.Charset = DEFAULT_CHARSET
+  HdrFont.Color = clWindowText
+  HdrFont.Height = -11
+  HdrFont.Name = 'Arial'
+  HdrFont.Style = []
+  Wrap = 2
+  WMark = 'None'
+  WColor = 13822463
+  BlackInk = True
+  Collate = True
+  SpellDict = 'ssceam2.clx'
+end
+}\uc1 
+\pard\cf1\kerning1\f0\fs28\lang1033 ISR.\fs8  \fs28 VI.\fs8  \kerning0\f1\fs28 Tsp\fs8  \fs12 TM\fs28 : Test Script Processor Class Library. Revision-History\par
+\fs20\par
+
+\pard\fi-2172\li2172\tx1080\ul Revision\ulnone\tab\ul Date\ulnone\tab\ul Description\par
+
+\pard\cbpat5\nowidctlpar\fi-2160\li2160\tx1080\tx2160\ulnone\f2 4.0.5803\tab 11/21/15\tab New structures and name spaces. \par
+3.0.5226\tab 05/23/14\tab Uses new stack trace parser. Fixes the checking for visa and device errors. \par
+3.0.5181\tab 03/09/14\tab Uses abstract properties to define instrument commands. \par
+\kerning1\f0 3.0.4871\tab 05/03/13\tab Amend commit notes..\par
+3.0.4870\tab 05/02/13\tab Add Tsp SCPI Instrument to support message based interface.\par
+3.0.4710\tab 11/23/12\tab Removes .VB tags from assemblies.\par
+3.0.4696\tab 11/09/12\tab Allows deletion of non-outdated scripts.\par
+3.0.4694\tab 11/07/12\tab Replaces GPIB instrument with SCPI Instrument to support USB and Ethernet.\par
+3.0.4693\tab 11/06/12\tab\kerning0\f2 Fixes dispose code to always dispose the parent class. Extends model mask to the 2600B. Spell checked. Supports 2600B GPIB.\par
+\kerning1\f0 3.0.4504\tab 05/01/12\tab Adds x86 project.\par
+3.0.4498\tab 04/17/12\tab Upgraded to VS2010. Implements code analysis rules for .NET 4.0.\par
+3.0.4232\tab 08/03/11\tab Standardize code elements and documentation.\f3\par
+
+\pard\fi-2160\li2160\tx1080\kerning0\f1 3.0.4213\tab 07/15/11\tab Simplifies the assembly information.\ul\par
+\ulnone 3.0.4056\tab 02/08/11\tab Uses debugger attached to control debug messages.\par
+
+\pard\tx1080 3.0.4049\tab 01/01/11\tab Adds contact check.\par
+3.0.4006\tab 12/20/10\tab Allows using controllers on nodes other than node 1.\par
+
+\pard\fi-2172\li2172\tx1080\tx2160 3.0.3576\tab 10/16/09\tab Keeps leading spaces when fetching source -- fixes loading scripts to some 2600 instruments.\par
+3.0.3548\tab 09/18/09\tab Correctly reports when scripts are up to date nor requiring deletion. Reads firmware version when enumerating nodes.\par
+3.0.3539\tab 09/09/09\tab Ignores TSP reset errors to allow using a single instrument. Updates scripts loading to register the script short name.\par
+3.0.3508\tab 08/09/09\tab Adds script source and file formats to use when writing the script file. Determines reading source files based on the version prefix.\par
+3.0.3498\tab 07/30/09\tab Adds saving and loading binary scripts on non-A instruments. Adds reading and writing scripts in compressed format. \par
+3.0.3463\tab 06/25/09\tab Removes application settings.\par
+3.0.3458\tab 06/20/09\tab Expands TSP Instrument for script management and more.\par
+3.0.3342\tab 02/23/09\tab Adds a TSP instrument that works outside the status system. \par
+3.0.3082\tab 06/09/08\tab Fixes bug reading user scripts -- returned value was not used when returned success from function.\par
+3.0.2961\tab 02/09/08\tab Upgrades code to using Managed VISA and ISR.VISA.\par
+2.0.2925\tab 01/04/08\tab Upgrades code to .NET 3.5.\par
+1.0.2853\tab 10/24/07\tab Updates error raising code in methods with resume next clauses.\par
+1.0.2685\tab 05/09/07\tab Turns off prompts and errors before disconnecting.\par
+1.0.2616\tab 03/01/07\tab Created.\par
+
+\pard\tx1080\tx2160\par
+\cf2 (C) 2007 Integrated Scientific Resources, Inc.  All rights reserved.\par
+
+\pard\sl240\slmult0 Licensed under The MIT License.\par
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\par
+
+\pard\sb120\kerning1\f0 Windows programs were developed and tested using Microsoft\fs8  \fs20\'ae Visual Studio. Firmware for the instrument was \kerning0\f1 developed and tested using Eclipse \'ae from the {{\field{\*\fldinst{HYPERLINK "http://www.eclipse.org"}}{\fldrslt{\ul\cf3\cf4 Eclipse Foundation}}}}\f1\fs20 .\cf1\kerning1\f3\par
+
+\pard\sb120\tx1080\cf2\kerning0\f1 Source code for this project is hosted on {{\field{\*\fldinst{HYPERLINK "https://bitbucket.org/davidhary"}}{\fldrslt{\ul\cf3\cf4\ul Bit Bucket}}}}\f1\fs20 .\par
+
+\pard\cbpat5\nowidctlpar\sb120\kerning1\f0 Open source used by this software is described and licensed on the following sites:\par
+
+\pard\cbpat5\nowidctlpar\sb120\tx9000 Core Pith Library\line - Safe Events \cf1\f3 ({{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/EventSafeTrigger.aspx"}}{\fldrslt{\ul\cf3\cf4\ul code project}}}}\f3\fs20 , {{\field{\*\fldinst{HYPERLINK "http://www.DreamInCode.net/forums/user/334492-aeonhack/"}}{\fldrslt{\ul\cf3\cf4\ul dream in code}}}}\f3\fs20 , {{\field{\*\fldinst{HYPERLINK "http://www.DreamInCode.net/code/snippet5016.htm"}}{\fldrslt{\ul\cf3\cf4\ul dream in code}}}}\f3\fs20 )\line\cf2\f0 - {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/LetYourFormDropAShadow.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Drop Shadow and Fade From}}}}\f0\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://WallaceKelly.BlogSpot.com/"}}{\fldrslt{\ul\cf3\cf4\ul Engineering Format}}}}\f0\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/efficient_strong_enum.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Efficient Strong Enumerations}}}}\f0\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/Articles/37921/Enums-Flags-and-CSharp-Oh-my-bad-pun.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Enumeration Extensions}}}}\f0\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/17472/StringEnumerator"}}{\fldrslt{\ul\cf3\cf4\ul String Enumerator}}}}\f0\fs20\par
+
+\pard\sb120\kerning0\b\f1 Typed Units Library \line - {\kerning1\b0\f0{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/611731/Working-with-Units-and-Amounts"}}{\fldrslt{\ul\cf3\cf4\ul Typed Units}}}}\kerning1\b0\f0\fs20\par
+
+\pard\cbpat5\nowidctlpar\sb120 Lua Global Support Libraries:\line - {{\field{\*\fldinst{HYPERLINK "http://www.lua.org"}}{\fldrslt{\ul\cf3\cf4\ul LUA}}}}\kerning0\f1\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.loop.org"}}{\fldrslt{\ul\cf3\cf4\ul table.copy}}}}\f1\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.it-rfc.de"}}{\fldrslt{\ul\cf3\cf4\ul Working LUA base-64 codec}}}}\f1\fs20\par
+\kerning1\f0 Commercial programs used by this software are described and licensed on the following sites:\par
+
+\pard\sb120\kerning0\b\f1 Typed Units Library\line {\kerning1\b0\f0{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/611731/Working-with-Units-and-Amounts"}}{\fldrslt{\ul\cf3\cf4\ul - Typed Units}}}}\kerning1\b0\f0\fs20\par
+
+\pard\cbpat5\nowidctlpar\sb120 Commercial programs used by this software are described and licensed on the following sites:\par
+\kerning0\b\f1 IVI Library:\line {\kerning1\b0\f0{\field{\*\fldinst{HYPERLINK "http://www.ivifoundation.org"}}{\fldrslt{\ul\cf3\cf4\ul - IVI VISA}}}}\kerning1\b0\f0\fs20\par
+\kerning0\b\f1 NI Library:\line - {\kerning1\b0\f0{\field{\*\fldinst{HYPERLINK "http://www.ni.com"}}{\fldrslt{\ul\cf3\cf4\ul NI VISA}}}}\f1\fs20\par
+\par
+}
+ 

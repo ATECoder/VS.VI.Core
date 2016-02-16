@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.8</ProductVersion>
+    <ProjectGuid>{05548d36-f8b0-47ee-80cb-c7b522f73bec}</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>VI.K3700.Console.2016.Setup</OutputName>
+    <OutputType>Bundle</OutputType>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <IncludeSearchPaths>C:\My\LIBRARIES\VS\Share\WiX\DirectoryTree\;C:\My\LIBRARIES\VS\VI\CORE\VI\WiX\K3700\K3700.Console.WiX\</IncludeSearchPaths>
+    <Name>VI.K3700.Console.Bundle</Name>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyPackage.wxs" />
+    <Compile Include="BundlePackage.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixTagExtension">
+      <HintPath>$(WixExtDir)\WixTagExtension.dll</HintPath>
+      <Name>WixTagExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixNetFxExtension">
+      <HintPath>$(WixExtDir)\WixNetFxExtension.dll</HintPath>
+      <Name>WixNetFxExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixBalExtension">
+      <HintPath>$(WixExtDir)\WixBalExtension.dll</HintPath>
+      <Name>WixBalExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\..\..\..\Share\WiX\DirectoryTree\TargetProgramFilesFolder.wxi">
+      <Link>TargetProgramFilesFolder.wxi</Link>
+    </Content>
+    <Content Include="..\K3700.Console.WiX\ProductPreprocessor.wxi">
+      <Link>ProductPreprocessor.wxi</Link>
+    </Content>
+    <Content Include="readme.rtf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Apps\K3700.Console\VI.K3700.Console.vbproj">
+      <Name>VI.K3700.Console</Name>
+      <Project>{77dd80a1-0a71-48d8-add9-3123dd4900a3}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\K3700.Console.WiX\VI.K3700.Console.WiX.wixproj">
+      <Name>VI.K3700.Console.WiX</Name>
+      <Project>{9884b0a5-bfa1-43bb-ac14-1ec6599b4de0}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" />
+  <PropertyGroup>
+    <SignOutput>true</SignOutput>
+  </PropertyGroup>
+  <Target Name="SignBundleEngine">
+    <Exec Command="&quot;%25my%25\Public\Certificate\SignAssembly.bat&quot; &quot;%(SignBundleEngine.Filename)&quot; &quot;@(SignBundleEngine)&quot;" />
+  </Target>
+  <Target Name="SignBundle">
+    <Exec Command="&quot;%25my%25\Public\Certificate\SignAssembly.bat&quot; &quot;%(SignBundle.Filename)&quot; &quot;@(SignBundle)&quot;" />
+  </Target>
+  <Target Name="AfterBuild">
+    <GetAssemblyIdentity AssemblyFiles="$(SolutionDir)Apps\K3700.Console\bin\$(Configuration)\VI.K3700.Console.exe">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyVersions" />
+    </GetAssemblyIdentity>
+    <CreateProperty Value="%(AssemblyVersions.Version)">
+      <Output TaskParameter="Value" PropertyName="AssyVersion" />
+    </CreateProperty>
+    <CreateProperty Value="$(AssyVersion.Split('.')[0]).$(AssyVersion.Split('.')[1]).$(AssyVersion.Split('.')[2])">
+      <Output TaskParameter="Value" PropertyName="AssyShortVersion" />
+    </CreateProperty>
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="C:\My\BUILDS\Tools\IO.Visa\$(OutputName)-$(AssyShortVersion).exe" />
+  </Target>
+  <!--
+	To modify your build process, add your task inside one of the targets below and uncomment it.
+	Other similar extension points exist, see Wix.targets.
+	<Target Name="BeforeBuild">
+
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+	-->
+</Project>

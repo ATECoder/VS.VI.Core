@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E3E5C265-4E4B-4FE3-A25D-97809E20085E}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>isr.VI.My.MyApplication</StartupObject>
+    <RootNamespace>isr.VI</RootNamespace>
+    <AssemblyName>VI.Multimeter.Tester</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>WindowsForms</MyType>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>Off</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>SPLASH,Blue_Splash</DefineConstants>
+    <DocumentationFile>VI.Multimeter.Tester.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\FromAllRules2015.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>VI.Multimeter.Tester.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\FromAllRules2015.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Windows.Forms" />
+    <Import Include="System.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\..\Share\Core\BlueSplashScreen.vb">
+      <Link>My\BlueSplashScreen.vb</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\..\..\..\..\Share\Core\CommandLineInfo.vb">
+      <Link>My\CommandLineInfo.vb</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\..\Share\Pith\MyApplicationEvents.vb">
+      <Link>My\MyApplicationEvents.vb</Link>
+    </Compile>
+    <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
+      <Link>My\SolutionInfo.vb</Link>
+    </Compile>
+    <Compile Include="FORMS\Switchboard.Designer.vb">
+      <DependentUpon>Switchboard.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FORMS\Switchboard.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="My\MyCustomApplicationEvents.vb" />
+    <Compile Include="My\MyApplicationInfo.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="My\MySuppressions.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FORMS\Switchboard.resx">
+      <DependentUpon>Switchboard.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Pith\My\keyPair.snk">
+      <Link>My\keyPair.snk</Link>
+    </None>
+    <Content Include="My\isr.VI.Multimeter.Tester.History.rtf" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="My\isr new logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
+      <Project>{F9D9ED3D-4CBD-49E2-B162-7C15E051F636}</Project>
+      <Name>isr.Core.Controls.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Core\Core\Forms\isr.Core.Forms.Library.vbproj">
+      <Project>{B501F643-EBC5-4096-86F6-43A2173066CA}</Project>
+      <Name>isr.Core.Forms.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Core\Core\MessageBox\isr.Core.MessageBox.Library.vbproj">
+      <Project>{209724b9-9f9c-43dd-a089-d3bfb6ad9f2b}</Project>
+      <Name>isr.Core.MessageBox.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+      <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
+      <Name>isr.Core.Pith.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\K2000\isr.VI.K2000.Library.vbproj">
+      <Project>{9f4428b3-4e89-4154-be81-6e079c5d93b4}</Project>
+      <Name>isr.VI.K2000.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\K2700\isr.VI.K2700.Library.vbproj">
+      <Project>{8ba6e502-02d3-4e89-b6e4-0c4f2f7181d4}</Project>
+      <Name>isr.VI.K2700.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\Tegam\isr.VI.Tegam.Library.vbproj">
+      <Project>{3348577f-b095-4685-80bd-9f917ca52d6b}</Project>
+      <Name>isr.VI.Tegam.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Instrument\Instrument\isr.VI.Instrument.Library.vbproj">
+      <Project>{C3B279E2-F2F4-4387-BD05-82B8D3976AC5}</Project>
+      <Name>isr.VI.Instrument.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
+      <Project>{0c14c4a7-d574-4f9b-a2d9-989b71cc7de4}</Project>
+      <Name>isr.VI.Device.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Resource\Pith\isr.VI.Pith.Library.vbproj">
+      <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
+      <Name>isr.VI.Pith.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

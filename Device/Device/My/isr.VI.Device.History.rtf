@@ -1,0 +1,95 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat{\fonttbl{\f0\fswiss\fcharset0 Trebuchet MS;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 trebuchet ms;}{\f3\fnil\fcharset0 Trebuchet MS;}{\f4\fnil Consolas;}}
+{\colortbl ;\red0\green0\blue0;\red134\green154\blue168;\red0\green0\blue255;\red0\green102\blue204;\red0\green128\blue0;\red255\green255\blue255;}
+{\*\generator Riched20 10.0.10586}\viewkind4\margt-1\margb-1\margl-1\margr-1\psz1
+{\*\jarte object RichPersist
+  Version = 2
+  LMarg = -1
+  RMarg = -1
+  TMarg = -1
+  BMarg = -1
+  Equal = True
+  Orient = 1
+  Size = 1
+  Width = 2159
+  Height = 2794
+  HdrMarg = -1
+  FtrMarg = -1
+  HdrFont.Charset = DEFAULT_CHARSET
+  HdrFont.Color = clWindowText
+  HdrFont.Height = -11
+  HdrFont.Name = 'MS Sans Serif'
+  HdrFont.Style = []
+  WMark = 'None'
+  WColor = 13822463
+  BlackInk = True
+  Collate = True
+  SpellDict = 'ssceam2.clx'
+end
+}\uc1 
+\pard\cbpat6\nowidctlpar\cf1\kerning1\f0\fs28\lang1033 ISR.\fs8  \fs28 VI.\fs8  \fs28 Device\fs8  \fs12 TM\fs28 : VISA Device Library.\f1\fs20\par
+\f0\fs22 VISA Device Base classes.\par
+Revision-History\f1\fs16\par
+
+\pard\cbpat6\nowidctlpar\fi-2160\li2160\tx1080\tx2160\ul\f0\fs20 Revision\ulnone\tab\ul Date\ulnone\tab\ul Description\ulnone\f1\par
+\kerning0\f2 4.0.5868\tab 01/25/16\tab Allows creating a session without a resource name. \par
+4.0.5812\tab 11/30/15\tab Splits R2D2 and SCPI devices to associated libraries. Uses factory class to create instrument and interface sessions.\par
+4.0.5803\tab 11/21/15\tab New structures and name spaces. \par
+3.0.5226\tab 05/23/14\tab Uses new stack trace parser. Fixes the checking for visa and device errors. \par
+3.0.5189\tab 03/17/14\tab Applies the session status elements when calling the resetting the status subsystem known state even if the status subsystem does not have a defined reset command.\par
+3.0.5181\tab 03/09/14\tab Uses abstract properties to define instrument commands. \par
+3.0.5163\tab 02/19/14\tab Uses local sync and async safe event handlers. \par
+3.0.5145\tab 02/01/14\tab Use diagnosis base classes for property changes. Bug fix: disable service request when closing (was enabling). Support enabling synchronous property change with last message received.\par
+3.0.5126\tab 01/13/14\tab Tagged as 2014.\par
+\kerning1\f0 3.0.5067\tab 11/15/13\tab Overrides Device Open in the Device class and set Device Open in the Status Subsystem. Adds Connect Timeout to the base device.\kerning0\f2\par
+\kerning1\f0 3.0.5065\tab 11/13/13\tab Changes 'Read' to 'Query' for all query methods -- read is used for reading existing data; query asks for the data and then reads. Adds tracing to the devices and subsystems. Makes status to main subsystem. Moves methods from System to Status. Adds a subsystem base with status. Add check and Throw and Check and Report. \kerning0\f2\par
+\kerning1\f0 3.0.5056\tab 11/04/13\tab Adds a Presettable Publisher Base and uses this in place of the Subsystems collection.\kerning0\f2\par
+\kerning1\f0 3.0.5054\tab 11/02/13\tab Uses Arebis units in place for core primitive units. \kerning0\f2\par
+\kerning1\f0 3.0.5050\tab 10/29/13\tab Prober: Emulates sending messages. Includes emulation in the Send command.\kerning0\f2\par
+\kerning1\f0 3.0.5045\tab 10/24/13\tab Moves setting default status bits to the constructors.\kerning0\f2\par
+\kerning1\f0 3.0.5014\tab 09/24/13\tab\kerning0\f2 Adds code for extracting delimited strings for them enumeration descriptions. Requires parsing version info. Adds String Enumerator and use to parse query results. Adds extensions to use delimited values from the enumerations. \par
+\kerning1\f0 3.0.5012\tab 09/22/13\tab\kerning0\f2 Add Multi Meter and Prober Libraries. Move Source Measure Units project to the Units folder. Copy the VISA 3.0 K2700 panel to the library.  Add the K2700 elements to the project. Change Readings to Not Disposable. Remove the Is Visible Property from the Resource Panel Base. Rename Readings to Readings base and document. Use reflection to publish properties. Add presettable publisher and use for the collection of subsystems. Add sense subsystem and use it to parse a reading. Core: Copy publisher base to Core Library. Use reflection to publish properties. Add publisher base and publisher interface.\par
+\kerning1\f0 3.0.5011\tab 09/21/13\tab\kerning0\f2 Adds Interface Panel. Session: Convert write functions to subroutines because the base functions are subroutines. Convert Presettable functions to subroutines. Device Base: Remove Session With Events directive and replace with Add and remove handlers. Encapsulate enabling and disabling the service request event. Set session to nothing when closing or disposing -- now works ok. Remove session Last VISA status properties. Tester: Adds Interface Panel.  Adds resource event handlers to the interface panel. Adds interface and resource name properties to the interface panel. Add disposing of managed resources to the NI derived panels. Add Is Open sentinel because we cannot null the Visa Interface. Document classes. Shared: Document some classes. Add IEEE488 Syntax standard commands. Move SCPI Device and Version Info under the SCPI folder. Instrument: Change fonts to Segoe UI 10. Enable clear only after selecting all resources and seeing that we have resources. Enable connection only if the resource exists. Update the selector connector to validate the selected resource. Remove the selected event and use property changed instead. Tester: Turn on Show Tool tip property of tool strip. Add messages. Add tracing. Use ISR Message Based Session; Core.Diagnostics: Update the observer interface. Have the publisher interface inherit the observer interface. Change the synopsis delimiter to ';. '  Forms: Change fonts to Segoe UI 10. Share: Add my library trace. Update Trace Log Info to return the default file trace listener when replacing the listener. \par
+\kerning1\f0 3.0.5010\tab 09/20/13\tab Debugged \kerning0\f2 VISA session or Interface with With events causes object disposed exception.\fs22\par
+\kerning1\f0\fs20 3.0.5009\tab 09/19/13\tab\kerning0\f2 Add Property Attributes to controls. Handle the display of resource names in the selector connector control. Includes the resource panel. Diagnostics: Add trace message interfaces for observer and publisher. Update copyright and creation dates. \kerning1\f0\par
+3.0.5008\tab 09/18/13\tab\kerning0\f2 Restores links to the solution info and key pair fails that broke when renaming the library folder. Adds write and write line and query line dealing with termination characters. Creates service register values. Adds GPIB interface extensions.\par
+\kerning1\f0 3.0.5007\tab 09/17/13\tab\kerning0\f2 Add handling of service request; Read registers when servicing request if no message; Update error, message and measurement available flags when reading service register; Update standard status when reading the standard register; Updates error, message and measurement available when reading the status register. Updates the device error when reading the standard register. Process registers on service requests. Adds Reset and Clear to the base device. Adds version info. Parses version info when reading the identity. Closes session if failed to open. Explicitly enables and disables session service requests. Adds resource manager extensions to find interfaces and instruments. Add readings and measurands. Append Library to all projects. Change main visa library to Visa Core. \kerning1\f0 3.0.5007\tab 09/16/13\tab\kerning0\f2 Adds Enabled property to the device. Adds sub system enabled and opened. Access session only if session is open -- allows working without hardware. Removes Session status from the device. Conditions hardware I/O on having an open session--session is open only if hardware is defined; otherwise session I/O is ignored. Adds reset and clear. Terminates Presettable collection action on first failure. Adds code to discard unread data waiting for all messages to end. Adds Version Info base and implement in the system subsystem.\par
+\kerning1\f0 3.0.5002\tab 09/11/13\tab\kerning0\f2 Debugs undefined header on :SYST:ERR command. Changes open session using must override method for adding sub stations. Replaces parser base of Boolean with Boolean parser. Removes shared methods from Power Supply and Source Measure. Requires implementing To Text function in all parsers. Uses Equals in place of equality or non equality operator on nullable types and all types for that matter as equality operator does not work if nullable is not set. Adds approximation functions for nullable double and default methods for using Single Epsilon as the delta. Adds sense and route subsystems to the source measure instrument. Uses Unequal for doubles. Adds measure subsystem to source measure and parse readings. Parses reading on read and fetch.\par
+\kerning1\f0 3.0.5001\tab 09/10/13\tab\kerning0\f2 Figures out how to set the session to nothing. Sets released history dates to 2012. Corrects copyright dates. Adds extension to try parse the resource.   Publishes interface type and number. Removes public open session methods. Discards all events when closing the session; Uses session not nothing and not disposed to determine if session is open -- setting session to nothing raises an Object Disposed exception. Makes error queue read only. Clears Error Queue in the base class. Updates NI folder from Visa 3.0. Moves NI.VS10 to Visa folder. Adds Device to Switch and Source measure. Adds unit tests for source measure. Removes session from session writer. Removes shared session methods. Moves interface type and number from the device to the session; Removes the resource name from the device. Enumerates subsystems when opening the session; Uses Boolean Parser when writing and querying.\par
+\kerning1\f0 3.0.5000\tab 09/09/13\tab\kerning0\f2 Documents status subsystem base. Processes subsystems: Moves setters to base classes. Creates generic base classes. Removes shared methods. Updates all writers and setters to return null if Visa status failed. Changes Getters (query), Setters (apply), Writers (write). Changes Read to Query. Changes enabled to value.\par
+\kerning1\f0 3.0.4998\tab 09/07/13\tab\kerning0\f2 Removes interfaces from instrument classes. Uses regions for base SCPI Code (shared). Removes System Subsystem Base commands exception from the System subsystem. Uses Reset Known State when initializing. Removes base system and status from the base device. Removes SCPI name space from Presettable and constants. Changes constants to read only values. Removes shared methods: System and Status subsystems. Device: Removes SCPI name space. Changes Subsystems to Presettable Elements. Adds function to Add Subsystems. Creates Generic Base Classes (to allow using TSP). \par
+\kerning1\f0 3.0.4996\tab 09/05/13\tab\kerning0\f2 Uses shared Visa and instrument exceptions. Adds custom constructors to Visa Exception. Moves units under the units folder. Adds Power Supply Units. Deletes Instrument code from the base library. Shared: Adds custom constructors to Visa Exception. Exposes timeout as timespan. Uses Property publisher base class. Converts parsers to classes. Removes parser interface. Creates parser base. Replaces parser interface with parser base. Uses new font for the RTF license statement. Removes all SCPI interfaces. Makes all SCPI subsystems base classes. Removes settings and resources from the VISA library.\par
+\kerning1\f0 2.0.4995\tab 09/04/13\tab Tagged in preparation of version 3.0.\par
+2.0.4695\tab 11/08/12\tab Adds status subsystem. Adds functionality to the session; Uses value, value getter, setter and writer.\kerning0\f2\par
+\kerning1\f0 2.0.4693\tab 11/06/12\tab Adds source measure source and output subsystem functionality.\kerning0\f2\par
+\kerning1\f0 2.0.4692\tab 11/05/12\tab\kerning0\f2 Uses Session, Session Read and Session Write from Version 3.0. Adds subsystems. Increments breaking version to 2.0\par
+\kerning1\f0 1.0.4657\tab 10/01/12\tab\kerning0\f2 Adds is Session Open. Adds wait for minimum current and voltage\par
+\kerning1\f0 1.0.4654\tab 09/28/12\tab\kerning0\f2 Adds Initialize to the VISA SCPIinstrument to encapsulate custom resetting. Documents the function calls. Adds On and Off constants. Adds over-voltage and current protection commands. Adds voltage and current source commands. Adds property Publishing.\par
+\kerning1\f0 1.0.4653\tab 09/27/12\tab\kerning0\f2 Saves Oster projects as isr.IO.Visa.Oster.Library and isr.IO.Visa.Oster.Units.vbproj. Renames turn off and on to output off. Adds output state.\par
+\kerning1\f0 1.0.4652\tab 09/26/12\tab\kerning0\f2 Created.\par
+
+\pard\cbpat6\nowidctlpar\sb120\cf2\kerning1\f0 (C) 2012 Integrated Scientific Resources, Inc. All rights reserved.\par
+
+\pard\sb120\sl240\slmult0 Licensed under The MIT License.\line THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\cf1\par
+
+\pard\sb120\tx9000\cf2 This software was developed and tested using Microsoft\fs8  \fs20\'ae Visual Studio.\cf1\f1\par
+
+\pard\sb120\tx1080\cf2\kerning0\f3 Source code for this project is hosted on {{\field{\*\fldinst{HYPERLINK "https://bitbucket.org/davidhary"}}{\fldrslt{\ul\cf3\cf4\ul Bit Bucket}}}}\f3\fs20 .\par
+
+\pard\cbpat6\nowidctlpar\sb120\kerning1\f0 Open source used by this software is described and licensed on the following sites:\par
+
+\pard\cbpat6\nowidctlpar\sb120\tx9000 Core Pith Library\line - Safe Events \cf1\f1 ({{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/EventSafeTrigger.aspx"}}{\fldrslt{\ul\cf3\cf4\ul code project}}}}\f1\fs20 , {{\field{\*\fldinst{HYPERLINK "http://www.DreamInCode.net/forums/user/334492-aeonhack/"}}{\fldrslt{\ul\cf3\cf4\ul dream in code}}}}\f1\fs20 , {{\field{\*\fldinst{HYPERLINK "http://www.DreamInCode.net/code/snippet5016.htm"}}{\fldrslt{\ul\cf3\cf4\ul dream in code}}}}\f1\fs20 )\line\cf2\f0 - {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/LetYourFormDropAShadow.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Drop Shadow and Fade From}}}}\cf1\kerning0\f3\fs20\par
+
+\pard\cbpat6\nowidctlpar\tx9000\cf2\kerning1\f0 - {{\field{\*\fldinst{HYPERLINK "http://WallaceKelly.BlogSpot.com/"}}{\fldrslt{\ul\cf3\cf4\ul Engineering Format}}}}\f0\fs20\par
+- {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/efficient_strong_enum.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Efficient Strong Enumerations}}}}\cf5\kerning0\f4\fs22\par
+\cf2\kerning1\f0\fs20 - {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/Articles/37921/Enums-Flags-and-CSharp-Oh-my-bad-pun.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Enumeration Extensions}}}}\f0\fs20\par
+- {{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/17472/StringEnumerator"}}{\fldrslt{\ul\cf3\cf4\ul String Enumerator}}}}\f0\fs20\par
+
+\pard\sb120\kerning0\b\f3 Typed Units Library\line {\kerning1\b0\f0{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/611731/Working-with-Units-and-Amounts"}}{\fldrslt{\ul\cf3\cf4\ul - Typed Units}}}}\kerning1\b0\f0\fs20\par
+
+\pard\cbpat6\nowidctlpar\sb120 Commercial programs used by this software are described and licensed on the following sites:\par
+\kerning0\b\f3 IVI Library:\line {\kerning1\b0\f0{\field{\*\fldinst{HYPERLINK "http://www.ivifoundation.org"}}{\fldrslt{\ul\cf3\cf4\ul - IVI VISA}}}}\kerning1\b0\f0\fs20\par
+\kerning0\b\f3 NI Library:\line - {\kerning1\b0\f0{\field{\*\fldinst{HYPERLINK "http://www.ni.com"}}{\fldrslt{\ul\cf3\cf4\ul NI VISA}}}}\f3\fs20\par
+\par
+\par
+}
+ 

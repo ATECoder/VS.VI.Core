@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Include>
+    <!-- Preprocessor variables used within this product -->
+    <?ifndef ProductName ?>
+        <?define ProductName         = 'VI.OhmniNet.Tester.2016' ?>
+        <?define ProductDescription  = 'OhmniNet Virtual Instruments Tester 2016' ?>
+        <?define ProductManufacturer = 'Integrated.Scientific.Resources' ?>
+        <?define ProductVendor       = 'Integrated.Scientific.Resources' ?>
+        <?define ProductCopyright    = '(c) 2016 by Integrated Scientific Resources, Inc. All rights reserved.' ?>
+        <!-- Workaround version binding bug - use a short file id. 
+        <?define ProductVersion      = '!(bind.assemblyVersion.$(var.isr.VI.OhmniNet.Tester.TargetFileName))' ?>
+        -->
+        <?define ProductVersion      = '!(bind.assemblyVersion.fid.MyAssembly)' ?>
+        <?define ProductPlatform     = $(var.isr.VI.OhmniNet.Tester.Platform) ?>
+        <?define ProgramFolderName   = 'Programs' ?>
+        <?define DocsFolderName      = 'Docs' ?>
+        <?define ProductIcon         = '$(env.My)\RESOURCES\Art\Logo\isr New.ico' ?>
+        <?define ProductLogo         = '$(env.My)\RESOURCES\Art\Logo\logo48.png' ?>
+        <?define HelpURL             = 'http://www.isr.cc' ?>
+        <?define LicenseFilePath     = '$(env.My)\Resources\Licenses\MIT\The MIT License ISR 2016.rtf' ?>
+        <?define LicenseReadme       = 'LicenseReadme.rtf' ?>
+        <?define UpdateBaseURL       = 'ftp://tools%40isr.cc:Tools.201x@ftp.isr.cc/visa/' ?>
+        <?define UpdateSetupURL      = '$(var.UpdateBaseURL)$(var.ProductName).Setup.exe' ?>
+    <?endif?>
+</Include>

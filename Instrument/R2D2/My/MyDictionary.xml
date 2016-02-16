@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Dictionary>
+    <Words>
+        <Recognized>
+            <Word>ms</Word>
+            <Word>isr</Word>
+        </Recognized>
+        <Deprecated>
+            <Term PreferredAlternate=""></Term>
+        </Deprecated>
+        <Compound>
+            <Term CompoundAlternate=""></Term>
+        </Compound>
+        <DiscreteExceptions>
+            <Term></Term>
+        </DiscreteExceptions>
+    </Words>
+    <Acronyms>
+        <CasingExceptions>
+            <Acronym>isr</Acronym>
+            <Acronym>R2D2</Acronym>
+        </CasingExceptions>
+    </Acronyms>
+</Dictionary>

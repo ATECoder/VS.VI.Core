@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?include ProductPreprocessor.wxi ?>
+<?include TargetProgramFilesFolder.wxi ?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi' 
+     xmlns:util='http://schemas.microsoft.com/wix/UtilExtension'
+     xmlns:netfx='http://schemas.microsoft.com/wix/NetFxExtension' 
+     xmlns:bal='http://schemas.microsoft.com/wix/BalExtension'
+     xmlns:swid='http://schemas.microsoft.com/wix/TagExtension'
+     >
+
+    <Bundle Name='!(bind.packageName.pid.MainPackage)' 
+            Version='!(bind.packageVersion.pid.MainPackage)' 
+            Manufacturer='!(bind.packageManufacturer.pid.MainPackage)' 
+            Copyright='$(var.ProductCopyright)'
+            Compressed='yes'
+            HelpUrl='$(var.HelpURL)'
+            IconSourceFile='$(var.ProductIcon)'
+            UpdateUrl='$(var.UpdateSetupURL)'
+            UpgradeCode='E24D1C09-551C-44CA-961F-3E577ED8AAF3'>
+        <BootstrapperApplicationRef Id='WixStandardBootstrapperApplication.RtfLicense' >
+            <bal:WixStandardBootstrapperApplication
+                 LicenseFile='readme.rtf'
+                 LogoFile='$(var.ProductLogo)'
+                 SuppressOptionsUI='no'
+                 ShowVersion='yes'
+                 />
+        </BootstrapperApplicationRef>
+
+        <!-- Sets the SAM id. -->
+        <swid:Tag Regid='isr.cc' InstallPath='$(var.TargetProgramFilesFolder)$(var.ProductManufacturer)\$(var.ProductName)' />
+
+        <!-- Sets the install folder to display as part of the Options dialog. -->
+        <Variable Name='InstallFolder' Type='string' Value='$(var.TargetProgramFilesFolder)$(var.ProductManufacturer)\$(var.ProductName)'  />
+
+        <Chain>
+            <!-- 
+            NO .NET
+            <PackageGroupRef Id='NetFx46Redist'/>
+            -->
+            <PackageGroupRef Id='NetFx46Web'/>
+            <PackageGroupRef Id='VI.Device.Tester'/>
+        </Chain>
+        
+	</Bundle>
+</Wix>

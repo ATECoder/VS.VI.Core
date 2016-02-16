@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>
+    </SchemaVersion>
+    <ProjectGuid>{378FEDFA-42F6-49B1-B2D0-D6BBC4CE04BB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>isr.VI.Multimeter.Units</RootNamespace>
+    <AssemblyName>isr.VI.Multimeter.Units</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>Windows</MyType>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
+    <ReferencePath>$(DevEnvDir)PublicAssemblies\</ReferencePath>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>isr.VI.Multimeter.Units.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\CodeAnalysisUnits.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>isr.VI.Multimeter.Units.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>Off</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
+      <Visible>False</Visible>
+    </CodeAnalysisDependentAssemblyPaths>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="MySuppressions.vb" />
+    <Compile Include="MeasureSubsystemTest.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+      <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
+      <Name>isr.Core.Pith.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\Tegam\isr.VI.Tegam.Library.vbproj">
+      <Project>{3348577f-b095-4685-80bd-9f917ca52d6b}</Project>
+      <Name>isr.VI.Tegam.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Device\Device.R2D2\isr.VI.Device.R2D2.Library.vbproj">
+      <Project>{876f93ee-0292-4f25-b599-7113ee47a1ca}</Project>
+      <Name>isr.VI.Device.R2D2.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
+      <Project>{0c14c4a7-d574-4f9b-a2d9-989b71cc7de4}</Project>
+      <Name>isr.VI.Device.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="MyDictionary.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Pith\My\keyPair.snk">
+      <Link>keyPair.snk</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

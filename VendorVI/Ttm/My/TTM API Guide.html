@@ -1,0 +1,1002 @@
+<html>
+<head>
+<meta name="generator" content="TreePad, http://www.treepad.com">
+<title>TTM Driver API Guide</title>
+</head>
+<!-- HTML created by TreePad (http://www.treepad.com) -->
+<body>
+<pre>
+</pre>
+
+<DL>
+
+<DT><a name="5B32C97B1A7348EC6702CB47F9970821B883B507"></a><h3>TTM Driver API Guide</h3></DT>
+
+<DD>
+
+<div ALIGN="CENTER"><FONT FACE="trebuchet ms" SIZE=3>Thermal Transient Meter</FONT></div>
+<div ALIGN="CENTER"><FONT FACE="trebuchet ms" SIZE=3>Driver API Guide</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=3 COLOR="#0000FF">Table of Contents</FONT></div>
+<div><a href="#4D6F07E8E6EC6AFBA03D73307BB158AEA4C5C51F"><FONT FACE="trebuchet ms" SIZE=3>Description</FONT></A></div>
+<div><a href="#0A8268FDD5F817FA79D412550B94C59DC598F8A6"><FONT FACE="trebuchet ms" SIZE=3>Changes</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#D5C1FFB528ED36C46517E8813BA5EB508F6C7EB5"><FONT FACE="trebuchet ms" SIZE=3>Revision 3.1</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#309D128794834E4A31FFE1B3509FCA5A5547BAC3"><FONT FACE="trebuchet ms" SIZE=3>Revision 4.0</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#3F7997C961EEE4C182E812C5CFFFC4BB68F01582"><FONT FACE="trebuchet ms" SIZE=3>Code Breaking Chances</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#325F86AB501EC8B8FB113943848FEE6E22358F45"><FONT FACE="trebuchet ms" SIZE=3>Trace Messages</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#28A117953D4BE0A0DE0D5A5443E742AAD224088B"><FONT FACE="trebuchet ms" SIZE=3>Return Values</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#88384FC10E58E619B4A9F46A92CF3132945EF7A0"><FONT FACE="trebuchet ms" SIZE=3>Connect using Open Session</FONT></A></div>
+<div><a href="#918627A5461921AA5DF267A3B19016AD41BBC7DA"><FONT FACE="trebuchet ms" SIZE=3>Testing the Library</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#555A10D2A49C37774FC940C01A7B606FDB82F4EB"><FONT FACE="trebuchet ms" SIZE=3>Launch</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#DE42ED00364AB6242BC2DF2F2FF94E0B514D91BE"><FONT FACE="trebuchet ms" SIZE=3>Connect</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#3EF7941C269F3B5BDEA0446E507B3E5013FDD3AE"><FONT FACE="trebuchet ms" SIZE=3>Configure</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#BACA1CDE9C913D33F5BED3A551F284C2CF141F47"><FONT FACE="trebuchet ms" SIZE=3>Manual Measurements</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#A1D9FB43084ADAC4F1E3715868420E145EDA709C"><FONT FACE="trebuchet ms" SIZE=3>Triggered Measurements</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#6A4707A4B7E1B0C21CA7DE6302A95167331DA9DE"><FONT FACE="trebuchet ms" SIZE=3>Stopping</FONT></A></div>
+<div><a href="#12B98CB2E58F8704F2414E1192452994105E212F"><FONT FACE="trebuchet ms" SIZE=3>Using the ISR TTM Driver</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#0294FF5D5A78CB5F6E7EA04B5E5493FEC149950A"><FONT FACE="trebuchet ms" SIZE=3>Developer Source Code</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#1290D547A9826AD34FA430E0DA0231FE0DCC4013"><FONT FACE="trebuchet ms" SIZE=3>Compiling the developer source code.</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#CF9548C2F37F1748727898D9F5DEE20824F53E1C"><FONT FACE="trebuchet ms" SIZE=3>Addressing the Driver</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#F5B5B5582BE9B1B41BD4385CAA088A3BE6561894"><FONT FACE="trebuchet ms" SIZE=3>Recommended</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#1598216608B9E9D2756E2987B8DC1E22B15F99B9"><FONT FACE="trebuchet ms" SIZE=3>Adding the source code</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#EC26E30EE829BF926417D914A89916E8CD9569B2"><FONT FACE="trebuchet ms" SIZE=3>Adding Reference to the DLL</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#682999071C6142AE22933C3A744CBD68F49FF679"><FONT FACE="trebuchet ms" SIZE=3>Instantiating the Interface</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#C6DB2E5DE08113453E60D36FA9C2F0CE3F1C511C"><FONT FACE="trebuchet ms" SIZE=3>Trace Message Handling</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#BFA08E5FA40F36E82599A5EF43429C33AE597F4D"><FONT FACE="trebuchet ms" SIZE=3>Connecting to the Instrument</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#32CF30FEF00484544C138F872E31B5184CBBBDC3"><FONT FACE="trebuchet ms" SIZE=3>Configuring the Measurement</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#3309551852E53CFFB689CB79155D228C6D471B17"><FONT FACE="trebuchet ms" SIZE=3>The Part Element</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#17915C64BB9660B3BC40FE09023D02356463AF1C"><FONT FACE="trebuchet ms" SIZE=3>TTM Measurements</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#1AF63C940121C6065C837983C0F7570081E913D8"><FONT FACE="trebuchet ms" SIZE=3>Shunt Measurement</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#73E83FB0D41D9BF90848C52334086F5AF6449DE4"><FONT FACE="trebuchet ms" SIZE=3>Making Measurements</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#9F5DF5D24248AC4145CB3567EFB5295927AE2FDC"><FONT FACE="trebuchet ms" SIZE=3>Initial Resistance</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#E5A0B42B2ADCAF3A1F77B9B15502044BF36B3B0C"><FONT FACE="trebuchet ms" SIZE=3>Thermal Transient</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#FA574E5257DBB64A90EA580C6CE55005781B37F1"><FONT FACE="trebuchet ms" SIZE=3>Final Resistance</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#8259C94EBE5851E5156C30770BBE347CB256617B"><FONT FACE="trebuchet ms" SIZE=3>Shunt Resistance</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#7225260A9E0D30715465EEF61B9C97BA99266AC0"><FONT FACE="trebuchet ms" SIZE=3>Updating Display Values</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#817A2C2555FD1244BC14E34E85C3973DD0E0AF9B"><FONT FACE="trebuchet ms" SIZE=3>Making Triggered Measurements</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#4F35165592DB9308E97EBD9AE5E0C81883A8138C"><FONT FACE="trebuchet ms" SIZE=3>Priming</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#9269BDBC7570D64ADABA60A8A88B2C8A2263531C"><FONT FACE="trebuchet ms" SIZE=3>Triggering</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#0F34508114F62061712B02BF9C7DD77218C909DF"><FONT FACE="trebuchet ms" SIZE=3>Reading</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#1EDE06C9807AEEA9CBC92520AEC26FF7D184E2A2"><FONT FACE="trebuchet ms" SIZE=3>Installing the Library with Your Project</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#3C4ED0823B469B1F9FB83D4ED6EC3AE865949AB7"><FONT FACE="trebuchet ms" SIZE=3>isr.TMM.Driver Files</FONT></A></div>
+<div><a href="#9ED4C4BDBD1AD537CD8DE232B042CF4C2A7C2366"><FONT FACE="trebuchet ms" SIZE=3>Attributions</FONT></A></div>
+
+
+<DL>
+
+<DT><a name="4D6F07E8E6EC6AFBA03D73307BB158AEA4C5C51F"></a><h3>This Guide</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>This document describes how to control the instrument remotely.</FONT></div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="0A8268FDD5F817FA79D412550B94C59DC598F8A6"></a><h3>Changes</h3></DT>
+
+<DD>
+
+
+
+<DL>
+
+<DT><a name="D5C1FFB528ED36C46517E8813BA5EB508F6C7EB5"></a><h3>Revision 3.1</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The meter must be reset and reconfigured when switching between shunt and thermal </FONT><FONT FACE="trebuchet ms" SIZE=3>transient measurements.</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="309D128794834E4A31FFE1B3509FCA5A5547BAC3"></a><h3>Revision 4.0</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The driver library (isr.VI.Ttm) version 4.x breaks compatibility with Driver 3.x. </FONT><FONT FACE="trebuchet ms" SIZE=3>Driver 3.x is still provided for backward compatibility. The following major changes </FONT><FONT FACE="trebuchet ms" SIZE=3>where introduced:</FONT></div>
+<ul><li><FONT FACE="trebuchet ms" SIZE=3>Three objects encapsulate the part information: Cold Resistance, Thermal </FONT><FONT FACE="trebuchet ms" SIZE=3>Transient and Shun Resistance. These include both configuration settings and </FONT><FONT FACE="trebuchet ms" SIZE=3>measurement results;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>Three objects encapsulate the thermal transient API: Meter Cold Resistance, Meter </FONT><FONT FACE="trebuchet ms" SIZE=3>Thermal Transient and Thermal Transient Estimator. These include both the </FONT><FONT FACE="trebuchet ms" SIZE=3>configuration and measurement commands and properties.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>The shunt resistance API is encapsulated in new Source Measure Unit system and </FONT><FONT FACE="trebuchet ms" SIZE=3>subsystems: Source Measure Unit Current Source and Source Measure Unit Measure.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>Additional objects were defined to handle other subsystems such as Display and </FONT><FONT FACE="trebuchet ms" SIZE=3>Status.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>The Source Measure, Display and Status subsystems are encapsulated in the Master </FONT><FONT FACE="trebuchet ms" SIZE=3>Device object, which represents a Test Script Processor instrument such as the </FONT><FONT FACE="trebuchet ms" SIZE=3>2600 Meter.</FONT></li>
+<div><FONT FACE="trebuchet ms" SIZE=3></FONT></div>
+</ul>
+<FONT FACE="trebuchet ms" SIZE=3></FONT>
+
+<DL>
+
+<DT><a name="FE8E7659BF3CB196DBB75B5AC7CBF78418C1E0EA"></a><h3>API Changes</h3></DT>
+
+<DD>
+
+<ul><li><FONT FACE="trebuchet ms" SIZE=3>The thermal transient elements include additional configuration settings. </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>The API implement equality functions that allow to determine changes in </FONT><FONT FACE="trebuchet ms" SIZE=3>configuration settings.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>The API include reset and clear function that clears or resets the execution state of </FONT><FONT FACE="trebuchet ms" SIZE=3>the instrument to known values.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>Default execution state values are defined in the TTM Instrument namespace.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>The measure command clears the execution state.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>New API elements allow detecting changed configurations and applying only new </FONT><FONT FACE="trebuchet ms" SIZE=3>configuration values. Note that before measuring shunt resistance after measuring </FONT><FONT FACE="trebuchet ms" SIZE=3>thermal transient, all configuration values must be applied. </FONT></li>
+<div><FONT FACE="trebuchet ms" SIZE=3></FONT></div>
+</ul>
+<FONT FACE="trebuchet ms" SIZE=3></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="3F7997C961EEE4C182E812C5CFFFC4BB68F01582"></a><h3>Code Breaking Chances</h3></DT>
+
+<DD>
+
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>
+&nbsp;<br>
+
+
+<DL>
+
+<DT><a name="325F86AB501EC8B8FB113943848FEE6E22358F45"></a><h3>Trace Messages</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The driver uses new </FONT><FONT FACE="Courier New" SIZE=3>TraceMessage</FONT><FONT FACE="trebuchet ms" SIZE=3> and </FONT><FONT FACE="Courier New" SIZE=3>TraceMessageEventArgs</FONT><FONT FACE="trebuchet ms" SIZE=3> classes instead </FONT><FONT FACE="trebuchet ms" SIZE=3>of the </FONT><FONT FACE="Courier New" SIZE=3>MessageEventArgs</FONT><FONT FACE="trebuchet ms" SIZE=3> class. Specifically, the following changes are called for:</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><ul><li><FONT FACE="trebuchet ms" SIZE=3>Replace the event handles for the message event arguments with the following </FONT><FONT FACE="trebuchet ms" SIZE=3>code (see </FONT><i><FONT FACE="trebuchet ms" SIZE=3>Console.vb</FONT></i><FONT FACE="trebuchet ms" SIZE=3>):</FONT></li>
+<div><FONT FACE="trebuchet ms" SIZE=3></FONT></div>
+</ul>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#Region</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot; TRACE MESSAGES &quot;</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3 COLOR="#A31515"></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Event handler. Called by _meter for trace message </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">available events. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;sender&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The source of the event. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;e&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trace message event information. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> _meter_TraceMessageAvailable(sender </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Object</FONT><FONT FACE="Consolas" SIZE=3>, e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceMessageEventArgs</FONT><FONT FACE="Consolas" SIZE=3>) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Handles</FONT><FONT FACE="Consolas" SIZE=3> _meter.TraceMessageAvailable</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(e.TraceMessage)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Executes the trace message available action. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;value&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The TraceMessage to process. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Public</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Overridable</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ByVal</FONT><FONT FACE="Consolas" SIZE=3> value </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceMessage</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> value </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">My</FONT><FONT FACE="Consolas" SIZE=3>.Application.Log.WriteEntry(value.Details, </FONT><FONT FACE="Consolas" SIZE=3>value.TraceLevel)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Executes the trace message available action. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;traceLevel&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The trace level. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;format&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">&nbsp;&nbsp;&nbsp;&nbsp; Describes the format to use. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;args&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A variable-length parameters list </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">containing arguments. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;returns&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The event arguments. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/returns&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Public</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Overridable</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Function</FONT><FONT FACE="Consolas" SIZE=3> OnTraceMessageAvailable(traceLevel </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>System.Diagnostics.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>, format </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">String</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ParamArray</FONT><FONT FACE="Consolas" SIZE=3> args() </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Object</FONT><FONT FACE="Consolas" SIZE=3>) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceMessage</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Dim</FONT><FONT FACE="Consolas" SIZE=3> e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">New</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceMessage</FONT><FONT FACE="Consolas" SIZE=3>(traceLevel, format, args)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">New</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceMessage</FONT><FONT FACE="Consolas" SIZE=3>(traceLevel, format, </FONT><FONT FACE="Consolas" SIZE=3>args))</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Return</FONT><FONT FACE="Consolas" SIZE=3> e</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Function</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Region</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><FONT FACE="Consolas" SIZE=3></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="28A117953D4BE0A0DE0D5A5443E742AAD224088B"></a><h3>Return Values</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The uses exceptions rather than return values to signal failures of operations.&nbsp; For </FONT><FONT FACE="trebuchet ms" SIZE=3>example, the OpenSession command may raise the </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ArgumentNullException </FONT><FONT FACE="trebuchet ms" SIZE=3>or </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">OperationFailedException </FONT><FONT FACE="trebuchet ms" SIZE=3>exceptions and could be handled as follows:</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.MasterDevice.OpenSession(resourceName)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ArgumentNullException</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MessageBox.Show(&quot;Connection Failed&quot;)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.MasterDevice.CloseSession()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Finally</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">OperationFailedException</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; MessageBox.Show(&quot;Connection Failed&quot;)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.MasterDevice.CloseSession()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Finally</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; MessageBox.Show(&quot;Connection Failed&quot;)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.MasterDevice.CloseSession()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Finally</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<FONT FACE="Consolas" SIZE=3 COLOR="#0000FF"></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="88384FC10E58E619B4A9F46A92CF3132945EF7A0"></a><h3>Connect using Open Session</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>Connecting and Disconnecting to the instrument is done using </FONT><i><FONT FACE="trebuchet ms" SIZE=3>MasterDevice</FONT></i><FONT FACE="trebuchet ms" SIZE=3> Open and </FONT><FONT FACE="trebuchet ms" SIZE=3>Close session methods.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><FONT FACE="trebuchet ms" SIZE=3></FONT>
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="918627A5461921AA5DF267A3B19016AD41BBC7DA"></a><h3>Testing the Library</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>Use the TTM Driver Tester program and TTM Tester Guide to study and test the TTM </FONT><FONT FACE="trebuchet ms" SIZE=3>API.</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="12B98CB2E58F8704F2414E1192452994105E212F"></a><h3>Using the API</h3></DT>
+
+<DD>
+
+
+
+<DL>
+
+<DT><a name="0294FF5D5A78CB5F6E7EA04B5E5493FEC149950A"></a><h3>Developer Source Code</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The source code for the API and Tester application are included with this distribution. </FONT><FONT FACE="trebuchet ms" SIZE=3>Source code is installed in the user folder, e.g., c:\Users\&lt;</FONT><i><FONT FACE="trebuchet ms" SIZE=3>user </FONT></i><i><FONT FACE="trebuchet ms" SIZE=3>name</FONT></i><FONT FACE="trebuchet ms" SIZE=3>&gt;/ISR/LIBRARIES/VS/VI/TTM.4.x.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="trebuchet ms" SIZE=3>The TTM Driver source code includes the driver library (</FONT><i><FONT FACE="trebuchet ms" SIZE=3>isr.Driver.Library</FONT></i><FONT FACE="trebuchet ms" SIZE=3>) project and </FONT><FONT FACE="trebuchet ms" SIZE=3>the driver tester program (</FONT><i><FONT FACE="trebuchet ms" SIZE=3>isr.Driver.Tester</FONT></i><FONT FACE="trebuchet ms" SIZE=3>) projects.</FONT></div>
+
+
+<DL>
+
+<DT><a name="1290D547A9826AD34FA430E0DA0231FE0DCC4013"></a><h3>Compiling the developer source code.</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>It is recommended that you compile the developer source code using you current </FONT><FONT FACE="trebuchet ms" SIZE=3>version of the National Instruments VISA drivers.</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="CF9548C2F37F1748727898D9F5DEE20824F53E1C"></a><h3>Addressing the Driver</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The driver can be addressed by adding the driver source code to a Visual Studio project </FONT><FONT FACE="trebuchet ms" SIZE=3>(recommended) or by referencing the driver DLL.</FONT></div>
+
+
+<DL>
+
+<DT><a name="F5B5B5582BE9B1B41BD4385CAA088A3BE6561894"></a><h3>Recommended</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>Adding the driver source code to your project is the preferred way because the code is </FONT><FONT FACE="trebuchet ms" SIZE=3>less likely to conflict with dynamic link libraries that might be used by your main code. </FONT><FONT FACE="trebuchet ms" SIZE=3>Specifically, the driver uses a particular National Instruments VISA library, which might </FONT><FONT FACE="trebuchet ms" SIZE=3>conflict with the VISA library installed on your computer. By adding the driver source </FONT><FONT FACE="trebuchet ms" SIZE=3>code library to your project you will be compiling the driver to use the same VISA link </FONT><FONT FACE="trebuchet ms" SIZE=3>library as your code.</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="1598216608B9E9D2756E2987B8DC1E22B15F99B9"></a><h3>Adding the source code</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>You can add a copy of the source code to your solution. Otherwise, you could add the </FONT><FONT FACE="trebuchet ms" SIZE=3>code from where the source code solution was installed on your computer. </FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="trebuchet ms" SIZE=3>Once you add the project to your solution, add a reference to the Driver to you </FONT><FONT FACE="trebuchet ms" SIZE=3>project:</FONT></div>
+<ul><li><FONT FACE="trebuchet ms" SIZE=3>i</FONT><FONT FACE="Courier New" SIZE=3>sr.TTM.Driver.4.x.Library</FONT></li>
+</ul>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="trebuchet ms" SIZE=3>This adds a reference to the TTM driver library to your project and adds the driver </FONT><FONT FACE="trebuchet ms" SIZE=3>dynamic link libraries to the project binaries. </FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><b><FONT FACE="trebuchet ms" SIZE=3>Note! </FONT></b></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>It is recommended that commit the code as first installed into your version control </FONT><FONT FACE="trebuchet ms" SIZE=3>system thus having access to the original source code.</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="EC26E30EE829BF926417D914A89916E8CD9569B2"></a><h3>Adding Reference to the DLL</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>Alternatively, you could use the driver link library as is by adding a reference to the </FONT><FONT FACE="trebuchet ms" SIZE=3>DLL:</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=3>From the Add Reference dialog of the Visual Studio project, browse to the location of </FONT><FONT FACE="trebuchet ms" SIZE=3>the compiled driver (see </FONT><a href="#1290D547A9826AD34FA430E0DA0231FE0DCC4013"><FONT FACE="trebuchet ms" SIZE=3>Compiling the developer source code</FONT></A><FONT FACE="trebuchet ms" SIZE=3>) and select the driver </FONT><FONT FACE="trebuchet ms" SIZE=3>DLL: </FONT><i><FONT FACE="trebuchet ms" SIZE=3>isr.VI.Ttm.dll</FONT></i><FONT FACE="trebuchet ms" SIZE=3>. This will add the </FONT><i><FONT FACE="Courier New" SIZE=3>isr.VI.Ttm</FONT></i><FONT FACE="trebuchet ms" SIZE=3> reference to your project.</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="682999071C6142AE22933C3A744CBD68F49FF679"></a><h3>Instantiating the Interface</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>Instantiate the ISR TTM Driver as follows:</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="Courier New" SIZE=3>Dim meter As New  Device()</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Courier New" SIZE=3></FONT><div><FONT FACE="trebuchet ms" SIZE=3>This instantiates the meter.</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="C6DB2E5DE08113453E60D36FA9C2F0CE3F1C511C"></a><h3>Trace Message Handling</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The driver sends messages the </FONT><FONT FACE="Courier New" SIZE=3>TraceMessageEvent</FONT><FONT FACE="trebuchet ms" SIZE=3> events (see </FONT><a href="#325F86AB501EC8B8FB113943848FEE6E22358F45"><FONT FACE="trebuchet ms" SIZE=3>Trace Messages</FONT></A><FONT FACE="trebuchet ms" SIZE=3>). </FONT><FONT FACE="trebuchet ms" SIZE=3>These events can be handled as follows:</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#Region</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot; TRACE MESSAGES &quot;</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3 COLOR="#A31515"></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Event handler. Called by _meter for trace message </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">available events. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;sender&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The source of the event. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;e&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trace message event information. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> _meter_TraceMessageAvailable(sender </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Object</FONT><FONT FACE="Consolas" SIZE=3>, e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceMessageEventArgs</FONT><FONT FACE="Consolas" SIZE=3>) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Handles</FONT><FONT FACE="Consolas" SIZE=3> _meter.TraceMessageAvailable</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(e.TraceMessage)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Executes the trace message available action. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;value&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The TraceMessage to process. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Public</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Overridable</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ByVal</FONT><FONT FACE="Consolas" SIZE=3> value </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceMessage</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> value </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">My</FONT><FONT FACE="Consolas" SIZE=3>.Application.Log.WriteEntry(value.Details, </FONT><FONT FACE="Consolas" SIZE=3>value.TraceLevel)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Executes the trace message available action. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;traceLevel&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The trace level. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;format&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">&nbsp;&nbsp;&nbsp;&nbsp; Describes the format to use. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;args&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A variable-length parameters list </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">containing arguments. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;returns&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The event arguments. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/returns&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Public</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Overridable</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Function</FONT><FONT FACE="Consolas" SIZE=3> OnTraceMessageAvailable(traceLevel </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>System.Diagnostics.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>, format </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">String</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ParamArray</FONT><FONT FACE="Consolas" SIZE=3> args() </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Object</FONT><FONT FACE="Consolas" SIZE=3>) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceMessage</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Dim</FONT><FONT FACE="Consolas" SIZE=3> e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">New</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceMessage</FONT><FONT FACE="Consolas" SIZE=3>(traceLevel, format, args)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">New</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceMessage</FONT><FONT FACE="Consolas" SIZE=3>(traceLevel, format, </FONT><FONT FACE="Consolas" SIZE=3>args))</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Return</FONT><FONT FACE="Consolas" SIZE=3> e</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Function</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Region</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="BFA08E5FA40F36E82599A5EF43429C33AE597F4D"></a><h3>Connecting to the Instrument</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>Use the </FONT><FONT FACE="Courier New" SIZE=3>OpenSession</FONT><FONT FACE="trebuchet ms" SIZE=3> method to Connect the meter:</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp; Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.MasterDevice.OpenSession(</FONT><FONT FACE="Courier New" SIZE=3>&quot;GPIB0::26::INSTR&quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; MessageBox.Show(&quot;Connection Failed&quot;)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.MasterDevice.CloseSession()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Finally</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="trebuchet ms" SIZE=3>This connects the meter to the device connected to the GPIB Board 0 at address 26.</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="32CF30FEF00484544C138F872E31B5184CBBBDC3"></a><h3>Configuring the Measurement</h3></DT>
+
+<DD>
+
+
+
+<DL>
+
+<DT><a name="3309551852E53CFFB689CB79155D228C6D471B17"></a><h3>The Part Element</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>Configuration parameters and measurement values use both part and meter elements. </FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="trebuchet ms" SIZE=3>This allows separating between the part configuration and the actual meter settings. </FONT><FONT FACE="trebuchet ms" SIZE=3>See the console class (</FONT><i><FONT FACE="trebuchet ms" SIZE=3>Console.vb)</FONT></i><FONT FACE="trebuchet ms" SIZE=3> for more details. </FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="trebuchet ms" SIZE=3>The meter elements use the same class to hold their test parameters. Moreover, when </FONT><FONT FACE="trebuchet ms" SIZE=3>setting the configuration parameters, the part elements are passed to the meter </FONT><FONT FACE="trebuchet ms" SIZE=3>elements and are updated by the meter elements. Using binding, these updated values </FONT><FONT FACE="trebuchet ms" SIZE=3>update the user interface with minimal coding as implemented in the new driver </FONT><FONT FACE="trebuchet ms" SIZE=3>tester.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Define a part to hold the current settings of the part or user </FONT><FONT FACE="Consolas" SIZE=3>interface.</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>Private WithEvents _Part As Part</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="17915C64BB9660B3BC40FE09023D02356463AF1C"></a><h3>TTM Measurements</h3></DT>
+
+<DD>
+
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the current to 10mA</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.InitialResistance.CurrentLevel = 0.01 </FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.FinalResistance.CurrentLevel = 0.01 </FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the voltage limit for measuring cold resistance to 0.1 volt.</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.InitialResistance.VoltageLimit = 0.1</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.FinalResistance.VoltageLimit = 0.1</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the low and high limits for the cold resistance.</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.InitialResistance.HighLimit = 2.1</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.InitialResistance.LowLimit = 1.9</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.FinalResistance.HighLimit = 2.1</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.FinalResistance.LowLimit = 1.9</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the delay time between the end of the thermal transient </FONT><FONT FACE="Consolas" SIZE=3>measurement and the onset of the final resistance measurement to 0.5 </FONT><FONT FACE="Consolas" SIZE=3>seconds.</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_Part.ThermalTransient.PostThermalTransientDelay = 0.5</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the thermal transient current pulse level to 270mA.</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_Part.ThermalTransient.CurrentLevel = 0.27</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the expected thermal transient voltage change during the thermal </FONT><FONT FACE="Consolas" SIZE=3>transient current pulse 0.1V</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_Part.ThermalTransient.VoltageChange = 0.099</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the thermal transient high and low limits</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_Part.ThermalTransient.HighLimit = 0.017</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_Part.ThermalTransient.LowLimit = 0.006</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Verbose, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Configuring </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">Thermal Transient;. &quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; If</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.IsDeviceOpen </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Meter.ResetKnownState()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Meter.ClearExecutionState()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.InitialResistance.Configure(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part.InitialResistance)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.FinalResistance.Configure(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part.FinalResistance)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.ThermalTransient.Configure(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part.ThermalTransient)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Else</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF"> Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Warning, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Meter not </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">connected;. &quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Error, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Exception occurred </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">configuring Thermal Transient;. Details: {0}&quot;</FONT><FONT FACE="Consolas" SIZE=3>, ex)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="1AF63C940121C6065C837983C0F7570081E913D8"></a><h3>Shunt Measurement</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>As with the thermal transient measurement, the configuration parameters are set in </FONT><FONT FACE="trebuchet ms" SIZE=3>the part element which is updated by the meter element and can be used with binding </FONT><FONT FACE="trebuchet ms" SIZE=3>to update the user interface.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the current to 1mA</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.ShuntResistance.CurrentLevel = 0.001 </FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the current range to 10mA</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.ShuntResistance.CurrentRange = 0.01 </FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the voltage limit for measuring resistance to 10 volt.</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.ShuntResistance.VoltageLimit = 10</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>' Set the low and high limits for the resistance.</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.ShuntResistance.HighLimit = 950</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>_part.ShuntResistance.LowLimit = 1050</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Verbose, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Configuring </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">Shunt Resistance;. &quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.IsDeviceOpen </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.ResetKnownState()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.ClearExecutionState()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Verbose, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Sending Shunt resistance configuration settings to the meter;. &quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.ConfigureShuntResistance(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part.ShuntResistance)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Verbose, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Shunt </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">resistance measurement configured successfully;. &quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Else</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Warning, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Meter not </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">connected;. &quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Error, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Exception occurred </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">configuring shunt resistance;. Details: {0}&quot;</FONT><FONT FACE="Consolas" SIZE=3>, ex)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="73E83FB0D41D9BF90848C52334086F5AF6449DE4"></a><h3>Making Measurements</h3></DT>
+
+<DD>
+
+
+
+<DL>
+
+<DT><a name="9F5DF5D24248AC4145CB3567EFB5295927AE2FDC"></a><h3>Initial Resistance</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The following commands measure the initial resistance.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.MasterDevice.DisplaySubsystem.ClearDisplayMeasurement()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.InitialResistance.Measure()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Error, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Failed Measuring </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">Initial Resistance;. Details: {0}&quot;</FONT><FONT FACE="Consolas" SIZE=3>, ex)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="E5A0B42B2ADCAF3A1F77B9B15502044BF36B3B0C"></a><h3>Thermal Transient</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The following commands measure the thermal transient.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.ThermalTransient.Measure()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Error, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Failed Measuring </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">Thermal Transient;. Details: {0}&quot;</FONT><FONT FACE="Consolas" SIZE=3>, ex)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="FA574E5257DBB64A90EA580C6CE55005781B37F1"></a><h3>Final Resistance</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The following commands measure the final resistance.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.FinalResistance.Measure()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Error, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Failed Measuring </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">Final Resistance;. Details: {0}&quot;</FONT><FONT FACE="Consolas" SIZE=3>, ex)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="8259C94EBE5851E5156C30770BBE347CB256617B"></a><h3>Shunt Resistance</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The following commands measure the shunt resistance.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.MeasureShuntResistance(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._ShuntResistance)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Error, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Failed Measuring </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">Shunt Resistance;. Details: {0}&quot;</FONT><FONT FACE="Consolas" SIZE=3>, ex)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="7225260A9E0D30715465EEF61B9C97BA99266AC0"></a><h3>Updating Display Values</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>Display values could be updated by binding or by directly handling the property changed </FONT><FONT FACE="trebuchet ms" SIZE=3>events of the elements as follows:</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#008000">' These elements are part of the Form Designer definitions</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._errorProvider = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">New</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>System.Windows.Forms.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ErrorProvider</FONT><FONT FACE="Consolas" SIZE=3>(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.components)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._initialResistanceTextBox = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">New</FONT><FONT FACE="Consolas" SIZE=3> System.Windows.Forms.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TextBox</FONT><FONT FACE="Consolas" SIZE=3>()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._FinalResistanceTextBox = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">New</FONT><FONT FACE="Consolas" SIZE=3> System.Windows.Forms.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TextBox</FONT><FONT FACE="Consolas" SIZE=3>()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._ThermalTransientVoltageTextBox = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">New</FONT><FONT FACE="Consolas" SIZE=3> System.Windows.Forms.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TextBox</FONT><FONT FACE="Consolas" SIZE=3>()</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#Region</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot; DISPLAY &quot;</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Displays the thermal transient. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> setErrorProvider(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ByVal</FONT><FONT FACE="Consolas" SIZE=3> textBox </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TextBox</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ByVal</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>resistance </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ResistanceMeasureBase</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> (resistance.Outcome </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">And</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">MeasurementOutcomes</FONT><FONT FACE="Consolas" SIZE=3>.PartFailed) &lt;&gt; 0 </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._errorProvider.SetError(textBox, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Value out of range&quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ElseIf</FONT><FONT FACE="Consolas" SIZE=3> (resistance.Outcome </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">And</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">MeasurementOutcomes</FONT><FONT FACE="Consolas" SIZE=3>.MeasurementFailed) &lt;&gt; 0 </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._errorProvider.SetError(textBox, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Measurement failed&quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ElseIf</FONT><FONT FACE="Consolas" SIZE=3> (resistance.Outcome </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">And</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">MeasurementOutcomes</FONT><FONT FACE="Consolas" SIZE=3>.MeasurementNotMade) &lt;&gt; 0 </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._errorProvider.SetError(textBox, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Measurement not made&quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Displays the resistance. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> showResistance(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ByVal</FONT><FONT FACE="Consolas" SIZE=3> textBox </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TextBox</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ByVal</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>resistance </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ResistanceMeasureBase</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._initialResistanceTextBox.Text = </FONT><FONT FACE="Consolas" SIZE=3>resistance.ResistanceCaption</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.setErrorProvider(textBox, resistance)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Displays the thermal transient. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> showThermalTransient(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ByVal</FONT><FONT FACE="Consolas" SIZE=3> textBox </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TextBox</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">ByVal</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>resistance </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ResistanceMeasureBase</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; textBox.Text = resistance.VoltageCaption</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.setErrorProvider(textBox, resistance)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Region</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#Region</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot; PART &quot;</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The Part. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">WithEvents</FONT><FONT FACE="Consolas" SIZE=3> _Part </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Part</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Gets or sets the part. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;value&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The part. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/value&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Property</FONT><FONT FACE="Consolas" SIZE=3> Part </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Part</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Get</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Return</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Get</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Set</FONT><FONT FACE="Consolas" SIZE=3>(value </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Part</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part = value</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._InitialResistance = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part.InitialResistance</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._FinalResistance = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part.FinalResistance</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._ShuntResistance = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part.ShuntResistance</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._ThermalTransient = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._Part.ThermalTransient</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Set</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Property</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Region</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#Region</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot; PART: INITIAL RESISTANCE &quot;</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The Part Initial Resistance. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">WithEvents</FONT><FONT FACE="Consolas" SIZE=3> _InitialResistance </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ColdResistance</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Event handler. Called by _InitialResistance for </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">property changed events. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;sender&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The source of the event. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;e&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Property changed event information. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3>&lt;System.Diagnostics.CodeAnalysis.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">SuppressMessage</FONT><FONT FACE="Consolas" SIZE=3>(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Microsoft.Design&quot;</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;CA1031:DoNotCatchGeneralExceptionTypes&quot;</FONT><FONT FACE="Consolas" SIZE=3>)&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> _InitialResistance_PropertyChanged(sender </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Object</FONT><FONT FACE="Consolas" SIZE=3>, e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> System.ComponentModel.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">PropertyChangedEventArgs</FONT><FONT FACE="Consolas" SIZE=3>) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Handles</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>_InitialResistance.PropertyChanged</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> sender </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">AndAlso</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">AndAlso</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Not</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">String</FONT><FONT FACE="Consolas" SIZE=3>.IsNullOrWhiteSpace(e.PropertyName) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Dim</FONT><FONT FACE="Consolas" SIZE=3> resistance </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ColdResistance</FONT><FONT FACE="Consolas" SIZE=3> = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">CType</FONT><FONT FACE="Consolas" SIZE=3>(sender, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ColdResistance</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Select</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Case</FONT><FONT FACE="Consolas" SIZE=3> e.PropertyName</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Case</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;MeasurementAvailable&quot;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> resistance.MeasurementAvailable </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.showResistance(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._initialResistanceTextBox, resistance)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Select</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Debug</FONT><FONT FACE="Consolas" SIZE=3>.Assert(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Not</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Debugger</FONT><FONT FACE="Consolas" SIZE=3>.IsAttached, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Exception handling </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">property&quot;</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Exception handling property '{0}'. Details: {1}.&quot;</FONT><FONT FACE="Consolas" SIZE=3>,</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e.PropertyName, ex.Message)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Region</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#Region</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot; PART: FINAL RESISTANCE &quot;</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The Part Final Resistance. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">WithEvents</FONT><FONT FACE="Consolas" SIZE=3> _FinalResistance </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ColdResistance</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Event handler. Called by _FinalResistance for </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">property changed events. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;sender&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The source of the event. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;e&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Property changed event information. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3>&lt;System.Diagnostics.CodeAnalysis.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">SuppressMessage</FONT><FONT FACE="Consolas" SIZE=3>(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Microsoft.Design&quot;</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;CA1031:DoNotCatchGeneralExceptionTypes&quot;</FONT><FONT FACE="Consolas" SIZE=3>)&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> _FinalResistance_PropertyChanged(sender </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Object</FONT><FONT FACE="Consolas" SIZE=3>, e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>System.ComponentModel.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">PropertyChangedEventArgs</FONT><FONT FACE="Consolas" SIZE=3>) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Handles</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>_FinalResistance.PropertyChanged</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> sender </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">AndAlso</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">AndAlso</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Not</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">String</FONT><FONT FACE="Consolas" SIZE=3>.IsNullOrWhiteSpace(e.PropertyName) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Dim</FONT><FONT FACE="Consolas" SIZE=3> resistance </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ColdResistance</FONT><FONT FACE="Consolas" SIZE=3> = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">CType</FONT><FONT FACE="Consolas" SIZE=3>(sender, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ColdResistance</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Select</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Case</FONT><FONT FACE="Consolas" SIZE=3> e.PropertyName</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Case</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;MeasurementAvailable&quot;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> resistance.MeasurementAvailable </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.showResistance(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._finalResistanceTextBox, resistance)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Select</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Debug</FONT><FONT FACE="Consolas" SIZE=3>.Assert(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Not</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Debugger</FONT><FONT FACE="Consolas" SIZE=3>.IsAttached, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Exception handling </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">property&quot;</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Exception handling property '{0}'. Details: {1}.&quot;</FONT><FONT FACE="Consolas" SIZE=3>,</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e.PropertyName, ex.Message)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Region</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#Region</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot; PART: SHUNT RESISTANCE &quot;</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The Part Shunt Resistance. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">WithEvents</FONT><FONT FACE="Consolas" SIZE=3> _ShuntResistance </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ShuntResistance</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Event handler. Called by _ShuntResistance for </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">property changed events. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;sender&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The source of the event. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;e&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Property changed event information. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3>&lt;System.Diagnostics.CodeAnalysis.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">SuppressMessage</FONT><FONT FACE="Consolas" SIZE=3>(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Microsoft.Design&quot;</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;CA1031:DoNotCatchGeneralExceptionTypes&quot;</FONT><FONT FACE="Consolas" SIZE=3>)&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> _ShuntResistance_PropertyChanged(sender </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Object</FONT><FONT FACE="Consolas" SIZE=3>, e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>System.ComponentModel.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">PropertyChangedEventArgs</FONT><FONT FACE="Consolas" SIZE=3>) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Handles</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>_ShuntResistance.PropertyChanged</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> sender </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">AndAlso</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">AndAlso</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Not</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">String</FONT><FONT FACE="Consolas" SIZE=3>.IsNullOrWhiteSpace(e.PropertyName) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Dim</FONT><FONT FACE="Consolas" SIZE=3> resistance </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ShuntResistance</FONT><FONT FACE="Consolas" SIZE=3> = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">CType</FONT><FONT FACE="Consolas" SIZE=3>(sender, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ShuntResistance</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Select</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Case</FONT><FONT FACE="Consolas" SIZE=3> e.PropertyName</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Case</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;MeasurementAvailable&quot;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> resistance.MeasurementAvailable </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.showResistance(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._ShuntResistanceTextBox, resistance)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Select</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Debug</FONT><FONT FACE="Consolas" SIZE=3>.Assert(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Not</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Debugger</FONT><FONT FACE="Consolas" SIZE=3>.IsAttached, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Exception handling </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">property&quot;</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Exception handling property '{0}'. Details: {1}.&quot;</FONT><FONT FACE="Consolas" SIZE=3>,</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e.PropertyName, ex.Message)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Region</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#Region</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot; PART: THERMAL TRANSIENT &quot;</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The Part Thermal Transient. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">WithEvents</FONT><FONT FACE="Consolas" SIZE=3> _ThermalTransient </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ThermalTransient</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;summary&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> Event handler. Called by _ThermalTransient for </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">property changed events. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/summary&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;sender&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000"> The source of the event. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">''' </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;param name=&quot;e&quot;&gt;</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#008000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Property changed event information. </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#808080">&lt;/param&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3>&lt;System.Diagnostics.CodeAnalysis.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">SuppressMessage</FONT><FONT FACE="Consolas" SIZE=3>(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Microsoft.Design&quot;</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;CA1031:DoNotCatchGeneralExceptionTypes&quot;</FONT><FONT FACE="Consolas" SIZE=3>)&gt;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Private</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT><FONT FACE="Consolas" SIZE=3> _ThermalTransient_PropertyChanged(sender </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Object</FONT><FONT FACE="Consolas" SIZE=3>, e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> System.ComponentModel.</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">PropertyChangedEventArgs</FONT><FONT FACE="Consolas" SIZE=3>) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Handles</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3>_ThermalTransient.PropertyChanged</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> sender </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">AndAlso</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">IsNot</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Nothing</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">AndAlso</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Not</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">String</FONT><FONT FACE="Consolas" SIZE=3>.IsNullOrWhiteSpace(e.PropertyName) </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Dim</FONT><FONT FACE="Consolas" SIZE=3> transient </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ThermalTransient</FONT><FONT FACE="Consolas" SIZE=3> = </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">CType</FONT><FONT FACE="Consolas" SIZE=3>(sender, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">ThermalTransient</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Select</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Case</FONT><FONT FACE="Consolas" SIZE=3> e.PropertyName</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Case</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;MeasurementAvailable&quot;</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT><FONT FACE="Consolas" SIZE=3> transient.MeasurementAvailable </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.showThermalTransient(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>._thermalTransientVoltageTextBox, transient)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Select</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">If</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Debug</FONT><FONT FACE="Consolas" SIZE=3>.Assert(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Not</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Debugger</FONT><FONT FACE="Consolas" SIZE=3>.IsAttached, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Exception handling </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">property&quot;</FONT><FONT FACE="Consolas" SIZE=3>, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Exception handling property '{0}'. Details: {1}.&quot;</FONT><FONT FACE="Consolas" SIZE=3>,</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e.PropertyName, ex.Message)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Sub</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="Consolas" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">#End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Region</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="817A2C2555FD1244BC14E34E85C3973DD0E0AF9B"></a><h3>Making Triggered Measurements</h3></DT>
+
+<DD>
+
+
+
+<DL>
+
+<DT><a name="4F35165592DB9308E97EBD9AE5E0C81883A8138C"></a><h3>Priming</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The following command prepares the instrument to wait for an external trigger.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">&nbsp;&nbsp;&nbsp; Me</FONT><FONT FACE="Consolas" SIZE=3>.Meter.PrepareForTrigger()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Verbose, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Monitoring </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">instrument for measurements;. &quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Catch</FONT><FONT FACE="Consolas" SIZE=3> ex </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">As</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Warning, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Failed </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">preparing instrument for waiting for trigger;. &quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">End</FONT><FONT FACE="Consolas" SIZE=3> </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Try</FONT></div>
+<FONT FACE="Consolas" SIZE=3 COLOR="#0000FF"></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="9269BDBC7570D64ADABA60A8A88B2C8A2263531C"></a><h3>Triggering</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The instrument provides full hand shake for controlling the measurement by way of the&nbsp; </FONT><FONT FACE="trebuchet ms" SIZE=3>digital I/O:</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><ul><li><FONT FACE="trebuchet ms" SIZE=3>Trigger a measurement by taking line 1 of the digital I/O port from low to high.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>The instrument responds by taking line 2 high. Lines 3 go low as well as the </FONT><FONT FACE="trebuchet ms" SIZE=3>pass/fail lines 4 through 7.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>Line 3 goes high when the measurement completes at which time the measurement </FONT><FONT FACE="trebuchet ms" SIZE=3>readings are available on lines 4 through 7.</FONT></li>
+</ul>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="trebuchet ms" SIZE=3>See the TTM Instrument User's Guide for more information on the digital I/O</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><FONT FACE="trebuchet ms" SIZE=3></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="0F34508114F62061712B02BF9C7DD77218C909DF"></a><h3>Reading</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The following commands wait for measurement completion and then reads the </FONT><FONT FACE="trebuchet ms" SIZE=3>measured data. The property changed handlers (see </FONT><a href="#7225260A9E0D30715465EEF61B9C97BA99266AC0"><FONT FACE="trebuchet ms" SIZE=3>Updating Display Values</FONT></A><FONT FACE="trebuchet ms" SIZE=3>) will </FONT><FONT FACE="trebuchet ms" SIZE=3>update the values.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="Consolas" SIZE=3>Dim done as Boolean = False</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>Do Until done</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp; If meter.IsMeasurementCompleted() Then</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp; done = True</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp; Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; meter.ReadMeasurements()</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Catch Ex as Exception</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#0000FF">Me</FONT><FONT FACE="Consolas" SIZE=3>.OnTraceMessageAvailable(</FONT><FONT FACE="Consolas" SIZE=3 COLOR="#2B91AF">TraceEventType</FONT><FONT FACE="Consolas" SIZE=3>.Warning, </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">&quot;Failed </FONT><FONT FACE="Consolas" SIZE=3 COLOR="#A31515">reading;. &quot;</FONT><FONT FACE="Consolas" SIZE=3>)</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>&nbsp; End Try</FONT></div>
+<div><FONT FACE="Consolas" SIZE=3>Loop</FONT></div>
+<FONT FACE="Consolas" SIZE=3></FONT>
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="1EDE06C9807AEEA9CBC92520AEC26FF7D184E2A2"></a><h3>Installing the Library with Your Project</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>Include the ISR TTM Driver library and referenced libraries (</FONT><a href="#3C4ED0823B469B1F9FB83D4ED6EC3AE865949AB7"><FONT FACE="trebuchet ms" SIZE=3>isr.TMM.Driver Files</FONT></A><FONT FACE="trebuchet ms" SIZE=3>) with </FONT><FONT FACE="trebuchet ms" SIZE=3>your project. </FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT><div><FONT FACE="trebuchet ms" SIZE=3>Check the ISR TTM Driver read me file for additional pre-requisites.</FONT></div>
+<FONT FACE="trebuchet ms" SIZE=3></FONT>
+
+<DL>
+
+<DT><a name="3C4ED0823B469B1F9FB83D4ED6EC3AE865949AB7"></a><h3>isr.TMM.Driver Files</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3>The ISR TTM driver includes the following files:</FONT></div>
+<ul><li><FONT FACE="trebuchet ms" SIZE=3>isr.VI.Ttm.dll </FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>isr.Algorithms.Optima.dll</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>NationalInstruments.Common.dll <br>
+</FONT><FONT FACE="trebuchet ms" SIZE=3>Installed in the GAC with other National Instruments files when installing NI VISA </FONT><FONT FACE="trebuchet ms" SIZE=3>runtime)</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>NationalInstruments.VisaNS.dll</FONT></li>
+<div><FONT FACE="trebuchet ms" SIZE=3></FONT></div>
+</ul>
+<div><FONT FACE="trebuchet ms" SIZE=3>Additional Required Installations:</FONT></div>
+<ul><li><FONT FACE="trebuchet ms" SIZE=3>NI VISA runtime</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=3>.NET 2010</FONT></li>
+</ul>
+<FONT FACE="trebuchet ms" SIZE=3></FONT>
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="9ED4C4BDBD1AD537CD8DE232B042CF4C2A7C2366"></a><h3>Attributions</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">Last Updated 04-19-14</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">Copyright 2011 by Integrated Scientific Resources, Inc.<br>
+</FONT><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">This information is provided &quot;AS IS&quot; WITHOUT WARRANTIES OR CONDITIONS OF ANY </FONT><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">KIND, EITHER EXPRESS OR IMPLIED.</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">Licensed under The Fair End User</FONT><sup><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">1</FONT></sup><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8"> and MIT Licenses</FONT><sup><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">2</FONT></sup><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">.</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">(1) Licensed under The Fair End User Use License, a copy of which you can download </FONT><A HREF="http://www.isr.cc/licenses/Fair%20End%20User%20Use%20License.pdf"><u><FONT FACE="trebuchet ms" SIZE=3 COLOR="#0066CC">here</FONT></u></A><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">.</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">(2) Source code is licensed under </FONT><A HREF="http://opensource.org/licenses/MIT"><u><FONT FACE="trebuchet ms" SIZE=3 COLOR="#0066CC">The MIT License.</FONT></u></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">Unless required by applicable law or agreed to in writing, this software is provided &quot;AS </FONT><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or </FONT><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">implied.</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">Source code is hosted on </FONT><A HREF="https://bitbucket.org/davidhary"><u><FONT FACE="trebuchet ms" SIZE=3 COLOR="#0066CC">Bit Bucket</FONT></u></A><FONT FACE="trebuchet ms" SIZE=3 COLOR="#869AA8">.</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<pre>
+ 
+</pre>
+</body>
+</html>
+

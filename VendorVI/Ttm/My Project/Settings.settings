@@ -1,0 +1,276 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="My" GeneratedClassName="MySettings" UseMySettingsClassName="true">
+  <Profiles />
+  <Settings>
+    <Setting Name="DeviceEnabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ColdResistanceCurrentLevelDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="ColdResistanceCurrentMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.0001</Value>
+    </Setting>
+    <Setting Name="ColdResistanceCurrentMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.0100</Value>
+    </Setting>
+    <Setting Name="ColdResistanceVoltageLimitDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="ColdResistanceVoltageMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.10</Value>
+    </Setting>
+    <Setting Name="ColdResistanceVoltageMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.001</Value>
+    </Setting>
+    <Setting Name="ThermalTransientCurrentLevelDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.27</Value>
+    </Setting>
+    <Setting Name="ThermalTransientCurrentMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.999</Value>
+    </Setting>
+    <Setting Name="ThermalTransientVoltageChangeDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.099</Value>
+    </Setting>
+    <Setting Name="ThermalTransientVoltageMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">9.99</Value>
+    </Setting>
+    <Setting Name="ThermalTransientVoltageMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="PostTransientDelayDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.5</Value>
+    </Setting>
+    <Setting Name="PostTransientDelayMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="PostTransientDelayMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.001</Value>
+    </Setting>
+    <Setting Name="ColdResistanceMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="ColdResistanceMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="ColdResistanceLowLimitDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1.85</Value>
+    </Setting>
+    <Setting Name="ColdResistanceHighLimitDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">2.156</Value>
+    </Setting>
+    <Setting Name="ThermalTransientLowLimitDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.006</Value>
+    </Setting>
+    <Setting Name="ThermalTransientHighLimitDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.017</Value>
+    </Setting>
+    <Setting Name="ColdResistanceApertureMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="ColdResistanceApertureMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceApertureDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceApertureMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceApertureMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceCurrentLevelDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.001</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceCurrentMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.00001</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceCurrentMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.05</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceCurrentRangeDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceVoltageLimitDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceVoltageMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceVoltageMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceLowLimitDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1150</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceHighLimitDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1250</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">900</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">10000</Value>
+    </Setting>
+    <Setting Name="ColdResistanceApertureDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="ThermalTransientSamplingIntervalDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.0001</Value>
+    </Setting>
+    <Setting Name="ThermalTransientSamplingIntervalMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.00008</Value>
+    </Setting>
+    <Setting Name="ThermalTransientSamplingIntervalMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.001</Value>
+    </Setting>
+    <Setting Name="ThermalTransientTracePointsDefault" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="ThermalTransientTracePointsMinimum" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="ThermalTransientDurationDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="ThermalTransientDurationMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="ThermalTransientDurationMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="ThermalTransientApertureDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.004</Value>
+    </Setting>
+    <Setting Name="ThermalTransientApertureMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.001</Value>
+    </Setting>
+    <Setting Name="ThermalTransientApertureMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="ThermalTransientTracePointsMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">10000</Value>
+    </Setting>
+    <Setting Name="ThermalTransientCurrentMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="ThermalTransientMedianFilterLengthDefault" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="ThermalTransientMedianFilterLengthMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="ThermalTransientMedianFilterLengthMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">9</Value>
+    </Setting>
+    <Setting Name="ThermalCoefficientDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.0005</Value>
+    </Setting>
+    <Setting Name="ThermalCoefficientMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.00001</Value>
+    </Setting>
+    <Setting Name="ThermalCoefficientMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.001</Value>
+    </Setting>
+    <Setting Name="ThermalTransientVoltageLimitDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.99</Value>
+    </Setting>
+    <Setting Name="ThermalTransientVoltageChangeMaximum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1.0</Value>
+    </Setting>
+    <Setting Name="ThermalTransientVoltageChangeMinimum" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.001</Value>
+    </Setting>
+    <Setting Name="SourceMeasureUnitDefault" Type="System.String" Scope="User">
+      <Value Profile="(Default)">smua</Value>
+    </Setting>
+    <Setting Name="ContactCheckEnabledDefault" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ContactCheckThresholdDefault" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="PostTransientDelay" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.5</Value>
+    </Setting>
+    <Setting Name="ColdResistanceCurrentLevel" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="ColdResistanceVoltageLimit" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="ThermalTransientCurrentLevel" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.27</Value>
+    </Setting>
+    <Setting Name="ThermalTransientVoltageChange" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.099</Value>
+    </Setting>
+    <Setting Name="ColdResistanceLowLimit" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1.85</Value>
+    </Setting>
+    <Setting Name="ColdResistanceHighLimit" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">2.156</Value>
+    </Setting>
+    <Setting Name="ThermalTransientLowLimit" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.006</Value>
+    </Setting>
+    <Setting Name="ThermalTransientHighLimit" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.017</Value>
+    </Setting>
+    <Setting Name="ThermalTransientVoltageLimit" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.99</Value>
+    </Setting>
+    <Setting Name="ContactCheckEnabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ContactCheckThreshold" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="ResourceName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">GPIB0::26::INSTR</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceCurrentLevel" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.001</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceCurrentRange" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">0.01</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceVoltageLimit" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceLowLimit" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1150</Value>
+    </Setting>
+    <Setting Name="ShuntResistanceHighLimit" Type="System.Decimal" Scope="User">
+      <Value Profile="(Default)">1250</Value>
+    </Setting>
+    <Setting Name="TraceFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">..\measurements\Trace1.csv</Value>
+    </Setting>
+    <Setting Name="FtpAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ftp://ttm%40isr.cc:ttm2.2@ftp.isr.cc</Value>
+    </Setting>
+    <Setting Name="PartsFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">..\measurements\Part1.csv</Value>
+    </Setting>
+    <Setting Name="PartNumber" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Part 1</Value>
+    </Setting>
+    <Setting Name="LotNumber" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Lot 1</Value>
+    </Setting>
+    <Setting Name="OperatorId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Operator 1</Value>
+    </Setting>
+    <Setting Name="SourceMeasureUnit" Type="System.String" Scope="User">
+      <Value Profile="(Default)">smua</Value>
+    </Setting>
+    <Setting Name="AutomaticallyAddPart" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TraceLevel" Type="System.Diagnostics.TraceEventType" Scope="User">
+      <Value Profile="(Default)">Verbose</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

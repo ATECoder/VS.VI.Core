@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Dictionary>
+    <Words>
+        <Recognized>
+            <Word>firewire</Word>
+            <Word>gauge</Word>
+            <Word>gpib</Word>
+            <Word>ieee</Word>
+            <Word>isr</Word>
+            <Word>multimeter</Word>
+            <Word>printf</Word>
+            <Word>pxi</Word>
+            <Word>scpi</Word>
+            <Word>tcpip</Word>
+            <Word>tegam</Word>
+            <Word>thermostream</Word>
+            <Word>tsp</Word>
+            <Word>ttm</Word>
+            <Word>vxi</Word>
+            <Word>untalk</Word>
+            <Word>unlisten</Word>
+            <Word>usb</Word>
+        </Recognized>
+        <Deprecated>
+            <Term PreferredAlternate=""></Term>
+        </Deprecated>
+        <Compound>
+            <Term CompoundAlternate=""></Term>
+        </Compound>
+        <DiscreteExceptions>
+            <Term></Term>
+        </DiscreteExceptions>
+    </Words>
+    <Acronyms>
+        <CasingExceptions>
+            <Acronym>ip</Acronym>
+            <Acronym>isr</Acronym>
+            <Acronym>tcp</Acronym>
+            <Acronym>ttm</Acronym>
+        </CasingExceptions>
+    </Acronyms>
+</Dictionary>

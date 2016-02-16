@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?include ProductPreprocessor.wxi ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+        <PackageGroup Id='VI.K3700.Console'>
+            <!-- Workaround 
+                SuppressSignatureVerification ='yes'
+                address light Error	3 This was not implemented in the move to WixToolset.Data.dll. Move this code back to wix.dll. -->
+            <MsiPackage Id='pid.MainPackage' InstallCondition='NOT VersionNT64'
+                        SourceFile='$(var.VI.K3700.Console.WiX.ProjectDir)Bin\x86\Debug\$(var.ProductName).Setup.msi'
+                        Compressed='yes'
+                        SuppressSignatureVerification ='yes'
+                        >                
+                <MsiProperty Name='APPLICATIONFOLDER' Value='[InstallFolder]'/>
+            </MsiPackage>
+            <MsiPackage InstallCondition='VersionNT64'
+                        SourceFile='$(var.VI.K3700.Console.WiX.ProjectDir)Bin\x64\Debug\$(var.ProductName).Setup.msi'
+                        Compressed='yes'
+                        SuppressSignatureVerification ='yes'
+                        >                
+                <MsiProperty Name='APPLICATIONFOLDER' Value='[InstallFolder]'/>
+            </MsiPackage>
+        </PackageGroup>
+	</Fragment>
+</Wix>

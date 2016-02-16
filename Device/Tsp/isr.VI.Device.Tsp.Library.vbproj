@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <MyType>Windows</MyType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1BAE3977-D99F-4E2D-9A52-6E4E11A93E40}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyName>isr.VI.Device.Tsp</AssemblyName>
+    <OutputType>Library</OutputType>
+    <AssemblyMajorVersion>1</AssemblyMajorVersion>
+    <AssemblyMinorVersion>0</AssemblyMinorVersion>
+    <AssemblyRevisionNumber>2909</AssemblyRevisionNumber>
+    <GenerateRevisionNumber>False</GenerateRevisionNumber>
+    <AssemblyCompanyName>Integrated Scientific Resources, Inc.</AssemblyCompanyName>
+    <StartWithIE>False</StartWithIE>
+    <RootNamespace>isr.VI.Tsp</RootNamespace>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OptionStrict>On</OptionStrict>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\debug\</OutputPath>
+    <DocumentationFile>isr.VI.Device.Tsp.xml</DocumentationFile>
+    <DebugSymbols>True</DebugSymbols>
+    <DefineDebug>True</DefineDebug>
+    <DefineTrace>True</DefineTrace>
+    <DefineConstants>
+    </DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <NoWarn>42353,42354,42355</NoWarn>
+    <DebugType>full</DebugType>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <BaseAddress>961552384</BaseAddress>
+    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\FromAllRules2015.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\release\</OutputPath>
+    <DocumentationFile>isr.VI.Device.Tsp.xml</DocumentationFile>
+    <DebugSymbols>False</DebugSymbols>
+    <DefineDebug>False</DefineDebug>
+    <DefineTrace>True</DefineTrace>
+    <DefineConstants>DebugBuildCompile = -1 : Win32=True</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>42353,42354,42355</NoWarn>
+    <DebugType>none</DebugType>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
+      <Link>My\SolutionInfo.vb</Link>
+    </Compile>
+    <Compile Include="ENTITIES\BufferElement.vb" />
+    <Compile Include="ENTITIES\DeviceError.vb" />
+    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="SUBSYSTEMS\MultimeterSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\ChannelSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\InteractiveSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\SourceMeasureUnit.vb" />
+    <Compile Include="SUBSYSTEMS\SourceMeasureUnitMeasure.vb" />
+    <Compile Include="ENTITIES\TspMessage.vb" />
+    <Compile Include="ENTITIES\VersionInfo.vb" />
+    <Compile Include="SUBSYSTEMS\DisplaySubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SourceMeasureUnitCurrentSource.vb" />
+    <Compile Include="SUBSYSTEMS\SourceMeasureUnitBase.vb" />
+    <Compile Include="SUBSYSTEMS\LinkSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\StatusSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SystemSubsystemBase.vb" />
+    <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="ENTITIES\NodeEntity.vb" />
+    <Compile Include="ENTITIES\NodeEntityBase.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="SYNTAX\TspNodeSyntax.vb" />
+    <Compile Include="SYNTAX\TspSyntax.vb" />
+    <Content Include="My\isr.VI.Device.Tsp.Library.rtf" />
+    <EmbeddedResource Include="RESOURCES\BinaryScripts.tsp" />
+    <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+      <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
+      <Name>isr.Core.Pith.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj">
+      <Project>{6a80136f-c0eb-4798-8bcf-569e249dd76a}</Project>
+      <Name>Arebis.StandardUnits.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
+      <Project>{d2c9a599-79dd-4cfa-8614-be3c444eb347}</Project>
+      <Name>Arebis.TypedUnits.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Device.Scpi\isr.VI.Device.Scpi.Library.vbproj">
+      <Project>{f6e68ae1-a1b8-43ce-bf8b-d1b8df65c366}</Project>
+      <Name>isr.VI.Device.Scpi.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Device\isr.VI.Device.Library.vbproj">
+      <Project>{0C14C4A7-D574-4F9B-A2D9-989B71CC7DE4}</Project>
+      <Name>isr.VI.Device.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Resource\Pith\isr.VI.Pith.Library.vbproj">
+      <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
+      <Name>isr.VI.Pith.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Pith\My\keyPair.snk">
+      <Link>My\keyPair.snk</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,361 @@
+<html>
+<head>
+<meta name="generator" content="TreePad, http://www.treepad.com">
+<title>VISA Core Tester</title>
+</head>
+<!-- HTML created by TreePad (http://www.treepad.com) -->
+<body>
+<pre>
+</pre>
+
+<DL>
+
+<DT><a name="DD9268E2F9808FA7BBB900F135B2827395683ACC"></a><h3>VISA Core Tester</h3></DT>
+
+<DD>
+
+<div ALIGN="CENTER"><FONT FACE="trebuchet ms" SIZE=2>VISA Library</FONT></div>
+<div ALIGN="CENTER"><FONT FACE="trebuchet ms" SIZE=2>VISA Core Tester User's Guide</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Table of Contents</FONT></div>
+<div><a href="#18C1861B3C578586348FDE561C9EF0AADF933481"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Description</FONT></A></div>
+<div><a href="#D51568234BC22417811BC41E07ED86D69D0EC7A6"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Simple Read and Write</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#178FDFB1B7DFFA85F6605E686DCDB031B55206F7"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Description</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#BA2AB72A8A3EB2D82153923D3B54B8EB81B753E6"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Open</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#F3F59A4C63F4BAA2F6AF4F842AE41CE6AF0510B2"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Open Session</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#60B9E7860D156EE2BE4FF5D0FF0E1626DAFE6C75"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Close Session</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#5637D971D43C2282F4ED0D768B8806F881AA778A"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Commands</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#2706F9DFF37F2E2939976737EA91575F3BCBC64A"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Identity</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#461EDDC3CADB834A3432E6B8B9D5F8273B2DD44C"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Clear</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#7F07EA37DB512305A3B2B95487A028A4EADD35B5"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Execution Times</FONT></A></div>
+<div><a href="#BAB007AAF0E46B4A8D557AA91B6A584E8CB397C0"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Basic GPIB Test Panel</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#2E19AF5EDDD1BDCBC6C9E63AB527F69AAEF9E8A7"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Open</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#658215B34277380A895C8EEE6E327216DB523CB1"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Connect</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#642103F2CFFA67AE7B46716073FA28F03102CE36"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Send/Receive</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#07D37EDF4F7BAFCD6C59825B3D979F2F1B47AA57"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">SCPI instruments</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#A454B8D67B1E30AB9FD12B8A0D68E288D94791A4"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">TSP Instruments</FONT></A></div>
+<div><a href="#44CADACA2B7A486CBBEA6C635F4F480BBC261254"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">VISA Events Service Requester</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#6F0908CA982DBBBC86DB6BB0B5132B9E140A3021"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Description</FONT></A></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </FONT><a href="#03B85825E58CCDF4E8945CFA89F4B72F1EFE34E9"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Open</FONT></A></div>
+<div><a href="#9F4A7F73A0A01DF16D11F21CF799755B73D9414A"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#0000FF">Attributions</FONT></A></div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+<DL>
+
+<DT><a name="18C1861B3C578586348FDE561C9EF0AADF933481"></a><h3>Description</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">The ISR VISA Library controls VISA instruments. This program tests the Core Library. Testing can be accomplished using </FONT><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">three programs:</FONT></div>
+<ul><li><a href="#D51568234BC22417811BC41E07ED86D69D0EC7A6"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Simple Read and Write</FONT></A><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">;</FONT></li>
+<li><a href="#BAB007AAF0E46B4A8D557AA91B6A584E8CB397C0"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">Basic GPIB Test Panel</FONT></A><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">; and </FONT></li>
+<li><a href="#44CADACA2B7A486CBBEA6C635F4F480BBC261254"><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">VISA Events Service Requester</FONT></A><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000">.</FONT></li>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000"></FONT></div>
+</ul>
+<FONT FACE="trebuchet ms" SIZE=2 COLOR="#000000"></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="D51568234BC22417811BC41E07ED86D69D0EC7A6"></a><h3>Simple Read and Write</h3></DT>
+
+<DD>
+
+
+
+<DL>
+
+<DT><a name="178FDFB1B7DFFA85F6605E686DCDB031B55206F7"></a><h3>Description</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>This panel the allows sending (writing) and receiving (reading) messages from message-based VISA instruments over the </FONT><FONT FACE="trebuchet ms" SIZE=2>IEEE488 (GPIB), Serial (ASRL), or Ethernet bus. </FONT></div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="BA2AB72A8A3EB2D82153923D3B54B8EB81B753E6"></a><h3>Open</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Select </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Simple Read and Write</FONT></i><FONT FACE="trebuchet ms" SIZE=2> from </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SWITCHBOARD </FONT></i><FONT FACE="trebuchet ms" SIZE=2>and click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Open</FONT></i><FONT FACE="trebuchet ms" SIZE=2>.&nbsp; This opens the&nbsp; </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Simple Read/Write </FONT></i><FONT FACE="trebuchet ms" SIZE=2>panel.&nbsp; </FONT></div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="F3F59A4C63F4BAA2F6AF4F842AE41CE6AF0510B2"></a><h3>Open Session</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Open Session</FONT></i><FONT FACE="trebuchet ms" SIZE=2>. This opens the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Select Resources</FONT></i><FONT FACE="trebuchet ms" SIZE=2> dialog displaying all the resources available locally.&nbsp; Instruments have </FONT><FONT FACE="trebuchet ms" SIZE=2>VISA resource names ending with INSTR.&nbsp; For example, the resource string for an instrument addressed at 24 on board 0 is </FONT><FONT FACE="trebuchet ms" SIZE=2>GPIB0:24:INSTR. </FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><div><FONT FACE="trebuchet ms" SIZE=2>Select an instrument from the list and click OK.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><div><FONT FACE="trebuchet ms" SIZE=2>If the instrument does not appear as part of the list of resources, try entering the resource (e.g., GPIB0:24:INSTR) manually </FONT><FONT FACE="trebuchet ms" SIZE=2>and click Open Session.&nbsp; Close and re-open the session and see if the resource is now listed.&nbsp; Another quirk of NI VISA.</FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="60B9E7860D156EE2BE4FF5D0FF0E1626DAFE6C75"></a><h3>Close Session</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Close Session</FONT></i><FONT FACE="trebuchet ms" SIZE=2> to close the session.</FONT></div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="5637D971D43C2282F4ED0D768B8806F881AA778A"></a><h3>Commands</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Once opened, access to the instrument is enabled and the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Query</FONT></i><FONT FACE="trebuchet ms" SIZE=2>, </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Write</FONT></i><FONT FACE="trebuchet ms" SIZE=2>, and </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Read</FONT></i><FONT FACE="trebuchet ms" SIZE=2> buttons can be used to exchange </FONT><FONT FACE="trebuchet ms" SIZE=2>messages with the instrument.</FONT></div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+<DL>
+
+<DT><a name="2706F9DFF37F2E2939976737EA91575F3BCBC64A"></a><h3>Identity</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Send the Identity (*IDN?) command to get the instrument manufacture and version information:</FONT></div>
+<ul><li><FONT FACE="trebuchet ms" SIZE=2>Enter the Identity command *IDN?\n in the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Message to Send</FONT></i><FONT FACE="trebuchet ms" SIZE=2> box. <br>
+</FONT><FONT FACE="trebuchet ms" SIZE=2>The '\n' signifies the termination character. The program replaces this with the termination character specified for the </FONT><FONT FACE="trebuchet ms" SIZE=2>instrument, typically a Line Feed (value 10).</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Query</FONT></i><FONT FACE="trebuchet ms" SIZE=2> to send the message and read back the result form the instrument.&nbsp; The result is displayed in the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Message</FONT></i><FONT FACE="trebuchet ms" SIZE=2> </FONT><FONT FACE="trebuchet ms" SIZE=2>box and the time in the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>ms</FONT></i><FONT FACE="trebuchet ms" SIZE=2> box.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Alternatively, click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Write</FONT></i><FONT FACE="trebuchet ms" SIZE=2> and then </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Read</FONT></i><FONT FACE="trebuchet ms" SIZE=2>.</FONT></li>
+</ul>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="461EDDC3CADB834A3432E6B8B9D5F8273B2DD44C"></a><h3>Clear</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Clear </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Clear</FONT></i><FONT FACE="trebuchet ms" SIZE=2> to clear the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Messages</FONT></i><FONT FACE="trebuchet ms" SIZE=2> box. </FONT></div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="7F07EA37DB512305A3B2B95487A028A4EADD35B5"></a><h3>Execution Times</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Execution times can be measured for query, write or read operations. The execution time is displayed in the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>ms</FONT></i><FONT FACE="trebuchet ms" SIZE=2> text box.</FONT></div>
+
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="BAB007AAF0E46B4A8D557AA91B6A584E8CB397C0"></a><h3>Basic GPIB Test Panel</h3></DT>
+
+<DD>
+
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+<DL>
+
+<DT><a name="2E19AF5EDDD1BDCBC6C9E63AB527F69AAEF9E8A7"></a><h3>Open</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Select </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Basic GPIB Test Panel </FONT></i><FONT FACE="trebuchet ms" SIZE=2>from the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SWITCHBOARD </FONT></i><FONT FACE="trebuchet ms" SIZE=2>and click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Open</FONT></i><FONT FACE="trebuchet ms" SIZE=2>.&nbsp; This opens the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>GPIB Test Panel</FONT></i><FONT FACE="trebuchet ms" SIZE=2>.&nbsp; </FONT></div>
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="658215B34277380A895C8EEE6E327216DB523CB1"></a><h3>Connect</h3></DT>
+
+<DD>
+
+<ul><li><FONT FACE="trebuchet ms" SIZE=2>Enter the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Primary Address</FONT></i><FONT FACE="trebuchet ms" SIZE=2> (e.g., 26) from the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>CONNECT</FONT></i><FONT FACE="trebuchet ms" SIZE=2> tab;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Depress the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>CONNECT</FONT></i><FONT FACE="trebuchet ms" SIZE=2> button;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Select the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SEND/RECEIVE</FONT></i><FONT FACE="trebuchet ms" SIZE=2> tab.</FONT></li>
+<div><FONT FACE="trebuchet ms" SIZE=2></FONT></div>
+</ul>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="642103F2CFFA67AE7B46716073FA28F03102CE36"></a><h3>Send/Receive</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Use the send receive tab to communicate with instruments using the GPIB (IEEE 488) Bus.&nbsp; Instruments could be:</FONT></div>
+<ul><li><a href="#07D37EDF4F7BAFCD6C59825B3D979F2F1B47AA57"><FONT FACE="trebuchet ms" SIZE=2>SCPI instruments</FONT></A><FONT FACE="trebuchet ms" SIZE=2><br>
+</FONT><FONT FACE="trebuchet ms" SIZE=2>Instruments using the SCPI protocol; or </FONT></li>
+<li><a href="#A454B8D67B1E30AB9FD12B8A0D68E288D94791A4"><FONT FACE="trebuchet ms" SIZE=2>TSP Instruments</FONT></A><FONT FACE="trebuchet ms" SIZE=2><br>
+</FONT><FONT FACE="trebuchet ms" SIZE=2>Instruments using the Keithley TSP protocol.</FONT></li>
+</ul>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+<DL>
+
+<DT><a name="07D37EDF4F7BAFCD6C59825B3D979F2F1B47AA57"></a><h3>SCPI instruments</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Example: </FONT></div>
+<ul><li><FONT FACE="trebuchet ms" SIZE=2>Select *IDN? from the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SINGLE COMMANDS</FONT></i><FONT FACE="trebuchet ms" SIZE=2> drop down;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SEND COMMAND;</FONT></i></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>READ SRQ (enable receive).</FONT></i><FONT FACE="trebuchet ms" SIZE=2> This enables the receive button if there is data in the instrument output buffer as </FONT><FONT FACE="trebuchet ms" SIZE=2>indicated also by the status byte displayed on the status bar;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>RECEIVE.</FONT></i><FONT FACE="trebuchet ms" SIZE=2> This reads the message from the instrument and displays it in the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>RECEIVED FROM INSTRUMENT</FONT></i><FONT FACE="trebuchet ms" SIZE=2> text </FONT><FONT FACE="trebuchet ms" SIZE=2>box.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>DISCONNECT</FONT></i><FONT FACE="trebuchet ms" SIZE=2> from the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>CONNECT</FONT></i><FONT FACE="trebuchet ms" SIZE=2> tab releasing the button and disconnecting the instrument.</FONT></li>
+</ul>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="A454B8D67B1E30AB9FD12B8A0D68E288D94791A4"></a><h3>TSP Instruments</h3></DT>
+
+<DD>
+
+<ul><li><FONT FACE="trebuchet ms" SIZE=2>Check </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Send Commands On Disconnect</FONT></i><FONT FACE="trebuchet ms" SIZE=2> from the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Connect</FONT></i><FONT FACE="trebuchet ms" SIZE=2> tab and make sure the command </FONT><FONT FACE="Courier New" SIZE=2>localnode.prompts = 0</FONT><FONT FACE="trebuchet ms" SIZE=2> is </FONT><FONT FACE="trebuchet ms" SIZE=2>listed in the command box below.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Open the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SEND/RECEIVE</FONT></i><FONT FACE="trebuchet ms" SIZE=2> tab;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Select *IDN? from the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SINGLE COMMANDS</FONT></i><FONT FACE="trebuchet ms" SIZE=2> drop down;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SEND COMMAND;</FONT></i></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>READ SRQ (enable receive).</FONT></i><FONT FACE="trebuchet ms" SIZE=2> This enables the receive button if there is data in the instrument output buffer as </FONT><FONT FACE="trebuchet ms" SIZE=2>indicated also by the status byte displayed on the status bar;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>RECEIVE.</FONT></i><FONT FACE="trebuchet ms" SIZE=2> This reads the message from the instrument and displays it in the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>RECEIVED FROM INSTRUMENT</FONT></i><FONT FACE="trebuchet ms" SIZE=2> text </FONT><FONT FACE="trebuchet ms" SIZE=2>box.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Select print( _VERSION ) the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SINGLE COMMANDS</FONT></i><FONT FACE="trebuchet ms" SIZE=2> drop down;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SEND COMMAND;</FONT></i></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>READ SRQ</FONT></i><FONT FACE="trebuchet ms" SIZE=2>;</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>RECEIVE;</FONT></i></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>This displays the LUA version stored in the instrument.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>DISCONNECT</FONT></i><FONT FACE="trebuchet ms" SIZE=2> from the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>CONNECT</FONT></i><FONT FACE="trebuchet ms" SIZE=2> tab releasing the button and disconnecting the instrument.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>CONNECT</FONT></i><FONT FACE="trebuchet ms" SIZE=2> while looking at the instrument panel.&nbsp; If no errors are displayed, the disconnection commands </FONT><FONT FACE="trebuchet ms" SIZE=2>executed properly.</FONT></li>
+<li><FONT FACE="trebuchet ms" SIZE=2>Click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>DISCONNECT</FONT></i><FONT FACE="trebuchet ms" SIZE=2>.</FONT></li>
+</ul>
+<FONT FACE="trebuchet ms" SIZE=2></FONT>
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="44CADACA2B7A486CBBEA6C635F4F480BBC261254"></a><h3>VISA Events Service Requester</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>The VISA Events Service Requester panel automatically displays messages read from the instrument using the event </FONT><FONT FACE="trebuchet ms" SIZE=2>requester call backs supported by the VISA protocol standard. </FONT></div>
+
+
+<DL>
+
+<DT><a name="6F0908CA982DBBBC86DB6BB0B5132B9E140A3021"></a><h3>Description</h3></DT>
+
+<DD>
+
+
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="03B85825E58CCDF4E8945CFA89F4B72F1EFE34E9"></a><h3>Open</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2>Select VISA Events Service Requester</FONT><i><FONT FACE="trebuchet ms" SIZE=2> </FONT></i><FONT FACE="trebuchet ms" SIZE=2>from the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>SWITCHBOARD </FONT></i><FONT FACE="trebuchet ms" SIZE=2>and click </FONT><i><FONT FACE="trebuchet ms" SIZE=2>Open</FONT></i><FONT FACE="trebuchet ms" SIZE=2>.&nbsp; This opens the </FONT><i><FONT FACE="trebuchet ms" SIZE=2>VISA Events Service </FONT></i><i><FONT FACE="trebuchet ms" SIZE=2>Requester</FONT></i><FONT FACE="trebuchet ms" SIZE=2>.&nbsp; </FONT></div>
+<div>&nbsp;</div>
+<FONT FACE="trebuchet ms" SIZE=2></FONT><div><FONT FACE="trebuchet ms" SIZE=2>Follow the instructions on the panel to test the event requester. </FONT></div>
+
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<DL>
+
+<DT><a name="9F4A7F73A0A01DF16D11F21CF799755B73D9414A"></a><h3>Attributions</h3></DT>
+
+<DD>
+
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#869AA8">Last Updated 12-25-2010</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#869AA8">Copyright 2010 by Integrated Scientific Resources, Inc.<br>
+</FONT><FONT FACE="trebuchet ms" SIZE=2 COLOR="#869AA8">PRIVILEGED AND CONFIDENTIAL</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#869AA8">Link: VISA Core Tester Guide</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#869AA8">File: VISA Core Tester Guide.html</FONT></div>
+<div><FONT FACE="trebuchet ms" SIZE=2 COLOR="#869AA8">This information is provided &quot;AS IS&quot; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.</FONT></div>
+<FONT FACE="trebuchet ms" SIZE=2 COLOR="#869AA8"></FONT>
+
+  </DD>
+
+</DL>
+
+  </DD>
+
+</DL>
+
+<pre>
+ 
+</pre>
+</body>
+</html>
+

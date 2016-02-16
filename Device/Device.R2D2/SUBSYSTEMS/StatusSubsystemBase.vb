@@ -1,0 +1,25 @@
+﻿''' <summary> Defines the contract that must be implemented by R2D2 Status Subsystem. </summary>
+''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
+''' Licensed under The MIT License. </para><para>
+''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+''' </para> </license>
+''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
+Public MustInherit Class StatusSubsystemBase
+    Inherits VI.StatusSubsystemBase
+
+#Region " CONSTRUCTORS  and  DESTRUCTORS "
+
+    ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
+    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' session</see>. </param>
+    Protected Sub New(ByVal visaSession As VI.SessionBase)
+        MyBase.New(visaSession, Scpi.Syntax.NoErrorCompoundMessage)
+    End Sub
+
+#End Region
+
+End Class

@@ -1,0 +1,103 @@
+''' <summary> Defines a Measure Subsystem for a Keithley 2000 instrument. </summary>
+''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
+''' Licensed under The MIT License. </para><para>
+''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+''' </para> </license>
+''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
+Public Class MeasureSubsystem
+    Inherits VI.Scpi.MeasureSubsystemBase
+
+#Region " CONSTRUCTORS  and  DESTRUCTORS "
+
+    ''' <summary> Initializes a new instance of the <see cref="MeasureSubsystem" /> class. </summary>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' session</see>. </param>
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
+        MyBase.New(statusSubsystem)
+        Me._readings = New Readings
+        ' this is the default setting for the format sub system
+        Me.Readings.Elements = ReadingElements.Reading
+    End Sub
+
+
+#End Region
+
+#Region " PUBLISHER "
+
+    ''' <summary> Publishes all values by raising the property changed events. </summary>
+    Public Overrides Sub Publish()
+        If Me.Publishable Then
+            For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
+                Me.AsyncNotifyPropertyChanged(p.Name)
+            Next
+        End If
+    End Sub
+
+#End Region
+
+#Region " COMMAND SYNTAX "
+
+#Region "  INIT, READ, FETCH "
+
+    ''' <summary> Gets the initiate command. </summary>
+    ''' <value> The initiate command. </value>
+    Protected Overrides ReadOnly Property InitiateCommand As String = ""
+
+    ''' <summary> Gets the fetch command. </summary>
+    ''' <value> The fetch command. </value>
+    Protected Overrides ReadOnly Property FetchCommand As String
+        Get
+            Return ":READ?"
+        End Get
+    End Property
+
+    ''' <summary> Gets the read command. </summary>
+    ''' <value> The read command. </value>
+    Protected Overrides ReadOnly Property ReadCommand As String
+        Get
+            Return ":READ?"
+        End Get
+    End Property
+
+#End Region
+
+#End Region
+
+#Region " READ  FETCH "
+
+    Public Overrides Sub Fetch()
+        Me.Session.MakeEmulatedReplyIfEmpty(Me.Readings.Reading.Generator.Value.ToString)
+        MyBase.Fetch()
+    End Sub
+
+    Public Overrides Sub Read()
+        Me.Session.MakeEmulatedReplyIfEmpty(Me.Readings.Reading.Generator.Value.ToString)
+        MyBase.Read()
+    End Sub
+
+#End Region
+#Region " PARSE READING "
+
+    Private _readings As Readings
+
+    ''' <summary> Returns the readings. </summary>
+    ''' <returns> The readings. </returns>
+    Public Function Readings() As Readings
+        Return Me._readings
+    End Function
+
+    ''' <summary> Parses a new set of reading elements. </summary>
+    ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
+    Public Overrides Sub ParseReading(ByVal reading As String)
+        If Me.Readings.TryParse(reading) Then
+        End If
+    End Sub
+
+#End Region
+
+End Class
+

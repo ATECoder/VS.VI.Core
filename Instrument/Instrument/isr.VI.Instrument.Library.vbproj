@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>
+    </SchemaVersion>
+    <ProjectGuid>{C3B279E2-F2F4-4387-BD05-82B8D3976AC5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>isr.VI.Instrument</RootNamespace>
+    <AssemblyName>isr.VI.Instrument</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>Windows</MyType>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>isr.VI.Instrument.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <BaseAddress>961568768</BaseAddress>
+    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\FromAllRules2015.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>isr.VI.Instrument.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\FromAllRules2015.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>Off</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
+      <Link>My\SolutionInfo.vb</Link>
+    </Compile>
+    <Compile Include="FORMS\InstrumentPanelForm.Designer.vb">
+      <DependentUpon>InstrumentPanelForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FORMS\InstrumentPanelForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FORMS\InstrumentInterfaceForm.Designer.vb">
+      <DependentUpon>InstrumentInterfaceForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FORMS\InstrumentInterfaceForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FORMS\InterfaceForm.Designer.vb">
+      <DependentUpon>InterfaceForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FORMS\InterfaceForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FORMS\ServiceRequesterForm.Designer.vb">
+      <DependentUpon>ServiceRequesterForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FORMS\ServiceRequesterForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FORMS\SimpleReadWriteForm.Designer.vb">
+      <DependentUpon>SimpleReadWriteForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FORMS\SimpleReadWriteForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\ResourcePanelBase.Designer.vb">
+      <DependentUpon>ResourcePanelBase.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\ResourcePanelBase.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PANELS\ServiceRequesterPanel.Designer.vb">
+      <DependentUpon>ServiceRequesterPanel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\ServiceRequesterPanel.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PANELS\SimpleReadWriteControl.Designer.vb">
+      <DependentUpon>SimpleReadWriteControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\SimpleReadWriteControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PANELS\SimpleReadWritePanel.Designer.vb">
+      <DependentUpon>SimpleReadWritePanel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\SimpleReadWritePanel.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PANELS\InterfacePanel.Designer.vb">
+      <DependentUpon>InterfacePanel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\InterfacePanel.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PANELS\ResourceChooserDialog.Designer.vb">
+      <DependentUpon>ResourceChooserDialog.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\ResourceChooserDialog.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PANELS\ResourceSelectorDialog.Designer.vb">
+      <DependentUpon>ResourceSelectorDialog.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\ResourceSelectorDialog.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PANELS\ResourceSelectorConnector.Designer.vb">
+      <DependentUpon>ResourceSelectorConnector.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\ResourceSelectorConnector.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="My\MySuppressions.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <EmbeddedResource Include="FORMS\InstrumentPanelForm.resx">
+      <DependentUpon>InstrumentPanelForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FORMS\InstrumentInterfaceForm.resx">
+      <DependentUpon>InstrumentInterfaceForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FORMS\InterfaceForm.resx">
+      <DependentUpon>InterfaceForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FORMS\ServiceRequesterForm.resx">
+      <DependentUpon>ServiceRequesterForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FORMS\SimpleReadWriteForm.resx">
+      <DependentUpon>SimpleReadWriteForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\InterfacePane.bmp" />
+    <EmbeddedResource Include="PANELS\ResourcePanelBase.resx">
+      <DependentUpon>ResourcePanelBase.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\ServiceRequesterPanel.resx">
+      <DependentUpon>ServiceRequesterPanel.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\SimpleReadWriteControl.resx">
+      <DependentUpon>SimpleReadWriteControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\SimpleReadWritePanel.resx">
+      <DependentUpon>SimpleReadWritePanel.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\InterfacePanel.resx">
+      <DependentUpon>InterfacePanel.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\ResourcePanelBase.bmp" />
+    <None Include="..\..\Resource\Pith\My\keyPair.snk">
+      <Link>My\keyPair.snk</Link>
+    </None>
+    <Content Include="My\isr.VI.Instrument.History.rtf" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="PANELS\ResourceSelectorConnector.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+      <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
+      <Name>isr.Core.Pith.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
+      <Project>{0C14C4A7-D574-4F9B-A2D9-989B71CC7DE4}</Project>
+      <Name>isr.VI.Device.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Resource\Pith\isr.VI.Pith.Library.vbproj">
+      <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
+      <Name>isr.VI.Pith.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PANELS\ResourceChooserDialog.resx">
+      <DependentUpon>ResourceChooserDialog.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\ResourceSelectorDialog.resx">
+      <DependentUpon>ResourceSelectorDialog.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\ResourceSelectorConnector.resx">
+      <DependentUpon>ResourceSelectorConnector.vb</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{94E38DFF-614B-4CBD-B67C-F211BB35CE8B}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

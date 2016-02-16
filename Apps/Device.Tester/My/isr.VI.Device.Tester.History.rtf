@@ -1,0 +1,77 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat{\fonttbl{\f0\fswiss\fcharset0 Trebuchet MS;}{\f1\fnil\fcharset0 Trebuchet MS;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil\fcharset0 trebuchet ms;}{\f4\fnil Consolas;}}
+{\colortbl ;\red0\green0\blue0;\red134\green154\blue168;\red0\green0\blue255;\red0\green102\blue204;\red0\green128\blue0;\red255\green255\blue255;}
+{\*\generator Riched20 10.0.10586}\viewkind4\psz1
+{\*\jarte object RichPersist
+  Version = 2
+  LMarg = 1440
+  RMarg = 1440
+  TMarg = 1440
+  BMarg = 1440
+  Equal = True
+  Orient = 1
+  Size = 1
+  Width = 2159
+  Height = 2794
+  HdrMarg = 720
+  FtrMarg = 720
+  HdrFont.Charset = DEFAULT_CHARSET
+  HdrFont.Color = clWindowText
+  HdrFont.Height = -11
+  HdrFont.Name = 'Arial'
+  HdrFont.Style = []
+  Wrap = 2
+  WMark = 'None'
+  WColor = 13822463
+  BlackInk = True
+  Collate = True
+  SpellDict = 'ssceam2.clx'
+end
+}\uc1 
+\pard\cbpat6\nowidctlpar\cf1\kerning1\f0\fs28\lang1033 ISR\kerning0\f1\fs8  \kerning1\f0\fs28 VI\kerning0\f1\fs8  \fs28 Device\fs8  \fs28 Tester\fs8  \fs12 TM\fs28 : VI Tester for a device.\par
+\kerning1\f0\fs22 Test application for a basic device.\par
+Revision-History\f2\fs16\par
+
+\pard\fi-2160\li2160\tx1080\kerning0\ul\f1\fs20 Revision\ulnone\tab\ul Date\ulnone\tab\ul Description\par
+
+\pard\cbpat6\nowidctlpar\fi-2160\li2160\tx1080\tx2160\ulnone\f3 4.0.5803\tab 11/21/15\tab New structures and name spaces. \par
+3.0.5126\tab 01/13/14\tab Tagged as 2014.\par
+\kerning1\f0 3.0.5024\tab 10/03/13\tab Adds timeout and message bits settings to the Service Requester panel. Allows enabling SRQ using an empty *SRE command. \kerning0\f3\par
+\kerning1\f0 3.0.5023\tab 10/02/13\tab\kerning0\f3 Adds polling capability to the Simple Read and Write control.\par
+\kerning1\f0 3.0.5011\tab 09/21/13\tab\kerning0\f3 Adds Interface Panel. Session: Convert write functions to subroutines because the base functions are subroutines. Convert Presettable functions to subroutines. Device Base: Remove Session With Events directive and replace with Add and remove handlers. Encapsulate enabling and disabling the service request event. Set session to nothing when closing or disposing -- now works ok. Remove session Last VISA status properties. Tester: Adds Interface Panel.  Adds resource event handlers to the interface panel. Adds interface and resource name properties to the interface panel. Add disposing of managed resources to the NI derived panels. Add Is Open sentinel because we cannot null the Visa Interface. Document classes. Shared: Document some classes. Add IEEE488 Syntax standard commands. Move SCPI Device and Version Info under the SCPI folder. Instrument: Change fonts to Segoe UI 10. Enable clear only after selecting all resources and seeing that we have resources. Enable connection only if the resource exists. Update the selector connector to validate the selected resource. Remove the selected event and use property changed instead. Tester: Turn on Show Tool tip property of tool strip. Add messages. Add tracing. Use ISR Message Based Session. Core .Diagnostics: Update the observer interface. Have the publisher interface inherit the observer interface. Change the synopsis delimiter to ';. '  Forms: Change fonts to Segoe UI 10. Share: Add my library trace. Update Trace Log Info to return the default file trace listener when replacing the listener. \par
+\kerning1\f0 3.0.5010\tab 09/20/13\tab Debugged \kerning0\f3 VISA session or Interface with With events causes object disposed exception.\fs22\par
+\kerning1\f0\fs20 3.0.5009\tab 09/19/13\tab\kerning0\f3 Add Property Attributes to controls. Handle the display of resource names in the selector connector control. Includes the resource panel. Diagnostics: Add trace message interfaces for observer and publisher. Update copyright and creation dates. \kerning1\f0\par
+3.0.5008\tab 09/18/13\tab Imported from Legacy Visa 3.0 library. \kerning0\f3 Reports service register values. Uses resource selector from the instrument library.\par
+
+\pard\fi-2340\li2340\sb120\tx1080\tx2160\cf2\f1 (C) 2007 Integrated Scientific Resources, Inc.  All rights reserved.\par
+
+\pard\sb120\sl240\slmult0 Licensed under The MIT License.\line THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\cf1\par
+
+\pard\sb120\cf2\kerning1\f0 This software was developed and tested using Microsoft\fs8  \fs20\'ae Visual Studio.\cf1\f2\par
+
+\pard\sb120\tx1080\cf2\kerning0\f1 Source code for this project is hosted on {{\field{\*\fldinst{HYPERLINK "https://bitbucket.org/davidhary"}}{\fldrslt{\ul\cf3\cf4\ul Bit Bucket}}}}\f1\fs20 .\par
+
+\pard\cbpat6\nowidctlpar\sb120\kerning1\f0 Open source used by this software is described and licensed on the following sites:\par
+
+\pard\cbpat6\nowidctlpar\sb120\tx9000 Core Controls Library\line - Safe Events \cf1\f2 ({{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/EventSafeTrigger.aspx"}}{\fldrslt{\ul\cf3\cf4\ul code project}}}}\f2\fs20 , {{\field{\*\fldinst{HYPERLINK "http://www.DreamInCode.net/forums/user/334492-aeonhack/"}}{\fldrslt{\ul\cf3\cf4\ul dream in code}}}}\f2\fs20 , {{\field{\*\fldinst{HYPERLINK "http://www.DreamInCode.net/code/snippet5016.htm"}}{\fldrslt{\ul\cf3\cf4\ul dream in code}}}}\f2\fs20 )\line\cf2\f0 - {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/cs/miscctrl/FlashLED.asp"}}{\fldrslt{\ul\cf3\cf4\ul Flashing Led}}}}\f0\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/edit/NumericUpDownEx.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Extended Numeric Up Down Control}}}}\f0\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/38758/An-Enhanced-PrintPreviewDialog"}}{\fldrslt{\ul\cf3\cf4\ul Cool Print Preview Dialog}}}}\f0\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/804316/Office-Style-Splash-Screen"}}{\fldrslt{\ul\cf3\cf4\ul Metro Style Progress Bar}}}}\cf1\kerning0\f1\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/1029499/ToggleSwitch-Winforms-Control"}}{\fldrslt{\ul\cf3\cf4\ul Toggle Switch Control}}}}\cf2\kerning1\f0\fs20\par
+Core Pith Library\line - Safe Events \cf1\f2 ({{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/EventSafeTrigger.aspx"}}{\fldrslt{\ul\cf3\cf4\ul code project}}}}\f2\fs20 , {{\field{\*\fldinst{HYPERLINK "http://www.DreamInCode.net/forums/user/334492-aeonhack/"}}{\fldrslt{\ul\cf3\cf4\ul dream in code}}}}\f2\fs20 , {{\field{\*\fldinst{HYPERLINK "http://www.DreamInCode.net/code/snippet5016.htm"}}{\fldrslt{\ul\cf3\cf4\ul dream in code}}}}\f2\fs20 )\line\cf2\f0 - {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/LetYourFormDropAShadow.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Drop Shadow and Fade From}}}}\cf1\kerning0\f1\fs20\par
+
+\pard\cbpat6\nowidctlpar\tx9000\cf2\kerning1\f0 - {{\field{\*\fldinst{HYPERLINK "http://WallaceKelly.BlogSpot.com/"}}{\fldrslt{\ul\cf3\cf4\ul Engineering Format}}}}\f0\fs20\par
+- {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/efficient_strong_enum.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Efficient Strong Enumerations}}}}\cf5\kerning0\f4\fs22\par
+\cf2\kerning1\f0\fs20 - {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/Articles/37921/Enums-Flags-and-CSharp-Oh-my-bad-pun.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Enumeration Extensions}}}}\f0\fs20\par
+- {{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/17472/StringEnumerator"}}{\fldrslt{\ul\cf3\cf4\ul String Enumerator}}}}\f0\fs20\par
+
+\pard\cbpat6\nowidctlpar\sb120\tx9000 Core Message Box Library\line - {{\field{\*\fldinst{HYPERLINK "http://stackoverflow.com/questions/899350/how-to-copy-the-contents-of-a-string-to-the-clipboard-in-c"}}{\fldrslt{\ul\cf3\cf4\ul Safe Copy from Clipboard}}}}\f0\fs20\par
+
+\pard\sb120 Core Forms Library\line - {{\field{\*\fldinst{HYPERLINK "http://www.CodeProject.com/KB/cs/LetYourFormDropAShadow.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Drop Shadow and Fade From}}}}\f0\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/KB/dialog/notificationwindow.aspx"}}{\fldrslt{\ul\cf3\cf4\ul Notification Window}}}}\f0\fs20\line - {{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/804316/Office-Style-Splash-Screen"}}{\fldrslt{\ul\cf3\cf4\ul Office Style Splash Screen}}}}\kerning0\b\f1\fs20\par
+Typed Units Library\line {\kerning1\b0\f0{\field{\*\fldinst{HYPERLINK "http://www.codeproject.com/Articles/611731/Working-with-Units-and-Amounts"}}{\fldrslt{\ul\cf3\cf4\ul - Typed Units}}}}\kerning1\b0\f0\fs20\par
+
+\pard\cbpat6\nowidctlpar\sb120 Commercial programs used by this software are described and licensed on the following sites:\par
+
+\pard\cbpat6\nowidctlpar\sb120\tx9000 Core Message Box Library\line {{\field{\*\fldinst{HYPERLINK "https://msdn.microsoft.com/en-us/library/ms365274.aspx"}}{\fldrslt{\ul\cf3\cf4\ul - SQL Exception Message}}}}\f0\fs20\par
+
+\pard\cbpat6\nowidctlpar\sb120\kerning0\b\f1 IVI Library:\line {\kerning1\b0\f0{\field{\*\fldinst{HYPERLINK "http://www.ivifoundation.org"}}{\fldrslt{\ul\cf3\cf4\ul - IVI VISA}}}}\kerning1\b0\f0\fs20\par
+\kerning0\b\f1 NI Library:\line - {\kerning1\b0\f0{\field{\*\fldinst{HYPERLINK "http://www.ni.com"}}{\fldrslt{\ul\cf3\cf4\ul NI VISA}}}}\f1\fs20\par
+
+\pard\sb120\tx1080\b0\par
+}
+ 

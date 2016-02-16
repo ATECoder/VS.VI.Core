@@ -1,0 +1,123 @@
+''' <summary> Defines the contract that must be implemented by a Trace Subsystem. </summary>
+''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
+''' Licensed under The MIT License. </para><para>
+''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+''' </para> </license>
+''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
+Public MustInherit Class TraceSubsystemBase
+    Inherits SubsystemPlusStatusBase
+
+#Region " CONSTRUCTORS  and  DESTRUCTORS "
+
+    ''' <summary> Initializes a new instance of the <see cref="TraceSubsystemBase" /> class. </summary>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
+        MyBase.New(statusSubsystem)
+    End Sub
+
+#End Region
+
+#Region " COMMANDS "
+
+    ''' <summary> Gets or sets the initiate command. </summary>
+    ''' <value> The initiate command. </value>
+    ''' <remakrs> SCPI: ":INIT". </remakrs>
+    Protected Overridable ReadOnly Property InitiateCommand As String
+
+    ''' <summary> Initiates operations. </summary>
+    ''' <remarks> This command is used to initiate source-measure operation by taking the SourceMeter
+    ''' out of idle. The :READ? and :MEASure? commands also perform an initiation. Note that if auto
+    ''' output-off is disabled (SOURce1:CLEar:AUTO OFF), the source output must first be turned on
+    ''' before an initiation can be performed. The :MEASure? command automatically turns the output
+    ''' source on before performing the initiation. </remarks>
+    Public Sub Initiate()
+        If Not String.IsNullOrWhiteSpace(Me.InitiateCommand) Then
+            Me.Session.WriteLine(Me.InitiateCommand)
+        End If
+    End Sub
+
+    ''' <summary> Gets or sets the Abort command. </summary>
+    ''' <value> The Abort command. </value>
+    ''' <remakrs> SCPI: ":ABOR". </remakrs>
+    Protected Overridable ReadOnly Property AbortCommand As String
+
+    ''' <summary> Aborts operations. </summary>
+    ''' <remarks> When this action command is sent, the SourceMeter aborts operation and returns to the
+    ''' idle state. A faster way to return to idle is to use the DCL or SDC command. With auto output-
+    ''' off enabled (:SOURce1:CLEar:AUTO ON), the output will remain on if operation is terminated
+    ''' before the output has a chance to automatically turn off. </remarks>
+    Public Sub Abort()
+        If Not String.IsNullOrWhiteSpace(Me.AbortCommand) Then
+            Me.Session.WriteLine(Me.AbortCommand)
+        End If
+    End Sub
+
+#End Region
+
+#Region " POINTS COUNT "
+
+    ''' <summary> Number of points. </summary>
+    Private _PointsCount As Integer?
+
+    ''' <summary> Gets or sets the cached Trace PointsCount. </summary>
+    ''' <remarks> Specifies how many times an operation is performed in the specified layer of the
+    ''' Trace model. </remarks>
+    ''' <value> The Trace PointsCount or none if not set or unknown. </value>
+    Public Overloads Property PointsCount As Integer?
+        Get
+            Return Me._PointsCount
+        End Get
+        Protected Set(ByVal value As Integer?)
+            If Not Nullable.Equals(Me.PointsCount, value) Then
+                Me._PointsCount = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.PointsCount))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Trace PointsCount. </summary>
+    ''' <param name="value"> The current PointsCount. </param>
+    ''' <returns> The PointsCount or none if unknown. </returns>
+    Public Function ApplyPointsCount(ByVal value As Integer) As Integer?
+        Me.WritePointsCount(value)
+        Return Me.QueryPointsCount()
+    End Function
+
+    ''' <summary> Gets or sets the points count query command. </summary>
+    ''' <value> The points count query command. </value>
+    ''' <remarks> SCPI: ":TRAC:POIN:COUN?" </remarks>
+    Protected Overridable ReadOnly Property PointsCountQueryCommand As String
+
+    ''' <summary> Queries the current PointsCount. </summary>
+    ''' <returns> The PointsCount or none if unknown. </returns>
+    Public Function QueryPointsCount() As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.PointsCountQueryCommand) Then
+            Me.PointsCount = Me.Session.Query(0I, Me.PointsCountQueryCommand)
+        End If
+        Return Me.PointsCount
+    End Function
+
+    ''' <summary> Gets or sets the points count command format. </summary>
+    ''' <value> The points count query command format. </value>
+    ''' <remarks> SCPI: ":TRAC:POIN:COUN {0}" </remarks>
+    Protected Overridable ReadOnly Property PointsCountCommandFormat As String
+
+    ''' <summary> Write the Trace PointsCount without reading back the value from the device. </summary>
+    ''' <param name="value"> The current PointsCount. </param>
+    ''' <returns> The PointsCount or none if unknown. </returns>
+    Public Function WritePointsCount(ByVal value As Integer) As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.PointsCountCommandFormat) Then
+            Me.Session.WriteLine(Me.PointsCountCommandFormat, value)
+        End If
+        Me.PointsCount = value
+        Return Me.PointsCount
+    End Function
+
+#End Region
+
+End Class
+
