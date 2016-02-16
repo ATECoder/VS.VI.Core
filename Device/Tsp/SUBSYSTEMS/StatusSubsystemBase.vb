@@ -1,4 +1,3 @@
-Imports isr.Core.Pith.StackTraceExtensions
 ''' <summary> Defines a Status Subsystem for a TSP System. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -10,7 +9,7 @@ Imports isr.Core.Pith.StackTraceExtensions
 ''' </para> </license>
 ''' <history date="10/7/2013" by="David" revision=""> Created. </history>
 Public MustInherit Class StatusSubsystemBase
-    Inherits VI.SCPI.StatusSubsystemBase
+    Inherits VI.Scpi.StatusSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 

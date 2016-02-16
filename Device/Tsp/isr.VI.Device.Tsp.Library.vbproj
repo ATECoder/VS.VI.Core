@@ -90,6 +90,8 @@
     <Compile Include="ENTITIES\BufferElement.vb" />
     <Compile Include="ENTITIES\DeviceError.vb" />
     <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="SUBSYSTEMS\SlotSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SlotsSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\MultimeterSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\InteractiveSubsystem.vb" />

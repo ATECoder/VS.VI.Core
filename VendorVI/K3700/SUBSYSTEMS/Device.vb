@@ -107,6 +107,10 @@ Public Class Device
             RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
         End If
 
+        If Me.SlotsSubsystem IsNot Nothing Then
+            RemoveHandler Me.SlotsSubsystem.PropertyChanged, AddressOf SlotsSubsystemPropertyChanged
+        End If
+
         Me.Subsystems.DisposeItems()
     End Sub
 
@@ -127,6 +131,10 @@ Public Class Device
         Me.ChannelSubsystem = New ChannelSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.ChannelSubsystem)
         AddHandler Me.ChannelSubsystem.PropertyChanged, AddressOf ChannelSubsystemPropertyChanged
+
+        Me.SlotsSubsystem = New SlotsSubsystem(6, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.SlotsSubsystem)
+        AddHandler Me.SlotsSubsystem.PropertyChanged, AddressOf SlotsSubsystemPropertyChanged
 
         Me.MultimeterSubsystem = New MultimeterSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.MultimeterSubsystem)
@@ -277,6 +285,37 @@ Public Class Device
 
 #End Region
 
+#Region " SLOTS "
+
+    ''' <summary> Gets or sets the Slots Subsystem. </summary>
+    ''' <value> Slots Subsystem. </value>
+    Public Property SlotsSubsystem As SlotsSubsystem
+
+    ''' <summary> Slots subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Overloads Sub OnPropertyChanged(ByVal sender As SlotsSubsystem, ByVal propertyName As String)
+        Try
+            If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
+                Select Case propertyName
+                End Select
+            End If
+        Catch ex As Exception
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+                         propertyName, ex.Message)
+        End Try
+    End Sub
+
+    ''' <summary> Slots subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SlotsSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Me.OnPropertyChanged(TryCast(sender, SlotsSubsystem), e?.PropertyName)
+    End Sub
+
+#End Region
 #End Region
 
 #Region " SERVICE REQUEST "

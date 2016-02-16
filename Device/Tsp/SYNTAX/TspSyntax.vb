@@ -428,6 +428,20 @@
 
     End Module
 
+    Namespace Slot
+
+        Public Module SlotSyntax
+
+            Public Const SubsystemNameFormat As String = "_G.slot[{0}]"
+
+            Public Const InterlockStateFormat As String = "_G.slot[{0}].interlock.state"
+
+            Public Const PrintInterlockStateFormat As String = "_G.print(_G.string.format('%d',_G.slot[{0}].interlock.state))"
+
+        End Module
+
+    End Namespace
+
     Namespace Display
 
         Public Module DisplaySyntax

@@ -9,7 +9,7 @@
 ''' </para> </license>
 ''' <history date="10/7/2013" by="David" revision=""> Created. </history>
 Public MustInherit Class DisplaySubsystemBase
-    Inherits VI.SCPI.DisplaySubsystemBase
+    Inherits VI.DisplaySubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
@@ -63,10 +63,8 @@ Public MustInherit Class DisplaySubsystemBase
     '''           Some TSP instruments (e.g., 3706) may have no display. </summary>
     ''' <returns> <c>True</c> if the display exists; otherwise, <c>False</c>. </returns>
     Public Function ReadDisplayExists() As Boolean?
-        If Not Me.IsDisplayExists.HasValue Then
-            ' detect the display
-            Me.IsDisplayExists = Not Me.Session.IsNil(TspSyntax.Display.SubsystemName)
-        End If
+        ' detect the display
+        Me.IsDisplayExists = Not Me.Session.IsNil(TspSyntax.Display.SubsystemName)
         Return Me.IsDisplayExists
     End Function
 
