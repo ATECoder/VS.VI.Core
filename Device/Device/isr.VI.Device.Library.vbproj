@@ -93,6 +93,7 @@
     <Compile Include="PRIMITIVES\ArmLayer.vb" />
     <Compile Include="PRIMITIVES\CalculateLimit.vb" />
     <Compile Include="PRIMITIVES\ChannelListBuilder.vb" />
+    <Compile Include="PRIMITIVES\InterlockInfo.vb" />
     <Compile Include="PRIMITIVES\VersionInfo.vb" />
     <Compile Include="READING\ConstantsEnums.vb" />
     <Compile Include="READING\ReadingValue.vb" />

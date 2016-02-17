@@ -69,7 +69,7 @@ Public MustInherit Class SlotsSubsystemBase
             s.QuerySlotExists()
             If s.IsSlotExists Then
                 s.QuerySupportsInterlock()
-                s.QueryInterlockState()
+                s.QueryInterlocksState()
             End If
         Next
     End Sub

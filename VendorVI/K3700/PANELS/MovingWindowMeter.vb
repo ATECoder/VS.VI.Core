@@ -311,6 +311,7 @@ Public Class MovingWindowMeter
             Me.Invoke(New Action(Of UserState)(AddressOf OnWorkerProgressChanged), New Object() {userState})
         Else
             If userState IsNot Nothing Then
+                Me._WindowLabel.Text = Me.MovingAverage.Window.ToString
                 Me._AverageProgressBar.Value = Math.Min(Me._AverageProgressBar.Maximum, userState.PercentProgress)
                 Me._ElapsedTimeLabel.Text = userState.MovingAverage.ElapsedTime.ToString("mm\:ss\.ff", Globalization.CultureInfo.CurrentCulture)
                 Me._CountLabel.Text = userState.MovingAverage.Count.ToString
@@ -389,13 +390,6 @@ Public Class MovingWindowMeter
         If Not stopped Then Return False
 
         Dim payload As New WorkerPayLoad
-        Me.MovingAverage.Length = CInt(Me._LengthTextBox.Text)
-        Me.MovingAverage.Window = 0.01 * CDbl(Me._WindowTextBox.Text)
-        Me.MovingAverage.UpdateRule = Core.Engineering.MovingWindowUpdateRule.StopOnWithinWindow
-        Me.MovingAverage.TimeoutInterval = TimeSpan.FromSeconds(CDbl(Me._TimeoutTextBox.Text))
-
-        Me._WindowLabel.Text = Me.MovingAverage.Window.ToString
-
         payload.Device = Me.Device
         payload.MovingAverage = Me.MovingAverage
         payload.ClearKnownState()
@@ -438,6 +432,10 @@ Public Class MovingWindowMeter
         If button Is Nothing Then Return
         Try
             If button.Checked Then
+                Me.MovingAverage.Length = CInt(Me._LengthTextBox.Text)
+                Me.MovingAverage.Window = 0.01 * CDbl(Me._WindowTextBox.Text)
+                Me.MovingAverage.UpdateRule = Core.Engineering.MovingWindowUpdateRule.StopOnWithinWindow
+                Me.MovingAverage.TimeoutInterval = TimeSpan.FromSeconds(CDbl(Me._TimeoutTextBox.Text))
                 Dim started As Boolean = Me.StartMeasureAsync()
                 If Not started Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed starting the moving average worker")

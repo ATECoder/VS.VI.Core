@@ -1,3 +1,4 @@
+Imports isr.VI.Tsp
 ''' <summary> Defines a System Subsystem for a TSP System. </summary>
 ''' <license> (c) 2016 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -19,6 +20,7 @@ Public MustInherit Class SlotSubsystemBase
     Protected Sub New(ByVal slotNumber As Integer, ByVal statusSubsystem As StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me._SlotNumber = slotNumber
+        Me._EnumerateInterlocks(2)
     End Sub
 
     ''' <summary>
@@ -40,11 +42,13 @@ Public MustInherit Class SlotSubsystemBase
 
 #End Region
 
-#Region " SLOT OPERATIONS "
+#Region " SLOT NUMBER "
 
     ''' <summary> Gets or sets the slot number. </summary>
     ''' <value> The slot number. </value>
     Public ReadOnly Property SlotNumber As Integer
+
+#End Region
 
 #Region " EXISTS "
 
@@ -71,12 +75,28 @@ Public MustInherit Class SlotSubsystemBase
         Me.IsSlotExists = Not Me.Session.IsNil(String.Format(TspSyntax.Slot.SubsystemNameFormat, Me.SlotNumber))
         If Not Me.IsSlotExists.GetValueOrDefault(False) Then
             Me.SupportsInterlock = False
-            Me.InterlockState = 0
+            Me.InterlocksState = 0
         End If
         Return Me.IsSlotExists
     End Function
 
 #End Region
+
+#Region " INTERLOCKS "
+
+    ''' <summary> Gets or sets the interlocks. </summary>
+    ''' <value> The interlocks. </value>
+    Public ReadOnly Property Interlocks As InterlockCollection
+
+    ''' <summary> Enumerate interlocks. </summary>
+    ''' <remarks> David, 2/16/2016. </remarks>
+    ''' <param name="interlockCount"> Number of interlocks. </param>
+    Private Sub _EnumerateInterlocks(ByVal interlockCount As Integer)
+        Me._Interlocks = New InterlockCollection
+        For i As Integer = 1 To interlockCount
+            Me._Interlocks.Add(i)
+        Next
+    End Sub
 
 #Region " SUPPORTS INTERLOCK "
 
@@ -113,34 +133,33 @@ Public MustInherit Class SlotSubsystemBase
 
 #Region " INTERLOCAK STATE "
 
-    Private _InterlockState As Integer?
+    Private _InterlocksState As Integer?
 
-    ''' <summary> Gets or sets the state of the interlock. </summary>
+    ''' <summary> Gets or sets the state of the interlocks. </summary>
     ''' <value> The interlock state. </value>
-    Public Property InterlockState() As Integer?
+    Public Property InterlocksState() As Integer?
         Get
-            Return Me._InterlockState
+            Return Me._InterlocksState
         End Get
         Protected Set(ByVal value As Integer?)
-            If Not Integer?.Equals(value, Me.InterlockState) Then
-                Me._InterlockState = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.InterlockState))
+            If Not Integer?.Equals(value, Me.InterlocksState) Then
+                Me._InterlocksState = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.InterlocksState))
             End If
         End Set
     End Property
 
-    ''' <summary> Queries interlock state. </summary>
+    ''' <summary> Queries interlocks state. </summary>
     ''' <remarks> David, 2/15/2016. </remarks>
     ''' <returns> The interlock state. </returns>
-    Public Function QueryInterlockState() As Integer?
-        If Not Me.IsSlotExists.HasValue Then
-            Me.QuerySlotExists()
-        End If
+    Public Function QueryInterlocksState() As Integer?
+        If Not Me.IsSlotExists.HasValue Then Me.QuerySlotExists()
+        If Not Me.SupportsInterlock.HasValue Then Me.QuerySupportsInterlock()
         If Me.IsSlotExists.GetValueOrDefault(False) AndAlso Me.QuerySupportsInterlock.GetValueOrDefault(False) Then
-            Me.InterlockState = Me.Query(Me.InterlockState, String.Format(TspSyntax.Slot.PrintInterlockStateFormat, Me.SlotNumber))
-            ' Me.InterlockState = Me.Query(Me.InterlockState, $"_G.print(string.format('%d',{String.Format(TspSyntax.Slot.InterlockStateFormat, Me.SlotNumber)}))")
+            Me.InterlocksState = Me.Query(Me.InterlocksState, String.Format(TspSyntax.Slot.PrintInterlockStateFormat, Me.SlotNumber))
+            Me.Interlocks.UpdateInterlockState(Me.InterlocksState.GetValueOrDefault(0))
         End If
-        Return Me.InterlockState
+        Return Me.InterlocksState
     End Function
 
     ''' <summary> Query if 'interlockNumber' is interlock engaged. </summary>
@@ -149,19 +168,17 @@ Public MustInherit Class SlotSubsystemBase
     ''' <returns> <c>true</c> if interlock engaged; otherwise <c>false</c> </returns>
     Public Function IsInterlockEngaged(ByVal interlockNumber As Integer) As Boolean
         If Me.SupportsInterlock.GetValueOrDefault(False) Then
-            If Not Me.InterlockState.HasValue Then
-                Me.QueryInterlockState()
+            If Not Me.InterlocksState.HasValue Then
+                Me.QueryInterlocksState()
             End If
-            Return (Me.InterlockState.GetValueOrDefault(0) And interlockNumber) = interlockNumber
+            Return (Me.InterlocksState.GetValueOrDefault(0) And interlockNumber) = interlockNumber
         Else
             Return True
         End If
     End Function
 
 #End Region
-
 #End Region
 
-
-
 End Class
+
