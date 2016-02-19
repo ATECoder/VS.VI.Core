@@ -789,7 +789,7 @@ Public Class K2700Panel
             Me.ErrorProvider.Clear()
             updateChannelListComboBox()
             Me.Device.ClearExecutionState()
-            Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+            Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyClosedChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(1))
         Catch ex As Exception
             Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
@@ -809,7 +809,7 @@ Public Class K2700Panel
             Me.ErrorProvider.Clear()
             updateChannelListComboBox()
             Me.Device.ClearExecutionState()
-            Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+            Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyOpenChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(1))
         Catch ex As Exception
             Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
@@ -829,7 +829,7 @@ Public Class K2700Panel
             Me.ErrorProvider.Clear()
             updateChannelListComboBox()
             Me.Device.ClearExecutionState()
-            Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+            Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(1))
             Me.Device.RouteSubsystem.ApplyClosedChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(1))
             ' this works only if a single channel:
@@ -851,7 +851,7 @@ Public Class K2700Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             Me.Device.ClearExecutionState()
-            Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+            Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(1))
         Catch ex As Exception
             Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)

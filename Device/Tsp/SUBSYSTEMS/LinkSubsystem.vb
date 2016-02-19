@@ -186,8 +186,7 @@ Public MustInherit Class LinkSubsystem
     ''' <param name="groupNumber"> Specifies the group number. That would be the same as the TSP
     ''' Link group number for the node. </param>
     Public Overloads Sub EnableWaitComplete(ByVal groupNumber As Integer)
-        Me.StatusSubsystem.EnableServiceRequestComplete(VI.StandardEvents.All And Not VI.StandardEvents.RequestControl,
-                                        VI.ServiceRequests.StandardEvent)
+        Me.StatusSubsystem.EnableWaitComplete()
         Me.Session.WriteLine(TspSyntax.WaitGroupCommandFormat, groupNumber)
     End Sub
 

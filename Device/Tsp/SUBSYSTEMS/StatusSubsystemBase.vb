@@ -57,14 +57,6 @@ Public MustInherit Class StatusSubsystemBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Try
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing error queue;. ")
-            ' clear the error queue on the controller node only.
-            Me.ClearErrorQueue()
-        Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Exception ignored clearing error queue;. Details: {0}.", ex)
-        End Try
 
         Try
             ' flush the input buffer in case the instrument has some leftovers.
@@ -90,28 +82,11 @@ Public MustInherit Class StatusSubsystemBase
                                "Exception ignored clearing read buffer;. Details: {0}.", ex)
         End Try
 
-        Try
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Enabling wait completion;. ")
-            ' clear the error queue on the controller node only.
-            Me.EnableWaitComplete()
-        Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Exception enabling wait completion;. Details: {0}.", ex)
-        End Try
-
-    End Sub
-
-    ''' <summary> Sets the subsystem to its reset state. </summary>
-    Public Overrides Sub ResetKnownState()
-
-        MyBase.ResetKnownState()
-
-        ' get prompt and errors status
-
         ' enable service request on all events
-        Me.EnableServiceRequest(StandardEvents.All, ServiceRequests.All)
+        ' this is part of INIT already. Me.EnableServiceRequest(StandardEvents.All, ServiceRequests.All)
         Me.OperationCompleted = Me.QueryOperationCompleted
 
+        ' get prompt and errors status
         Me.SerialNumber = New Long?
         Me.SerialNumberReading = ""
 

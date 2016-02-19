@@ -48,7 +48,20 @@ Public MustInherit Class StatusSubsystemBase
     '''           </para></remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me.QueryIdentity()
+        Try
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Enabling wait completion;. ")
+            Me.EnableWaitComplete()
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                               "Exception enabling wait completion;. Details: {0}.", ex)
+        End Try
+        Try
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading identity;. ")
+            Me.QueryIdentity()
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                               "Exception reading identity;. Details: {0}.", ex)
+        End Try
     End Sub
 
     ''' <summary> Sets the subsystem to its preset state. </summary>

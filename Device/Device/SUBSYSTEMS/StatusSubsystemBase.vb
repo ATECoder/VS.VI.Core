@@ -110,9 +110,16 @@ Public MustInherit Class StatusSubsystemBase
     ''' <remarks> Additional Actions: <para>
     '''           Clears Error Queue.
     '''           </para></remarks>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me.ClearErrorQueue()
+        Try
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing error queue;. ")
+            Me.ClearErrorQueue()
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                               "Exception ignored clearing error queue;. Details: {0}.", ex)
+        End Try
     End Sub
 
     ''' <summary> Gets or sets the reset known state command. </summary>
@@ -613,10 +620,30 @@ Public MustInherit Class StatusSubsystemBase
         Return Me.OperationCompleted
     End Function
 
-    ''' <summary> Enabled detection of completion. </summary>
+    ''' <summary> Gets the standard event wait complete bitmask. </summary>
+    ''' <exception cref="TimeoutException"> Thrown when a Timeout error condition occurs. </exception>
+    ''' <value> The standard event wait complete bitmask. </value>
     ''' <remarks> 3475. Add Or VI.Ieee4882.ServiceRequests.OperationEvent. </remarks>
+    Public Property StandardEventWaitCompleteBitmask As StandardEvents = StandardEvents.All And Not StandardEvents.RequestControl
+
+    ''' <summary> Gets the service request wait complete bitmask. </summary>
+    ''' <exception cref="TimeoutException"> Thrown when a Timeout error condition occurs. </exception>
+    ''' <value> The service request wait complete bitmask. </value>
+    Public Property ServiceRequestWaitCompleteBitmask As ServiceRequests = ServiceRequests.StandardEvent
+
+    ''' <summary> Enabled detection of completion. </summary>
+    ''' <remarks> David, 2/18/2016. </remarks>
+    ''' <param name="standardEventEnableBitmask">  Specifies standard events will issue an SRQ. </param>
+    ''' <param name="serviceRequestEnableBitmask"> Specifies which status registers will issue an
+    '''                                            SRQ. </param>
+    Public Sub EnableWaitComplete(ByVal standardEventEnableBitmask As StandardEvents,
+                                  ByVal serviceRequestEnableBitmask As ServiceRequests)
+        Me.EnableServiceRequestComplete(standardEventEnableBitmask, serviceRequestEnableBitmask)
+    End Sub
+
+    ''' <summary> Enabled detection of completion. </summary>
     Public Sub EnableWaitComplete()
-        Me.EnableServiceRequestComplete(StandardEvents.All And Not StandardEvents.RequestControl, ServiceRequests.StandardEvent)
+        Me.EnableWaitComplete(Me.StandardEventWaitCompleteBitmask, Me.ServiceRequestWaitCompleteBitmask)
     End Sub
 
     ''' <summary> Awaits for service request. Use this method to wait for an operation to complete on

@@ -211,7 +211,7 @@ Public Class DummySession
     ''' <summary> Enables the service request. </summary>
     ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub EnableServiceRequest()
-        If Not IsServiceRequestEventEnabled Then
+        If Not Me.IsServiceRequestEventEnabled Then
             Me._LastNativeError = DummyNativeError.Success
             Me.EnabledEventType = True
         End If
