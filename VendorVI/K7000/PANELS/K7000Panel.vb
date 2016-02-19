@@ -633,7 +633,9 @@ Public Class K7000Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             Me.Device.ClearExecutionState()
-            Me.Device.RouteSubsystem.SaveChannelPattern(Int32.Parse(Me._MemoryLocationTextBox.Text, Globalization.CultureInfo.CurrentCulture))
+            Me.Device.StatusSubsystem.EnableWaitComplete()
+            Me.Device.RouteSubsystem.SaveChannelPattern(Int32.Parse(Me._MemoryLocationTextBox.Text, Globalization.CultureInfo.CurrentCulture),
+                                                        TimeSpan.FromSeconds(1))
         Catch ex As Exception
             Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)

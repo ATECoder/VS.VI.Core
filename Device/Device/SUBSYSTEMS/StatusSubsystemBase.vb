@@ -238,13 +238,14 @@ Public MustInherit Class StatusSubsystemBase
     Public Overridable Sub ClearErrorQueue()
         Me.ClearErrorCache()
         Me.Session.Execute(Me.ClearErrorQueueCommand)
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.DeviceErrors))
     End Sub
 
     ''' <summary> Clears the error cache. </summary>
     Public Overridable Sub ClearErrorCache()
         Me.DeviceErrorQueue.Clear()
         Me.DeviceErrorBuilder = New System.Text.StringBuilder
+        Me.AsyncNotifyPropertyChanged(NameOf(Me.DeviceErrors))
+        Me.AsyncNotifyPropertyChanged(NameOf(Me.LastDeviceError))
     End Sub
 
     ''' <summary> The device errors. </summary>
@@ -592,19 +593,6 @@ Public MustInherit Class StatusSubsystemBase
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function QueryOperationCompleted(ByVal timeout As TimeSpan) As Boolean?
         Me.OperationCompleted = Me.Session.Execute(AddressOf Me.QueryOperationCompleted, timeout)
-        If Not String.IsNullOrWhiteSpace(Me.OperationCompletedQueryCommand) Then
-            Try
-                Me.Session.StoreTimeout(timeout)
-                Me.QueryOperationCompleted()
-            Catch
-                Throw
-            Finally
-                Me.Session.RestoreTimeout()
-            End Try
-        Else
-            Me.OperationCompleted = True
-        End If
-        Return Me.OperationCompleted
     End Function
 
     ''' <summary> Issues the operation completion query, waits and returns a reply. </summary>

@@ -248,10 +248,12 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property RecallChannelPatternCommandFormat As String
 
     ''' <summary> Recalls channel pattern from a memory location. </summary>
-    ''' <exception cref="ArgumentNullException" guarantee="strong"> . </exception>
+    ''' <remarks> David, 2/19/2016. </remarks>
     ''' <param name="memoryLocation"> Specifies a memory location between 1 and 100. </param>
-    Public Sub RecallChannelPattern(ByVal memoryLocation As Integer)
+    ''' <param name="timeout">        The timeout. </param>
+    Public Sub RecallChannelPattern(ByVal memoryLocation As Integer, ByVal timeout As TimeSpan)
         Me.Session.Execute(String.Format(Me.RecallChannelPatternCommandFormat, memoryLocation))
+        If timeout > TimeSpan.Zero Then Me.StatusSubsystem.AwaitOperationCompleted(timeout)
     End Sub
 
     ''' <summary> Gets the save channel pattern command format. </summary>
@@ -259,10 +261,12 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property SaveChannelPatternCommandFormat As String
 
     ''' <summary> Saves existing channel pattern into a memory location. </summary>
-    ''' <exception cref="ArgumentNullException" guarantee="strong"> . </exception>
+    ''' <remarks> David, 2/19/2016. </remarks>
     ''' <param name="memoryLocation"> Specifies a memory location between 1 and 100. </param>
-    Public Sub SaveChannelPattern(ByVal memoryLocation As Integer)
+    ''' <param name="timeout">        The timeout. </param>
+    Public Sub SaveChannelPattern(ByVal memoryLocation As Integer, ByVal timeout As TimeSpan)
         Me.Session.Execute(String.Format(Me.SaveChannelPatternCommandFormat, memoryLocation))
+        If timeout > TimeSpan.Zero Then Me.StatusSubsystem.AwaitOperationCompleted(timeout)
     End Sub
 
     ''' <summary> Saves a channel list to a memory item. </summary>
@@ -271,7 +275,7 @@ Public MustInherit Class RouteSubsystemBase
     Public Function SaveChannelPattern(ByVal channelList As String, ByVal memoryLocation As Integer, ByVal timeout As TimeSpan) As Integer
         If Not String.IsNullOrWhiteSpace(channelList) Then
             Me.WriteClosedChannels(channelList, timeout)
-            Me.SaveChannelPattern(memoryLocation)
+            Me.SaveChannelPattern(memoryLocation, timeout)
             Me.WriteOpenAll(timeout)
         End If
         Return memoryLocation
