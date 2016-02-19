@@ -90,7 +90,7 @@ Public Class DeviceTest
             actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Source Measure")
             Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session;")
             ' do a device clear and reset.
-            target.ResetAndClear()
+            target.ResetClearInit()
             actualBoolean = True
 
             ' output should be off after a device clear.
@@ -138,7 +138,7 @@ Public Class DeviceTest
             target.Session.Clear()
 
             expectedBoolean = True
-            target.ResetAndClear()
+            target.ResetClearInit()
             actualBoolean = True
             Assert.AreEqual(expectedBoolean, actualBoolean, "Reset;")
 

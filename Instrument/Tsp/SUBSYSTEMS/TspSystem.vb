@@ -96,10 +96,12 @@ Public Class TspSystem
         Me.Device.ClearExecutionState()
     End Sub
 
-    ''' <summary> Resets and clears the subsystem. Starts with issuing a selective-device-clear, reset
-    ''' (RST), Clear Status (CLS, and clear error queue). </summary>
-    Public Sub ResetAndClear()
-        Me.Device.ResetAndClear()
+    ''' <summary>
+    ''' Resets, clears and initializes the device. Starts with issuing a selective-device-clear, reset (RST),
+    ''' Clear Status (CLS, and clear error queue) and initialize.
+    ''' </summary>
+    Public Sub ResetClearInit()
+        Me.Device.ResetClearInit()
     End Sub
 
     ''' <summary> Resets the Device to its known state. </summary>

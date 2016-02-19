@@ -278,10 +278,10 @@ Public Class TestPanel
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceSelectorConnector.Clear
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
-                           "Clearing resource;. Clearing the resource {0}", Me._ResourceSelectorConnector.SelectedResourceName)
-        Me.TspSystem.Device.ResetAndClear()
+                           "Resetting, clearing and initializing resource;. {0}", Me._ResourceSelectorConnector.SelectedResourceName)
+        Me.TspSystem.Device.ResetClearInit()
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
-                           "Resource cleared;. Resource {0} cleared", Me._ResourceSelectorConnector.SelectedResourceName)
+                           "Resource reset, initialized and cleared;. {0}", Me._ResourceSelectorConnector.SelectedResourceName)
     End Sub
 
     ''' <summary> Connects the instrument by calling a propagating connect command. </summary>
@@ -445,8 +445,8 @@ Public Class TestPanel
                         Me.receive(True)
                     End If
 
-                    Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Resetting and clearing the device;. ")
-                    Me.TspSystem.Device.ResetAndClear()
+                    Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Resetting, clearing and initializing the device;. ")
+                    Me.TspSystem.Device.ResetClearInit()
 
                     ' set the error and prompt check boxes.
                     Me.TspSystem.Device.StatusSubsystem.QueryIdentity()

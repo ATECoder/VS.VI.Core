@@ -120,7 +120,7 @@ Public Class ScpiPowerSupplyTest
         Using target As PowerSupply.Device = New PowerSupply.Device()
             actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply")
             Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session;")
-            target.ResetAndClear()
+            target.ResetClearInit()
             actualBoolean = True
             Assert.AreEqual(expectedBoolean, actualBoolean, "Reset;")
             expectedString = "Agilent"
@@ -161,7 +161,7 @@ Public Class ScpiPowerSupplyTest
         Using target As PowerSupply.Device = New PowerSupply.Device()
             actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply")
             Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session;")
-            target.ResetAndClear()
+            target.ResetClearInit()
             actualBoolean = True
             Assert.AreEqual(expectedBoolean, actualBoolean, "Reset;")
             expectedString = "Agilent"

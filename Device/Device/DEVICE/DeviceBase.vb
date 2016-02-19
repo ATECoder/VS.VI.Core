@@ -227,18 +227,18 @@ Public MustInherit Class DeviceBase
     End Property
 
     ''' <summary>
-    ''' Resets and clears the subsystem. Starts with issuing a selective-device-clear, reset (RST),
-    ''' Clear Status (CLS, and clear error queue).
+    ''' Resets, clears and initializes the device. Starts with issuing a selective-device-clear, reset (RST),
+    ''' Clear Status (CLS, and clear error queue) and initialize.
     ''' </summary>
     ''' <remarks> David, 1/8/2016. </remarks>
     ''' <param name="deviceClearRefractoryPeriod"> The device clear refractory period. </param>
     ''' <param name="resetRefractoryPeriod">       The reset refractory period. </param>
     ''' <param name="initRefractoryPeriod">        The initialize refractory period. </param>
     ''' <param name="clearRefractoryPeriod">       The clear refractory period. </param>
-    Public Sub ResetAndClear(ByVal deviceClearRefractoryPeriod As TimeSpan,
-                             ByVal resetRefractoryPeriod As TimeSpan,
-                             ByVal initRefractoryPeriod As TimeSpan,
-                             ByVal clearRefractoryPeriod As TimeSpan)
+    Public Sub ResetClearInit(ByVal deviceClearRefractoryPeriod As TimeSpan,
+                              ByVal resetRefractoryPeriod As TimeSpan,
+                              ByVal initRefractoryPeriod As TimeSpan,
+                              ByVal clearRefractoryPeriod As TimeSpan)
 
         ' issues selective device clear.
         Me.ClearActiveState()
@@ -248,32 +248,37 @@ Public MustInherit Class DeviceBase
         Me.ResetKnownState()
         If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(resetRefractoryPeriod)
 
-        ' initialize the device
-        Me.InitKnownState()
-        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(initRefractoryPeriod)
-
         ' Clear the device Status and set more defaults
         Me.ClearExecutionState()
         If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(clearRefractoryPeriod)
 
+        ' initialize the device must be done after clear (5892)
+        Me.InitKnownState()
+        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(initRefractoryPeriod)
+
+
     End Sub
 
-    ''' <summary> Resets and clears the device. Starts with issuing a selective-device-clear, reset
-    ''' (RST), Clear Status (CLS, and clear error queue). </summary>
-    Public Overridable Sub ResetAndClear()
-        Me.ResetAndClear(Me.DeviceClearRefractoryPeriod, Me.ResetRefractoryPeriod,
-                         Me.InitRefractoryPeriod, Me.ClearRefractoryPeriod)
+    ''' <summary>
+    ''' Resets, clears and initializes the device. Starts with issuing a selective-device-clear, reset (RST),
+    ''' Clear Status (CLS, and clear error queue) and initialize.
+    ''' </summary>
+    Public Overridable Sub ResetClearInit()
+        Me.ResetClearInit(Me.DeviceClearRefractoryPeriod, Me.ResetRefractoryPeriod,
+                          Me.InitRefractoryPeriod, Me.ClearRefractoryPeriod)
     End Sub
 
-    ''' <summary> Resets and clears the subsystem. Starts with issuing a selective-device-clear, reset
-    ''' (RST), Clear Status (CLS, and clear error queue). </summary>
+    ''' <summary>
+    ''' Resets, clears and initializes the device. Starts with issuing a selective-device-clear, reset (RST),
+    ''' Clear Status (CLS, and clear error queue) and initialize.
+    ''' </summary>
     ''' <param name="timeout"> The timeout to use. This allows using a longer timeout than the
     ''' minimal timeout set for the session. Typically, a source meter requires a 5000 milliseconds
     ''' timeout. </param>
-    Public Overridable Sub ResetAndClear(ByVal timeout As TimeSpan)
+    Public Overridable Sub ResetClearInit(ByVal timeout As TimeSpan)
         Try
             Me.Session.StoreTimeout(timeout)
-            Me.ResetAndClear()
+            Me.ResetClearInit()
         Catch
             Throw
         Finally
@@ -485,6 +490,9 @@ Public MustInherit Class DeviceBase
         ' add listens and enable publishing while initializing the device.
         Me.AddSubsystemListeners()
 
+        ' 2/18/16
+        Me.ResetClearInit()
+#If False Then
         ' reset device
         Me.ResetKnownState()
         If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(ResetRefractoryPeriod)
@@ -492,6 +500,7 @@ Public MustInherit Class DeviceBase
         ' initialize the device
         Me.InitKnownState()
         If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(InitRefractoryPeriod)
+#End If
 
     End Sub
 

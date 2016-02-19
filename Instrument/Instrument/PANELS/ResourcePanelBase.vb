@@ -665,10 +665,10 @@ Public Class ResourcePanelBase
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles Connector.Clear
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                           "Clearing resource;. Clearing the resource {0}", Me.Connector.SelectedResourceName)
-        Me.Device.ResetAndClear()
+                           "Resetting, clearing and initializing resource to know state;. {0}", Me.Connector.SelectedResourceName)
+        Me.Device.ResetClearInit()
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                           "Resource cleared;. Resource {0} cleared", Me.Connector.SelectedResourceName)
+                           "Resource reset, cleared and initialized;. {0}", Me.Connector.SelectedResourceName)
     End Sub
 
     ''' <summary> Displays available instrument names. </summary>
