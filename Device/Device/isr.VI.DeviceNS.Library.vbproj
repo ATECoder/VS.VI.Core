@@ -28,8 +28,7 @@
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <BaseAddress>961548288</BaseAddress>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>NI_VISA,NI_VISA_NS</DefineConstants>
     <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\FromAllRules2015.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <Prefer32Bit>false</Prefer32Bit>
@@ -84,7 +83,7 @@
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="DEVICE\DeviceError.vb" />
-    <Compile Include="DEVICE\SessionFactoryNational.vb" />
+    <Compile Include="DEVICE\SessionFactoryNS.vb" />
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="DEVICE\DeviceBase.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -157,6 +156,10 @@
     <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
       <Project>{D2C9A599-79DD-4CFA-8614-BE3C444EB347}</Project>
       <Name>Arebis.TypedUnits.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Resource\National.VisaNS\isr.VI.National.VisaNS.Library.vbproj">
+      <Project>{34b4d518-34ea-4f51-a456-903e560a33b1}</Project>
+      <Name>isr.VI.National.VisaNS.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Resource\National.Visa\isr.VI.National.Visa.Library.vbproj">
       <Project>{9861a7b2-6651-43b3-a5f1-ad852a26589e}</Project>

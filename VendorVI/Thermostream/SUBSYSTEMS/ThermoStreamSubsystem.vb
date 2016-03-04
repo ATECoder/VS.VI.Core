@@ -753,18 +753,16 @@ Public Class ThermostreamSubsystem
         Application.DoEvents()
     End Sub
 
-    ''' <summary> Conditional move first. This assumes the head is still up. </summary>
+    ''' <summary> Conditional apply setpoint. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="thermalProfileSetpointNumber"> The thermal profile setpoint number. </param>
     ''' <param name="countdown">                    The countdown. </param>
     ''' <param name="e">                            Cancel event information. </param>
-    Public Sub ConditionalMoveFirst(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
-                                        ByVal additionalInfo As String,
-                                        ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Sub ConditionalApplySetpoint(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
+                                        ByVal additionalInfo As String, ByVal e As isr.Core.Pith.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException("e")
-        If String.IsNullOrWhiteSpace(additionalInfo) Then additionalInfo = "selecting first profile @ head up; clear to start"
-        Me.ValidateHandlerHeadUp(e)
         If Not e.Cancel Then
+            If String.IsNullOrWhiteSpace(additionalInfo) Then additionalInfo = $"applying setpoint {thermalProfileSetpointNumber};"
             Me.SelectActiveThermalSetpoint(thermalProfileSetpointNumber, e)
             If Not e.Cancel Then
                 Me.ApplyActiveThermalSetpoint()
@@ -774,9 +772,26 @@ Public Class ThermostreamSubsystem
                     countdown -= 1
                 Loop Until Not e.Cancel OrElse countdown = 0
             End If
+            If e.Cancel Then
+                e.CancelDetails("Thermo-Stream failed {0};. Details: {1}", additionalInfo, e.Details)
+            End If
         End If
+    End Sub
+
+    ''' <summary> Conditional move first. This assumes the head is still up. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="thermalProfileSetpointNumber"> The thermal profile setpoint number. </param>
+    ''' <param name="countdown">                    The countdown. </param>
+    ''' <param name="e">                            Cancel event information. </param>
+    Public Sub ConditionalMoveFirst1(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
+                                    ByVal additionalInfo As String, ByVal e As isr.Core.Pith.CancelEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If String.IsNullOrWhiteSpace(additionalInfo) Then additionalInfo = "selecting first profile @ head up; clear to start"
+        Me.ValidateHandlerHeadUp(e)
         If e.Cancel Then
-            e.CancelDetails("Thermo-Stream is unable to start while {0};. Details {1}", additionalInfo, e.Details)
+            e.CancelDetails("Thermo-Stream is unable to start while {0};. Details: {1}", additionalInfo, e.Details)
+        Else
+            Me.ConditionalApplySetpoint(thermalProfileSetpointNumber, countdown, additionalInfo, e)
         End If
     End Sub
 
@@ -785,25 +800,16 @@ Public Class ThermostreamSubsystem
     ''' <param name="thermalProfileSetpointNumber"> The thermal profile setpoint number. </param>
     ''' <param name="countdown">                    The countdown. </param>
     ''' <param name="e">                            Cancel event information. </param>
-    Public Sub ConditionalMoveNext(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
-                                       ByVal additionalInfo As String,
-                                       ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Sub ConditionalMoveNext1(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
+                                   ByVal additionalInfo As String,
+                                   ByVal e As isr.Core.Pith.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException("e")
         If String.IsNullOrWhiteSpace(additionalInfo) Then additionalInfo = "moving to next profile"
         Me.ValidateHandlerHeadDown(e)
-        If Not e.Cancel Then
-            Me.SelectActiveThermalSetpoint(thermalProfileSetpointNumber, e)
-            If Not e.Cancel Then
-                Me.ApplyActiveThermalSetpoint()
-                Do
-                    Diagnostics.Stopwatch.StartNew.Wait(Me.CommandRefractoryTimeSpan)
-                    Me.ValidateThermalSetpoint(Me.ThermalProfile.Item(thermalProfileSetpointNumber), e)
-                    countdown -= 1
-                Loop Until Not e.Cancel OrElse countdown = 0
-            End If
-        End If
         If e.Cancel Then
-            e.CancelDetails("Thermo-Stream is unable to start while {0};. Details {1}", additionalInfo, e.Details)
+            e.CancelDetails("Thermo-Stream is unable to start while {0};. Details: {1}", additionalInfo, e.Details)
+        Else
+            Me.ConditionalApplySetpoint(thermalProfileSetpointNumber, countdown, additionalInfo, e)
         End If
     End Sub
 

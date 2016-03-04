@@ -179,7 +179,7 @@ Public Class InstrumentInterfaceForm
                                     Me.Session.WriteLine(command)
                                 Catch ex As NativeException
                                     Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                                       $"{lastAction} failed;. Details {ex.ToString}.")
+                                                       $"{lastAction} failed;. Details: {ex.ToString}.")
                                 End Try
                             End If
                         Next
@@ -360,7 +360,7 @@ Public Class InstrumentInterfaceForm
             Me.Session.Clear()
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{lastAction} failed;. Details {ex.ToString}")
+                               $"{lastAction} failed;. Details: {ex.ToString}")
         End Try
     End Sub
 

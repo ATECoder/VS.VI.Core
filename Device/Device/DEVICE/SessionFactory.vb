@@ -50,20 +50,4 @@ Public Class SessionFactory
     ''' <value> The factory. </value>
     Public Property Factory As SessionFactoryBase
 
-#If NI_VISA Then
-    ''' <summary> Use national visa session factor. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
-    Public Sub UseNationalVisaSessionFactory()
-        Me.Factory = New isr.VI.National.Visa.SessionFactory
-    End Sub
-#End If
-
-#If NI_VISA_NS Then
-    ''' <summary> Use national legacy visa session factor. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
-    Public Sub UseNationalLegacyVisaSessionFactory()
-        Me.Factory = New isr.VI.National.VisaNS.SessionFactory
-    End Sub
-#End If
-
 End Class
