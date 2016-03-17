@@ -61,9 +61,7 @@ Public MustInherit Class NodeEntityBase
     ''' <param name="nodeNumber"> The node number. </param>
     ''' <returns> <c>True</c> is node exists; otherwise, <c>False</c>. </returns>
     Public Shared Function NodeExists(ByVal session As SessionBase, ByVal nodeNumber As Integer) As Boolean
-        If session Is Nothing Then
-            Throw New ArgumentNullException("session")
-        End If
+        If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Return Not session.IsNil("node[{0}]", nodeNumber)
     End Function
 
@@ -103,9 +101,7 @@ Public MustInherit Class NodeEntityBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="session"> The session. </param>
     Public Sub QueryDataQueueCapacity(ByVal session As SessionBase)
-        If session Is Nothing Then
-            Throw New ArgumentNullException("session")
-        End If
+        If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Me.DataQueueCapacity = session.QueryPrint(0I, 1, "node[{0}].dataqueue.capacity", Me.Number)
     End Sub
 
@@ -117,9 +113,7 @@ Public MustInherit Class NodeEntityBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="session"> The session. </param>
     Public Sub QueryDataQueueCount(ByVal session As SessionBase)
-        If session Is Nothing Then
-            Throw New ArgumentNullException("session")
-        End If
+        If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Me.DataQueueCount = session.QueryPrint(0I, 1, "node[{0}].dataqueue.count", Me.Number)
     End Sub
 
@@ -131,9 +125,7 @@ Public MustInherit Class NodeEntityBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="session"> The session. </param>
     Public Sub QueryFirmwareVersion(ByVal session As SessionBase)
-        If session Is Nothing Then
-            Throw New ArgumentNullException("session")
-        End If
+        If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Me.FirmwareVersion = session.QueryPrintTrimEnd("node[{0}].revision", Me.Number)
     End Sub
 
@@ -173,18 +165,14 @@ Public MustInherit Class NodeEntityBase
     ''' <param name="nodeNumber"> The node number. </param>
     ''' <returns> The model number. </returns>
     Public Shared Function QueryModelNumber(ByVal session As SessionBase, ByVal nodeNumber As Integer) As String
-        If session Is Nothing Then
-            Throw New ArgumentNullException("session")
-        End If
+        If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Return session.QueryPrintTrimEnd("print(node[{0}].model)", nodeNumber)
     End Function
 
     ''' <summary> Queries controller node model. </summary>
     ''' <returns> The controller node model. </returns>
     Public Shared Function QueryControllerNodeModel(ByVal session As SessionBase) As String
-        If session Is Nothing Then
-            Throw New ArgumentNullException("session")
-        End If
+        If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Return session.QueryPrintTrimEnd("localnode.model")
     End Function
 
@@ -194,9 +182,7 @@ Public MustInherit Class NodeEntityBase
     ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="session"> The session. </param>
     Public Sub QueryModelNumber(ByVal session As SessionBase)
-        If session Is Nothing Then
-            Throw New ArgumentNullException("session")
-        End If
+        If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         If Me.Number = Me.ControllerNodeNumber Then
             Me._modelNumber = NodeEntityBase.QueryControllerNodeModel(session)
         Else
@@ -220,7 +206,7 @@ Public MustInherit Class NodeEntityBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="session"> The session. </param>
     Public Sub QuerySerialNumber(ByVal session As SessionBase)
-        If session Is Nothing Then Throw New ArgumentNullException("session")
+        If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Me.SerialNumber = session.QueryPrintTrimEnd("node[{0}].serialno", Me.Number)
     End Sub
 

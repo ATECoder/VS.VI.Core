@@ -18,15 +18,6 @@ Public Class CalculateLimit
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
-        Me.ComplianceFailureBits = 15
-        Me.IncomplianceCondition = True
-        Me.FailureBits = 15
-        Me.LowerLimit = New Double?
-        Me.LowerLimitFailureBits = 15
-        Me.PassBits = 15
-        Me.Enabled = False
-        Me.UpperLimit = New Double?
-        Me.UpperLimitFailureBits = 15
     End Sub
 
 #End Region
@@ -47,12 +38,19 @@ Public Class CalculateLimit
     End Sub
 
     ''' <summary> Sets values to their known execution reset state. </summary>
+    Private Sub _ResetKnownState()
+        Me.LimitFailed = New Boolean?
+        Me.Enabled = False
+        Me.UpperLimit = 1
+        Me.UpperLimitFailureBits = 15
+        Me.LowerLimit = -1
+        Me.LowerLimitFailureBits = 15
+        Me.PassBits = 15
+    End Sub
+
+    ''' <summary> Sets values to their known execution reset state. </summary>
     Public Sub ResetKnownState() Implements IPresettable.ResetKnownState
-        Me.Enabled = False
-        Me.IncomplianceCondition = True
-        Me.LowerLimit = New Double?
-        Me.Enabled = False
-        Me.UpperLimit = New Double?
+        Me._ResetKnownState()
     End Sub
 
 #End Region
@@ -70,63 +68,20 @@ Public Class CalculateLimit
 
 #End Region
 
-#Region " COMPLIANCE BITS "
-
-    ''' <summary> The Compliance Failure Bit patterns. </summary>
-    Private _ComplianceFailureBits As Integer?
-
-    ''' <summary>Gets or sets the fail bit pattern for compliance (15). </summary>
-    ''' <value> The Compliance Failure Bit pattern or none if not set or unknown. </value>
-    Public Overloads Property ComplianceFailureBits As Integer?
-        Get
-            Return Me._ComplianceFailureBits
-        End Get
-        Set(ByVal value As Integer?)
-            If Not Nullable.Equals(Me.ComplianceFailureBits, value) Then
-                Me._ComplianceFailureBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ComplianceFailureBits))
-            End If
-        End Set
-    End Property
-
-#End Region
-
-#Region " IN COMPLIANCE CONDITION "
-
-    ''' <summary> The In Compliance Condition. </summary>
-    Private _IncomplianceCondition As Boolean?
-
-    ''' <summary> Gets or sets the cached the Compliance condition (In/Out) (in) state. </summary>
-    ''' <value> <c>True</c> if the In Compliance Condition is In; <c>False</c> if out, or none if
-    ''' unknown or not set. </value>
-    Public Overloads Property IncomplianceCondition As Boolean?
-        Get
-            Return Me._IncomplianceCondition
-        End Get
-        Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.IncomplianceCondition, value) Then
-                Me._IncomplianceCondition = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IncomplianceCondition))
-            End If
-        End Set
-    End Property
-
-#End Region
-
 #Region " ENABLED "
 
     ''' <summary> The on/off state. </summary>
-    Private _Enabled As Boolean?
+    Private _Enabled As Boolean
 
     ''' <summary> Gets or sets the cached on/off (off = False) state. </summary>
     ''' <value> <c>True</c> if the Enabled; <c>False</c> if not, or none if
     ''' unknown or not set. </value>
-    Public Overloads Property Enabled As Boolean?
+    Public Overloads Property Enabled As Boolean
         Get
             Return Me._Enabled
         End Get
-        Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.Enabled, value) Then
+        Set(ByVal value As Boolean)
+            If Me.Enabled <> value Then
                 Me._Enabled = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.Enabled))
             End If
@@ -138,16 +93,16 @@ Public Class CalculateLimit
 #Region " FAILURE BITS "
 
     ''' <summary> The Failure Bits. </summary>
-    Private _FailureBits As Integer?
+    Private _FailureBits As Integer
 
     ''' <summary>Gets or sets the Output fail bit pattern (15). </summary>
     ''' <value> The Failure Bits or none if not set or unknown. </value>
-    Public Overloads Property FailureBits As Integer?
+    Public Overloads Property FailureBits As Integer
         Get
             Return Me._FailureBits
         End Get
-        Set(ByVal value As Integer?)
-            If Not Nullable.Equals(Me.FailureBits, value) Then
+        Set(ByVal value As Integer)
+            If Me.FailureBits <> value Then
                 Me._FailureBits = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.FailureBits))
             End If
@@ -169,7 +124,7 @@ Public Class CalculateLimit
             Return Me._LimitFailed
         End Get
         Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.LimitFailed, value) Then
+            If Not Boolean.Equals(Me.LimitFailed, value) Then
                 Me._LimitFailed = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.LimitFailed))
             End If
@@ -181,16 +136,16 @@ Public Class CalculateLimit
 #Region " LOWER LIMIT "
 
     ''' <summary> The Lower Limit. </summary>
-    Private _LowerLimit As Double?
+    Private _LowerLimit As Double
 
     ''' <summary>Gets or sets the lower limit. </summary>
     ''' <value> The Lower Limit or none if not set or unknown. </value>
-    Public Overloads Property LowerLimit As Double?
+    Public Overloads Property LowerLimit As Double
         Get
             Return Me._LowerLimit
         End Get
-        Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.LowerLimit, value) Then
+        Set(ByVal value As Double)
+            If Me.LowerLimit <> value Then
                 Me._LowerLimit = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.LowerLimit))
             End If
@@ -202,16 +157,16 @@ Public Class CalculateLimit
 #Region " LOWER LIMIT FAILURE BITS "
 
     ''' <summary> The Lower Limit Failure Bits. </summary>
-    Private _LowerLimitFailureBits As Integer?
+    Private _LowerLimitFailureBits As Integer
 
     ''' <summary>Gets or sets the lower limit failure bit pattern (15). </summary>
     ''' <value> The Lower Limit FailureBits or none if not set or unknown. </value>
-    Public Overloads Property LowerLimitFailureBits As Integer?
+    Public Overloads Property LowerLimitFailureBits As Integer
         Get
             Return Me._LowerLimitFailureBits
         End Get
-        Set(ByVal value As Integer?)
-            If Not Nullable.Equals(Me.LowerLimitFailureBits, value) Then
+        Set(ByVal value As Integer)
+            If Me.LowerLimitFailureBits <> value Then
                 Me._LowerLimitFailureBits = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.LowerLimitFailureBits))
             End If
@@ -223,16 +178,16 @@ Public Class CalculateLimit
 #Region " PASS BITS "
 
     ''' <summary> The Pass Bits. </summary>
-    Private _PassBits As Integer?
+    Private _PassBits As Integer
 
     ''' <summary>Gets or sets the Output pass bit pattern (15). </summary>
     ''' <value> The Pass Bits or none if not set or unknown. </value>
-    Public Overloads Property PassBits As Integer?
+    Public Overloads Property PassBits As Integer
         Get
             Return Me._PassBits
         End Get
-        Set(ByVal value As Integer?)
-            If Not Nullable.Equals(Me.PassBits, value) Then
+        Set(ByVal value As Integer)
+            If Me.PassBits <> value Then
                 Me._PassBits = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.PassBits))
             End If
@@ -244,16 +199,16 @@ Public Class CalculateLimit
 #Region " UPPER LIMIT "
 
     ''' <summary> The Upper Limit. </summary>
-    Private _UpperLimit As Double?
+    Private _UpperLimit As Double
 
     ''' <summary>Gets or sets the Upper limit. </summary>
     ''' <value> The Upper Limit or none if not set or unknown. </value>
-    Public Overloads Property UpperLimit As Double?
+    Public Overloads Property UpperLimit As Double
         Get
             Return Me._UpperLimit
         End Get
-        Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.UpperLimit, value) Then
+        Set(ByVal value As Double)
+            If Me.UpperLimit <> value Then
                 Me._UpperLimit = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.UpperLimit))
             End If
@@ -265,16 +220,16 @@ Public Class CalculateLimit
 #Region " UPPER LIMIT FAILURE BITS "
 
     ''' <summary> The Upper Limit Failure Bits. </summary>
-    Private _UpperLimitFailureBits As Integer?
+    Private _UpperLimitFailureBits As Integer
 
     ''' <summary>Gets or sets the Upper limit failure bit pattern (15). </summary>
     ''' <value> The Upper Limit FailureBits or none if not set or unknown. </value>
-    Public Overloads Property UpperLimitFailureBits As Integer?
+    Public Overloads Property UpperLimitFailureBits As Integer
         Get
             Return Me._UpperLimitFailureBits
         End Get
-        Set(ByVal value As Integer?)
-            If Not Nullable.Equals(Me.UpperLimitFailureBits, value) Then
+        Set(ByVal value As Integer)
+            If Me.UpperLimitFailureBits <> value Then
                 Me._UpperLimitFailureBits = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.UpperLimitFailureBits))
             End If

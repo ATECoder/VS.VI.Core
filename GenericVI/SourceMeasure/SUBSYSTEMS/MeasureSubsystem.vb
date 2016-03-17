@@ -13,7 +13,7 @@ Public Class MeasureSubsystem
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Initializes a new instance of the <see cref="MeasureVoltageSubsystem" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="MeasureSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
@@ -29,11 +29,7 @@ Public Class MeasureSubsystem
     ''' </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me.Voltage = New Double?
-        Me.Current = New Double?
-        Me.Resistance = New Double?
-        Me.Timestamp = New Double?
-        Me.Status = New Long?
+        Me._readings.Reset()
     End Sub
 
     ''' <summary>
@@ -41,11 +37,7 @@ Public Class MeasureSubsystem
     ''' </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.Voltage = New Double?
-        Me.Current = New Double?
-        Me.Resistance = New Double?
-        Me.Timestamp = New Double?
-        Me.Status = New Long?
+        Me._readings = New Readings
     End Sub
 
 #End Region
@@ -109,47 +101,19 @@ Public Class MeasureSubsystem
     ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
     Public Overrides Sub ParseReading(ByVal reading As String)
         If Me.Readings.TryParse(reading) Then
+
         End If
     End Sub
 
 #End Region
 
+End Class
 
-#Region " PARSE READING "
-
-    ''' <summary> Parses the reading into the data elements. </summary>
-    ''' <remarks> This assumes that the instrument is set to output all reading elements. </remarks>
-    Public Sub ParseReadingLegacy(ByVal reading As String)
-        If String.IsNullOrWhiteSpace(reading) Then
-            Me.Voltage = New Double?
-            Me.Current = New Double?
-            Me.Resistance = New Double?
-            Me.Timestamp = New Double?
-            Me.Status = New Long?
-        Else
-            Dim readings As String() = reading.Split(","c)
-            If readings.Count >= 5 Then
-                Me.Voltage = VI.SessionBase.Parse(1.0F, readings(0))
-                Me.Current = VI.SessionBase.Parse(1.0F, readings(1))
-                Me.Resistance = VI.SessionBase.Parse(1.0F, readings(2))
-                Me.Timestamp = VI.SessionBase.Parse(1.0F, readings(3))
-                Me.Status = CLng(VI.SessionBase.Parse(1.0F, readings(4)))
-
-                If Me.Status.HasValue AndAlso Me.VoltageComplianceLevel.HasValue AndAlso
-                       (Not (Me.Voltage.Value >= Me.VoltageComplianceLevel.Value) Xor (Me.VoltageComplianceLevel.Value > 0)) Then
-                    Me.Status = Me.Status Or Me.LevelComplianceBits
-                End If
-
-                If Me.Status.HasValue AndAlso Me.CurrentComplianceLevel.HasValue AndAlso
-                      (Not (Me.Current.Value >= Me.CurrentComplianceLevel.Value) Xor (Me.CurrentComplianceLevel.Value > 0)) Then
-                    Me.Status = Me.Status Or Me.LevelComplianceBits
-                End If
-
-            End If
-        End If
-    End Sub
-
-#End Region
+#Region " UNUSED "
+#If False Then
+    ''' <summary> The level compliance bits. </summary>
+    ''' <remarks> This is a custom value. </remarks>
+    Public Overridable Property LevelComplianceBits As Long = CLng(2 ^ 32)
 
 #Region " VOLTAGE "
 
@@ -282,20 +246,23 @@ Public Class MeasureSubsystem
 
     ''' <summary> The compliance bits. </summary>
     ''' <remarks> See 2400 manual page 432 of 592</remarks>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields",
-            Justification:="This is the perfect use for this field, which can be changed in constructors.")>
-    Public ReadOnly ComplianceBits As Integer = CInt(2 ^ 3)
+    Public Overridable Property ComplianceBit As Integer = StatusWordBit.HitCompliance
+
+    ''' <summary> The contact check bit pattern. </summary>
+    Public Overridable Property FailedContactCheckBit As Integer = StatusWordBit.FailedContactCheck
+
+    ''' <summary> The over-range bit pattern. </summary>
+    Public Overridable Property OverRangeBit As Integer = StatusWordBit.OverRange
 
     ''' <summary> The range compliance bits. </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields",
-            Justification:="This is the perfect use for this field, which can be changed in constructors.")>
-    Public ReadOnly RangeComplianceBits As Integer = CInt(2 ^ 16)
+    Public Overridable Property RangeComplianceBits As Integer = StatusWordBit.HitRangeCompliance
 
-    ''' <summary> The level compliance bits. </summary>
-    ''' <remarks> This is a custom value. </remarks>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields",
-            Justification:="This is the perfect use for this field, which can be changed in constructors.")>
-    Public ReadOnly LevelComplianceBits As Long = CLng(2 ^ 32)
+    ''' <summary> The voltage protection bits. </summary>
+    Public Overridable Property VoltageProtectionBits As Integer = StatusWordBit.HitVoltageProtection
+
+    Public Function IsStatusBit(ByVal bit As Integer) As Boolean
+        Return Me.Status.HasValue AndAlso ((1 And (Me.Status.Value << bit)) <> 0)
+    End Function
 
     Private _status As Long?
 
@@ -318,21 +285,68 @@ Public Class MeasureSubsystem
         End Set
     End Property
 
-    ''' <summary> Returns true if the measurement hit compliance. </summary>
-    Public Function IsHitCompliance() As Boolean
-        Return Me.Status.HasValue AndAlso ((Me.Status.Value And ComplianceBits) = ComplianceBits)
-    End Function
+#Region " PARSE READING -- LEGACY "
 
-    ''' <summary> Returns true if the measurement hit range compliance. </summary>
-    Public Function IsHitRangeCompliance() As Boolean
-        Return Me.Status.HasValue AndAlso ((Me.Status.Value And ComplianceBits) = RangeComplianceBits)
-    End Function
+    ''' <summary> Parses the reading into the data elements. </summary>
+    ''' <remarks> This assumes that the instrument is set to output all reading elements. </remarks>
+    Public Sub ParseReadingLegacy(ByVal reading As String)
+        If String.IsNullOrWhiteSpace(reading) Then
+            Me.Voltage = New Double?
+            Me.Current = New Double?
+            Me.Resistance = New Double?
+            Me.Timestamp = New Double?
+            Me.Status = New Long?
+        Else
+            Dim readings As String() = reading.Split(","c)
+            If readings.Count >= 5 Then
+                Me.Voltage = VI.SessionBase.Parse(1.0F, readings(0))
+                Me.Current = VI.SessionBase.Parse(1.0F, readings(1))
+                Me.Resistance = VI.SessionBase.Parse(1.0F, readings(2))
+                Me.Timestamp = VI.SessionBase.Parse(1.0F, readings(3))
+                Me.Status = CLng(VI.SessionBase.Parse(1.0F, readings(4)))
 
-    ''' <summary> Returns true if the measurement hit Level compliance. </summary>
-    Public Function IsHitLevelCompliance() As Boolean
-        Return Me.Status.HasValue AndAlso ((Me.Status.Value And ComplianceBits) = LevelComplianceBits)
-    End Function
+                If Me.Status.HasValue AndAlso Me.VoltageComplianceLevel.HasValue AndAlso
+                       (Not (Me.Voltage.Value >= Me.VoltageComplianceLevel.Value) Xor (Me.VoltageComplianceLevel.Value > 0)) Then
+                    Me.Status = Me.Status Or 1 << Measurand.LevelComplianceBit
+                End If
+
+                If Me.Status.HasValue AndAlso Me.CurrentComplianceLevel.HasValue AndAlso
+                      (Not (Me.Current.Value >= Me.CurrentComplianceLevel.Value) Xor (Me.CurrentComplianceLevel.Value > 0)) Then
+                    Me.Status = Me.Status Or 1 << Measurand.LevelComplianceBit
+                End If
+
+            End If
+        End If
+    End Sub
 
 #End Region
 
-End Class
+#Region " I PRESETTABLE "
+
+    ''' <summary>
+    ''' Sets subsystem values to their known execution clear state.
+    ''' </summary>
+    Public Overrides Sub ClearExecutionState()
+        MyBase.ClearExecutionState()
+        Me.Voltage = New Double?
+        Me.Current = New Double?
+        Me.Resistance = New Double?
+        Me.Timestamp = New Double?
+        Me.Status = New Long?
+    End Sub
+
+    ''' <summary>
+    ''' Sets the subsystem values to their known execution reset state.
+    ''' </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.Voltage = New Double?
+        Me.Current = New Double?
+        Me.Resistance = New Double?
+        Me.Timestamp = New Double?
+        Me.Status = New Long?
+    End Sub
+
+#End Region
+#End If
+#End Region

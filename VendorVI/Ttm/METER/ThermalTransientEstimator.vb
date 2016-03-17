@@ -134,7 +134,7 @@ Public Class ThermalTransientEstimator
 #Region " CONFIGURE "
 
     ''' <summary> Applies the instrument defaults. </summary>
-    ''' <remakrs> This is required until the reset command gets implemented. </remakrs>
+    ''' <remarks> This is required until the reset command gets implemented. </remarks>
     Public Overrides Sub ApplyInstrumentDefaults()
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Applying {0} defaults.", Me.EntityName)
         Me.StatusSubsystem.Write("{0}:thermalCoefficientSetter({1}.thermalCoefficient)", Me.EntityName, Me.DefaultsName)

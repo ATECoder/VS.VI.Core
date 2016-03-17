@@ -52,7 +52,7 @@ Public Class MeasuredAmount
         If Me.MetaStatus.IsValid Then
             Return Me.Amount.ToString(format)
         Else
-            Return Me._MetaStatus.ToShortDescription
+            Return Me._MetaStatus.ToShortDescription("p")
         End If
     End Function
 
@@ -110,14 +110,12 @@ Public Class MeasuredAmount
     ''' <returns> <c>True</c> if parsed; Otherwise, <c>False</c>. </returns>
     Public Overrides Function TryParse(ByVal valueReading As String) As Boolean
         If MyBase.TryParse(valueReading) Then
-
             Me._MetaStatus.IsValid = True
             Dim newValue As Double = Me.Value.Value
-            Me.MetaStatus.Toggle(MetaStatusBits.Infinity, Math.Abs(newValue - Scpi.Syntax.Infinity) < 1)
-            Me.MetaStatus.Toggle(MetaStatusBits.NegativeInfinity, Math.Abs(newValue - Scpi.Syntax.NegativeInfinity) < 1)
-            Me.MetaStatus.Toggle(MetaStatusBits.NotANumber, Math.Abs(newValue - Scpi.Syntax.NotANumber) < 1)
+            Me.MetaStatus.ToggleBit(MetaStatusBit.Infinity, Math.Abs(newValue - Scpi.Syntax.Infinity) < 1)
+            Me.MetaStatus.ToggleBit(MetaStatusBit.NegativeInfinity, Math.Abs(newValue - Scpi.Syntax.NegativeInfinity) < 1)
+            Me.MetaStatus.ToggleBit(MetaStatusBit.NotANumber, Math.Abs(newValue - Scpi.Syntax.NotANumber) < 1)
             Me.MetaStatus.HitLevelCompliance = Not (newValue >= Me._ComplianceLimit) Xor (Me._ComplianceLimit > 0)
-
             Me.MetaStatus.IsHigh = Me.Value.Value.CompareTo(Me.HighLimit) > 0
             Me.MetaStatus.IsLow = Me.Value.Value.CompareTo(Me.LowLimit) < 0
         Else

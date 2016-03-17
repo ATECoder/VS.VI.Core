@@ -1,5 +1,5 @@
 Imports isr.Core.Pith
-''' <summary> Defines an Arm Layer for the Trigger SCPI subsystem. </summary>
+''' <summary> Defines an Trigger Layer for the Trigger SCPI subsystem. </summary>
 ''' <license> (c) 2010 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
 ''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
@@ -9,7 +9,7 @@ Imports isr.Core.Pith
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ''' </para> </license>
 ''' <history date="11/5/2013" by="David" revision=""> Created based on SCPI 5.1 library. </history>
-Public Class ArmLayer
+Public Class TriggerLayer
     Inherits PropertyPublisherBase
     Implements IPresettablePropertyPublisher
 
@@ -41,12 +41,12 @@ Public Class ArmLayer
     Public Sub ResetKnownState() Implements IPresettable.ResetKnownState
         Me.AutoDelayEnabled = False
         Me.Count = 1
-        Me.Delay = 0
-        Me.BypassEnabled = True
+        Me.Delay = TimeSpan.Zero
+        Me.Direction = VI.Direction.Acceptor
         Me.InputLineNumber = 1
         Me.OutputLineNumber = 2
-        Me.ArmSource = VI.ArmSource.Immediate
-        Me.TimerInterval = TimeSpan.FromSeconds(0.001)
+        Me.TriggerSource = VI.TriggerSources.Immediate
+        Me.TimerInterval = TimeSpan.FromSeconds(0.1)
     End Sub
 
 #End Region
@@ -64,22 +64,22 @@ Public Class ArmLayer
 
 #End Region
 
-#Region " ARM SOURCE "
+#Region " TRIGGER SOURCE "
 
-    ''' <summary> The arm source mode. </summary>
-    Private _ArmSource As ArmSource?
+    ''' <summary> The Trigger source mode. </summary>
+    Private _TriggerSource As TriggerSources
 
-    ''' <summary> Gets or sets the cached arm Source. </summary>
-    ''' <value> The <see cref="ArmSource">source Function Mode</see> or none if not set or
+    ''' <summary> Gets or sets the cached Trigger Source. </summary>
+    ''' <value> The <see cref="TriggerSource">source Function Mode</see> or none if not set or
     ''' unknown. </value>
-    Public Overloads Property ArmSource As ArmSource?
+    Public Property TriggerSource As TriggerSources
         Get
-            Return Me._ArmSource
+            Return Me._TriggerSource
         End Get
-        Set(ByVal value As ArmSource?)
-            If Not Me.ArmSource.Equals(value) Then
-                Me._ArmSource = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmSource))
+        Set(ByVal value As TriggerSources)
+            If Not Me.TriggerSource.Equals(value) Then
+                Me._TriggerSource = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerSource))
             End If
         End Set
     End Property
@@ -89,17 +89,17 @@ Public Class ArmLayer
 #Region " AUTO DELAY "
 
     ''' <summary> The auto delay enabled. </summary>
-    Private _AutoDelayEnabled As Boolean?
+    Private _AutoDelayEnabled As Boolean
 
     ''' <summary> Gets or sets the cached source Auto Delay enabled state. </summary>
     ''' <value> <c>True</c> if the Auto Delay is enabled; <c>False</c> if not enabled, or none if
     ''' unknown or not set. </value>
-    Public Overloads Property AutoDelayEnabled As Boolean?
+    Public Property AutoDelayEnabled As Boolean
         Get
             Return Me._AutoDelayEnabled
         End Get
-        Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.AutoDelayEnabled, value) Then
+        Set(ByVal value As Boolean)
+            If Not Boolean.Equals(Me.AutoDelayEnabled, value) Then
                 Me._AutoDelayEnabled = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoDelayEnabled))
             End If
@@ -108,23 +108,22 @@ Public Class ArmLayer
 
 #End Region
 
-#Region " BYPASS "
+#Region " DIRECTION "
 
-    ''' <summary> The bypass enabled. </summary>
-    Private _BypassEnabled As Boolean?
+    ''' <summary> The Trigger Direction. </summary>
+    Private _Direction As Direction
 
-    ''' <summary> Gets or sets the cached source Bypass enabled state.
-    '''           The determines Acceptor (disabled) or Source (enabled) of the arm layer </summary>
-    ''' <value> <c>True</c> if the Bypass is enabled; <c>False</c> if not enabled, or none if
-    ''' unknown or not set. </value>
-    Public Overloads Property BypassEnabled As Boolean?
+    ''' <summary> Gets or sets the cached source Direction. </summary>
+    ''' <value> The <see cref="Direction">Trigger Direction</see> or none if not set or
+    ''' unknown. </value>
+    Public Property Direction As Direction
         Get
-            Return Me._BypassEnabled
+            Return Me._Direction
         End Get
-        Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.BypassEnabled, value) Then
-                Me._BypassEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.BypassEnabled))
+        Set(ByVal value As Direction)
+            If Not Me.Direction.Equals(value) Then
+                Me._Direction = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.Direction))
             End If
         End Set
     End Property
@@ -134,15 +133,15 @@ Public Class ArmLayer
 #Region " COUNT "
 
     ''' <summary> The Count. </summary>
-    Private _Count As Integer?
+    Private _Count As Integer
 
     ''' <summary> Gets or sets the cached source Count. </summary>
     ''' <value> The source Count or none if not set or unknown. </value>
-    Public Overloads Property Count As Integer?
+    Public Property Count As Integer
         Get
             Return Me._Count
         End Get
-        Set(ByVal value As Integer?)
+        Set(ByVal value As Integer)
             If Not Nullable.Equals(Me.Count, value) Then
                 Me._Count = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.Count))
@@ -155,15 +154,15 @@ Public Class ArmLayer
 #Region " DELAY "
 
     ''' <summary> The delay. </summary>
-    Private _Delay As Double?
+    Private _Delay As TimeSpan
 
-    ''' <summary> Gets or sets the cached source Delay. </summary>
-    ''' <value> The source Delay or none if not set or unknown. </value>
-    Public Overloads Property Delay As Double?
+    ''' <summary> Gets or sets the cached Delay. </summary>
+    ''' <value> The Delay or none if not set or unknown. </value>
+    Public Property Delay As TimeSpan
         Get
             Return Me._Delay
         End Get
-        Set(ByVal value As Double?)
+        Set(ByVal value As TimeSpan)
             If Not Nullable.Equals(Me.Delay, value) Then
                 Me._Delay = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.Delay))
@@ -176,15 +175,15 @@ Public Class ArmLayer
 #Region " INPUT LINE NUMBER "
 
     ''' <summary> The Input Line Number. </summary>
-    Private _InputLineNumber As Integer?
+    Private _InputLineNumber As Integer
 
     ''' <summary> Gets or sets the cached source Input Line Number. </summary>
     ''' <value> The source Input Line Number or none if not set or unknown. </value>
-    Public Overloads Property InputLineNumber As Integer?
+    Public Property InputLineNumber As Integer
         Get
             Return Me._InputLineNumber
         End Get
-        Set(ByVal value As Integer?)
+        Set(ByVal value As Integer)
             If Not Nullable.Equals(Me.InputLineNumber, value) Then
                 Me._InputLineNumber = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.InputLineNumber))
@@ -197,15 +196,15 @@ Public Class ArmLayer
 #Region " OUTPUT LINE NUMBER "
 
     ''' <summary> The Output Line Number. </summary>
-    Private _OutputLineNumber As Integer?
+    Private _OutputLineNumber As Integer
 
     ''' <summary> Gets or sets the cached source Output Line Number. </summary>
     ''' <value> The source Output Line Number or none if not set or unknown. </value>
-    Public Overloads Property OutputLineNumber As Integer?
+    Public Property OutputLineNumber As Integer
         Get
             Return Me._OutputLineNumber
         End Get
-        Set(ByVal value As Integer?)
+        Set(ByVal value As Integer)
             If Not Nullable.Equals(Me.OutputLineNumber, value) Then
                 Me._OutputLineNumber = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.OutputLineNumber))
@@ -218,15 +217,15 @@ Public Class ArmLayer
 #Region " TIMER INTERVAL "
 
     ''' <summary> The Timer Interval. </summary>
-    Private _TimerInterval As TimeSpan?
+    Private _TimerInterval As TimeSpan
 
     ''' <summary> Gets or sets the cached source Timer Interval. </summary>
     ''' <value> The source Timer Interval or none if not set or unknown. </value>
-    Public Overloads Property TimerInterval As TimeSpan?
+    Public Property TimerInterval As TimeSpan
         Get
             Return Me._TimerInterval
         End Get
-        Set(ByVal value As TimeSpan?)
+        Set(ByVal value As TimeSpan)
             If Not Me.TimerInterval.Equals(value) Then
                 Me._TimerInterval = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.TimerInterval))

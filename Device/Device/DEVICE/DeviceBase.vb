@@ -65,16 +65,7 @@ Public MustInherit Class DeviceBase
             If Not Me.IsDisposed AndAlso disposing Then
                 Me.Talker?.Listeners.Clear()
                 Me._Talker = Nothing
-                Try
-                    Me.SessionMessagesTraceEnabled = False
-                Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, ex.ToString)
-                End Try
-                Try
-                    Me.SessionPropertyChangeHandlerEnabled = False
-                Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, ex.ToString)
-                End Try
+                Me.SessionMessagesTraceEnabled = False
                 Me.DisableServiceRequestEventHandler()
                 Me.RemoveEventHandler(Me.ServiceRequestedEvent)
                 Me.RemoveOpeningEventHandler(Me.OpeningEvent)
@@ -300,6 +291,12 @@ Public MustInherit Class DeviceBase
     Private Sub OnPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
+            Case NameOf(sender.IsDeviceOpen)
+                If sender.IsDeviceOpen Then
+                    AddHandler Me.Session.PropertyChanged, AddressOf Me.SessionPropertyChanged
+                Else
+                    RemoveHandler Me.Session.PropertyChanged, AddressOf Me.SessionPropertyChanged
+                End If
             Case NameOf(sender.ResourceTitle)
                 Me.ResourceTitle = sender.ResourceTitle
             Case NameOf(sender.ResourceName)
@@ -636,64 +633,53 @@ Public MustInherit Class DeviceBase
 
 #Region " SESSION: PROPERTY CHANGES AND MESSAGES EVENTS  "
 
-    Private _SessionPropertyChangeHandlerEnabled As Boolean
-
-    ''' <summary> Gets or sets the session property change handler enabled. </summary>
-    ''' <value> The session property change handler enabled. </value>
-    Public Property SessionPropertyChangeHandlerEnabled As Boolean
-        Get
-            Return _SessionPropertyChangeHandlerEnabled
-        End Get
-        Set(value As Boolean)
-            If Not value.Equals(Me.SessionPropertyChangeHandlerEnabled) Then
-                If value Then
-                    AddHandler Me.Session.PropertyChanged, AddressOf Me.SessionPropertyChanged
-                Else
-                    RemoveHandler Me.Session.PropertyChanged, AddressOf Me.SessionPropertyChanged
-                End If
-                Me._SessionPropertyChangeHandlerEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SessionPropertyChangeHandlerEnabled))
-            End If
-        End Set
-    End Property
-
-    Private _SessionMessagesTraceEnabled As Boolean
-
     ''' <summary> Gets or sets the session messages trace enabled. </summary>
     ''' <value> The session messages trace enabled. </value>
     Public Property SessionMessagesTraceEnabled As Boolean
         Get
-            Return Me._SessionMessagesTraceEnabled
+            Return Me.Session.SessionMessagesTraceEnabled
         End Get
         Set(value As Boolean)
             If Not value.Equals(Me.SessionMessagesTraceEnabled) Then
-                Me._SessionMessagesTraceEnabled = value
+                Me.Session.SessionMessagesTraceEnabled = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.SessionMessagesTraceEnabled))
             End If
         End Set
     End Property
 
     ''' <summary> Session property changed. </summary>
+    ''' <remarks> David, 3/7/2016. </remarks>
+    ''' <param name="sender">       Source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub SessionPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
+        If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
+            Select Case propertyName
+                Case NameOf(sender.IsServiceRequestEventEnabled)
+                    Me.AsyncNotifyPropertyChanged(NameOf(Me.IsServiceRequestEventEnabled))
+                Case NameOf(sender.LastMessageReceived)
+                    Dim value As String = sender.LastMessageReceived
+                    If Not String.IsNullOrWhiteSpace(value) Then
+                        Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                               "{0} sent: '{1}'.", Me.ResourceName, value.InsertCommonEscapeSequences)
+                    End If
+                Case NameOf(sender.LastMessageSent)
+                    Dim value As String = sender.LastMessageSent
+                    If Not String.IsNullOrWhiteSpace(value) Then
+                        Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                               "{0} received: '{1}'.", Me.ResourceName, value)
+                    End If
+            End Select
+        End If
+    End Sub
+
+    ''' <summary> Session property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub SessionPropertyChanged(ByVal sender As SessionBase, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+    Private Sub SessionPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(e.PropertyName) Then
-                Select Case e.PropertyName
-                    Case NameOf(sender.LastMessageReceived)
-                        Dim value As String = sender.LastMessageReceived
-                        If Me.SessionMessagesTraceEnabled AndAlso Not String.IsNullOrWhiteSpace(value) Then
-                            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                               "{0} sent: '{1}'.", Me.ResourceName, value.InsertCommonEscapeSequences)
-                        End If
-                    Case NameOf(sender.LastMessageSent)
-                        Dim value As String = sender.LastMessageSent
-                        If Me.SessionMessagesTraceEnabled AndAlso Not String.IsNullOrWhiteSpace(value) Then
-                            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                               "{0} received: '{1}'.", Me.ResourceName, value)
-                        End If
-                End Select
+            If sender IsNot Nothing AndAlso e IsNot Nothing Then
+                Me.SessionPropertyChanged(CType(sender, SessionBase), e.PropertyName)
             End If
         Catch ex As Exception
             If e Is Nothing Then
@@ -707,14 +693,6 @@ Public MustInherit Class DeviceBase
                          e.PropertyName, ex.Message)
             End If
         End Try
-    End Sub
-
-    ''' <summary> Session property changed. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub SessionPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Me.SessionPropertyChanged(CType(sender, SessionBase), e)
     End Sub
 
 #End Region
@@ -735,6 +713,14 @@ Public MustInherit Class DeviceBase
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.UsingSyncServiceRequestHandler))
             End If
         End Set
+    End Property
+
+    ''' <summary> Gets the is service request event enabled. </summary>
+    ''' <value> The is service request event enabled. </value>
+    Public ReadOnly Property IsServiceRequestEventEnabled As Boolean
+        Get
+            Return Me.IsDeviceOpen AndAlso Me.Session.IsServiceRequestEventEnabled
+        End Get
     End Property
 
     ''' <summary> Enable service request event handler. </summary>
@@ -1307,6 +1293,24 @@ End Class
 
 #Region " UNUSED "
 #If False Then
+
+    Private _SessionPropertyChangeHandlerEnabled As Boolean
+
+    ''' <summary> Gets or sets the session property change handler enabled. </summary>
+    ''' <value> The session property change handler enabled. </value>
+    Public Property SessionPropertyChangeHandlerEnabled As Boolean
+        Get
+            Return _SessionPropertyChangeHandlerEnabled
+        End Get
+        Set(value As Boolean)
+            If Not value.Equals(Me.SessionPropertyChangeHandlerEnabled) Then
+                Me._SessionPropertyChangeHandlerEnabled = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.SessionPropertyChangeHandlerEnabled))
+            End If
+        End Set
+    End Property
+
+
     ''' <summary> Gets a value indicating whether the subsystem has an open session open. </summary>
     ''' <value> <c>True</c> if the device has an open session; otherwise, <c>False</c>. </value>
     Public ReadOnly Property IsSessionOpen As Boolean

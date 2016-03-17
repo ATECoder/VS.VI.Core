@@ -70,6 +70,10 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
+    <Compile Include="LIMITS\ContactCheckLimitBase.vb" />
+    <Compile Include="LIMITS\UpperLowerLimitBase.vb" />
+    <Compile Include="LIMITS\CompositeLimitBase.vb" />
+    <Compile Include="LIMITS\ComplianceLimitBase.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -87,7 +91,9 @@
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="SUBSYSTEMS\ArmLayerSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\Calculate2SubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\DigitalOutputBase.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\FormatSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\MeasureCurrentSubsystemBase.vb" />

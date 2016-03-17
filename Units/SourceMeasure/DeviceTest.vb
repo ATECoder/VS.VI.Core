@@ -160,13 +160,13 @@ Public Class DeviceTest
 
             target.MeasureSubsystem.Read()
             expectedDouble = voltage
-            Assert.AreEqual(expectedDouble, target.MeasureSubsystem.Voltage.GetValueOrDefault(0), 0.1)
+            Assert.AreEqual(expectedDouble, target.MeasureSubsystem.Readings.VoltageReading.Value.GetValueOrDefault(0), 0.1)
 
             expectedDouble = voltage / resistance
-            Assert.AreEqual(expectedDouble, target.MeasureSubsystem.Current.GetValueOrDefault(0), 0.1 / resistance)
+            Assert.AreEqual(expectedDouble, target.MeasureSubsystem.Readings.CurrentReading.Value.GetValueOrDefault(0), 0.1 / resistance)
 
             expectedDouble = resistance
-            Assert.AreEqual(expectedDouble, target.MeasureSubsystem.Resistance.GetValueOrDefault(0), 0.1 / resistance)
+            Assert.AreEqual(expectedDouble, target.MeasureSubsystem.Readings.ResistanceReading.Value.GetValueOrDefault(0), 0.1 / resistance)
 
             expectedBoolean = False
             actualBoolean = target.OutputSubsystem.ApplyOutputOnState(expectedBoolean).GetValueOrDefault(Not expectedBoolean)

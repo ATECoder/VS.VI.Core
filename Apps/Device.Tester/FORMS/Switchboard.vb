@@ -165,13 +165,13 @@ Public Class Switchboard
         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
         Select Case Me.selectedAction
             Case ActionOption.InterfaceForm
-                Me._OpenForms.ShowNew(New Instrument.InterfaceForm, My.Application.Log)
+                Me._OpenForms.ShowNew(New Instrument.InterfaceForm, My.Application.MyLog)
             Case ActionOption.SimpleReadAndWrite
-                Me._OpenForms.ShowNew(New Instrument.SimpleReadWriteForm, My.Application.Log)
+                Me._OpenForms.ShowNew(New Instrument.SimpleReadWriteForm, My.Application.MyLog)
             Case ActionOption.ServiceRequester
-                Me._OpenForms.ShowNew(New Instrument.ServiceRequesterForm, My.Application.Log)
+                Me._OpenForms.ShowNew(New Instrument.ServiceRequesterForm, My.Application.MyLog)
             Case ActionOption.InstrumentInterfacePanel
-                Me._OpenForms.ShowNew(New Instrument.InstrumentInterfaceForm, My.Application.Log)
+                Me._OpenForms.ShowNew(New Instrument.InstrumentInterfaceForm, My.Application.MyLog)
         End Select
         Me.Cursor = System.Windows.Forms.Cursors.Default
     End Sub

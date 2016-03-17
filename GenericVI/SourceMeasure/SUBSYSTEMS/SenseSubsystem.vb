@@ -19,9 +19,8 @@ Public Class SenseSubsystem
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         MyBase.SupportsMultiFunctions = True
-        Me.SupportedFunctionModes = VI.Scpi.SenseFunctionModes.CurrentDC Or
-                                         VI.Scpi.SenseFunctionModes.VoltageDC Or
-                                         VI.Scpi.SenseFunctionModes.Resistance
+        Me.SupportedFunctionModes = VI.Scpi.SenseFunctionModes.Current Or VI.Scpi.SenseFunctionModes.Voltage Or
+                                    VI.Scpi.SenseFunctionModes.Resistance
     End Sub
 
 #End Region
@@ -31,7 +30,9 @@ Public Class SenseSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.FunctionModes = VI.Scpi.SenseFunctionModes.CurrentDC Or VI.Scpi.SenseFunctionModes.VoltageDC
+        Me.ConcurrentSenseEnabled = True
+        Me.FunctionModes = VI.Scpi.SenseFunctionModes.VoltageDC Or Scpi.SenseFunctionModes.CurrentDC
+        Me.SupportedFunctionModes = VI.Scpi.SenseFunctionModes.CurrentDC Or VI.Scpi.SenseFunctionModes.VoltageDC Or Scpi.SenseFunctionModes.Resistance
         Me.ConcurrentSenseEnabled = True
         Me.Range = 0.105
         Me.PowerLineCycles = 5

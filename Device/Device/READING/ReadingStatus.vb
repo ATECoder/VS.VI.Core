@@ -16,30 +16,50 @@ Public Class ReadingStatus
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
-        Me._ComplianceBits = CInt(2 ^ 3) ' StatusWordBits.HitCompliance
-        Me._Limit1Bits = CInt(2 ^ 9) ' StatusWordBits.LimitResultBit1
-        Me._Limit2Bits = CInt(2 ^ 19) ' StatusWordBits.LimitResultBit2
-        Me._RangeComplianceBits = CInt(2 ^ 16) ' StatusWordBits.HitRangeCompliance
     End Sub
 
     ''' <summary> Constructs a copy of an existing value. </summary>
     ''' <param name="model"> The model. </param>
     Public Sub New(ByVal model As ReadingStatus)
         MyBase.New(model)
-        If model IsNot Nothing Then
-            Me._ComplianceBits = model._ComplianceBits
-            Me._Limit1Bits = model._Limit1Bits
-            Me._Limit2Bits = model._Limit2Bits
-            Me._RangeComplianceBits = model._RangeComplianceBits
-        End If
     End Sub
 
 #End Region
 
+#Region " VALUES "
+
+    ''' <summary> Gets the Status Value. </summary>
+    ''' <value> The Status Value. </value>
+    ''' <remarks> Handles the case where the status value was saved as infinite. </remarks>
+    Public ReadOnly Property StatusValue As Long?
+        Get
+            If Me.Value.HasValue Then
+                Return CLng(Math.Min(Math.Max(0, Me.Value.Value), Long.MaxValue))
+            Else
+                Return New Integer?
+            End If
+        End Get
+    End Property
+
+    ''' <summary> Query if 'bit' is bit. </summary>
+    ''' <remarks> David, 3/7/2016. </remarks>
+    ''' <param name="bit"> The bit. </param>
+    ''' <returns> <c>true</c> if bit; otherwise <c>false</c> </returns>
+    Public Function IsBit(ByVal bit As Integer) As Boolean
+        Return (1 And (Me.StatusValue.GetValueOrDefault(0) And (1 >> bit))) = 1
+    End Function
+
+#End Region
+
+End Class
+
+#Region " UNUSED "
+#If False Then
 #Region " BIT VALUES "
 
     ''' <summary> Gets the Status Value. </summary>
     ''' <value> The Status Value. </value>
+    ''' <remarks> Handles the case where the status value was saved as infinite. </remarks>
     Public ReadOnly Property StatusValue As Long?
         Get
             If Me.Value.HasValue Then
@@ -52,60 +72,63 @@ Public Class ReadingStatus
 
     ''' <summary> Gets or sets the bits for detecting compliance. </summary>
     ''' <value> The compliance bits. </value>
-    Public Property ComplianceBits() As Integer
+    Public Property ComplianceBit() As Integer
 
     ''' <summary> Gets or sets the bits for detecting limit 1 failure. </summary>
     ''' <value> The limit 1 bits. </value>
-    Public Property Limit1Bits() As Integer
+    Public Property Limit1Bit() As Integer
 
     ''' <summary> Gets or sets the bits for detecting limit 2 failure. </summary>
     ''' <value> The limit 2 bits. </value>
-    Public Property Limit2Bits() As Integer
+    Public Property Limit2Bit() As Integer
 
     ''' <summary> Gets the bits for detecting range compliance. </summary>
     ''' <value> The range compliance bits. </value>
-    Public Property RangeComplianceBits() As Integer
+    Public Property RangeComplianceBit() As Integer
 
     ''' <summary> Returns an outcome string depending on the measured outcome or pass code. </summary>
     ''' <value> The limit results. </value>
     Public ReadOnly Property LimitResults() As String
         Get
             If Me.Value.HasValue Then
-
-                Select Case Me.StatusValue.Value And (Me.Limit1Bits Or Me.Limit2Bits)
-                    Case Me.Limit1Bits
-                        Return "F1"
-                    Case Me.Limit2Bits
-                        Return "F2"
-                    Case Me.Limit1Bits Or Me.Limit2Bits
-                        Return "F3"
-                    Case Else
-                        ' 1.11.14 display P and not...
-                        Return "P"
-                End Select
+                Dim f1 As Boolean = Me.IsBit(Me.Limit1Bit)
+                Dim f2 As Boolean = Me.IsBit(Me.Limit2Bit)
+                If f1 AndAlso f2 Then
+                    Return "F3"
+                ElseIf f1 Then
+                    Return "F1"
+                ElseIf f2 Then
+                    Return "F2"
+                Else
+                    ' 1.11.14 display P and not...
+                    Return "P"
+                End If
             Else
                 Return ""
             End If
         End Get
     End Property
 
-    ''' <summary> Gets the condition for hit real compliance. </summary>
-    ''' <value> A <see cref="System.Boolean">Boolean</see> value. </value>
-    Public ReadOnly Property IsHitCompliance() As Boolean
-        Get
-            Return (Me.StatusValue.GetValueOrDefault(0) And Me.ComplianceBits) <> 0
-        End Get
-    End Property
+    ''' <summary> Query if 'bit' is bit. </summary>
+    ''' <remarks> David, 3/7/2016. </remarks>
+    ''' <param name="bit"> The bit. </param>
+    ''' <returns> <c>true</c> if bit; otherwise <c>false</c> </returns>
+    Public Function IsBit(ByVal bit As Integer) As Boolean
+        Return (1 And (Me.StatusValue.GetValueOrDefault(0) And (1 >> bit))) = 1
+    End Function
 
-    ''' <summary> Gets the condition for hit range compliance. </summary>
-    ''' <value> A <see cref="System.Boolean">Boolean</see> value. </value>
-    Public ReadOnly Property IsHitRangeCompliance() As Boolean
-        Get
-            Return (Me.StatusValue.GetValueOrDefault(0) And Me.RangeComplianceBits) <> 0
-        End Get
-    End Property
+    ''' <summary> Constructs a copy of an existing value. </summary>
+    ''' <param name="model"> The model. </param>
+    Public Sub New(ByVal model As ReadingStatus)
+        MyBase.New(model)
+        If model IsNot Nothing Then
+            Me._ComplianceBit = model._ComplianceBit
+            Me._Limit1Bit = model._Limit1Bit
+            Me._Limit2Bit = model._Limit2Bit
+            Me._RangeComplianceBit = model._RangeComplianceBit
+        End If
+    End Sub
 
 #End Region
-
-End Class
-
+#End If
+#End Region

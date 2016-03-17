@@ -203,9 +203,7 @@ Public Class MeterColdResistance
     ''' <summary> Configures the meter for making the cold resistance measurement. </summary>
     ''' <param name="resistance"> The cold resistance. </param>
     Public Overrides Sub Configure(ByVal resistance As ResistanceMeasureBase)
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
         MyBase.Configure(resistance)
         Me.CheckThrowDeviceException(False, "configuring {0} measurement;. ", Me.EntityName)
         Me.ColdResistance.CheckThrowUnequalConfiguration(resistance)
@@ -214,9 +212,7 @@ Public Class MeterColdResistance
     ''' <summary> Applies changed meter configuration. </summary>
     ''' <param name="resistance"> The cold resistance. </param>
     Public Overrides Sub ConfigureChanged(ByVal resistance As ResistanceMeasureBase)
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
         MyBase.ConfigureChanged(resistance)
         Me.StatusSubsystem.CheckThrowDeviceException(False, "configuring {0} measurement;. ", Me.EntityName)
         Me.ColdResistance.CheckThrowUnequalConfiguration(resistance)
@@ -237,9 +233,7 @@ Public Class MeterColdResistance
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="resistance"> The resistance. </param>
     Public Overloads Sub Measure(ByVal resistance As ResistanceMeasureBase)
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
         Me.Session.MakeEmulatedReply(resistance.GenerateRandomReading)
         MyBase.Measure(resistance)
         Me.ReadResistance(resistance)
@@ -291,9 +285,7 @@ Public Class MeterColdResistance
     ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="resistance"> The cold resistance. </param>
     Public Sub ReadResistance(ByVal resistance As ResistanceMeasureBase)
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
         Me.ReadResistance()
         Me.StatusSubsystem.CheckThrowDeviceException(False, "Reading Resistance;. last command: '{0}'", Me.Session.LastMessageSent)
         Dim measurementOutcome As MeasurementOutcomes = MeasurementOutcomes.None
@@ -309,9 +301,7 @@ Public Class MeterColdResistance
     ''' <summary> Emulates cold resistance. </summary>
     ''' <param name="resistance"> The cold resistance. </param>
     Public Sub EmulateResistance(ByVal resistance As ResistanceMeasureBase)
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
         Me.ColdResistance.EmulateReading()
         Me.LastReading = Me.ColdResistance.LastReading
         Me.LastOutcome = Me.ColdResistance.LastOutcome

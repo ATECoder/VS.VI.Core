@@ -73,6 +73,18 @@ Public Class SenseResistanceSubsystem
 
 #End Region
 
+#Region " CONFIGURATION MODE "
+
+    ''' <summary> Gets the Configuration Mode query command. </summary>
+    ''' <value> The Configuration Mode query command. </value>
+    Protected Overrides ReadOnly Property ConfigurationModeQueryCommand As String = ":SENS:RES:MODE?"
+
+    ''' <summary> Gets the Configuration Mode command format. </summary>
+    ''' <value> The Configuration Mode command format. </value>
+    Protected Overrides ReadOnly Property ConfigurationModeCommandFormat As String = ":SENS:RES:MODE {0}"
+
+#End Region
+
 #End Region
 
 #Region " CURRENT "
@@ -116,6 +128,30 @@ Public Class SenseResistanceSubsystem
 #End Region
 
 #Region " RANGE "
+
+    ''' <summary> The Range of the power line cycles. </summary>
+    Public Overrides ReadOnly Property PowerLineCyclesRange As Core.Pith.RangeR = New Core.Pith.RangeR(0.01, 10)
+
+    ''' <summary> The Range of function values. </summary>
+    Public Overrides ReadOnly Property ValueRange As Core.Pith.RangeR
+        Get
+            Dim model As String = Me.StatusSubsystem.VersionInfo.Model
+            Select Case True
+                Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(0, 210000000.0)
+                Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(0, 210000000.0)
+                Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(0, 21000000.0)
+                Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(0, 21000000.0)
+                Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(0, 21000000.0)
+                Case Else
+                    Return New isr.Core.Pith.RangeR(0, 21000000.0)
+            End Select
+        End Get
+    End Property
 
     ''' <summary> Find range match. The matched range is the first range with a range value
     ''' greater or equal to the specified range. </summary>

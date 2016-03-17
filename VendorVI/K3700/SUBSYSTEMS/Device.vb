@@ -316,6 +316,7 @@ Public Class Device
     End Sub
 
 #End Region
+
 #End Region
 
 #Region " SERVICE REQUEST "

@@ -14,25 +14,21 @@ Public Class VersionInfo
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()
-        MyBase.new()
-        Me._boardRevisions = New System.Collections.Specialized.StringDictionary
+        MyBase.New()
+        Me._Clear()
+    End Sub
+
+    ''' <summary> Clears this object to its blank/initial state. </summary>
+    ''' <remarks> David, 3/12/2016. </remarks>
+    Private Sub _Clear()
         Me._FirmwareVersion = New System.Version
     End Sub
 
     ''' <summary> Clears this object to its blank/initial state. </summary>
     Public Overrides Sub Clear()
         MyBase.Clear()
-        Me._boardRevisions = New System.Collections.Specialized.StringDictionary
-        Me.ParseFirmwareRevision("")
+        Me._Clear()
     End Sub
-
-    Private _boardRevisions As System.Collections.Specialized.StringDictionary
-    ''' <summary>Returns the list of board revisions.</summary>
-    Public ReadOnly Property BoardRevisions() As System.Collections.Specialized.StringDictionary
-        Get
-            Return Me._boardRevisions
-        End Get
-    End Property
 
     ''' <summary> Gets or sets the firmware version. </summary>
     ''' <value> The firmware version. </value>
@@ -52,10 +48,12 @@ Public Class VersionInfo
     ''' e.g., <c>2.1.6</c>. The source meter identity includes no board specs. </param>
     Protected Overrides Sub ParseFirmwareRevision(ByVal revision As String)
         If revision Is Nothing Then
-            Throw New ArgumentNullException("revision")
+            Throw New ArgumentNullException(NameOf(revision))
         ElseIf String.IsNullOrWhiteSpace(revision) Then
+            MyBase.ParseFirmwareRevision(revision)
             Me.FirmwareVersion = New System.Version
         Else
+            MyBase.ParseFirmwareRevision(revision)
             Dim rev As New System.Version
             If Not System.Version.TryParse(revision, rev) Then
                 Dim tempRev As New System.Version
@@ -92,11 +90,4 @@ Public Class VersionInfo
     End Sub
 
 End Class
-
-''' <summary>Boards included in the instrument.</summary>
-Public Enum BoardType
-    <System.ComponentModel.Description("None")> None = 0
-    <System.ComponentModel.Description("Digital")> Digital = 1
-    <System.ComponentModel.Description("Display")> Display = 2
-End Enum
 

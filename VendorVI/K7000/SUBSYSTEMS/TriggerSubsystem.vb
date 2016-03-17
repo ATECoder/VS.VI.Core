@@ -27,11 +27,6 @@ Public Class TriggerSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.ArmSource = VI.ArmSource.Immediate
-        Me.AutoDelayEnabled = True
-        Me.Count = 1
-        Me.Delay = TimeSpan.Zero
-        Me.TimerInterval = TimeSpan.FromSeconds(0.1)
     End Sub
 
 #End Region
@@ -51,7 +46,7 @@ Public Class TriggerSubsystem
 
 #Region " COMMAND SYNTAX "
 
-#Region " ABORT / INIT COMMANDS "
+#Region " COMMANDS "
 
     ''' <summary> Gets the Abort command. </summary>
     ''' <value> The Abort command. </value>
@@ -61,17 +56,9 @@ Public Class TriggerSubsystem
     ''' <value> The initiate command. </value>
     Protected Overrides ReadOnly Property InitiateCommand As String = ":INIT"
 
-#End Region
-
-#Region " ARM "
-
-    ''' <summary> Gets the Arm source command format. </summary>
-    ''' <value> The write Arm source command format. </value>
-    Protected Overrides ReadOnly Property ArmSourceCommandFormat As String = ":TRAC:ARM {0}"
-
-    ''' <summary> Gets the Arm source query command. </summary>
-    ''' <value> The Arm source query command. </value>
-    Protected Overrides ReadOnly Property ArmSourceQueryCommand As String = ":TRAC:ARM?"
+    ''' <summary> Gets or sets the Immediate command. </summary>
+    ''' <value> The Immediate command. </value>
+    Protected Overrides ReadOnly Property ImmediateCommand As String = ":TRIG:IMM"
 
 #End Region
 
@@ -87,15 +74,15 @@ Public Class TriggerSubsystem
 
 #End Region
 
-#Region " COUNT "
+#Region " TRIGGER COUNT "
 
     ''' <summary> Gets trigger count query command. </summary>
     ''' <value> The trigger count query command. </value>
-    Protected Overrides ReadOnly Property CountQueryCommand As String = ":TRIG:COUN?"
+    Protected Overrides ReadOnly Property TriggerCountQueryCommand As String = ":TRIG:COUN?"
 
     ''' <summary> Gets trigger count command format. </summary>
     ''' <value> The trigger count command format. </value>
-    Protected Overrides ReadOnly Property CountCommandFormat As String = ":TRIG:COUN {0}"
+    Protected Overrides ReadOnly Property TriggerCountCommandFormat As String = ":TRIG:COUN {0}"
 
 #End Region
 
@@ -103,11 +90,11 @@ Public Class TriggerSubsystem
 
     ''' <summary> Gets the delay command format. </summary>
     ''' <value> The delay command format. </value>
-    Protected Overrides ReadOnly Property DelayCommandFormat As String = ":TRIG:DEL {0:s\.fff}"
+    Protected Overrides ReadOnly Property DelayCommandFormat As String = ":TRIG:DEL {0:s\.FFFFFFF}"
 
     ''' <summary> Gets the Delay format for converting the query to time span. </summary>
     ''' <value> The Delay query command. </value>
-    Protected Overrides ReadOnly Property DelayFormat As String = "s\.fff"
+    Protected Overrides ReadOnly Property DelayFormat As String = "s\.FFFFFFF"
 
     ''' <summary> Gets the delay query command. </summary>
     ''' <value> The delay query command. </value>
@@ -155,11 +142,11 @@ Public Class TriggerSubsystem
 
     ''' <summary> Gets the Timer Interval command format. </summary>
     ''' <value> The query command format. </value>
-    Protected Overrides ReadOnly Property TimerIntervalCommandFormat As String = ":TRIG:TIM {0:s\.fff}"
+    Protected Overrides ReadOnly Property TimerIntervalCommandFormat As String = ":TRIG:TIM {0:s\.FFFFFFF}"
 
     ''' <summary> Gets the Timer Interval format for converting the query to time span. </summary>
     ''' <value> The Timer Interval query command. </value>
-    Protected Overrides ReadOnly Property TimerIntervalFormat As String = "s\.fff"
+    Protected Overrides ReadOnly Property TimerIntervalFormat As String = "s\.FFFFFFF"
 
     ''' <summary> Gets the Timer Interval query command. </summary>
     ''' <value> The Timer Interval query command. </value>

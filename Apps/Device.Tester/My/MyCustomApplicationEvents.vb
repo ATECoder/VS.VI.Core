@@ -13,10 +13,8 @@ Namespace My
 
         ''' <summary> Destroys objects for this project. </summary>
         Friend Sub Destroy()
-#If SPLASH Then
             MySplashScreen.Close()
             MySplashScreen.Dispose()
-#End If
             Me.SplashScreen = Nothing
         End Sub
 
@@ -73,6 +71,18 @@ Namespace My
             End If
         End Sub
 
+        ''' <summary> Gets or sets the log. </summary>
+        ''' <value> The log. </value>
+        Public ReadOnly Property MyLog As MyLog = New MyLog()
+
+        ''' <summary> Applies the given value. </summary>
+        ''' <remarks> David, 3/16/2016. </remarks>
+        ''' <param name="value"> The value. </param>
+        Public Sub Apply(ByVal value As MyLog)
+            Me._MyLog = value
+            Global.isr.VI.My.MyLibrary.apply(value)
+        End Sub
+
         ''' <summary> Processes the startup. Sets the event arguments
         ''' <see cref="Microsoft.VisualBasic.ApplicationServices.StartupEventArgs.Cancel">cancel</see>
         ''' value if failed. </summary>
@@ -80,10 +90,8 @@ Namespace My
         ''' instance containing the event data. </param>
         Private Sub ProcessStartup(ByVal e As Microsoft.VisualBasic.ApplicationServices.StartupEventArgs)
             If Not e.Cancel Then
-#If SPLASH Then
                 MySplashScreen.CreateInstance(My.Application.SplashScreen)
                 Me.SplashTraceEvent(TraceEventType.Verbose, "Using splash panel.")
-#End If
                 Me.SplashTraceEvent(TraceEventType.Information, "Parsing command line")
                 e.Cancel = Not CommandLineInfo.TryParseCommandLine(e.CommandLine)
             End If
@@ -98,22 +106,29 @@ Namespace My
         ''' <returns> A <see cref="T:System.Boolean" /> indicating if application startup should continue. </returns>
         Protected Overrides Function OnInitialize(ByVal commandLineArgs As System.Collections.ObjectModel.ReadOnlyCollection(Of String)) As Boolean
 
-            With Me.Log
-                .ReplaceDefaultTraceListener(UserLevel.AllUsers)
-                If .LogFileExists Then
-                    .TraceSource.TraceEventOverride(TraceEventType.Information, My.MyApplication.TraceEventId, "Application initialized")
-                Else
+            Me.Apply(New MyLog(My.MyApplication.AssemblyProduct))
+            Dim listener As Microsoft.VisualBasic.Logging.FileLogTraceListener
+            With Me.MyLog
+                listener = .ReplaceDefaultTraceListener(UserLevel.AllUsers)
+                If Not .LogFileExists Then
                     .TraceSource.TraceEventOverride(TraceEventType.Information, My.MyApplication.TraceEventId,
                                                     "{0} version {1} {2} {3}", My.Application.Info.ProductName,
                                                     My.Application.Info.Version.ToString(4), Date.Now.ToShortDateString(), Date.Now.ToLongTimeString)
                 End If
+                .TraceSource.TraceEventOverride(TraceEventType.Information, My.MyApplication.TraceEventId, "Process {0} initialized", MyApplication.CurrentProcessName)
             End With
+
+            ' set the log for the application
+            With My.Application.Log
+                .TraceSource.Listeners.Remove(DefaultFileLogTraceListener.DefaultFileLogWriterName)
+                .TraceSource.Listeners.Add(listener)
+                .TraceSource.Switch.Level = SourceLevels.Verbose
+            End With
+
             Me.ApplyTraceLevel(My.Settings.TraceLevel)
 
-#If SPLASH Then
             ' Set the display time to value from the settings class.
             Me.MinimumSplashScreenDisplayTime = My.Settings.MinimumSplashScreenDisplayMilliseconds
-#End If
 
             Return MyBase.OnInitialize(commandLineArgs)
 
@@ -122,7 +137,7 @@ Namespace My
         ''' <summary> Applies the trace level described by value. </summary>
         ''' <param name="value"> The value. </param>
         Public Sub ApplyTraceLevel(ByVal value As TraceEventType)
-            Me.Log.ApplyTraceLevel(value)
+            Me.MyLog.ApplyTraceLevel(value)
         End Sub
 
     End Class

@@ -41,11 +41,11 @@ Public Class SourceSubsystem
 
     ''' <summary> Gets the delay command format. </summary>
     ''' <value> The delay command format. </value>
-    Protected Overrides ReadOnly Property DelayCommandFormat As String = ":SOUR:DEL {0:s\.fff}"
+    Protected Overrides ReadOnly Property DelayCommandFormat As String = ":SOUR:DEL {0:s\.FFFFFFF}"
 
     ''' <summary> Gets the Delay format for converting the query to time span. </summary>
     ''' <value> The Delay query command. </value>
-    Protected Overrides ReadOnly Property DelayFormat As String = "s\.fff"
+    Protected Overrides ReadOnly Property DelayFormat As String = "s\.FFFFFFF"
 
     ''' <summary> Gets the delay query command. </summary>
     ''' <value> The delay query command. </value>

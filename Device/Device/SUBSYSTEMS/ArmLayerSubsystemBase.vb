@@ -1,5 +1,6 @@
 Imports isr.Core.Pith
-''' <summary> Defines a SCPI ARM Subsystem. </summary>
+Imports isr.Core.Pith.EnumExtensions
+''' <summary> Defines a SCPI arm layer base Subsystem. </summary>
 ''' <license> (c) 2010 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
 ''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
@@ -9,18 +10,27 @@ Imports isr.Core.Pith
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ''' </para> </license>
 ''' <history date="11/5/2013" by="David" revision=""> Created based on SCPI 5.1 library. </history>
-Public MustInherit Class ArmSubsystemBase
+Public MustInherit Class ArmLayerSubsystemBase
     Inherits SubsystemPlusStatusBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Initializes a new instance of the <see cref="ArmSubsystemBase" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="ArmLayerSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
+        Me.New(1, statusSubsystem)
+    End Sub
+
+    ''' <summary>
+    ''' Initializes a new instance of the <see cref="ArmLayerSubsystemBase" /> class.
+    ''' </summary>
+    ''' <remarks> David, 3/11/2016. </remarks>
+    ''' <param name="layerNumber">     The arm layer number. </param>
+    ''' <param name="statusSubsystem"> A reference to a
+    '''                                <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    Protected Sub New(ByVal layerNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me._ActiveLayer = New ArmLayer()
-        ' create a new instance of the arm layers collection
-        Me._ArmLayers = New PresettablePropertyPublisherCollection
+        Me._LayerNumber = layerNumber
     End Sub
 
     ''' <summary>
@@ -34,12 +44,6 @@ Public MustInherit Class ArmSubsystemBase
     Protected Overloads Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                ' Free managed resources when explicitly called
-                ' Unable to use null conditional because it is not visible to code analysis
-                If Me._ActiveLayer IsNot Nothing Then Me._ActiveLayer.Dispose() : Me._ActiveLayer = Nothing
-            End If
-            If Not Me.IsDisposed Then
-                Me.ArmLayers?.Clear() : Me._ArmLayers = Nothing
             End If
         Finally
             MyBase.Dispose(disposing)
@@ -50,149 +54,112 @@ Public MustInherit Class ArmSubsystemBase
 
 #Region " I PRESETTABLE "
 
-    ''' <summary> Sets subsystem values to their known execution clear state. </summary>
-    Public Overrides Sub ClearExecutionState()
-        MyBase.ClearExecutionState()
-        Me.ArmLayers.ClearExecutionState()
-    End Sub
-
-    ''' <summary> Sets the subsystem to its preset state. </summary>
-    Public Overrides Sub PresetKnownState()
-        MyBase.PresetKnownState()
-        Me.ArmLayers.PresetKnownState()
-    End Sub
-
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.ArmLayers.ResetKnownState()
+        Me._Count = 1
+        Me._Delay = TimeSpan.Zero
+        Me._Direction = VI.Direction.Acceptor
+        Me._InputLineNumber = 1
+        Me._OutputLineNumber = 2
+        Me._ArmSource = VI.ArmSources.Immediate
+        Me._TimerInterval = TimeSpan.FromSeconds(0.001)
     End Sub
 
 #End Region
 
-#Region " LAYERS "
+#Region " NUMERIC COMMAND BUILDER "
 
-    ''' <summary> Gets or sets reference to the <see cref="Armlayer">arm layer</see>.
-    ''' </summary>
-    Public Property ActiveLayer() As ArmLayer
+    ''' <summary> Gets or sets the arm layer number. </summary>
+    ''' <value> The arm layer number. </value>
+    Protected ReadOnly Property LayerNumber As Integer
 
-    ''' <summary>
-    ''' Adds an <see cref="Armlayer">arm layer</see> to the collection of arm layers.
-    ''' Makes the layer the <see cref="Activelayer">active layer.</see>
-    ''' </summary>
-    Public Sub AddLayer()
-        Me.ActiveLayer = New ArmLayer()
-        Me.ArmLayers.Add(New ArmLayer())
+    ''' <summary> Builds a command. </summary>
+    ''' <remarks> David, 3/10/2016. </remarks>
+    ''' <param name="baseCommand"> The base command. </param>
+    ''' <returns> A String. </returns>
+    Protected Function BuildCommand(ByVal baseCommand As String) As String
+        Return String.Format(Globalization.CultureInfo.InvariantCulture, baseCommand, Me.LayerNumber)
+    End Function
+
+#End Region
+
+#Region " COMMANDS "
+
+    ''' <summary> Gets the Immediate command. </summary>
+    ''' <value> The Immediate command. </value>
+    ''' <remarks> SCPI: ":ARM:LAY{0}:IMM". </remarks>
+    Protected Overridable ReadOnly Property ImmediateCommand As String
+
+    ''' <summary> Immediately move tot he next layer. </summary>
+    Public Sub Immediate()
+        Me.Session.Execute(Me.ImmediateCommand)
     End Sub
 
-    Private _ArmLayers As PresettablePropertyPublisherCollection
-    ''' <summary>
-    ''' Gets reference to the collection of calculation layers
-    ''' </summary>
-    Public ReadOnly Property ArmLayers() As PresettablePropertyPublisherCollection
-        Get
-            Return Me._ArmLayers
-        End Get
-    End Property
-
 #End Region
 
-#Region " ACTIVE LAYER "
+#Region " ARM COUNT "
 
-#Region " ARM SOURCE "
-
-    ''' <summary> Gets or sets the cached source ArmSource. </summary>
-    ''' <value> The <see cref="ArmSource">source Arm Source</see> or none if not set or
-    ''' unknown. </value>
-    Public Overloads Property ArmSource As ArmSource?
+    Private _Count As Integer?
+    ''' <summary> Gets or sets the cached Arm ArmCount. </summary>
+    ''' <remarks> Specifies how many times an operation is performed in the specified layer of the
+    ''' Arm model. </remarks>
+    ''' <value> The Arm ArmCount or none if not set or unknown. </value>
+    Public Overloads Property ArmCount As Integer?
         Get
-            Return Me.ActiveLayer.ArmSource
+            Return Me._Count
         End Get
-        Protected Set(ByVal value As ArmSource?)
-            If Not Me.ArmSource.Equals(value) Then
-                Me.ActiveLayer.ArmSource = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmSource))
+        Protected Set(ByVal value As Integer?)
+            If Not Nullable.Equals(Me.ArmCount, value) Then
+                Me._Count = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmCount))
             End If
         End Set
     End Property
 
-    ''' <summary> Writes and reads back the source Arm Source. </summary>
-    ''' <param name="value"> The  Source Arm Source. </param>
-    ''' <returns> The <see cref="ArmSource">source Arm Source</see> or none if unknown. </returns>
-    Public Function ApplyArmSource(ByVal value As ArmSource) As ArmSource?
-        Me.WriteArmSource(value)
-        Return Me.QueryArmSource()
+    ''' <summary> Writes and reads back the Arm ArmCount. </summary>
+    ''' <param name="value"> The current ArmCount. </param>
+    ''' <returns> The ArmCount or none if unknown. </returns>
+    Public Function ApplyArmCount(ByVal value As Integer) As Integer?
+        Me.WriteArmCount(value)
+        Return Me.QueryArmCount()
     End Function
 
-    ''' <summary> Queries the Source Arm Source. </summary>
-    ''' <returns> The <see cref="ArmSource">source Arm Source</see> or none if unknown. </returns>
-    Public MustOverride Function QueryArmSource() As ArmSource?
+    ''' <summary> Gets Arm ArmCount query command. </summary>
+    ''' <value> The Arm ArmCount query command. </value>
+    ''' <remarks> SCPI: ":ARM:COUN?" </remarks>
+    Protected Overridable ReadOnly Property ArmCountQueryCommand As String
 
-    ''' <summary> Writes the source Arm Source without reading back the value from the device. </summary>
-    ''' <param name="value"> The Arm Source. </param>
-    ''' <returns> The <see cref="ArmSource">source Arm Source</see> or none if unknown. </returns>
-    Public MustOverride Function WriteArmSource(ByVal value As ArmSource) As ArmSource?
-
-#End Region
-
-#Region " AUTO DELAY ENABLED "
-
-    ''' <summary> Gets or sets the cached Auto Delay Enabled sentinel. </summary>
-    ''' <value> <c>null</c> if Auto Delay Enabled is not known; <c>True</c> if output is on; otherwise,
-    ''' <c>False</c>. </value>
-    Public Property AutoDelayEnabled As Boolean?
-        Get
-            Return Me.ActiveLayer.AutoDelayEnabled
-        End Get
-        Protected Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.AutoDelayEnabled, value) Then
-                Me.ActiveLayer.AutoDelayEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoDelayEnabled))
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the Auto Delay Enabled sentinel. </summary>
-    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function ApplyAutoDelayEnabled(ByVal value As Boolean) As Boolean?
-        Me.WriteAutoDelayEnabled(value)
-        Return Me.QueryAutoDelayEnabled()
+    ''' <summary> Queries the current PointsArmCount. </summary>
+    ''' <returns> The PointsArmCount or none if unknown. </returns>
+    Public Function QueryArmCount() As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.ArmCountQueryCommand) Then
+            Me.ArmCount = Me.Session.Query(0I, Me.BuildCommand(Me.ArmCountQueryCommand))
+        End If
+        Return Me.ArmCount
     End Function
 
-    ''' <summary> Gets the automatic delay enabled query command. </summary>
-    ''' <value> The automatic delay enabled query command. </value>
-    ''' <remarks> SCPI: ":TRIG:DEL:AUTO?" </remarks>
-    Protected Overridable ReadOnly Property AutoDelayEnabledQueryCommand As String
+    ''' <summary> Gets Arm ArmCount command format. </summary>
+    ''' <value> The Arm ArmCount command format. </value>
+    ''' <remarks> SCPI: ":ARM:COUN {0}" </remarks>
+    Protected Overridable ReadOnly Property ArmCountCommandFormat As String
 
-    ''' <summary> Queries the Auto Delay Enabled sentinel. Also sets the
-    ''' <see cref="AutoDelayEnabled">Enabled</see> sentinel. </summary>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function QueryAutoDelayEnabled() As Boolean?
-        Me.AutoDelayEnabled = Me.Query(Me.AutoDelayEnabled, Me.AutoDelayEnabledQueryCommand)
-        Return Me.AutoDelayEnabled
-    End Function
-
-    ''' <summary> Gets the automatic delay enabled command Format. </summary>
-    ''' <value> The automatic delay enabled query command. </value>
-    ''' <remarks> SCPI: ":TRIG:DEL:AUTO {0:'ON';'ON';'OFF'}" </remarks>
-    Protected Overridable ReadOnly Property AutoDelayEnabledCommandFormat As String
-
-    ''' <summary> Writes the Auto Delay Enabled sentinel. Does not read back from the instrument. </summary>
-    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function WriteAutoDelayEnabled(ByVal value As Boolean) As Boolean?
-        Me.AutoDelayEnabled = Me.Write(value, Me.AutoDelayEnabledCommandFormat)
-        Return Me.AutoDelayEnabled
+    ''' <summary> Write the Trace PointsArmCount without reading back the value from the device. </summary>
+    ''' <param name="value"> The current PointsArmCount. </param>
+    ''' <returns> The PointsArmCount or none if unknown. </returns>
+    Public Function WriteArmCount(ByVal value As Integer) As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.ArmCountCommandFormat) Then
+            Me.Session.WriteLine(Me.BuildCommand(Me.ArmCountCommandFormat), value)
+        End If
+        Me.ArmCount = value
+        Return Me.ArmCount
     End Function
 
 #End Region
 
 #Region " ARM DIRECTION "
 
-    ''' <summary> The ARM Direction. </summary>
     Private _Direction As Direction?
-
     ''' <summary> Gets or sets the cached source Direction. </summary>
     ''' <value> The <see cref="Direction">ARM Direction</see> or none if not set or
     ''' unknown. </value>
@@ -243,48 +210,92 @@ Public MustInherit Class ArmSubsystemBase
 
 #End Region
 
-#Region " COUNT "
+#Region " ARM SOURCE "
 
-    ''' <summary> Gets or sets the cached Trigger Count. </summary>
-    ''' <remarks> Specifies how many times an operation is performed in the specified layer of the
-    ''' trigger model. </remarks>
-    ''' <value> The Trigger Count or none if not set or unknown. </value>
-    Public Overloads Property Count As Integer?
+    Private _SupportedArmSources As ArmSources
+    ''' <summary>
+    ''' Gets or sets the supported Function Mode.
+    ''' This is a subset of the functions supported by the instrument.
+    ''' </summary>
+    Public Property SupportedArmSources() As ArmSources
         Get
-            Return Me.ActiveLayer.Count
+            Return Me._SupportedArmSources
         End Get
-        Protected Set(ByVal value As Integer?)
-            If Not Nullable.Equals(Me.Count, value) Then
-                Me.ActiveLayer.Count = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Count))
+        Set(ByVal value As ArmSources)
+            If Not Me.SupportedArmSources.Equals(value) Then
+                Me._SupportedArmSources = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedArmSources))
             End If
         End Set
     End Property
 
-    ''' <summary> Writes and reads back the Trigger Count. </summary>
-    ''' <param name="value"> The current Count. </param>
-    ''' <returns> The Count or none if unknown. </returns>
-    Public Function ApplyCount(ByVal value As Integer) As Integer?
-        Me.WriteCount(value)
-        Return Me.QueryCount()
+    Private _ArmSource As ArmSources?
+    ''' <summary> Gets or sets the cached source ArmSource. </summary>
+    ''' <value> The <see cref="ArmSource">source Arm Source</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property ArmSource As ArmSources?
+        Get
+            Return Me._ArmSource
+        End Get
+        Protected Set(ByVal value As ArmSources?)
+            If Not Me.ArmSource.Equals(value) Then
+                Me._ArmSource = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmSource))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the source Arm Source. </summary>
+    ''' <param name="value"> The  Source Arm Source. </param>
+    ''' <returns> The <see cref="ArmSource">source Arm Source</see> or none if unknown. </returns>
+    Public Function ApplyArmSource(ByVal value As ArmSources) As ArmSources?
+        Me.WriteArmSource(value)
+        Return Me.QueryArmSource()
     End Function
 
-    ''' <summary> Queries the current Count. </summary>
-    ''' <returns> The Count or none if unknown. </returns>
-    Public MustOverride Function QueryCount() As Integer?
+    ''' <summary> Gets the Arm source query command. </summary>
+    ''' <value> The Arm source query command. </value>
+    ''' <remarks> SCPI: ":ARM:SOUR?" </remarks>
+    Protected Overridable ReadOnly Property ArmSourceQueryCommand As String
 
-    ''' <summary> Sets back the Trigger Count without reading back the value from the device. </summary>
-    ''' <param name="value"> The current Count. </param>
-    ''' <returns> The Count or none if unknown. </returns>
-    Public MustOverride Function WriteCount(ByVal value As Integer) As Integer?
+    ''' <summary> Queries the Arm Source. </summary>
+    ''' <returns> The <see cref="ArmSource">Arm Source</see> or none if unknown. </returns>
+    Public Function QueryArmSource() As ArmSources?
+        Dim currentValue As String = Me.ArmSource.ToString
+        If String.IsNullOrEmpty(Me.Session.EmulatedReply) Then Me.Session.EmulatedReply = currentValue
+        If Not String.IsNullOrWhiteSpace(Me.ArmSourceQueryCommand) Then
+            currentValue = Me.Session.QueryTrimEnd(Me.BuildCommand(Me.ArmSourceQueryCommand))
+        End If
+        If String.IsNullOrWhiteSpace(currentValue) Then
+            Me.ArmSource = New ArmSources?
+        Else
+            Dim se As New StringEnumerator(Of ArmSources)
+            Me.ArmSource = se.ParseContained(currentValue.BuildDelimitedValue)
+        End If
+        Return Me.ArmSource
+    End Function
+
+    ''' <summary> Gets the Arm source command format. </summary>
+    ''' <value> The write Arm source command format. </value>
+    ''' <remarks> SCPI: ":ARM:SOUR {0}". </remarks>
+    Protected Overridable ReadOnly Property ArmSourceCommandFormat As String
+
+    ''' <summary> Writes the Arm Source without reading back the value from the device. </summary>
+    ''' <param name="value"> The Arm Source. </param>
+    ''' <returns> The <see cref="ArmSource">Arm Source</see> or none if unknown. </returns>
+    Public Function WriteArmSource(ByVal value As ArmSources) As ArmSources?
+        If Not String.IsNullOrWhiteSpace(Me.ArmSourceCommandFormat) Then
+            Me.Session.WriteLine(Me.BuildCommand(Me.ArmSourceCommandFormat), value.ExtractBetween())
+        End If
+        Me.ArmSource = value
+        Return Me.ArmSource
+    End Function
 
 #End Region
 
 #Region " DELAY "
 
-    ''' <summary> The delay. </summary>
     Private _Delay As TimeSpan?
-
     ''' <summary> Gets or sets the cached Arm Delay. </summary>
     ''' <remarks> The delay is used to delay operation in the Arm layer. After the programmed
     ''' Arm event occurs, the instrument waits until the delay period expires before performing
@@ -317,26 +328,26 @@ Public MustInherit Class ArmSubsystemBase
 
     ''' <summary> Gets the Delay format for converting the query to time span. </summary>
     ''' <value> The Delay query command. </value>
-    ''' <remarks> For example: "s\.fff" will convert the result from seconds. </remarks>
+    ''' <remarks> For example: "s\.FFFFFFF" will convert the result from seconds. </remarks>
     Protected Overridable ReadOnly Property DelayFormat As String
 
     ''' <summary> Queries the Delay. </summary>
     ''' <returns> The Delay or none if unknown. </returns>
     Public Function QueryDelay() As TimeSpan?
-        Me.Delay = Me.Query(Me.Delay, Me.DelayFormat, Me.DelayQueryCommand)
+        Me.Delay = Me.Query(Me.Delay, Me.DelayFormat, Me.BuildCommand(Me.DelayQueryCommand))
         Return Me.Delay
     End Function
 
     ''' <summary> Gets the delay command format. </summary>
     ''' <value> The delay command format. </value>
-    ''' <remarks> SCPI: ":ARM:DEL {0:s\.fff}" </remarks>
+    ''' <remarks> SCPI: ":ARM:DEL {0:s\.FFFFFFF}" </remarks>
     Protected Overridable ReadOnly Property DelayCommandFormat As String
 
     ''' <summary> Writes the Arm Delay without reading back the value from the device. </summary>
     ''' <param name="value"> The current Delay. </param>
     ''' <returns> The Arm Delay or none if unknown. </returns>
     Public Function WriteDelay(ByVal value As TimeSpan) As TimeSpan?
-        Me.Delay = Me.Write(value, Me.DelayCommandFormat)
+        Me.Delay = Me.Write(value, Me.BuildCommand(Me.DelayCommandFormat))
         Return Me.Delay
     End Function
 
@@ -377,7 +388,7 @@ Public MustInherit Class ArmSubsystemBase
     ''' <summary> Queries the InputLineNumber. </summary>
     ''' <returns> The Input Line Number or none if unknown. </returns>
     Public Function QueryInputLineNumber() As Integer?
-        Me.InputLineNumber = Me.Query(Me.InputLineNumber, Me.InputLineNumberQueryCommand)
+        Me.InputLineNumber = Me.Query(Me.InputLineNumber, Me.BuildCommand(Me.InputLineNumberQueryCommand))
         Return Me.InputLineNumber
     End Function
 
@@ -390,7 +401,7 @@ Public MustInherit Class ArmSubsystemBase
     ''' <param name="value"> The current InputLineNumber. </param>
     ''' <returns> The Arm Input Line Number or none if unknown. </returns>
     Public Function WriteInputLineNumber(ByVal value As Integer) As Integer?
-        Me.InputLineNumber = Me.Write(value, Me.InputLineNumberCommandFormat)
+        Me.InputLineNumber = Me.Write(value, Me.BuildCommand(Me.InputLineNumberCommandFormat))
         Return Me.InputLineNumber
     End Function
 
@@ -431,7 +442,7 @@ Public MustInherit Class ArmSubsystemBase
     ''' <summary> Queries the OutputLineNumber. </summary>
     ''' <returns> The Output Line Number or none if unknown. </returns>
     Public Function QueryOutputLineNumber() As Integer?
-        Me.OutputLineNumber = Me.Query(Me.OutputLineNumber, Me.OutputLineNumberQueryCommand)
+        Me.OutputLineNumber = Me.Query(Me.OutputLineNumber, Me.BuildCommand(Me.OutputLineNumberQueryCommand))
         Return Me.OutputLineNumber
     End Function
 
@@ -444,7 +455,7 @@ Public MustInherit Class ArmSubsystemBase
     ''' <param name="value"> The current OutputLineNumber. </param>
     ''' <returns> The Arm Output Line Number or none if unknown. </returns>
     Public Function WriteOutputLineNumber(ByVal value As Integer) As Integer?
-        Me.OutputLineNumber = Me.Write(value, Me.OutputLineNumberCommandFormat)
+        Me.OutputLineNumber = Me.Write(value, Me.BuildCommand(Me.OutputLineNumberCommandFormat))
         Return Me.OutputLineNumber
     End Function
 
@@ -452,9 +463,7 @@ Public MustInherit Class ArmSubsystemBase
 
 #Region " TIMER TIME SPAN "
 
-    ''' <summary> The Timer Interval. </summary>
     Private _TimerInterval As TimeSpan?
-
     ''' <summary> Gets or sets the cached Arm Timer Interval. </summary>
     ''' <remarks> The Timer Interval is used to Timer Interval operation in the Arm layer. After the programmed
     ''' Arm event occurs, the instrument waits until the Timer Interval period expires before performing
@@ -487,29 +496,27 @@ Public MustInherit Class ArmSubsystemBase
 
     ''' <summary> Gets the Timer Interval format for converting the query to time span. </summary>
     ''' <value> The Timer Interval query command. </value>
-    ''' <remarks> For example: "s\.fff" will convert the result from seconds. </remarks>
+    ''' <remarks> For example: "s\.FFFFFFF" will convert the result from seconds. </remarks>
     Protected Overridable ReadOnly Property TimerIntervalFormat As String
 
     ''' <summary> Queries the Timer Interval. </summary>
     ''' <returns> The Timer Interval or none if unknown. </returns>
     Public Function QueryTimerTimeSpan() As TimeSpan?
-        Me.TimerInterval = Me.Query(Me.TimerInterval, Me.TimerIntervalFormat, Me.TimerIntervalQueryCommand)
+        Me.TimerInterval = Me.Query(Me.TimerInterval, Me.TimerIntervalFormat, Me.BuildCommand(Me.TimerIntervalQueryCommand))
         Return Me.TimerInterval
     End Function
 
     ''' <summary> Gets the Timer Interval command format. </summary>
     ''' <value> The query command format. </value>
-    ''' <remarks> SCPI: ":ARM:TIM {0:s\.fff}" </remarks>
+    ''' <remarks> SCPI: ":ARM:TIM {0:s\.FFFFFFF}" </remarks>
     Protected Overridable ReadOnly Property TimerIntervalCommandFormat As String
 
     ''' <summary> Writes the Arm Timer Interval without reading back the value from the device. </summary>
     ''' <param name="value"> The current TimerTimeSpan. </param>
     ''' <returns> The Arm Timer Interval or none if unknown. </returns>
     Public Function WriteTimerTimeSpan(ByVal value As TimeSpan) As TimeSpan?
-        Me.TimerInterval = Me.Write(value, Me.TimerIntervalQueryCommand)
+        Me.TimerInterval = Me.Write(value, Me.BuildCommand(Me.TimerIntervalQueryCommand))
     End Function
-
-#End Region
 
 #End Region
 

@@ -82,6 +82,7 @@ Public MustInherit Class ReadingAmounts
             Me._RawReading = ReadingAmounts.Empty
         Else
             Me._RawReading = ""
+            affirmative = True
             For Each readingItem As ReadingElement In Me._Readings
                 Dim valueReading As String = readings(firstElementIndex)
                 Me._RawReading = $"{Me._RawReading}{Me.DefaultDelimiter}{valueReading}"

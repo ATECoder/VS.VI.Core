@@ -95,12 +95,12 @@ Public Class Readings
     Public Shared Function ParseMulti(ByVal baseReading As Readings, ByVal readingRecords As String) As Readings()
 
         If readingRecords Is Nothing Then
-            Throw New ArgumentNullException("readingRecords")
+            Throw New ArgumentNullException(NameOf(readingRecords))
         ElseIf readingRecords.Length = 0 Then
             Dim r As Readings() = {}
             Return r
         ElseIf baseReading Is Nothing Then
-            Throw New ArgumentNullException("baseReading")
+            Throw New ArgumentNullException(NameOf(baseReading))
         End If
 
         Dim readings As String() = readingRecords.Split(","c)

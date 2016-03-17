@@ -72,17 +72,17 @@ Public MustInherit Class SourceSubsystemBase
 #Region " FUNCTION MODE "
 
     ''' <summary> Queries the Source Function Mode. </summary>
-    ''' <returns> The <see cref="SourceFunctionMode">source Function Mode</see> or none if unknown. </returns>
-    Public Overrides Function QueryFunctionMode() As SourceFunctionMode?
+    ''' <returns> The <see cref="SourceFunctionModes">source Function Mode</see> or none if unknown. </returns>
+    Public Overrides Function QueryFunctionMode() As SourceFunctionModes?
         Dim mode As String = Me.FunctionMode.ToString
         Me.Session.MakeEmulatedReplyIfEmpty(mode)
         mode = Me.Session.QueryTrimEnd(":SOUR:FUNC?")
         If String.IsNullOrWhiteSpace(mode) Then
             Dim message As String = "Failed fetching source function mode"
             Debug.Assert(Not Debugger.IsAttached, message)
-            Me.FunctionMode = New SourceFunctionMode?
+            Me.FunctionMode = New SourceFunctionModes?
         Else
-            Dim se As New StringEnumerator(Of SourceFunctionMode)
+            Dim se As New StringEnumerator(Of SourceFunctionModes)
             Me.FunctionMode = se.ParseContained(mode.BuildDelimitedValue)
         End If
         Return Me.FunctionMode
@@ -90,8 +90,8 @@ Public MustInherit Class SourceSubsystemBase
 
     ''' <summary> Writes the source Function Mode without reading back the value from the device. </summary>
     ''' <param name="value"> The Function Mode. </param>
-    ''' <returns> The <see cref="SourceFunctionMode">source Function Mode</see> or none if unknown. </returns>
-    Public Overrides Function WriteFunctionMode(ByVal value As SourceFunctionMode) As SourceFunctionMode?
+    ''' <returns> The <see cref="SourceFunctionModes">source Function Mode</see> or none if unknown. </returns>
+    Public Overrides Function WriteFunctionMode(ByVal value As SourceFunctionModes) As SourceFunctionModes?
         Me.Session.WriteLine(":SOUR:FUNC {0}", value.ExtractBetween())
         Me.FunctionMode = value
         Return Me.FunctionMode

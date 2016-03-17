@@ -503,9 +503,7 @@ Public Class PartsPanel
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub ConfigurePartsDisplay(ByVal grid As DataGridView)
 
-        If grid Is Nothing Then
-            Throw New ArgumentNullException("grid")
-        End If
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
         Me._PartsBindingSource = New BindingSource()
         Me._PartsBindingSource.DataSource = Me.Parts

@@ -22,6 +22,24 @@ Public Class TriggerSubsystem
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Sets the subsystem to its initial post reset state. </summary>
+    ''' <remarks> Additional Actions: <para>
+    '''           Clears Error Queue.
+    '''           </para></remarks>
+    Public Overrides Sub InitKnownState()
+        MyBase.InitKnownState()
+        Me.SupportedTriggerSources = VI.TriggerSources.Immediate Or VI.TriggerSources.TriggerLink
+    End Sub
+
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.TriggerSource = VI.TriggerSources.Immediate
+    End Sub
+
+#End Region
+
 #Region " PUBLISHER "
 
     ''' <summary> Publishes all values by raising the property changed events. </summary>
@@ -37,27 +55,24 @@ Public Class TriggerSubsystem
 
 #Region " COMMAND SYNTAX "
 
-#Region " ABORT / INIT COMMANDS "
+#Region " COMMANDS "
 
     ''' <summary> Gets the Abort command. </summary>
     ''' <value> The Abort command. </value>
-    Protected Overrides ReadOnly Property AbortCommand As String = ":ABOR"
+    Protected Overrides ReadOnly Property AbortCommand As String = ":ABORT"
 
     ''' <summary> Gets the initiate command. </summary>
     ''' <value> The initiate command. </value>
     Protected Overrides ReadOnly Property InitiateCommand As String = ":INIT"
 
-#End Region
+    ''' <summary> Gets the clear command. </summary>
+    ''' <remarks> SCPI: ":TRIG:CLE". </remarks>
+    ''' <value> The clear command. </value>
+    Protected Overrides ReadOnly Property ClearCommand As String = "TRIG:CLE"
 
-#Region " ARM "
-
-    ''' <summary> Gets the Arm source command format. </summary>
-    ''' <value> The write Arm source command format. </value>
-    Protected Overrides ReadOnly Property ArmSourceCommandFormat As String = ":TRAC:ARM {0}"
-
-    ''' <summary> Gets the Arm source query command. </summary>
-    ''' <value> The Arm source query command. </value>
-    Protected Overrides ReadOnly Property ArmSourceQueryCommand As String = ":TRAC:ARM?"
+    ''' <summary> Gets or sets the Immediate command. </summary>
+    ''' <value> The Immediate command. </value>
+    Protected Overrides ReadOnly Property ImmediateCommand As String = "" ' ":TRIG:IMM"
 
 #End Region
 
@@ -73,15 +88,15 @@ Public Class TriggerSubsystem
 
 #End Region
 
-#Region " COUNT "
+#Region " TRIGGER COUNT "
 
     ''' <summary> Gets trigger count query command. </summary>
     ''' <value> The trigger count query command. </value>
-    Protected Overrides ReadOnly Property CountQueryCommand As String = ":TRIG:COUN?"
+    Protected Overrides ReadOnly Property TriggerCountQueryCommand As String = ":TRIG:COUN?"
 
     ''' <summary> Gets trigger count command format. </summary>
     ''' <value> The trigger count command format. </value>
-    Protected Overrides ReadOnly Property CountCommandFormat As String = ":TRIG:COUN {0}"
+    Protected Overrides ReadOnly Property TriggerCountCommandFormat As String = ":TRIG:COUN {0}"
 
 #End Region
 
@@ -89,11 +104,11 @@ Public Class TriggerSubsystem
 
     ''' <summary> Gets the delay command format. </summary>
     ''' <value> The delay command format. </value>
-    Protected Overrides ReadOnly Property DelayCommandFormat As String = ":TRIG:DEL {0:s\.fff}"
+    Protected Overrides ReadOnly Property DelayCommandFormat As String = ":TRIG:DEL {0:s\.FFFFFFF}"
 
     ''' <summary> Gets the Delay format for converting the query to time span. </summary>
     ''' <value> The Delay query command. </value>
-    Protected Overrides ReadOnly Property DelayFormat As String = "s\.fff"
+    Protected Overrides ReadOnly Property DelayFormat As String = "s\.FFFFFFF"
 
     ''' <summary> Gets the delay query command. </summary>
     ''' <value> The delay query command. </value>
@@ -137,15 +152,27 @@ Public Class TriggerSubsystem
 
 #End Region
 
+#Region " TRIGGER SOURCE "
+
+    ''' <summary> Gets the Trigger source command format. </summary>
+    ''' <value> The write Trigger source command format. </value>
+    Protected Overrides ReadOnly Property TriggerSourceCommandFormat As String = ":TRIG:SOUR {0}"
+
+    ''' <summary> Gets the Trigger source query command. </summary>
+    ''' <value> The Trigger source query command. </value>
+    Protected Overrides ReadOnly Property TriggerSourceQueryCommand As String = ":TRIG:SOUR?"
+
+#End Region
+
 #Region " TIMER TIME SPAN "
 
     ''' <summary> Gets the Timer Interval command format. </summary>
     ''' <value> The query command format. </value>
-    Protected Overrides ReadOnly Property TimerIntervalCommandFormat As String = ":TRIG:TIM {0:s\.fff}"
+    Protected Overrides ReadOnly Property TimerIntervalCommandFormat As String = ":TRIG:TIM {0:s\.FFFFFFF}"
 
     ''' <summary> Gets the Timer Interval format for converting the query to time span. </summary>
     ''' <value> The Timer Interval query command. </value>
-    Protected Overrides ReadOnly Property TimerIntervalFormat As String = "s\.fff"
+    Protected Overrides ReadOnly Property TimerIntervalFormat As String = "s\.FFFFFFF"
 
     ''' <summary> Gets the Timer Interval query command. </summary>
     ''' <value> The Timer Interval query command. </value>

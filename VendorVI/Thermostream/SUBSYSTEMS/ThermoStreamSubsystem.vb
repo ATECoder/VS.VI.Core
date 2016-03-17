@@ -142,7 +142,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="countdown"> The countdown. </param>
     ''' <param name="e">         Event information to send to registered event handlers. </param>
     Public Overloads Sub StartCycling(ByVal countdown As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
 
         If Not e.Cancel Then
             ' send the start command
@@ -184,7 +184,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="countdown"> The countdown. </param>
     ''' <param name="e">         Event information to send to registered event handlers. </param>
     Public Overloads Sub StopCycling(ByVal countdown As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
 
         If Not e.Cancel Then
             ' send the start command
@@ -220,7 +220,7 @@ Public Class ThermostreamSubsystem
 
     ''' <summary> Gets the Device Control command Format. </summary>
     ''' <value> The automatic Range enabled query command. </value>
-    Protected Overrides ReadOnly Property DeviceControlCommandFormat As String = "DUTM {0:'1';'1';'0'}"
+    Protected Overrides ReadOnly Property DeviceControlCommandFormat As String = "DUTM {0:        '1';'1';'0'}"
 
     ''' <summary> Gets the Device Control query command. </summary>
     ''' <value> The automatic Range enabled query command. </value>
@@ -436,7 +436,7 @@ Public Class ThermostreamSubsystem
     ''' <summary> Query if this object is cycle ended. </summary>
     ''' <returns> <c>true</c> if cycle ended; otherwise <c>false</c> </returns>
     Public Function QueryCycleCompleted(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.QueryTemperatureEventStatus()
         affirmative = Me.IsCycleCompleted OrElse (ThermostreamSubsystem.UseCyclesCompleted AndAlso Me.IsCyclesCompleted)
@@ -456,7 +456,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="countdown"> The countdown. </param>
     ''' <param name="e">         Cancel event information. </param>
     Public Sub MoveNextSetpoint(ByVal countdown As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         ' otherwise, save the current setpoint number
         Me.QuerySetpointNumber()
         If Me.SetpointNumber.HasValue Then
@@ -497,7 +497,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="e">         Cancel event information. </param>
     Public Sub ConditionalCycleMoveNext(ByVal countdown As Integer, ByVal additionalInfo As String,
                                         ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If String.IsNullOrEmpty(additionalInfo) Then additionalInfo = "waiting for At-Temp"
         Me.QueryTemperatureEventStatus()
         If Me.IsCycleCompleted Then
@@ -653,7 +653,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="setpoint"> The setpoint. </param>
     ''' <returns> A String. </returns>
     Public Function BuildCommand(ByVal setpoint As ThermalSetpoint) As String
-        If setpoint Is Nothing Then Throw New ArgumentNullException("setpoint")
+        If setpoint Is Nothing Then Throw New ArgumentNullException(NameOf(setpoint))
         Dim builder As New Text.StringBuilder()
         Dim delimiter As String = "; "
         builder.AppendFormat(Me.SetpointNumberCommandFormat, Me.ParseSetpointNumber(setpoint.Temperature))
@@ -678,7 +678,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="thermalProfileSetpointNumber"> The thermal profile setpoint number. </param>
     ''' <param name="e">                            Cancel event information. </param>
     Public Sub SelectActiveThermalSetpoint(ByVal thermalProfileSetpointNumber As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Me.ThermalProfile Is Nothing Then
             e.CancelDetails("Thermo-Stream thermal profile not set")
         ElseIf Me.ThermalProfile.Count = 0 Then
@@ -697,8 +697,8 @@ Public Class ThermostreamSubsystem
     ''' <param name="setpoint"> The setpoint. </param>
     ''' <param name="e">        Cancel event information. </param>
     Public Sub ValidateThermalSetpoint(ByVal setpoint As ThermalSetpoint, ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
-        If setpoint Is Nothing Then Throw New ArgumentNullException("setpoint")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If setpoint Is Nothing Then Throw New ArgumentNullException(NameOf(setpoint))
         e.CancelDetails("")
         Me.QuerySetpointNumber()
         If Me.SetpointNumber.HasValue Then
@@ -760,7 +760,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="e">                            Cancel event information. </param>
     Public Sub ConditionalApplySetpoint(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
                                         ByVal additionalInfo As String, ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Not e.Cancel Then
             If String.IsNullOrWhiteSpace(additionalInfo) Then additionalInfo = $"applying setpoint {thermalProfileSetpointNumber};"
             Me.SelectActiveThermalSetpoint(thermalProfileSetpointNumber, e)
@@ -785,7 +785,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="e">                            Cancel event information. </param>
     Public Sub ConditionalMoveFirst1(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
                                     ByVal additionalInfo As String, ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If String.IsNullOrWhiteSpace(additionalInfo) Then additionalInfo = "selecting first profile @ head up; clear to start"
         Me.ValidateHandlerHeadUp(e)
         If e.Cancel Then
@@ -803,7 +803,7 @@ Public Class ThermostreamSubsystem
     Public Sub ConditionalMoveNext1(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
                                    ByVal additionalInfo As String,
                                    ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If String.IsNullOrWhiteSpace(additionalInfo) Then additionalInfo = "moving to next profile"
         Me.ValidateHandlerHeadDown(e)
         If e.Cancel Then
@@ -832,7 +832,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="e">              Cancel event information. </param>
     ''' <returns> <c>true</c> if profile completed; otherwise <c>false</c> </returns>
     Public Function IsProfileCompleted(ByVal setpointNumber As Integer, ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         If Me.ThermalProfile Is Nothing Then
             e.CancelDetails("Thermo-Stream thermal profile not set")
@@ -1012,7 +1012,7 @@ Public Class ThermostreamSubsystem
     ''' <remarks> This is the same as indicating that the start of test signal was received. </remarks>
     ''' <returns> <c>true</c> if at temperature; otherwise <c>false</c> </returns>
     Public Function QueryCyclingAtTemperature(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.QueryTemperatureEventStatus()
         If Me.IsCycleCompleted Then
@@ -1037,7 +1037,7 @@ Public Class ThermostreamSubsystem
     ''' <remarks> This is the same as indicating that the start of test signal was received. </remarks>
     ''' <returns> <c>true</c> if at temperature; otherwise <c>false</c> </returns>
     Public Function QueryAtTemperature(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.ValidateHandlerHeadDown(e)
         If e.Cancel Then
@@ -1053,7 +1053,7 @@ Public Class ThermostreamSubsystem
     ''' <summary> Queries head down. </summary>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Overloads Function QueryCyclingHeadDown(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.QueryTemperatureEventStatus()
         If Me.IsCycleCompleted Then
@@ -1071,7 +1071,7 @@ Public Class ThermostreamSubsystem
     ''' <summary> Queries head down. </summary>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Overloads Function QueryHeadDown(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.QueryAuxiliaryEventStatus()
         If Not Me.IsReady Then
@@ -1086,7 +1086,7 @@ Public Class ThermostreamSubsystem
     ''' <summary> Queries head down. </summary>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Overloads Function QueryHeadUp(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.QueryAuxiliaryEventStatus()
         If Not Me.IsReady Then
@@ -1102,7 +1102,7 @@ Public Class ThermostreamSubsystem
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     Public Sub ValidateCyclingHandlerReady(ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         ' check if handler is ready and head is up
         Me.ValidateHandlerHeadUp(e)
         If Not e.Cancel Then
@@ -1119,7 +1119,7 @@ Public Class ThermostreamSubsystem
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     Public Sub ValidateHandlerHeadUp(ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         ' check if handler is ready
         Me.QueryAuxiliaryEventStatus()
         If Not Me.IsReady Then
@@ -1136,7 +1136,7 @@ Public Class ThermostreamSubsystem
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     Public Sub ValidateHandlerHeadDown(ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         ' check if handler is ready
         Me.QueryAuxiliaryEventStatus()
         If Not Me.IsReady Then
@@ -1153,7 +1153,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="repeatCount"> Number of repeats. </param>
     ''' <param name="e">           Cancel event information. </param>
     Public Sub ConditionalResetOperatorMode(ByVal repeatCount As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Me.QuerySystemScreen()
         If Not Me.OperatorScreen.GetValueOrDefault(False) Then
             Me.ResetOperatorMode(repeatCount, e)
@@ -1164,7 +1164,7 @@ Public Class ThermostreamSubsystem
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     Public Sub ResetOperatorMode(ByVal repeatCount As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
-        If e Is Nothing Then Throw New ArgumentNullException("e")
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Me.ValidateHandlerHeadUp(e)
         If e.Cancel Then
             e.CancelDetails("Unable to reset operator mode;. Details: {0}", e.Details)

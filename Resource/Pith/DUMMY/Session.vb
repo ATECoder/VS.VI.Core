@@ -65,12 +65,16 @@ Public Class DummySession
     ''' <value> The dummy sentinel. </value>
     Public Overrides ReadOnly Property IsDummy As Boolean = True
 
-    ''' <summary> Creates a session. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
-    ''' <param name="resourceName"> Name of the resource. </param>
-    Protected Overrides Sub CreateSession(ByVal resourceName As String)
-        Me._LastNativeError = DummyNativeError.Success
-    End Sub
+    ''' <summary>
+    ''' Gets the session open sentinel. When open, the session is capable of addressing the hardware.
+    ''' See also <see cref="P:isr.VI.SessionBase.IsDeviceOpen" />.
+    ''' </summary>
+    ''' <value> The is session open. </value>
+    Public Overrides ReadOnly Property IsSessionOpen As Boolean
+        Get
+            Return Me.IsDeviceOpen
+        End Get
+    End Property
 
     ''' <summary> Initializes a dummy session. </summary>
     ''' <remarks> David, 1/26/2016. </remarks>
@@ -176,6 +180,13 @@ Public Class DummySession
         End If
     End Sub
 
+    ''' <summary> Sends a TCP/IP message to keep the socket connected. </summary>
+    ''' <remarks> David, 3/14/2016. </remarks>
+    ''' <returns> <c>true</c> if success; otherwise <c>false</c> </returns>
+    Public Overrides Function KeepAlive() As Boolean
+        Return True
+    End Function
+
 #End Region
 
 #Region " REGISTERS "
@@ -220,7 +231,7 @@ Public Class DummySession
     ''' <summary> Disables the service request. </summary>
     ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub DisableServiceRequest()
-        If IsServiceRequestEventEnabled Then
+        If Me.IsServiceRequestEventEnabled Then
             Me._LastNativeError = DummyNativeError.Success
             Me.EnabledEventType = False
         End If
@@ -239,12 +250,6 @@ Public Class DummySession
 #End Region
 
 #Region " INTERFACE "
-
-    ''' <summary> Supports clear interface. </summary>
-    ''' <returns> <c>True</c> if supports clearing the interface. </returns>
-    Public Overrides Function SupportsClearInterface() As Boolean
-        Return Me.ResourceInfo.InterfaceType = VI.HardwareInterfaceType.Gpib
-    End Function
 
     ''' <summary> Clears the interface. </summary>
     Public Overrides Sub ClearInterface()

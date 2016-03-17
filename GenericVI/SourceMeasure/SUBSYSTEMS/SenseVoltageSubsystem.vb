@@ -51,6 +51,9 @@ Public Class SenseVoltageSubsystem
 
 #Region " POWER LINE CYCLES "
 
+    ''' <summary> The Range of the power line cycles. </summary>
+    Public Overrides ReadOnly Property PowerLineCyclesRange As Core.Pith.RangeR = New Core.Pith.RangeR(0.01, 10)
+
     ''' <summary> Gets The Power Line Cycles command format. </summary>
     ''' <value> The Power Line Cycles command format. </value>
     Protected Overrides ReadOnly Property PowerLineCyclesCommandFormat As String = ":SENS:VOLT:NPLC {0}"
@@ -94,6 +97,27 @@ Public Class SenseVoltageSubsystem
     ''' <summary> Gets the range query command. </summary>
     ''' <value> The range query command. </value>
     Protected Overrides ReadOnly Property RangeQueryCommand As String = ":SENS:VOLT:RANG?"
+
+    ''' <summary> The Range of function values. </summary>
+    Public Overrides ReadOnly Property ValueRange As Core.Pith.RangeR
+        Get
+            Dim model As String = Me.StatusSubsystem.VersionInfo.Model
+            Select Case True
+                Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-210, +210)
+                Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-1100, +1100)
+                Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-63, +63)
+                Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-63, +63)
+                Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-42, +42)
+                Case Else
+                    Return New isr.Core.Pith.RangeR(-210, +210)
+            End Select
+        End Get
+    End Property
 
 #End Region
 

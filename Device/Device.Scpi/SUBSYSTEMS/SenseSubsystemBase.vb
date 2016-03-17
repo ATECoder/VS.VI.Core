@@ -185,20 +185,20 @@ End Class
 <System.Flags()> Public Enum SenseFunctionModes
     <ComponentModel.Description("Not specified")> None = 0
     <ComponentModel.Description("Voltage ('VOLT')")> Voltage = 1
-    <ComponentModel.Description("Current ('CURR')")> Current = 2 * SenseFunctionModes.Voltage
-    <ComponentModel.Description("DC Voltage ('VOLT:DC')")> VoltageDC = 2 * SenseFunctionModes.Current
-    <ComponentModel.Description("DC Current ('CURR:DC')")> CurrentDC = 2 * SenseFunctionModes.VoltageDC
-    <ComponentModel.Description("AC Voltage ('VOLT:AC')")> VoltageAC = 2 * SenseFunctionModes.CurrentDC
-    <ComponentModel.Description("AC Current ('CURR:AC')")> CurrentAC = 2 * SenseFunctionModes.VoltageAC
-    <ComponentModel.Description("Resistance ('RES')")> Resistance = 2 * SenseFunctionModes.CurrentAC
-    <ComponentModel.Description("Four-Wire Resistance ('FRES')")> FourWireResistance = 2 * SenseFunctionModes.Resistance
-    <ComponentModel.Description("Temperature ('TEMP')")> Temperature = 2 * SenseFunctionModes.FourWireResistance
-    <ComponentModel.Description("Frequency ('FREQ')")> Frequency = 2 * SenseFunctionModes.Temperature
-    <ComponentModel.Description("Period ('PER')")> Period = 2 * SenseFunctionModes.Frequency
-    <ComponentModel.Description("Continuity ('CONT')")> Continuity = 2 * SenseFunctionModes.Period
-    <ComponentModel.Description("Timestamp element ('TIME')")> TimestampElement = 2 * SenseFunctionModes.Continuity
-    <ComponentModel.Description("Status Element ('STAT')")> StatusElement = 2 * SenseFunctionModes.TimestampElement
-    <ComponentModel.Description("Memory ('MEM')")> Memory = 2 * SenseFunctionModes.StatusElement
-    <ComponentModel.Description("Diode ('DIOD')")> Diode = 2 * SenseFunctionModes.Memory
+    <ComponentModel.Description("Current ('CURR')")> Current = SenseFunctionModes.Voltage << 1
+    <ComponentModel.Description("DC Voltage ('VOLT:DC')")> VoltageDC = SenseFunctionModes.Current << 1
+    <ComponentModel.Description("DC Current ('CURR:DC')")> CurrentDC = SenseFunctionModes.VoltageDC << 1
+    <ComponentModel.Description("AC Voltage ('VOLT:AC')")> VoltageAC = SenseFunctionModes.CurrentDC << 1
+    <ComponentModel.Description("AC Current ('CURR:AC')")> CurrentAC = SenseFunctionModes.VoltageAC << 1
+    <ComponentModel.Description("Resistance ('RES')")> Resistance = SenseFunctionModes.CurrentAC << 1
+    <ComponentModel.Description("Four-Wire Resistance ('FRES')")> FourWireResistance = SenseFunctionModes.Resistance << 1
+    <ComponentModel.Description("Temperature ('TEMP')")> Temperature = SenseFunctionModes.FourWireResistance << 1
+    <ComponentModel.Description("Frequency ('FREQ')")> Frequency = SenseFunctionModes.Temperature << 1
+    <ComponentModel.Description("Period ('PER')")> Period = SenseFunctionModes.Frequency << 1
+    <ComponentModel.Description("Continuity ('CONT')")> Continuity = SenseFunctionModes.Period << 1
+    <ComponentModel.Description("Timestamp element ('TIME')")> TimestampElement = SenseFunctionModes.Continuity << 1
+    <ComponentModel.Description("Status Element ('STAT')")> StatusElement = SenseFunctionModes.TimestampElement << 1
+    <ComponentModel.Description("Memory ('MEM')")> Memory = SenseFunctionModes.StatusElement << 1
+    <ComponentModel.Description("Diode ('DIOD')")> Diode = SenseFunctionModes.Memory << 1
 End Enum
 

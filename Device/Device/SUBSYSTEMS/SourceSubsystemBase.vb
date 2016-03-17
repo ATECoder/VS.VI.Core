@@ -29,8 +29,9 @@ Public MustInherit Class SourceSubsystemBase
         Me.AutoClearEnabled = False
         Me.AutoDelayEnabled = True
         Me.Delay = TimeSpan.Zero
-        Me.FunctionMode = SourceFunctionMode.Voltage
+        Me.FunctionMode = SourceFunctionModes.Voltage
         Me.SweepPoints = 2500
+        Me.SupportedFunctionModes = SourceFunctionModes.Current Or SourceFunctionModes.Voltage
     End Sub
 
 #End Region
@@ -158,7 +159,7 @@ Public MustInherit Class SourceSubsystemBase
 
     ''' <summary> Gets or sets the Delay format for converting the query to time span. </summary>
     ''' <value> The Delay query command. </value>
-    ''' <remarks> For example: "s\.fff" will convert the result from seconds. </remarks>
+    ''' <remarks> For example: "s\.FFFFFFF" will convert the result from seconds. </remarks>
     Protected Overridable ReadOnly Property DelayFormat As String
 
     ''' <summary> Queries the Delay. </summary>
@@ -170,7 +171,7 @@ Public MustInherit Class SourceSubsystemBase
 
     ''' <summary> Gets or sets the delay command format. </summary>
     ''' <value> The delay command format. </value>
-    ''' <remarks> SCPI: ":SOUR:DEL {0:s\.fff}" </remarks>
+    ''' <remarks> SCPI: ":SOUR:DEL {0:s\.FFFFFFF}" </remarks>
     Protected Overridable ReadOnly Property DelayCommandFormat As String
 
     ''' <summary> Writes the Source Delay without reading back the value from the device. </summary>
@@ -185,17 +186,34 @@ Public MustInherit Class SourceSubsystemBase
 
 #Region " FUNCTION MODE "
 
+    Private _SupportedFunctionModes As SourceFunctionModes
+    ''' <summary>
+    ''' Gets or sets the supported Function Mode.
+    ''' This is a subset of the functions supported by the instrument.
+    ''' </summary>
+    Public Property SupportedFunctionModes() As SourceFunctionModes
+        Get
+            Return _SupportedFunctionModes
+        End Get
+        Set(ByVal value As SourceFunctionModes)
+            If Not Me.SupportedFunctionModes.Equals(value) Then
+                Me._SupportedFunctionModes = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedFunctionModes))
+            End If
+        End Set
+    End Property
+
     ''' <summary> The function mode. </summary>
-    Private _FunctionMode As SourceFunctionMode?
+    Private _FunctionMode As SourceFunctionModes?
 
     ''' <summary> Gets or sets the cached source FunctionMode. </summary>
-    ''' <value> The <see cref="SourceFunctionMode">source Function Mode</see> or none if not set or
+    ''' <value> The <see cref="SourceFunctionModes">source Function Mode</see> or none if not set or
     ''' unknown. </value>
-    Public Overloads Property FunctionMode As SourceFunctionMode?
+    Public Overloads Property FunctionMode As SourceFunctionModes?
         Get
             Return Me._FunctionMode
         End Get
-        Protected Set(ByVal value As SourceFunctionMode?)
+        Protected Set(ByVal value As SourceFunctionModes?)
             If Not Nullable.Equals(Me.FunctionMode, value) Then
                 Me._FunctionMode = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.FunctionMode))
@@ -204,21 +222,21 @@ Public MustInherit Class SourceSubsystemBase
     End Property
 
     ''' <summary> Queries the Source Function Mode. </summary>
-    ''' <returns> The <see cref="SourceFunctionMode">source Function Mode</see> or none if unknown. </returns>
-    Public MustOverride Function QueryFunctionMode() As SourceFunctionMode?
+    ''' <returns> The <see cref="SourceFunctionModes">source Function Mode</see> or none if unknown. </returns>
+    Public MustOverride Function QueryFunctionMode() As SourceFunctionModes?
 
     ''' <summary> Writes and reads back the source Function Mode. </summary>
     ''' <param name="value"> The  Source Function Mode. </param>
-    ''' <returns> The <see cref="SourceFunctionMode">source Function Mode</see> or none if unknown. </returns>
-    Public Function ApplyFunctionMode(ByVal value As SourceFunctionMode) As SourceFunctionMode?
+    ''' <returns> The <see cref="SourceFunctionModes">source Function Mode</see> or none if unknown. </returns>
+    Public Function ApplyFunctionMode(ByVal value As SourceFunctionModes) As SourceFunctionModes?
         Me.WriteFunctionMode(value)
         Return Me.QueryFunctionMode()
     End Function
 
     ''' <summary> Writes the source Function Mode without reading back the value from the device. </summary>
     ''' <param name="value"> The Function Mode. </param>
-    ''' <returns> The <see cref="SourceFunctionMode">source Function Mode</see> or none if unknown. </returns>
-    Public MustOverride Function WriteFunctionMode(ByVal value As SourceFunctionMode) As SourceFunctionMode?
+    ''' <returns> The <see cref="SourceFunctionModes">source Function Mode</see> or none if unknown. </returns>
+    Public MustOverride Function WriteFunctionMode(ByVal value As SourceFunctionModes) As SourceFunctionModes?
 
 #End Region
 
@@ -262,15 +280,20 @@ Public MustInherit Class SourceSubsystemBase
 
 End Class
 
-''' <summary> Specifies the source function modes. </summary>
-Public Enum SourceFunctionMode
-    <ComponentModel.Description("None")> None
-    <ComponentModel.Description("Voltage (VOLT)")> Voltage
-    <ComponentModel.Description("Current (CURR)")> Current
-    <ComponentModel.Description("Memory (MEM)")> Memory
-    <ComponentModel.Description("DC Voltage (VOLT:DC)")> VoltageDC
-    <ComponentModel.Description("DC Current (CURR:DC)")> CurrentDC
-    <ComponentModel.Description("AC Voltage (VOLT:AC)")> VoltageAC
-    <ComponentModel.Description("AC Current (CURR:AC)")> CurrentAC
+''' <summary>
+''' Specifies the source function modes. Using flags permits using these values to define the
+''' supported function modes.
+''' </summary>
+''' <remarks> David, 3/12/2016. </remarks>
+<Flags>
+Public Enum SourceFunctionModes
+    <ComponentModel.Description("None")> None = 0
+    <ComponentModel.Description("Voltage (VOLT)")> Voltage = 1
+    <ComponentModel.Description("Current (CURR)")> Current = Voltage << 1
+    <ComponentModel.Description("Memory (MEM)")> Memory = Current << 1
+    <ComponentModel.Description("DC Voltage (VOLT:DC)")> VoltageDC = Memory << 1
+    <ComponentModel.Description("DC Current (CURR:DC)")> CurrentDC = VoltageDC << 1
+    <ComponentModel.Description("AC Voltage (VOLT:AC)")> VoltageAC = CurrentDC << 1
+    <ComponentModel.Description("AC Current (CURR:AC)")> CurrentAC = VoltageAC << 1
 End Enum
 

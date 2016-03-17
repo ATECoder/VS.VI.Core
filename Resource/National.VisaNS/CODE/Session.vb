@@ -59,33 +59,37 @@ Public Class Session
     ''' <value> The dummy sentinel. </value>
     Public Overrides ReadOnly Property IsDummy As Boolean = False
 
+    Public ReadOnly Property IsVisaSessionDisposed As Boolean
+
     ''' <summary> The visa session. </summary>
     Private _VisaSession As NationalInstruments.VisaNS.MessageBasedSession
 
-    ''' <summary> Initializes a new instance of the <see cref="NationalInstruments.VisaNS.Session" /> class. </summary>
-    ''' <remarks> This method does not lock the resource. Rev 4.1 and 5.0 of VISA did not support this
-    ''' call and could not verify the resource.  </remarks>
-    ''' <param name="resourceName"> Name of the resource. </param>
-    Protected Overrides Sub CreateSession(ByVal resourceName As String)
-        Try
-            Me._LastNativeError = NativeError.Success
-            If Me.Enabled Then
-                Select Case ResourceManager.ParseResource(resourceName).InterfaceType
-                    Case HardwareInterfaceType.Gpib
-                        Me._VisaSession = New NationalInstruments.VisaNS.GpibSession(resourceName)
-                    Case HardwareInterfaceType.Tcpip
-                        Me._VisaSession = New NationalInstruments.VisaNS.TcpipSession(resourceName)
-                    Case VI.HardwareInterfaceType.Usb
-                        Me._VisaSession = New NationalInstruments.VisaNS.UsbSession(resourceName)
-                    Case Else
-                        Me._VisaSession = New NationalInstruments.VisaNS.MessageBasedSession(resourceName)
-                End Select
+    ''' <summary> The visa session. </summary>
+    ''' <remarks> Must be defined without events; Otherwise, setting the timeout causes a memory exception. </remarks>
+    Private Property VisaSession As NationalInstruments.VisaNS.MessageBasedSession
+        Get
+            Return Me._VisaSession
+        End Get
+        Set(value As NationalInstruments.VisaNS.MessageBasedSession)
+            Me._VisaSession = value
+            If Me._VisaSession.HardwareInterfaceType = NationalInstruments.VisaNS.HardwareInterfaceType.Tcpip Then
+                Me._TcpIpSession = TryCast(Me.VisaSession, NationalInstruments.VisaNS.TcpipSession)
             End If
-        Catch ex As NationalInstruments.VisaNS.VisaException
-            Me._LastNativeError = New NativeError(ex.ErrorCode, resourceName, "@opening", "opening session")
-            Throw New NativeException(Me._LastNativeError, ex)
-        End Try
-    End Sub
+        End Set
+    End Property
+
+    Private _TcpIpSession As NationalInstruments.VisaNS.TcpipSession
+
+    ''' <summary>
+    ''' Gets the session open sentinel. When open, the session is capable of addressing the hardware.
+    ''' See also <see cref="P:isr.VI.SessionBase.IsDeviceOpen" />.
+    ''' </summary>
+    ''' <value> The is session open. </value>
+    Public Overrides ReadOnly Property IsSessionOpen As Boolean
+        Get
+            Return Me.VisaSession IsNot Nothing AndAlso Not Me.IsVisaSessionDisposed
+        End Get
+    End Property
 
     ''' <summary>
     ''' Initializes a new instance of the <see cref="NationalInstruments.VisaNS.Session" /> class.
@@ -103,50 +107,68 @@ Public Class Session
             If Me.Enabled Then
                 Select Case ResourceManager.ParseResource(resourceName).InterfaceType
                     Case HardwareInterfaceType.Gpib
-                        Me._VisaSession = New NationalInstruments.VisaNS.GpibSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
-                                                                                     CInt(timeout.TotalMilliseconds), True)
-                    Case HardwareInterfaceType.Tcpip
-                        Me._VisaSession = New NationalInstruments.VisaNS.TcpipSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
-                                                                                      CInt(timeout.TotalMilliseconds), True)
-                    Case VI.HardwareInterfaceType.Usb
-                        Me._VisaSession = New NationalInstruments.VisaNS.UsbSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
+                        Me.VisaSession = New NationalInstruments.VisaNS.GpibSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
                                                                                     CInt(timeout.TotalMilliseconds), True)
+                    Case HardwareInterfaceType.Tcpip
+                        Me.VisaSession = New NationalInstruments.VisaNS.TcpipSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
+                                                                                     CInt(timeout.TotalMilliseconds), True)
+                    Case VI.HardwareInterfaceType.Usb
+                        Me.VisaSession = New NationalInstruments.VisaNS.UsbSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
+                                                                                   CInt(timeout.TotalMilliseconds), True)
                     Case Else
-                        Me._VisaSession = New NationalInstruments.VisaNS.MessageBasedSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
-                                                                                             CInt(timeout.TotalMilliseconds))
+                        Me.VisaSession = New NationalInstruments.VisaNS.MessageBasedSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
+                                                                                            CInt(timeout.TotalMilliseconds))
                 End Select
+                Me._IsVisaSessionDisposed = Not Me.VisaSession Is Nothing
             End If
+            If Not Me.KeepAlive OrElse Not Me.IsAlive Then Throw New OperationFailedException($"Resource not found;. {resourceName}")
         Catch ex As NationalInstruments.VisaNS.VisaException
+            Me.DisposeSession()
             Me._LastNativeError = New NativeError(ex.ErrorCode, resourceName, "@opening", "opening session")
             Throw New NativeException(Me._LastNativeError, ex)
+        Catch
+            Me.DisposeSession()
+            Throw
         End Try
+    End Sub
+
+    ''' <summary> Dispose session. </summary>
+    ''' <remarks> David, 3/14/2016. </remarks>
+    Private Sub DisposeSession()
+        Me._IsVisaSessionDisposed = True
+        If Me.VisaSession IsNot Nothing Then
+            Me._VisaSession.Dispose()
+            Me._VisaSession = Nothing
+        End If
     End Sub
 
     ''' <summary> Discards the session. </summary>
     ''' <remarks> David, 1/25/2016. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     Protected Overrides Sub DiscardSession()
-        If Me._VisaSession IsNot Nothing Then
+        If Me.IsSessionOpen Then
             Try
                 Me._LastNativeError = NativeError.Success
-                Me._VisaSession.DiscardEvent(NationalInstruments.VisaNS.MessageBasedSessionEventType.AllEnabledEvents)
+                Me.VisaSession.DiscardEvent(NationalInstruments.VisaNS.MessageBasedSessionEventType.AllEnabledEvents)
                 Me.DisableServiceRequest()
-                Me._VisaSession.Dispose()
-                Me._VisaSession = Nothing
             Catch ex As NationalInstruments.VisaNS.VisaException
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, "@discarding", "discarding session")
                 Throw New NativeException(Me._LastNativeError, ex)
             Finally
-                If Me._VisaSession IsNot Nothing Then
-                    Me._VisaSession.Dispose()
-                    Me._VisaSession = Nothing
-                End If
+                Me.DisposeSession()
             End Try
         End If
     End Sub
 
-    ''' <summary> Searches for a listeners for the specified <see cref="ResourceName">reasource name</see>. </summary>
-    ''' <remarks> David, 11/27/2015. Updates <see cref="ResourceFound">Resource Exists</see></remarks>
+    ''' <summary>
+    ''' Searches for a listeners for the specified <see cref="ResourceName">reasource name</see>.
+    ''' </summary>
+    ''' <remarks>
+    ''' David, 11/27/2015. Updates <see cref="ResourceFound">Resource Exists</see>
+    ''' This could return a false positive because the resource manager does not always rely on
+    ''' physical check of existence. The NI VISA Manager returns affirmative if the resource is
+    ''' listed in the configuration file.
+    ''' </remarks>
     ''' <returns> <c>true</c> if it the resource exists; otherwise <c>false</c> </returns>
     Public Overrides Function FindResource() As Boolean
         Dim result As Boolean = True
@@ -175,14 +197,14 @@ Public Class Session
     Public Overrides Property SynchronizeCallBacks As Boolean
         Get
             If Me.IsSessionOpen Then
-                MyBase.SynchronizeCallbacks = Me._VisaSession.SynchronizeCallbacks
+                MyBase.SynchronizeCallbacks = Me.VisaSession.SynchronizeCallbacks
             End If
             Return MyBase.SynchronizeCallbacks
         End Get
         Set(value As Boolean)
             MyBase.SynchronizeCallbacks = value
             If Me.IsSessionOpen Then
-                Me._VisaSession.SynchronizeCallbacks = value
+                Me.VisaSession.SynchronizeCallbacks = value
             End If
         End Set
     End Property
@@ -209,7 +231,7 @@ Public Class Session
     Public Overrides Property TerminationCharacter As Byte
         Get
             If Me.IsSessionOpen Then
-                MyBase.TerminationCharacter = Me._VisaSession.TerminationCharacter
+                MyBase.TerminationCharacter = Me.VisaSession.TerminationCharacter
             End If
             Return MyBase.TerminationCharacter
         End Get
@@ -217,7 +239,7 @@ Public Class Session
             If value <> Me.TerminationCharacter Then
                 MyBase.TerminationCharacter = value
                 If Me.IsSessionOpen Then
-                    Me._VisaSession.TerminationCharacter = value
+                    Me.VisaSession.TerminationCharacter = value
                 End If
             End If
         End Set
@@ -228,7 +250,7 @@ Public Class Session
     Public Overrides Property Timeout As TimeSpan
         Get
             If Me.IsSessionOpen Then
-                MyBase.Timeout = TimeSpan.FromMilliseconds(Me._VisaSession.Timeout)
+                MyBase.Timeout = TimeSpan.FromMilliseconds(Me.VisaSession.Timeout)
             End If
             Return MyBase.Timeout
         End Get
@@ -236,7 +258,7 @@ Public Class Session
             If value <> Me.Timeout Then
                 MyBase.Timeout = value
                 If Me.IsSessionOpen Then
-                    Me._VisaSession.Timeout = CInt(value.TotalMilliseconds)
+                    Me.VisaSession.Timeout = CInt(value.TotalMilliseconds)
                 End If
             End If
         End Set
@@ -253,7 +275,7 @@ Public Class Session
         Try
             Me._LastNativeError = NativeError.Success
             If Me.IsSessionOpen Then
-                Me.LastMessageReceived = Me._VisaSession.ReadString()
+                Me.LastMessageReceived = Me.VisaSession.ReadString()
             Else
                 Me.LastMessageReceived = Me.EmulatedReply
             End If
@@ -265,6 +287,8 @@ Public Class Session
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, Me.LastMessageSent, Me.LastAction)
             End If
             Throw New NativeException(Me._LastNativeError, ex)
+        Finally
+            Me.LastInputOutputTime = DateTime.Now
         End Try
     End Function
 
@@ -280,7 +304,7 @@ Public Class Session
             Try
                 Me._LastNativeError = NativeError.Success
                 If Me.IsSessionOpen Then
-                    Me._VisaSession.Write(dataToWrite)
+                    Me.VisaSession.Write(dataToWrite)
                 End If
                 Me.LastMessageSent = dataToWrite
             Catch ex As NationalInstruments.VisaNS.VisaException
@@ -290,9 +314,27 @@ Public Class Session
                     Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, dataToWrite, Me.LastAction)
                 End If
                 Throw New NativeException(Me._LastNativeError, ex)
+            Finally
+                Me.LastInputOutputTime = DateTime.Now
             End Try
         End If
     End Sub
+
+    ''' <summary> Sends a TCP/IP message to keep the socket connected. </summary>
+    ''' <remarks> David, 3/14/2016. </remarks>
+    ''' <returns> <c>true</c> if success; otherwise <c>false</c> </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Overrides Function KeepAlive() As Boolean
+        Dim affirmative As Boolean = True
+        If Me.IsSessionOpen AndAlso Not Me._TcpIpSession Is Nothing Then
+            Try
+                Me._TcpIpSession.UnlockResource()
+            Catch
+                affirmative = False
+            End Try
+        End If
+        Return affirmative
+    End Function
 
 #End Region
 
@@ -307,7 +349,7 @@ Public Class Session
             Dim value As ServiceRequests = Me.EmulatedStatusByte
             Me.EmulatedStatusByte = 0
             If Me.IsSessionOpen Then
-                value = CType(Me._VisaSession.ReadStatusByte, ServiceRequests)
+                value = CType(Me.VisaSession.ReadStatusByte, ServiceRequests)
             End If
             Return value
         Catch ex As NationalInstruments.VisaNS.VisaException
@@ -317,6 +359,8 @@ Public Class Session
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, "@STB", Me.LastAction)
             End If
             Throw New NativeException(Me._LastNativeError, ex)
+        Finally
+            Me.LastInputOutputTime = DateTime.Now
         End Try
     End Function
 
@@ -325,7 +369,7 @@ Public Class Session
     Public Overrides Sub Clear()
         Try
             Me._LastNativeError = NativeError.Success
-            If Me.IsSessionOpen Then Me._VisaSession.Clear()
+            If Me.IsSessionOpen Then Me.VisaSession.Clear()
         Catch ex As NationalInstruments.VisaNS.VisaException
             If Me.LastNodeNumber.HasValue Then
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, Me.LastNodeNumber.Value, "@DCL", Me.LastAction)
@@ -333,6 +377,8 @@ Public Class Session
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, "@DCL", Me.LastAction)
             End If
             Throw New NativeException(Me._LastNativeError, ex)
+        Finally
+            Me.LastInputOutputTime = DateTime.Now
         End Try
     End Sub
 
@@ -372,9 +418,9 @@ Public Class Session
                 Me._LastNativeError = NativeError.Success
                 If Me.IsSessionOpen Then
                     ' must define the handler before enabling the events.
-                    AddHandler Me._VisaSession.ServiceRequest, AddressOf OnServiceRequested
-                    Me._VisaSession.EnableEvent(NationalInstruments.VisaNS.MessageBasedSessionEventType.ServiceRequest,
-                                            NationalInstruments.VisaNS.EventMechanism.Handler)
+                    AddHandler Me.VisaSession.ServiceRequest, AddressOf OnServiceRequested
+                    Me.VisaSession.EnableEvent(NationalInstruments.VisaNS.MessageBasedSessionEventType.ServiceRequest,
+                                               NationalInstruments.VisaNS.EventMechanism.Handler)
                 End If
                 Me.EnabledEventType = NationalInstruments.VisaNS.MessageBasedSessionEventType.ServiceRequest
             End If
@@ -396,10 +442,10 @@ Public Class Session
                 Me._LastNativeError = NativeError.Success
                 If Me.IsSessionOpen Then
                     ' must disable before removing the handler.
-                    Me._VisaSession.DiscardEvent(NationalInstruments.VisaNS.MessageBasedSessionEventType.ServiceRequest)
-                    Me._VisaSession.DisableEvent(NationalInstruments.VisaNS.MessageBasedSessionEventType.ServiceRequest,
-                                             NationalInstruments.VisaNS.EventMechanism.Handler)
-                    RemoveHandler Me._VisaSession.ServiceRequest, AddressOf OnServiceRequested
+                    Me.VisaSession.DiscardEvent(NationalInstruments.VisaNS.MessageBasedSessionEventType.ServiceRequest)
+                    Me.VisaSession.DisableEvent(NationalInstruments.VisaNS.MessageBasedSessionEventType.ServiceRequest,
+                                                NationalInstruments.VisaNS.EventMechanism.Handler)
+                    RemoveHandler Me.VisaSession.ServiceRequest, AddressOf OnServiceRequested
                 End If
                 Me.EnabledEventType = NationalInstruments.VisaNS.MessageBasedSessionEventType.Custom
             End If
@@ -422,7 +468,7 @@ Public Class Session
     Public Overrides Sub AssertTrigger()
         Try
             Me._LastNativeError = NativeError.Success
-            If Me.IsSessionOpen Then Me._VisaSession.AssertTrigger()
+            If Me.IsSessionOpen Then Me.VisaSession.AssertTrigger()
         Catch ex As NationalInstruments.VisaNS.VisaException
             If Me.LastNodeNumber.HasValue Then
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, Me.LastNodeNumber.Value, "@TRG", Me.LastAction)
@@ -430,6 +476,8 @@ Public Class Session
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, "@TRG", Me.LastAction)
             End If
             Throw New NativeException(Me._LastNativeError, ex)
+        Finally
+            Me.LastInputOutputTime = DateTime.Now
         End Try
     End Sub
 
@@ -437,12 +485,6 @@ Public Class Session
 #End Region
 
 #Region " INTERFACE "
-
-    ''' <summary> Supports clear interface. </summary>
-    ''' <returns> <c>True</c> if supports clearing the interface. </returns>
-    Public Overrides Function SupportsClearInterface() As Boolean
-        Return Me.ResourceInfo.InterfaceType = VI.HardwareInterfaceType.Gpib
-    End Function
 
     ''' <summary> Clears the interface. </summary>
     Public Overrides Sub ClearInterface()
@@ -465,7 +507,7 @@ Public Class Session
             Using gi As GpibInterfaceSession = New GpibInterfaceSession()
                 gi.OpenSession(Me.ResourceInfo.InterfaceResourceName)
                 If gi.IsOpen Then
-                    gi.SelectiveDeviceClear(Me._VisaSession.ResourceName)
+                    gi.SelectiveDeviceClear(Me.VisaSession.ResourceName)
                 Else
                     Throw New OperationFailedException($"Failed opening GPIB Interface Session {Me.ResourceInfo.InterfaceResourceName}")
                 End If

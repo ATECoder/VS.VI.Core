@@ -37,6 +37,22 @@ Public Class SystemSubsystem
 
 #End Region
 
+#Region " COMMAND SYNTAX "
+
+#Region " CONTACT CHECK RESISTANCE "
+
+    ''' <summary> Gets or sets the ContactCheck Resistance command format. </summary>
+    ''' <value> the ContactCheck Resistance command format. </value>
+    Protected Overrides ReadOnly Property ContactCheckResistanceCommandFormat As String = "SYST:CCH:RES {0}"
+
+    ''' <summary> Gets or sets the ContactCheck Resistance query command. </summary>
+    ''' <value> the ContactCheck Resistance query command. </value>
+    Protected Overrides ReadOnly Property ContactCheckResistanceQueryCommand As String = "SYST:CCH:RES?"
+
+#End Region
+
+#End Region
+
 #Region " AUTO ZERO ENABLED "
 
     ''' <summary> Queries the auto zero enabled state. </summary>
@@ -55,6 +71,28 @@ Public Class SystemSubsystem
         Me.Session.WriteLine(":SYST:AZER {0:'ON';'ON';'OFF'}", CType(value, Integer))
         Me.AutoZeroEnabled = value
         Return Me.AutoZeroEnabled
+    End Function
+
+#End Region
+
+#Region " CONTACT CHECK ENABLED "
+
+    ''' <summary> Queries the Contact Check enabled state. </summary>
+    ''' <returns> <c>True</c> if Contact Check is enabled; <c>False</c> if not or none if not set or
+    ''' unknown. </returns>
+    Public Overrides Function QueryContactCheckEnabled() As Boolean?
+        Me.ContactCheckEnabled = Me.Session.Query(Me.ContactCheckEnabled.GetValueOrDefault(True), ":SYST:CCH?")
+        Return Me.ContactCheckEnabled
+    End Function
+
+    ''' <summary> Writes the Contact Check enabled state without reading back the actual value. </summary>
+    ''' <param name="value"> if set to <c>True</c> [value]. </param>
+    ''' <returns> <c>True</c> if Contact Check is enabled; <c>False</c> if not or none if not set or
+    ''' unknown. </returns>
+    Public Overrides Function WriteContactCheckEnabled(ByVal value As Boolean) As Boolean?
+        Me.Session.WriteLine(":SYST:CCH {0:'ON';'ON';'OFF'}", CType(value, Integer))
+        Me.ContactCheckEnabled = value
+        Return Me.ContactCheckEnabled
     End Function
 
 #End Region
@@ -101,13 +139,46 @@ Public Class SystemSubsystem
         End Set
     End Property
 
+    ''' <summary> Gets or sets the front switched query command. </summary>
+    ''' <value> The front switched query command. </value>
+    ''' <remarks> SCPI: :SYST:FRSW? </remarks>
+    Public Overridable Property FrontSwitchedQueryCommand As String
+
     ''' <summary> Queries the Front Switched state. </summary>
     ''' <returns> <c>True</c> if Front is Switched; <c>False</c> if not or none if not set or
     ''' unknown. </returns>
     Public Function QueryFrontSwitched() As Boolean?
-        Me.FrontSwitched = Me.Session.Query(Me.FrontSwitched.GetValueOrDefault(True), ":SYST:FRSW?")
+        Me.FrontSwitched = Me.Session.Query(Me.FrontSwitched.GetValueOrDefault(True), Me.FrontSwitchedQueryCommand)
         Return Me.FrontSwitched
     End Function
+
+#End Region
+
+#Region " SUPPORTS CONTACT CHECK "
+
+    ''' <summary> The contact check option. </summary>
+    Private Const ContactCheckOption As String = "CONTACT-CHECK"
+
+    ''' <summary> Queries support for contact check. </summary>
+    ''' <remarks> David, 3/5/2016. </remarks>
+    ''' <returns> <c>True</c> if supports contact check; otherwise <c>False</c>. </returns>
+    Public Overrides Function QuerySupportsContactCheck() As Boolean?
+        If String.IsNullOrWhiteSpace(Me.Options) Then Me.QueryOptions()
+        If String.IsNullOrWhiteSpace(Me.Options) Then
+            Me.SupportsContactCheck = New Boolean?
+        Else
+            Me.SupportsContactCheck = Me.Options.Contains(SystemSubsystem.ContactCheckOption)
+        End If
+        Return Me.SupportsContactCheck
+    End Function
+
+#End Region
+
+#Region " OPTIONS "
+
+    ''' <summary> Gets or sets the option query command. </summary>
+    ''' <value> The option query command. </value>
+    Protected Overrides ReadOnly Property OptionQueryCommand As String = "*OPT?"
 
 #End Region
 

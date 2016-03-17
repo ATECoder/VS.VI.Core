@@ -65,4 +65,20 @@ Public Class StatusSubsystem
 
 #End Region
 
+#Region " IDENTITY "
+
+    ''' <summary> Parse version information. </summary>
+    ''' <param name="value"> The value. </param>
+    Protected Overrides Sub ParseVersionInfo(value As String)
+        MyBase.ParseVersionInfo(value)
+        Me._VersionInfo = New VersionInfo
+        Me.VersionInfo.Parse(value)
+    End Sub
+
+    ''' <summary> Gets or sets the information describing the version. </summary>
+    ''' <value> Information describing the version. </value>
+    Public Overloads ReadOnly Property VersionInfo As VersionInfo
+
+#End Region
+
 End Class

@@ -114,9 +114,7 @@ Public Class MeasurementPanelBase
     ''' <param name="grid"> The grid. </param>
     Private Shared Sub displayTrace(ByVal grid As DataGridView, ByVal values As ObjectModel.ReadOnlyCollection(Of System.Drawing.PointF))
 
-        If grid Is Nothing Then
-            Throw New ArgumentNullException("grid")
-        End If
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
         grid.Enabled = False
         grid.Columns.Clear()

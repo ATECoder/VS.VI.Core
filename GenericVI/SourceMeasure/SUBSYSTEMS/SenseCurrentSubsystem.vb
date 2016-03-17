@@ -51,6 +51,30 @@ Public Class SenseCurrentSubsystem
 
 #Region " POWER LINE CYCLES "
 
+    ''' <summary> The Range of the power line cycles. </summary>
+    Public Overrides ReadOnly Property PowerLineCyclesRange As Core.Pith.RangeR = New Core.Pith.RangeR(0.01, 10)
+
+    ''' <summary> The Range of function values. </summary>
+    Public Overrides ReadOnly Property ValueRange As Core.Pith.RangeR
+        Get
+            Dim model As String = Me.StatusSubsystem.VersionInfo.Model
+            Select Case True
+                Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-1.05, +1.05)
+                Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-1.05, +1.05)
+                Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-3.15, +3.05)
+                Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-3.15, +3.15)
+                Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-5.25, +5.25)
+                Case Else
+                    Return New isr.Core.Pith.RangeR(-1.05, +1.05)
+            End Select
+        End Get
+    End Property
+
     ''' <summary> Gets The Power Line Cycles command format. </summary>
     ''' <value> The Power Line Cycles command format. </value>
     Protected Overrides ReadOnly Property PowerLineCyclesCommandFormat As String = ":SENS:CURR:NPLC {0}"

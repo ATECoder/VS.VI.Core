@@ -1,3 +1,4 @@
+Imports isr.VI
 ''' <summary> Holds a single set of 27xx instrument reading elements. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -20,38 +21,44 @@ Public Class Readings
         ' instantiate the base class
         MyBase.New()
 
-        Me._Reading = New isr.VI.MeasuredAmount()
-        With Me._Reading
+        Me._VoltageReading = New isr.VI.MeasuredAmount()
+        With Me._VoltageReading
+            .Unit = Arebis.StandardUnits.ElectricUnits.Volt
+            .ComplianceLimit = VI.Scpi.Syntax.Infinity
+            .HighLimit = VI.Scpi.Syntax.Infinity
+            .LowLimit = VI.Scpi.Syntax.NegativeInfinity
+            .ReadingLength = 13
+        End With
+
+        Me._CurrentReading = New isr.VI.MeasuredAmount()
+        With Me._CurrentReading
             .Unit = Arebis.StandardUnits.ElectricUnits.Ampere
             .ComplianceLimit = VI.Scpi.Syntax.Infinity
             .HighLimit = VI.Scpi.Syntax.Infinity
             .LowLimit = VI.Scpi.Syntax.NegativeInfinity
-            .ReadingLength = 15
+            .ReadingLength = 13
+        End With
+
+        Me._ResistanceReading = New isr.VI.MeasuredAmount()
+        With Me._ResistanceReading
+            .Unit = Arebis.StandardUnits.ElectricUnits.Ohm
+            .ComplianceLimit = VI.Scpi.Syntax.Infinity
+            .HighLimit = VI.Scpi.Syntax.Infinity
+            .LowLimit = VI.Scpi.Syntax.NegativeInfinity
+            .ReadingLength = 13
         End With
 
         Me._Timestamp = New isr.VI.ReadingAmount()
         With Me._Timestamp
             .Unit = Arebis.StandardUnits.TimeUnits.Second
-            .ReadingLength = 7
+            .ReadingLength = 13
         End With
 
-        Me._ReadingNumber = New isr.VI.ReadingValue()
-        With Me._ReadingNumber
-            .ReadingLength = 4
+        Me._StatusReading = New isr.VI.ReadingStatus()
+        With Me._StatusReading
+            .ReadingLength = 13
         End With
 
-        Me._Channel = New isr.VI.ReadingValue()
-        With Me._Channel
-            .ReadingLength = 3
-        End With
-
-        Me._Limits = New isr.VI.ReadingValue()
-        With Me._Limits
-            .ReadingLength = 4
-        End With
-        ' Units is a property of each element. If units are turned on, each element units is enabled.
-        ' TO_DO: Check on this
-        ' Me._Units = New isr.VI.ReadingElement() : Me._Units.ReadingLength = 4
     End Sub
 
     ''' <summary> Create a copy of the model. </summary>
@@ -62,14 +69,12 @@ Public Class Readings
         MyBase.New()
 
         If model IsNot Nothing Then
-            Me._Reading = New isr.VI.MeasuredAmount(model.Reading)
+            Me._CurrentReading = New isr.VI.MeasuredAmount(model.CurrentReading)
+            Me._ResistanceReading = New isr.VI.MeasuredAmount(model.ResistanceReading)
+            Me._VoltageReading = New isr.VI.MeasuredAmount(model.VoltageReading)
             Me._Timestamp = New isr.VI.ReadingAmount(model.Timestamp)
-            Me._ReadingNumber = New isr.VI.ReadingValue(model.ReadingNumber)
-            Me._Channel = New isr.VI.ReadingValue(model.Channel)
-            Me._Limits = New isr.VI.ReadingValue(model.Limits)
-            ' Units is a property of each element. If units are turned on, each element units is enabled.
-            ' Me._Units = New isr.VI.ReadingElement(model.Units)
-            Me.Elements = model._elements
+            Me._StatusReading = New isr.VI.ReadingStatus(model.StatusReading)
+            Me.Elements = model.Elements
         End If
 
     End Sub
@@ -84,6 +89,47 @@ Public Class Readings
 
 #Region " PARSE "
 
+    Public Overrides Function TryParse(ByVal readings As String(), ByVal firstElementIndex As Integer) As Boolean
+        Dim affirmative As Boolean = MyBase.TryParse(readings, firstElementIndex)
+        If affirmative Then
+            Dim statusValue As Long = Me.StatusReading.StatusValue.GetValueOrDefault(0)
+            ' add the status to each meta status value.
+            Me.VoltageReading.MetaStatus.Preset(Me.VoltageReading.MetaStatus.Value Or statusValue)
+            Me.CurrentReading.MetaStatus.Preset(Me.CurrentReading.MetaStatus.Value Or statusValue)
+            Me.ResistanceReading.MetaStatus.Preset(Me.ResistanceReading.MetaStatus.Value Or statusValue)
+            If statusValue > 0 Then
+                ' update the meta status based on the status reading.
+                If Me.StatusReading.IsBit(StatusWordBit.FailedContactCheck) Then
+                    Me.VoltageReading.MetaStatus.FailedContactCheck = True
+                    Me.CurrentReading.MetaStatus.FailedContactCheck = True
+                    Me.ResistanceReading.MetaStatus.FailedContactCheck = True
+                End If
+                If Me.StatusReading.IsBit(StatusWordBit.HitCompliance) Then
+                    Me.VoltageReading.MetaStatus.HitStatusCompliance = True
+                    Me.CurrentReading.MetaStatus.HitStatusCompliance = True
+                    Me.ResistanceReading.MetaStatus.HitStatusCompliance = True
+                End If
+                If Me.StatusReading.IsBit(StatusWordBit.HitRangeCompliance) Then
+                    Me.VoltageReading.MetaStatus.HitRangeCompliance = True
+                    Me.CurrentReading.MetaStatus.HitRangeCompliance = True
+                    Me.ResistanceReading.MetaStatus.HitRangeCompliance = True
+                End If
+                If Me.StatusReading.IsBit(StatusWordBit.HitVoltageProtection) Then
+                    Me.VoltageReading.MetaStatus.HitVoltageProtection = True
+                    Me.CurrentReading.MetaStatus.HitVoltageProtection = True
+                    Me.ResistanceReading.MetaStatus.HitVoltageProtection = True
+                End If
+                If Me.StatusReading.IsBit(StatusWordBit.OverRange) Then
+                    Me.VoltageReading.MetaStatus.HitVoltageProtection = True
+                    Me.CurrentReading.MetaStatus.HitVoltageProtection = True
+                    Me.ResistanceReading.MetaStatus.HitVoltageProtection = True
+                End If
+            End If
+        End If
+
+        Return affirmative
+    End Function
+
     ''' <summary> Parses reading data into a readings array. </summary>
     ''' <param name="baseReading">    Specifies the base reading which includes the limits for all
     ''' reading elements. </param>
@@ -96,12 +142,12 @@ Public Class Readings
     Public Shared Function ParseMulti(ByVal baseReading As Readings, ByVal readingRecords As String) As Readings()
 
         If readingRecords Is Nothing Then
-            Throw New ArgumentNullException("readingRecords")
+            Throw New ArgumentNullException(NameOf(readingRecords))
         ElseIf readingRecords.Length = 0 Then
             Dim r As Readings() = {}
             Return r
         ElseIf baseReading Is Nothing Then
-            Throw New ArgumentNullException("baseReading")
+        Throw New ArgumentNullException(NameOf(baseReading))
         End If
 
         Dim readings As String() = readingRecords.Split(","c)
@@ -180,12 +226,11 @@ Public Class Readings
             If Not value.Equals(Me.Elements) Then
                 Me._elements = value
                 Me.Readings = New ReadingElementCollection
-                If (value And isr.VI.ReadingElements.Reading) <> 0 Then
-                    MyBase.AddReading(Me.Reading)
-                End If
-                If (value And isr.VI.ReadingElements.Channel) <> 0 Then
-                    MyBase.AddReading(Me.Channel)
-                End If
+                If (value And isr.VI.ReadingElements.Voltage) <> 0 Then MyBase.AddReading(Me.VoltageReading)
+                If (value And isr.VI.ReadingElements.Current) <> 0 Then MyBase.AddReading(Me.CurrentReading)
+                If (value And isr.VI.ReadingElements.Resistance) <> 0 Then MyBase.AddReading(Me.ResistanceReading)
+                If (value And isr.VI.ReadingElements.Time) <> 0 Then MyBase.AddReading(Me.Timestamp)
+                If (value And isr.VI.ReadingElements.Status) <> 0 Then MyBase.AddReading(Me.StatusReading)
                 ' Units is a property of each element. If units are turned on, each element units is enabled.
                 If (value And isr.VI.ReadingElements.Units) <> 0 Then
                     For Each e As ReadingElement In Me.Readings
@@ -196,20 +241,37 @@ Public Class Readings
         End Set
     End Property
 
-    ''' <summary>Gets or sets the <see cref="isr.VI.ReadingAmount">channel number</see>.</summary>
-    Public Property Channel() As isr.VI.ReadingValue
+    ''' <summary>Gets or sets the source meter <see cref="isr.VI.MeasuredAmount">current reading</see>.</summary>
+    Public Property CurrentReading() As isr.VI.MeasuredAmount
 
-    ''' <summary>Gets or sets the <see cref="isr.VI.ReadingAmount">limits</see>.</summary>
-    Public Property Limits() As isr.VI.ReadingValue
+    ''' <summary>Gets or sets the source meter <see cref="isr.VI.MeasuredAmount">resistance reading</see>.</summary>
+    Public Property ResistanceReading() As isr.VI.MeasuredAmount
 
-    ''' <summary>Gets or sets the DMM <see cref="isr.VI.MeasuredAmount">reading</see>.</summary>
-    Public Property Reading() As isr.VI.MeasuredAmount
-
-    ''' <summary>Gets or sets the <see cref="isr.VI.ReadingAmount">reading number</see>.</summary>
-    Public Property ReadingNumber() As isr.VI.ReadingValue
+    ''' <summary>Gets or sets the source meter <see cref="isr.VI.MeasuredAmount">voltage reading</see>.</summary>
+    Public Property VoltageReading() As isr.VI.MeasuredAmount
 
     ''' <summary>Gets or sets the timestamp <see cref="isr.VI.ReadingAmount">reading</see>.</summary>
     Public Property Timestamp() As isr.VI.ReadingAmount
+
+    ''' <summary>Gets or sets the source meter <see cref="isr.VI.MeasuredAmount">status reading</see>.</summary>
+    Public Property StatusReading() As isr.VI.ReadingStatus
+
+    ''' <summary> Select measured amount. </summary>
+    ''' <remarks> David, 3/8/2016. </remarks>
+    ''' <param name="element"> The element. </param>
+    ''' <returns> A MeasuredAmount. </returns>
+    Public Function SelectMeasuredAmount(ByVal element As ReadingElements) As MeasuredAmount
+        Dim reading As MeasuredAmount = Nothing
+        Select Case element
+            Case ReadingElements.Current
+                reading = Me.CurrentReading
+            Case ReadingElements.Resistance
+                reading = Me.ResistanceReading
+            Case ReadingElements.Voltage
+                reading = Me.VoltageReading
+        End Select
+        Return reading
+    End Function
 
     ''' <summary> Convert this object into a string representation. </summary>
     ''' <param name="element"> The element. </param>
@@ -217,34 +279,18 @@ Public Class Readings
     Public Overloads Function ToString(ByVal element As ReadingElements) As String
 
         Dim value As String = ""
-        If Me.Reading IsNot Nothing Then
+        Dim reading As MeasuredAmount = Me.SelectMeasuredAmount(element)
+        If reading Is Nothing Then
             Select Case element
-                Case VI.ReadingElements.Reading
-                    If Me.Reading IsNot Nothing AndAlso Me.Reading.Amount IsNot Nothing Then
-                        value = Me.Reading.Amount.ToString()
+                Case ReadingElements.Time
+                    If Me.Timestamp IsNot Nothing AndAlso Me.Timestamp.Amount IsNot Nothing Then
+                        value = Timestamp.Amount.ToString()
                     End If
-                Case VI.ReadingElements.Timestamp
-                    If Me.Timestamp IsNot Nothing AndAlso Me.Reading.Amount IsNot Nothing Then
-                        value = Me.Timestamp.Amount.ToString()
-                    End If
-                Case VI.ReadingElements.ReadingNumber
-                    If Me.ReadingNumber IsNot Nothing AndAlso Me.Reading.Amount IsNot Nothing Then
-                        value = Me.ReadingNumber.ToString()
-                    End If
-                Case VI.ReadingElements.Channel
-                    If Me.Channel IsNot Nothing AndAlso Me.Reading.Amount IsNot Nothing Then
-                        value = Me.Channel.ToString()
-                    End If
-                Case VI.ReadingElements.Limits
-                    If Me.Limits IsNot Nothing AndAlso Me.Reading.Amount IsNot Nothing Then
-                        value = Me.Limits.ToString()
-                    End If
-                    ' Units is a property of each element. If units are turned on, each element units is enabled.
-                    ' Case VI.ReadingElements.Units
-                    '    If Me.Units IsNot Nothing AndAlso Me.Reading.Amount IsNot Nothing Then
-                    '        value = Me.Units.ToString()
-                    '    End If
+                Case ReadingElements.Status
+                    value = Me.StatusReading?.ValueReading
             End Select
+        ElseIf reading.Amount IsNot Nothing Then
+            value = reading.Amount.ToString()
         End If
         Return value
 

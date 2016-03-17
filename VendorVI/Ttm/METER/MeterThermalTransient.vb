@@ -581,7 +581,7 @@ Public Class MeterThermalTransient
 #Region " CONFIGURE "
 
     ''' <summary> Applies the instrument defaults. </summary>
-    ''' <remakrs> This is required until the reset command gets implemented. </remakrs>
+    ''' <remarks> This is required until the reset command gets implemented. </remarks>
     Public Overrides Sub ApplyInstrumentDefaults()
         MyBase.ApplyInstrumentDefaults()
         Me.StatusSubsystem.Write("{0}:maxRateSetter()", Me.EntityName)
@@ -703,9 +703,7 @@ Public Class MeterThermalTransient
     ''' <param name="thermalTransient"> The Thermal Transient element. </param>
     Public Overloads Sub Configure(ByVal thermalTransient As ThermalTransientBase)
 
-        If thermalTransient Is Nothing Then
-            Throw New ArgumentNullException("thermalTransient")
-        End If
+        If thermalTransient Is Nothing Then Throw New ArgumentNullException(NameOf(thermalTransient))
         MyBase.Configure(thermalTransient)
 
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} post transient delay to {1};. ", Me.BaseEntityName, thermalTransient.PostTransientDelay)
@@ -725,9 +723,7 @@ Public Class MeterThermalTransient
     ''' <param name="thermalTransient"> The Thermal Transient element. </param>
     Public Overloads Sub ConfigureChanged(ByVal thermalTransient As ThermalTransientBase)
 
-        If thermalTransient Is Nothing Then
-            Throw New ArgumentNullException("thermalTransient")
-        End If
+        If thermalTransient Is Nothing Then Throw New ArgumentNullException(NameOf(thermalTransient))
         MyBase.ConfigureChanged(thermalTransient)
         If Not Me.ThermalTransient.ConfigurationEquals(thermalTransient) Then
 
@@ -767,9 +763,7 @@ Public Class MeterThermalTransient
     ''' <summary> Measures the Thermal Transient. </summary>
     ''' <param name="thermalTransient"> The Thermal Transient element. </param>
     Public Overloads Sub Measure(ByVal thermalTransient As ResistanceMeasureBase)
-        If thermalTransient Is Nothing Then
-            Throw New ArgumentNullException("thermalTransient")
-        End If
+        If thermalTransient Is Nothing Then            Throw New ArgumentNullException(NameOf(thermalTransient))
         If Me.Session.IsSessionOpen Then
             MyBase.Measure(thermalTransient)
             Me.ReadThermalTransient(thermalTransient)
@@ -800,7 +794,7 @@ Public Class MeterThermalTransient
             Me.LastReading = ""
             Me.LastOutcome = ""
             Me.LastMeasurementStatus = ""
-            Throw New InvalidOperationException("Measurement not made.")
+            Throw New InvalidOperationException("Measurement Not made.")
         Else
             If Me.QueryOkay() Then
                 Me.LastReading = Me.Session.QueryPrintStringFormatTrimEnd(9.6D, "{0}.voltageChange", MeterSubsystemBase.ThermalTransientEstimatorEntityName)
@@ -827,9 +821,7 @@ Public Class MeterThermalTransient
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="thermalTransient"> The Thermal Transient element. </param>
     Public Sub ReadThermalTransient(ByVal thermalTransient As ResistanceMeasureBase)
-        If thermalTransient Is Nothing Then
-            Throw New ArgumentNullException("thermalTransient")
-        End If
+        If thermalTransient Is Nothing Then Throw New ArgumentNullException(NameOf(thermalTransient))
         Me.ReadThermalTransient()
         Me.StatusSubsystem.CheckThrowDeviceException(False, "Reading Thermal Transient;. last command: '{0}'", Me.Session.LastMessageSent)
         Dim measurementOutcome As MeasurementOutcomes = MeasurementOutcomes.None
@@ -845,9 +837,7 @@ Public Class MeterThermalTransient
     ''' <summary> Emulates a Thermal Transient. </summary>
     ''' <param name="thermalTransient"> The Thermal Transient element. </param>
     Public Sub EmulateThermalTransient(ByVal thermalTransient As ResistanceMeasureBase)
-        If thermalTransient Is Nothing Then
-            Throw New ArgumentNullException("thermalTransient")
-        End If
+        If thermalTransient Is Nothing Then Throw New ArgumentNullException(NameOf(thermalTransient))
         Me.ThermalTransient.EmulateReading()
         Me.LastReading = Me.ThermalTransient.LastReading
         Me.LastOutcome = Me.ThermalTransient.LastOutcome
@@ -921,7 +911,7 @@ Public Class MeterThermalTransient
     Public Sub ModelTransientResponse(ByVal thermalTransient As ThermalTransient)
 
         If thermalTransient Is Nothing Then
-            Throw New ArgumentNullException("thermalTransient")
+            Throw New ArgumentNullException(NameOf(thermalTransient))
         ElseIf Me.LastTimeSeries Is Nothing Then
             Throw New InvalidOperationException("Last time series not read")
         ElseIf Me.LastTimeSeries.Count = 0 Then
@@ -1005,9 +995,7 @@ Public Class MeterThermalTransient
     ''' <summary> Displays a trace described by timeSeries. </summary>
     ''' <param name="chart">          The <see cref="DataVisualization.Charting.Chart">Chart</see>. </param>
     Public Sub DisplayModel(ByVal chart As DataVisualization.Charting.Chart)
-        If chart Is Nothing Then
-            Throw New ArgumentNullException("chart")
-        End If
+        If chart Is Nothing Then Throw New ArgumentNullException(NameOf(chart))
         If chart.Series.Count = 1 Then
             chart.Series.Add("Model")
             With chart.Series(1)

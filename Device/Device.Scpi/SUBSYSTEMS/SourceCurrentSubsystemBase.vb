@@ -22,25 +22,63 @@ Public MustInherit Class SourceCurrentSubsystemBase
 
 #End Region
 
+#Region " AUTO RANGE "
+
+    ''' <summary> Gets or sets the automatic Range enabled query command. </summary>
+    ''' <value> The automatic Range enabled query command. </value>
+    Protected Overrides ReadOnly Property AutoRangeEnabledQueryCommand As String = ":SOUR:CURR:RANG:AUTO?"
+
+    ''' <summary> Gets or sets the automatic Range enabled command Format. </summary>
+    ''' <value> The automatic Range enabled query command. </value>
+    Protected Overrides ReadOnly Property AutoRangeEnabledCommandFormat As String = ":SOUR:CURR:RANG:AUTO {0:'ON';'ON';'OFF'}"
+
+#End Region
+
 #Region " LEVEL "
 
-    ''' <summary> Queries the current level. </summary>
-    ''' <returns> The current level or none if unknown. </returns>
-    Public Overrides Function QueryLevel() As Double?
-        Me.Level = Me.Session.Query(Me.Level.GetValueOrDefault(0), ":SOURCE:CURR?")
-        Return Me.Level
-    End Function
+    ''' <summary> Gets or sets the Level query command. </summary>
+    ''' <value> The Level query command. </value>
+    Protected Overrides ReadOnly Property LevelQueryCommand As String = ":SOUR:CURR?"
 
-    ''' <summary> Writes the source current level without reading back the value from the device. </summary>
-    ''' <remarks> This command sets the immediate output current level. The value is in Amperes. The
-    ''' immediate level is the output current setting. At *RST, the current values = 0. </remarks>
-    ''' <param name="value"> The current level. </param>
-    ''' <returns> The Source Current Level. </returns>
-    Public Overrides Function WriteLevel(ByVal value As Double) As Double?
-        Me.Session.WriteLine(":SOURCE:CURR {0}", value)
-        Me.Level = value
-        Return Me.Level
-    End Function
+    ''' <summary> Gets or sets the Level command format. </summary>
+    ''' <value> The Level command format. </value>
+    Protected Overrides ReadOnly Property LevelCommandFormat As String = ":SOUR:CURR {0}"
+
+#End Region
+
+#Region " SWEEP START LEVEL "
+
+    ''' <summary> Gets or sets the Sweep Start Level query command. </summary>
+    ''' <value> The Sweep Start Level query command. </value>
+    Protected Overrides ReadOnly Property SweepStartLevelQueryCommand As String = ":SOUR:CURR:STAR?"
+
+    ''' <summary> Gets or sets the Sweep Start Level command format. </summary>
+    ''' <value> The Sweep Start Level command format. </value>
+    Protected Overrides ReadOnly Property SweepStartLevelCommandFormat As String = ":SOUR:CURR:STAR {0}"
+
+#End Region
+
+#Region " SWEEP STOP LEVEL "
+
+    ''' <summary> Gets or sets the Sweep Stop Level query command. </summary>
+    ''' <value> The Sweep Stop Level query command. </value>
+    Protected Overrides ReadOnly Property SweepStopLevelQueryCommand As String = ":SOUR:CURR:STOP?"
+
+    ''' <summary> Gets or sets the Sweep Stop Level command format. </summary>
+    ''' <value> The Sweep Stop Level command format. </value>
+    Protected Overrides ReadOnly Property SweepStopLevelCommandFormat As String = ":SOUR:CURR:STOP {0}"
+
+#End Region
+
+#Region " SWEEP MODE "
+
+    ''' <summary> Gets or sets the Sweep Mode  query command. </summary>
+    ''' <value> The Sweep Mode  query command. </value>
+    Protected Overrides ReadOnly Property SweepModeQueryCommand As String = ":SOUR:CURR:MODE?"
+
+    ''' <summary> Gets or sets the Sweep Mode  command format. </summary>
+    ''' <value> The Sweep Mode  command format. </value>
+    Protected Overrides ReadOnly Property SweepModeCommandFormat As String = ":SOUR:CURR:MODE {0}"
 
 #End Region
 

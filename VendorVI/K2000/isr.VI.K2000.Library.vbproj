@@ -104,7 +104,6 @@
     <Compile Include="SUBSYSTEMS\SystemSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\TraceSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\TriggerSubsystem.vb" />
-    <Compile Include="SUBSYSTEMS\VersionInfo.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -112,6 +111,7 @@
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="SUBSYSTEMS\VersionInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="My\isr.VI.K2000.History.rtf" />

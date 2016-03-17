@@ -1,8 +1,10 @@
 #Region " MEASURAND-RELATED TYPES "
 
 Public Module Measurand
+    ''' <summary> The level compliance bit. </summary>
+    Public Const LevelComplianceBit As Integer = 32
     ''' <summary> The meta status bits base. </summary>
-    Public Const MetaStatusBitsBase As Long = CLng(2 ^ 32)
+    Public Const MetaStatusBitBase As Integer = LevelComplianceBit + 1
 End Module
 
 ''' <summary>
@@ -11,21 +13,22 @@ End Module
 ''' <remarks> Based above 32 bits so that these can be added to the extended 64 bit status word which lower 32 bits
 '''           hold the standard status word.
 '''          </remarks>
-<System.Flags()>
-Public Enum MetaStatusBits As Long
-    <ComponentModel.Description("None")> None = CLng(0)
-    <ComponentModel.Description("Valid")> Valid = CLng(2 ^ 0) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("Has Value")> HasValue = CLng(2 ^ 1) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("Not a number")> NotANumber = CLng(2 ^ 2) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("Infinity")> Infinity = CLng(2 ^ 3) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("Negative Infinity")> NegativeInfinity = CLng(2 ^ 4) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("Hit Status Compliance")> HitStatusCompliance = CLng(2 ^ 5) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("Hit Level Compliance")> HitLevelCompliance = CLng(2 ^ 6) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("Hit Range Compliance")> HitRangeCompliance = CLng(2 ^ 7) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("Failed Contact Check")> FailedContactCheck = CLng(2 ^ 8) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("Pass")> Pass = CLng(2 ^ 9) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("High")> High = CLng(2 ^ 10) * Measurand.MetaStatusBitsBase
-    <ComponentModel.Description("Low")> Low = CLng(2 ^ 11) * Measurand.MetaStatusBitsBase
+Public Enum MetaStatusBit
+    <ComponentModel.Description("None")> None = 0
+    <ComponentModel.Description("Valid")> Valid = Measurand.MetaStatusBitBase
+    <ComponentModel.Description("Has Value")> HasValue = Measurand.MetaStatusBitBase + 1
+    <ComponentModel.Description("Not a number")> NotANumber = Measurand.MetaStatusBitBase + 2
+    <ComponentModel.Description("Infinity")> Infinity = Measurand.MetaStatusBitBase + 3
+    <ComponentModel.Description("Negative Infinity")> NegativeInfinity = Measurand.MetaStatusBitBase + 4
+    <ComponentModel.Description("Hit Status Compliance")> HitStatusCompliance = Measurand.MetaStatusBitBase + 5
+    <ComponentModel.Description("Hit Level Compliance")> HitLevelCompliance = Measurand.MetaStatusBitBase + 6
+    <ComponentModel.Description("Hit Range Compliance")> HitRangeCompliance = Measurand.MetaStatusBitBase + 7
+    <ComponentModel.Description("Failed Contact Check")> FailedContactCheck = Measurand.MetaStatusBitBase + 8
+    <ComponentModel.Description("Hit Voltage Protection")> HitVoltageProtection = Measurand.MetaStatusBitBase + 9
+    <ComponentModel.Description("Measured while over range")> HitOverRange = Measurand.MetaStatusBitBase + 10
+    <ComponentModel.Description("Pass")> Pass = Measurand.MetaStatusBitBase + 11
+    <ComponentModel.Description("High")> High = Measurand.MetaStatusBitBase + 12
+    <ComponentModel.Description("Low")> Low = Measurand.MetaStatusBitBase + 13
 End Enum
 
 ''' <summary>
@@ -35,19 +38,19 @@ End Enum
 Public Enum ReadingElements
     <ComponentModel.Description("None")> None
     <ComponentModel.Description("Reading (READ)")> Reading = 1
-    <ComponentModel.Description("Time Stamp (TST)")> Timestamp = 2 * Reading
-    <ComponentModel.Description("Units (UNIT)")> Units = 2 * Timestamp
-    <ComponentModel.Description("Reading Number (RNUM)")> ReadingNumber = 2 * Units
-    <ComponentModel.Description("Source (SOUR)")> Source = 2 * ReadingNumber
-    <ComponentModel.Description("Compliance (COMP)")> Compliance = 2 * Source
-    <ComponentModel.Description("Average Voltage (AVOL)")> AverageVoltage = 2 * Compliance
-    <ComponentModel.Description("Voltage (VOLT)")> Voltage = 2 * AverageVoltage
-    <ComponentModel.Description("Current (CURR)")> Current = 2 * Voltage
-    <ComponentModel.Description("Resistance (RES)")> Resistance = 2 * Current
-    <ComponentModel.Description("Time (TIME)")> Time = 2 * Resistance
-    <ComponentModel.Description("Status (STAT)")> Status = 2 * Time
-    <ComponentModel.Description("Channel (CHAN)")> Channel = 2 * Status
-    <ComponentModel.Description("Limits (LIM)")> Limits = 2 * Channel
+    <ComponentModel.Description("Time Stamp (TST)")> Timestamp = Reading << 1
+    <ComponentModel.Description("Units (UNIT)")> Units = Timestamp << 1
+    <ComponentModel.Description("Reading Number (RNUM)")> ReadingNumber = Units << 1
+    <ComponentModel.Description("Source (SOUR)")> Source = ReadingNumber << 1
+    <ComponentModel.Description("Compliance (COMP)")> Compliance = Source << 1
+    <ComponentModel.Description("Average Voltage (AVOL)")> AverageVoltage = Compliance << 1
+    <ComponentModel.Description("Voltage (VOLT)")> Voltage = AverageVoltage << 1
+    <ComponentModel.Description("Current (CURR)")> Current = Voltage << 1
+    <ComponentModel.Description("Resistance (RES)")> Resistance = Current << 1
+    <ComponentModel.Description("Time (TIME)")> Time = Resistance << 1
+    <ComponentModel.Description("Status (STAT)")> Status = Time << 1
+    <ComponentModel.Description("Channel (CHAN)")> Channel = Status << 1
+    <ComponentModel.Description("Limits (LIM)")> Limits = Channel << 1
 End Enum
 
 #End Region

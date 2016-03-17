@@ -432,12 +432,58 @@ Public Class ResourcePanelBase
 
 #Region " PROPERTY CHANGE "
 
+    ''' <summary> Executes the device open changed action. </summary>
+    Protected Overridable Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
+    End Sub
+
+    ''' <summary> Handle the device property changed event. </summary>
+    ''' <param name="device">    The device. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Protected Overridable Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
+        If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(device.IsDeviceOpen)
+                Me.OnDeviceOpenChanged(device)
+            Case NameOf(device.Enabled)
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   $"{device.ResourceTitle} {device.Enabled.GetHashCode:enabled;enabled;disabled};. ")
+            Case NameOf(device.ResourcesFilter)
+                Me.Connector.ResourcesFilter = device.ResourcesFilter
+            Case NameOf(device.ServiceRequestFailureMessage)
+                If Not String.IsNullOrWhiteSpace(device.ServiceRequestFailureMessage) Then
+                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, device.ServiceRequestFailureMessage)
+                End If
+            Case NameOf(device.ResourceTitle)
+                Me.ResourceTitle = device.ResourceTitle
+                Me.OnTitleChanged(Me.BuildTitle)
+            Case NameOf(device.ResourceName)
+                Me.ResourceName = device.ResourceName
+                Me.OnTitleChanged(Me.BuildTitle)
+        End Select
+    End Sub
+
+    ''' <summary> Event handler. Called for property changed events. </summary>
+    ''' <param name="sender"> <see cref="Object"/> instance of this
+    ''' <see cref="Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub DevicePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            If sender IsNot Nothing AndAlso e IsNot Nothing Then
+                Me.OnDevicePropertyChanged(TryCast(sender, DeviceBase), e.PropertyName)
+            End If
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
     ''' <summary> Executes the subsystem property changed action. </summary>
     ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Protected Overridable Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors AndAlso subsystem.ErrorAvailable Then
@@ -462,53 +508,13 @@ Public Class ResourcePanelBase
         End Select
     End Sub
 
-    ''' <summary> Handle the device property changed event. </summary>
-    ''' <param name="device">    The device. </param>
-    ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
-        If device Is Nothing OrElse propertyName Is Nothing Then Return
-        Select Case propertyName
-            Case NameOf(device.Enabled)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   $"{device.ResourceTitle} {device.Enabled.GetHashCode:enabled;enabled;disabled};. ")
-            Case NameOf(device.ResourcesFilter)
-                Me.Connector.ResourcesFilter = device.ResourcesFilter
-            Case NameOf(device.ServiceRequestFailureMessage)
-                If Not String.IsNullOrWhiteSpace(device.ServiceRequestFailureMessage) Then
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, device.ServiceRequestFailureMessage)
-                End If
-            Case NameOf(device.ResourceTitle)
-                Me.ResourceTitle = device.ResourceTitle
-                Me.OnTitleChanged(Me.BuildTitle)
-            Case NameOf(device.ResourceName)
-                Me.ResourceName = device.ResourceName
-                Me.OnTitleChanged(Me.BuildTitle)
-        End Select
-    End Sub
-
-    ''' <summary> Event handler. Called for property changed events. </summary>
-    ''' <param name="sender"> <see cref="Object"/> instance of this
-    ''' <see cref="Windows.Forms.Control"/> </param>
-    ''' <param name="e">      Event information to send to registered event handlers. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overridable Sub DevicePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnDevicePropertyChanged(TryCast(sender, DeviceBase), e.PropertyName)
-            End If
-        Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
-        End Try
-    End Sub
-
 #End Region
 
 #Region " OPENING / OPEN "
 
     ''' <summary> Connects the instrument by opening a visa session. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:   DoNotCatchGeneralExceptionTypes")>
-    Private Sub openSession(ByVal resourceName As String, ByVal resourceTitle As String)
+    Private Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
         Try
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opening {0};. ", resourceName)
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor

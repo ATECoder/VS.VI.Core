@@ -606,7 +606,7 @@ Public MustInherit Class MeterSubsystemBase
 #Region " CONFIGURE "
 
     ''' <summary> Applies the instrument defaults. </summary>
-    ''' <remakrs> This is required until the reset command gets implemented. </remakrs>
+    ''' <remarks> This is required until the reset command gets implemented. </remarks>
     Public Overridable Sub ApplyInstrumentDefaults()
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Applying {0} defaults;. ", Me.EntityName)
         Windows.Forms.Application.DoEvents()
@@ -643,9 +643,7 @@ Public MustInherit Class MeterSubsystemBase
     ''' <summary> Applies changed meter configuration. </summary>
     ''' <param name="resistance"> The resistance. </param>
     Public Overridable Sub ConfigureChanged(ByVal resistance As ResistanceMeasureBase)
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
 
         If Not resistance.ConfigurationEquals(Me.Resistance) Then
 
@@ -690,9 +688,7 @@ Public MustInherit Class MeterSubsystemBase
     ''' <summary> Configures the meter for making the resistance measurement. </summary>
     ''' <param name="resistance"> The resistance. </param>
     Public Overridable Sub Configure(ByVal resistance As ResistanceMeasureBase)
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Configuring {0} resistance measurement;. ", Me.EntityName)
         Windows.Forms.Application.DoEvents()
 
@@ -765,9 +761,7 @@ Public MustInherit Class MeterSubsystemBase
     ''' <summary> Measures the Thermal Transient. </summary>
     ''' <param name="resistance"> The Thermal Transient element. </param>
     Public Sub Measure(ByVal resistance As ResistanceMeasureBase)
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
         resistance.ClearExecutionState()
         Me.Measure()
         Me.StatusSubsystem.CheckThrowDeviceException(False, "Measuring Thermal Transient;. last command: '{0}'", Me.Session.LastMessageSent)

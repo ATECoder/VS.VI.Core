@@ -83,9 +83,7 @@ Friend Module ResourceManagerExtensions
     Public Function ParseResource(ByVal value As NationalInstruments.Visa.ResourceManager,
                                       ByVal resourceName As String) As VI.ResourceParseResult
 
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             Return ConvertParseResult(value.Parse(resourceName))
         Catch ex As Ivi.Visa.NativeVisaException
@@ -105,9 +103,7 @@ Friend Module ResourceManagerExtensions
     ''' <returns> List of all resources. </returns>
     <Extension()>
     Public Function FindResources(ByVal value As NationalInstruments.Visa.ResourceManager) As IEnumerable(Of String)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim resources As String = ""
         Try
             resources = VI.ResourceNamesManager.AllResourcesFilter
@@ -133,9 +129,7 @@ Friend Module ResourceManagerExtensions
     <Extension()>
     Public Function TryFindResources(ByVal value As NationalInstruments.Visa.ResourceManager,
                                          ByRef resources As IEnumerable(Of String)) As Boolean
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             Return value.FindResources().Count > 0
         Catch ex As ArgumentException
@@ -161,9 +155,7 @@ Friend Module ResourceManagerExtensions
     <Extension()>
     Public Function TryFindResources(ByVal value As NationalInstruments.Visa.ResourceManager,
                                          ByVal filter As String, ByRef resources As IEnumerable(Of String)) As Boolean
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.Find(filter)
             Return resources.Count > 0
@@ -184,12 +176,8 @@ Friend Module ResourceManagerExtensions
     ''' <returns> <c>True</c> if the resource was located; Otherwise, <c>False</c>. </returns>
     <Extension()>
     Public Function Exists(ByVal value As NationalInstruments.Visa.ResourceManager, ByVal resourceName As String) As Boolean
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
-        If String.IsNullOrWhiteSpace(resourceName) Then
-            Throw New ArgumentNullException("resourceName")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
+        If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
         Dim resources As IEnumerable(Of String) = value.FindResources()
         Return resources.Contains(resourceName, StringComparer.CurrentCultureIgnoreCase)
     End Function
@@ -202,9 +190,7 @@ Friend Module ResourceManagerExtensions
     ''' <returns> <c>True</c> if the interface was located; Otherwise, <c>False</c>. </returns>
     <Extension()>
     Public Function InterfaceExists(ByVal value As NationalInstruments.Visa.ResourceManager, ByVal resourceName As String) As Boolean
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim parseResult As VI.ResourceParseResult = value.ParseResource(resourceName)
         If parseResult.IsParsed Then
             Dim resources As IEnumerable(Of String) = New String() {}
@@ -222,9 +208,7 @@ Friend Module ResourceManagerExtensions
     ''' <returns> The found interface resource names. </returns>
     <Extension()>
     Public Function FindInterfaces(ByVal value As NationalInstruments.Visa.ResourceManager) As IEnumerable(Of String)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim filter As String = ""
         Try
             filter = VI.ResourceNamesManager.BuildInterfaceFilter()
@@ -248,9 +232,7 @@ Friend Module ResourceManagerExtensions
             Justification:="This is the normative implementation of this method.")>
     Public Function TryFindInterfaces(ByVal value As NationalInstruments.Visa.ResourceManager,
                                           ByRef resources As IEnumerable(Of String)) As Boolean
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInterfaces()
             Return resources.Count > 0
@@ -272,9 +254,7 @@ Friend Module ResourceManagerExtensions
     <Extension()>
     Public Function FindInterfaces(ByVal value As NationalInstruments.Visa.ResourceManager,
                                        ByVal interfaceType As VI.HardwareInterfaceType) As IEnumerable(Of String)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim filter As String = ""
         Try
             filter = VI.ResourceNamesManager.BuildInterfaceFilter(interfaceType)
@@ -299,9 +279,7 @@ Friend Module ResourceManagerExtensions
     Public Function TryFindInterfaces(ByVal value As NationalInstruments.Visa.ResourceManager,
                                           ByVal interfaceType As VI.HardwareInterfaceType,
                                           ByRef resources As IEnumerable(Of String)) As Boolean
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInterfaces(interfaceType)
             Return resources.Count > 0
@@ -322,9 +300,7 @@ Friend Module ResourceManagerExtensions
     ''' <returns> <c>True</c> if the instrument was located; Otherwise, <c>False</c>. </returns>
     <Extension()>
     Public Function InstrumentExists(ByVal value As NationalInstruments.Visa.ResourceManager, ByVal resourceName As String) As Boolean
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim parseResult As VI.ResourceParseResult = value.ParseResource(resourceName)
         If parseResult.IsParsed Then
 
@@ -346,9 +322,7 @@ Friend Module ResourceManagerExtensions
     ''' <returns> The found instrument resource names. </returns>
     <Extension()>
     Public Function FindInstruments(ByVal value As NationalInstruments.Visa.ResourceManager) As IEnumerable(Of String)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim filter As String = ""
         Try
             filter = isr.VI.ResourceNamesManager.BuildInstrumentFilter()
@@ -372,9 +346,7 @@ Friend Module ResourceManagerExtensions
             Justification:="This is the normative implementation of this method.")>
     Public Function TryFindInstruments(ByVal value As NationalInstruments.Visa.ResourceManager,
                                            ByRef resources As IEnumerable(Of String)) As Boolean
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInstruments()
             Return resources.Count > 0
@@ -396,9 +368,7 @@ Friend Module ResourceManagerExtensions
     <Extension()>
     Public Function FindInstruments(ByVal value As NationalInstruments.Visa.ResourceManager,
                                         ByVal interfaceType As VI.HardwareInterfaceType) As IEnumerable(Of String)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim filter As String = ""
         Try
             filter = isr.VI.ResourceNamesManager.BuildInstrumentFilter(interfaceType)
@@ -424,9 +394,7 @@ Friend Module ResourceManagerExtensions
     Public Function TryFindInstruments(ByVal value As NationalInstruments.Visa.ResourceManager,
                                            ByVal interfaceType As VI.HardwareInterfaceType,
                                            ByRef resources As IEnumerable(Of String)) As Boolean
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInstruments(interfaceType)
             Return resources.Count > 0
@@ -449,9 +417,7 @@ Friend Module ResourceManagerExtensions
     <Extension()>
     Public Function FindInstruments(ByVal value As NationalInstruments.Visa.ResourceManager,
                                         ByVal interfaceType As VI.HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim filter As String = ""
         Try
             filter = isr.VI.ResourceNamesManager.BuildInstrumentFilter(interfaceType, boardNumber)
@@ -478,9 +444,7 @@ Friend Module ResourceManagerExtensions
     Public Function TryFindInstruments(ByVal value As NationalInstruments.Visa.ResourceManager,
                                            ByVal interfaceType As VI.HardwareInterfaceType,
                                            ByVal interfaceNumber As Integer, ByRef resources As IEnumerable(Of String)) As Boolean
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInstruments(interfaceType, interfaceNumber)
             Return resources.Count > 0

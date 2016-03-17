@@ -46,6 +46,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <remarks> Additional Actions: <para>
     '''           Clears Error Queue.
     '''           </para></remarks>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Try

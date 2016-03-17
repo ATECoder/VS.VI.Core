@@ -31,6 +31,13 @@ Public Class Device
     ''' <param name="disposing"> <c>True</c> to release both managed and unmanaged resources;
     '''                          <c>False</c> to release only unmanaged resources when called from the
     '''                          runtime finalize. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_ArmLayerSubsystem", Justification:="@Closing")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_ContactCheckLimit", Justification:="@Closing")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_ComplianceLimit", Justification:="@Closing")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_CompositeLimit", Justification:="@Closing")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_DigitalOutput", Justification:="@Closing")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_UpperLowerLimit", Justification:="@Closing")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_Calculate2Subsystem", Justification:="@Closing")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_TriggerSubsystem", Justification:="@Closing")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SystemSubsystem", Justification:="@Closing")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_StatusSubsystem", Justification:="@Closing")>
@@ -40,7 +47,6 @@ Public Class Device
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SenseVoltageSubsystem", Justification:="@Closing")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SenseSubsystem", Justification:="@Closing")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SenseResistanceSubsystem", Justification:="@Closing")>
-    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SenseFourWireResistanceSubsystem", Justification:="@Closing")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SenseCurrentSubsystem", Justification:="@Closing")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_RouteSubsystem", Justification:="@Closing")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_OutputSubsystem", Justification:="@Closing")>
@@ -109,7 +115,7 @@ Public Class Device
             RemoveHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
         End If
         If Me._SystemSubsystem IsNot Nothing Then
-            'RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+            RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
         End If
         If Me._StatusSubsystem IsNot Nothing Then
             RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
@@ -130,7 +136,7 @@ Public Class Device
 
         Me._SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.SystemSubsystem)
-        'AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+        AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
 
         Me._FormatSubsystem = New FormatSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.FormatSubsystem)
@@ -151,9 +157,6 @@ Public Class Device
         Me._SenseResistanceSubsystem = New SenseResistanceSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.SenseResistanceSubsystem)
 
-        Me._SenseFourWireResistanceSubsystem = New SenseFourWireResistanceSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SenseFourWireResistanceSubsystem)
-
         Me._SenseSubsystem = New SenseSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.SenseSubsystem)
 
@@ -166,17 +169,32 @@ Public Class Device
         Me._SourceSubsystem = New SourceSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.SourceSubsystem)
 
+        Me._ArmLayerSubsystem = New ArmLayerSubsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.ArmLayerSubsystem)
+
         Me._TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.TriggerSubsystem)
 
         Me._MeasureSubsystem = New MeasureSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.MeasureSubsystem)
 
-        Me._MeasureCurrentSubsystem = New MeasureCurrentSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.MeasureCurrentSubsystem)
+        Me._Calculate2Subsystem = New Calculate2Subsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.Calculate2Subsystem)
 
-        Me._MeasureVoltageSubsystem = New MeasureVoltageSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.MeasureVoltageSubsystem)
+        Me._ContactCheckLimit = New ContactCheckLimit(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.ContactCheckLimit)
+
+        Me._ComplianceLimit = New ComplianceLimit(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.ComplianceLimit)
+
+        Me._CompositeLimit = New CompositeLimit(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.CompositeLimit)
+
+        Me._DigitalOutput = New DigitalOutput(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.DigitalOutput)
+
+        Me._UpperLowerLimit = New UpperLowerLimit(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.UpperLowerLimit)
 
     End Sub
 
@@ -185,22 +203,40 @@ Public Class Device
 #Region " SUBSYSTEMS "
 
     ''' <summary>
+    ''' Gets or sets the arm layer subsystem.
+    ''' </summary>
+    ''' <value>The arm layer subsystem.</value>
+    Public Property ArmLayerSubsystem As ArmLayerSubsystem
+
+    ''' <summary> Gets or sets the Composite Limit. </summary>
+    ''' <value> The Composite limit. </value>
+    Public Property CompositeLimit As CompositeLimit
+
+    ''' <summary> Gets or sets the compliance limit. </summary>
+    ''' <value> The compliance limit. </value>
+    Public Property ComplianceLimit As ComplianceLimit
+
+    ''' <summary> Gets or sets the contact check limit. </summary>
+    ''' <value> The contact check limit. </value>
+    Public Property ContactCheckLimit As ContactCheckLimit
+
+    ''' <summary> Gets or sets the upper lower limit. </summary>
+    ''' <value> The upper lower limit. </value>
+    Public Property UpperLowerLimit As UpperLowerLimit
+
+    ''' <summary> Gets or sets the calculate 2 subsystem. </summary>
+    ''' <value> The calculate 2 subsystem. </value>
+    Public Property Calculate2Subsystem As Calculate2Subsystem
+
+    ''' <summary> Gets or sets the digital output. </summary>
+    ''' <value> The digital output. </value>
+    Public Property DigitalOutput As DigitalOutput
+
+    ''' <summary>
     ''' Gets or sets the Measure subsystem.
     ''' </summary>
     ''' <value>The Measure subsystem.</value>
     Public Property MeasureSubsystem As MeasureSubsystem
-
-    ''' <summary>
-    ''' Gets or sets the Measure Current subsystem.
-    ''' </summary>
-    ''' <value>The Measure Current subsystem.</value>
-    Public Property MeasureCurrentSubsystem As MeasureCurrentSubsystem
-
-    ''' <summary>
-    ''' Gets or sets the Measure Voltage subsystem.
-    ''' </summary>
-    ''' <value>The Measure Voltage subsystem.</value>
-    Public Property MeasureVoltageSubsystem As MeasureVoltageSubsystem
 
     ''' <summary>
     ''' Gets or sets the Output subsystem.
@@ -225,10 +261,6 @@ Public Class Device
     ''' </summary>
     ''' <value>The Sense Resistance subsystem.</value>
     Public Property SenseResistanceSubsystem As SenseResistanceSubsystem
-
-    ''' <summary> Gets or sets the Sense Four Wire Resistance Subsystem. </summary>
-    ''' <value> The Sense Four Wire Resistance Subsystem. </value>
-    Public Property SenseFourWireResistanceSubsystem As SenseFourWireResistanceSubsystem
 
     ''' <summary>
     ''' Gets or sets the Sense Voltage subsystem.
@@ -276,7 +308,7 @@ Public Class Device
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
                 Me.MeasureSubsystem.Readings.Elements = subsystem.Elements
@@ -331,6 +363,31 @@ Public Class Device
     ''' <value>The System Subsystem.</value>
     Public Property SystemSubsystem As SystemSubsystem
 
+    ''' <summary> Handles the Status subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Protected Overridable Overloads Sub OnPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.Options)
+                ' read the contact check option after reading options.
+                subsystem.QuerySupportsContactCheck()
+        End Select
+    End Sub
+
+    ''' <summary> System subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
 #End Region
 
 #End Region
@@ -349,7 +406,7 @@ Public Class Device
         ' turn output off.
         Me.OutputSubsystem.ApplyOutputOnState(False)
 
-        Me.SourceSubsystem.WriteFunctionMode(SourceFunctionMode.VoltageDC)
+        Me.SourceSubsystem.WriteFunctionMode(SourceFunctionModes.VoltageDC)
 
         ' Set the voltage
         Me.SourceVoltageSubsystem.ApplyLevel(voltage)
@@ -360,7 +417,7 @@ Public Class Device
         ' Turn on over current protection
         Me.SenseCurrentSubsystem.ApplyProtectionLevel(currentLimit)
 
-        Me.SenseSubsystem.ApplyFunctionModes(VI.Scpi.SenseFunctionModes.CurrentDC Or VI.Scpi.SenseFunctionModes.VoltageDC)
+        Me.SenseSubsystem.ApplyFunctionModes(VI.Scpi.SenseFunctionModes.Current Or VI.Scpi.SenseFunctionModes.Voltage)
 
         Me.SenseSubsystem.ApplyConcurrentSenseEnabled(True)
 
@@ -394,3 +451,33 @@ Public Class Device
 #End Region
 
 End Class
+
+#Region " UNUSED "
+#If False Then
+    ''' <summary> Gets or sets the Sense Four Wire Resistance Subsystem. </summary>
+    ''' <value> The Sense Four Wire Resistance Subsystem. </value>
+    Public Property SenseFourWireResistanceSubsystem As SenseFourWireResistanceSubsystem
+        Me._SenseFourWireResistanceSubsystem = New SenseFourWireResistanceSubsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.SenseFourWireResistanceSubsystem)
+    ''' <summary>
+    ''' Gets or sets the Measure Current subsystem.
+    ''' </summary>
+    ''' <value>The Measure Current subsystem.</value>
+    Public Property MeasureCurrentSubsystem As MeasureCurrentSubsystem
+
+    ''' <summary>
+    ''' Gets or sets the Measure Voltage subsystem.
+    ''' </summary>
+    ''' <value>The Measure Voltage subsystem.</value>
+    Public Property MeasureVoltageSubsystem As MeasureVoltageSubsystem
+
+        Me._MeasureCurrentSubsystem = New MeasureCurrentSubsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.MeasureCurrentSubsystem)
+
+        Me._MeasureVoltageSubsystem = New MeasureVoltageSubsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.MeasureVoltageSubsystem)
+
+
+
+#End If
+#End Region

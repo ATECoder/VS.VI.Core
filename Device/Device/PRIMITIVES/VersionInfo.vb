@@ -42,12 +42,16 @@ Public Class VersionInfo
     ''' <value> The serial number. </value>
     Public Property SerialNumber() As String
 
+    ''' <summary>Gets or sets the list of board revisions.</summary>
+    Public Property BoardRevisions() As System.Collections.Specialized.StringDictionary
+
 #End Region
 
 #Region " PARSE "
 
     ''' <summary> Clears this object to its blank/initial state. </summary>
     Private Sub _Clear()
+        Me._BoardRevisions = New System.Collections.Specialized.StringDictionary
         Me._Identity = ""
         Me._FirmwareRevision = ""
         Me._ManufacturerName = ""
@@ -58,13 +62,13 @@ Public Class VersionInfo
     ''' <summary> Clears this object to its blank/initial state. </summary>
     Public Overridable Sub Clear()
         Me._Clear()
-        Me.ParseFirmwareRevision("")
     End Sub
 
     ''' <summary> Parses the instrument firmware revision. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="revision"> Specifies the instrument firmware revision.. </param>
     Protected Overridable Sub ParseFirmwareRevision(ByVal revision As String)
+        Me._BoardRevisions = New System.Collections.Specialized.StringDictionary
     End Sub
 
     ''' <summary> Builds the identity. </summary>
@@ -141,3 +145,13 @@ Public Class VersionInfo
 #End Region
 
 End Class
+
+''' <summary> Enumerates the instrument board types as defined by the instrument identity. </summary>
+Public Enum BoardType
+    <ComponentModel.Description("None")> None
+    <ComponentModel.Description("Analog")> Analog
+    <ComponentModel.Description("Digital")> Digital
+    <ComponentModel.Description("Display")> Display
+    <ComponentModel.Description("Contact Check")> ContactCheck
+    <ComponentModel.Description("LED Display")> LedDisplay
+End Enum

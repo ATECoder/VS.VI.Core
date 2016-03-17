@@ -22,17 +22,6 @@ Public MustInherit Class SenseSubsystemBase
 
 #End Region
 
-#Region " I PRESETTABLE "
-
-    ''' <summary> Sets the subsystem to its reset state. </summary>
-    Public Overrides Sub ResetKnownState()
-        MyBase.ResetKnownState()
-        Me.FunctionModes = VI.Scpi.SenseFunctionModes.VoltageDC
-        Me.ConcurrentSenseEnabled = New Boolean?
-    End Sub
-
-#End Region
-
 #Region " AUTO RANGE ENABLED "
 
     ''' <summary> Auto Range enabled. </summary>
@@ -132,6 +121,18 @@ Public MustInherit Class SenseSubsystemBase
 
     ''' <summary> The Power Line Cycles. </summary>
     Private _PowerLineCycles As Double?
+
+    ''' <summary> Gets the integration period. </summary>
+    ''' <value> The integration period. </value>
+    Public ReadOnly Property IntegrationPeriod As TimeSpan?
+        Get
+            If Me.PowerLineCycles.HasValue Then
+                Return VI.StatusSubsystemBase.IntegrationPeriod(Me.PowerLineCycles.Value)
+            Else
+                Return New TimeSpan?
+            End If
+        End Get
+    End Property
 
     ''' <summary> Gets or sets the cached sense PowerLineCycles. </summary>
     ''' <value> <c>null</c> if value is not known. </value>

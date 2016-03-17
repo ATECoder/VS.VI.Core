@@ -725,7 +725,7 @@ Public MustInherit Class MultimeterSubsystemBase
     ''' <value> The function mode ranges. </value>
     Public ReadOnly Property FunctionModeRanges As FunctionRangeDictionary
 
-    ''' <summary> The Range of the range in seconds. </summary>
+    ''' <summary> The Range of the range. </summary>
     Public ReadOnly Property RangeRange As Core.Pith.RangeR
 
     ''' <summary> The Range. </summary>

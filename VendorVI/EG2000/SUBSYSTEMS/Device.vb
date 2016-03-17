@@ -152,7 +152,7 @@ Public Class Device
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As ProberSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Dim lastReading As String = subsystem.LastReading
         Select Case propertyName
             Case NameOf(subsystem.IdentityRead)

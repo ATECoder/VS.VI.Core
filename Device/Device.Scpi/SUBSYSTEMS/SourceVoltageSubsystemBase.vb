@@ -25,118 +25,61 @@ Public MustInherit Class SourceVoltageSubsystemBase
 
 #Region " AUTO RANGE "
 
-    ''' <summary> Queries the Auto Range Enabled sentinel. Also sets the
-    ''' <see cref="AutoRangeEnabled">Enabled</see> sentinel. </summary>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Overrides Function QueryAutoRangeEnabled() As Boolean?
-        Me.AutoRangeEnabled = Session.Query(Me.AutoRangeEnabled.GetValueOrDefault(True), ":SOUR:VOLT:RANG:AUTO?")
-        Return Me.AutoRangeEnabled
-    End Function
+    ''' <summary> Gets or sets the automatic Range enabled query command. </summary>
+    ''' <value> The automatic Range enabled query command. </value>
+    Protected Overrides ReadOnly Property AutoRangeEnabledQueryCommand As String = ":SOUR:VOLT:RANG:AUTO?"
 
-    ''' <summary> Writes the Auto Range Enabled sentinel. Does not read back from the instrument. </summary>
-    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Overrides Function WriteAutoRangeEnabled(ByVal value As Boolean) As Boolean?
-        Me.Session.WriteLine(":SOUR:VOLT:RANG:AUTO {0:'ON';'ON';'OFF'}", CType(value, Integer))
-        Me.AutoRangeEnabled = value
-        Return Me.AutoRangeEnabled
-    End Function
+    ''' <summary> Gets or sets the automatic Range enabled command Format. </summary>
+    ''' <value> The automatic Range enabled query command. </value>
+    Protected Overrides ReadOnly Property AutoRangeEnabledCommandFormat As String = ":SOUR:VOLT:RANG:AUTO {0:'ON';'ON';'OFF'}"
 
 #End Region
 
 #Region " LEVEL "
 
-    ''' <summary> Queries the level. </summary>
-    ''' <returns> The level or none if unknown. </returns>
-    Public Overrides Function QueryLevel() As Double?
-        Me.Level = Me.Session.Query(Me.Level.GetValueOrDefault(0), ":SOURCE:VOLT?")
-        Return Me.Level
-    End Function
+    ''' <summary> Gets or sets the Level query command. </summary>
+    ''' <value> The Level query command. </value>
+    Protected Overrides ReadOnly Property LevelQueryCommand As String = ":SOUR:VOLT?"
 
-    ''' <summary> Writes and reads back the source Voltage level. </summary>
-    ''' <remarks> These commands set the immediate output Voltage level. The values are programmed in
-    ''' Volts. The immediate level is the output Voltage setting. At *RST, the Voltage values = 0.
-    ''' The range of values that can be programmed for these commands is coupled with the voltage
-    ''' protection and the voltage limit low settings. The maximum value for the immediate and
-    ''' triggered voltage level is either the value in the following table, or the voltage protection
-    ''' setting divided by 1.05; whichever is lower. The minimum value is either the value in the
-    ''' table, or the low voltage setting divided by 0.95; whichever is higher.  </remarks>
-    ''' <param name="value"> The Voltage level. </param>
-    ''' <returns> <see cref="Level"/> </returns>
-    Public Overrides Function WriteLevel(ByVal value As Double) As Double?
-        Me.Session.WriteLine(":SOURCE:VOLT {0}", value)
-        Me.Level = value
-        Return Me.Level
-    End Function
+    ''' <summary> Gets or sets the Level command format. </summary>
+    ''' <value> The Level command format. </value>
+    Protected Overrides ReadOnly Property LevelCommandFormat As String = ":SOUR:VOLT {0}"
 
 #End Region
 
 #Region " SWEEP START LEVEL "
 
-    ''' <summary> Queries the source voltage Sweep Start Level. </summary>
-    ''' <returns> The source voltage Sweep Start Level or none if unknown. </returns>
-    Public Overrides Function QuerySweepStartLevel() As Double?
-        Me.SweepStartLevel = Me.Session.Query(Me.SweepStartLevel.GetValueOrDefault(0), ":SOUR:VOLT:STAR?")
-        Return Me.SweepStartLevel
-    End Function
+    ''' <summary> Gets or sets the Sweep Start Level query command. </summary>
+    ''' <value> The Sweep Start Level query command. </value>
+    Protected Overrides ReadOnly Property SweepStartLevelQueryCommand As String = ":SOUR:VOLT:STAR?"
 
-    ''' <summary> Writes and reads back the source Voltage Sweep Start Level. </summary>
-    ''' <param name="value"> The Voltage SweepStartLevel. </param>
-    ''' <returns> <see cref="SweepStartLevel">Sweep Start Level</see>. </returns>
-    Public Overrides Function WriteSweepStartLevel(ByVal value As Double) As Double?
-        Me.Session.WriteLine(":SOUR:VOLT:STAR {0}", value)
-        Me.SweepStartLevel = value
-        Return Me.SweepStartLevel
-    End Function
+    ''' <summary> Gets or sets the Sweep Start Level command format. </summary>
+    ''' <value> The Sweep Start Level command format. </value>
+    Protected Overrides ReadOnly Property SweepStartLevelCommandFormat As String = ":SOUR:VOLT:STAR {0}"
 
 #End Region
 
 #Region " SWEEP STOP LEVEL "
 
-    ''' <summary> Queries the source voltage Sweep Stop Level. </summary>
-    ''' <returns> The source voltage Sweep Stop Level or none if unknown. </returns>
-    Public Overrides Function QuerySweepStopLevel() As Double?
-        Me.SweepStopLevel = Me.Session.Query(Me.SweepStopLevel.GetValueOrDefault(1), ":SOUR:VOLT:STOP?")
-        Return Me.SweepStopLevel
-    End Function
+    ''' <summary> Gets or sets the Sweep Stop Level query command. </summary>
+    ''' <value> The Sweep Stop Level query command. </value>
+    Protected Overrides ReadOnly Property SweepStopLevelQueryCommand As String = ":SOUR:VOLT:STOP?"
 
-
-    ''' <summary> Writes and reads back the source Voltage Sweep Stop Level. </summary>
-    ''' <param name="value"> The Voltage SweepStopLevel. </param>
-    ''' <returns> <see cref="SweepStopLevel">Sweep Stop Level</see>. </returns>
-    Public Overrides Function WriteSweepStopLevel(ByVal value As Double) As Double?
-        Me.Session.WriteLine(":SOUR:VOLT:STOP {0}", value)
-        Me.SweepStopLevel = value
-        Return Me.SweepStopLevel
-    End Function
+    ''' <summary> Gets or sets the Sweep Stop Level command format. </summary>
+    ''' <value> The Sweep Stop Level command format. </value>
+    Protected Overrides ReadOnly Property SweepStopLevelCommandFormat As String = ":SOUR:VOLT:STOP {0}"
 
 #End Region
 
 #Region " SWEEP MODE "
 
-    ''' <summary> Queries the sweep mode. </summary>
-    ''' <returns> The sweep mode or none if unknown. </returns>
-    Public Overrides Function QuerySweepMode() As SweepMode?
-        Dim mode As String = Me.SweepMode.ToString
-        Me.Session.MakeEmulatedReplyIfEmpty(mode)
-        mode = Me.Session.QueryTrimEnd(":SOUR:VOLT:MODE?")
-        If String.IsNullOrWhiteSpace(mode) Then
-            Me.SweepMode = New SweepMode?
-        Else
-            Dim se As New StringEnumerator(Of SweepMode)
-            Me.SweepMode = se.ParseContained(mode.BuildDelimitedValue)
-        End If
-        Return Me.SweepMode
-    End Function
+    ''' <summary> Gets or sets the Sweep Mode  query command. </summary>
+    ''' <value> The Sweep Mode  query command. </value>
+    Protected Overrides ReadOnly Property SweepModeQueryCommand As String = ":SOUR:VOLT:MODE?"
 
-    ''' <summary> Writes the sweep mode but does not read back from the device. </summary>
-    ''' <param name="value"> The  sweep mode. </param>
-    ''' <returns> The sweep mode or none if unknown. </returns>
-    Public Overrides Function WriteSweepMode(ByVal value As SweepMode) As SweepMode?
-        Me.Session.WriteLine(":SOUR:VOLT:MODE {0}", value.ExtractBetween())
-        Me.SweepMode = value
-        Return Me.SweepMode
-    End Function
+    ''' <summary> Gets or sets the Sweep Mode  command format. </summary>
+    ''' <value> The Sweep Mode  command format. </value>
+    Protected Overrides ReadOnly Property SweepModeCommandFormat As String = ":SOUR:VOLT:MODE {0}"
 
 #End Region
 

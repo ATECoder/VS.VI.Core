@@ -11,20 +11,12 @@ Namespace My
             Return isr.Core.Pith.ApplicationInfo.BuildDefaultCaption(suffix.ToString)
         End Function
 
-        ''' <summary> Destroys objects for this project. </summary>
-        Friend Sub Destroy()
-#If SPLASH Then
-            MySplashScreen.Close()
-            MySplashScreen.Dispose()
-            Me.SplashScreen = Nothing
-#End If
-        End Sub
-
         ''' <summary> Instantiates the application to its known state. </summary>
         ''' <returns> <c>True</c> if success or <c>False</c> if failed. </returns>
         <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
         Private Function TryinitializeKnownState() As Boolean
 
+            Dim affirmative As Boolean = True
             Try
 
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.AppStarting
@@ -39,37 +31,47 @@ Namespace My
                 ' Apply command line results.
                 If CommandLineInfo.DevicesEnabled.HasValue Then
                     Me.SplashTraceEvent(TraceEventType.Information, "{0} use of devices from command line",
-                                  IIf(CommandLineInfo.DevicesEnabled.Value, "Enabled", "Disabling"))
+                                        IIf(CommandLineInfo.DevicesEnabled.Value, "Enabled", "Disabling"))
                     My.Settings.DevicesEnabled = CommandLineInfo.DevicesEnabled.Value
                 End If
-
-                Return True
 
             Catch ex As Exception
 
                 ' Turn off the hourglass
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
                 Me.SplashTraceEvent(TraceEventType.Error, "Exception occurred initializing application known state;. Details: {0}", ex)
-                Try
-                    Me.Destroy()
-                Finally
-                End Try
-                Return False
+                affirmative = False
+
             Finally
 
                 ' Turn off the hourglass
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
 
             End Try
+            Return affirmative
 
         End Function
 
         ''' <summary> Processes the shut down. </summary>
+        <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
         Private Sub processShutDown()
-            My.Application.SaveMySettingsOnExit = True
-            If My.Application.SaveMySettingsOnExit Then
-                ' Save library settings here
-            End If
+            Try
+                If My.Application.SaveMySettingsOnExit Then
+                    Me.MyLog.TraceSource.TraceEventOverride(TraceEventType.Information, My.MyApplication.TraceEventId,
+                                                          "Saving assembly settings")
+                    ' Save library settings here
+                End If
+            Catch
+            Finally
+            End Try
+        End Sub
+
+        ''' <summary> Applies the given value. </summary>
+        ''' <remarks> David, 3/16/2016. </remarks>
+        ''' <param name="value"> The value. </param>
+        Public Sub Apply(ByVal value As MyLog)
+            Me._MyLog = value
+            Global.isr.VI.My.MyLibrary.apply(value)
         End Sub
 
         ''' <summary> Processes the startup. Sets the event arguments
@@ -78,50 +80,10 @@ Namespace My
         ''' <param name="e"> The <see cref="Microsoft.VisualBasic.ApplicationServices.StartupEventArgs" />
         ''' instance containing the event data. </param>
         Private Sub ProcessStartup(ByVal e As Microsoft.VisualBasic.ApplicationServices.StartupEventArgs)
-            If Not e.Cancel Then
-#If SPLASH Then
-                MySplashScreen.CreateInstance(My.Application.SplashScreen)
-                Me.SplashTraceEvent(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Allowing library use of splash screen")
-#End If
+            If e IsNot Nothing Then
                 Me.SplashTraceEvent(TraceEventType.Information, My.MyApplication.TraceEventId, "Parsing command line")
                 e.Cancel = Not CommandLineInfo.TryParseCommandLine(e.CommandLine)
             End If
-        End Sub
-
-        ''' <summary> Sets the visual styles, text display styles, and current principal for the main
-        ''' application thread (if the application uses Windows authentication), and initializes the
-        ''' splash screen, if defined. Replaces the default trace listener with the modified listener.
-        ''' Updates the minimum splash screen display time. </summary>
-        ''' <param name="commandLineArgs"> A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection" /> of String, 
-        '''                                containing the command-line arguments as strings for the current application. </param>
-        ''' <returns> A <see cref="T:System.Boolean" /> indicating if application startup should continue. </returns>
-        Protected Overrides Function OnInitialize(ByVal commandLineArgs As System.Collections.ObjectModel.ReadOnlyCollection(Of String)) As Boolean
-
-            With Me.Log
-                .ReplaceDefaultTraceListener(UserLevel.AllUsers)
-                If .LogFileExists Then
-                    .TraceSource.TraceEventOverride(TraceEventType.Information, My.MyApplication.TraceEventId, "Application initialized")
-                Else
-                    .TraceSource.TraceEventOverride(TraceEventType.Information, My.MyApplication.TraceEventId,
-                                                    "{0} version {1} {2} {3}", My.Application.Info.ProductName,
-                                                    My.Application.Info.Version.ToString(4), Date.Now.ToShortDateString(), Date.Now.ToLongTimeString)
-                End If
-            End With
-            Me.ApplyTraceLevel(My.Settings.TraceLevel)
-
-#If SPLASH Then
-            ' Set the display time to value from the settings class.
-            Me.MinimumSplashScreenDisplayTime = My.Settings.MinimumSplashScreenDisplayMilliseconds
-#End If
-
-            Return MyBase.OnInitialize(commandLineArgs)
-
-        End Function
-
-        ''' <summary> Applies the trace level described by value. </summary>
-        ''' <param name="value"> The value. </param>
-        Public Sub ApplyTraceLevel(ByVal value As TraceEventType)
-            Me.Log.ApplyTraceLevel(value)
         End Sub
 
     End Class

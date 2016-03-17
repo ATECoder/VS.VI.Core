@@ -532,9 +532,7 @@ Public Class DeviceUnderTest
     ''' <param name="other"> The other. </param>
     ''' <returns> <c>True</c> if configurations are the same as the other device. </returns>
     Public Function ConfigurationEquals(ByVal other As DeviceUnderTest) As Boolean
-        If other Is Nothing Then
-            Throw New ArgumentNullException("other")
-        End If
+        If other Is Nothing Then Throw New ArgumentNullException(NameOf(other))
         Return other IsNot Nothing AndAlso
                Me.ContactCheckEnabled.Equals(other.ContactCheckEnabled) AndAlso
                Me.ContactCheckThreshold.Equals(other.ContactCheckThreshold) AndAlso
@@ -549,9 +547,7 @@ Public Class DeviceUnderTest
     ''' <param name="other"> The other. </param>
     ''' <returns> <c>True</c> if configurations are the same as the other device. </returns>
     Public Function ThermalTransientConfigurationEquals(ByVal other As DeviceUnderTest) As Boolean
-        If other Is Nothing Then
-            Throw New ArgumentNullException("other")
-        End If
+        If other Is Nothing Then Throw New ArgumentNullException(NameOf(other))
         Return other IsNot Nothing AndAlso
                Me.InitialResistance.ConfigurationEquals(other.InitialResistance) AndAlso
                Me.FinalResistance.ConfigurationEquals(other.FinalResistance) AndAlso
@@ -562,9 +558,7 @@ Public Class DeviceUnderTest
     ''' <param name="other"> The other. </param>
     ''' <returns> <c>True</c> if info and configurations are the same as the other device. </returns>
     Public Function InfoConfigurationEquals(ByVal other As DeviceUnderTest) As Boolean
-        If other Is Nothing Then
-            Throw New ArgumentNullException("other")
-        End If
+        If other Is Nothing Then Throw New ArgumentNullException(NameOf(other))
         Return Me.InfoEquals(other) AndAlso Me.ConfigurationEquals(other)
     End Function
 
@@ -572,7 +566,7 @@ Public Class DeviceUnderTest
     ''' <returns> <c>True</c> if configurations are the same as the other device.</returns>
     Public Function SourceMeasureUnitEquals(ByVal other As DeviceUnderTest) As Boolean
         If other Is Nothing Then
-            Throw New ArgumentNullException("other")
+            Throw New ArgumentNullException(NameOf(other))
         ElseIf other.InitialResistance Is Nothing OrElse
             other.FinalResistance Is Nothing OrElse
             other.ThermalTransient Is Nothing Then

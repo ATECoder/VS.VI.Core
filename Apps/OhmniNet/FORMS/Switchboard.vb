@@ -166,17 +166,17 @@ Public Class Switchboard
         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
         Select Case Me.selectedAction
             Case ActionOption.InterfaceForm
-                Me._OpenForms.ShowNew(New Instrument.InterfaceForm, My.Application.Log)
+                Me._OpenForms.ShowNew(New Instrument.InterfaceForm, My.Application.MyLog)
             Case ActionOption.SimpleReadAndWrite
-                Me._OpenForms.ShowNew(New Instrument.SimpleReadWriteForm, My.Application.Log)
+                Me._OpenForms.ShowNew(New Instrument.SimpleReadWriteForm, My.Application.MyLog)
             Case ActionOption.ServiceRequester
-                Me._OpenForms.ShowNew(New Instrument.ServiceRequesterForm, My.Application.Log)
+                Me._OpenForms.ShowNew(New Instrument.ServiceRequesterForm, My.Application.MyLog)
             Case ActionOption.Keithley2002
-                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K2000.K2000Panel, My.Application.Log)
+                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K2000.K2000Panel, My.Application.MyLog)
             Case ActionOption.Keithley7001
-                Me._OpenForms.ShowNew("Switch", New Instrument.InstrumentPanelForm, New K7000.K7000Panel, My.Application.Log)
+                Me._OpenForms.ShowNew("Switch", New Instrument.InstrumentPanelForm, New K7000.K7000Panel, My.Application.MyLog)
             Case ActionOption.ThermostreamForm
-                Me._OpenForms.ShowNew("Thermo", New Instrument.InstrumentPanelForm, New Thermostream.ThermostreamPanel, My.Application.Log)
+                Me._OpenForms.ShowNew("Thermo", New Instrument.InstrumentPanelForm, New Thermostream.ThermostreamPanel, My.Application.MyLog)
         End Select
         Me.Cursor = System.Windows.Forms.Cursors.Default
     End Sub

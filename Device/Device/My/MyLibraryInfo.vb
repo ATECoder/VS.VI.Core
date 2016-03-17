@@ -9,6 +9,17 @@
             MyBase.New()
         End Sub
 
+        ''' <summary> Gets or sets the log. </summary>
+        ''' <value> The log. </value>
+        Public Shared ReadOnly Property MyLog As isr.Core.Pith.MyLog = New isr.Core.Pith.MyLog
+
+        ''' <summary> Applies the given value. </summary>
+        ''' <remarks> David, 3/16/2016. </remarks>
+        ''' <param name="value"> The value. </param>
+        Public Shared Sub Apply(ByVal value As isr.Core.Pith.MyLog)
+            MyLibrary._MyLog = value
+        End Sub
+
         ''' <summary> Gets the identifier of the trace source. </summary>
         Public Const TraceEventId As Integer = ProjectTraceEventId.Device
 

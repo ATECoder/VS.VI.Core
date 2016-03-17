@@ -165,12 +165,13 @@ Public Class K3700Panel
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
         Me.AddListeners()
+        Me.OnDeviceOpenChanged(value)
     End Sub
 
     ''' <summary> Assigns a device. </summary>
     ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
-    Public Overloads Sub AssignDevice(value As Device)
+    Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
         MyBase.AssignDevice(value)
         Me._AssignDevice(value)
@@ -190,31 +191,35 @@ Public Class K3700Panel
 
 #Region " DEVICE EVENT HANDLERS "
 
+    ''' <summary> Executes the device open changed action. </summary>
+    ''' <remarks> David, 3/3/2016. </remarks>
+    Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
+        Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
+        If isOpen Then
+            Me._SimpleReadWriteControl.Connect(device?.Session)
+        Else
+            Me._SimpleReadWriteControl.Disconnect()
+        End If
+        For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
+            If t IsNot Me._MessagesTabPage Then
+                For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, isOpen) : Next
+            End If
+        Next
+    End Sub
+
     ''' <summary> Handle the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnDevicePropertyChanged(ByVal device As Device, ByVal propertyName As String)
-        If device Is Nothing OrElse propertyName Is Nothing Then Return
+    Protected Overrides Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
+        If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionPropertyChangeHandlerEnabled)
-                Me._HandleServiceRequestsCheckBox.Checked = device.SessionPropertyChangeHandlerEnabled
-            Case NameOf(device.IsDeviceOpen)
-                If device.IsDeviceOpen Then
-                    Me._SimpleReadWriteControl.Connect(device.Session)
-                    Me._SimpleReadWriteControl.ReadEnabled = True
-                Else
-                    Me._SimpleReadWriteControl.Disconnect()
-                End If
-                ' enable the tabs even if the device failed to open.
-                Me._Tabs.Enabled = True
-                For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
-                    If t IsNot Me._MessagesTabPage Then
-                        For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, device.IsDeviceOpen) : Next
-                    End If
-                Next
+            Case NameOf(device.IsServiceRequestEventEnabled)
+                Me._HandleServiceRequestsCheckBox.Checked = device.IsServiceRequestEventEnabled
         End Select
     End Sub
 
+#If False Then
     ''' <summary> Device property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
@@ -231,6 +236,7 @@ Public Class K3700Panel
             MyBase.DevicePropertyChanged(sender, e)
         End Try
     End Sub
+#End If
 
     ''' <summary> Event handler. Called when device opened. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
@@ -361,7 +367,7 @@ Public Class K3700Panel
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As MultimeterSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Select Case propertyName
             Case NameOf(subsystem.AutoDelayMode)
                 If subsystem.AutoDelayMode.HasValue Then Me.AutoDelayMode = subsystem.AutoDelayMode.Value
@@ -422,7 +428,7 @@ Public Class K3700Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As ChannelSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Select Case propertyName
             Case NameOf(subsystem.ClosedChannels)
                 Me.ClosedChannels = subsystem.ClosedChannels
@@ -781,14 +787,7 @@ Public Class K3700Panel
             Me.ErrorProvider.Clear()
             If Not Me.DesignMode AndAlso sender IsNot Nothing Then
                 Dim checkBox As Windows.Forms.CheckBox = CType(sender, Windows.Forms.CheckBox)
-                If checkBox.Enabled Then
-                    Me.Device.SessionPropertyChangeHandlerEnabled = checkBox.Checked
-                    If Me.Device.SessionPropertyChangeHandlerEnabled = checkBox.Checked Then
-                        Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
-                    Else
-                        Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed to toggle the session property handler")
-                    End If
-                End If
+                Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)

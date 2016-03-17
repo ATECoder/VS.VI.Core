@@ -85,6 +85,12 @@
     </Compile>
     <Compile Include="DEVICE\DeviceError.vb" />
     <Compile Include="DEVICE\SessionFactoryNational.vb" />
+    <Compile Include="DEVICE\SessionFactoryNS.vb" />
+    <Compile Include="LIMITS\ContactCheckLimitBase.vb" />
+    <Compile Include="LIMITS\NumericLimitBase.vb" />
+    <Compile Include="LIMITS\UpperLowerLimitBase.vb" />
+    <Compile Include="LIMITS\CompositeLimitBase.vb" />
+    <Compile Include="LIMITS\ComplianceLimitBase.vb" />
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="DEVICE\DeviceBase.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -92,9 +98,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
-    <Compile Include="PRIMITIVES\ArmLayer.vb" />
-    <Compile Include="PRIMITIVES\CalculateLimit.vb" />
+    <Compile Include="PRIMITIVES\BinningInfo.vb" />
     <Compile Include="PRIMITIVES\ChannelListBuilder.vb" />
+    <Compile Include="PRIMITIVES\InsulationResistance.vb" />
     <Compile Include="PRIMITIVES\InterlockInfo.vb" />
     <Compile Include="PRIMITIVES\VersionInfo.vb" />
     <Compile Include="READING\ConstantsEnums.vb" />
@@ -108,10 +114,13 @@
     <Compile Include="READING\ReadingAmounts.vb" />
     <Compile Include="READING\ReadingStatus.vb" />
     <Compile Include="DEVICE\SessionFactory.vb" />
+    <Compile Include="SUBSYSTEMS\ArmLayerSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\Calculate3SubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\Calculate2SubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\ArmSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\AccessSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\DigitalOutputBase.vb" />
+    <Compile Include="SUBSYSTEMS\SenseFunctionSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SourceFunctionSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ThermoStreamSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystemBase.vb" />
@@ -166,6 +175,9 @@
       <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
       <Name>isr.VI.Pith.Library</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="~Trash\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

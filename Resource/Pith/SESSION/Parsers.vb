@@ -81,7 +81,7 @@ Partial Public Class SessionBase
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId:="dummy")>
     Public Shared Function Parse(ByVal dummy As Decimal, ByVal value As String) As Decimal
         If value Is Nothing Then
-            Throw New ArgumentNullException("value", "Query not executed")
+            Throw New ArgumentNullException(NameOf(value), "Query not executed")
         ElseIf String.IsNullOrWhiteSpace(value) Then
             Throw New ArgumentException("Query returned an empty string", "value")
         Else
@@ -123,7 +123,7 @@ Partial Public Class SessionBase
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId:="dummy")>
     Public Shared Function Parse(ByVal dummy As Double, ByVal value As String) As Double
         If value Is Nothing Then
-            Throw New ArgumentNullException("value", "Query not executed")
+            Throw New ArgumentNullException(NameOf(value), "Query not executed")
         ElseIf String.IsNullOrWhiteSpace(value) Then
             Throw New ArgumentException("Query returned an empty string", "value")
         Else
@@ -164,7 +164,7 @@ Partial Public Class SessionBase
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId:="dummy")>
     Public Shared Function Parse(ByVal dummy As Integer, ByVal value As String) As Integer
         If value Is Nothing Then
-            Throw New ArgumentNullException("value", "Query not executed")
+            Throw New ArgumentNullException(NameOf(value), "Query not executed")
         ElseIf String.IsNullOrWhiteSpace(value) Then
             Throw New ArgumentException("Query returned an empty string", "value")
         Else
@@ -380,6 +380,8 @@ Partial Public Class SessionBase
     ''' <param name="format">      The format for parsing the result. </param>
     ''' <param name="dataToWrite"> The data to write. </param>
     ''' <returns> The parsed value. </returns>
+    ''' <remarks>see also: https://msdn.microsoft.com/en-us/library/ee372287.aspx#Other
+    '''          </remarks> 
     Public Overloads Function Query(ByVal format As String, ByVal dataToWrite As String) As TimeSpan
         Me.MakeEmulatedReplyIfEmpty(TimeSpan.Zero)
         Return TimeSpan.ParseExact(Me.QueryTrimEnd(dataToWrite), format, Globalization.CultureInfo.InvariantCulture)
@@ -388,7 +390,7 @@ Partial Public Class SessionBase
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
     ''' read. Parses the time span return value. </summary>
     ''' <param name="result">      [in,out] The result. </param>
-    ''' <param name="format">      The format for parsing the result. For example, "s\.fff", convert the
+    ''' <param name="format">      The format for parsing the result. For example, "s\.FFFFFFF", convert the
     '''                            value to time span from seconds. </param>
     ''' <param name="dataToWrite"> The data to write. </param>
     ''' <returns> <c>True</c> if the parsed value is valid. </returns>
@@ -486,7 +488,7 @@ Partial Public Class SessionBase
         Me.MakeEmulatedReplyIfEmpty(currentValue)
         If Not String.IsNullOrWhiteSpace(dataToWrite) Then
             Me.WriteLine(dataToWrite)
-            currentValue = Me.ReadLine()
+            currentValue = Me.ReadLineTrimEnd()
         End If
         Return SessionBase.ParseEnumValue(Of T)(currentValue)
     End Function
@@ -500,7 +502,7 @@ Partial Public Class SessionBase
         Me.MakeEmulatedReplyIfEmpty(currentValue)
         If Not String.IsNullOrWhiteSpace(dataToWrite) Then
             Me.WriteLine(dataToWrite)
-            currentValue = Me.ReadLine()
+            currentValue = Me.ReadLineTrimEnd()
         End If
         If String.IsNullOrWhiteSpace(currentValue) Then
             Return New Nullable(Of T)

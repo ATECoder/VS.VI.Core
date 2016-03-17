@@ -1,4 +1,5 @@
-﻿Imports isr.Core.Pith.EventHandlerExtensions
+﻿Imports System.Timers
+Imports isr.Core.Pith.EventHandlerExtensions
 ''' <summary> Base class for SessionBase. </summary>
 ''' <remarks> David, 11/21/2015. </remarks>
 ''' <license>
@@ -31,6 +32,8 @@ Public MustInherit Class SessionBase
         Me._Timeouts = New Collections.Generic.Stack(Of TimeSpan)
         Me._MinimumTimeout = TimeSpan.FromMilliseconds(3000)
         Me._Timeout = TimeSpan.FromMilliseconds(10000)
+        ' must be less than half the communication timeout interval.
+        Me._KeepAliveInterval = TimeSpan.FromSeconds(58)
     End Sub
 
 #Region " Disposable Support "
@@ -46,6 +49,11 @@ Public MustInherit Class SessionBase
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                If Me._KeepAliveTimer IsNot Nothing Then
+                    Me._KeepAliveTimer.Enabled = False
+                    Me._KeepAliveTimer.Dispose()
+                    Me._KeepAliveTimer = Nothing
+                End If
                 Me.RemoveEventHandler(Me.ServiceRequestedEvent)
                 Me.Timeouts?.Clear() : Me._Timeouts = Nothing
             End If
@@ -76,16 +84,16 @@ Public MustInherit Class SessionBase
     ''' <value> The enabled sentinel. </value>
     Public Property Enabled As Boolean
 
+    ''' <summary> Gets or sets the default open timeout. </summary>
+    ''' <value> The default open timeout. </value>
+    Public Property DefaultOpenTimeout As TimeSpan = TimeSpan.FromSeconds(3)
+
     ''' <summary>
     ''' Gets or sets the session open sentinel. When open, the session is capable of addressing the
     ''' hardware. See also <see cref="IsDeviceOpen"/>.
     ''' </summary>
     ''' <value> The is session open. </value>
-    Public ReadOnly Property IsSessionOpen As Boolean
-        Get
-            Return Me.Enabled And Me.IsOpen
-        End Get
-    End Property
+    Public MustOverride ReadOnly Property IsSessionOpen As Boolean
 
     ''' <summary>
     ''' Gets or sets the Device Open sentinel. When open, the device is capable of addressing real
@@ -93,20 +101,11 @@ Public MustInherit Class SessionBase
     ''' </summary>
     ''' <value> The is device open. </value>
     Public ReadOnly Property IsDeviceOpen As Boolean
-        Get
-            Return Me.IsOpen
-        End Get
-    End Property
 
     ''' <summary> Gets the sentinel indicating weather this is a dummy session. </summary>
     ''' <value> The dummy sentinel. </value>
     Public MustOverride ReadOnly Property IsDummy As Boolean
 
-    ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
-    Public Overridable Sub OpenSession(ByVal resourceName As String)
-        Me.OpenSession(resourceName, resourceName)
-    End Sub
 
     ''' <summary> Executes the opening session action. </summary>
     ''' <remarks> David, 1/25/2016. </remarks>
@@ -123,41 +122,21 @@ Public MustInherit Class SessionBase
     ''' <summary> Executes the session open action. </summary>
     ''' <remarks> David, 1/25/2016. </remarks>
     Private Sub OnSessionOpen()
-        Me.IsOpen = Me.FindResource
-        If Me.IsOpen Then
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourceName))
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourceTitle))
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDeviceOpen))
-            Me._Timeouts.Push(Me.Timeout)
+        If Me.ResourceInfo.InterfaceType = HardwareInterfaceType.Tcpip AndAlso Me.KeepAliveInterval > TimeSpan.Zero Then
+            Me._KeepAliveTimer = New Timers.Timer
+            Me._KeepAliveTimer.Interval = Me.KeepAliveInterval.TotalMilliseconds
+            Me._KeepAliveTimer.Enabled = True
         End If
-    End Sub
-
-    ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
-    ''' <remarks> Call this first. </remarks>
-    Public Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
-        Try
-            Me.OnOpeningSession(resourceName, resourceTitle)
-            Me.CreateSession(resourceName)
-            Me.OnSessionOpen()
-        Catch ex As Exception
-            Throw
-        End Try
+        Me._IsDeviceOpen = True
+        Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDeviceOpen))
+        Me.AsyncNotifyPropertyChanged(NameOf(Me.IsSessionOpen))
+        Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourceName))
+        Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourceTitle))
+        Me._Timeouts.Push(Me.Timeout)
     End Sub
 
     ''' <summary> Creates a session. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
-    ''' <param name="resourceName"> The name of the resource. </param>
-    Protected MustOverride Sub CreateSession(ByVal resourceName As String)
-
-    ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
-    ''' <param name="timeout"> The timeout. </param>
-    Public Sub OpenSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
-        Me.OpenSession(resourceName, resourceName, timeout)
-    End Sub
-
-    ''' <summary> Creates a session. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
+    ''' <remarks> Throws an exception if the resource is not accessible. </remarks>
     ''' <param name="resourceName"> The name of the resource. </param>
     ''' <param name="timeout">      The timeout. </param>
     Protected MustOverride Sub CreateSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
@@ -165,9 +144,35 @@ Public MustInherit Class SessionBase
     ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
     ''' <remarks> Call this first. </remarks>
     Public Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal timeout As TimeSpan)
-        Me.OnOpeningSession(resourceName, resourceTitle)
-        Me.CreateSession(resourceName, timeout)
-        Me.OnSessionOpen()
+        Try
+            Me.OnOpeningSession(resourceName, resourceTitle)
+            Me.CreateSession(resourceName, timeout)
+            Me.OnSessionOpen()
+        Catch ex As Exception
+            Throw
+        End Try
+    End Sub
+
+    ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
+    ''' <remarks> Call this first. </remarks>
+    ''' <param name="resourceName">  The name of the resource. </param>
+    ''' <param name="resourceTitle"> The short title of the device. </param>
+    Public Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
+        Me.OpenSession(resourceName, resourceTitle, Me.DefaultOpenTimeout)
+    End Sub
+
+    ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
+    ''' <remarks> David, 11/29/2015. </remarks>
+    ''' <param name="resourceName"> The name of the resource. </param>
+    Public Sub OpenSession(ByVal resourceName As String)
+        Me.OpenSession(resourceName, resourceName, Me.DefaultOpenTimeout)
+    End Sub
+
+    ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
+    ''' <remarks> David, 11/29/2015. </remarks>
+    ''' <param name="timeout"> The timeout. </param>
+    Public Sub OpenSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
+        Me.OpenSession(resourceName, resourceName, timeout)
     End Sub
 
     ''' <summary> Discards the session. </summary>
@@ -177,10 +182,18 @@ Public MustInherit Class SessionBase
     ''' <summary> Closes the <see cref="SessionBase">Session</see>. </summary>
     ''' <remarks> David, 11/29/2015. </remarks>
     Public Sub CloseSession()
-        Me.IsOpen = False
+        If Me._KeepAliveTimer IsNot Nothing Then
+            Me._KeepAliveTimer.Enabled = False
+            Me._KeepAliveTimer.Dispose()
+            Me._KeepAliveTimer = Nothing
+        End If
         Me._Timeouts = New Collections.Generic.Stack(Of TimeSpan)
-        Me.DiscardSession()
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDeviceOpen))
+        If Me.IsDeviceOpen Then
+            Me.DiscardSession()
+            Me._IsDeviceOpen = False
+            Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDeviceOpen))
+            Me.AsyncNotifyPropertyChanged(NameOf(Me.IsSessionOpen))
+        End If
     End Sub
 
     ''' <summary> Searches for a listeners for the specified <see cref="ResourceName">reasource name</see>. </summary>
@@ -203,10 +216,6 @@ Public MustInherit Class SessionBase
             End If
         End Set
     End Property
-
-    ''' <summary> Gets the sentinel indicating if the session is open and the associated resource exists. </summary>
-    ''' <value> The sentinel indicating if the session is open and has listeners. </value>
-    Protected Property IsOpen As Boolean
 
     ''' <summary> Gets the last action. </summary>
     ''' <value> The last action. </value>
@@ -273,6 +282,22 @@ Public MustInherit Class SessionBase
         End Set
     End Property
 
+    Private _SessionMessagesTraceEnabled As Boolean
+
+    ''' <summary> Gets or sets the session messages trace enabled. </summary>
+    ''' <value> The session messages trace enabled. </value>
+    Public Property SessionMessagesTraceEnabled As Boolean
+        Get
+            Return Me._SessionMessagesTraceEnabled
+        End Get
+        Set(value As Boolean)
+            If Not value.Equals(Me.SessionMessagesTraceEnabled) Then
+                Me._SessionMessagesTraceEnabled = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.SessionMessagesTraceEnabled))
+            End If
+        End Set
+    End Property
+
     Private _LastMessageReceived As String
     ''' <summary> Gets or sets the last message Received. </summary>
     ''' <remarks> The last message sent is posted asynchronously. This may not be processed fast enough
@@ -284,10 +309,12 @@ Public MustInherit Class SessionBase
         End Get
         Protected Set(ByVal value As String)
             Me._LastMessageReceived = value
-            If Me.SyncNotifyLastMessageReceivedEnabled Then
-                Me.SyncNotifyPropertyChanged(NameOf(Me.LastMessageReceived))
-            Else
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LastMessageReceived))
+            If Me.SessionMessagesTraceEnabled Then
+                If Me.SyncNotifyLastMessageReceivedEnabled Then
+                    Me.SyncNotifyPropertyChanged(NameOf(Me.LastMessageReceived))
+                Else
+                    Me.AsyncNotifyPropertyChanged(NameOf(Me.LastMessageReceived))
+                End If
             End If
         End Set
     End Property
@@ -302,15 +329,80 @@ Public MustInherit Class SessionBase
         End Get
         Protected Set(ByVal value As String)
             Me._LastMessageSent = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.LastMessageSent))
+            If Me.SessionMessagesTraceEnabled Then
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.LastMessageSent))
+            End If
         End Set
     End Property
 
 #End Region
 
+#Region " KEEP ALIVE "
+
+    Private WithEvents _KeepAliveTimer As Timers.Timer
+
+    ''' <summary> Keep alive timer elapsed. </summary>
+    ''' <remarks> David, 3/14/2016. </remarks>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Elapsed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub KeepAliveTimerElapsed(sender As Object, e As ElapsedEventArgs) Handles _KeepAliveTimer.Elapsed
+        Try
+            Dim tmr As Timers.Timer = TryCast(sender, Timers.Timer)
+            If tmr IsNot Nothing AndAlso tmr.Interval < DateTime.Now.Subtract(Me.LastInputOutputTime).TotalMilliseconds Then
+                Me.KeepAlive()
+                Me.LastInputOutputTime = DateTime.Now
+            End If
+        Catch
+        Finally
+        End Try
+    End Sub
+
+    ''' <summary> Gets or sets the keep alive interval. Must be smaller or equal to half the communication timeout interval. </summary>
+    ''' <value> The keep alive interval. </value>
+    Public Property KeepAliveInterval As TimeSpan
+
+    ''' <summary> Query if this object is alive. </summary>
+    ''' <remarks> David, 3/14/2016. </remarks>
+    ''' <returns> <c>true</c> if alive; otherwise <c>false</c> </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Function IsAlive() As Boolean
+        Dim affirmative As Boolean = True
+        If Me.IsSessionOpen AndAlso Me.ResourceInfo.UsingLanController Then
+            Try
+                If Not String.IsNullOrWhiteSpace(Me.IsAliveCommand) Then
+                    Me.Write(Me.IsAliveCommand)
+                ElseIf Not String.IsNullOrWhiteSpace(Me.IsAliveQueryCommand) Then
+                    Me.Query(Me.IsAliveQueryCommand)
+                End If
+            Catch
+                affirmative = False
+            End Try
+        End If
+        Return affirmative
+    End Function
+
+    ''' <summary> Gets or sets the is alive command. </summary>
+    ''' <value> The is alive command. </value>
+    Public Property IsAliveCommand As String = "*OPC"
+
+    ''' <summary> Gets or sets the is alive query command. </summary>
+    ''' <value> The is alive query command. </value>
+    Public Property IsAliveQueryCommand As String = "*OPC?"
+
+    ''' <summary> Keep alive. </summary>
+    ''' <remarks> David, 3/15/2016. </remarks>
+    Public MustOverride Function KeepAlive() As Boolean
+
 #End Region
 
-#Region " READ / WRITE  "
+#End Region
+
+#Region " READ / WRITE "
+
+    ''' <summary> Gets or sets the last input output time. </summary>
+    ''' <value> The last input output time. </value>
+    Public Property LastInputOutputTime As Date
 
     ''' <summary> Gets or sets the termination character. </summary>
     ''' <value> The termination character. </value>
@@ -520,9 +612,18 @@ Public MustInherit Class SessionBase
 
 #Region " INTERFACE "
 
+    ''' <summary> Determines if we can requires keep alive. </summary>
+    ''' <remarks> David, 3/15/2016. </remarks>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Function RequiresKeepAlive() As Boolean
+        Return Me.ResourceInfo.InterfaceType = VI.HardwareInterfaceType.Tcpip
+    End Function
+
     ''' <summary> Supports clear interface. </summary>
     ''' <returns> <c>True</c> if supports clearing the interface. </returns>
-    Public MustOverride Function SupportsClearInterface() As Boolean
+    Public Function SupportsClearInterface() As Boolean
+        Return Me.ResourceInfo.InterfaceType = VI.HardwareInterfaceType.Gpib
+    End Function
 
     ''' <summary> Clears the interface. </summary>
     Public MustOverride Sub ClearInterface()

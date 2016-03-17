@@ -59,6 +59,29 @@ Public Class SourceVoltageSubsystem
     ''' <value> The range query command. </value>
     Protected Overrides ReadOnly Property RangeQueryCommand As String = ":SOUR:VOLT:RANG?"
 
+    ''' <summary> The Range of function values. </summary>
+    Public Overrides ReadOnly Property LevelRange As Core.Pith.RangeR
+        Get
+            Dim model As String = Me.StatusSubsystem.VersionInfo.Model
+            Select Case True
+                Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-210, +210)
+                Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-1100, +1100)
+                Case model.StartsWith("2420", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-63, +63)
+                Case model.StartsWith("2425", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-105, +105)
+                Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-105, +105)
+                Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-42, +42)
+                Case Else
+                    Return New isr.Core.Pith.RangeR(-210, +210)
+            End Select
+        End Get
+    End Property
+
 #End Region
 
 #End Region

@@ -1,7 +1,7 @@
 Imports System.Windows.Forms
 Imports System.ComponentModel
 Imports isr.Core.Pith
-Imports isr.Core.Pith.EscapeSequencesExtensions
+Imports isr.Core.Pith.ErrorProviderExtensions
 Imports isr.Core.Pith.SplitExtensions
 ''' <summary> Provides a user interface for the EG2000 Prober Device. </summary>
 ''' <license> (c) 2015 Integrated Scientific Resources, Inc.<para>
@@ -79,12 +79,13 @@ Public Class EG2000Panel
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
         Me.AddListeners()
+        Me.OnDeviceOpenChanged(value)
     End Sub
 
     ''' <summary> Assigns a device. </summary>
     ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
-    Public Overloads Sub AssignDevice(value As Device)
+    Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
         MyBase.AssignDevice(value)
         Me._AssignDevice(value)
@@ -105,29 +106,33 @@ Public Class EG2000Panel
 
 #Region " DEVICE EVENT HANDLERS "
 
+    ''' <summary> Executes the device open changed action. </summary>
+    Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
+        Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
+        If isOpen Then
+            Me._SimpleReadWriteControl.Connect(device?.Session)
+        Else
+            Me._SimpleReadWriteControl.Disconnect()
+        End If
+        For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
+            If t IsNot Me._MessagesTabPage Then
+                For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, isOpen) : Next
+            End If
+        Next
+    End Sub
+
+#If False Then
     ''' <summary> Handle the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnDevicePropertyChanged(ByVal device As Device, ByVal propertyName As String)
-        If device Is Nothing OrElse propertyName Is Nothing Then Return
+        If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+
         Select Case propertyName
             Case NameOf(device.IsDeviceOpen)
-                If device.IsDeviceOpen Then
-                    Me._SimpleReadWriteControl.Connect(device.Session)
-                    Me._SimpleReadWriteControl.ReadEnabled = True
-                Else
-                    Me._SimpleReadWriteControl.Disconnect()
-                End If
-                ' enable the tabs even if the device failed to open.
-                Me._Tabs.Enabled = True
-                For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
-                    If t IsNot Me._MessagesTabPage Then
-                        For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, device.IsDeviceOpen) : Next
-                    End If
-                Next
+                Me.OnDeviceOpenChanged(device)
         End Select
     End Sub
-
     ''' <summary> Event handler. Called for property changed events. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
@@ -145,6 +150,7 @@ Public Class EG2000Panel
             MyBase.DevicePropertyChanged(sender, e)
         End Try
     End Sub
+#End If
 
     ''' <summary> Event handler. Called when device opened. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
@@ -260,7 +266,7 @@ Public Class EG2000Panel
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As ProberSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
                 ' The error is read by the EG2000 device
                 ' the id is set by the device using the last reading that was set.
@@ -318,7 +324,7 @@ Public Class EG2000Panel
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
     Protected Overrides Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
             Case NameOf(subsystem.DeviceErrors)
@@ -398,7 +404,7 @@ Public Class EG2000Panel
                                "{0} clearing interface;. {1}", Me.ResourceTitle, Me.ResourceName)
             Me.Device.SystemSubsystem.ClearInterface()
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred clearing interface;. Details: {0}", ex)
         Finally
@@ -419,7 +425,7 @@ Public Class EG2000Panel
                                "{0} clearing selective device;. {1}", Me.ResourceTitle, Me.ResourceName)
             Me.Device.SystemSubsystem.ClearDevice()
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred sending SDC;. Details: {0}", ex)
         Finally
@@ -440,7 +446,7 @@ Public Class EG2000Panel
                 Me.Device.ResetKnownState()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred resetting known state;. Details: {0}", ex)
         End Try
@@ -463,7 +469,7 @@ Public Class EG2000Panel
                 Me.Device.InitKnownState()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred resetting and initializing known state;. Details: {0}", ex)
         End Try
@@ -480,14 +486,7 @@ Public Class EG2000Panel
         If Me._InitializingComponents Then Return
         If Not Me.DesignMode AndAlso sender IsNot Nothing Then
             Dim checkBox As Windows.Forms.CheckBox = CType(sender, Windows.Forms.CheckBox)
-            If checkBox.Enabled Then
-                Me.Device.SessionPropertyChangeHandlerEnabled = checkBox.Checked
-                If Me.Device.SessionPropertyChangeHandlerEnabled = checkBox.Checked Then
-                    Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
-                Else
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed to toggle the session property handler")
-                End If
-            End If
+            Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
         End If
     End Sub
 
@@ -503,7 +502,7 @@ Public Class EG2000Panel
                 Me.Device.ProberSubsystem.LastReading = message
                 Me.Device.ProberSubsystem.ParseReading(message)
             Catch ex As Exception
-                Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+                Me.ErrorProvider.Annunciate(sender, ex.ToString)
                 Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                    "Exception occurred sending emulation message;. '{0}'. Details: {1}", message, ex)
             End Try

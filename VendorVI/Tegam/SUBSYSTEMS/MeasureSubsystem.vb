@@ -183,23 +183,20 @@ Public Class MeasureSubsystem
     ''' <param name="value"> The value. </param>
     ''' <returns> A Double. </returns>
     Public Shared Function ParseScale(ByVal value As String) As Double
-        If String.IsNullOrWhiteSpace(value) Then
-            Throw New ArgumentNullException("value")
-        Else
-            value = value.Trim
-            Select Case True
-                Case value.StartsWith("mOhm", StringComparison.Ordinal)
-                    Return 0.001
-                Case value.StartsWith("Ohm", StringComparison.Ordinal)
-                    Return 1
-                Case value.StartsWith("KOhm", StringComparison.Ordinal)
-                    Return 1000
-                Case value.StartsWith("MOhm", StringComparison.Ordinal)
-                    Return 1000000
-                Case Else
-                    Return 0
-            End Select
-        End If
+        If String.IsNullOrWhiteSpace(value) Then Throw New ArgumentNullException(NameOf(value))
+        value = value.Trim
+        Select Case True
+            Case value.StartsWith("mOhm", StringComparison.Ordinal)
+                Return 0.001
+            Case value.StartsWith("Ohm", StringComparison.Ordinal)
+                Return 1
+            Case value.StartsWith("KOhm", StringComparison.Ordinal)
+                Return 1000
+            Case value.StartsWith("MOhm", StringComparison.Ordinal)
+                Return 1000000
+            Case Else
+                Return 0
+        End Select
     End Function
 
     ''' <summary> Parses a new set of reading elements. </summary>

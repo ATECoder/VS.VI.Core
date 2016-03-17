@@ -47,7 +47,7 @@ Public MustInherit Class FormatSubsystemBase
     End Function
 
     ''' <summary> Returns the <see cref="ReadingElements"></see> from the specified value. </summary>
-    ''' <param name="value"> The Elements. </param>
+    ''' <param name="value"> The Elements. </param>                 
     ''' <returns> The reading elements. </returns>
     Public Shared Function ParseReadingElement(ByVal value As String) As ReadingElements
         If String.IsNullOrWhiteSpace(value) Then

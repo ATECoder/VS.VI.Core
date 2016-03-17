@@ -209,7 +209,7 @@ Public Class Device
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
                 Me.MeasureSubsystem.Readings.Elements = subsystem.Elements

@@ -80,6 +80,7 @@ Public Class MeasureSubsystem
     End Sub
 
 #End Region
+
 #Region " PARSE READING "
 
     Private _readings As Readings

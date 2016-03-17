@@ -67,6 +67,7 @@ Public Class ResourceParseResult
                 Me._GpibAddress = 0
             End If
         End If
+        Me.UsingLanController = Globalization.CultureInfo.InvariantCulture.CompareInfo.IndexOf(resourceName, "gpib0,", Globalization.CompareOptions.OrdinalIgnoreCase) >= 0
     End Sub
 
     ''' <summary> Parses resource name </summary>
@@ -99,6 +100,10 @@ Public Class ResourceParseResult
     ''' <summary> Gets the gpib address. </summary>
     ''' <value> The gpib address. </value>
     Public Property GpibAddress As Integer
+
+    ''' <summary> Gets or sets the sentinel indicating if the resource uses a LAN controller. </summary>
+    ''' <value> The sentinel indicating if the resource uses a LAN controller. </value>
+    Public Property UsingLanController As Boolean
 
     ''' <summary> Gets the is parsed. </summary>
     ''' <value> The is parsed. </value>

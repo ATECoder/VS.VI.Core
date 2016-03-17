@@ -8,6 +8,7 @@ Imports isr.Core.Controls.ToolStripExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
+Imports isr.Core.Pith.ErrorProviderExtensions
 ''' <summary> Provides a user interface for a Keithley 200X Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -92,12 +93,13 @@ Public Class K2000Panel
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
         Me.AddListeners()
+        Me.OnDeviceOpenChanged(value)
     End Sub
 
     ''' <summary> Assigns a device. </summary>
     ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
-    Public Overloads Sub AssignDevice(value As Device)
+    Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
         MyBase.AssignDevice(value)
         Me._AssignDevice(value)
@@ -118,30 +120,35 @@ Public Class K2000Panel
 
 #Region " DEVICE EVENT HANDLERS "
 
+    ''' <summary> Executes the device open changed action. </summary>
+    ''' <remarks> David, 3/3/2016. </remarks>
+    Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
+        Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
+        If isOpen Then
+            Me._SimpleReadWriteControl.Connect(device?.Session)
+        Else
+            Me._SimpleReadWriteControl.Disconnect()
+        End If
+        For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
+            If t IsNot Me._MessagesTabPage Then
+                For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, isOpen) : Next
+            End If
+        Next
+    End Sub
+
     ''' <summary> Handle the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnDevicePropertyChanged(ByVal device As Device, ByVal propertyName As String)
-        If device Is Nothing OrElse propertyName Is Nothing Then Return
+    Protected Overrides Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
+        If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionPropertyChangeHandlerEnabled)
-                Me._HandleServiceRequestsCheckBox.Checked = device.SessionPropertyChangeHandlerEnabled
-            Case NameOf(device.IsDeviceOpen)
-                If device.IsDeviceOpen Then
-                    Me._SimpleReadWriteControl.Connect(device.Session)
-                    Me._SimpleReadWriteControl.ReadEnabled = True
-                Else
-                    Me._SimpleReadWriteControl.Disconnect()
-                End If
-                Me._Tabs.Enabled = True
-                For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
-                    If t IsNot Me._MessagesTabPage Then
-                        For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, device.IsDeviceOpen) : Next
-                    End If
-                Next
+            Case NameOf(device.IsServiceRequestEventEnabled)
+                Me._HandleServiceRequestsCheckBox.Checked = device.IsServiceRequestEventEnabled
         End Select
     End Sub
 
+#If False Then
     ''' <summary> Device property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
@@ -158,6 +165,7 @@ Public Class K2000Panel
             MyBase.DevicePropertyChanged(sender, e)
         End Try
     End Sub
+#End If
 
     ''' <summary> Event handler. Called when device opened. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
@@ -221,7 +229,7 @@ Public Class K2000Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
                 If Me.Device IsNot Nothing AndAlso subsystem.Elements <> ReadingElements.None Then
@@ -418,7 +426,7 @@ Public Class K2000Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -457,7 +465,7 @@ Public Class K2000Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseVoltageSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -501,7 +509,7 @@ Public Class K2000Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseCurrentSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -545,7 +553,7 @@ Public Class K2000Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseFourWireResistanceSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -589,7 +597,7 @@ Public Class K2000Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseResistanceSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -643,7 +651,7 @@ Public Class K2000Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Protected Overrides Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse propertyName Is Nothing Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
             Case NameOf(subsystem.DeviceErrors)
@@ -790,17 +798,10 @@ Public Class K2000Panel
             Me.ErrorProvider.Clear()
             If Not Me.DesignMode AndAlso sender IsNot Nothing Then
                 Dim checkBox As Windows.Forms.CheckBox = CType(sender, Windows.Forms.CheckBox)
-                If checkBox.Enabled Then
-                    Me.Device.SessionPropertyChangeHandlerEnabled = checkBox.Checked
-                    If Me.Device.SessionPropertyChangeHandlerEnabled = checkBox.Checked Then
-                        Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
-                    Else
-                        Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed to toggle the session property handler")
-                    End If
-                End If
+                Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
             End If
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initiating a measurement;. Details: {0}", ex)
         Finally
@@ -820,7 +821,7 @@ Public Class K2000Panel
                                "{0} clearing interface;. {1}", Me.ResourceTitle, Me.ResourceName)
             Me.Device.SystemSubsystem.ClearInterface()
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred clearing interface;. Details: {0}", ex)
         Finally
@@ -841,7 +842,7 @@ Public Class K2000Panel
                                "{0} clearing selective device;. {1}", Me.ResourceTitle, Me.ResourceName)
             Me.Device.SystemSubsystem.ClearDevice()
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred sending SDC;. Details: {0}", ex)
         Finally
@@ -863,7 +864,7 @@ Public Class K2000Panel
                 Me.Device.ResetKnownState()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred resetting known state;. Details: {0}", ex)
         Finally
@@ -889,7 +890,7 @@ Public Class K2000Panel
                 Me.Device.InitKnownState()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initializing known state;. Details: {0}", ex)
         Finally
@@ -923,7 +924,7 @@ Public Class K2000Panel
             Me.Device.TriggerSubsystem.Initiate()
 
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initiating a measurement;. Details: {0}", ex)
         Finally
@@ -945,7 +946,7 @@ Public Class K2000Panel
                 Me.onMeasurementAvailable(Me.Device.MeasureSubsystem.Readings)
             End If
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initiating a measurement;. Details: {0}", ex)
         Finally
@@ -971,7 +972,7 @@ Public Class K2000Panel
             Me.Device.MeasureSubsystem.Read()
 
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initiating a measurement;. Details: {0}", ex)
         Finally
@@ -1125,7 +1126,7 @@ Public Class K2000Panel
             Me.ErrorProvider.Clear()
             Me.applySenseSettings()
         Catch ex As Exception
-            Me.ErrorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initiating a measurement;. Details: {0}", ex)
         Finally

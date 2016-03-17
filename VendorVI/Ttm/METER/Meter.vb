@@ -545,9 +545,7 @@ Public Class Meter
     ''' <param name="resistance"> The shunt resistance. </param>
     Public Sub ConfigureShuntResistance(ByVal resistance As ShuntResistanceBase)
 
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
 
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Configuring shunt resistance measurement;. ")
 
@@ -587,9 +585,7 @@ Public Class Meter
     ''' <param name="resistance"> The shunt resistance. </param>
     Public Sub ConfigureShuntResistanceChanged(ByVal resistance As ShuntResistanceBase)
 
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
 
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to DC current source;. ", Me.MasterDevice.SourceMeasureUnit)
         Me.MasterDevice.SourceMeasureUnit.ApplySourceFunction(Tsp.SourceFunctionMode.CurrentDC)
@@ -639,9 +635,7 @@ Public Class Meter
     ''' type. </exception>
     ''' <param name="resistance"> The shunt resistance. </param>
     Public Sub MeasureShuntResistance(ByVal resistance As ResistanceMeasureBase)
-        If resistance Is Nothing Then
-            Throw New ArgumentNullException("resistance")
-        End If
+        If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
         Me.ShuntResistance.HighLimit = resistance.HighLimit
         Me.ShuntResistance.LowLimit = resistance.LowLimit
         Me.MasterDevice.SourceMeasureUnitMeasure.MeasureResistance()

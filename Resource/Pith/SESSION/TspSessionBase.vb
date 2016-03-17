@@ -549,7 +549,7 @@ Partial Public Class SessionBase
     ''' <returns> The command message. </returns>
     Public Function ExecuteCommand(ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object) As String
         If String.IsNullOrWhiteSpace(format) Then
-            Throw New ArgumentNullException("format")
+            Throw New ArgumentNullException(NameOf(format))
         Else
             Dim command As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
             Me.WriteLine(SessionBase.ExecuteNodeCommandFormat, nodeNumber, command)
@@ -571,7 +571,7 @@ Partial Public Class SessionBase
     ''' <param name="dataToWrite"> The data to write. </param>
     Public Sub ExecuteQuery(ByVal nodeNumber As Integer, ByVal dataToWrite As String)
         If String.IsNullOrWhiteSpace(dataToWrite) Then
-            Throw New ArgumentNullException("dataToWrite")
+            Throw New ArgumentNullException(NameOf(dataToWrite))
         Else
             Me.WriteLine(SessionBase.NodeValueGetterCommandFormat1, nodeNumber, dataToWrite)
         End If
@@ -585,7 +585,7 @@ Partial Public Class SessionBase
     ''' <param name="args">       The format arguments. </param>
     Public Sub ExecuteQuery(ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
         If String.IsNullOrWhiteSpace(format) Then
-            Throw New ArgumentNullException("format")
+            Throw New ArgumentNullException(NameOf(format))
         Else
             Dim command As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
             Me.WriteLine(SessionBase.NodeValueGetterCommandFormat1, nodeNumber, command)

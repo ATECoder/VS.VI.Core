@@ -21,11 +21,21 @@ Public MustInherit Class TraceSubsystemBase
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.PointsCount = 0
+    End Sub
+
+#End Region
+
 #Region " COMMANDS "
 
     ''' <summary> Gets or sets the initiate command. </summary>
     ''' <value> The initiate command. </value>
-    ''' <remakrs> SCPI: ":INIT". </remakrs>
+    ''' <remarks> SCPI: ":INIT". </remarks>
     Protected Overridable ReadOnly Property InitiateCommand As String
 
     ''' <summary> Initiates operations. </summary>
@@ -42,7 +52,7 @@ Public MustInherit Class TraceSubsystemBase
 
     ''' <summary> Gets or sets the Abort command. </summary>
     ''' <value> The Abort command. </value>
-    ''' <remakrs> SCPI: ":ABOR". </remakrs>
+    ''' <remarks> SCPI: ":ABOR". </remarks>
     Protected Overridable ReadOnly Property AbortCommand As String
 
     ''' <summary> Aborts operations. </summary>

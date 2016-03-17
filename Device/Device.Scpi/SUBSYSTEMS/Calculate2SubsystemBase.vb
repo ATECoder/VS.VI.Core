@@ -23,6 +23,16 @@ Public MustInherit Class Calculate2SubsystemBase
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.FeedSource = VI.Scpi.FeedSource.Voltage
+    End Sub
+
+#End Region
+
 #Region " FEED SOURCE "
 
     ''' <summary> The Feed Source. </summary>
@@ -53,7 +63,7 @@ Public MustInherit Class Calculate2SubsystemBase
 
     ''' <summary> Gets or sets the feed source query command. </summary>
     ''' <value> The feed source query command. </value>
-    ''' <remarks> SCPI: ":TRAC:FEED?" </remarks>
+    ''' <remarks> SCPI: ":CALC2:FEED?" </remarks>
     Protected Overridable ReadOnly Property FeedSourceQueryCommand As String
 
     ''' <summary> Queries the feed Source. </summary>
@@ -73,7 +83,7 @@ Public MustInherit Class Calculate2SubsystemBase
 
     ''' <summary> Gets or sets the feed source command format. </summary>
     ''' <value> The write feed source command format. </value>
-    ''' <remarks> SCPI: ":TRAC:FEED {0}". </remarks>
+    ''' <remarks> SCPI: "CALC2:FEED {0}". </remarks>
     Protected Overridable ReadOnly Property FeedSourceCommandFormat As String
 
     ''' <summary> Writes the feed Source without reading back the value from the device. </summary>

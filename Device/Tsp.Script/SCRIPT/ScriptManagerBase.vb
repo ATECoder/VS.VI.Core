@@ -403,9 +403,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node"> Specifies the node. </param>
     Private Sub LoadBinaryScriptsFunction(ByVal node As NodeEntityBase)
 
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         Const scriptName As String = "CreateBinaries"
         Using script As New ScriptEntity(scriptName, Tsp.NodeEntity.ModelFamilyMask(Tsp.InstrumentModelFamily.K2600))
@@ -427,7 +425,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node"> Specifies the node entity. </param>
     ''' <returns> <c>True</c> if the script is a binary script; otherwise, <c>False&gt;</c>. </returns>
     Public Function IsBinaryScript(ByVal name As String, ByVal node As NodeEntityBase) As Boolean?
-        If node Is Nothing Then Throw New ArgumentNullException("node")
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If node.IsController Then
             Return Me.Session.IsStatementTrue("_G.isr.script.isBinary({0})", name)
         Else
@@ -444,7 +442,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="name"> Specifies the script name. </param>
     ''' <param name="node"> Specifies the node entity. </param>
     Public Sub ConvertBinaryScript(ByVal name As String, ByVal node As NodeEntityBase)
-        If node Is Nothing Then Throw New ArgumentNullException("node")
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If String.IsNullOrWhiteSpace(name) Then
             Return
         ElseIf Me.IsBinaryScript(name, node) Then
@@ -524,11 +522,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if the script was saved. </returns>
     Public Function SaveScript(ByVal name As String, ByVal node As NodeEntityBase, ByVal isSaveAsBinary As Boolean, ByVal isBootScript As Boolean) As Boolean
 
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        ElseIf String.IsNullOrWhiteSpace(name) Then
-            Throw New ArgumentNullException("name")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
         ' saving just the script name does not work if script was created and name assigned.
         Dim commandFormat As String = "script.user.scripts.{0}.save() waitcomplete()"
@@ -588,9 +583,7 @@ Public MustInherit Class ScriptManagerBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub FetchScriptSource(ByVal name As String)
 
-        If String.IsNullOrWhiteSpace(name) Then
-            Throw New ArgumentNullException("name")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
         Me._lastFetchScriptSource = ""
 
@@ -625,9 +618,7 @@ Public MustInherit Class ScriptManagerBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub FetchScriptSource(ByVal nodeNumber As Integer, ByVal name As String)
 
-        If String.IsNullOrWhiteSpace(name) Then
-            Throw New ArgumentNullException("name")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
         Me._lastFetchScriptSource = ""
 
@@ -660,12 +651,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node">   Specifies the node. </param>
     Public Sub FetchScriptSource(ByVal script As ScriptEntityBase, ByVal node As NodeEntityBase)
 
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If node.IsController Then
             Me.FetchScriptSource(script.Name)
         Else
@@ -796,9 +783,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="name"> Specifies the script name. </param>
     Private Sub _nilifyScript(ByVal name As String)
 
-        If String.IsNullOrWhiteSpace(name) Then
-            Throw New ArgumentNullException("name")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
         Me.StatusSubsystem.EnableWaitComplete()
         Me.Session.WriteLine("{0} = nil waitcomplete()", name)
@@ -815,9 +800,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="name"> Specifies the script name. </param>
     Public Sub NilifyScript(ByVal name As String)
-        If String.IsNullOrWhiteSpace(name) Then
-            Throw New ArgumentNullException("name")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
         If Not Me.Session.IsNil(name) Then
             Me._nilifyScript(name)
         End If
@@ -890,9 +873,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="refreshScriptCatalog"> True to refresh the list of saved scripts. </param>
     Public Sub DeleteScript(ByVal name As String, ByVal refreshScriptCatalog As Boolean)
 
-        If String.IsNullOrWhiteSpace(name) Then
-            Throw New ArgumentNullException("name")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
         If Me.SavedScriptExists(name, refreshScriptCatalog) Then
             Me.DeleteSavedScript(name)
@@ -910,9 +891,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="name"> Specifies the script name. </param>
     Public Sub DeleteSavedScript(ByVal name As String)
 
-        If String.IsNullOrWhiteSpace(name) Then
-            Throw New ArgumentNullException("name")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
         Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Enabling wait completion;. ")
         Me.StatusSubsystem.EnableWaitComplete()
@@ -941,9 +920,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="name">                 Specifies the script name. </param>
     ''' <param name="refreshScriptCatalog"> True to refresh the list of saved scripts. </param>
     Public Sub DeleteSavedScript(ByVal name As String, ByVal refreshScriptCatalog As Boolean)
-        If String.IsNullOrWhiteSpace(name) Then
-            Throw New ArgumentNullException("name")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
         If Me.SavedScriptExists(name, refreshScriptCatalog) Then
             Me.DeleteSavedScript(name)
         End If
@@ -956,12 +933,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="name">Specifies the script name</param>
     ''' <returns> <c>True</c> if the script is nil; otherwise <c>False</c>. </returns>
     Public Function DeleteScript(ByVal node As NodeEntityBase, ByVal name As String, ByVal refreshScriptCatalog As Boolean) As Boolean
-        If String.IsNullOrWhiteSpace(name) Then
-            Return False
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Return False
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If node.IsController Then
             Me.DeleteScript(name, refreshScriptCatalog)
             Return True
@@ -988,12 +961,8 @@ Public MustInherit Class ScriptManagerBase
     ''' Waits for operation completion.
     ''' </remarks>
     Public Function DeleteSavedScript(ByVal node As NodeEntityBase, ByVal name As String) As Boolean
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
-        If String.IsNullOrWhiteSpace(name) Then
-            Return False
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
+        If String.IsNullOrWhiteSpace(name) Then Return False
 
         Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Deleting script '{0}';. ", name)
         Me.Session.LastNodeNumber = node.Number
@@ -1133,9 +1102,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node"> Specifies the node. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub FetchSavedScripts(ByVal node As NodeEntityBase)
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If node.IsController Then
             FetchSavedScripts()
         Else
@@ -1193,9 +1160,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <exception cref="TimeoutException">      Thrown when a Timeout error condition occurs. </exception>
     Public Sub RunScript(ByVal name As String, ByVal timeout As TimeSpan)
 
-        If String.IsNullOrWhiteSpace(name) Then
-            Throw New ArgumentNullException("name")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
         Dim returnedValue As String = "1"
         Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "running script;. ")
@@ -1229,9 +1194,7 @@ Public MustInherit Class ScriptManagerBase
     ''' completed. </param>
     Public Sub RunScript(ByVal nodeNumber As Integer, ByVal name As String, ByVal timeout As TimeSpan)
 
-        If String.IsNullOrWhiteSpace(name) Then
-            Throw New ArgumentNullException("name")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
         Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                    "Running script '{0}' on node {1};. ", name, nodeNumber)
@@ -1258,13 +1221,9 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node">   Specifies the subsystem node. </param>
     Public Sub RunScript(ByVal script As ScriptEntityBase, ByVal node As NodeEntityBase)
 
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        ElseIf node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        ElseIf String.IsNullOrWhiteSpace(script.Name) Then
-            Throw New InvalidOperationException("script name is empty")
-        End If
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
+        If String.IsNullOrWhiteSpace(script.Name) Then Throw New InvalidOperationException("script name is empty")
 
         Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                    "Running script '{0}' on node {1};. ", Name, node.Number)
@@ -1388,9 +1347,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <c>False</c>. </returns>
     Public Function SavedScriptExists(ByVal name As String, ByVal node As NodeEntityBase, ByVal refreshScriptCatalog As Boolean) As Boolean
 
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If node.IsController Then
             Return SavedScriptExists(name, refreshScriptCatalog)
         Else
@@ -1419,9 +1376,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> Parsed script. </returns>
     Public Shared Function ParseScript(ByVal source As String, ByVal retainOutline As Boolean) As String
 
-        If source Is Nothing Then
-            Throw New ArgumentNullException("source")
-        End If
+        If source Is Nothing Then Throw New ArgumentNullException(NameOf(source))
         Dim sourceLines As String() = source.Split(Environment.NewLine.ToCharArray, StringSplitOptions.RemoveEmptyEntries)
         Dim newSource As New System.Text.StringBuilder
         Dim isInCommentBlock As Boolean = False
@@ -1648,9 +1603,7 @@ Public MustInherit Class ScriptManagerBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Shared Sub WriteScript(ByVal source As String, ByVal filePath As String)
 
-        If source Is Nothing Then
-            Throw New ArgumentNullException("source")
-        End If
+        If source Is Nothing Then Throw New ArgumentNullException(NameOf(source))
         Using tspFile As System.IO.StreamWriter = New System.IO.StreamWriter(filePath)
             tspFile.Write(source)
         End Using
@@ -1671,9 +1624,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="retainOutline"> Specifies if the code outline is retained or trimmed. </param>
     Public Shared Sub ReadParseWriteScript(ByVal filePath As String, ByVal retainOutline As Boolean)
 
-        If String.IsNullOrWhiteSpace(filePath) Then
-            Throw New ArgumentNullException("filePath")
-        End If
+        If String.IsNullOrWhiteSpace(filePath) Then Throw New ArgumentNullException(NameOf(filePath))
 
         Dim scriptSource As String = ""
         ' check if file exists.
@@ -1707,15 +1658,9 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="retainOutline">        Specifies if the code outline is retained or trimmed. </param>
     Public Shared Sub ReadParseWriteScripts(ByVal instrumentModelNumber As String, ByVal folderPath As String,
                                             ByVal scripts As ScriptEntityCollection, ByVal retainOutline As Boolean)
-        If instrumentModelNumber Is Nothing Then
-            Throw New ArgumentNullException("instrumentModelNumber")
-        End If
-        If folderPath Is Nothing Then
-            Throw New ArgumentNullException("folderPath")
-        End If
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
+        If instrumentModelNumber Is Nothing Then Throw New ArgumentNullException(NameOf(instrumentModelNumber))
+        If folderPath Is Nothing Then Throw New ArgumentNullException(NameOf(folderPath))
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
         If scripts IsNot Nothing AndAlso scripts.Count > 0 Then
             For Each script As ScriptEntityBase In scripts
                 If script.IsModelMatch(instrumentModelNumber) AndAlso script.RequiresReadParseWrite Then
@@ -2188,12 +2133,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <see cref="ScriptEntityBase">script</see> </param>
     Public Sub LoadUserScriptFile(ByVal folderPath As String, ByVal script As ScriptEntityBase)
 
-        If folderPath Is Nothing Then
-            Throw New ArgumentNullException("folderPath")
-        End If
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
+        If folderPath Is Nothing Then Throw New ArgumentNullException(NameOf(folderPath))
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
 
         If Not Me.Session.IsNil(script.Name) Then
             ' script already exists
@@ -2239,9 +2180,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="value"> Includes the script as a long string. </param>
     Public Sub LoadString(ByVal value As String)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim scriptLines As String() = value.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
         Me.LoadString(scriptLines)
     End Sub
@@ -2252,9 +2191,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="scriptLines"> Includes the script in lines. </param>
     Public Sub LoadString(ByVal scriptLines() As String)
 
-        If scriptLines Is Nothing Then
-            Throw New ArgumentNullException("scriptLines")
-        End If
+        If scriptLines Is Nothing Then Throw New ArgumentNullException(NameOf(scriptLines))
 
         If scriptLines IsNot Nothing Then
             For Each scriptLine As String In scriptLines
@@ -2306,9 +2243,7 @@ Public MustInherit Class ScriptManagerBase
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId:="LoadScript")>
     Public Sub LoadScript(ByVal name As String, ByVal scriptLines() As String)
 
-        If scriptLines Is Nothing Then
-            Throw New ArgumentNullException("scriptLines")
-        End If
+        If scriptLines Is Nothing Then Throw New ArgumentNullException(NameOf(scriptLines))
 
         Dim firstLine As String = scriptLines(0)
         ' check if we already have the load/end constructs.
@@ -2340,12 +2275,8 @@ Public MustInherit Class ScriptManagerBase
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId:="LoadScript")>
     Public Sub LoadScript(ByVal name As String, ByVal source As String)
 
-        If name Is Nothing Then
-            Throw New ArgumentNullException("name")
-        End If
-        If source Is Nothing Then
-            Throw New ArgumentNullException("source")
-        End If
+        If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
+        If String.IsNullOrWhiteSpace(source) Then Throw New ArgumentNullException(NameOf(source))
         If source.Substring(0, 50).Trim.StartsWith("{", True, Globalization.CultureInfo.CurrentCulture) Then
             source = "loadstring(table.concat(" & source & "))() "
         End If
@@ -2360,9 +2291,7 @@ Public MustInherit Class ScriptManagerBase
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId:="LoadScript")>
     Public Sub LoadScript(ByVal source As String)
 
-        If source Is Nothing Then
-            Throw New ArgumentNullException("source")
-        End If
+        If source Is Nothing Then Throw New ArgumentNullException(NameOf(source))
         If source.Substring(0, 50).Trim.StartsWith("{", True, Globalization.CultureInfo.CurrentCulture) Then
             source = "loadstring(table.concat(" & source & "))() "
         End If
@@ -2438,12 +2367,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if all scripts are loaded on the specified node. </returns>
     Public Function AllUserScriptsExist(ByVal scripts As ScriptEntityCollection, ByVal node As NodeEntityBase) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         If scripts IsNot Nothing AndAlso scripts.Count > 0 Then
 
@@ -2473,12 +2398,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if all scripts were executed on the specified node. </returns>
     Public Function AllUserScriptsExecuted(ByVal scripts As ScriptEntityCollection, ByVal node As NodeEntityBase) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         If scripts IsNot Nothing AndAlso scripts.Count > 0 Then
 
@@ -2508,12 +2429,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if all scripts were saved on the specified node. </returns>
     Public Function AllUserScriptsSaved(ByVal scripts As ScriptEntityCollection, ByVal node As NodeEntityBase) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If scripts IsNot Nothing AndAlso scripts.Count > 0 Then
             Me.FetchSavedScripts(node)
 
@@ -2538,12 +2455,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if any of the specified scripts exists. </returns>
     Public Function AnyUserScriptExists(ByVal scripts As ScriptEntityCollection, ByVal node As NodeEntityBase) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         If scripts IsNot Nothing AndAlso scripts.Count > 0 Then
             For Each script As ScriptEntityBase In scripts
@@ -2582,7 +2495,7 @@ Public MustInherit Class ScriptManagerBase
             Return Me._scripts.Item(0).ReleasedFirmwareVersion
         Else
             If node Is Nothing Then
-                Throw New ArgumentNullException("node")
+                Throw New ArgumentNullException(NameOf(node))
             End If
             Return Me._scripts.SelectSerialNumberScript(node).ReleasedFirmwareVersion
         End If
@@ -2603,9 +2516,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node"> Specifies the node. </param>
     ''' <returns> The released main firmware version. </returns>
     Public Function FirmwareVersionGetter(ByVal node As NodeEntityBase) As String
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Return Me._scripts.SelectSerialNumberScript(node).EmbeddedFirmwareVersion
     End Function
 
@@ -2619,9 +2530,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node"> Specifies the node. </param>
     ''' <returns> The node firmware name. </returns>
     Public Function FirmwareNameGetter(ByVal node As NodeEntityBase) As String
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Return Me._scripts.SelectSerialNumberScript(node).Name
     End Function
 
@@ -2653,9 +2562,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node"> Specifies the node. </param>
     ''' <returns> <c>True</c> if the firmware exists; otherwise, <c>False</c>. </returns>
     Public Function FindFirmware(ByVal node As NodeEntityBase) As Boolean
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then            Throw New ArgumentNullException(NameOf(node))
         Me._FirmwareExists = Not Me.Session.IsNil(Me.FirmwareNameGetter(node))
         Return Me._FirmwareExists.Value
     End Function
@@ -2665,9 +2572,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node"> Specifies the node. </param>
     ''' <returns> <c>True</c> if the support firmware exists; otherwise, <c>False</c>. </returns>
     Public Function SupportFirmwareNameGetter(ByVal node As NodeEntityBase) As String
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Return Me._scripts.SelectSupportScript(node).Name
     End Function
 
@@ -2698,9 +2603,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node"> Specifies the node. </param>
     ''' <returns> <c>True</c> if the support firmware exists; otherwise, <c>False</c>. </returns>
     Public Function FindSupportFirmware(ByVal node As NodeEntityBase) As Boolean
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Me._SupportfirmwareExists = Not Me.Session.IsNil(Me.SupportFirmwareNameGetter(node))
         Return Me._SupportfirmwareExists.Value
     End Function
@@ -2717,9 +2620,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node"> Specifies the node. </param>
     ''' <returns> <c>True</c> if okay; otherwise, <c>False</c>. </returns>
     Public Function ReadFirmwareVersions(ByVal node As NodeEntityBase) As Boolean
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Return Me._scripts.ReadFirmwareVersions(node, Me.Session)
     End Function
 
@@ -2798,12 +2699,8 @@ Public MustInherit Class ScriptManagerBase
                                               ByVal node As NodeEntityBase,
                                               ByVal allowDeletingNewerScripts As Boolean) As Boolean
 
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         If Me.Session.IsNil(node.IsController, node.Number, script.Name) Then
             ' ignore error if nil
@@ -2922,12 +2819,8 @@ Public MustInherit Class ScriptManagerBase
                                                ByVal node As NodeEntityBase,
                                                ByVal refreshScriptsCatalog As Boolean) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         ' <c>True</c> if any delete action was executed
         ' Dim scriptsDeleted As Boolean = False
 
@@ -2979,12 +2872,8 @@ Public MustInherit Class ScriptManagerBase
                                                ByVal nodes As NodeEntityCollection,
                                                ByVal refreshScriptsCatalog As Boolean) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If nodes Is Nothing Then
-            Throw New ArgumentNullException("nodes")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If nodes Is Nothing Then Throw New ArgumentNullException(NameOf(nodes))
 
         ' clear buffers before deleting.
         Me.Session.DiscardUnreadData()
@@ -3010,12 +2899,8 @@ Public MustInherit Class ScriptManagerBase
                                      ByVal node As NodeEntityBase,
                                      ByVal refreshScriptsCatalog As Boolean) As Boolean
 
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         If Me.Session.IsNil(node.IsController, node.Number, script.Name) Then
             ' ignore error if nil
@@ -3087,12 +2972,8 @@ Public MustInherit Class ScriptManagerBase
                                       ByVal refreshScriptsCatalog As Boolean,
                                       ByVal deleteOutdatedOnly As Boolean) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         Dim success As Boolean = True
 
@@ -3176,12 +3057,8 @@ Public MustInherit Class ScriptManagerBase
                                       ByVal refreshScriptsCatalog As Boolean,
                                       ByVal deleteOutdatedOnly As Boolean) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If nodes Is Nothing Then
-            Throw New ArgumentNullException("nodes")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If nodes Is Nothing Then Throw New ArgumentNullException(NameOf(nodes))
 
         ' clear buffers before deleting.
         Me.Session.DiscardUnreadData()
@@ -3208,12 +3085,8 @@ Public MustInherit Class ScriptManagerBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub LoadRunUserScript(ByVal script As ScriptEntityBase, ByVal node As NodeEntityBase)
 
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         If Me.Session.IsNil(node.IsController, node.Number, script.Name) Then
 
@@ -3250,12 +3123,8 @@ Public MustInherit Class ScriptManagerBase
     Public Function LoadRunUserScripts(ByVal scripts As ScriptEntityCollection,
                                        ByVal node As NodeEntityBase) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         ' reset all status values so as to force a read.
         Me.ResetKnownState()
@@ -3296,12 +3165,8 @@ Public MustInherit Class ScriptManagerBase
     Public Function LoadRunUserScripts(ByVal scripts As ScriptEntityCollection,
                                        ByVal nodes As NodeEntityCollection) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If nodes Is Nothing Then
-            Throw New ArgumentNullException("nodes")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If nodes Is Nothing Then Throw New ArgumentNullException(NameOf(nodes))
 
         ' clear buffers before deleting.
         Me.Session.DiscardUnreadData()
@@ -3346,9 +3211,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="destinationName"> The script name on the remote node. </param>
     Public Sub CopyScript(ByVal node As NodeEntityBase, ByVal sourceName As String, ByVal destinationName As String)
 
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If node.IsController Then
             Me.CopyScript(sourceName, destinationName)
         Else
@@ -3382,9 +3245,7 @@ Public MustInherit Class ScriptManagerBase
                                                     ByVal script As ScriptEntityBase,
                                                     ByVal loadingScriptName As String) As System.Text.StringBuilder
 
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
 
         Dim prefix As String = "loadstring(table.concat("
         Dim suffix As String = "))()"
@@ -3429,12 +3290,8 @@ Public MustInherit Class ScriptManagerBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Function UploadScript(ByVal node As NodeEntityBase, ByVal script As ScriptEntityBase) As Boolean
 
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
 
         Me.Session.LastNodeNumber = node.Number
         Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "loading script '{0}';. ", script.Name)
@@ -3563,12 +3420,8 @@ Public MustInherit Class ScriptManagerBase
     Public Function UploadScript(ByVal node As NodeEntityBase, ByVal scriptName As String,
                                  ByVal timeout As TimeSpan) As Boolean
 
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
-        If scriptName Is Nothing Then
-            Throw New ArgumentNullException("scriptName")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
+        If String.IsNullOrWhiteSpace(scriptName) Then Throw New ArgumentNullException(NameOf(scriptName))
 
         ' NOTE: WAIT COMPLETE is required on the system before a wait complete is tested on the node
         ' otherwise getting error 1251.
@@ -3613,12 +3466,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <see cref="ScriptEntity">script</see> </param>
     Public Sub LoadUserScript(ByVal node As NodeEntityBase, ByVal script As ScriptEntityBase)
 
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
 
         Me.Session.LastNodeNumber = node.Number
 
@@ -3671,9 +3520,7 @@ Public MustInherit Class ScriptManagerBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Function LoadUserScript(ByVal script As ScriptEntityBase) As Boolean
 
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
 
         If Not Me.Session.IsNil(script.Name) Then
 
@@ -3763,9 +3610,7 @@ Public MustInherit Class ScriptManagerBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Function RunUserScript(ByVal script As ScriptEntityBase, ByVal runAlways As Boolean) As Boolean
 
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
 
         If Me.Session.IsNil(script.Name) Then
             Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
@@ -3862,12 +3707,8 @@ Public MustInherit Class ScriptManagerBase
     <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
     Public Function RunUserScript(ByVal node As NodeEntityBase, ByVal script As ScriptEntityBase, ByVal runAlways As Boolean) As Boolean
 
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
 
         If Me.Session.IsNil(node.Number, script.Name) Then
             Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
@@ -3954,9 +3795,7 @@ Public MustInherit Class ScriptManagerBase
     Public Shared Function BuildAutoRunScript(ByVal commands As System.Text.StringBuilder,
                                        ByVal scripts As ScriptEntityCollection) As String
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
         Dim script As New System.Text.StringBuilder(1024)
         Dim uniqueScripts As New Collections.Specialized.ListDictionary()
         ' add code to run all scripts other than the boot script
@@ -3996,12 +3835,8 @@ Public MustInherit Class ScriptManagerBase
     Public Function IsSaveRequired(ByVal scriptName As String, ByVal node As NodeEntityBase,
                                    ByVal isSaveAsBinary As Boolean, ByVal isBootScript As Boolean) As Boolean
 
-        If scriptName Is Nothing Then
-            Throw New ArgumentNullException("scriptName")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If String.IsNullOrWhiteSpace(scriptName) Then Throw New ArgumentNullException(NameOf(scriptName))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Return (isSaveAsBinary AndAlso Not Me.IsBinaryScript(scriptName, node).GetValueOrDefault(False)) OrElse
                Not Me.SavedScriptExists(scriptName, node, False) OrElse
                (isBootScript AndAlso node.BootScriptSaveRequired)
@@ -4020,12 +3855,8 @@ Public MustInherit Class ScriptManagerBase
                                    ByVal isSaveAsBinary As Boolean, ByVal isBootScript As Boolean,
                                    ByVal timeout As TimeSpan) As Boolean
 
-        If scriptName Is Nothing Then
-            Throw New ArgumentNullException("scriptName")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If String.IsNullOrWhiteSpace(scriptName) Then Throw New ArgumentNullException(NameOf(scriptName))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         If Me.Session.IsNil(node.IsController, node.Number, scriptName) Then
             Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
@@ -4095,12 +3926,8 @@ Public MustInherit Class ScriptManagerBase
     Public Overloads Function SaveUserScripts(ByVal scripts As ScriptEntityCollection,
                                               ByVal node As NodeEntityBase) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         Dim success As Boolean = True
 
@@ -4147,12 +3974,8 @@ Public MustInherit Class ScriptManagerBase
     Public Overloads Function SaveUserScripts(ByVal scripts As ScriptEntityCollection,
                                               ByVal nodes As NodeEntityCollection) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If nodes Is Nothing Then
-            Throw New ArgumentNullException("nodes")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If nodes Is Nothing Then Throw New ArgumentNullException(NameOf(nodes))
 
         ' clear buffers before deleting.
         Me.Session.DiscardUnreadData()
@@ -4177,12 +4000,8 @@ Public MustInherit Class ScriptManagerBase
     Public Function UpdateUserScripts(ByVal scripts As ScriptEntityCollection,
                                       ByVal node As NodeEntityBase, ByVal isSecondPass As Boolean) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         Dim prefix As String = ""
 
@@ -4301,12 +4120,8 @@ Public MustInherit Class ScriptManagerBase
     Public Function UpdateUserScripts(ByVal scripts As ScriptEntityCollection,
                                       ByVal nodes As NodeEntityCollection) As Boolean
 
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If nodes Is Nothing Then
-            Throw New ArgumentNullException("nodes")
-        End If
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If nodes Is Nothing Then Throw New ArgumentNullException(NameOf(nodes))
 
         ' clear buffers before deleting.
         Me.Session.DiscardUnreadData()
@@ -4337,15 +4152,9 @@ Public MustInherit Class ScriptManagerBase
     Public Function WriteScriptFile(ByVal folderPath As String, ByVal script As ScriptEntityBase,
                                     ByVal node As NodeEntityBase, ByVal compress As Boolean) As Boolean
 
-        If folderPath Is Nothing Then
-            Throw New ArgumentNullException("folderPath")
-        End If
-        If script Is Nothing Then
-            Throw New ArgumentNullException("script")
-        End If
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If folderPath Is Nothing Then Throw New ArgumentNullException(NameOf(folderPath))
+        If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         Dim filePath As String = String.Format(Globalization.CultureInfo.CurrentCulture, "{0}.{1}",
                                                    script.FileName, node.ModelNumber)
@@ -4396,15 +4205,9 @@ Public MustInherit Class ScriptManagerBase
                                      ByVal scripts As ScriptEntityCollection,
                                      ByVal nodes As NodeEntityCollection) As Boolean
 
-        If folderPath Is Nothing Then
-            Throw New ArgumentNullException("folderPath")
-        End If
-        If scripts Is Nothing Then
-            Throw New ArgumentNullException("scripts")
-        End If
-        If nodes Is Nothing Then
-            Throw New ArgumentNullException("nodes")
-        End If
+        If folderPath Is Nothing Then Throw New ArgumentNullException(NameOf(folderPath))
+        If scripts Is Nothing Then Throw New ArgumentNullException(NameOf(scripts))
+        If nodes Is Nothing Then Throw New ArgumentNullException(NameOf(nodes))
 
         ' clear receive buffer.
         Me.Session.DiscardUnreadData()

@@ -59,6 +59,27 @@ Public Class SourceCurrentSubsystem
     ''' <value> The range query command. </value>
     Protected Overrides ReadOnly Property RangeQueryCommand As String = ":SOUR:CURR:RANG?"
 
+    ''' <summary> The Range of function values. </summary>
+    Public Overrides ReadOnly Property LevelRange As Core.Pith.RangeR
+        Get
+            Dim model As String = Me.StatusSubsystem.VersionInfo.Model
+            Select Case True
+                Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-1.05, +1.05)
+                Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-1.05, +1.05)
+                Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-3.15, +3.05)
+                Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-3.15, +3.15)
+                Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
+                    Return New isr.Core.Pith.RangeR(-5.25, +5.25)
+                Case Else
+                    Return New isr.Core.Pith.RangeR(-1.05, +1.05)
+            End Select
+        End Get
+    End Property
+
 #End Region
 
 #End Region

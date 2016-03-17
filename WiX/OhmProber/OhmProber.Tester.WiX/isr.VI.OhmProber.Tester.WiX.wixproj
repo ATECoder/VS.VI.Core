@@ -16,7 +16,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug</DefineConstants>
+    <DefineConstants>Debug;NI_VISA=1</DefineConstants>
     <SuppressValidation>False</SuppressValidation>
     <SuppressIces>ICE30;ICE61</SuppressIces>
     <SuppressSpecificWarnings>1056</SuppressSpecificWarnings>
@@ -26,7 +26,7 @@
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <DefineConstants>Debug;NI_VISA=1;NI_VISA_NS=1</DefineConstants>
+    <DefineConstants>Debug;NI_VISA=1</DefineConstants>
     <SuppressValidation>False</SuppressValidation>
     <SuppressIces>ICE30;ICE61</SuppressIces>
     <SuppressSpecificWarnings>1056</SuppressSpecificWarnings>

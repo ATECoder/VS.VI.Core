@@ -14,49 +14,39 @@ Public Class VersionInfo
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
-        Me._boardRevisions = New System.Collections.Specialized.StringDictionary
     End Sub
 
     ''' <summary> Clears this object to its blank/initial state. </summary>
     Public Overrides Sub Clear()
         MyBase.Clear()
-        Me._boardRevisions = New System.Collections.Specialized.StringDictionary
-        Me.ParseFirmwareRevision("")
     End Sub
 
-    Private _boardRevisions As System.Collections.Specialized.StringDictionary
-    ''' <summary>Returns the list of board revisions.</summary>
-    Public ReadOnly Property BoardRevisions() As System.Collections.Specialized.StringDictionary
-        Get
-            Return Me._boardRevisions
-        End Get
-    End Property
-
-    ''' <summary>Parses the instrument firmware revision.</summary>
-    ''' <param name="revision">Specifies the instrument <see cref="BoardRevisions">board revisions</see>
-    '''   e.g., <c>yyyyy/zzz</c> for the digital and display boards.
-    '''   </param>
-    ''' <exception cref="ArgumentNullException" guarantee="strong"></exception>
+    ''' <summary> Parses the instrument firmware revision. </summary>
+    ''' <remarks>
+    ''' KEITHLEY INSTRUMENTS INC., Model 2700, xxxxxxx, yyyyy/zzz<para>
+    ''' where</para><para>xxxxxxx is the serial number.</para><para>
+    ''' yyyyy/zzz Is the firmware revision levels of the digital board ROM And display board
+    ''' ROM.</para>
+    ''' </remarks>
+    ''' <exception cref="ArgumentNullException" guarantee="strong"> . </exception>
+    ''' <param name="revision"> Specifies the instrument <see cref="BoardRevisions">board
+    '''                         revisions</see>
+    '''                         e.g., <c>yyyyy/zzz</c> for the digital and display boards. </param>
     Protected Overrides Sub ParseFirmwareRevision(ByVal revision As String)
 
         If revision Is Nothing Then
-            Throw New ArgumentNullException("revision")
+            Throw New ArgumentNullException(NameOf(revision))
         ElseIf String.IsNullOrWhiteSpace(revision) Then
-            Me._boardRevisions = New System.Collections.Specialized.StringDictionary
+            MyBase.ParseFirmwareRevision(revision)
         Else
-            ' get the revision sections
-            Dim revisionSections() As String = revision.Split("/"c)
+            MyBase.ParseFirmwareRevision(revision)
 
-            ' set board revisions collection
-            Me._boardRevisions = New System.Collections.Specialized.StringDictionary
+            ' get the revision sections
+            Dim revSections As Queue(Of String) = New Queue(Of String)(revision.Split("/"c))
 
             ' Rev: yyyyy/ZZZ
-            If revisionSections.Length > 0 Then
-                Me._boardRevisions.Add(BoardType.Digital.ToString, revisionSections(0).Trim)
-                If revisionSections.Length > 1 Then
-                    Me._boardRevisions.Add(BoardType.Display.ToString, revisionSections(1).Trim)
-                End If
-            End If
+            If revSections.Count > 0 Then Me.BoardRevisions.Add(BoardType.Digital.ToString, revSections.Dequeue.Trim)
+            If revSections.Count > 0 Then Me.BoardRevisions.Add(BoardType.Display.ToString, revSections.Dequeue.Trim)
 
         End If
 
@@ -64,9 +54,3 @@ Public Class VersionInfo
 
 End Class
 
-''' <summary>Boards included in the instrument.</summary>
-Public Enum BoardType
-    <ComponentModel.Description("None")> None = 0
-    <ComponentModel.Description("Digital")> Digital = 1
-    <ComponentModel.Description("Display")> Display = 2
-End Enum

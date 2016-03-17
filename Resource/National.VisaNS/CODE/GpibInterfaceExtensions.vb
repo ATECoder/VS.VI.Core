@@ -18,9 +18,7 @@ Public Module GpibInterfaceExtensions
     ''' <param name="value"> The value. </param>
     <Extension()>
     Public Sub ClearDevices(ByVal value As NationalInstruments.VisaNS.GpibInterface)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             ' Transmit the DCL command to the interface.
             value.SendCommand(Ieee488.Syntax.BuildDeviceClear.ToArray)
@@ -36,9 +34,7 @@ Public Module GpibInterfaceExtensions
     ''' <param name="gpibAddress"> The instrument address. </param>
     <Extension()>
     Public Sub SelectiveDeviceClear(ByVal value As NationalInstruments.VisaNS.GpibInterface, ByVal gpibAddress As Integer)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             ' transmit the SDC command
             value.SendCommand(Ieee488.Syntax.BuildSelectiveDeviceClear(CByte(gpibAddress)).ToArray)
@@ -54,12 +50,8 @@ Public Module GpibInterfaceExtensions
     ''' <param name="resourceName"> Name of the resource. </param>
     <Extension()>
     Public Sub SelectiveDeviceClear(ByVal value As NationalInstruments.VisaNS.GpibInterface, ByVal resourceName As String)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
-        If String.IsNullOrWhiteSpace(resourceName) Then
-            Throw New ArgumentNullException("resourceName")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
+        If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
         Dim parseResult As VI.ResourceParseResult = NationalInstruments.VisaNS.ResourceManager.GetLocalManager.ParseResource(resourceName)
         If parseResult.GpibAddress > 0 Then value.SelectiveDeviceClear(parseResult.GpibAddress)
     End Sub
@@ -69,9 +61,7 @@ Public Module GpibInterfaceExtensions
     '''           </summary>
     <Extension()>
     Public Sub ClearInterface(ByVal value As NationalInstruments.VisaNS.GpibInterface)
-        If value Is Nothing Then
-            Throw New ArgumentNullException("value")
-        End If
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         value.SendInterfaceClear()
         value.ClearDevices()
     End Sub

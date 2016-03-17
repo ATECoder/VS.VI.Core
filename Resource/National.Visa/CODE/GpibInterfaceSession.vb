@@ -66,8 +66,8 @@ Public Class GpibInterfaceSession
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <param name="timeout">      The timeout. </param>
     Public Overrides Sub OpenSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
-        MyBase.OpenSession(resourceName, timeout)
         Me._OpenSession(resourceName, timeout)
+        MyBase.OpenSession(resourceName, timeout)
     End Sub
 
     ''' <summary> Opens a session. </summary>
@@ -82,8 +82,8 @@ Public Class GpibInterfaceSession
     ''' <remarks> David, 11/29/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     Public Overrides Sub OpenSession(ByVal resourceName As String)
-        MyBase.OpenSession(resourceName)
         Me._OpenSession(resourceName)
+        MyBase.OpenSession(resourceName)
     End Sub
 
     ''' <summary> Opens a session. </summary>
@@ -97,6 +97,7 @@ Public Class GpibInterfaceSession
     ''' <remarks> David, 11/30/2015. </remarks>
     Public Overrides Sub CloseSession()
         Me._CloseSession()
+        MyBase.CloseSession()
     End Sub
 
     ''' <summary> Closes the session. </summary>
@@ -107,14 +108,6 @@ Public Class GpibInterfaceSession
             Me._GpibInterface.Dispose()
         End If
     End Sub
-
-    ''' <summary> Gets the is open. </summary>
-    ''' <value> The is open. </value>
-    Public Overrides ReadOnly Property IsOpen As Boolean
-        Get
-            Return Me.GpibInterface IsNot Nothing
-        End Get
-    End Property
 
 #End Region
 
@@ -167,5 +160,6 @@ Public Class GpibInterfaceSession
     End Sub
 
 #End Region
+
 End Class
 

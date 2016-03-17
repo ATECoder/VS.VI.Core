@@ -70,9 +70,7 @@ Public MustInherit Class LinkSubsystem
     ''' <returns> The error count. </returns>
     Public Function QueryErrorQueueCount(ByVal node As NodeEntityBase) As Integer
         Dim count As Integer?
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If node.IsController Then
             count = Me.Session.QueryPrint(0I, 1, "_G.errorqueue.count")
         Else
@@ -124,9 +122,7 @@ Public MustInherit Class LinkSubsystem
     Public Shadows Function QueryQueuedError(ByVal node As NodeEntityBase) As DeviceError
         Dim err As New DeviceError()
         If Me.QueryErrorQueueCount(node) > 0 Then
-            If node Is Nothing Then
-                Throw New ArgumentNullException("node")
-            End If
+            If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
             Dim message As String = ""
             Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Querying queued device errors;. ")
             If node.IsController Then
@@ -146,9 +142,7 @@ Public MustInherit Class LinkSubsystem
     ''' <summary> Reads the device errors. </summary>
     ''' <returns> <c>True</c> if device has errors, <c>False</c> otherwise. </returns>
     Public Shadows Function QueryDeviceErrors(ByVal node As NodeEntityBase) As String
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Dim deviceError As DeviceError
         Do
             deviceError = Me.QueryQueuedError(node)
@@ -213,7 +207,6 @@ Public MustInherit Class LinkSubsystem
 
 #End Region
 
-
 #Region " COLLECT GARBAGE "
 
     ''' <summary> Collect garbage wait complete. </summary>
@@ -239,9 +232,7 @@ Public MustInherit Class LinkSubsystem
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Function _CollectGarbageWaitComplete(ByVal node As NodeEntityBase, ByVal timeout As TimeSpan,
                                                ByVal format As String, ByVal ParamArray args() As Object) As Boolean
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If node.IsController Then
             Return Me.StatusSubsystem.CollectGarbageWaitComplete(timeout, format, args)
         End If
@@ -291,9 +282,7 @@ Public MustInherit Class LinkSubsystem
     ''' <param name="node">                Specifies the node. </param>
     ''' <param name="reportQueueNotEmpty"> true to report queue not empty. </param>
     Public Sub ClearDataQueue(ByVal node As NodeEntityBase, ByVal reportQueueNotEmpty As Boolean)
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If Me.NodeExists(node.Number) Then
             If reportQueueNotEmpty Then
                 If Me.QueryDataQueueCount(node) > 0 Then
@@ -345,9 +334,7 @@ Public MustInherit Class LinkSubsystem
     ''' <summary> Queries the capacity of the data queue. </summary>
     ''' <returns> Capacity. </returns>
     Public Function QueryDataQueueCapacity(ByVal node As NodeEntityBase) As Integer
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Return Me.QueryDataQueueCapacity(node.Number)
     End Function
 
@@ -373,9 +360,7 @@ Public MustInherit Class LinkSubsystem
     ''' <param name="node"> . </param>
     ''' <returns> Count. </returns>
     Public Function QueryDataQueueCount(ByVal node As NodeEntityBase) As Integer
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then            Throw New ArgumentNullException(NameOf(node))
         Return Me.QueryDataQueueCount(node.Number)
     End Function
 
@@ -421,9 +406,7 @@ Public MustInherit Class LinkSubsystem
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Function ResetNode(ByVal node As NodeEntityBase) As Boolean
 
-        If node Is Nothing Then
-            Throw New ArgumentNullException("node")
-        End If
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Dim affirmative As Boolean = True
         If node.IsController Then
             affirmative = Me.ResetNode()
@@ -449,6 +432,8 @@ Public MustInherit Class LinkSubsystem
     Public Sub ConnectRuleSetter(ByVal nodeNumber As Integer, ByVal value As Integer)
         Me.Session.WriteLine(TspSyntax.NodeConnectRuleSetterCommandFormat, nodeNumber, value)
     End Sub
+
+#End Region
 
 #Region " RESET NODES "
 
@@ -485,7 +470,6 @@ Public MustInherit Class LinkSubsystem
         End Try
     End Function
 
-#End Region
 #End Region
 
 #Region " CONTROLLER NODE "
@@ -810,9 +794,7 @@ Public MustInherit Class LinkSubsystem
     ''' <param name="frameworkName">    Name of the framework. </param>
     Public Sub ResetTspLink(ByVal timeout As TimeSpan, ByVal maximumNodeCount As Integer,
                             ByVal displaySubsystem As DisplaySubsystemBase, ByVal frameworkName As String)
-        If displaySubsystem Is Nothing Then
-            Throw New ArgumentNullException("displaySubsystem")
-        End If
+        If displaySubsystem Is Nothing Then Throw New ArgumentNullException(NameOf(displaySubsystem))
         displaySubsystem.DisplayLine(1, "Resetting  {0}", frameworkName)
         displaySubsystem.DisplayLine(2, "Resetting TSP Link")
         Me.ResetTspLinkWaitComplete(timeout, maximumNodeCount)

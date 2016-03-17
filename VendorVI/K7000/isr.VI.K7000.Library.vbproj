@@ -95,12 +95,15 @@
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="SUBSYSTEMS\ArmLayer2Subsystem.vb" />
+    <Compile Include="SUBSYSTEMS\ArmLayerSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\ContantsEnums.vb" />
     <Compile Include="SUBSYSTEMS\Device.vb" />
     <Compile Include="SUBSYSTEMS\RouteSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\StatusSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SystemSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\TriggerSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\VersionInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="PANELS\K7000Panel.resx">

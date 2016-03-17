@@ -55,7 +55,8 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>SPLASH,Blue_Splash</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <DocumentationFile>VI.Multimeter.Tester.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>full</DebugType>
@@ -98,8 +99,8 @@
     <Compile Include="..\..\..\..\..\Share\Core\CommandLineInfo.vb">
       <Link>My\CommandLineInfo.vb</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\Share\Pith\MyApplicationEvents.vb">
-      <Link>My\MyApplicationEvents.vb</Link>
+    <Compile Include="..\..\..\..\..\Share\Pith\BlueApplicationEvents.vb">
+      <Link>My\BlueApplicationEvents.vb</Link>
     </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
@@ -145,6 +146,8 @@
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>
     </None>
+    <Content Include="My\document-decrypt.png" />
+    <Content Include="My\document-encrypt.png" />
     <Content Include="My\isr.VI.Multimeter.Tester.History.rtf" />
     <None Include="App.config">
       <SubType>Designer</SubType>
@@ -185,6 +188,10 @@
     <ProjectReference Include="..\..\VendorVI\K2000\isr.VI.K2000.Library.vbproj">
       <Project>{9f4428b3-4e89-4154-be81-6e079c5d93b4}</Project>
       <Name>isr.VI.K2000.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\K2400\isr.VI.K2400.Library.vbproj">
+      <Project>{966f71bc-1172-4058-82f4-1bdfabefbaca}</Project>
+      <Name>isr.VI.K2400.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\VendorVI\K2700\isr.VI.K2700.Library.vbproj">
       <Project>{8ba6e502-02d3-4e89-b6e4-0c4f2f7181d4}</Project>

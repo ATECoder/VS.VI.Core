@@ -28,8 +28,14 @@ Public MustInherit Class TriggerSubsystemBase
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.Count = 1
-        Me.Delay = TimeSpan.Zero
+        Me._AutoDelayEnabled = False
+        Me._Count = 1
+        Me._Delay = TimeSpan.Zero
+        Me._Direction = VI.Direction.Acceptor
+        Me._InputLineNumber = 1
+        Me._OutputLineNumber = 2
+        Me._TriggerSource = VI.TriggerSources.Immediate
+        Me._TimerInterval = TimeSpan.FromSeconds(0.1)
     End Sub
 
 #End Region
@@ -38,7 +44,7 @@ Public MustInherit Class TriggerSubsystemBase
 
     ''' <summary> Gets the initiate command. </summary>
     ''' <value> The initiate command. </value>
-    ''' <remakrs> SCPI: ":INIT". </remakrs>
+    ''' <remarks> SCPI: ":INIT". </remarks>
     Protected Overridable ReadOnly Property InitiateCommand As String
 
     ''' <summary> Initiates operations. </summary>
@@ -53,7 +59,7 @@ Public MustInherit Class TriggerSubsystemBase
 
     ''' <summary> Gets the Abort command. </summary>
     ''' <value> The Abort command. </value>
-    ''' <remakrs> SCPI: ":ABOR". </remakrs>
+    ''' <remarks> SCPI: ":ABOR". </remarks>
     Protected Overridable ReadOnly Property AbortCommand As String
 
     ''' <summary> Aborts operations. </summary>
@@ -67,81 +73,32 @@ Public MustInherit Class TriggerSubsystemBase
         End If
     End Sub
 
-#End Region
+    ''' <summary> Gets the clear command. </summary>
+    ''' <remarks> SCPI: ":TRIG:CLE". </remarks>
+    ''' <value> The clear command. </value>
+    Protected Overridable ReadOnly Property ClearCommand As String
 
-#Region " ARM SOURCE "
+    ''' <summary> Clears the triggers. </summary>
+    ''' <remarks> David, 3/10/2016. </remarks>
+    Public Sub ClearTriggers()
+        Me.Write(Me.ClearCommand)
+    End Sub
 
-    ''' <summary> The Arm Source. </summary>
-    Private _ArmSource As ArmSource?
+    ''' <summary> Gets the Immediate command. </summary>
+    ''' <value> The Immediate command. </value>
+    ''' <remarks> SCPI: ":TRIG:IMM". </remarks>
+    Protected Overridable ReadOnly Property ImmediateCommand As String
 
-    ''' <summary> Gets or sets the cached source ArmSource. </summary>
-    ''' <value> The <see cref="ArmSource">source Arm Source</see> or none if not set or
-    ''' unknown. </value>
-    Public Overloads Property ArmSource As ArmSource?
-        Get
-            Return Me._ArmSource
-        End Get
-        Protected Set(ByVal value As ArmSource?)
-            If Not Me.ArmSource.Equals(value) Then
-                Me._ArmSource = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmSource))
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the source Arm Source. </summary>
-    ''' <param name="value"> The  Source Arm Source. </param>
-    ''' <returns> The <see cref="ArmSource">source Arm Source</see> or none if unknown. </returns>
-    Public Function ApplyArmSource(ByVal value As ArmSource) As ArmSource?
-        Me.WriteArmSource(value)
-        Return Me.QueryArmSource()
-    End Function
-
-    ''' <summary> Gets the Arm source query command. </summary>
-    ''' <value> The Arm source query command. </value>
-    ''' <remarks> SCPI: ":TRAC:ARM?" </remarks>
-    Protected Overridable ReadOnly Property ArmSourceQueryCommand As String
-
-    ''' <summary> Queries the Arm Source. </summary>
-    ''' <returns> The <see cref="ArmSource">Arm Source</see> or none if unknown. </returns>
-    Public Function QueryArmSource() As ArmSource?
-        Dim currentValue As String = Me.ArmSource.ToString
-        If String.IsNullOrEmpty(Me.Session.EmulatedReply) Then Me.Session.EmulatedReply = currentValue
-        If Not String.IsNullOrWhiteSpace(Me.ArmSourceQueryCommand) Then
-            currentValue = Me.Session.QueryTrimEnd(Me.ArmSourceQueryCommand)
-        End If
-        If String.IsNullOrWhiteSpace(currentValue) Then
-            Me.ArmSource = New ArmSource?
-        Else
-            Dim se As New StringEnumerator(Of ArmSource)
-            Me.ArmSource = se.ParseContained(currentValue.BuildDelimitedValue)
-        End If
-        Return Me.ArmSource
-    End Function
-
-    ''' <summary> Gets the Arm source command format. </summary>
-    ''' <value> The write Arm source command format. </value>
-    ''' <remarks> SCPI: ":TRAC:ARM {0}". </remarks>
-    Protected Overridable ReadOnly Property ArmSourceCommandFormat As String
-
-    ''' <summary> Writes the Arm Source without reading back the value from the device. </summary>
-    ''' <param name="value"> The Arm Source. </param>
-    ''' <returns> The <see cref="ArmSource">Arm Source</see> or none if unknown. </returns>
-    Public Function WriteArmSource(ByVal value As ArmSource) As ArmSource?
-        If Not String.IsNullOrWhiteSpace(Me.ArmSourceCommandFormat) Then
-            Me.Session.WriteLine(Me.ArmSourceCommandFormat, value.ExtractBetween())
-        End If
-        Me.ArmSource = value
-        Return Me.ArmSource
-    End Function
+    ''' <summary> Immediately move tot he next layer. </summary>
+    Public Sub Immediate()
+        Me.Session.Execute(Me.ImmediateCommand)
+    End Sub
 
 #End Region
 
 #Region " AUTO DELAY ENABLED "
 
-    ''' <summary> Auto Delay enabled. </summary>
     Private _AutoDelayEnabled As Boolean?
-
     ''' <summary> Gets or sets the cached Auto Delay Enabled sentinel. </summary>
     ''' <value> <c>null</c> if Auto Delay Enabled is not known; <c>True</c> if output is on; otherwise,
     ''' <c>False</c>. </value>
@@ -195,9 +152,7 @@ Public MustInherit Class TriggerSubsystemBase
 
 #Region " TRIGGER DIRECTION "
 
-    ''' <summary> The Trigger Direction. </summary>
     Private _Direction As Direction?
-
     ''' <summary> Gets or sets the cached source Direction. </summary>
     ''' <value> The <see cref="Direction">source Trigger Direction</see> or none if not set or
     ''' unknown. </value>
@@ -248,70 +203,68 @@ Public MustInherit Class TriggerSubsystemBase
 
 #End Region
 
-#Region " COUNT "
+#Region " TRIGGER COUNT "
 
     Private _Count As Integer?
-    ''' <summary> Gets or sets the cached Trigger Count. </summary>
+    ''' <summary> Gets or sets the cached Trigger TriggerCount. </summary>
     ''' <remarks> Specifies how many times an operation is performed in the specified layer of the
     ''' trigger model. </remarks>
-    ''' <value> The Trigger Count or none if not set or unknown. </value>
-    Public Overloads Property Count As Integer?
+    ''' <value> The Trigger TriggerCount or none if not set or unknown. </value>
+    Public Overloads Property TriggerCount As Integer?
         Get
             Return Me._Count
         End Get
         Protected Set(ByVal value As Integer?)
-            If Not Nullable.Equals(Me.Count, value) Then
+            If Not Nullable.Equals(Me.TriggerCount, value) Then
                 Me._Count = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Count))
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerCount))
             End If
         End Set
     End Property
 
-    ''' <summary> Writes and reads back the Trigger Count. </summary>
-    ''' <param name="value"> The current Count. </param>
-    ''' <returns> The Count or none if unknown. </returns>
-    Public Function ApplyCount(ByVal value As Integer) As Integer?
-        Me.WriteCount(value)
-        Return Me.QueryCount()
+    ''' <summary> Writes and reads back the Trigger TriggerCount. </summary>
+    ''' <param name="value"> The current TriggerCount. </param>
+    ''' <returns> The TriggerCount or none if unknown. </returns>
+    Public Function ApplyTriggerCount(ByVal value As Integer) As Integer?
+        Me.WriteTriggerCount(value)
+        Return Me.QueryTriggerCount()
     End Function
 
-    ''' <summary> Gets trigger count query command. </summary>
-    ''' <value> The trigger count query command. </value>
+    ''' <summary> Gets trigger TriggerCount query command. </summary>
+    ''' <value> The trigger TriggerCount query command. </value>
     ''' <remarks> SCPI: ":TRIG:COUN?" </remarks>
-    Protected Overridable ReadOnly Property CountQueryCommand As String
+    Protected Overridable ReadOnly Property TriggerCountQueryCommand As String
 
-    ''' <summary> Queries the current PointsCount. </summary>
-    ''' <returns> The PointsCount or none if unknown. </returns>
-    Public Function QueryCount() As Integer?
-        If Not String.IsNullOrWhiteSpace(Me.CountQueryCommand) Then
-            Me.Count = Me.Session.Query(0I, Me.CountQueryCommand)
+    ''' <summary> Queries the current Trigger Count. </summary>
+    ''' <returns> The Trigger Count or none if unknown. </returns>
+    Public Function QueryTriggerCount() As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.TriggerCountQueryCommand) Then
+            Me.TriggerCount = Me.Session.Query(0I, Me.TriggerCountQueryCommand)
         End If
-        Return Me.Count
+        Return Me.TriggerCount
     End Function
 
-    ''' <summary> Gets trigger count command format. </summary>
-    ''' <value> The trigger count command format. </value>
+    ''' <summary> Gets trigger TriggerCount command format. </summary>
+    ''' <value> The trigger TriggerCount command format. </value>
     ''' <remarks> SCPI: ":TRIG:COUN {0}" </remarks>
-    Protected Overridable ReadOnly Property CountCommandFormat As String
+    Protected Overridable ReadOnly Property TriggerCountCommandFormat As String
 
-    ''' <summary> Write the Trace PointsCount without reading back the value from the device. </summary>
-    ''' <param name="value"> The current PointsCount. </param>
-    ''' <returns> The PointsCount or none if unknown. </returns>
-    Public Function WriteCount(ByVal value As Integer) As Integer?
-        If Not String.IsNullOrWhiteSpace(Me.CountCommandFormat) Then
-            Me.Session.WriteLine(Me.CountCommandFormat, value)
+    ''' <summary> Write the Trace PointsTriggerCount without reading back the value from the device. </summary>
+    ''' <param name="value"> The current PointsTriggerCount. </param>
+    ''' <returns> The PointsTriggerCount or none if unknown. </returns>
+    Public Function WriteTriggerCount(ByVal value As Integer) As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.TriggerCountCommandFormat) Then
+            Me.Session.WriteLine(Me.TriggerCountCommandFormat, value)
         End If
-        Me.Count = value
-        Return Me.Count
+        Me.TriggerCount = value
+        Return Me.TriggerCount
     End Function
 
 #End Region
 
 #Region " DELAY "
 
-    ''' <summary> The delay. </summary>
     Private _Delay As TimeSpan?
-
     ''' <summary> Gets or sets the cached Trigger Delay. </summary>
     ''' <remarks> The delay is used to delay operation in the trigger layer. After the programmed
     ''' trigger event occurs, the instrument waits until the delay period expires before performing
@@ -344,7 +297,7 @@ Public MustInherit Class TriggerSubsystemBase
 
     ''' <summary> Gets the Delay format for converting the query to time span. </summary>
     ''' <value> The Delay query command. </value>
-    ''' <remarks> For example: "s\.fff" will convert the result from seconds. </remarks>
+    ''' <remarks> For example: "s\.FFFFFFF" will convert the result from seconds. </remarks>
     Protected Overridable ReadOnly Property DelayFormat As String
 
     ''' <summary> Queries the Delay. </summary>
@@ -356,7 +309,7 @@ Public MustInherit Class TriggerSubsystemBase
 
     ''' <summary> Gets the delay command format. </summary>
     ''' <value> The delay command format. </value>
-    ''' <remarks> SCPI: ":TRIG:DEL {0:s\.fff}" </remarks>
+    ''' <remarks> SCPI: ":TRIG:DEL {0:s\.FFFFFFF}" </remarks>
     Protected Overridable ReadOnly Property DelayCommandFormat As String
 
     ''' <summary> Writes the Trigger Delay without reading back the value from the device. </summary>
@@ -479,9 +432,7 @@ Public MustInherit Class TriggerSubsystemBase
 
 #Region " TIMER TIME SPAN "
 
-    ''' <summary> The Timer Interval. </summary>
     Private _TimerInterval As TimeSpan?
-
     ''' <summary> Gets or sets the cached Trigger Timer Interval. </summary>
     ''' <remarks> The Timer Interval is used to Timer Interval operation in the trigger layer. After the programmed
     ''' trigger event occurs, the instrument waits until the Timer Interval period expires before performing
@@ -514,7 +465,7 @@ Public MustInherit Class TriggerSubsystemBase
 
     ''' <summary> Gets the Timer Interval format for converting the query to time span. </summary>
     ''' <value> The Timer Interval query command. </value>
-    ''' <remarks> For example: "s\.fff" will convert the result from seconds. </remarks>
+    ''' <remarks> For example: "s\.FFFFFFF" will convert the result from seconds. </remarks>
     Protected Overridable ReadOnly Property TimerIntervalFormat As String
 
     ''' <summary> Queries the Timer Interval. </summary>
@@ -526,7 +477,7 @@ Public MustInherit Class TriggerSubsystemBase
 
     ''' <summary> Gets the Timer Interval command format. </summary>
     ''' <value> The query command format. </value>
-    ''' <remarks> SCPI: ":TRIG:TIM {0:s\.fff}" </remarks>
+    ''' <remarks> SCPI: ":TRIG:TIM {0:s\.FFFFFFF}" </remarks>
     Protected Overridable ReadOnly Property TimerIntervalCommandFormat As String
 
     ''' <summary> Writes the Trigger Timer Interval without reading back the value from the device. </summary>
@@ -538,37 +489,96 @@ Public MustInherit Class TriggerSubsystemBase
 
 #End Region
 
+#Region " TRIGGER SOURCE "
+
+    Private _SupportedTriggerSources As TriggerSources
+    ''' <summary>
+    ''' Gets or sets the supported Function Mode.
+    ''' This is a subset of the functions supported by the instrument.
+    ''' </summary>
+    Public Property SupportedTriggerSources() As TriggerSources
+        Get
+            Return _SupportedTriggerSources
+        End Get
+        Set(ByVal value As TriggerSources)
+            If Not Me.SupportedTriggerSources.Equals(value) Then
+                Me._SupportedTriggerSources = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedTriggerSources))
+            End If
+        End Set
+    End Property
+
+    Private _TriggerSource As TriggerSources?
+    ''' <summary> Gets or sets the cached source TriggerSource. </summary>
+    ''' <value> The <see cref="TriggerSource">source Trigger Source</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property TriggerSource As TriggerSources?
+        Get
+            Return Me._TriggerSource
+        End Get
+        Protected Set(ByVal value As TriggerSources?)
+            If Not Me.TriggerSource.Equals(value) Then
+                Me._TriggerSource = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerSource))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the source Trigger Source. </summary>
+    ''' <param name="value"> The  Source Trigger Source. </param>
+    ''' <returns> The <see cref="TriggerSource">source Trigger Source</see> or none if unknown. </returns>
+    Public Function ApplyTriggerSource(ByVal value As TriggerSources) As TriggerSources?
+        Me.WriteTriggerSource(value)
+        Return Me.QueryTriggerSource()
+    End Function
+
+    ''' <summary> Gets the Trigger source query command. </summary>
+    ''' <value> The Trigger source query command. </value>
+    ''' <remarks> SCPI: ":TRIG:SOUR?" </remarks>
+    Protected Overridable ReadOnly Property TriggerSourceQueryCommand As String
+
+    ''' <summary> Queries the Trigger Source. </summary>
+    ''' <returns> The <see cref="TriggerSource">Trigger Source</see> or none if unknown. </returns>
+    Public Function QueryTriggerSource() As TriggerSources?
+        Dim currentValue As String = Me.TriggerSource.ToString
+        If String.IsNullOrEmpty(Me.Session.EmulatedReply) Then Me.Session.EmulatedReply = currentValue
+        If Not String.IsNullOrWhiteSpace(Me.TriggerSourceQueryCommand) Then
+            currentValue = Me.Session.QueryTrimEnd(Me.TriggerSourceQueryCommand)
+        End If
+        If String.IsNullOrWhiteSpace(currentValue) Then
+            Me.TriggerSource = New TriggerSources?
+        Else
+            Dim se As New StringEnumerator(Of TriggerSources)
+            Me.TriggerSource = se.ParseContained(currentValue.BuildDelimitedValue)
+        End If
+        Return Me.TriggerSource
+    End Function
+
+    ''' <summary> Gets the Trigger source command format. </summary>
+    ''' <value> The write Trigger source command format. </value>
+    ''' <remarks> SCPI: ":TRIG:SOUR {0}". </remarks>
+    Protected Overridable ReadOnly Property TriggerSourceCommandFormat As String
+
+    ''' <summary> Writes the Trigger Source without reading back the value from the device. </summary>
+    ''' <param name="value"> The Trigger Source. </param>
+    ''' <returns> The <see cref="TriggerSource">Trigger Source</see> or none if unknown. </returns>
+    Public Function WriteTriggerSource(ByVal value As TriggerSources) As TriggerSources?
+        If Not String.IsNullOrWhiteSpace(Me.TriggerSourceCommandFormat) Then
+            Me.Session.WriteLine(Me.TriggerSourceCommandFormat, value.ExtractBetween())
+        End If
+        Me.TriggerSource = value
+        Return Me.TriggerSource
+    End Function
+
+#End Region
+
 End Class
 
-''' <summary> Enumerates the arm layer bypass mode. </summary>
+''' <summary> Enumerates the trigger or arm layer bypass mode. </summary>
 Public Enum Direction
     <ComponentModel.Description("Not Defined ()")> None
-    <ComponentModel.Description("Immediate (IMM)")> Immediate
-    <ComponentModel.Description("End (END)")> [End]
-End Enum
-
-''' <summary> Enumerates the arm layer control sources. </summary>
-Public Enum ArmSource
-    <ComponentModel.Description("Not Defined ()")> None
-    <ComponentModel.Description("Bus (BUS)")> Bus
-    <ComponentModel.Description("External (EXT)")> External
-    <ComponentModel.Description("Hold operation (HOLD)")> Hold
-    <ComponentModel.Description("Immediate (IMM)")> Immediate
-    <ComponentModel.Description("Manual (MAN)")> Manual
-    <ComponentModel.Description("Timer (TIM)")> Timer
-
-    ''' <summary> Event detection for the arm layer is satisfied when either a positive-going or 
-    ''' a negative-going pulse (via the SOT line of the Digital I/O) is received. </summary>
-    <ComponentModel.Description("Start Test Pulsed High or Low (BSTES)")> StartTestBoth
-
-    ''' <summary> Event detection for the arm layer is satisfied when a positive-going pulse 
-    ''' (via the SOT line of the Digital I/O) is received.  </summary>
-    <ComponentModel.Description("Start Test Pulsed High (PSTES)")> StartTestHigh
-
-    ''' <summary> Event detection for the arm layer is satisfied when a negative-going pulse 
-    ''' (via the SOT line of the Digital I/O) is received. </summary>
-    <ComponentModel.Description("Start Test Pulsed High (NSTES)")> StartTestLow
-    <ComponentModel.Description("Trigger Link (TLIN)")> TriggerLink
+    <ComponentModel.Description("Acceptor (ACC")> Acceptor
+    <ComponentModel.Description("Source (SOUR)")> Source
 End Enum
 
 ''' <summary> Enumerates the arm to trigger events. </summary>
@@ -580,12 +590,11 @@ Public Enum TriggerEvent
 End Enum
 
 ''' <summary> Enumerates the trigger layer control sources. </summary>
-Public Enum TriggerSource
+<Flags>
+Public Enum TriggerSources
     <ComponentModel.Description("Not Defined ()")> None
     <ComponentModel.Description("Bus (BUS)")> Bus
     <ComponentModel.Description("External (Ext)")> External
     <ComponentModel.Description("Immediate (IMM)")> Immediate
     <ComponentModel.Description("Trigger Link (TLIN)")> TriggerLink
 End Enum
-
-

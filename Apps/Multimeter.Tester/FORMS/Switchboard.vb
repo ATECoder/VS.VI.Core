@@ -152,6 +152,7 @@ Public Class Switchboard
         <System.ComponentModel.Description("Keithley 2002")> Keithley2002
         <System.ComponentModel.Description("Keithley 2700")> Keithley2700
         <System.ComponentModel.Description("Tegam T1750")> Tegam1750
+        <System.ComponentModel.Description("Keithley 2400")> Keithley2400
     End Enum
 
     Private _OpenForms As Instrument.InstrumentPanelFormCollection
@@ -165,15 +166,17 @@ Public Class Switchboard
         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
         Select Case Me.selectedAction
             Case ActionOption.InterfaceForm
-                Me._OpenForms.ShowNew(New Instrument.InterfaceForm, My.Application.Log)
+                Me._OpenForms.ShowNew(New Instrument.InterfaceForm, My.Application.MyLog)
             Case ActionOption.SimpleReadAndWrite
-                Me._OpenForms.ShowNew(New Instrument.SimpleReadWriteForm, My.Application.Log)
+                Me._OpenForms.ShowNew(New Instrument.SimpleReadWriteForm, My.Application.MyLog)
             Case ActionOption.Keithley2002
-                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K2000.K2000Panel, My.Application.Log)
+                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K2000.K2000Panel, My.Application.MyLog)
             Case ActionOption.Tegam1750
-                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New Tegam.T1750Panel, My.Application.Log)
+                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New Tegam.T1750Panel, My.Application.MyLog)
             Case ActionOption.Keithley2700
-                Me._OpenForms.ShowNew("Switch/Meter", New Instrument.InstrumentPanelForm, New K2700.K2700Panel, My.Application.Log)
+                Me._OpenForms.ShowNew("Switch/Meter", New Instrument.InstrumentPanelForm, New K2700.K2700Panel, My.Application.MyLog)
+            Case ActionOption.Keithley2400
+                Me._OpenForms.ShowNew("Source Meter", New Instrument.InstrumentPanelForm, New K2400.K2400Panel, My.Application.MyLog)
         End Select
         Me.Cursor = System.Windows.Forms.Cursors.Default
     End Sub

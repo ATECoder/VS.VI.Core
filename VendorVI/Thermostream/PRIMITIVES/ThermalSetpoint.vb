@@ -61,7 +61,7 @@ Public Class ThermalProfileCollection
     ''' <param name="item"> The item. </param>
     ''' <returns> The key for item. </returns>
     Protected Overrides Function GetKeyForItem(item As ThermalSetpoint) As Integer
-        If item Is Nothing Then Throw New ArgumentNullException("item")
+        If item Is Nothing Then Throw New ArgumentNullException(NameOf(item))
         Return item.OrdinalNumber
     End Function
 
