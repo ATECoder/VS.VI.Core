@@ -126,12 +126,14 @@ Public Class Device
         Me.AddSubsystem(Me.SystemSubsystem)
         'AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
 
+        ' better add before the format subsystem, which reset initializes the readings.
+        Me._MeasureSubsystem = New MeasureSubsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.MeasureSubsystem)
+
+        ' the measure subsystem readings are set when the format system is reset.
         Me._FormatSubsystem = New FormatSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.FormatSubsystem)
         AddHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
-
-        Me._MeasureSubsystem = New MeasureSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.MeasureSubsystem)
 
         Me._RouteSubsystem = New RouteSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.RouteSubsystem)
@@ -212,7 +214,7 @@ Public Class Device
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
-                Me.MeasureSubsystem.Readings.Elements = subsystem.Elements
+                Me.MeasureSubsystem.Readings.Initialize(subsystem.Elements)
         End Select
     End Sub
 

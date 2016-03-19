@@ -138,6 +138,11 @@ Public Class Device
         Me.AddSubsystem(Me.SystemSubsystem)
         AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
 
+        ' better add before the format subsystem, which reset initializes the readings.
+        Me._MeasureSubsystem = New MeasureSubsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.MeasureSubsystem)
+
+        ' the measure subsystem reading are initialized when the format system is reset
         Me._FormatSubsystem = New FormatSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.FormatSubsystem)
         AddHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
@@ -174,9 +179,6 @@ Public Class Device
 
         Me._TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.TriggerSubsystem)
-
-        Me._MeasureSubsystem = New MeasureSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.MeasureSubsystem)
 
         Me._Calculate2Subsystem = New Calculate2Subsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.Calculate2Subsystem)
@@ -311,7 +313,7 @@ Public Class Device
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
-                Me.MeasureSubsystem.Readings.Elements = subsystem.Elements
+                Me.MeasureSubsystem.Readings.Initialize(subsystem.Elements)
         End Select
     End Sub
 
@@ -452,32 +454,3 @@ Public Class Device
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    ''' <summary> Gets or sets the Sense Four Wire Resistance Subsystem. </summary>
-    ''' <value> The Sense Four Wire Resistance Subsystem. </value>
-    Public Property SenseFourWireResistanceSubsystem As SenseFourWireResistanceSubsystem
-        Me._SenseFourWireResistanceSubsystem = New SenseFourWireResistanceSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SenseFourWireResistanceSubsystem)
-    ''' <summary>
-    ''' Gets or sets the Measure Current subsystem.
-    ''' </summary>
-    ''' <value>The Measure Current subsystem.</value>
-    Public Property MeasureCurrentSubsystem As MeasureCurrentSubsystem
-
-    ''' <summary>
-    ''' Gets or sets the Measure Voltage subsystem.
-    ''' </summary>
-    ''' <value>The Measure Voltage subsystem.</value>
-    Public Property MeasureVoltageSubsystem As MeasureVoltageSubsystem
-
-        Me._MeasureCurrentSubsystem = New MeasureCurrentSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.MeasureCurrentSubsystem)
-
-        Me._MeasureVoltageSubsystem = New MeasureVoltageSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.MeasureVoltageSubsystem)
-
-
-
-#End If
-#End Region

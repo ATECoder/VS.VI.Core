@@ -28,14 +28,14 @@ Public MustInherit Class FormatSubsystemBase
     ''' <summary> Builds the elements record for the specified elements. </summary>
     ''' <param name="elements"> Reading Elements. </param>
     ''' <returns> The record. </returns>
-    Public Shared Function BuildRecord(ByVal elements As ReadingElements) As String
-        If elements = ReadingElements.None Then
+    Public Shared Function BuildRecord(ByVal elements As ReadingTypes) As String
+        If elements = ReadingTypes.None Then
             Return String.Empty
         Else
             Dim reply As New System.Text.StringBuilder
-            For Each code As Integer In [Enum].GetValues(GetType(ReadingElements))
+            For Each code As Integer In [Enum].GetValues(GetType(ReadingTypes))
                 If (elements And code) <> 0 Then
-                    Dim value As String = CType(code, ReadingElements).ExtractBetween()
+                    Dim value As String = CType(code, ReadingTypes).ExtractBetween()
                     If Not String.IsNullOrWhiteSpace(value) Then
                         If reply.Length > 0 Then reply.Append(","c)
                         reply.Append(value)
@@ -46,14 +46,14 @@ Public MustInherit Class FormatSubsystemBase
         End If
     End Function
 
-    ''' <summary> Returns the <see cref="ReadingElements"></see> from the specified value. </summary>
+    ''' <summary> Returns the <see cref="ReadingTypes"></see> from the specified value. </summary>
     ''' <param name="value"> The Elements. </param>                 
     ''' <returns> The reading elements. </returns>
-    Public Shared Function ParseReadingElement(ByVal value As String) As ReadingElements
+    Public Shared Function ParseReadingElement(ByVal value As String) As ReadingTypes
         If String.IsNullOrWhiteSpace(value) Then
-            Return ReadingElements.None
+            Return ReadingTypes.None
         Else
-            Dim se As New StringEnumerator(Of ReadingElements)
+            Dim se As New StringEnumerator(Of ReadingTypes)
             Return se.ParseContained(value.BuildDelimitedValue)
         End If
     End Function
@@ -61,8 +61,8 @@ Public MustInherit Class FormatSubsystemBase
     ''' <summary> Get the composite reading elements based on the message from the instrument. </summary>
     ''' <param name="record"> Specifies the comma delimited elements record. </param>
     ''' <returns> The reading elements. </returns>
-    Public Shared Function ParseReadingElements(ByVal record As String) As ReadingElements
-        Dim parsed As ReadingElements = ReadingElements.None
+    Public Shared Function ParseReadingElements(ByVal record As String) As ReadingTypes
+        Dim parsed As ReadingTypes = ReadingTypes.None
         If Not String.IsNullOrWhiteSpace(record) Then
             For Each elementValue As String In record.Split(","c)
                 parsed = parsed Or ParseReadingElement(elementValue)
@@ -72,15 +72,15 @@ Public MustInherit Class FormatSubsystemBase
     End Function
 
     ''' <summary> Reading Elements. </summary>
-    Private _Elements As ReadingElements
+    Private _Elements As ReadingTypes
 
     ''' <summary> Gets or sets the cached Elements. </summary>
     ''' <value> A List of scans. </value>
-    Public Overloads Property Elements As ReadingElements
+    Public Overloads Property Elements As ReadingTypes
         Get
             Return Me._Elements
         End Get
-        Protected Set(ByVal value As ReadingElements)
+        Protected Set(ByVal value As ReadingTypes)
             If Not Me.Elements.Equals(value) Then
                 Me._Elements = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.Elements))
@@ -91,7 +91,7 @@ Public MustInherit Class FormatSubsystemBase
     ''' <summary> Writes and reads back the Elements. </summary>
     ''' <param name="value"> The Elements. </param>
     ''' <returns> A List of scans. </returns>
-    Public Function ApplyElements(ByVal value As ReadingElements) As ReadingElements
+    Public Function ApplyElements(ByVal value As ReadingTypes) As ReadingTypes
         Me.WriteElements(value)
         Return Me.QueryElements()
     End Function
@@ -103,7 +103,7 @@ Public MustInherit Class FormatSubsystemBase
 
     ''' <summary> Queries the Elements. Also sets the <see cref="Elements">Format on</see> sentinel. </summary>
     ''' <returns> A List of scans. </returns>
-    Public Function QueryElements() As ReadingElements
+    Public Function QueryElements() As ReadingTypes
         Dim record As String = FormatSubsystemBase.BuildRecord(Me.Elements)
         record = Me.Query(record, Me.ElementsQueryCommand)
         Me.Elements = FormatSubsystemBase.ParseReadingElements(record)
@@ -112,7 +112,7 @@ Public MustInherit Class FormatSubsystemBase
 
     ''' <summary> Queries the Elements for a single element. Also sets the <see cref="Elements">Format on</see> sentinel. </summary>
     ''' <returns> A List of scans. </returns>
-    Public Function QueryElement() As ReadingElements
+    Public Function QueryElement() As ReadingTypes
         Dim record As String = FormatSubsystemBase.BuildRecord(Me.Elements)
         record = Me.Query(record, Me.ElementsQueryCommand)
         Me.Elements = FormatSubsystemBase.ParseReadingElement(record)
@@ -127,9 +127,9 @@ Public MustInherit Class FormatSubsystemBase
     ''' <summary> Writes the Elements for a single element. Does not read back from the instrument. </summary>
     ''' <param name="value"> The Elements. </param>
     ''' <returns> A List of scans. </returns>
-    Public Function WriteElement(ByVal value As ReadingElements) As ReadingElements
+    Public Function WriteElement(ByVal value As ReadingTypes) As ReadingTypes
         Dim record As String = FormatSubsystemBase.BuildRecord(value)
-        record = Me.Write(Me.ElementsCommandFormat, record)
+        Me.Write(Me.ElementsCommandFormat, record)
         Me.Elements = FormatSubsystemBase.ParseReadingElement(record)
         Return Me.Elements
     End Function
@@ -137,9 +137,9 @@ Public MustInherit Class FormatSubsystemBase
     ''' <summary> Writes the Elements. Does not read back from the instrument. </summary>
     ''' <param name="value"> The Elements. </param>
     ''' <returns> A List of scans. </returns>
-    Public Function WriteElements(ByVal value As ReadingElements) As ReadingElements
+    Public Function WriteElements(ByVal value As ReadingTypes) As ReadingTypes
         Dim record As String = FormatSubsystemBase.BuildRecord(value)
-        record = Me.Write(Me.ElementsCommandFormat, record)
+        Me.Write(Me.ElementsCommandFormat, record)
         Me.Elements = FormatSubsystemBase.ParseReadingElements(record)
         Return Me.Elements
     End Function

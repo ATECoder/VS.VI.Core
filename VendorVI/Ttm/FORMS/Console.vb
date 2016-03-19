@@ -1276,31 +1276,6 @@ Public Class Console
             activeDisplay = Nothing
         End If
 
-#If False Then
-        ' toggling visibility may not be needed if we toggle the visibility of the container control.
-        Me._messagesBox.Visible = False
-        Me._alertsBox.Visible = False
-        Select Case node
-            Case TreeViewNode.FirmwareNode
-            Case TreeViewNode.ConfigureNode
-            Case TreeViewNode.MeasureNode
-            Case TreeViewNode.PartsNode
-            Case TreeViewNode.MessagesNode
-                Me._messagesBox.Visible = True
-                Me._messagesBox.Display()
-            Case TreeViewNode.AboutNode
-        End Select
-#Else
-        Select Case node
-            Case TreeViewNode.ConnectNode
-            Case TreeViewNode.ConfigureNode
-            Case TreeViewNode.MeasureNode
-            Case TreeViewNode.PartsNode
-            Case TreeViewNode.MessagesNode
-            Case TreeViewNode.ShuntNode
-        End Select
-#End If
-
     End Sub
 
     ''' <summary> Gets or sets a value indicating whether this <see cref="Console"/> is navigating. </summary>

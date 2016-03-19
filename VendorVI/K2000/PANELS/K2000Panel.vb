@@ -148,25 +148,6 @@ Public Class K2000Panel
         End Select
     End Sub
 
-#If False Then
-    ''' <summary> Device property changed. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub DevicePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnDevicePropertyChanged(TryCast(sender, Device), e.PropertyName)
-            End If
-        Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
-        Finally
-            MyBase.DevicePropertyChanged(sender, e)
-        End Try
-    End Sub
-#End If
-
     ''' <summary> Event handler. Called when device opened. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
@@ -232,12 +213,12 @@ Public Class K2000Panel
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
-                If Me.Device IsNot Nothing AndAlso subsystem.Elements <> ReadingElements.None Then
+                If Me.Device IsNot Nothing AndAlso subsystem.Elements <> ReadingTypes.None Then
                     Dim selectedIndex As Integer = Me._ReadingComboBox.SelectedIndex
                     With Me._ReadingComboBox
                         .DataSource = Nothing
                         .Items.Clear()
-                        .DataSource = GetType(VI.ReadingElements).ValueDescriptionPairs(subsystem.Elements And Not ReadingElements.Units)
+                        .DataSource = GetType(VI.ReadingTypes).ValueDescriptionPairs(subsystem.Elements And Not ReadingTypes.Units)
                         .DisplayMember = "Value"
                         .ValueMember = "Key"
                         If .Items.Count > 0 Then
@@ -268,49 +249,37 @@ Public Class K2000Panel
 
 #Region " MEASURE "
 
-    ''' <summary> Executes the measurement available action. </summary>
-    ''' <param name="readings"> The readings. </param>
-    Private Sub onMeasurementAvailable(ByVal readings As Readings)
-
+    ''' <summary> Displays the active reading caption and status. </summary>
+    ''' <remarks> David, 3/18/2016. </remarks>
+    Private Sub DisplayActiveReading()
         Const clear As String = "    "
-        Const compliance As String = "..C.."
-        Const rangeCompliance As String = ".RC."
-        Const levelCompliance As String = ".LC."
-
-        If readings Is Nothing OrElse readings.IsEmpty Then
-            Me._ReadingToolStripStatusLabel.Text = "-.------- V"
-            Me._ComplianceToolStripStatusLabel.Text = clear
-            Me._TbdToolStripStatusLabel.Text = clear
+        Dim caption As String = clear
+        Dim failureCaption As String = clear
+        Dim failureToolTip As String = clear
+        Dim tbdCaption As String = clear
+        If Me.Device.MeasureSubsystem Is Nothing OrElse
+            Me.Device.MeasureSubsystem.Readings Is Nothing OrElse
+            Me.Device.MeasureSubsystem.Readings.ActiveReadingType = ReadingTypes.None Then
+            caption = "-.------- :)"
+        ElseIf Me.Device.MeasureSubsystem.Readings.IsEmpty Then
+            caption = Me.Device.MeasureSubsystem.Readings.ActiveAmountCaption
         Else
-            Me._ReadingToolStripStatusLabel.SafeTextSetter(readings.ToString(Me.selectedReading))
-            If readings.Reading.MetaStatus.HitCompliance Then
-
-                Me._ComplianceToolStripStatusLabel.Text = compliance
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Real Compliance.  Instrument sensed an output overflow of the measured value.")
-
-            ElseIf readings.Reading.MetaStatus.HitRangeCompliance Then
-
-                Me._ComplianceToolStripStatusLabel.Text = rangeCompliance
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Range Compliance.  Instrument sensed an output overflow of the measured value.")
-
-            ElseIf readings.Reading.MetaStatus.HitLevelCompliance Then
-
-                Me._ComplianceToolStripStatusLabel.Text = levelCompliance
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Level Compliance.  Instrument sensed an output overflow of the measured value.")
-
-            Else
-
-                Me._ComplianceToolStripStatusLabel.Text = clear
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Instruments parsed reading elements.")
-
+            caption = Me.Device.MeasureSubsystem.Readings.ActiveAmountCaption
+            Dim metaStatus As MetaStatus = Me.Device.MeasureSubsystem.Readings.ActiveMetaStatus
+            If metaStatus.HasValue Then
+                failureCaption = $"{metaStatus.ToShortDescription(""),4}"
+                failureToolTip = metaStatus.ToLongDescription("")
+                If String.IsNullOrEmpty(failureToolTip) Then
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Instruments parsed reading elements.")
+                Else
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, failureToolTip)
+                End If
             End If
-
         End If
-
-
+        Me._ReadingToolStripStatusLabel.SafeTextSetter(caption)
+        Me._FailureCodeToolStripStatusLabel.SafeTextSetter(failureCaption)
+        Me._FailureCodeToolStripStatusLabel.SafeToolTipTextSetter(failureToolTip)
+        Me._TbdToolStripStatusLabel.SafeTextSetter(tbdCaption)
     End Sub
 
     ''' <summary> Handles the Measure subsystem property changed event. </summary>
@@ -326,7 +295,7 @@ Public Class K2000Panel
                     Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                        "Measure message: {0}.", subsystem.LastReading.InsertCommonEscapeSequences)
                 Case NameOf(subsystem.MeasurementAvailable)
-                    Me.onMeasurementAvailable(subsystem.Readings)
+                    Me.DisplayActiveReading()
             End Select
         End If
     End Sub
@@ -431,7 +400,7 @@ Public Class K2000Panel
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
             Case NameOf(subsystem.MeasurementAvailable)
-                Me.onMeasurementAvailable(subsystem.Readings)
+                Me.DisplayActiveReading()
             Case NameOf(subsystem.SupportedFunctionModes)
                 Me.onSupportedFunctionModesChanged(subsystem)
             Case NameOf(subsystem.FunctionMode)
@@ -727,21 +696,21 @@ Public Class K2000Panel
 
     ''' <summary> Selects a new reading to display.
     ''' </summary>
-    Friend Function SelectReading(ByVal value As VI.ReadingElements) As VI.ReadingElements
+    Friend Function SelectReading(ByVal value As VI.ReadingTypes) As VI.ReadingTypes
         If Me.IsDeviceOpen AndAlso
-                (value <> VI.ReadingElements.None) AndAlso (value <> Me.selectedReading) Then
+                (value <> VI.ReadingTypes.None) AndAlso (value <> Me.SelectedReadingType) Then
             Me._ReadingComboBox.SafeSelectItem(value.ValueDescriptionPair)
         End If
-        Return Me.selectedReading
+        Return Me.SelectedReadingType
     End Function
 
-    ''' <summary> Gets the selected reading. </summary>
-    ''' <value> The selected reading. </value>
+    ''' <summary> Gets the type of the selected reading. </summary>
+    ''' <value> The type of the selected reading. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Private ReadOnly Property selectedReading() As VI.ReadingElements
+    Private ReadOnly Property SelectedReadingType() As VI.ReadingTypes
         Get
             Return CType(CType(Me._ReadingComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(
-                                            Of [Enum], String)).Key, VI.ReadingElements)
+                                            Of [Enum], String)).Key, VI.ReadingTypes)
         End Get
     End Property
 
@@ -933,26 +902,25 @@ Public Class K2000Panel
 
     End Sub
 
-    ''' <summary> Event handler. Called by _ReadingComboBox for selected index changed events. Selects
-    ''' a new reading to display. </summary>
-    ''' <param name="sender"> Source of the event. </param>
+    ''' <summary> Reading combo box selected value changed. </summary>
+    ''' <remarks> David, 3/18/2016. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ReadingComboBox_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ReadingComboBox.SelectedIndexChanged
+    Private Sub _ReadingComboBox_SelectedValueChanged(sender As Object, e As EventArgs) Handles _ReadingComboBox.SelectedValueChanged
+        If Me._InitializingComponents Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
-            If Me._ReadingComboBox.Enabled AndAlso Me._ReadingComboBox.SelectedIndex >= 0 AndAlso
-                    Not String.IsNullOrWhiteSpace(Me._ReadingComboBox.Text) Then
-                Me.onMeasurementAvailable(Me.Device.MeasureSubsystem.Readings)
-            End If
+            Me.ErrorProvider.Clear()
+            Me.Device.MeasureSubsystem.Readings.ActiveReadingType = Me.SelectedReadingType
+            Me.DisplayActiveReading()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred displaying a measurement;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
         End Try
-
     End Sub
 
     ''' <summary> Event handler. Called by _ReadButton for click events. Query the Device for a
@@ -964,17 +932,11 @@ Public Class K2000Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-
-            ' update the terminal display.
             Me.Device.SystemSubsystem.QueryFrontSwitched()
-
-            ' update display modalities if changed.
             Me.Device.MeasureSubsystem.Read()
-
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -984,7 +946,7 @@ Public Class K2000Panel
     ''' <summary> Event handler. Called by _terminalsToggle for click events. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub _terminalstoggle_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _TerminalsToggle.CheckStateChanged
+    Private Sub _TerminalsToggle_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _TerminalsToggle.CheckStateChanged
         If Me._InitializingComponents Then Return
         Dim checkBox As Windows.Forms.CheckBox = TryCast(sender, Windows.Forms.CheckBox)
         If checkBox IsNot Nothing Then

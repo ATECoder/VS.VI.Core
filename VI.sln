@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VENDORvi", "VENDORvi", "{38
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APPS", "APPS", "{5A67A281-8142-4FB8-8AFF-3EC87B02355F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UNITS", "UNITS", "{D787833B-1C85-43C1-BEFC-74C9DF4C5B89}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "`Unit Tests", "`Unit Tests", "{D787833B-1C85-43C1-BEFC-74C9DF4C5B89}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Pith.Library", "Resource\Pith\isr.VI.Pith.Library.vbproj", "{AC4FDBF7-8AAB-4FD5-92D7-EF49DBAF3604}"
 EndProject
@@ -100,31 +100,31 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.PowerSupply.Units", 
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.SourceMeasure.Units", "Units\SourceMeasure\isr.VI.SourceMeasure.Units.vbproj", "{9EECCD62-65E6-4793-8A91-960B4E2BB445}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Device.Tester", "Apps\Device.Tester\isr.VI.Device.Tester.vbproj", "{76BE615A-13D5-403E-9CA8-805E0BFD387A}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VI.Device.Tester", "Apps\Device.Tester\VI.Device.Tester.vbproj", "{76BE615A-13D5-403E-9CA8-805E0BFD387A}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Multimeter.Tester", "Apps\Multimeter.Tester\isr.VI.Multimeter.Tester.vbproj", "{E3E5C265-4E4B-4FE3-A25D-97809E20085E}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VI.Multimeter.Tester", "Apps\Multimeter.Tester\VI.Multimeter.Tester.vbproj", "{E3E5C265-4E4B-4FE3-A25D-97809E20085E}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Tsp.Tester", "Apps\Tsp.Tester\isr.VI.Tsp.Tester.vbproj", "{2C1F34BA-62EF-480E-AC29-CA866D1C1AF6}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VI.Tsp.Tester", "Apps\Tsp.Tester\VI.Tsp.Tester.vbproj", "{2C1F34BA-62EF-480E-AC29-CA866D1C1AF6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WiXBundles", "WiXBundles", "{F464A367-2F81-4FBE-82B5-46C23622D518}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K3700.Library", "VendorVI\K3700\isr.VI.K3700.Library.vbproj", "{259F39E6-9C5B-45EA-BDCF-B34C397CB172}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.OhmProber.Tester", "Apps\OhmProber\isr.VI.OhmProber.Tester.vbproj", "{269D72CF-BED4-44C3-A580-A984BA59963F}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VI.OhmProber.Tester", "Apps\OhmProber\VI.OhmProber.Tester.vbproj", "{269D72CF-BED4-44C3-A580-A984BA59963F}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "isr.VI.Device.Tester.WiX", "WiX\Device\Device.Tester.WiX\isr.VI.Device.Tester.WiX.wixproj", "{37254351-A99D-4CB0-93F2-3203D6D5B58A}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "VI.Device.Tester.WiX", "WiX\Device\Device.Tester.WiX\VI.Device.Tester.WiX.wixproj", "{37254351-A99D-4CB0-93F2-3203D6D5B58A}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "isr.VI.Device.Tester.Bundle", "WiX\Device\Device.Tester.Bundle\isr.VI.Device.Tester.Bundle.wixproj", "{8EA71953-DC91-4E4C-A64D-6F7349012A34}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "VI.Device.Tester.Bundle", "WiX\Device\Device.Tester.Bundle\VI.Device.Tester.Bundle.wixproj", "{8EA71953-DC91-4E4C-A64D-6F7349012A34}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.OhmniNet.Tester", "Apps\OhmniNet\isr.VI.OhmniNet.Tester.vbproj", "{B449651B-8ED5-4E57-B04F-D45585C8B36B}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VI.OhmniNet.Tester", "Apps\OhmniNet\VI.OhmniNet.Tester.vbproj", "{B449651B-8ED5-4E57-B04F-D45585C8B36B}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "isr.VI.OhmniNet.Tester.WiX", "WiX\OhmniNet\OhmniNet.Tester.WiX\isr.VI.OhmniNet.Tester.WiX.wixproj", "{19060FB4-46B7-47CE-A5C6-0619D093877F}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "VI.OhmniNet.Tester.WiX", "WiX\OhmniNet\OhmniNet.Tester.WiX\VI.OhmniNet.Tester.WiX.wixproj", "{19060FB4-46B7-47CE-A5C6-0619D093877F}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "isr.VI.OhmniNet.Tester.Bundle", "WiX\OhmniNet\OhmniNet.Tester.Bundle\isr.VI.OhmniNet.Tester.Bundle.wixproj", "{85425A68-CB24-4933-9307-B51794DFE9E3}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "VI.OhmniNet.Tester.Bundle", "WiX\OhmniNet\OhmniNet.Tester.Bundle\VI.OhmniNet.Tester.Bundle.wixproj", "{85425A68-CB24-4933-9307-B51794DFE9E3}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "isr.VI.OhmProber.Tester.WiX", "WiX\OhmProber\OhmProber.Tester.WiX\isr.VI.OhmProber.Tester.WiX.wixproj", "{057E940C-6587-44C3-9619-2A30C48DAFC6}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "VI.OhmProber.Tester.WiX", "WiX\OhmProber\OhmProber.Tester.WiX\VI.OhmProber.Tester.WiX.wixproj", "{057E940C-6587-44C3-9619-2A30C48DAFC6}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "isr.VI.OhmProber.Tester.Bundle", "WiX\OhmProber\OhmProber.Tester.Bundle\isr.VI.OhmProber.Tester.Bundle.wixproj", "{D8F14337-EFB2-4D46-A447-569E83509FF3}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "VI.OhmProber.Tester.Bundle", "WiX\OhmProber\OhmProber.Tester.Bundle\VI.OhmProber.Tester.Bundle.wixproj", "{D8F14337-EFB2-4D46-A447-569E83509FF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WiXProducts", "WiXProducts", "{9404FDD5-1B65-426A-ABF6-DEC460458A0B}"
 EndProject
@@ -147,6 +147,8 @@ EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "VI.Solomon.Gauge.WiX", "WiX\Solomon\Solomon.Gauge.WiX\VI.Solomon.Gauge.WiX.wixproj", "{71376415-2932-4A3E-AFB6-5D596937E590}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "VI.Solomon.Gauge.Bundle", "WiX\Solomon\Solomon.Gauge.Bundle\VI.Solomon.Gauge.Bundle.wixproj", "{BF9426F2-B135-4BBB-9C16-D43BC6D37CF7}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VI.Device.Console", "Apps\Device.Console\VI.Device.Console.vbproj", "{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1071,6 +1073,22 @@ Global
 		{BF9426F2-B135-4BBB-9C16-D43BC6D37CF7}.Release|x64.ActiveCfg = Release|x86
 		{BF9426F2-B135-4BBB-9C16-D43BC6D37CF7}.Release|x86.ActiveCfg = Release|x86
 		{BF9426F2-B135-4BBB-9C16-D43BC6D37CF7}.Release|x86.Build.0 = Release|x86
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Debug|x64.Build.0 = Debug|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Debug|x86.Build.0 = Debug|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Release|x64.ActiveCfg = Release|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Release|x64.Build.0 = Release|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Release|x86.ActiveCfg = Release|Any CPU
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1135,6 +1153,7 @@ Global
 		{E98BCF33-0131-46CB-8E35-F535F35CC94E} = {5A67A281-8142-4FB8-8AFF-3EC87B02355F}
 		{71376415-2932-4A3E-AFB6-5D596937E590} = {9404FDD5-1B65-426A-ABF6-DEC460458A0B}
 		{BF9426F2-B135-4BBB-9C16-D43BC6D37CF7} = {F464A367-2F81-4FBE-82B5-46C23622D518}
+		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C} = {5A67A281-8142-4FB8-8AFF-3EC87B02355F}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = isr.IO.Visa.vsmdi

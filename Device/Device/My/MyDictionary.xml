@@ -5,6 +5,12 @@
             <Word>na</Word>
             <Word>nv</Word>
             <Word>rc</Word>
+            <Word>mpty</Word>
+            <Word>vld</Word>
+            <Word>cmpl</Word>
+            <Word>Vcmpl</Word>
+            <Word>rnge</Word>
+            <Word>levl</Word>
             <Word>accurrent</Word>
             <Word>acvolts</Word>
             <Word>commonsideohms</Word>

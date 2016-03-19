@@ -11,7 +11,7 @@
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <IncludeSearchPaths>C:\My\LIBRARIES\VS\Share\WiX\DirectoryTree\;C:\My\LIBRARIES\VS\VI\CORE\VI\WiX\OhmniNet\OhmniNet.Tester.WiX\</IncludeSearchPaths>
-    <Name>isr.VI.OhmniNet.Tester.Bundle</Name>
+    <Name>VI.OhmniNet.Tester.Bundle</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -58,16 +58,16 @@
     <Content Include="readme.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Apps\OhmniNet\isr.VI.OhmniNet.Tester.vbproj">
-      <Name>isr.VI.OhmniNet.Tester</Name>
-      <Project>{B449651B-8ED5-4E57-B04F-D45585C8B36B}</Project>
+    <ProjectReference Include="..\..\..\Apps\OhmniNet\VI.OhmniNet.Tester.vbproj">
+      <Name>VI.OhmniNet.Tester</Name>
+      <Project>{b449651b-8ed5-4e57-b04f-d45585c8b36b}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\OhmniNet.Tester.WiX\isr.VI.OhmniNet.Tester.WiX.wixproj">
-      <Name>isr.VI.OhmniNet.Tester.WiX</Name>
+    <ProjectReference Include="..\OhmniNet.Tester.WiX\VI.OhmniNet.Tester.WiX.wixproj">
+      <Name>VI.OhmniNet.Tester.WiX</Name>
       <Project>{19060fb4-46b7-47ce-a5c6-0619d093877f}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>

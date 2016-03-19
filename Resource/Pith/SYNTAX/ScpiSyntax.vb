@@ -23,10 +23,10 @@ Namespace Scpi
             Public Const InfinityCaption As String = "9.90000E+37"
 
             ''' <summary> Gets the SCPI value for negative infinity. </summary>
-            Public Const NegativeInfinity As Double = -9.9E+37
+            Public Const NegativeInfinity As Double = -9.91E+37
 
             ''' <summary> Gets the SCPI caption for negative infinity. </summary>
-            Public Const NegativeInfinityCaption As String = "-9.90000E+37"
+            Public Const NegativeInfinityCaption As String = "-9.91000E+37"
 
             ''' <summary> Gets the SCPI value for 'non-a-number' (NAN). </summary>
             Public Const NotANumber As Double = 9.91E+37

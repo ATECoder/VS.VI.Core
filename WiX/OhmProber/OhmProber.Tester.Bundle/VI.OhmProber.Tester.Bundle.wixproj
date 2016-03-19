@@ -11,7 +11,7 @@
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <IncludeSearchPaths>C:\My\LIBRARIES\VS\Share\WiX\DirectoryTree\;C:\My\LIBRARIES\VS\VI\CORE\VI\WiX\OhmProber\OhmProber.Tester.WiX\</IncludeSearchPaths>
-    <Name>isr.VI.OhmProber.Tester.Bundle</Name>
+    <Name>VI.OhmProber.Tester.Bundle</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -58,16 +58,16 @@
     <Content Include="readme.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Apps\OhmProber\isr.VI.OhmProber.Tester.vbproj">
-      <Name>isr.VI.OhmProber.Tester</Name>
-      <Project>{269D72CF-BED4-44C3-A580-A984BA59963F}</Project>
+    <ProjectReference Include="..\..\..\Apps\OhmProber\VI.OhmProber.Tester.vbproj">
+      <Name>VI.OhmProber.Tester</Name>
+      <Project>{269d72cf-bed4-44c3-a580-a984ba59963f}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\OhmProber.Tester.WiX\isr.VI.OhmProber.Tester.WiX.wixproj">
-      <Name>isr.VI.OhmProber.Tester.WiX</Name>
+    <ProjectReference Include="..\OhmProber.Tester.WiX\VI.OhmProber.Tester.WiX.wixproj">
+      <Name>VI.OhmProber.Tester.WiX</Name>
       <Project>{057e940c-6587-44c3-9619-2a30c48dafc6}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>

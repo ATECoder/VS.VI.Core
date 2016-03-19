@@ -32,10 +32,10 @@ Public Enum MetaStatusBit
 End Enum
 
 ''' <summary>
-''' Enumerates reading elements the instrument is capable of.
+''' Enumerates reading types the instrument is capable of.
 ''' </summary>
 <System.Flags()>
-Public Enum ReadingElements
+Public Enum ReadingTypes
     <ComponentModel.Description("None")> None
     <ComponentModel.Description("Reading (READ)")> Reading = 1
     <ComponentModel.Description("Time Stamp (TST)")> Timestamp = Reading << 1

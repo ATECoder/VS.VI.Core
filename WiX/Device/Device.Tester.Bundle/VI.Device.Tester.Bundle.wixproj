@@ -11,7 +11,7 @@
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <IncludeSearchPaths>C:\My\LIBRARIES\VS\Share\WiX\DirectoryTree\;C:\My\LIBRARIES\VS\VI\CORE\VI\WiX\Device\Device.Tester.WiX\</IncludeSearchPaths>
-    <Name>isr.VI.Device.Tester.Bundle</Name>
+    <Name>VI.Device.Tester.Bundle</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -58,16 +58,16 @@
     <Content Include="readme.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Apps\Device.Tester\isr.VI.Device.Tester.vbproj">
-      <Name>isr.VI.Device.Tester</Name>
+    <ProjectReference Include="..\..\..\Apps\Device.Tester\VI.Device.Tester.vbproj">
+      <Name>VI.Device.Tester</Name>
       <Project>{76be615a-13d5-403e-9ca8-805e0bfd387a}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\Device.Tester.WiX\isr.VI.Device.Tester.WiX.wixproj">
-      <Name>isr.VI.Device.Tester.WiX</Name>
+    <ProjectReference Include="..\Device.Tester.WiX\VI.Device.Tester.WiX.wixproj">
+      <Name>VI.Device.Tester.WiX</Name>
       <Project>{37254351-a99d-4cb0-93f2-3203d6d5b58a}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>

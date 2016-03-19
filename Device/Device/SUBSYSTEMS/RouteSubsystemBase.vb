@@ -85,8 +85,9 @@ Public MustInherit Class RouteSubsystemBase
     ''' <param name="value"> The scan list. </param>
     ''' <returns> A String. </returns>
     Public Function WriteClosedChannel(ByVal value As String, ByVal timeout As TimeSpan) As String
-        Me.ClosedChannel = Me.Write(Me.ClosedChannelCommandFormat, value)
+        Me.Write(Me.ClosedChannelCommandFormat, value)
         If timeout > TimeSpan.Zero Then Me.StatusSubsystem.AwaitOperationCompleted(timeout)
+        Me.ClosedChannel = value
         Me.ClosedChannels = Nothing
         Return Me.ClosedChannel
     End Function
@@ -174,8 +175,9 @@ Public MustInherit Class RouteSubsystemBase
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
     Public Function WriteClosedChannels(ByVal value As String, ByVal timeout As TimeSpan) As String
-        Me.ClosedChannels = Me.Write(Me.ClosedChannelsCommandFormat, value)
+        Me.Write(Me.ClosedChannelsCommandFormat, value)
         If timeout > TimeSpan.Zero Then Me.StatusSubsystem.AwaitOperationCompleted(timeout)
+        Me.ClosedChannels = value
         Me.ClosedChannel = Nothing
         Return Me.ClosedChannels
     End Function
@@ -363,7 +365,8 @@ Public MustInherit Class RouteSubsystemBase
     ''' <param name="value"> The scan list. </param>
     ''' <returns> A List of scans. </returns>
     Public Function WriteScanList(ByVal value As String) As String
-        Me.ScanList = Me.Write(Me.ScanListCommandFormat, value)
+        Me.Write(Me.ScanListCommandFormat, value)
+        Me.ScanList = value
         Return Me.ScanList
     End Function
 

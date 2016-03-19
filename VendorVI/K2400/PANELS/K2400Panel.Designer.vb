@@ -101,7 +101,7 @@ Partial Class K2400Panel
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
         Me._LastErrorTextBox = New System.Windows.Forms.TextBox()
         Me._ReadingStatusStrip = New System.Windows.Forms.StatusStrip()
-        Me._ComplianceToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me._FailureCodeToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._ReadingToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._TbdToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._LastReadingTextBox = New System.Windows.Forms.TextBox()
@@ -325,11 +325,11 @@ Partial Class K2400Panel
         '_ReadingComboBoxLabel
         '
         Me._ReadingComboBoxLabel.AutoSize = True
-        Me._ReadingComboBoxLabel.Location = New System.Drawing.Point(109, 13)
+        Me._ReadingComboBoxLabel.Location = New System.Drawing.Point(103, 13)
         Me._ReadingComboBoxLabel.Name = "_ReadingComboBoxLabel"
-        Me._ReadingComboBoxLabel.Size = New System.Drawing.Size(59, 17)
+        Me._ReadingComboBoxLabel.Size = New System.Drawing.Size(53, 17)
         Me._ReadingComboBoxLabel.TabIndex = 2
-        Me._ReadingComboBoxLabel.Text = "Reading:"
+        Me._ReadingComboBoxLabel.Text = "Display:"
         Me._ReadingComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         '_ReadingComboBox
@@ -338,7 +338,7 @@ Partial Class K2400Panel
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._ReadingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me._ReadingComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ReadingComboBox.Location = New System.Drawing.Point(171, 9)
+        Me._ReadingComboBox.Location = New System.Drawing.Point(159, 9)
         Me._ReadingComboBox.Name = "_ReadingComboBox"
         Me._ReadingComboBox.Size = New System.Drawing.Size(175, 25)
         Me._ReadingComboBox.TabIndex = 3
@@ -738,9 +738,9 @@ Partial Class K2400Panel
         Me._HipotGroupBox.Controls.Add(Me._dwellTimeNumeric)
         Me._HipotGroupBox.Controls.Add(Me._ApertureNumeric)
         Me._HipotGroupBox.Controls.Add(Me._ApertureNumericLabel)
-        Me._HipotGroupBox.Location = New System.Drawing.Point(38, 26)
+        Me._HipotGroupBox.Location = New System.Drawing.Point(36, 26)
         Me._HipotGroupBox.Name = "_HipotGroupBox"
-        Me._HipotGroupBox.Size = New System.Drawing.Size(279, 217)
+        Me._HipotGroupBox.Size = New System.Drawing.Size(283, 217)
         Me._HipotGroupBox.TabIndex = 2
         Me._HipotGroupBox.TabStop = False
         Me._HipotGroupBox.Text = "HIPOT SETTINGS"
@@ -930,7 +930,7 @@ Partial Class K2400Panel
         '
         Me._TriggerToolStrip.Dock = System.Windows.Forms.DockStyle.None
         Me._TriggerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._AwaitTriggerToolStripButton, Me._WaitHourglassLabel, Me._AssertTriggerToolStripButton, Me._TriggerActionToolStripLabel})
-        Me._TriggerToolStrip.Location = New System.Drawing.Point(13, 226)
+        Me._TriggerToolStrip.Location = New System.Drawing.Point(13, 219)
         Me._TriggerToolStrip.Name = "_TriggerToolStrip"
         Me._TriggerToolStrip.Size = New System.Drawing.Size(270, 25)
         Me._TriggerToolStrip.Stretch = True
@@ -989,9 +989,9 @@ Partial Class K2400Panel
         Me._BinningGroupBox.Controls.Add(Me._ContactCheckBitPatternNumericLabel)
         Me._BinningGroupBox.Controls.Add(Me._EotStrobeDurationNumericLabel)
         Me._BinningGroupBox.Controls.Add(Me._EotStrobeDurationNumeric)
-        Me._BinningGroupBox.Location = New System.Drawing.Point(16, 21)
+        Me._BinningGroupBox.Location = New System.Drawing.Point(16, 29)
         Me._BinningGroupBox.Name = "_BinningGroupBox"
-        Me._BinningGroupBox.Size = New System.Drawing.Size(323, 184)
+        Me._BinningGroupBox.Size = New System.Drawing.Size(323, 161)
         Me._BinningGroupBox.TabIndex = 2
         Me._BinningGroupBox.TabStop = False
         Me._BinningGroupBox.Text = "SOT, EOT, BINNING"
@@ -1017,7 +1017,7 @@ Partial Class K2400Panel
         '
         '_ApplySotSettingsButton
         '
-        Me._ApplySotSettingsButton.Location = New System.Drawing.Point(260, 147)
+        Me._ApplySotSettingsButton.Location = New System.Drawing.Point(253, 124)
         Me._ApplySotSettingsButton.Name = "_ApplySotSettingsButton"
         Me._ApplySotSettingsButton.Size = New System.Drawing.Size(57, 28)
         Me._ApplySotSettingsButton.TabIndex = 11
@@ -1028,7 +1028,7 @@ Partial Class K2400Panel
         '
         Me._ContactCheckSupportLabel.AutoSize = True
         Me._ContactCheckSupportLabel.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._ContactCheckSupportLabel.Location = New System.Drawing.Point(3, 164)
+        Me._ContactCheckSupportLabel.Location = New System.Drawing.Point(3, 141)
         Me._ContactCheckSupportLabel.Name = "_ContactCheckSupportLabel"
         Me._ContactCheckSupportLabel.Size = New System.Drawing.Size(0, 17)
         Me._ContactCheckSupportLabel.TabIndex = 9
@@ -1163,7 +1163,7 @@ Partial Class K2400Panel
         Me._ReadingStatusStrip.Dock = System.Windows.Forms.DockStyle.Top
         Me._ReadingStatusStrip.Font = New System.Drawing.Font("Segoe UI", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ReadingStatusStrip.GripMargin = New System.Windows.Forms.Padding(0)
-        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ComplianceToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._TbdToolStripStatusLabel})
+        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._FailureCodeToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._TbdToolStripStatusLabel})
         Me._ReadingStatusStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingStatusStrip.Name = "_ReadingStatusStrip"
         Me._ReadingStatusStrip.Size = New System.Drawing.Size(364, 37)
@@ -1172,14 +1172,14 @@ Partial Class K2400Panel
         '
         '_ComplianceToolStripStatusLabel
         '
-        Me._ComplianceToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ComplianceToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ComplianceToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
-        Me._ComplianceToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
-        Me._ComplianceToolStripStatusLabel.Name = "_ComplianceToolStripStatusLabel"
-        Me._ComplianceToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
-        Me._ComplianceToolStripStatusLabel.Text = "C"
-        Me._ComplianceToolStripStatusLabel.ToolTipText = "Compliance"
+        Me._FailureCodeToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._FailureCodeToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._FailureCodeToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
+        Me._FailureCodeToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
+        Me._FailureCodeToolStripStatusLabel.Name = "_ComplianceToolStripStatusLabel"
+        Me._FailureCodeToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
+        Me._FailureCodeToolStripStatusLabel.Text = "C"
+        Me._FailureCodeToolStripStatusLabel.ToolTipText = "Compliance"
         '
         '_ReadingToolStripStatusLabel
         '
@@ -1340,7 +1340,7 @@ Partial Class K2400Panel
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
-    Private WithEvents _ComplianceToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _FailureCodeToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _TbdToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _LastReadingTextBox As System.Windows.Forms.TextBox

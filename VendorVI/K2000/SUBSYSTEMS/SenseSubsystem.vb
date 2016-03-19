@@ -18,18 +18,25 @@ Public Class SenseSubsystem
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me._readings = New Readings
-        Me.Readings.Elements = ReadingElements.Reading Or ReadingElements.Units Or
-                                   ReadingElements.ReadingNumber Or ReadingElements.Timestamp
         Me.SupportedFunctionModes = VI.Scpi.SenseFunctionModes.CurrentDC Or
                                         VI.Scpi.SenseFunctionModes.VoltageDC Or
                                         VI.Scpi.SenseFunctionModes.Resistance Or
                                         VI.Scpi.SenseFunctionModes.FourWireResistance
+        ' the readings are initialized when the format system is reset.
+        Me._readings = New Readings
     End Sub
 
 #End Region
 
 #Region " I PRESETTABLE "
+
+    ''' <summary>
+    ''' Sets subsystem values to their known execution clear state.
+    ''' </summary>
+    Public Overrides Sub ClearExecutionState()
+        MyBase.ClearExecutionState()
+        Me._readings.Reset()
+    End Sub
 
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
@@ -79,8 +86,8 @@ Public Class SenseSubsystem
     Public Overrides Sub ParseReading(ByVal reading As String)
 
         ' check if we have units suffixes.
-        If (Me.Readings.Elements And isr.VI.ReadingElements.Units) <> 0 Then
-            reading = ReadingElement.TrimUnits(reading)
+        If (Me.Readings.Elements And isr.VI.ReadingTypes.Units) <> 0 Then
+            reading = ReadingEntity.TrimUnits(reading)
         End If
 
         ' Take a reading and parse the results

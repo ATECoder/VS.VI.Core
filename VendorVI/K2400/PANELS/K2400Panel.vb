@@ -172,28 +172,6 @@ Public Class K2400Panel
         End Select
     End Sub
 
-#If False Then
-
-#End If
-#If False Then
-    ''' <summary> Device property changed. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub DevicePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnDevicePropertyChanged(TryCast(sender, Device), e.PropertyName)
-            End If
-        Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
-        Finally
-            MyBase.DevicePropertyChanged(sender, e)
-        End Try
-    End Sub
-#End If
-
     ''' <summary> Event handler. Called when device opened. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
@@ -497,12 +475,12 @@ Public Class K2400Panel
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
-                If Me.Device IsNot Nothing AndAlso subsystem.Elements <> ReadingElements.None Then
+                If Me.Device IsNot Nothing AndAlso subsystem.Elements <> ReadingTypes.None Then
                     Dim selectedIndex As Integer = Me._ReadingComboBox.SelectedIndex
                     With Me._ReadingComboBox
                         .DataSource = Nothing
                         .Items.Clear()
-                        .DataSource = GetType(VI.ReadingElements).ValueDescriptionPairs(subsystem.Elements And Not ReadingElements.Units)
+                        .DataSource = GetType(VI.ReadingTypes).ValueDescriptionPairs(subsystem.Elements And Not ReadingTypes.Units)
                         .DisplayMember = "Value"
                         .ValueMember = "Key"
                         If .Items.Count > 0 Then
@@ -533,20 +511,20 @@ Public Class K2400Panel
     ''' <param name="value"> The <see cref="TraceMessage">message</see> to display and
     ''' log. </param>
     ''' <returns> The VI.ReadingElements. </returns>
-    Friend Function SelectReading(ByVal value As VI.ReadingElements) As VI.ReadingElements
+    Friend Function SelectReading(ByVal value As VI.ReadingTypes) As VI.ReadingTypes
         If Me.IsDeviceOpen AndAlso
-                (value <> VI.ReadingElements.None) AndAlso (value <> Me.SelectedReading) Then
+                (value <> VI.ReadingTypes.None) AndAlso (value <> Me.SelectedReadingType) Then
             Me._ReadingComboBox.SafeSelectItem(value.ValueDescriptionPair)
         End If
-        Return Me.SelectedReading
+        Return Me.SelectedReadingType
     End Function
 
-    ''' <summary> Gets the selected reading. </summary>
-    ''' <value> The selected reading. </value>
+    ''' <summary> Gets the type of the selected reading. </summary>
+    ''' <value> The type of the selected reading. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Private ReadOnly Property SelectedReading() As VI.ReadingElements
+    Private ReadOnly Property SelectedReadingType() As VI.ReadingTypes
         Get
-            Return CType(CType(Me._ReadingComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, VI.ReadingElements)
+            Return CType(CType(Me._ReadingComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, VI.ReadingTypes)
         End Get
     End Property
 
@@ -554,32 +532,37 @@ Public Class K2400Panel
 
 #Region " MEASURE "
 
-    ''' <summary> Executes the measurement available action. </summary>
-    ''' <param name="readings"> The readings. </param>
-    Private Sub onMeasurementAvailable(ByVal readings As Readings)
+    ''' <summary> Displays the active reading caption and status. </summary>
+    ''' <remarks> David, 3/18/2016. </remarks>
+    Private Sub DisplayActiveReading()
         Const clear As String = "    "
-        If readings Is Nothing OrElse readings.IsEmpty Then
-            Me._ReadingToolStripStatusLabel.Text = "-.------- :)"
-            Me._ComplianceToolStripStatusLabel.Text = clear
-            Me._TbdToolStripStatusLabel.Text = clear
+        Dim caption As String = clear
+        Dim failureCaption As String = clear
+        Dim failureToolTip As String = clear
+        Dim tbdCaption As String = clear
+        If Me.Device.MeasureSubsystem Is Nothing OrElse
+            Me.Device.MeasureSubsystem.Readings Is Nothing OrElse
+            Me.Device.MeasureSubsystem.Readings.ActiveReadingType = ReadingTypes.None Then
+            caption = "-.------- :)"
+        ElseIf Me.Device.MeasureSubsystem.Readings.IsEmpty Then
+            caption = Me.Device.MeasureSubsystem.Readings.ActiveAmountCaption
         Else
-            Me._ReadingToolStripStatusLabel.SafeTextSetter(readings.ToString(Me.SelectedReading))
-            Dim reading As MeasuredAmount = readings.SelectMeasuredAmount(Me.SelectedReading)
-            If reading Is Nothing OrElse reading.Amount Is Nothing Then
-                Me._ComplianceToolStripStatusLabel.Text = clear
-                Me._TbdToolStripStatusLabel.Text = clear
-            Else
-                Dim failureCode As String = reading.MetaStatus.ToShortDescription("")
-                Dim details As String = reading.MetaStatus.ToLongDescription("")
-                Me._ComplianceToolStripStatusLabel.Text = (failureCode & clear).Substring(0, clear.Length)
-                Me._TbdToolStripStatusLabel.Text = clear
-                If String.IsNullOrEmpty(details) Then
+            caption = Me.Device.MeasureSubsystem.Readings.ActiveAmountCaption
+            Dim metaStatus As MetaStatus = Me.Device.MeasureSubsystem.Readings.ActiveMetaStatus
+            If metaStatus.HasValue Then
+                failureCaption = $"{metaStatus.ToShortDescription(""),4}"
+                failureToolTip = metaStatus.ToLongDescription("")
+                If String.IsNullOrEmpty(failureToolTip) Then
                     Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Instruments parsed reading elements.")
                 Else
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, details)
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, failureToolTip)
                 End If
             End If
         End If
+        Me._ReadingToolStripStatusLabel.SafeTextSetter(caption)
+        Me._FailureCodeToolStripStatusLabel.SafeTextSetter(failureCaption)
+        Me._FailureCodeToolStripStatusLabel.SafeToolTipTextSetter(failureToolTip)
+        Me._TbdToolStripStatusLabel.SafeTextSetter(tbdCaption)
     End Sub
 
     ''' <summary> Handles the Measure subsystem property changed event. </summary>
@@ -593,7 +576,7 @@ Public Class K2400Panel
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Measure message: {0}.", subsystem.LastReading.InsertCommonEscapeSequences)
             Case NameOf(subsystem.MeasurementAvailable)
-                Me.onMeasurementAvailable(subsystem.Readings)
+                Me.DisplayActiveReading()
         End Select
     End Sub
 
@@ -727,7 +710,8 @@ Public Class K2400Panel
         End Get
         Set(value As Scpi.SenseFunctionModes)
             With Me._EnabledSenseFunctionsListBox
-                For Each item As Object In .Items
+                For i As Integer = 0 To .Items.Count - 1
+                    Dim item As Object = .Items(i)
                     Dim mode As Scpi.SenseFunctionModes = CType(CType(item, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, VI.Scpi.SenseFunctionModes)
                     If (value And mode) = 0 Then
                         .SetItemCheckState(.Items.IndexOf(item), CheckState.Unchecked)
@@ -763,11 +747,11 @@ Public Class K2400Panel
             Case NameOf(subsystem.PowerLineCycles)
                 If subsystem.PowerLineCycles.HasValue Then Me._NplcNumeric.SafeValueSetter(CDec(subsystem.PowerLineCycles.Value))
             Case NameOf(subsystem.MeasurementAvailable)
-                Me.onMeasurementAvailable(subsystem.Readings)
+                Me.DisplayActiveReading()
             Case NameOf(subsystem.SupportedFunctionModes)
                 Me.onSupportedFunctionModesChanged(subsystem)
             Case NameOf(subsystem.FunctionModes)
-                Me.onFunctionModesChanged(subsystem)
+                Me.OnFunctionModesChanged(subsystem)
         End Select
     End Sub
 
@@ -2101,78 +2085,68 @@ Public Class K2400Panel
     ''' <summary>
     ''' Configures the high potential measurement.
     ''' </summary>
-    Public Function ConfigureHipot(ByVal hipotSettings As InsulationResistance) As Boolean
+    Public Sub ConfigureHipot(ByVal hipotSettings As InsulationResistance)
         If hipotSettings Is Nothing Then Throw New ArgumentNullException(NameOf(hipotSettings))
+
         ' make sure the 2400 output is off
-        ' Me.Session.Write(":OUTP OFF")
         Me.Device.OutputSubsystem.ApplyOutputOnState(False)
 
 #If False Then
     Me.Session.Write("*RST")
+    Me.Session.Write(":OUTP OFF")
+    Me.Session.Write(":ROUT:TERM REAR")
     Me.Session.Write(":SENS:FUNC ""RES""")
     Me.Session.Write(":SENS:RES:MODE MAN")
+    Me.Session.Write(":SOUR:CLE:AUTO ON")
+    Me.Session.Write(":SOUR:DEL 5")
     Me.Session.Write(":SYST:RSEN ON")
     Me.Session.Write(":SOUR:FUNC VOLT")
     Me.Session.Write(":SOUR:VOLT:RANG 5")
     Me.Session.Write(":SOUR:VOLT 5")
     Me.Session.Write(":SENS:CURR:RANG 10e-6")
-    Me.Session.Write(":OUTPut ON")
+    Me.Session.Write(":SENS:CURR:PROT 10e-6")
+    Me.Session.Write(":SENS:VOLT:NPLC 1")
+    Me.Session.Write(":SENS:CURR:NPLC 1")
+    Me.Session.Write(":SENS:RES:NPLC 1")
+    Me.Session.Write(":SYST:AZER ONCE")
+    Me.Session.Write(":FORM:ELEM VOLT,CURR,RES,STATUS")
+    Me.Session.Write(":SOUR:CLE:AUTO ON")
     Dim value As String = Me.Session.Query(":READ?")
-    Me.Session.Write(":OUTPut OFF")
 #End If
 
-        ' Use rear terminals
-        ' Me.Session.Write(":ROUT:TERM REAR")
+        ' initialize the known state.
+        Me.Device.ResetClearInit()
         Me.Device.RouteSubsystem.ApplyTerminalMode(VI.RouteTerminalMode.Rear)
-
-        ' Me.Session.Write(":SENS:FUNC ""RES""")
-        Me.Device.SenseSubsystem.ApplyFunctionMode(Scpi.SenseFunctionModes.Resistance)
+        Me.Device.SenseSubsystem.ApplyFunctionModes(Scpi.SenseFunctionModes.Resistance)
 
         ' set to manual mode to require manually setting the measurement as voltage source
-        ' Me.Session.Write(":SENS:RES:MODE MAN")
         Me.Device.SenseResistanceSubsystem.ApplyConfigurationMode(ConfigurationMode.Manual)
 
         ' the source must be set first.
-        ' Me.Session.Write(":SOUR:CLE:AUTO ON")
         Me.Device.SourceSubsystem.ApplyAutoClearEnabled(True)
 
-        'Me.Session.Write(":SOUR:DEL " & CStr(Me._dwellTimeNumeric.Value))
-        'Me._dwellTimeNumeric.Value = CDec(Me.Session.Query(":SOUR:DEL?"))
         Me.Device.SourceSubsystem.ApplyDelay(hipotSettings.DwellTime)
         hipotSettings.DwellTime = Me.Device.SourceSubsystem.Delay.GetValueOrDefault(TimeSpan.Zero)
 
-        ' Me.Session.Write(":SOUR:FUNC VOLT")
         Me.Device.SourceSubsystem.ApplyFunctionMode(SourceFunctionModes.Voltage)
 
-        'Me.Session.Write(":SOUR:VOLT:RANG " & SelectVoltageRange(Me._VoltageLevelNumeric.Value))
         Me.Device.SourceVoltageSubsystem.ApplyRange(hipotSettings.VoltageLevel)
 
-        ' Me.Session.Write(":SOUR:VOLT:LEV " & CStr(Me._VoltageLevelNumeric.Value))
-        ' Me._VoltageLevelNumeric.Value = CDec(Me.Session.Query(":SOUR:VOLT:LEV?"))
         Me.Device.SourceVoltageSubsystem.ApplyLevel(hipotSettings.VoltageLevel)
         hipotSettings.VoltageLevel = Me.Device.SourceVoltageSubsystem.Level.GetValueOrDefault(0)
 
-        ' Me.Session.Write(":SENS:CURR:RANG " & CStr(Me.CurrentRange))
         Me.Device.SenseCurrentSubsystem.ApplyRange(Me.ActiveInsulationResistance.CurrentRange)
 
-        ' Me.Session.Write(":SENS:CURR:PROT " & CStr(Me._CurrentLimitNumeric.Value))
         Me.Device.SenseCurrentSubsystem.ApplyProtectionLevel(hipotSettings.CurrentLimit)
         hipotSettings.CurrentLimit = Me.Device.SenseCurrentSubsystem.ProtectionLevel.GetValueOrDefault(0)
 
-        'Me.Session.Write(":SENS:VOLT:NPLC " & CStr(Me._ApertureNumeric.Value))
-        Me.Device.SenseVoltageSubsystem.ApplyPowerLineCycles(hipotSettings.PowerLineCycles)
-        hipotSettings.PowerLineCycles = Me.Device.SenseVoltageSubsystem.PowerLineCycles.GetValueOrDefault(0)
-
-        ' Me.Session.Write(":SENS:CURR:NPLC " & CStr(Me._ApertureNumeric.Value))
-        Me.Device.SenseCurrentSubsystem.ApplyPowerLineCycles(hipotSettings.PowerLineCycles)
-        hipotSettings.PowerLineCycles = Me.Device.SenseCurrentSubsystem.PowerLineCycles.GetValueOrDefault(0)
+        Me.Device.SenseResistanceSubsystem.ApplyPowerLineCycles(hipotSettings.PowerLineCycles)
+        hipotSettings.PowerLineCycles = Me.Device.SenseResistanceSubsystem.PowerLineCycles.GetValueOrDefault(0)
 
         ' Enable four wire connection
-        ' Me.Session.Write(":SYST:RSEN ON")
         Me.Device.SystemSubsystem.ApplyFourWireSenseEnabled(True)
 
         ' force immediate update of auto zero
-        ' Me.Session.Write(":SYST:AZER ONCE")
         Me.Device.SystemSubsystem.ApplyAutoZeroEnabled(True)
 
         Me.Device.SystemSubsystem.ApplyContactCheckEnabled(hipotSettings.ContactCheckEnabled)
@@ -2180,15 +2154,28 @@ Public Class K2400Panel
         Me.Device.ContactCheckLimit.ApplyEnabled(hipotSettings.ContactCheckEnabled)
         hipotSettings.ContactCheckEnabled = Me.Device.ContactCheckLimit.Enabled.GetValueOrDefault(False)
 
-        ' Me.Session.Write(":FORM:ELEM VOLT,CURR,RES,STATUS")
-        Me.Device.FormatSubsystem.ApplyElements(ReadingElements.Voltage Or ReadingElements.Current Or
-                                                ReadingElements.Resistance Or ReadingElements.Status)
+        Me.Device.FormatSubsystem.ApplyElements(ReadingTypes.Voltage Or ReadingTypes.Current Or
+                                                ReadingTypes.Resistance Or ReadingTypes.Status)
 
-        Return True
+        Me.Device.MeasureSubsystem.Readings.ResistanceReading.LowLimit = 1000000.0 * Me._ResistanceRangeNumeric.Value
 
-    End Function
+        ' update the timeout to reflect the dwell time.
+        If Me.Device.SourceSubsystem.Delay.HasValue Then
+            Dim totalTestTime As TimeSpan = Me.Device.SourceSubsystem.Delay.Value
+            totalTestTime = totalTestTime.Add(Me.Device.SenseResistanceSubsystem.IntegrationPeriod.GetValueOrDefault(TimeSpan.Zero))
+            totalTestTime = totalTestTime.Add(Me.Device.TriggerSubsystem.Delay.GetValueOrDefault(TimeSpan.Zero))
+            ' set this as the minimum timeout
+            totalTestTime = totalTestTime.Add(TimeSpan.FromSeconds(2))
+            If totalTestTime > Me.Device.Session.Timeout Then
+                Me.Device.Session.Timeout = totalTestTime
+            End If
+        End If
+    End Sub
 
+    ''' <summary> Applies the hipot settings. </summary>
+    ''' <remarks> David, 3/17/2016. </remarks>
     Private Sub ApplyHipotSettings()
+        If Me.ActiveInsulationResistance Is Nothing Then Me.AssignInsulationTest()
         With Me.ActiveInsulationResistance
             .DwellTime = TimeSpan.FromSeconds(Me._dwellTimeNumeric.Value)
             .VoltageLevel = Me._VoltageLevelNumeric.Value
@@ -2200,11 +2187,17 @@ Public Class K2400Panel
         End With
     End Sub
 
+    ''' <summary> Applies the hipot settings button click. </summary>
+    ''' <remarks> David, 3/17/2016. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ApplyHipotSettingsButton_Click(sender As Object, e As EventArgs) Handles _ApplyHipotSettingsButton.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
+            Me.ApplyHipotSettings()
             Me.ConfigureHipot(Me.ActiveInsulationResistance)
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, "Failed applying high potential settings")
@@ -2359,25 +2352,25 @@ Public Class K2400Panel
 
     End Sub
 
-    ''' <summary> Event handler. Called by _ReadingComboBox for selected index changed events. Selects
-    ''' a new reading to display. </summary>
-    ''' <param name="sender"> Source of the event. </param>
+    ''' <summary> Reading combo box selected value changed. </summary>
+    ''' <remarks> David, 3/17/2016. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ReadingComboBox_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ReadingComboBox.SelectedIndexChanged
+    Private Sub _ReadingComboBox_SelectedValueChanged(sender As Object, e As EventArgs) Handles _ReadingComboBox.SelectedValueChanged
+        If Me._InitializingComponents Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
-            If Me._ReadingComboBox.Enabled AndAlso Me._ReadingComboBox.SelectedIndex >= 0 AndAlso
-                    Not String.IsNullOrWhiteSpace(Me._ReadingComboBox.Text) Then
-                Me.onMeasurementAvailable(Me.Device.MeasureSubsystem.Readings)
-            End If
+            Me.ErrorProvider.Clear()
+            Me.Device.MeasureSubsystem.Readings.ActiveReadingType = Me.SelectedReadingType
+            Me.DisplayActiveReading()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred displaying a measurement;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
         End Try
-
     End Sub
 
     ''' <summary> Event handler. Called by _ReadButton for click events. Query the Device for a
@@ -2389,10 +2382,7 @@ Public Class K2400Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-
-            ' update display modalities if changed.
             Me.Device.MeasureSubsystem.Read()
-
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. Details: {0}", ex)
@@ -2469,14 +2459,7 @@ Public Class K2400Panel
         My.MyLibrary.Identify(Me.Talker)
     End Sub
 
-
 #End Region
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-        AddHandler Me.Device.SenseFourWireResistanceSubsystem.PropertyChanged, AddressOf Me.SenseFourWireResistanceSubsystemPropertyChanged
-        RemoveHandler Me.Device.SenseFourWireResistanceSubsystem.PropertyChanged, AddressOf Me.SenseFourWireResistanceSubsystemPropertyChanged
-#End If
-#End Region

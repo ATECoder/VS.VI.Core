@@ -32,7 +32,6 @@ Namespace My
                 If CommandLineInfo.DevicesEnabled.HasValue Then
                     Me.SplashTraceEvent(TraceEventType.Information, "{0} use of devices from command line",
                                         IIf(CommandLineInfo.DevicesEnabled.Value, "Enabled", "Disabling"))
-                    My.Settings.DevicesEnabled = CommandLineInfo.DevicesEnabled.Value
                 End If
 
             Catch ex As Exception
@@ -84,12 +83,6 @@ Namespace My
                 Me.SplashTraceEvent(TraceEventType.Information, My.MyApplication.TraceEventId, "Parsing command line")
                 e.Cancel = Not CommandLineInfo.TryParseCommandLine(e.CommandLine)
             End If
-        End Sub
-
-        ''' <summary> Applies the trace level described by value. </summary>
-        ''' <param name="value"> The value. </param>
-        Public Sub ApplyTraceLevel(ByVal value As TraceEventType)
-            Me.MyLog.ApplyTraceLevel(value)
         End Sub
 
     End Class

@@ -3,7 +3,7 @@
     Partial Friend Class MyApplication
 
         ''' <summary> Gets the identifier of the trace source. </summary>
-        Public Const TraceEventId As Integer = isr.VI.My.ProjectTraceEventId.K3700Console
+        Public Const TraceEventId As Integer = 1 ' top level identifier. isr.VI.My.ProjectTraceEventId.K3700Console
 
         Public Const AssemblyTitle As String = "K3700 Driver Console"
         Public Const AssemblyDescription As String = "K3700 Switching Mainframe Virtual Instrument Console"
@@ -18,7 +18,6 @@
         End Sub
 
     End Class
-
 
 End Namespace
 

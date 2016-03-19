@@ -15,8 +15,8 @@ Public Class MeasuredAmount
 
     ''' <summary> Constructs a measured value without specifying the value or its validity, which must
     ''' be specified for the value to be made valid. </summary>
-    Public Sub New()
-        MyBase.New()
+    Public Sub New(ByVal readingType As ReadingTypes)
+        MyBase.New(readingType)
         Me._MetaStatus = New MetaStatus()
         Me._ComplianceLimitMargin = 0.001
     End Sub
@@ -91,35 +91,46 @@ Public Class MeasuredAmount
 
 #Region " AMOUNT "
 
-    ''' <summary> Parses the reading to create the specific reading type in the inherited class. </summary>
+    ''' <summary> Applies the reading to create the specific reading type in the inherited class. </summary>
     ''' <remarks> Assumes that reading is a number. </remarks>
     ''' <param name="valueReading"> Specifies the value reading. </param>
     ''' <returns> <c>True</c> if parsed; Otherwise, <c>False</c>. </returns>
-    Public Overrides Function TryParse(ByVal valueReading As String, ByVal unitsReading As String) As Boolean
-        If MyBase.TryParse(valueReading, unitsReading) Then
-            Return Me.TryParse(valueReading)
-        Else
-            Me.MetaStatus.IsValid = False
-        End If
+    Public Overrides Function TryApplyReading(ByVal valueReading As String, ByVal unitsReading As String) As Boolean
+        Me.MetaStatus.Reset()
+        Me.MetaStatus.IsValid = MyBase.TryApplyReading(valueReading, unitsReading)
         Return Me.MetaStatus.IsValid
     End Function
 
-    ''' <summary> Parses the reading to create the specific reading type in the inherited class. </summary>
+    ''' <summary> Applies the reading to create the specific reading type in the inherited class. </summary>
     ''' <remarks> Assumes that reading is a number. </remarks>
     ''' <param name="valueReading"> Specifies the value reading. </param>
     ''' <returns> <c>True</c> if parsed; Otherwise, <c>False</c>. </returns>
-    Public Overrides Function TryParse(ByVal valueReading As String) As Boolean
-        If MyBase.TryParse(valueReading) Then
-            Me._MetaStatus.IsValid = True
+    Public Overrides Function TryApplyReading(ByVal valueReading As String) As Boolean
+        Me.MetaStatus.Reset()
+        Me.MetaStatus.IsValid = MyBase.TryApplyReading(valueReading)
+        Return Me.MetaStatus.IsValid
+    End Function
+
+    Public Overrides Function TryEvaluate(ByVal status As Long) As Boolean
+        ' update the status to preserve the validity state.
+        Me.MetaStatus.Preset(Me.MetaStatus.Value Or status)
+        If Me.MetaStatus.IsValid Then
             Dim newValue As Double = Me.Value.Value
+
             Me.MetaStatus.ToggleBit(MetaStatusBit.Infinity, Math.Abs(newValue - Scpi.Syntax.Infinity) < 1)
+            If Me.MetaStatus.IsBit(MetaStatusBit.Infinity) Then Return Me.MetaStatus.IsValid
+
             Me.MetaStatus.ToggleBit(MetaStatusBit.NegativeInfinity, Math.Abs(newValue - Scpi.Syntax.NegativeInfinity) < 1)
+            If Me.MetaStatus.IsBit(MetaStatusBit.NegativeInfinity) Then Return Me.MetaStatus.IsValid
+
             Me.MetaStatus.ToggleBit(MetaStatusBit.NotANumber, Math.Abs(newValue - Scpi.Syntax.NotANumber) < 1)
+            If Me.MetaStatus.IsBit(MetaStatusBit.NotANumber) Then Return Me.MetaStatus.IsValid
+
             Me.MetaStatus.HitLevelCompliance = Not (newValue >= Me._ComplianceLimit) Xor (Me._ComplianceLimit > 0)
+            If Me.MetaStatus.HitLevelCompliance Then Return Me.MetaStatus.IsValid
+
             Me.MetaStatus.IsHigh = Me.Value.Value.CompareTo(Me.HighLimit) > 0
             Me.MetaStatus.IsLow = Me.Value.Value.CompareTo(Me.LowLimit) < 0
-        Else
-            Me.MetaStatus.IsValid = False
         End If
         Return Me.MetaStatus.IsValid
     End Function

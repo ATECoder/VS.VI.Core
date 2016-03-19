@@ -18,9 +18,20 @@ Public Class MeasureSubsystem
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
+        ' the readings are initialized when the format system is reset.
         Me._readings = New Readings
-        Me.Readings.Elements = ReadingElements.Reading Or ReadingElements.Units Or
-                                   ReadingElements.ReadingNumber Or ReadingElements.Timestamp
+    End Sub
+
+#End Region
+
+#Region " I PRESETTABLE "
+
+    ''' <summary>
+    ''' Sets subsystem values to their known execution clear state.
+    ''' </summary>
+    Public Overrides Sub ClearExecutionState()
+        MyBase.ClearExecutionState()
+        Me._readings.Reset()
     End Sub
 
 #End Region

@@ -120,6 +120,7 @@ Public Class Device
         Me.AddSubsystem(Me.SystemSubsystem)
         'AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
 
+        ' better add before the format subsystem, which reset initializes the readings.
         Me._MeasureSubsystem = New MeasureSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.MeasureSubsystem)
         'AddHandler Me._MeasureSubsystem.PropertyChanged, AddressOf Me.MeasureSubsystemPropertyChanged

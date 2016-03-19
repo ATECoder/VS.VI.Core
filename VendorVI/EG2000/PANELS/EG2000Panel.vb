@@ -121,37 +121,6 @@ Public Class EG2000Panel
         Next
     End Sub
 
-#If False Then
-    ''' <summary> Handle the device property changed event. </summary>
-    ''' <param name="device">    The device. </param>
-    ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnDevicePropertyChanged(ByVal device As Device, ByVal propertyName As String)
-        If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
-
-        Select Case propertyName
-            Case NameOf(device.IsDeviceOpen)
-                Me.OnDeviceOpenChanged(device)
-        End Select
-    End Sub
-    ''' <summary> Event handler. Called for property changed events. </summary>
-    ''' <param name="sender"> <see cref="System.Object"/> instance of this
-    ''' <see cref="System.Windows.Forms.Control"/> </param>
-    ''' <param name="e">      Event information to send to registered event handlers. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub DevicePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnDevicePropertyChanged(TryCast(sender, Device), e.PropertyName)
-            End If
-        Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
-        Finally
-            MyBase.DevicePropertyChanged(sender, e)
-        End Try
-    End Sub
-#End If
-
     ''' <summary> Event handler. Called when device opened. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>

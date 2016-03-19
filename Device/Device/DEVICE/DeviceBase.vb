@@ -487,17 +487,8 @@ Public MustInherit Class DeviceBase
         ' add listens and enable publishing while initializing the device.
         Me.AddSubsystemListeners()
 
-        ' 2/18/16
+        ' 2/18/16: replaces calls to reset and then init known states
         Me.ResetClearInit()
-#If False Then
-        ' reset device
-        Me.ResetKnownState()
-        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(ResetRefractoryPeriod)
-
-        ' initialize the device
-        Me.InitKnownState()
-        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(InitRefractoryPeriod)
-#End If
 
     End Sub
 
@@ -1290,33 +1281,3 @@ Public MustInherit Class DeviceBase
 #End Region
 
 End Class
-
-#Region " UNUSED "
-#If False Then
-
-    Private _SessionPropertyChangeHandlerEnabled As Boolean
-
-    ''' <summary> Gets or sets the session property change handler enabled. </summary>
-    ''' <value> The session property change handler enabled. </value>
-    Public Property SessionPropertyChangeHandlerEnabled As Boolean
-        Get
-            Return _SessionPropertyChangeHandlerEnabled
-        End Get
-        Set(value As Boolean)
-            If Not value.Equals(Me.SessionPropertyChangeHandlerEnabled) Then
-                Me._SessionPropertyChangeHandlerEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SessionPropertyChangeHandlerEnabled))
-            End If
-        End Set
-    End Property
-
-
-    ''' <summary> Gets a value indicating whether the subsystem has an open session open. </summary>
-    ''' <value> <c>True</c> if the device has an open session; otherwise, <c>False</c>. </value>
-    Public ReadOnly Property IsSessionOpen As Boolean
-        Get
-            Return Me.Session.IsSessionOpen
-        End Get
-    End Property
-#End If
-#End Region

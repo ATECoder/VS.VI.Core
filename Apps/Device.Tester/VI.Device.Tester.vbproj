@@ -5,17 +5,17 @@
     <MyType>WindowsForms</MyType>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2C1F34BA-62EF-480E-AC29-CA866D1C1AF6}</ProjectGuid>
+    <ProjectGuid>{76BE615A-13D5-403E-9CA8-805E0BFD387A}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <AssemblyName>VI.Tsp.Tester</AssemblyName>
+    <AssemblyName>VI.Device.Tester</AssemblyName>
     <OutputType>WinExe</OutputType>
     <StartupObject>isr.VI.My.MyApplication</StartupObject>
     <AssemblyMajorVersion>1</AssemblyMajorVersion>
     <AssemblyMinorVersion>0</AssemblyMinorVersion>
-    <AssemblyRevisionNumber>2909</AssemblyRevisionNumber>
+    <AssemblyRevisionNumber>2863</AssemblyRevisionNumber>
     <GenerateRevisionNumber>False</GenerateRevisionNumber>
-    <AssemblyCompanyName>Integrated Scientific Resources, Inc.</AssemblyCompanyName>
+    <AssemblyCompanyName>isr</AssemblyCompanyName>
     <ApplicationIcon>My\isr new logo.ico</ApplicationIcon>
     <RootNamespace>isr.VI</RootNamespace>
     <FileUpgradeFlags>
@@ -27,8 +27,6 @@
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -41,12 +39,14 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\debug\</OutputPath>
-    <DocumentationFile>VI.Tsp.Tester.xml</DocumentationFile>
+    <DocumentationFile>VI.Device.Tester.xml</DocumentationFile>
     <DebugSymbols>True</DebugSymbols>
     <DefineDebug>True</DefineDebug>
     <DefineTrace>True</DefineTrace>
@@ -59,13 +59,13 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\release\</OutputPath>
-    <DocumentationFile>VI.Tsp.Tester.xml</DocumentationFile>
+    <OutputPath>.\bin\</OutputPath>
+    <DocumentationFile>VI.Device.Tester.xml</DocumentationFile>
     <DebugSymbols>False</DebugSymbols>
     <DefineDebug>False</DefineDebug>
     <DefineTrace>True</DefineTrace>
-    <DefineConstants>CODE_ANALYSIS</DefineConstants>
-    <PlatformTarget>x86</PlatformTarget>
+    <DefineConstants>Win32=True</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <NoWarn>42353,42354,42355</NoWarn>
     <DebugType>none</DebugType>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -75,6 +75,9 @@
   <ItemGroup>
     <Reference Include="System">
       <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
@@ -97,86 +100,56 @@
       <Link>My\BlueSplashScreen.vb</Link>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="..\..\..\..\..\Share\core\CommandLineInfo.vb">
+    <Compile Include="..\..\..\..\..\Share\Core\CommandLineInfo.vb">
       <Link>My\CommandLineInfo.vb</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\Share\Pith\MyApplicationEvents.vb">
-      <Link>My\MyApplicationEvents.vb</Link>
+    <Compile Include="..\..\..\..\..\Share\Pith\BlueApplicationEvents.vb">
+      <Link>My\BlueApplicationEvents.vb</Link>
     </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="My\MyCustomApplicationEvents.vb" />
+    <Compile Include="My\BlueMyApplication.vb" />
     <Compile Include="My\MyApplicationInfo.vb" />
-    <Compile Include="FORMS\TestPanel.Designer.vb">
-      <DependentUpon>TestPanel.vb</DependentUpon>
+    <Compile Include="FORMS\Switchboard.Designer.vb">
+      <DependentUpon>Switchboard.vb</DependentUpon>
     </Compile>
-    <Compile Include="FORMS\TestPanel.vb">
+    <Compile Include="FORMS\Switchboard.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="My\MySuppressions.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="My Project\Resources.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="My Project\Settings.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Content Include="My\isr new logo.ico" />
-    <EmbeddedResource Include="FORMS\TestPanel.resx">
-      <DependentUpon>TestPanel.vb</DependentUpon>
+    <EmbeddedResource Include="FORMS\Switchboard.resx">
+      <DependentUpon>Switchboard.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="My Project\Resources.resx">
-      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
-      <CustomToolNamespace>My.Resources</CustomToolNamespace>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Content Include="app.config">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="app.config" />
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <Content Include="My\Visa Core Tester Guide.html" />
+    <Content Include="My\isr new logo.ico" />
+    <Content Include="My\VI.Device.Tester.History.rtf" />
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>
     </None>
-    <None Include="My\isr.VI.Tsp.Tester.History.rtf" />
     <None Include="My Project\app.manifest" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
     <None Include="My Project\Settings.settings">
       <CustomToolNamespace>My</CustomToolNamespace>
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-    <None Include="My Project\Application.myapp">
-      <Generator>MyApplicationCodeGenerator</Generator>
-      <LastGenOutput>Application.Designer.vb</LastGenOutput>
-    </None>
     <Content Include="My\readme.rtf" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
@@ -195,10 +168,6 @@
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Device\Device.Scpi\isr.VI.Device.Scpi.Library.vbproj">
-      <Project>{f6e68ae1-a1b8-43ce-bf8b-d1b8df65c366}</Project>
-      <Name>isr.VI.Device.Scpi.Library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
       <Project>{0C14C4A7-D574-4F9B-A2D9-989B71CC7DE4}</Project>
       <Name>isr.VI.Device.Library</Name>
@@ -207,23 +176,29 @@
       <Project>{C3B279E2-F2F4-4387-BD05-82B8D3976AC5}</Project>
       <Name>isr.VI.Instrument.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Instrument\Tsp\isr.VI.Instrument.Tsp.Library.vbproj">
-      <Project>{60C53062-B4AD-4BD4-82CF-DDB47BB87E68}</Project>
-      <Name>isr.VI.Instrument.Tsp.Library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Resource\Pith\isr.VI.Pith.Library.vbproj">
       <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
       <Name>isr.VI.Pith.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Device\Tsp\isr.VI.Device.Tsp.Library.vbproj">
-      <Project>{1BAE3977-D99F-4E2D-9A52-6E4E11A93E40}</Project>
-      <Name>isr.VI.Device.Tsp.Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Device\Tsp.Script\isr.VI.Device.Tsp.Script.Library.vbproj">
-      <Project>{de6ff239-fa77-4998-9201-15656ddecd9d}</Project>
-      <Name>isr.VI.Device.Tsp.Script.Library</Name>
-    </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>
     <PreBuildEvent>

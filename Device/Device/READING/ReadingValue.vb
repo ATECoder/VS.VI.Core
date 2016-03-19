@@ -9,14 +9,18 @@
 ''' </para> </license>
 ''' <history date="11/1/2013" by="David" revision=""> Created. </history>
 Public Class ReadingValue
-    Inherits ReadingElement
+    Inherits ReadingEntity
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Constructs a measured value without specifying the value or its validity, which must
-    ''' be specified for the value to be made valid. </summary>
-    Public Sub New()
-        MyBase.New()
+    ''' <summary>
+    ''' Constructs a measured value without specifying the value or its validity, which must be
+    ''' specified for the value to be made valid.
+    ''' </summary>
+    ''' <remarks> David, 3/18/2016. </remarks>
+    ''' <param name="readingType"> Type of the reading. </param>
+    Public Sub New(ByVal readingType As ReadingTypes)
+        MyBase.New(readingType)
         Me._generator = New RandomNumberGenerator
     End Sub
 
@@ -43,24 +47,24 @@ Public Class ReadingValue
         Me._Value = New Double?
     End Sub
 
-    ''' <summary> Parses the reading to create the specific reading type in the inherited class. </summary>
+    ''' <summary> Applies the reading to create the specific reading type in the inherited class. </summary>
     ''' <param name="valueReading"> The value reading. </param>
     ''' <param name="unitsReading"> The units reading. </param>
     ''' <returns> <c>True</c> if parsed. </returns>
-    Public Overrides Function TryParse(ByVal valueReading As String, ByVal unitsReading As String) As Boolean
-        If MyBase.TryParse(valueReading, unitsReading) Then
+    Public Overrides Function TryApplyReading(ByVal valueReading As String, ByVal unitsReading As String) As Boolean
+        If MyBase.TryApplyReading(valueReading, unitsReading) Then
             ' convert reading to numeric
-            Return Me.TryParse(valueReading)
+            Return Me.TryApplyReading(valueReading)
         Else
             Return False
         End If
     End Function
 
-    ''' <summary> Parses the reading to create the specific reading type in the inherited class. </summary>
+    ''' <summary> Applies the reading to create the specific reading type in the inherited class. </summary>
     ''' <param name="valueReading"> The value reading. </param>
     ''' <returns> <c>True</c> if parsed. </returns>
-    Public Overrides Function TryParse(ByVal valueReading As String) As Boolean
-        If MyBase.TryParse(valueReading) Then
+    Public Overrides Function TryApplyReading(ByVal valueReading As String) As Boolean
+        If MyBase.TryApplyReading(valueReading) Then
             ' convert reading to numeric
             Dim value As Double
             If Double.TryParse(valueReading, Globalization.NumberStyles.Number Or Globalization.NumberStyles.AllowExponent,
@@ -76,6 +80,7 @@ Public Class ReadingValue
             Return False
         End If
     End Function
+
 
 #End Region
 

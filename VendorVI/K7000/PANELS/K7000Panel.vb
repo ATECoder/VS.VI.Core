@@ -151,25 +151,6 @@ Public Class K7000Panel
         End Select
     End Sub
 
-#If False Then
-    ''' <summary> Device property changed. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub DevicePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnDevicePropertyChanged(TryCast(sender, Device), e.PropertyName)
-            End If
-        Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
-        Finally
-            MyBase.DevicePropertyChanged(sender, e)
-        End Try
-    End Sub
-#End If
-
     ''' <summary> Event handler. Called when device opened. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>

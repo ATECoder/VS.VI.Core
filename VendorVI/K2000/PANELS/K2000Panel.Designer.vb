@@ -40,7 +40,7 @@ Partial Class K2000Panel
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
         Me._LastErrorTextBox = New System.Windows.Forms.TextBox()
         Me._ReadingStatusStrip = New System.Windows.Forms.StatusStrip()
-        Me._ComplianceToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me._FailureCodeToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._ReadingToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._TbdToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._LastReadingTextBox = New System.Windows.Forms.TextBox()
@@ -449,7 +449,7 @@ Partial Class K2000Panel
         Me._ReadingStatusStrip.Dock = System.Windows.Forms.DockStyle.Top
         Me._ReadingStatusStrip.Font = New System.Drawing.Font("Segoe UI", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ReadingStatusStrip.GripMargin = New System.Windows.Forms.Padding(0)
-        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ComplianceToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._TbdToolStripStatusLabel})
+        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._FailureCodeToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._TbdToolStripStatusLabel})
         Me._ReadingStatusStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingStatusStrip.Name = "_ReadingStatusStrip"
         Me._ReadingStatusStrip.Size = New System.Drawing.Size(364, 37)
@@ -458,15 +458,15 @@ Partial Class K2000Panel
         '
         '_ComplianceToolStripStatusLabel
         '
-        Me._ComplianceToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ComplianceToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ComplianceToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
-        Me._ComplianceToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
-        Me._ComplianceToolStripStatusLabel.Name = "_ComplianceToolStripStatusLabel"
-        Me._ComplianceToolStripStatusLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
-        Me._ComplianceToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
-        Me._ComplianceToolStripStatusLabel.Text = "C"
-        Me._ComplianceToolStripStatusLabel.ToolTipText = "Compliance"
+        Me._FailureCodeToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._FailureCodeToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._FailureCodeToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
+        Me._FailureCodeToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
+        Me._FailureCodeToolStripStatusLabel.Name = "_ComplianceToolStripStatusLabel"
+        Me._FailureCodeToolStripStatusLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
+        Me._FailureCodeToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
+        Me._FailureCodeToolStripStatusLabel.Text = "C"
+        Me._FailureCodeToolStripStatusLabel.ToolTipText = "Compliance"
         '
         '_ReadingToolStripStatusLabel
         '
@@ -606,7 +606,7 @@ Partial Class K2000Panel
     Private WithEvents _SelectiveDeviceClearButton As System.Windows.Forms.Button
     Private WithEvents _SessionTraceEnableCheckBox As System.Windows.Forms.CheckBox
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
-    Private WithEvents _ComplianceToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _FailureCodeToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _TbdToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _HandleServiceRequestsCheckBox As System.Windows.Forms.CheckBox

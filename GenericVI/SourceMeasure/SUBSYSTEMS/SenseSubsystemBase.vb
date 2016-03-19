@@ -388,8 +388,8 @@ Public MustInherit Class SenseSubsystemBase
     Public Overrides Sub ParseReading(ByVal reading As String)
 
         ' check if we have units suffixes.
-        If (Me._readings.Elements And ReadingElements.Units) <> 0 Then
-            reading = ReadingElement.TrimUnits(reading)
+        If (Me._readings.Elements And ReadingTypes.Units) <> 0 Then
+            reading = ReadingEntity.TrimUnits(reading)
         End If
 
         ' Take a reading and parse the results

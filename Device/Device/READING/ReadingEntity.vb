@@ -8,26 +8,31 @@
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ''' </para> </license>
 ''' <history date="11/1/2013" by="David" revision=""> Created. </history>
-Public Class ReadingElement
+Public Class ReadingEntity
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Constructs a measured value without specifying the value or its validity, which must
-    ''' be specified for the value to be made valid. </summary>
-    Public Sub New()
+    ''' <summary>
+    ''' Constructs a measured value without specifying the value or its validity, which must be
+    ''' specified for the value to be made valid.
+    ''' </summary>
+    ''' <remarks> David, 3/18/2016. </remarks>
+    ''' <param name="readingType"> The type of the reading. </param>
+    Public Sub New(ByVal readingType As ReadingTypes)
         MyBase.New()
+        Me._ReadingType = readingType
     End Sub
 
     ''' <summary> Constructs a copy of an existing value. </summary>
     ''' <param name="model"> The model. </param>
-    Public Sub New(ByVal model As ReadingElement)
-        Me.New()
+    Public Sub New(ByVal model As ReadingEntity)
+        Me.New(ReadingTypes.None)
         If model IsNot Nothing Then
+            Me._ReadingType = model.ReadingType
             Me._Heading = model.Heading
             Me._ValueReading = model.ValueReading
             Me._IncludesUnitsSuffix = model.IncludesUnitsSuffix
         End If
-
     End Sub
 
 #End Region
@@ -43,7 +48,7 @@ Public Class ReadingElement
     ''' <param name="value"> A delimited string of values. </param>
     ''' <returns> A String. </returns>
     Public Shared Function TrimUnits(ByVal value As String) As String
-        Return ReadingElement.TrimUnits(value, ",")
+        Return ReadingEntity.TrimUnits(value, ",")
     End Function
 
     ''' <summary> Remove unit characters from SCPI data. Some instruments append units to the end of
@@ -100,32 +105,37 @@ Public Class ReadingElement
 
 #Region " READING "
 
-    ''' <summary> Parses the reading to create the specific reading type in the inherited class. </summary>
+    ''' <summary> Gets or sets the type of the reading. </summary>
+    ''' <value> The type of the reading. </value>
+    Public Property ReadingType As ReadingTypes
+
+    ''' <summary> Applies the reading to create the specific reading type in the inherited class. </summary>
     ''' <param name="valueReading"> The value reading. </param>
     ''' <param name="unitsReading"> The units reading. </param>
-    ''' <returns> <c>True</c> if parsed. </returns>
-    Public Overridable Function TryParse(ByVal valueReading As String, ByVal unitsReading As String) As Boolean
+    Public Overridable Function TryApplyReading(ByVal valueReading As String, ByVal unitsReading As String) As Boolean
         ' save the readings 
         If String.IsNullOrEmpty(valueReading) Then valueReading = ""
         If String.IsNullOrEmpty(unitsReading) Then valueReading = ""
         Me.ValueReading = valueReading
         Me.UnitsReading = unitsReading
-        Return Not String.IsNullOrWhiteSpace(valueReading)
+        Return True
     End Function
 
 
-    ''' <summary> Parses the reading to create the specific reading type in the inherited class. </summary>
+    ''' <summary> Applies the reading to create the specific reading type in the inherited class. </summary>
     ''' <param name="valueReading"> The value reading. </param>
-    ''' <returns> <c>True</c> if parsed. </returns>
-    Public Overridable Function TryParse(ByVal valueReading As String) As Boolean
-        ' convert reading to numeric
+    Public Overridable Function TryApplyReading(ByVal valueReading As String) As Boolean
         If String.IsNullOrEmpty(valueReading) Then
-            Me.ValueReading = ""
-            Return False
-        Else
-            Me.ValueReading = valueReading
-            Return True
+            valueReading = ""
         End If
+        Me.ValueReading = valueReading
+        Return True
+    End Function
+
+    ''' <summary> Attempts to evaluate using the applied reading and given status. </summary>
+    ''' <returns> <c>True</c> if evaluated. </returns>
+    Public Overridable Function TryEvaluate(ByVal status As Long) As Boolean
+        Return True
     End Function
 
     ''' <summary> Returns a string that represents the current object. </summary>

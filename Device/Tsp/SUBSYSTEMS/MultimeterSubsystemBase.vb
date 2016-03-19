@@ -18,7 +18,7 @@ Public MustInherit Class MultimeterSubsystemBase
     ''' Subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me._Amount = New MeasuredAmount
+        Me._Amount = New MeasuredAmount(ReadingTypes.Reading)
         Me._FunctionModeRanges = New FunctionRangeDictionary
         For Each fm As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
             Me._FunctionModeRanges.Add(fm, New Core.Pith.RangeR(0, 1))

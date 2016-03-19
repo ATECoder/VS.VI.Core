@@ -15,8 +15,8 @@ Public Class ReadingAmount
 
     ''' <summary> Constructs a measured value without specifying the value or its validity, which must
     ''' be specified for the value to be made valid. </summary>
-    Public Sub New()
-        MyBase.New()
+    Public Sub New(ByVal readingType As ReadingTypes)
+        MyBase.New(readingType)
     End Sub
 
     ''' <summary> Constructs a copy of an existing value. </summary>
@@ -64,9 +64,9 @@ Public Class ReadingAmount
     ''' <param name="valueReading"> The value reading. </param>
     ''' <param name="unitsReading"> The units reading. </param>
     ''' <returns> <c>True</c> if parsed. </returns>
-    Public Overrides Function TryParse(ByVal valueReading As String, ByVal unitsReading As String) As Boolean
-        If MyBase.TryParse(valueReading, unitsReading) Then
-            Return Me.TryParse(valueReading)
+    Public Overrides Function TryApplyReading(ByVal valueReading As String, ByVal unitsReading As String) As Boolean
+        If MyBase.TryApplyReading(valueReading, unitsReading) Then
+            Return Me.TryApplyReading(valueReading)
         Else
             Me.Amount = New Arebis.TypedUnits.Amount(Scpi.Syntax.NotANumber, Me.Unit)
             Return False
@@ -76,8 +76,8 @@ Public Class ReadingAmount
     ''' <summary> Parses the reading to create the specific reading type in the inherited class. </summary>
     ''' <param name="valueReading"> The value reading. </param>
     ''' <returns> <c>True</c> if parsed. </returns>
-    Public Overrides Function TryParse(ByVal valueReading As String) As Boolean
-        If MyBase.TryParse(valueReading) Then
+    Public Overrides Function TryApplyReading(ByVal valueReading As String) As Boolean
+        If MyBase.TryApplyReading(valueReading) Then
             If Me.Value.HasValue Then
                 Me.Amount = New Arebis.TypedUnits.Amount(Me.Value.Value, Me.Unit)
             End If

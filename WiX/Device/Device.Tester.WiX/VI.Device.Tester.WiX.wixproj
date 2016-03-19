@@ -4,14 +4,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>3.8</ProductVersion>
-    <ProjectGuid>{19060fb4-46b7-47ce-a5c6-0619d093877f}</ProjectGuid>
+    <ProjectGuid>{37254351-a99d-4cb0-93f2-3203d6d5b58a}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>VI.OhmniNet.Tester.2016.Setup</OutputName>
+    <OutputName>VI.Device.Tester.2016.Setup</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
-    <IncludeSearchPaths>C:\My\LIBRARIES\VS\Share\WiX\DirectoryTree\;C:\My\LIBRARIES\VS\VI\CORE\VI\WiX\OhmniNet\OhmniNet.Tester.WiX\</IncludeSearchPaths>
-    <Name>isr.VI.OhmniNet.Tester.WiX</Name>
+    <IncludeSearchPaths>C:\My\LIBRARIES\VS\Share\WiX\DirectoryTree\;C:\My\LIBRARIES\VS\VI\CORE\VI\WiX\Device\Device.Tester.WiX\</IncludeSearchPaths>
+    <Name>VI.Device.Tester.WiX</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
@@ -91,9 +91,9 @@
     <Folder Include="Shared\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Apps\OhmniNet\isr.VI.OhmniNet.Tester.vbproj">
-      <Name>isr.VI.OhmniNet.Tester</Name>
-      <Project>{B449651B-8ED5-4E57-B04F-D45585C8B36B}</Project>
+    <ProjectReference Include="..\..\..\Apps\Device.Tester\VI.Device.Tester.vbproj">
+      <Name>VI.Device.Tester</Name>
+      <Project>{76be615a-13d5-403e-9ca8-805e0bfd387a}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
@@ -102,10 +102,10 @@
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <PropertyGroup>
-    <PreBuildEvent>call "%25my%25\Public\Certificate\SignAssembly.bat" "VI OhmniNet Tester" "$(SolutionDir)Apps\OhmniNet\bin\Debug\VI.OhmniNet.Tester.exe"</PreBuildEvent>
+    <PreBuildEvent>call "%25my%25\Public\Certificate\SignAssembly.bat" "VI Device Tester" "$(SolutionDir)Apps\Device.Tester\bin\Debug\VI.Device.Tester.exe"</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>call "%25my%25\Public\Certificate\SignAssembly.bat" "VI OhmniNet Tester" "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent>call "%25my%25\Public\Certificate\SignAssembly.bat" "VI Device Tester" "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.

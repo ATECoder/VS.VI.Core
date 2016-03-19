@@ -63,7 +63,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -83,8 +82,11 @@
       <Link>My\BlueSplashScreen.vb</Link>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="..\..\..\..\..\Share\Pith\MyApplicationEvents.vb">
-      <Link>My\MyApplicationEvents.vb</Link>
+    <Compile Include="..\..\..\..\..\Share\Core\CommandLineInfo.vb">
+      <Link>My\CommandLineInfo.vb</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\..\Share\Pith\BlueApplicationEvents.vb">
+      <Link>My\BlueApplicationEvents.vb</Link>
     </Compile>
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
@@ -99,11 +101,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="My\BlueMyApplication.vb" />
     <Compile Include="My\Console1.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My\MyApplicationInfo.vb" />
-    <Compile Include="My\MyCustomApplicationEvents.vb" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="My\logo.ico" />
@@ -119,7 +121,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-    <None Include="My\isr.VI.K3700.Console.History.rtf" />
+    <None Include="My\VI.K3700.Console.History.rtf" />
     <Content Include="My\keyPair.snk" />
     <Content Include="My\Readme.rtf" />
   </ItemGroup>
@@ -136,25 +138,13 @@
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Device\Device.Scpi\isr.VI.Device.Scpi.Library.vbproj">
-      <Project>{f6e68ae1-a1b8-43ce-bf8b-d1b8df65c366}</Project>
-      <Name>isr.VI.Device.Scpi.Library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
       <Project>{0c14c4a7-d574-4f9b-a2d9-989b71cc7de4}</Project>
       <Name>isr.VI.Device.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Device\Tsp\isr.VI.Device.Tsp.Library.vbproj">
-      <Project>{1bae3977-d99f-4e2d-9a52-6e4e11a93e40}</Project>
-      <Name>isr.VI.Device.Tsp.Library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Instrument\Instrument\isr.VI.Instrument.Library.vbproj">
       <Project>{c3b279e2-f2f4-4387-bd05-82b8d3976ac5}</Project>
       <Name>isr.VI.Instrument.Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Resource\Pith\isr.VI.Pith.Library.vbproj">
-      <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
-      <Name>isr.VI.Pith.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\VendorVI\K3700\isr.VI.K3700.Library.vbproj">
       <Project>{259f39e6-9c5b-45ea-bdcf-b34c397cb172}</Project>

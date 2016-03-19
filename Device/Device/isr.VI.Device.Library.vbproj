@@ -105,11 +105,11 @@
     <Compile Include="PRIMITIVES\VersionInfo.vb" />
     <Compile Include="READING\ConstantsEnums.vb" />
     <Compile Include="READING\ReadingValue.vb" />
-    <Compile Include="READING\ReadingElement.vb" />
+    <Compile Include="READING\ReadingEntity.vb" />
     <Compile Include="READING\MeasuredAmount.vb" />
     <Compile Include="READING\MetaStatus.vb" />
     <Compile Include="READING\RandomNumberGenerator.vb" />
-    <Compile Include="READING\ReadingElementCollection.vb" />
+    <Compile Include="READING\ReadingEntityCollection.vb" />
     <Compile Include="READING\ReadingAmout.vb" />
     <Compile Include="READING\ReadingAmounts.vb" />
     <Compile Include="READING\ReadingStatus.vb" />
@@ -162,6 +162,10 @@
     <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj">
+      <Project>{6a80136f-c0eb-4798-8bcf-569e249dd76a}</Project>
+      <Name>Arebis.StandardUnits.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
       <Project>{D2C9A599-79DD-4CFA-8614-BE3C444EB347}</Project>

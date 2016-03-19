@@ -219,25 +219,6 @@ Public Class K3700Panel
         End Select
     End Sub
 
-#If False Then
-    ''' <summary> Device property changed. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub DevicePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnDevicePropertyChanged(TryCast(sender, Device), e.PropertyName)
-            End If
-        Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
-        Finally
-            MyBase.DevicePropertyChanged(sender, e)
-        End Try
-    End Sub
-#End If
-
     ''' <summary> Event handler. Called when device opened. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
@@ -570,9 +551,9 @@ Public Class K3700Panel
     ''' <param name="value"> The <see cref="TraceMessage">message</see> to display and
     ''' log. </param>
     ''' <returns> The VI.ReadingElements. </returns>
-    Friend Function SelectReading(ByVal value As VI.ReadingElements) As VI.ReadingElements
+    Friend Function SelectReading(ByVal value As VI.ReadingTypes) As VI.ReadingTypes
         If Me.IsDeviceOpen AndAlso
-                (value <> VI.ReadingElements.None) AndAlso (value <> Me.selectedReading) Then
+                (value <> VI.ReadingTypes.None) AndAlso (value <> Me.selectedReading) Then
             Me._ReadingComboBox.SafeSelectItem(value.ValueDescriptionPair)
         End If
         Return Me.selectedReading
@@ -581,10 +562,10 @@ Public Class K3700Panel
     ''' <summary> Gets the selected reading. </summary>
     ''' <value> The selected reading. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Private ReadOnly Property selectedReading() As VI.ReadingElements
+    Private ReadOnly Property selectedReading() As VI.ReadingTypes
         Get
             Return CType(CType(Me._ReadingComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(
-                                            Of [Enum], String)).Key, VI.ReadingElements)
+                                            Of [Enum], String)).Key, VI.ReadingTypes)
         End Get
     End Property
 

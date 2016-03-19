@@ -144,7 +144,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
-    <None Include="My\isr.VI.Solomon.Gauge.History.rtf" />
+    <None Include="My\VI.Solomon.Gauge.History.rtf" />
     <Content Include="My\keyPair.snk" />
     <Content Include="My\Readme.rtf" />
   </ItemGroup>

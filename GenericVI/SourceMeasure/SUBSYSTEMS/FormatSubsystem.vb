@@ -27,9 +27,9 @@ Public Class FormatSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.Elements = ReadingElements.Voltage Or ReadingElements.Current Or
-                      ReadingElements.Resistance Or ReadingElements.Time Or
-                      ReadingElements.Status
+        Me.Elements = ReadingTypes.Voltage Or ReadingTypes.Current Or
+                      ReadingTypes.Resistance Or ReadingTypes.Time Or
+                      ReadingTypes.Status
     End Sub
 
 #End Region
