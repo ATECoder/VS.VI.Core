@@ -25,6 +25,7 @@
     <DocumentationFile>VI.Device.Console.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\FromAllRules2015.ruleset</CodeAnalysisRuleSet>
+    <DefineConstants>K7000</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -161,6 +162,10 @@
     <ProjectReference Include="..\..\VendorVI\K3700\isr.VI.K3700.Library.vbproj">
       <Project>{259f39e6-9c5b-45ea-bdcf-b34c397cb172}</Project>
       <Name>isr.VI.K3700.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\K7000\isr.VI.K7000.Library.vbproj">
+      <Project>{698b037f-c21d-4f0b-bda3-fa511ce3b8f7}</Project>
+      <Name>isr.VI.K7000.Library</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
