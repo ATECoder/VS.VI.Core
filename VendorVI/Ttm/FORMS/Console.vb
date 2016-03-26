@@ -866,23 +866,15 @@ Public Class Console
     ''' <summary> Raises the property changed event. </summary>
     ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Event information to send to registered event handlers. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub OnPropertyChanged(ByVal sender As ShuntResistance, ByVal e As PropertyChangedEventArgs)
-        Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(e.PropertyName) Then
-                Me.UpdateShuntConfigButtonCaption()
-                Select Case e.PropertyName
-                    Case NameOf(sender.MeasurementAvailable)
-                        If sender.MeasurementAvailable Then
-                            Me.showResistance(Me._ShuntResistanceTextBox, sender)
-                        End If
-                End Select
-            End If
-        Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
-                         e.PropertyName, ex.Message)
-        End Try
+    Private Sub OnPropertyChanged(ByVal sender As ShuntResistance, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Me.UpdateShuntConfigButtonCaption()
+        Select Case propertyName
+            Case NameOf(sender.MeasurementAvailable)
+                If sender.MeasurementAvailable Then
+                    Me.showResistance(Me._ShuntResistanceTextBox, sender)
+                End If
+        End Select
     End Sub
 
     ''' <summary> Event handler. Called by _ShuntResistance for property changed events. </summary>
@@ -890,7 +882,12 @@ Public Class Console
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ShuntResistancePropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Me.OnPropertyChanged(TryCast(sender, ShuntResistance), e)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, ShuntResistance), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. Details: {1}.",
+                               e.PropertyName, ex.Message)
+        End Try
     End Sub
 
 #End Region
@@ -904,18 +901,32 @@ Public Class Console
         End If
     End Sub
 
-    Private Sub _TTMConfigurationPanel_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _TTMConfigurationPanel.PropertyChanged
-        If sender IsNot Nothing AndAlso e IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(e.PropertyName) Then
-            If e.PropertyName = "IsNewConfigurationSettingAvailable" Then
+    ''' <summary> Raises the property changed event. </summary>
+    ''' <remarks> David, 3/25/2016. </remarks>
+    ''' <param name="sender">       The source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnPropertyChanged(sender As ConfigurationPanel, propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.IsNewConfigurationSettingAvailable)
                 If Me._NavigatorTreeView.Nodes IsNot Nothing AndAlso Me._NavigatorTreeView.Nodes.Count > 0 Then
                     Dim caption As String = TreeViewNode.ConfigureNode.Description
-                    If Me._TTMConfigurationPanel.IsNewConfigurationSettingAvailable Then
+                    If sender.IsNewConfigurationSettingAvailable Then
                         caption &= " *"
                     End If
                     Me._NavigatorTreeView.Nodes(TreeViewNode.ConfigureNode.ToString).Text = caption
                 End If
-            End If
-        End If
+        End Select
+    End Sub
+
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _TTMConfigurationPanel_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _TTMConfigurationPanel.PropertyChanged
+        Try
+            Me.OnPropertyChanged(TryCast(sender, ConfigurationPanel), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. Details: {1}.",
+                               e.PropertyName, ex.Message)
+        End Try
     End Sub
 
 #End Region
@@ -939,29 +950,31 @@ Public Class Console
         End Set
     End Property
 
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    ''' <summary> Raises the property changed event. </summary>
+    ''' <remarks> David, 3/25/2016. </remarks>
+    ''' <param name="sender">       The source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As Meter, ByVal propertyName As String)
-        Try
-            If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
-                Select Case propertyName
-                    Case NameOf(sender.MeasurementCompleted)
-                        If sender.MeasurementCompleted Then
-                            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                              "{0} measurement completed;. ", sender.ResourceName)
-                        End If
-                End Select
-            End If
-        Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
-                         propertyName, ex.Message)
-        End Try
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.MeasurementCompleted)
+                If sender.MeasurementCompleted Then
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "{0} measurement completed;. ", sender.ResourceName)
+                End If
+        End Select
     End Sub
 
     ''' <summary> Event handler. Called by _meter for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _meter_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _meter.PropertyChanged
-        Me.OnPropertyChanged(TryCast(sender, Meter), e?.PropertyName)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, Meter), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. Details: {1}.",
+                               e.PropertyName, ex.Message)
+        End Try
     End Sub
 
 #End Region
@@ -1349,10 +1362,9 @@ Public Class Console
     ''' <param name="sender">       The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, ByVal propertyName As String)
-        If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
-            If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
-                Me._StatusLabel.Text = sender.StatusPrompt
-            End If
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
+            Me._StatusLabel.Text = sender.StatusPrompt
         End If
     End Sub
 

@@ -231,7 +231,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <param name="timeout"> The timeout. </param>
     Public Sub RestoreDisplay(ByVal timeout As TimeSpan)
         Me.DisplayScreen = DisplayScreens.Default
-        If Me.ReadDisplayExists.GetValueOrDefault(False) AndAlso
+        If Me.IsDisplayExists.HasValue AndAlso Me.IsDisplayExists.Value AndAlso
             Not String.IsNullOrWhiteSpace(Me.RestoreMainScreenWaitCompleteCommand) Then
             Me.StatusSubsystem.EnableWaitComplete()
             ' Documentation error: Display Main equals 1, not 0. This code should work on other instruments.
@@ -243,7 +243,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <summary> Restores the instrument display. </summary>
     Public Sub RestoreDisplay()
         Me.DisplayScreen = DisplayScreens.Default
-        If Me.ReadDisplayExists.GetValueOrDefault(False) AndAlso
+        If Me.IsDisplayExists.HasValue AndAlso Me.IsDisplayExists.Value AndAlso
             Not String.IsNullOrWhiteSpace(Me.RestoreMainScreenWaitCompleteCommand) Then
             ' Documentation error: Display Main equals 1, not 0. This code should work on other instruments.
             Me.Session.WriteLine(Me.RestoreMainScreenWaitCompleteCommand)

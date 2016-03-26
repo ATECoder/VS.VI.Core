@@ -97,7 +97,7 @@ Public MustInherit Class MeterSubsystemBase
         Set(ByVal value As ThermalTransientMeterEntity)
             If Not value.Equals(Me.MeterEntity) Then
                 Me._MeterEntity = value
-                MyBase.AsyncNotifyPropertyChanged(NameOf(Me.MeterEntity))
+                Me.AsyncNotifyPropertyChanged()
                 Select Case value
                     Case ThermalTransientMeterEntity.FinalResistance
                         Me.EntityName = MeterSubsystemBase.FinalResistanceEntityName
@@ -142,7 +142,7 @@ Public MustInherit Class MeterSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.DefaultsName) Then
                 Me._DefaultsName = value
-                MyBase.AsyncNotifyPropertyChanged(NameOf(Me.DefaultsName))
+                Me.AsyncNotifyPropertyChanged()
             End If
         End Set
     End Property
@@ -159,7 +159,7 @@ Public MustInherit Class MeterSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.EntityName) Then
                 Me._EntityName = value
-                MyBase.AsyncNotifyPropertyChanged(NameOf(Me.EntityName))
+                Me.AsyncNotifyPropertyChanged()
             End If
         End Set
     End Property
@@ -175,7 +175,7 @@ Public MustInherit Class MeterSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.BaseEntityName) Then
                 Me._BaseEntityName = value
-                MyBase.AsyncNotifyPropertyChanged(NameOf(Me.BaseEntityName))
+                Me.AsyncNotifyPropertyChanged()
             End If
         End Set
     End Property
@@ -212,7 +212,7 @@ Public MustInherit Class MeterSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.SourceMeasureUnit) Then
                 Me._SourceMeasureUnit = value
-                MyBase.AsyncNotifyPropertyChanged(NameOf(Me.SourceMeasureUnit))
+                Me.AsyncNotifyPropertyChanged()
             End If
         End Set
     End Property
@@ -860,7 +860,7 @@ Public MustInherit Class MeterSubsystemBase
         Protected Set(ByVal value As Integer)
             If Not Me.MeasurementEventCondition.Equals(value) Then
                 Me._MeasurementEventCondition = value
-                MyBase.AsyncNotifyPropertyChanged(NameOf(Me.MeasurementEventCondition))
+                Me.AsyncNotifyPropertyChanged()
             End If
         End Set
     End Property

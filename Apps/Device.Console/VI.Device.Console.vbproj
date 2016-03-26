@@ -25,7 +25,7 @@
     <DocumentationFile>VI.Device.Console.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\FromAllRules2015.ruleset</CodeAnalysisRuleSet>
-    <DefineConstants>K7000</DefineConstants>
+    <DefineConstants>E4990x,K2400x,K3700x,K7000x,TTM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -155,6 +155,10 @@
       <Project>{c3b279e2-f2f4-4387-bd05-82b8d3976ac5}</Project>
       <Name>isr.VI.Instrument.Library</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\E4990\isr.VI.E4990.Library.vbproj">
+      <Project>{04dc1394-a7bf-4d31-8ec3-fcf42598ff9f}</Project>
+      <Name>isr.VI.E4990.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\VendorVI\K2400\isr.VI.K2400.Library.vbproj">
       <Project>{966f71bc-1172-4058-82f4-1bdfabefbaca}</Project>
       <Name>isr.VI.K2400.Library</Name>
@@ -166,6 +170,10 @@
     <ProjectReference Include="..\..\VendorVI\K7000\isr.VI.K7000.Library.vbproj">
       <Project>{698b037f-c21d-4f0b-bda3-fa511ce3b8f7}</Project>
       <Name>isr.VI.K7000.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\Ttm\isr.VI.Ttm.Library.vbproj">
+      <Project>{25b976fe-24ba-470a-8834-ee713314dbde}</Project>
+      <Name>isr.VI.Ttm.Library</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

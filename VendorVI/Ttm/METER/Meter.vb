@@ -142,7 +142,7 @@ Public Class Meter
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _MasterDevice_Closing(ByVal sender As Object, ByVal e As System.EventArgs) Handles _MasterDevice.Closing
-        If sender IsNot Nothing Then Me.OnClosing()
+        If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then Me.OnClosing()
     End Sub
 
     ''' <summary> Event handler. Called by the Master Device when closed after all subsystems were disposed. </summary>
@@ -210,30 +210,24 @@ Public Class Meter
             ' this is already done.  Me.MasterDevice.AddListeners(Me.Talker.Listeners)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred while TTM elements initiazlized;. Details: {0}", ex)
+                              "Exception occurred while TTM elements initialized;. Details: {0}", ex)
         End Try
     End Sub
 
     ''' <summary> Raises the system. component model. property changed event. </summary>
-    ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Event information to send to registered event handlers. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub OnPropertyChanged(ByVal sender As Device, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(e.PropertyName) Then
-                Select Case e.PropertyName
-                    Case NameOf(sender.IsDeviceOpen)
-                        If sender.IsDeviceOpen Then
-                            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "{0} open;. ", sender.ResourceName)
-                        Else
-                            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "{0} close;. ", sender.ResourceName)
-                        End If
-                End Select
-            End If
-        Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
-                         e.PropertyName, ex.Message)
-        End Try
+    ''' <remarks> David, 3/25/2016. </remarks>
+    ''' <param name="sender">       The source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnPropertyChanged(ByVal sender As Device, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.IsDeviceOpen)
+                If sender.IsDeviceOpen Then
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "{0} open;. ", sender.ResourceName)
+                Else
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "{0} close;. ", sender.ResourceName)
+                End If
+        End Select
     End Sub
 
     ''' <summary> Event handler. Called by _MasterDevice for property changed events. </summary>
@@ -241,7 +235,12 @@ Public Class Meter
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _MasterDevice_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _MasterDevice.PropertyChanged
-        Me.OnPropertyChanged(TryCast(sender, Device), e)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, Device), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "", "Exception handling property '{0}'. Details: {1}.",
+                               e.PropertyName, ex.Message)
+        End Try
     End Sub
 
 #End Region

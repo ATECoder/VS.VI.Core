@@ -15,7 +15,7 @@ Public Class Device
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Initializes a new instance of the <see cref="K7000.Device" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="E4990.Device" /> class. </summary>
     Public Sub New()
         MyBase.New()
         Me.InitializeTimeout = TimeSpan.FromMilliseconds(5000)
@@ -31,10 +31,8 @@ Public Class Device
     ''' <param name="disposing"> <c>True</c> to release both managed and unmanaged resources;
     '''                          <c>False</c> to release only unmanaged resources when called from the
     '''                          runtime finalize. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_TriggerSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SystemSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_StatusSubsystem", Justification:="Disposed @Subsystems")>
-    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_RouteSubsystem", Justification:="Disposed @Subsystems")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(disposing As Boolean)
@@ -53,7 +51,7 @@ Public Class Device
 
 #End Region
 
-#Region " I PRESETTABLE "
+#Region " I PRESETTABLE PUBLISHER "
 
     ''' <summary> Clears the Device. Issues <see cref="StatusSubsystemBase.ClearActiveState">Selective
     ''' Device Clear</see>. </summary>
@@ -68,10 +66,6 @@ Public Class Device
         Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
     End Sub
 
-#End Region
-
-#Region " PUBLISHER "
-
     ''' <summary> Publishes all values by raising the property changed events. </summary>
     Public Overrides Sub Publish()
         Me.Subsystems.Publish()
@@ -81,10 +75,6 @@ Public Class Device
             Next
         End If
     End Sub
-
-#End Region
-
-#Region " COMMAND SYNTAX "
 
 #End Region
 
@@ -120,27 +110,11 @@ Public Class Device
         Me.AddSubsystem(Me.SystemSubsystem)
         'AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
 
-        Me._RouteSubsystem = New RouteSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.RouteSubsystem)
-
-        Me._TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.TriggerSubsystem)
-
     End Sub
 
 #End Region
 
 #Region " SUBSYSTEMS "
-
-    ''' <summary>
-    ''' Gets or sets the Route Subsystem.
-    ''' </summary>
-    ''' <value>The System Subsystem.</value>
-    Public Property RouteSubsystem As RouteSubsystem
-
-    ''' <summary> Gets or sets the Trigger Subsystem. </summary>
-    ''' <value> The Trigger Subsystem. </value>
-    Public Property TriggerSubsystem As TriggerSubsystem
 
 #Region " STATUS "
 
@@ -162,49 +136,6 @@ Public Class Device
                                "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
         End Try
     End Sub
-
-#Region " SERVICE REQUEST "
-
-    ''' <summary>
-    ''' Enables or disables the operation service status registers requesting
-    ''' a service request upon a negative transition.
-    ''' </summary>
-    ''' <param name="isOn">if set to <c>True</c> [is on].</param>
-    Public Sub ToggleEndOfScanService(ByVal isOn As Boolean)
-        Me.ToggleEndOfScanService(isOn, ServiceRequests.All And (Not ServiceRequests.MessageAvailable))
-    End Sub
-
-    ''' <summary>
-    ''' Enables or disables the operation service status registers requesting
-    ''' a service request upon a negative transition.
-    ''' </summary>
-    ''' <param name="turnOn">True to turn on or false to turn off the service request.</param>
-    ''' <param name="serviceRequestMask">Specifies the
-    ''' <see cref="ServiceRequests">service request flags</see></param>
-    Public Sub ToggleEndOfScanService(ByVal turnOn As Boolean, ByVal serviceRequestMask As ServiceRequests)
-        If turnOn Then
-            Me.StatusSubsystem.ApplyOperationNegativeTransitionEventEnableBitmask(OperationTransitionEvents.Settling)
-            Me.StatusSubsystem.ApplyOperationPositiveTransitionEventEnableBitmask(OperationTransitionEvents.None)
-            Me.StatusSubsystem.ApplyOperationEventEnableBitmask(OperationEvents.Settling)
-        Else
-            Me.StatusSubsystem.ApplyOperationNegativeTransitionEventEnableBitmask(OperationTransitionEvents.None)
-            Me.StatusSubsystem.ApplyOperationPositiveTransitionEventEnableBitmask(OperationTransitionEvents.None)
-            Me.StatusSubsystem.ApplyOperationEventEnableBitmask(OperationEvents.None)
-        End If
-        Me.ToggleServiceRequest(turnOn, serviceRequestMask)
-    End Sub
-
-    ''' <summary>
-    ''' Enables or disables service requests.
-    ''' </summary>
-    ''' <param name="turnOn">True to turn on or false to turn off the service request.</param>
-    ''' <param name="serviceRequestMask">Specifies the
-    ''' <see cref="ServiceRequests">service request flags</see></param>
-    Public Sub ToggleServiceRequest(ByVal turnOn As Boolean, ByVal serviceRequestMask As ServiceRequests)
-        If turnOn Then Me.StatusSubsystem.EnableServiceRequest(serviceRequestMask)
-    End Sub
-
-#End Region
 
 #End Region
 

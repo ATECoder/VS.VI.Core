@@ -44,7 +44,9 @@
         <System.ComponentModel.Description("K7000 Switch")> K7000 = ProjectTraceEventId.PowerSupply + &H9
         <System.ComponentModel.Description("K3700 Meter Switch")> K3700 = ProjectTraceEventId.PowerSupply + &HA
         <System.ComponentModel.Description("TTM Driver")> TtmDriver = ProjectTraceEventId.PowerSupply + &HB
-        <System.ComponentModel.Description("K3600 Source Meter")> K2600 = ProjectTraceEventId.PowerSupply + &HC
+        <System.ComponentModel.Description("K2600 Source Meter")> K2600 = ProjectTraceEventId.PowerSupply + &HC
+        <System.ComponentModel.Description("E4990 Impedance Analyzer")> E4990 = ProjectTraceEventId.PowerSupply + &HD
+        <System.ComponentModel.Description("K2400 Source Meter")> K2400 = ProjectTraceEventId.PowerSupply + &HE
 
         <System.ComponentModel.Description("Core Tester")> DeviceTester = ProjectTraceEventId.VI *
                                                                           TraceEventConstants.BaseScaleFactor +

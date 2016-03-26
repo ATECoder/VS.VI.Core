@@ -285,6 +285,7 @@ Public Class MeasurementsHeader
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnInitialResistancePropertyChanged(ByVal sender As ColdResistance, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.MeasurementAvailable)
                 If sender.MeasurementAvailable Then
@@ -322,6 +323,7 @@ Public Class MeasurementsHeader
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnFinalResistancePropertyChanged(ByVal sender As ColdResistance, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.MeasurementAvailable)
                 If sender.MeasurementAvailable Then
@@ -358,7 +360,8 @@ Public Class MeasurementsHeader
     ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnThermalTransientPropertyChanged(ByVal sender As ColdResistance, ByVal propertyName As String)
+    Private Sub OnThermalTransientPropertyChanged(ByVal sender As ResistanceMeasureBase, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.MeasurementAvailable)
                 If sender.MeasurementAvailable Then
@@ -377,7 +380,7 @@ Public Class MeasurementsHeader
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ThermalTransient_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _ThermalTransient.PropertyChanged
         Try
-            Me.OnThermalTransientPropertyChanged(TryCast(sender, ColdResistance), e?.PropertyName)
+            Me.OnThermalTransientPropertyChanged(TryCast(sender, ResistanceMeasureBase), e?.PropertyName)
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
                          e.PropertyName, ex.Message)

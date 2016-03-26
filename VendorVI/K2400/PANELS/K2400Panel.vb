@@ -22,8 +22,8 @@ Imports isr.VI.SourceMeasure
 ''' <history date="01/15/2008" by="David" revision="2.0.2936.x"> Create based on the 24xx
 ''' system classes. </history>
 <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")>
-<System.ComponentModel.DisplayName("K2700 Panel"),
-      System.ComponentModel.Description("Keithley 2700 Device Panel"),
+<System.ComponentModel.DisplayName("K2400 Panel"),
+      System.ComponentModel.Description("Keithley 2400 Device Panel"),
       System.Drawing.ToolboxBitmap(GetType(K2400Panel))>
 Public Class K2400Panel
     Inherits VI.Instrument.ResourcePanelBase

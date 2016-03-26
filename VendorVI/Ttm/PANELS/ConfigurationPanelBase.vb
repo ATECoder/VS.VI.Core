@@ -80,22 +80,16 @@ Public Class ConfigurationPanelBase
     ''' <param name="propertyName"> Name of the property. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub OnPropertyChanged(ByVal sender As DeviceUnderTest, ByVal propertyName As String)
-        Try
-            If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
-                Select Case propertyName
-                    Case NameOf(sender.InitialResistance)
-                        Me.onConfigurationChanged()
-                    Case NameOf(sender.FinalResistance)
-                        Me.onConfigurationChanged()
-                    Case NameOf(sender.ShuntResistance)
-                    Case NameOf(sender.ThermalTransient)
-                        Me.onConfigurationChanged()
-                End Select
-            End If
-        Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
-                         propertyName, ex.Message)
-        End Try
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.InitialResistance)
+                Me.onConfigurationChanged()
+            Case NameOf(sender.FinalResistance)
+                Me.onConfigurationChanged()
+            Case NameOf(sender.ShuntResistance)
+            Case NameOf(sender.ThermalTransient)
+                Me.onConfigurationChanged()
+        End Select
     End Sub
 
     ''' <summary> Event handler. Called by _InitialResistance for property changed events. </summary>
@@ -103,7 +97,12 @@ Public Class ConfigurationPanelBase
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _part_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _Part.PropertyChanged
-        Me.OnPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}'. Details: {1}.",
+                         e?.PropertyName, ex.Message)
+        End Try
     End Sub
 
     ''' <summary> Bind controls. </summary>
@@ -305,7 +304,7 @@ Public Class ConfigurationPanelBase
         Set(value As Boolean)
             If Not value.Equals(Me.IsNewConfigurationSettingAvailable) Then
                 Me._IsNewConfigurationSettingAvailable = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsNewConfigurationSettingAvailable))
+                Me.AsyncNotifyPropertyChanged()
             End If
         End Set
     End Property

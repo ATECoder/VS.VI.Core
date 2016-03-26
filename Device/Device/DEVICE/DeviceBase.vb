@@ -575,7 +575,8 @@ Public MustInherit Class DeviceBase
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     ''' <remarks> This override should occur as the first call of the overriding method. </remarks>
     Protected Overridable Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
-        Me.SyncNotifyClosing(e)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If Not e?.Cancel Then Me.SyncNotifyClosing(e)
         If Not e?.Cancel Then
             Me.IsInitialized = False
             Me.SuspendPublishing()
@@ -595,6 +596,8 @@ Public MustInherit Class DeviceBase
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overridable Sub CloseSession()
         Try
+            ' check if already closed.
+            If Me.IsDisposed OrElse Not Me.IsDeviceOpen Then  Return
             Dim e As New ComponentModel.CancelEventArgs
             Me.OnClosing(e)
             If e.Cancel Then Return

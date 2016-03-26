@@ -41,7 +41,7 @@ Public MustInherit Class MasterDeviceBase
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                Me.OnClosing(New System.ComponentModel.CancelEventArgs)
+                If Me.IsDeviceOpen Then Me.OnClosing(New System.ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception details: {0}", ex)

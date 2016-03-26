@@ -380,7 +380,6 @@ Public Class DeviceUnderTest
                 Me._ContactCheckThreshold = value
                 Me.AsyncNotifyPropertyChanged()
             End If
-
         End Set
     End Property
 
