@@ -131,7 +131,7 @@ Friend Module ResourceManagerExtensions
                                          ByRef resources As IEnumerable(Of String)) As Boolean
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
-            Return value.FindResources().Count > 0
+            Return value.FindResources().Any
         Catch ex As ArgumentException
             resources = ResourceManagerExtensions.buildResourceMessage(ex)
             Return False
@@ -158,7 +158,7 @@ Friend Module ResourceManagerExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.Find(filter)
-            Return resources.Count > 0
+            Return resources.Any
         Catch ex As ArgumentException
             resources = ResourceManagerExtensions.buildResourceMessage(ex)
             Return False
@@ -235,7 +235,7 @@ Friend Module ResourceManagerExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInterfaces()
-            Return resources.Count > 0
+            Return resources.Any
         Catch ex As ArgumentException
             resources = ResourceManagerExtensions.buildResourceMessage(ex)
             Return False
@@ -282,7 +282,7 @@ Friend Module ResourceManagerExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInterfaces(interfaceType)
-            Return resources.Count > 0
+            Return resources.Any
         Catch ex As ArgumentException
             resources = ResourceManagerExtensions.buildResourceMessage(ex)
             Return False
@@ -349,7 +349,7 @@ Friend Module ResourceManagerExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInstruments()
-            Return resources.Count > 0
+            Return resources.Any
         Catch ex As ArgumentException
             resources = ResourceManagerExtensions.buildResourceMessage(ex)
             Return False
@@ -397,7 +397,7 @@ Friend Module ResourceManagerExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInstruments(interfaceType)
-            Return resources.Count > 0
+            Return resources.Any
         Catch ex As ArgumentException
             resources = ResourceManagerExtensions.buildResourceMessage(ex)
             Return False
@@ -447,7 +447,7 @@ Friend Module ResourceManagerExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInstruments(interfaceType, interfaceNumber)
-            Return resources.Count > 0
+            Return resources.Any
         Catch ex As ArgumentException
             resources = ResourceManagerExtensions.buildResourceMessage(ex)
             Return False

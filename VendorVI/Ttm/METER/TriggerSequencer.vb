@@ -154,7 +154,7 @@ Public Class TriggerSequencer
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="0#")>
     Public Function Dequeue(ByRef signal As TriggerSequenceSignal) As Boolean
         SyncLock signalQueueSyncLocker
-            If Me.lockedSignalQueue.Count > 0 Then
+            If Me.lockedSignalQueue.Any Then
                 signal = Me.lockedSignalQueue.Dequeue()
                 Return True
             Else

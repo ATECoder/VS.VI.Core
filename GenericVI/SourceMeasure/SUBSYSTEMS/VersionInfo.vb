@@ -84,9 +84,9 @@ Public Class VersionInfo
             ' Minor revision: A02
             Me._FirmwareLevelMinorRevision = revSections.Dequeue.Trim
 
-            If revSections.Count > 0 Then Me.BoardRevisions.Add(BoardType.Analog.ToString, revSections.Dequeue.Trim)
-            If revSections.Count > 0 Then Me.BoardRevisions.Add(BoardType.Digital.ToString, revSections.Dequeue.Trim)
-            If revSections.Count > 0 Then Me.BoardRevisions.Add(BoardType.ContactCheck.ToString, revSections.Dequeue.Trim)
+            If revSections.Any Then Me.BoardRevisions.Add(BoardType.Analog.ToString, revSections.Dequeue.Trim)
+            If revSections.Any Then Me.BoardRevisions.Add(BoardType.Digital.ToString, revSections.Dequeue.Trim)
+            If revSections.Any Then Me.BoardRevisions.Add(BoardType.ContactCheck.ToString, revSections.Dequeue.Trim)
             Me._SupportsContactCheck = Me.BoardRevisions.ContainsKey(BoardType.ContactCheck.ToString)
 
         End If

@@ -205,7 +205,7 @@ Public MustInherit Class ReadingAmounts
     ''' <returns> The unit suffix </returns>
     Public Shared Function ParseUnitSuffix(ByVal reading As String) As String
         Dim suffix As String = ""
-        If Not String.IsNullOrWhiteSpace(reading) AndAlso ReadingAmounts.UnitsDictionary.Keys.Count > 0 Then
+        If Not String.IsNullOrWhiteSpace(reading) AndAlso ReadingAmounts.UnitsDictionary.Keys.Any Then
             For Each suffix In ReadingAmounts.UnitsDictionary.Keys
                 If reading.EndsWith(suffix, StringComparison.OrdinalIgnoreCase) Then
                     Exit For

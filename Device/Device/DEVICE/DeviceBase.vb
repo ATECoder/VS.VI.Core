@@ -450,7 +450,7 @@ Public MustInherit Class DeviceBase
     ''' <remarks> This override should occur as the first call of the overriding method. </remarks>
     Protected Overridable Sub OnOpening(ByVal e As ComponentModel.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        If Me.Subsystems?.Count > 0 Then
+        If Me.Subsystems?.Any Then
             e.Cancel = True
             Dim msg As String = Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                                    $"Aborting attempt to add subsystems on top of existing subsystems for resource '{ResourceName}';. ")

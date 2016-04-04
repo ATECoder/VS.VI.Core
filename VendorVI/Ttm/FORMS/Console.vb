@@ -938,7 +938,7 @@ Public Class Console
 
     ''' <summary> Gets or sets reference to the thermal transient meter device. </summary>
     ''' <value> The meter. </value>
-    Private Property Meter() As Meter
+    Public Property Meter() As Meter
         Get
             Return Me._meter
         End Get

@@ -135,8 +135,8 @@ Public Class ResourceSelectorDialog
                 resources = rm.FindResources()
             End Using
 
-            If Resources.Count > 0 Then
-                For Each s As String In Resources
+            If resources.Any Then
+                For Each s As String In resources
                     Me._AvailableResourcesListBox.Items.Add(s)
                 Next
                 Me.selectFirstNotSerialInstrument()

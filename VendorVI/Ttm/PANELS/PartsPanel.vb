@@ -255,9 +255,9 @@ Public Class PartsPanel
     Protected Sub OnPartsChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _Parts.CollectionChanged
         ' Me.ConfigurePartsDisplay(Me._PartsDataGridView)
         Me._PartsBindingSource.ResetBindings(False)
-        Me._AddPartToolStripButton.Enabled = Me._AddPartToolStripButton.Enabled AndAlso Me.Parts IsNot Nothing AndAlso Me.Parts.Count > 0
-        Me._ClearPartListToolStripButton.Enabled = Me.Parts IsNot Nothing AndAlso Me.Parts.Count > 0
-        Me._SavePartsToolStripButton.Enabled = Me.Parts IsNot Nothing AndAlso Me.Parts.Count > 0
+        Me._AddPartToolStripButton.Enabled = Me._AddPartToolStripButton.Enabled AndAlso Me.Parts IsNot Nothing AndAlso Me.Parts.Any
+        Me._ClearPartListToolStripButton.Enabled = Me.Parts IsNot Nothing AndAlso Me.Parts.Any
+        Me._SavePartsToolStripButton.Enabled = Me.Parts IsNot Nothing AndAlso Me.Parts.Any
     End Sub
 
     ''' <summary> Clears the list of measurements. </summary>
@@ -416,7 +416,7 @@ Public Class PartsPanel
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub SaveParts()
 
-        If Me.Parts IsNot Nothing AndAlso Me.Parts.Count > 0 Then
+        If Me.Parts IsNot Nothing AndAlso Me.Parts.Any Then
 
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Browsing for file;. ")
             Dim filePath As String = ""

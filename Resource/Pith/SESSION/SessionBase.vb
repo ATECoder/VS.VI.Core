@@ -646,7 +646,7 @@ Public MustInherit Class SessionBase
             Return Me.__TerminationCharacters
         End Get
         Set(value As IEnumerable(Of Char))
-            If value IsNot Nothing AndAlso value.Count > 0 Then
+            If value IsNot Nothing AndAlso value.Any Then
                 Me.__TerminationCharacters = New Char(value.Count - 1) {}
                 Array.Copy(value.ToArray, Me.__TerminationCharacters, value.Count)
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.Termination))

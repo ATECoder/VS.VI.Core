@@ -96,7 +96,7 @@ Public Class MeasurementPanelBase
                                              MeasurementSequenceState.Idle = measurementSequenceState
         If Me._TraceToolStripDropDownButton.Enabled Then
             Me._ReadTraceToolStripMenuItem.Enabled = Me._isTraceAvailable
-            Dim enabled As Boolean = Me._LastTimeSeries IsNot Nothing AndAlso Me._LastTimeSeries.Count > 0
+            Dim enabled As Boolean = Me._LastTimeSeries IsNot Nothing AndAlso Me._LastTimeSeries.Any
             Me._SaveTraceToolStripMenuItem.Enabled = enabled
             Me._ClearTraceToolStripMenuItem.Enabled = enabled
             Me._ModelTraceToolStripMenuItem.Enabled = enabled
@@ -172,7 +172,7 @@ Public Class MeasurementPanelBase
             Me._LastTimeSeries = Me.DisplayThermalTransientTrace(Me._Chart)
             ' list the trace values
             MeasurementPanelBase.displayTrace(Me._TraceDataGridView, Me._LastTimeSeries)
-            Dim enabled As Boolean = Me._LastTimeSeries IsNot Nothing AndAlso Me._LastTimeSeries.Count > 0
+            Dim enabled As Boolean = Me._LastTimeSeries IsNot Nothing AndAlso Me._LastTimeSeries.Any
             Me._SaveTraceToolStripMenuItem.Enabled = enabled
             Me._ClearTraceToolStripMenuItem.Enabled = enabled
             Me._ModelTraceToolStripMenuItem.Enabled = enabled
@@ -311,7 +311,7 @@ Public Class MeasurementPanelBase
         Me._ErrorProvider.SetError(Me._TtmMeasureControlsToolStrip, "")
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "User action @{0};. ", System.Reflection.MethodInfo.GetCurrentMethod.Name)
 
-        If Me._LastTimeSeries IsNot Nothing AndAlso Me._LastTimeSeries.Count > 0 Then
+        If Me._LastTimeSeries IsNot Nothing AndAlso Me._LastTimeSeries.Any Then
 
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Browsing for file;. ")
             Dim filePath As String = ""
@@ -319,7 +319,7 @@ Public Class MeasurementPanelBase
             If String.IsNullOrWhiteSpace(filePath) Then
                 Return
             End If
-             My.MySettings.Default.TraceFilePath = filePath
+            My.MySettings.Default.TraceFilePath = filePath
 
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Saving trace;. to '{0}'", filePath)
             Try

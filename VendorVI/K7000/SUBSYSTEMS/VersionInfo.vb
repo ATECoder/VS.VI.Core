@@ -46,9 +46,9 @@ Public Class VersionInfo
             Dim revSections As Queue(Of String) = New Queue(Of String)(revision.Split("/"c))
 
             ' Rev: xxxxx,/yyyyy/zzzzz
-            If revSections.Count > 0 Then Me.BoardRevisions.Add(BoardType.Digital.ToString, revSections.Dequeue.Trim.TrimEnd(",".ToCharArray))
-            If revSections.Count > 0 Then Me.BoardRevisions.Add(BoardType.Display.ToString, revSections.Dequeue.Trim)
-            If revSections.Count > 0 Then Me.BoardRevisions.Add(BoardType.LedDisplay.ToString, revSections.Dequeue.Trim)
+            If revSections.Any Then Me.BoardRevisions.Add(BoardType.Digital.ToString, revSections.Dequeue.Trim.TrimEnd(",".ToCharArray))
+            If revSections.Any Then Me.BoardRevisions.Add(BoardType.Display.ToString, revSections.Dequeue.Trim)
+            If revSections.Any Then Me.BoardRevisions.Add(BoardType.LedDisplay.ToString, revSections.Dequeue.Trim)
 
         End If
 
