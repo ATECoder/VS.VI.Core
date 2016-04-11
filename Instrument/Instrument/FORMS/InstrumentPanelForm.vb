@@ -206,7 +206,6 @@ Public Class InstrumentPanelForm
 
 #End Region
 
-
 #Region " TALKER "
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
