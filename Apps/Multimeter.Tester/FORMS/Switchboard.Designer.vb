@@ -17,7 +17,6 @@ Partial Class Switchboard
         Me._ApplicationsListBox = New System.Windows.Forms.ListBox()
         Me._Tooltip = New System.Windows.Forms.ToolTip(Me.components)
         Me._ImageList48 = New System.Windows.Forms.ImageList(Me.components)
-        Me.RoundButton1 = New isr.Core.Controls.RoundButton()
         Me.SuspendLayout()
         '
         '_ApplicationsListBoxLabel
@@ -66,25 +65,10 @@ Partial Class Switchboard
         Me._ImageList48.Images.SetKeyName(0, "document-decrypt.png")
         Me._ImageList48.Images.SetKeyName(1, "document-encrypt.png")
         '
-        'RoundButton1
-        '
-        Me.RoundButton1.BackgroundImage = Global.isr.VI.My.Resources.Resources.document_encrypt
-        Me.RoundButton1.FlatAppearance.BorderColor = System.Drawing.Color.Maroon
-        Me.RoundButton1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.RoundButton1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
-        Me.RoundButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.RoundButton1.ImageList = Me._ImageList48
-        Me.RoundButton1.Location = New System.Drawing.Point(434, 91)
-        Me.RoundButton1.Name = "RoundButton1"
-        Me.RoundButton1.Size = New System.Drawing.Size(48, 48)
-        Me.RoundButton1.TabIndex = 16
-        Me.RoundButton1.UseVisualStyleBackColor = True
-        '
         'Switchboard
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 17.0!)
         Me.ClientSize = New System.Drawing.Size(513, 217)
-        Me.Controls.Add(Me.RoundButton1)
         Me.Controls.Add(Me._ApplicationsListBoxLabel)
         Me.Controls.Add(Me._OpenButton)
         Me.Controls.Add(Me._ExitButton)
@@ -100,6 +84,5 @@ Partial Class Switchboard
     Private WithEvents _ExitButton As System.Windows.Forms.Button
     Private WithEvents _ApplicationsListBox As System.Windows.Forms.ListBox
     Private WithEvents _Tooltip As System.Windows.Forms.ToolTip
-    Friend WithEvents RoundButton1 As Core.Controls.RoundButton
     Private WithEvents _ImageList48 As ImageList
 End Class

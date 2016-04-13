@@ -46,23 +46,19 @@ Partial Public Class SessionBase
     ''' <returns> <c>True</c> if the parsed value is valid. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
     Public Shared Function TryParse(ByVal value As String, ByRef result As Boolean) As Boolean
+        Dim numericValue As Integer = 0
+        Dim returnValue As Boolean = False
         If String.IsNullOrWhiteSpace(value) Then
-            Return False
-        ElseIf String.Equals("1", value) Then
-            result = True
-            Return True
-        ElseIf String.Equals("0", value) Then
-            result = False
-            Return True
-        ElseIf String.Equals("true", value, StringComparison.OrdinalIgnoreCase) Then
-            result = True
-            Return True
-        ElseIf String.Equals("false", value, StringComparison.OrdinalIgnoreCase) Then
-            result = False
-            Return True
+            returnValue = False
+        ElseIf Integer.TryParse(value, numericValue) Then
+            result = numericValue <> 0
+            returnValue = result
+        ElseIf Boolean.TryParse(value, returnValue) Then
+            result = returnValue
         Else
-            Return False
+            returnValue = False
         End If
+        Return returnValue
     End Function
 
 #End Region

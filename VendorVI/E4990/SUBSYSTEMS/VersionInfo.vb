@@ -23,11 +23,10 @@ Public Class VersionInfo
 
     ''' <summary> Parses the instrument firmware revision. </summary>
     ''' <remarks>
-    ''' KEITHLEY INSTRUMENTS INC., MODEL 7001, wwwwwww, xxxxx,/yyyyy/zzzzz<para>
-    ''' where; wwwwwww Is the serial number</para><para>
-    ''' xxxxx Is the firmware revision level of the digital board</para><para>
-    ''' yyyyy Is the firmware revision level of the VFD display</para><para>
-    ''' zzzzz Is the firmware revision level of the LED display</para>
+    ''' Agilent\sTechnologies,E4990A,MY54100800,A.02.12\n<para>
+    ''' where; MY54100800 Is the serial number</para><para>
+    ''' A Is the firmware revision top level revision</para><para>
+    ''' 02.12 Is the firmware revision</para>
     ''' </remarks>
     ''' <exception cref="ArgumentNullException" guarantee="strong"> . </exception>
     ''' <param name="revision"> Specifies the instrument <see cref="BoardRevisions">board
@@ -43,10 +42,10 @@ Public Class VersionInfo
             MyBase.ParseFirmwareRevision(revision)
 
             ' get the revision sections
-            Dim revSections As Queue(Of String) = New Queue(Of String)(revision.Split("/"c))
+            Dim revSections As Queue(Of String) = New Queue(Of String)(revision.Split("."c))
 
-            ' Rev: xxxxx,/yyyyy/zzzzz
-            If revSections.Any Then Me.BoardRevisions.Add(BoardType.Digital.ToString, revSections.Dequeue.Trim.TrimEnd(",".ToCharArray))
+            ' Rev: A.02.12
+            If revSections.Any Then Me.BoardRevisions.Add(BoardType.Digital.ToString, revSections.Dequeue.Trim)
             If revSections.Any Then Me.BoardRevisions.Add(BoardType.Display.ToString, revSections.Dequeue.Trim)
             If revSections.Any Then Me.BoardRevisions.Add(BoardType.LedDisplay.ToString, revSections.Dequeue.Trim)
 
