@@ -220,8 +220,12 @@ Public MustInherit Class ExceptionBase
         Me._additionalInformation.Add(AdditionalInfoItem.FullName.ToString, Reflection.Assembly.GetExecutingAssembly().FullName)
         Me._additionalInformation.Add(AdditionalInfoItem.AppDomainName.ToString, AppDomain.CurrentDomain.FriendlyName)
         Me._additionalInformation.Add(AdditionalInfoItem.ThreadIdentity.ToString, My.User.Name) ' Thread.CurrentPrincipal.Identity.Name
-        Me._additionalInformation.Add(AdditionalInfoItem.WindowsIdentity.ToString, My.Computer.Info.OSFullName)
-        Me._additionalInformation.Add(AdditionalInfoItem.OSVersion.ToString, My.Computer.Info.OSVersion)
+        Try
+            ' WMI may not be installed on the computer
+            Me._additionalInformation.Add(AdditionalInfoItem.WindowsIdentity.ToString, My.Computer.Info.OSFullName)
+            Me._additionalInformation.Add(AdditionalInfoItem.OSVersion.ToString, My.Computer.Info.OSVersion)
+        Catch
+        End Try
 
     End Sub
 

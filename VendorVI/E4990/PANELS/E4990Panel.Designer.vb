@@ -59,23 +59,23 @@ Partial Class E4990Panel
         Me._SenseFunctionComboBoxLabel = New System.Windows.Forms.Label()
         Me._SenseAutoRangeToggle = New System.Windows.Forms.CheckBox()
         Me._ApplySenseSettingsButton = New System.Windows.Forms.Button()
-        Me._HipotTabPage = New System.Windows.Forms.TabPage()
+        Me._ImpedanceTabPage = New System.Windows.Forms.TabPage()
         Me._HipotLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._HipotGroupBox = New System.Windows.Forms.GroupBox()
-        Me._ContactCheckToggle = New System.Windows.Forms.CheckBox()
-        Me._ApplyHipotSettingsButton = New System.Windows.Forms.Button()
-        Me._CurrentLimitNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._CurrentLimitNumericLabel = New System.Windows.Forms.Label()
-        Me._VoltageLevelNumericLabel = New System.Windows.Forms.Label()
-        Me._VoltageLevelNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._ResistanceRangeNumericLabel = New System.Windows.Forms.Label()
-        Me._resistanceLowLimitNumericLabel = New System.Windows.Forms.Label()
-        Me._ResistanceRangeNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._ResistanceLowLimitNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._dwellTimeNumericLabel = New System.Windows.Forms.Label()
-        Me._dwellTimeNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._ImpedanceGroupBox = New System.Windows.Forms.GroupBox()
+        Me._SourceToggle = New System.Windows.Forms.CheckBox()
+        Me._ApplyImpedanceSettingsButton = New System.Windows.Forms.Button()
+        Me._LevelNumericLabel = New System.Windows.Forms.Label()
+        Me._LevelNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._HighFrequencyNumericLabel = New System.Windows.Forms.Label()
+        Me._LowFrequencyNumericLabel = New System.Windows.Forms.Label()
+        Me._HighFrequencyNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._LowFrequencyNumeric = New System.Windows.Forms.NumericUpDown()
         Me._ApertureNumeric = New System.Windows.Forms.NumericUpDown()
         Me._ApertureNumericLabel = New System.Windows.Forms.Label()
+        Me._CompensationGroupBox = New System.Windows.Forms.GroupBox()
+        Me._ComopensationTextBox = New System.Windows.Forms.TextBox()
+        Me._ShortButton = New System.Windows.Forms.Button()
+        Me._OpenButton = New System.Windows.Forms.Button()
         Me._SotTabPage = New System.Windows.Forms.TabPage()
         Me._BinningLayout = New System.Windows.Forms.TableLayoutPanel()
         Me._TriggerToolStrip = New System.Windows.Forms.ToolStrip()
@@ -122,15 +122,14 @@ Partial Class E4990Panel
         Me._SenseTabPage.SuspendLayout()
         CType(Me._SenseRangeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._NplcNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me._HipotTabPage.SuspendLayout()
+        Me._ImpedanceTabPage.SuspendLayout()
         Me._HipotLayout.SuspendLayout()
-        Me._HipotGroupBox.SuspendLayout()
-        CType(Me._CurrentLimitNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._VoltageLevelNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._ResistanceRangeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._ResistanceLowLimitNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._dwellTimeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._ImpedanceGroupBox.SuspendLayout()
+        CType(Me._LevelNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me._HighFrequencyNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me._LowFrequencyNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._ApertureNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._CompensationGroupBox.SuspendLayout()
         Me._SotTabPage.SuspendLayout()
         Me._BinningLayout.SuspendLayout()
         Me._TriggerToolStrip.SuspendLayout()
@@ -165,7 +164,7 @@ Partial Class E4990Panel
         Me._Tabs.Controls.Add(Me._ReadingTabPage)
         Me._Tabs.Controls.Add(Me._SourceTabPage)
         Me._Tabs.Controls.Add(Me._SenseTabPage)
-        Me._Tabs.Controls.Add(Me._HipotTabPage)
+        Me._Tabs.Controls.Add(Me._ImpedanceTabPage)
         Me._Tabs.Controls.Add(Me._SotTabPage)
         Me._Tabs.Controls.Add(Me._ReadWriteTabPage)
         Me._Tabs.Controls.Add(Me._MessagesTabPage)
@@ -695,15 +694,15 @@ Partial Class E4990Panel
         Me._ApplySenseSettingsButton.Text = "&Apply"
         Me._ApplySenseSettingsButton.UseVisualStyleBackColor = True
         '
-        '_HipotTabPage
+        '_ImpedanceTabPage
         '
-        Me._HipotTabPage.Controls.Add(Me._HipotLayout)
-        Me._HipotTabPage.Location = New System.Drawing.Point(4, 26)
-        Me._HipotTabPage.Name = "_HipotTabPage"
-        Me._HipotTabPage.Size = New System.Drawing.Size(356, 270)
-        Me._HipotTabPage.TabIndex = 6
-        Me._HipotTabPage.Text = "High"
-        Me._HipotTabPage.UseVisualStyleBackColor = True
+        Me._ImpedanceTabPage.Controls.Add(Me._HipotLayout)
+        Me._ImpedanceTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._ImpedanceTabPage.Name = "_ImpedanceTabPage"
+        Me._ImpedanceTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._ImpedanceTabPage.TabIndex = 6
+        Me._ImpedanceTabPage.Text = "Z"
+        Me._ImpedanceTabPage.UseVisualStyleBackColor = True
         '
         '_HipotLayout
         '
@@ -711,178 +710,132 @@ Partial Class E4990Panel
         Me._HipotLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._HipotLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
         Me._HipotLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._HipotLayout.Controls.Add(Me._HipotGroupBox, 1, 1)
+        Me._HipotLayout.Controls.Add(Me._ImpedanceGroupBox, 1, 1)
+        Me._HipotLayout.Controls.Add(Me._CompensationGroupBox, 1, 2)
         Me._HipotLayout.Dock = System.Windows.Forms.DockStyle.Fill
         Me._HipotLayout.Location = New System.Drawing.Point(0, 0)
         Me._HipotLayout.Name = "_HipotLayout"
-        Me._HipotLayout.RowCount = 3
+        Me._HipotLayout.RowCount = 4
         Me._HipotLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._HipotLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._HipotLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._HipotLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._HipotLayout.Size = New System.Drawing.Size(356, 270)
         Me._HipotLayout.TabIndex = 3
         '
-        '_HipotGroupBox
+        '_ImpedanceGroupBox
         '
-        Me._HipotGroupBox.Controls.Add(Me._ContactCheckToggle)
-        Me._HipotGroupBox.Controls.Add(Me._ApplyHipotSettingsButton)
-        Me._HipotGroupBox.Controls.Add(Me._CurrentLimitNumeric)
-        Me._HipotGroupBox.Controls.Add(Me._CurrentLimitNumericLabel)
-        Me._HipotGroupBox.Controls.Add(Me._VoltageLevelNumericLabel)
-        Me._HipotGroupBox.Controls.Add(Me._VoltageLevelNumeric)
-        Me._HipotGroupBox.Controls.Add(Me._ResistanceRangeNumericLabel)
-        Me._HipotGroupBox.Controls.Add(Me._resistanceLowLimitNumericLabel)
-        Me._HipotGroupBox.Controls.Add(Me._ResistanceRangeNumeric)
-        Me._HipotGroupBox.Controls.Add(Me._ResistanceLowLimitNumeric)
-        Me._HipotGroupBox.Controls.Add(Me._dwellTimeNumericLabel)
-        Me._HipotGroupBox.Controls.Add(Me._dwellTimeNumeric)
-        Me._HipotGroupBox.Controls.Add(Me._ApertureNumeric)
-        Me._HipotGroupBox.Controls.Add(Me._ApertureNumericLabel)
-        Me._HipotGroupBox.Location = New System.Drawing.Point(36, 26)
-        Me._HipotGroupBox.Name = "_HipotGroupBox"
-        Me._HipotGroupBox.Size = New System.Drawing.Size(283, 217)
-        Me._HipotGroupBox.TabIndex = 2
-        Me._HipotGroupBox.TabStop = False
-        Me._HipotGroupBox.Text = "HIPOT SETTINGS"
+        Me._ImpedanceGroupBox.Controls.Add(Me._SourceToggle)
+        Me._ImpedanceGroupBox.Controls.Add(Me._ApplyImpedanceSettingsButton)
+        Me._ImpedanceGroupBox.Controls.Add(Me._LevelNumericLabel)
+        Me._ImpedanceGroupBox.Controls.Add(Me._LevelNumeric)
+        Me._ImpedanceGroupBox.Controls.Add(Me._HighFrequencyNumericLabel)
+        Me._ImpedanceGroupBox.Controls.Add(Me._LowFrequencyNumericLabel)
+        Me._ImpedanceGroupBox.Controls.Add(Me._HighFrequencyNumeric)
+        Me._ImpedanceGroupBox.Controls.Add(Me._LowFrequencyNumeric)
+        Me._ImpedanceGroupBox.Controls.Add(Me._ApertureNumeric)
+        Me._ImpedanceGroupBox.Controls.Add(Me._ApertureNumericLabel)
+        Me._ImpedanceGroupBox.Location = New System.Drawing.Point(36, 10)
+        Me._ImpedanceGroupBox.Name = "_ImpedanceGroupBox"
+        Me._ImpedanceGroupBox.Size = New System.Drawing.Size(283, 160)
+        Me._ImpedanceGroupBox.TabIndex = 2
+        Me._ImpedanceGroupBox.TabStop = False
+        Me._ImpedanceGroupBox.Text = "IMPEDANCE SETTINGS"
         '
-        '_ContactCheckToggle
+        '_SourceToggle
         '
-        Me._ContactCheckToggle.AutoSize = True
-        Me._ContactCheckToggle.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me._ContactCheckToggle.Location = New System.Drawing.Point(19, 187)
-        Me._ContactCheckToggle.Name = "_ContactCheckToggle"
-        Me._ContactCheckToggle.Size = New System.Drawing.Size(161, 21)
-        Me._ContactCheckToggle.TabIndex = 13
-        Me._ContactCheckToggle.Text = "Contact check enabled:"
-        Me._ContactCheckToggle.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me._ContactCheckToggle.UseVisualStyleBackColor = True
+        Me._SourceToggle.Appearance = System.Windows.Forms.Appearance.Button
+        Me._SourceToggle.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._SourceToggle.Location = New System.Drawing.Point(3, 41)
+        Me._SourceToggle.Name = "_SourceToggle"
+        Me._SourceToggle.Size = New System.Drawing.Size(109, 28)
+        Me._SourceToggle.TabIndex = 2
+        Me._SourceToggle.Text = "Source: Current"
+        Me._SourceToggle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me._SourceToggle.UseVisualStyleBackColor = True
         '
-        '_ApplyHipotSettingsButton
+        '_ApplyImpedanceSettingsButton
         '
-        Me._ApplyHipotSettingsButton.Location = New System.Drawing.Point(197, 183)
-        Me._ApplyHipotSettingsButton.Name = "_ApplyHipotSettingsButton"
-        Me._ApplyHipotSettingsButton.Size = New System.Drawing.Size(75, 28)
-        Me._ApplyHipotSettingsButton.TabIndex = 12
-        Me._ApplyHipotSettingsButton.Text = "Apply"
-        Me._ApplyHipotSettingsButton.UseVisualStyleBackColor = True
+        Me._ApplyImpedanceSettingsButton.Location = New System.Drawing.Point(202, 126)
+        Me._ApplyImpedanceSettingsButton.Name = "_ApplyImpedanceSettingsButton"
+        Me._ApplyImpedanceSettingsButton.Size = New System.Drawing.Size(75, 28)
+        Me._ApplyImpedanceSettingsButton.TabIndex = 9
+        Me._ApplyImpedanceSettingsButton.Text = "Apply"
+        Me.TipsTooltip.SetToolTip(Me._ApplyImpedanceSettingsButton, "Configures an impedance measurement")
+        Me._ApplyImpedanceSettingsButton.UseVisualStyleBackColor = True
         '
-        '_CurrentLimitNumeric
+        '_LevelNumericLabel
         '
-        Me._CurrentLimitNumeric.DecimalPlaces = 1
-        Me._CurrentLimitNumeric.Location = New System.Drawing.Point(191, 102)
-        Me._CurrentLimitNumeric.Maximum = New Decimal(New Integer() {1000, 0, 0, 0})
-        Me._CurrentLimitNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
-        Me._CurrentLimitNumeric.Name = "_CurrentLimitNumeric"
-        Me._CurrentLimitNumeric.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._CurrentLimitNumeric.Size = New System.Drawing.Size(79, 25)
-        Me._CurrentLimitNumeric.TabIndex = 7
-        Me._CurrentLimitNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._CurrentLimitNumeric.Value = New Decimal(New Integer() {10, 0, 0, 0})
+        Me._LevelNumericLabel.AutoSize = True
+        Me._LevelNumericLabel.Location = New System.Drawing.Point(117, 47)
+        Me._LevelNumericLabel.Name = "_LevelNumericLabel"
+        Me._LevelNumericLabel.Size = New System.Drawing.Size(71, 17)
+        Me._LevelNumericLabel.TabIndex = 3
+        Me._LevelNumericLabel.Text = "Level [mA]:"
         '
-        '_CurrentLimitNumericLabel
+        '_LevelNumeric
         '
-        Me._CurrentLimitNumericLabel.AutoSize = True
-        Me._CurrentLimitNumericLabel.Location = New System.Drawing.Point(76, 106)
-        Me._CurrentLimitNumericLabel.Name = "_CurrentLimitNumericLabel"
-        Me._CurrentLimitNumericLabel.Size = New System.Drawing.Size(112, 17)
-        Me._CurrentLimitNumericLabel.TabIndex = 6
-        Me._CurrentLimitNumericLabel.Text = "Current Limit [uA]:"
+        Me._LevelNumeric.Location = New System.Drawing.Point(191, 43)
+        Me._LevelNumeric.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
+        Me._LevelNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 196608})
+        Me._LevelNumeric.Name = "_LevelNumeric"
+        Me._LevelNumeric.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me._LevelNumeric.Size = New System.Drawing.Size(85, 25)
+        Me._LevelNumeric.TabIndex = 4
+        Me._LevelNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me._LevelNumeric.Value = New Decimal(New Integer() {5, 0, 0, 0})
         '
-        '_VoltageLevelNumericLabel
+        '_HighFrequencyNumericLabel
         '
-        Me._VoltageLevelNumericLabel.AutoSize = True
-        Me._VoltageLevelNumericLabel.Location = New System.Drawing.Point(80, 79)
-        Me._VoltageLevelNumericLabel.Name = "_VoltageLevelNumericLabel"
-        Me._VoltageLevelNumericLabel.Size = New System.Drawing.Size(108, 17)
-        Me._VoltageLevelNumericLabel.TabIndex = 4
-        Me._VoltageLevelNumericLabel.Text = "Voltage Level [V]:"
+        Me._HighFrequencyNumericLabel.AutoSize = True
+        Me._HighFrequencyNumericLabel.Location = New System.Drawing.Point(60, 103)
+        Me._HighFrequencyNumericLabel.Name = "_HighFrequencyNumericLabel"
+        Me._HighFrequencyNumericLabel.Size = New System.Drawing.Size(128, 17)
+        Me._HighFrequencyNumericLabel.TabIndex = 7
+        Me._HighFrequencyNumericLabel.Text = "High Frequency [Hz]:"
         '
-        '_VoltageLevelNumeric
+        '_LowFrequencyNumericLabel
         '
-        Me._VoltageLevelNumeric.Increment = New Decimal(New Integer() {10, 0, 0, 0})
-        Me._VoltageLevelNumeric.Location = New System.Drawing.Point(191, 75)
-        Me._VoltageLevelNumeric.Maximum = New Decimal(New Integer() {1100, 0, 0, 0})
-        Me._VoltageLevelNumeric.Name = "_VoltageLevelNumeric"
-        Me._VoltageLevelNumeric.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._VoltageLevelNumeric.Size = New System.Drawing.Size(79, 25)
-        Me._VoltageLevelNumeric.TabIndex = 5
-        Me._VoltageLevelNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._VoltageLevelNumeric.Value = New Decimal(New Integer() {10, 0, 0, 0})
+        Me._LowFrequencyNumericLabel.AutoSize = True
+        Me._LowFrequencyNumericLabel.Location = New System.Drawing.Point(64, 75)
+        Me._LowFrequencyNumericLabel.Name = "_LowFrequencyNumericLabel"
+        Me._LowFrequencyNumericLabel.Size = New System.Drawing.Size(124, 17)
+        Me._LowFrequencyNumericLabel.TabIndex = 5
+        Me._LowFrequencyNumericLabel.Text = "Low Frequency [Hz]:"
         '
-        '_ResistanceRangeNumericLabel
+        '_HighFrequencyNumeric
         '
-        Me._ResistanceRangeNumericLabel.AutoSize = True
-        Me._ResistanceRangeNumericLabel.Location = New System.Drawing.Point(19, 160)
-        Me._ResistanceRangeNumericLabel.Name = "_ResistanceRangeNumericLabel"
-        Me._ResistanceRangeNumericLabel.Size = New System.Drawing.Size(169, 17)
-        Me._ResistanceRangeNumericLabel.TabIndex = 10
-        Me._ResistanceRangeNumericLabel.Text = "Resistance Range [M Ohm]:"
+        Me._HighFrequencyNumeric.Increment = New Decimal(New Integer() {100000, 0, 0, 0})
+        Me._HighFrequencyNumeric.Location = New System.Drawing.Point(191, 99)
+        Me._HighFrequencyNumeric.Maximum = New Decimal(New Integer() {10000000, 0, 0, 0})
+        Me._HighFrequencyNumeric.Minimum = New Decimal(New Integer() {20, 0, 0, 0})
+        Me._HighFrequencyNumeric.Name = "_HighFrequencyNumeric"
+        Me._HighFrequencyNumeric.Size = New System.Drawing.Size(85, 25)
+        Me._HighFrequencyNumeric.TabIndex = 8
+        Me._HighFrequencyNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me._HighFrequencyNumeric.ThousandsSeparator = True
+        Me._HighFrequencyNumeric.Value = New Decimal(New Integer() {10000000, 0, 0, 0})
         '
-        '_resistanceLowLimitNumericLabel
+        '_LowFrequencyNumeric
         '
-        Me._resistanceLowLimitNumericLabel.AutoSize = True
-        Me._resistanceLowLimitNumericLabel.Location = New System.Drawing.Point(5, 133)
-        Me._resistanceLowLimitNumericLabel.Name = "_resistanceLowLimitNumericLabel"
-        Me._resistanceLowLimitNumericLabel.Size = New System.Drawing.Size(183, 17)
-        Me._resistanceLowLimitNumericLabel.TabIndex = 8
-        Me._resistanceLowLimitNumericLabel.Text = "Resistance low Limit [M Ohm]:"
-        '
-        '_ResistanceRangeNumeric
-        '
-        Me._ResistanceRangeNumeric.Increment = New Decimal(New Integer() {1000000, 0, 0, 0})
-        Me._ResistanceRangeNumeric.Location = New System.Drawing.Point(191, 156)
-        Me._ResistanceRangeNumeric.Maximum = New Decimal(New Integer() {10000, 0, 0, 0})
-        Me._ResistanceRangeNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
-        Me._ResistanceRangeNumeric.Name = "_ResistanceRangeNumeric"
-        Me._ResistanceRangeNumeric.Size = New System.Drawing.Size(79, 25)
-        Me._ResistanceRangeNumeric.TabIndex = 11
-        Me._ResistanceRangeNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._ResistanceRangeNumeric.ThousandsSeparator = True
-        Me._ResistanceRangeNumeric.Value = New Decimal(New Integer() {1000, 0, 0, 0})
-        '
-        '_ResistanceLowLimitNumeric
-        '
-        Me._ResistanceLowLimitNumeric.Increment = New Decimal(New Integer() {10, 0, 0, 0})
-        Me._ResistanceLowLimitNumeric.Location = New System.Drawing.Point(191, 129)
-        Me._ResistanceLowLimitNumeric.Maximum = New Decimal(New Integer() {1000, 0, 0, 0})
-        Me._ResistanceLowLimitNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
-        Me._ResistanceLowLimitNumeric.Name = "_ResistanceLowLimitNumeric"
-        Me._ResistanceLowLimitNumeric.Size = New System.Drawing.Size(79, 25)
-        Me._ResistanceLowLimitNumeric.TabIndex = 9
-        Me._ResistanceLowLimitNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._ResistanceLowLimitNumeric.ThousandsSeparator = True
-        Me._ResistanceLowLimitNumeric.Value = New Decimal(New Integer() {100, 0, 0, 0})
-        '
-        '_dwellTimeNumericLabel
-        '
-        Me._dwellTimeNumericLabel.AutoSize = True
-        Me._dwellTimeNumericLabel.Location = New System.Drawing.Point(98, 52)
-        Me._dwellTimeNumericLabel.Name = "_dwellTimeNumericLabel"
-        Me._dwellTimeNumericLabel.Size = New System.Drawing.Size(90, 17)
-        Me._dwellTimeNumericLabel.TabIndex = 2
-        Me._dwellTimeNumericLabel.Text = "Dwell time [S]:"
-        '
-        '_dwellTimeNumeric
-        '
-        Me._dwellTimeNumeric.DecimalPlaces = 2
-        Me._dwellTimeNumeric.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
-        Me._dwellTimeNumeric.Location = New System.Drawing.Point(191, 48)
-        Me._dwellTimeNumeric.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
-        Me._dwellTimeNumeric.Name = "_dwellTimeNumeric"
-        Me._dwellTimeNumeric.Size = New System.Drawing.Size(79, 25)
-        Me._dwellTimeNumeric.TabIndex = 3
-        Me._dwellTimeNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._dwellTimeNumeric.Value = New Decimal(New Integer() {2, 0, 0, 0})
+        Me._LowFrequencyNumeric.Increment = New Decimal(New Integer() {100000, 0, 0, 0})
+        Me._LowFrequencyNumeric.Location = New System.Drawing.Point(191, 71)
+        Me._LowFrequencyNumeric.Maximum = New Decimal(New Integer() {10000000, 0, 0, 0})
+        Me._LowFrequencyNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me._LowFrequencyNumeric.Name = "_LowFrequencyNumeric"
+        Me._LowFrequencyNumeric.Size = New System.Drawing.Size(85, 25)
+        Me._LowFrequencyNumeric.TabIndex = 6
+        Me._LowFrequencyNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me._LowFrequencyNumeric.ThousandsSeparator = True
+        Me._LowFrequencyNumeric.Value = New Decimal(New Integer() {1000000, 0, 0, 0})
         '
         '_ApertureNumeric
         '
-        Me._ApertureNumeric.DecimalPlaces = 2
-        Me._ApertureNumeric.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
-        Me._ApertureNumeric.Location = New System.Drawing.Point(191, 21)
-        Me._ApertureNumeric.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
+        Me._ApertureNumeric.Location = New System.Drawing.Point(191, 15)
+        Me._ApertureNumeric.Maximum = New Decimal(New Integer() {5, 0, 0, 0})
         Me._ApertureNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 131072})
         Me._ApertureNumeric.Name = "_ApertureNumeric"
-        Me._ApertureNumeric.Size = New System.Drawing.Size(79, 25)
+        Me._ApertureNumeric.Size = New System.Drawing.Size(85, 25)
         Me._ApertureNumeric.TabIndex = 1
         Me._ApertureNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me._ApertureNumeric.Value = New Decimal(New Integer() {1, 0, 0, 0})
@@ -890,11 +843,50 @@ Partial Class E4990Panel
         '_ApertureNumericLabel
         '
         Me._ApertureNumericLabel.AutoSize = True
-        Me._ApertureNumericLabel.Location = New System.Drawing.Point(86, 25)
+        Me._ApertureNumericLabel.Location = New System.Drawing.Point(86, 19)
         Me._ApertureNumericLabel.Name = "_ApertureNumericLabel"
         Me._ApertureNumericLabel.Size = New System.Drawing.Size(102, 17)
         Me._ApertureNumericLabel.TabIndex = 0
         Me._ApertureNumericLabel.Text = "Aperture [NPLC]"
+        '
+        '_CompensationGroupBox
+        '
+        Me._CompensationGroupBox.Controls.Add(Me._ComopensationTextBox)
+        Me._CompensationGroupBox.Controls.Add(Me._ShortButton)
+        Me._CompensationGroupBox.Controls.Add(Me._OpenButton)
+        Me._CompensationGroupBox.Location = New System.Drawing.Point(36, 176)
+        Me._CompensationGroupBox.Name = "_CompensationGroupBox"
+        Me._CompensationGroupBox.Size = New System.Drawing.Size(283, 84)
+        Me._CompensationGroupBox.TabIndex = 3
+        Me._CompensationGroupBox.TabStop = False
+        Me._CompensationGroupBox.Text = "Compensation"
+        '
+        '_ComopensationTextBox
+        '
+        Me._ComopensationTextBox.Location = New System.Drawing.Point(89, 24)
+        Me._ComopensationTextBox.Multiline = True
+        Me._ComopensationTextBox.Name = "_ComopensationTextBox"
+        Me._ComopensationTextBox.Size = New System.Drawing.Size(187, 52)
+        Me._ComopensationTextBox.TabIndex = 2
+        '
+        '_ShortButton
+        '
+        Me._ShortButton.Location = New System.Drawing.Point(6, 51)
+        Me._ShortButton.Name = "_ShortButton"
+        Me._ShortButton.Size = New System.Drawing.Size(75, 28)
+        Me._ShortButton.TabIndex = 1
+        Me._ShortButton.Text = "Short"
+        Me.TipsTooltip.SetToolTip(Me._ShortButton, "Acquire short compensation")
+        Me._ShortButton.UseVisualStyleBackColor = True
+        '
+        '_OpenButton
+        '
+        Me._OpenButton.Location = New System.Drawing.Point(6, 21)
+        Me._OpenButton.Name = "_OpenButton"
+        Me._OpenButton.Size = New System.Drawing.Size(75, 28)
+        Me._OpenButton.TabIndex = 0
+        Me._OpenButton.Text = "Open"
+        Me._OpenButton.UseVisualStyleBackColor = True
         '
         '_SotTabPage
         '
@@ -1170,13 +1162,13 @@ Partial Class E4990Panel
         Me._ReadingStatusStrip.SizingGrip = False
         Me._ReadingStatusStrip.TabIndex = 1
         '
-        '_ComplianceToolStripStatusLabel
+        '_FailureCodeToolStripStatusLabel
         '
         Me._FailureCodeToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
         Me._FailureCodeToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._FailureCodeToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
         Me._FailureCodeToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
-        Me._FailureCodeToolStripStatusLabel.Name = "_ComplianceToolStripStatusLabel"
+        Me._FailureCodeToolStripStatusLabel.Name = "_FailureCodeToolStripStatusLabel"
         Me._FailureCodeToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
         Me._FailureCodeToolStripStatusLabel.Text = "C"
         Me._FailureCodeToolStripStatusLabel.ToolTipText = "Compliance"
@@ -1263,10 +1255,10 @@ Partial Class E4990Panel
         Me._TitleLabel.Text = "KE4990"
         Me._TitleLabel.UseMnemonic = False
         '
-        'KE4990Panel
+        'E4990Panel
         '
         Me.Controls.Add(Me._Layout)
-        Me.Name = "KE4990Panel"
+        Me.Name = "E4990Panel"
         Me.Size = New System.Drawing.Size(364, 450)
         Me.Controls.SetChildIndex(Me.Connector, 0)
         Me.Controls.SetChildIndex(Me._Layout, 0)
@@ -1289,16 +1281,16 @@ Partial Class E4990Panel
         Me._SenseTabPage.PerformLayout()
         CType(Me._SenseRangeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._NplcNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        Me._HipotTabPage.ResumeLayout(False)
+        Me._ImpedanceTabPage.ResumeLayout(False)
         Me._HipotLayout.ResumeLayout(False)
-        Me._HipotGroupBox.ResumeLayout(False)
-        Me._HipotGroupBox.PerformLayout()
-        CType(Me._CurrentLimitNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._VoltageLevelNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._ResistanceRangeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._ResistanceLowLimitNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._dwellTimeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._ImpedanceGroupBox.ResumeLayout(False)
+        Me._ImpedanceGroupBox.PerformLayout()
+        CType(Me._LevelNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me._HighFrequencyNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me._LowFrequencyNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._ApertureNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._CompensationGroupBox.ResumeLayout(False)
+        Me._CompensationGroupBox.PerformLayout()
         Me._SotTabPage.ResumeLayout(False)
         Me._BinningLayout.ResumeLayout(False)
         Me._BinningLayout.PerformLayout()
@@ -1367,19 +1359,15 @@ Partial Class E4990Panel
     Private WithEvents _SessionOptionsDownButton As Windows.Forms.ToolStripDropDownButton
     Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ResetsDropDownButton As Windows.Forms.ToolStripDropDownButton
-    Private WithEvents _HipotTabPage As Windows.Forms.TabPage
+    Private WithEvents _ImpedanceTabPage As Windows.Forms.TabPage
     Private WithEvents _HipotLayout As Windows.Forms.TableLayoutPanel
-    Private WithEvents _HipotGroupBox As Windows.Forms.GroupBox
-    Private WithEvents _CurrentLimitNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _CurrentLimitNumericLabel As Windows.Forms.Label
-    Private WithEvents _VoltageLevelNumericLabel As Windows.Forms.Label
-    Private WithEvents _VoltageLevelNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _ResistanceRangeNumericLabel As Windows.Forms.Label
-    Private WithEvents _resistanceLowLimitNumericLabel As Windows.Forms.Label
-    Private WithEvents _ResistanceRangeNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _ResistanceLowLimitNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _dwellTimeNumericLabel As Windows.Forms.Label
-    Private WithEvents _dwellTimeNumeric As Windows.Forms.NumericUpDown
+    Private WithEvents _ImpedanceGroupBox As Windows.Forms.GroupBox
+    Private WithEvents _LevelNumericLabel As Windows.Forms.Label
+    Private WithEvents _LevelNumeric As Windows.Forms.NumericUpDown
+    Private WithEvents _HighFrequencyNumericLabel As Windows.Forms.Label
+    Private WithEvents _LowFrequencyNumericLabel As Windows.Forms.Label
+    Private WithEvents _HighFrequencyNumeric As Windows.Forms.NumericUpDown
+    Private WithEvents _LowFrequencyNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _ApertureNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _ApertureNumericLabel As Windows.Forms.Label
     Private WithEvents _BinningLayout As Windows.Forms.TableLayoutPanel
@@ -1397,7 +1385,7 @@ Partial Class E4990Panel
     Private WithEvents _WaitHourglassLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _AssertTriggerToolStripButton As Windows.Forms.ToolStripButton
     Private WithEvents _TriggerActionToolStripLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _ApplyHipotSettingsButton As Windows.Forms.Button
+    Private WithEvents _ApplyImpedanceSettingsButton As Windows.Forms.Button
     Private WithEvents _ApplySotSettingsButton As Windows.Forms.Button
     Private WithEvents _ArmSourceComboBox As Windows.Forms.ComboBox
     Private WithEvents _PassBitPatternNumericLabel As Windows.Forms.Label
@@ -1415,9 +1403,13 @@ Partial Class E4990Panel
     Private WithEvents _ContactCheckEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _SourceAutoClearEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _OutputTerminalMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _ContactCheckToggle As Windows.Forms.CheckBox
+    Private WithEvents _SourceToggle As Windows.Forms.CheckBox
     Private WithEvents _EnabledSenseFunctionsListBoxLabel As Windows.Forms.Label
     Private WithEvents _EnabledSenseFunctionsListBox As Windows.Forms.CheckedListBox
     Private WithEvents _TriggerDelayNumericLabel As Windows.Forms.Label
     Private WithEvents _TriggerDelayNumeric As Windows.Forms.NumericUpDown
+    Friend WithEvents _CompensationGroupBox As Windows.Forms.GroupBox
+    Private WithEvents _ComopensationTextBox As Windows.Forms.TextBox
+    Friend WithEvents _ShortButton As Windows.Forms.Button
+    Friend WithEvents _OpenButton As Windows.Forms.Button
 End Class

@@ -29,7 +29,7 @@ Public Class E4990Panel
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private _InitializingComponents As Boolean
+    Private Property InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
@@ -503,6 +503,21 @@ Public Class E4990Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
+            Dim caption As String = ""
+            Me.Device.ClearExecutionState()
+            Me.EnableMeasurementAvailable()
+            Me.Device.Session.WriteLine(":TRIG")
+            If Me.Device.StatusSubsystem.TryAwaitServiceRequest(ServiceRequests.RequestingService, TimeSpan.FromSeconds(10),
+                                                                TimeSpan.FromMilliseconds(100)) Then
+                ' auto scale after measurement completes
+                Me.AutoScale(1, 1)
+                Me.AutoScale(1, 2)
+                Me.SelectActiveTrace(1, 1)
+                caption = Me.ReadMarker(1, 1)
+                Me._ReadingToolStripStatusLabel.SafeTextSetter(caption)
+            Else
+                Me.ErrorProvider.Annunciate(sender, "timeout")
+            End If
             'Me.Device.MeasureSubsystem.Read()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -510,8 +525,652 @@ Public Class E4990Panel
         Finally
             Me.Cursor = Cursors.Default
         End Try
+    End Sub
+
+#End Region
+
+#Region " EXAMPLES "
+
+    Public Sub ConfigureKeysightExample()
+
+        Me.Device.Session.StoreTimeout(TimeSpan.FromSeconds(10))
+
+        ' Preset the equipment to its known state.
+        Me.Device.SystemSubsystem.PresetKnownState()
+
+        Me.Device.Session.RestoreTimeout()
+
+        ' DISPLAY: Set two channels
+        Me.Device.Session.Write(":DISP:SPL D1_2")
+
+        ' Set trigger source at BUS
+        Me.Device.Session.Write(":TRIG:SOUR BUS")
+
+        ' Setup Channel 1
+
+        ' Set measurement parameter for trace 1
+        Me.Device.Session.Write(":CALC1:PAR1:DEF Z")
+
+        ' Set measurement parameter for trace 2
+        Me.Device.Session.Write(":CALC1:PAR2:DEF TZ")
+
+        ' Set Y-Axis at Log format
+        Me.Device.Session.Write(":DISP:WIND1:TRAC1:Y:SPAC LOG")
+
+        ' Stimulus Setup
+
+        ' Turn on Continuous Activation mode for channel 1
+        Me.Device.Session.Write(":INIT1:CONT ON")
+
+        ' Set sweep type at LOG
+        Me.Device.Session.Write(":SENS1:SWE:TYPE LOG")
+
+        ' Set number of point
+        Me.Device.Session.Write(":SENS1:SWE:POIN 201")
+
+        ' Set start frequency
+        Me.Device.Session.Write(":SENS1:FREQ:STAR 100E3")
+
+        ' Set stop frequency
+        Me.Device.Session.Write(":SENS1:FREQ:STOP 10E6")
+
+        ' Set OSC mode
+        Me.Device.Session.Write(":SOUR1:MODE VOLT")
+
+        ' Set OSC level
+        Me.Device.Session.Write(":SOUR1:VOLT 300E-3")
+
+        ' Turn on ALC
+        Me.Device.Session.Write(":SOUR1:ALC ON")
+
+        ' Setup Channel 2
+
+        ' Set measurement parameter for trace 1
+        Me.Device.Session.Write(":CALC2:PAR1:DEF CS")
+
+        ' Set measurement parameter for trace 2
+        Me.Device.Session.Write(":CALC2:PAR2:DEF Q")
+
+        ' Split the trace windows
+        Me.Device.Session.Write(":DISP:WIND2:SPL D1_2")
+
+        ' Stimulus Setup Channel 2
+
+        ' Turn on Continuous Activation mode for channel 2
+        Me.Device.Session.Write(":INIT2:CONT ON")
+
+        ' Set sweep type at segment sweep
+        Me.Device.Session.Write(":SENS2:SWE:TYPE SEGM")
+
+        ' Set segment display at freq base
+        Me.Device.Session.Write(":DISP:WIND2:X:SPAC LIN")
+
+        Dim SegFmt As String = "7,0,1,0,0,0,0,0,3,"
+        Dim SegNo1 As String = "1E4,1E5,50,0,0.3," ' Start Freq, Stop Freq, Nop, Voltage Type, OSC level
+        Dim SegNo2 As String = "1E5,1E6,200,0,0.5,"
+        Dim segNo3 As String = "1E6,1E7,50,0,0.3"
+
+        ' Set sweep type at LOG"
+        Me.Device.Session.Write(String.Format(":SENS2:SEGM:DATA {0}{1}{2}{3}", SegFmt, SegNo1, SegNo2, segNo3))
+
+#If False Then
+    ' Save setting into state file
+    ' Save settings to file
+    Me.Device.Session.Write(":MMEM:STOR ""D:\State\Test.sta""")  
+   
+   ' Close IO
+    Analyzer.IO.Close
+#End If
 
     End Sub
+
+    Public Sub DefineShortTermination(ByVal resistance As Double, ByVal inductance As Double)
+
+        ' Define Short termination by equivalent circuit model
+
+        ' Set equivalent circuit model for short
+        Me.Device.Session.Write(":SENS1:CORR2:CKIT:SHOR:MOD EQU")
+
+        ' Set short termination parameter (L)
+        Me.Device.Session.Write(String.Format(":SENS1:CORR2:CKIT:SHOR:L {0}", inductance))
+
+        ' Set short termination parameter (R)  
+        Me.Device.Session.Write(String.Format(":SENS1:CORR2:CKIT:SHOR:R {0}", resistance))
+
+    End Sub
+
+#End Region
+
+#Region " Z: IMPEDANCE "
+
+    ''' <summary> Enables the marker. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="channelNumber"> The channel number. </param>
+    ''' <param name="markerNumber">  The marker number. </param>
+    ''' <param name="frequency">     The frequency. </param>
+    Public Sub EnableMarker(ByVal channelNumber As Integer, ByVal markerNumber As Integer, ByVal frequency As Double)
+
+        ' Turn on marker 1
+        Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture,
+                                              ":CALC{0}:MARK{1} ON", channelNumber, markerNumber))
+
+        ' set marker position to 100 KHz
+        Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture,
+                                              ":CALC{0}:MARK{1}:X {2}", channelNumber, markerNumber, frequency))
+    End Sub
+
+    ''' <summary> Select active trace. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="channelNumber"> The channel number. </param>
+    ''' <param name="traceNumber">   The trace number. </param>
+    Public Sub SelectActiveTrace(ByVal channelNumber As Integer, ByVal traceNumber As Integer)
+        Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture,
+                                              ":CALC{0}:PAR{1}:SEL", channelNumber, traceNumber))
+    End Sub
+
+    ''' <summary> Reads a marker. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="channelNumber"> The channel number. </param>
+    ''' <param name="markerNumber">  The marker number. </param>
+    ''' <returns> The marker. </returns>
+    Public Function ReadMarker(ByVal channelNumber As Integer, ByVal markerNumber As Integer) As String
+        Dim result As String = ""
+        result = Me.Device.Session.QueryTrimEnd(":CALC{0}:MARK{1}:Y?", channelNumber, markerNumber)
+        ' marker returns two values.
+        result = result.Split(","c)(0)
+        Return result
+    End Function
+
+    ''' <summary> Automatic scale. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="channelNumber"> The channel number. </param>
+    ''' <param name="traceNumber">   The trace number. </param>
+    Public Sub AutoScale(ByVal channelNumber As Integer, ByVal traceNumber As Integer)
+        Me.Device.Session.WriteLine(":DISP:WIND{0}:TRAC{1}:Y:SCAL:AUTO", channelNumber, traceNumber)
+    End Sub
+
+    ''' <summary> Configure sweep. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="lowFrequency">  The low frequency. </param>
+    ''' <param name="highFrequency"> The high frequency. </param>
+    Public Sub ConfigureSweep(ByVal lowFrequency As Double, ByVal highFrequency As Double)
+
+        ' Set number of points
+        Me.Device.Session.Write(":SENS1:SWE:POIN 2")
+
+        ' Set start frequency
+        Me.Device.Session.WriteLine(":SENS1:FREQ:STAR {0}", lowFrequency)
+
+        ' Set stop frequency
+        Me.Device.Session.WriteLine(":SENS1:FREQ:STOP {0}", highFrequency)
+
+    End Sub
+
+    ''' <summary> Configure impedance measurement. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="sourceMode">    Source mode. </param>
+    ''' <param name="aperture">      The aperture. </param>
+    ''' <param name="level">         The level. </param>
+    ''' <param name="lowFrequency">  The low frequency. </param>
+    ''' <param name="highFrequency"> The high frequency. </param>
+    Public Sub ConfigureImpedanceMeasurement(ByVal sourceMode As SourceFunctionModes, aperture As Integer, ByVal level As Double,
+                                             ByVal lowFrequency As Double, ByVal highFrequency As Double)
+
+        Me.Device.Session.StoreTimeout(TimeSpan.FromSeconds(10))
+
+        ' Preset the equipment to its known state.
+        Me.Device.SystemSubsystem.PresetKnownState()
+
+        ' Clear the error queue
+        Me.Device.ClearExecutionState()
+
+        ' clear the device display from warnings
+        Me.Device.Session.Write(":DISP:CCL")
+
+        Me.Device.Session.RestoreTimeout()
+
+        ' Set trigger source at BUS
+        Me.Device.Session.Write(":TRIG:SOUR BUS")
+
+        ' Setup Channel 1
+
+        ' Allocate measurement parameter for trace 1: Rs
+        Me.Device.Session.Write(":CALC1:PAR1:DEF RS")
+
+        ' Allocate measurement parameter for trace 2: Ls
+        Me.Device.Session.Write(":CALC1:PAR2:DEF LS")
+
+        ' Stimulus Setup
+
+        ' Turn on Continuous Activation mode for channel 1
+        Me.Device.Session.Write(":INIT1:CONT ON")
+
+        ' Set aperture
+        Me.Device.Session.WriteLine(":SENS1:APER {0}", aperture)
+
+        ' set a two point sweep.
+        Me.ConfigureSweep(lowFrequency, highFrequency)
+
+        ' Set OSC mode
+        If sourceMode = SourceFunctionModes.Current Then
+            Me.Device.Session.Write(":SOUR1:MODE CURR")
+
+            ' Set OSC level
+            Me.Device.Session.WriteLine(":SOUR1:CURR {0}", level)
+        Else
+            Me.Device.Session.Write(":SOUR1:MODE VOLT")
+
+            ' Set OSC level
+            Me.Device.Session.WriteLine(":SOUR1:VOLT {0}", level)
+        End If
+
+        ' MARKERS
+
+        ' Turn on marker 1
+        Me.Device.Session.Write(":CALC1:MARK1 ON")
+
+        ' set first marker position
+        Me.Device.Session.WriteLine(":CALC1:MARK1:X {0}", lowFrequency)
+
+        ' Turn on marker 2
+        Me.Device.Session.Write(":CALC1:MARK2 ON")
+
+        ' set marker 2 position 
+        Me.Device.Session.WriteLine(":CALC1:MARK2:X {0}", highFrequency)
+
+    End Sub
+
+    ''' <summary> Enables the measurement available. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    Public Sub EnableMeasurementAvailable()
+
+        ' Sets the positive transition filter to 0 and the negative transition filter to 1 
+        ' so that the operation status event register at bit 4 is set to 1 only when the
+        ' operation status condition register at bit 4 is changed from 1 to 0.
+        Me.Device.Session.Write(":STAT:OPER:PTR 0")
+        Me.Device.Session.Write(":STAT:OPER:NTR 16")
+
+        ' Enables bit 4 in the operation status event register and bit 8 in the status byte register.
+        Me.Device.Session.Write(":STAT:OPER:ENAB 16")
+        Me.Device.Session.Write("*SRE 128")
+
+    End Sub
+
+    ''' <summary> Applies the impedance settings button click. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ApplyImpedanceSettingsButton_Click(sender As Object, e As EventArgs) Handles _ApplyImpedanceSettingsButton.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Dim mode As SourceFunctionModes = If(_SourceToggle.Checked, SourceFunctionModes.Voltage, SourceFunctionModes.Current)
+            Dim level As Double = Me._LevelNumeric.Value
+            If mode = SourceFunctionModes.Current Then level = 0.001 * level
+            Me.ConfigureImpedanceMeasurement(mode, CInt(Me._ApertureNumeric.Value), level,
+                                             Me._LowFrequencyNumeric.Value, Me._HighFrequencyNumeric.Value)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred configuring a measurement;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary> Source toggle checked changed. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    Private Sub _SourceToggle_CheckedChanged(sender As Object, e As EventArgs) Handles _SourceToggle.CheckedChanged
+        If Me.InitializingComponents Then Return
+        _SourceToggle.Text = If(_SourceToggle.Checked, "Source: Voltage", "Source: Current")
+        With Me._LevelNumericLabel
+            If Me._SourceToggle.Checked Then
+                .Text = "Level [V]:"
+            Else
+                .Text = "Level [mA]:"
+            End If
+            .Left = Me._ApertureNumericLabel.Right - .Width
+        End With
+        With Me._LevelNumeric
+            If Me._SourceToggle.Checked Then
+                .Minimum = 0.001D
+                .Maximum = 1D
+                .Value = 0.5D
+            Else
+                .Minimum = 0.1D
+                .Maximum = 10D
+                .Value = 5D
+            End If
+        End With
+
+    End Sub
+
+#End Region
+
+#Region " COMPENSATION "
+
+    ''' <summary> Adapter setup. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    <CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")>
+    Sub AdapterSetup()
+
+        ' TimeOut time should be greater than the measurement time.    
+        Me.Device.Session.StoreTimeout(TimeSpan.FromSeconds(10))
+
+        ' Select the adapter
+        ' Set adapter type to 42942A
+        Me.Device.Session.Write(":SENS1:ADAP:TYPE E4PR")
+
+        ' Phase setup
+        MessageBox.Show("Connect Open Termination")
+        ' Execute open in phase setup
+        Me.Device.Session.Write(":SENS1:ADAP:CORR:COLL:ACQ PHAS")
+        ' Wait for measurement end
+        Me.Device.Session.Query("*OPC?")
+
+        ' Save phase setup data
+        Me.Device.Session.Write(":SENS1:ADAP:CORR:COLL:SAVE PHAS")
+        MessageBox.Show("Phase Setup Done")
+
+        ' Impedance setup
+        MessageBox.Show("Connect Open Termination")
+
+        ' Execute open in impedance setup
+        Me.Device.Session.Write(":SENS1:ADAP:CORR:COLL:ACQ OPEN")
+
+        ' Wait for measurement end
+        Me.Device.Session.Query("*OPC?")
+
+        MessageBox.Show("Connect Short Termination")
+
+        ' Execute short in impedance setup
+        Me.Device.Session.Write(":SENS1:ADAP:CORR:COLL:ACQ SHOR")
+
+        ' Wait for measurement end
+        Me.Device.Session.Query("*OPC?")
+
+        MessageBox.Show("Connect LOAD Termination")
+
+        ' Execute load in impedance setup
+        Me.Device.Session.Write(":SENS1:ADAP:CORR:COLL:ACQ LOAD")
+
+        ' Wait for measurement end
+        Me.Device.Session.Query("*OPC?")
+
+        ' Save impedance setup data
+        Me.Device.Session.Write(":SENS1:ADAP:CORR:COLL:SAVE IMP")
+
+    End Sub
+
+    ''' <summary> Builds compensation string. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
+    '''                                              null. </exception>
+    ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
+    ''' <param name="lowFrequencyValues">  The low frequency values. </param>
+    ''' <param name="highFrequencyValues"> The high frequency values. </param>
+    ''' <returns> A String. </returns>
+    Public Shared Function BuildCompensationString(ByVal lowFrequencyValues() As Double,
+                                            ByVal highFrequencyValues() As Double) As String
+        If lowFrequencyValues Is Nothing Then Throw New ArgumentNullException(NameOf(lowFrequencyValues))
+        If highFrequencyValues Is Nothing Then Throw New ArgumentNullException(NameOf(highFrequencyValues))
+        If lowFrequencyValues.Count <> 3 Then Throw New InvalidOperationException($"Low frequency array has {lowFrequencyValues.Count} values instead of 3")
+        If highFrequencyValues.Count <> 3 Then Throw New InvalidOperationException($"High frequency array has {highFrequencyValues.Count} values instead of 3")
+        Dim builder As New System.Text.StringBuilder
+        builder.Append($"{lowFrequencyValues(1)}")
+        builder.AppendFormat($",{lowFrequencyValues(2)}")
+        builder.AppendFormat($",{highFrequencyValues(1)}")
+        builder.AppendFormat($",{highFrequencyValues(2)}")
+        Return builder.ToString
+    End Function
+
+    ''' <summary> Merge compensations. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
+    '''                                              null. </exception>
+    ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
+    ''' <param name="frequencies"> The frequencies. </param>
+    ''' <param name="values">      The values. </param>
+    ''' <returns> A String. </returns>
+    Public Shared Function MergeCompensations(ByVal frequencies As String, ByVal values As String) As String
+        If String.IsNullOrEmpty(frequencies) Then Throw New ArgumentNullException(NameOf(frequencies))
+        If String.IsNullOrEmpty(values) Then Throw New ArgumentNullException(NameOf(values))
+        Dim builder As New System.Text.StringBuilder
+        Dim f As New Stack(Of String)(frequencies.Split(","c))
+        Dim v As New Stack(Of String)(values.Split(","c))
+        If 2 * f.Count <> v.Count Then
+            Throw New InvalidOperationException($"Number of values {v.Count} must be twice the number of frequencies {f.Count}")
+        End If
+        Do While f.Any
+            If builder.Length > 0 Then
+                builder.AppendFormat("{0}", f.Pop)
+            Else
+                builder.AppendFormat(",{0}", f.Pop)
+            End If
+            If v.Any Then builder.AppendFormat(",{0}", v.Pop)
+            If v.Any Then builder.AppendFormat(",{0}", v.Pop)
+        Loop
+        Return builder.ToString
+    End Function
+
+    ''' <summary> Builds the compensations. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
+    '''                                              null. </exception>
+    ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
+    ''' <exception cref="InvalidCastException">      Thrown when an object cannot be cast to a
+    '''                                              required type. </exception>
+    ''' <param name="frequencies"> The frequencies. </param>
+    ''' <param name="values">      The values. </param>
+    ''' <returns> A Double()() </returns>
+    Public Shared Function BuildCompensations(ByVal frequencies As String, ByVal values As String) As Double()()
+        If String.IsNullOrEmpty(frequencies) Then Throw New ArgumentNullException(NameOf(frequencies))
+        If String.IsNullOrEmpty(values) Then Throw New ArgumentNullException(NameOf(values))
+        Dim f As New Stack(Of String)(frequencies.Split(","c))
+        Dim v As New Stack(Of String)(values.Split(","c))
+        If 2 * f.Count <> v.Count Then
+            Throw New InvalidOperationException($"Number of values {v.Count} must be twice the number of frequencies {f.Count}")
+        End If
+        Dim data()() As Double = New Double(f.Count - 1)() {}
+        Dim index As Integer = 0
+        Do While f.Any
+            Dim av() As Double = New Double(2) {}
+            Dim pop As String = f.Pop
+            If Not Double.TryParse(pop, av(0)) Then
+                Throw New InvalidCastException($"Parse failed for frequency {pop}")
+            End If
+            pop = v.Pop
+            If Not Double.TryParse(pop, av(1)) Then
+                Throw New InvalidCastException($"Parse failed for real value {pop}")
+            End If
+            pop = v.Pop
+            If Not Double.TryParse(pop, av(2)) Then
+                Throw New InvalidCastException($"Parse failed for imaginary value {pop}")
+            End If
+            data(index) = av
+            index += 1
+        Loop
+        Return data
+    End Function
+
+#Region " OPEN "
+
+    ''' <summary> Toggle open compensation state. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="enabled"> true to enable, false to disable. </param>
+    Public Sub ToggleOpenCompensationState(ByVal enabled As Boolean)
+        Me.Device.Session.WriteLine(":SENS1:CORR2:OPEN {0}", If(enabled, "1", "0"))
+    End Sub
+
+    ''' <summary> Applies the open compensation. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
+    '''                                              null. </exception>
+    ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
+    ''' <param name="lowFrequencyValues">  The low frequency values. </param>
+    ''' <param name="highFrequencyValues"> The high frequency values. </param>
+    Public Sub ApplyOpenCompensation(ByVal lowFrequencyValues() As Double,
+                                     ByVal highFrequencyValues() As Double)
+        If lowFrequencyValues Is Nothing Then Throw New ArgumentNullException(NameOf(lowFrequencyValues))
+        If highFrequencyValues Is Nothing Then Throw New ArgumentNullException(NameOf(highFrequencyValues))
+        If lowFrequencyValues.Count <> 3 Then Throw New InvalidOperationException($"Low frequency array has {lowFrequencyValues.Count} values instead of 3")
+        If highFrequencyValues.Count <> 3 Then Throw New InvalidOperationException($"High frequency array has {highFrequencyValues.Count} values instead of 3")
+        Me.Device.Session.WriteLine(":SENS1:CORR2:ZME:OPEN:DATA {0}",
+                                    E4990Panel.BuildCompensationString(lowFrequencyValues, highFrequencyValues))
+    End Sub
+
+    ''' <summary> Reads open compensations. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <returns> The open compensations. </returns>
+    Public Function ReadOpenCompensations() As String
+
+        ' read the frequencies
+        Dim frequencies As String = Me.Device.Session.Query(":SENS1:CORR2:ZME:OPEN:FREQ?")
+
+        ' read the data
+        Dim values As String = Me.Device.Session.Query(":SENS1:CORR2:ZME:OPEN:DATA?")
+
+        Return E4990Panel.MergeCompensations(frequencies, values)
+
+    End Function
+
+    ''' <summary> Acquires the open compensation. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="lowFrequency">  The low frequency. </param>
+    ''' <param name="highFrequency"> The high frequency. </param>
+    Public Sub AcquireOpenCompensation(ByVal lowFrequency As Double, ByVal highFrequency As Double)
+
+        ' Compensation points will be acquired at the sweep points:
+        Me.ConfigureSweep(lowFrequency, highFrequency)
+
+        ' Select arbitrary fixture model           
+        Me.Device.Session.Write(":SENS1:FIXT:SEL ARB")
+
+        ' Set user-specified frequencies
+        Me.Device.Session.Write(":SENS1:CORR:COLL:FPO USER")
+
+        ' Acquire open fixture compensation
+        Me.Device.Session.Write(":SENS1:CORR2:COLL:ACQ:OPEN")
+
+        ' Wait for measurement end
+        Me.Device.Session.Query("*OPC?")
+
+    End Sub
+
+#End Region
+
+#Region " SHORT "
+
+    ''' <summary> Toggle short compensation state. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="enabled"> true to enable, false to disable. </param>
+    Public Sub ToggleShortCompensationState(ByVal enabled As Boolean)
+        Me.Device.Session.WriteLine(":SENS1:CORR2:SHOR {0}", If(enabled, "1", "0"))
+    End Sub
+
+
+#End Region
+
+#Region " EXAMPLE "
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")>
+    Sub CompensateFixture()
+
+        ' TimeOut time should be greater than the measurement time.    
+        Me.Device.Session.StoreTimeout(TimeSpan.FromSeconds(10))
+
+        ' Select compensation point
+        ' 
+        ' Set compensation point at fix
+        Me.Device.Session.Write(":SENS1:CORR:COLL:FPO FIX")
+
+        ' Select fixture model           
+        Me.Device.Session.Write(":SENS1:FIXT:SEL ARB") '  FIXT16047A")
+
+        Call DefineTermination()
+
+        ' Perform Fixture Compensation
+        Dim dlg As DialogResult = MessageBox.Show("Do you perform Open Fixture Compensation?", "Fixture Compensation", MessageBoxButtons.YesNo)
+
+        If dlg = DialogResult.Yes Then
+            MessageBox.Show("Connect Open Termination")
+
+            ' Execute open in fixture compensation
+            Me.Device.Session.Write(":SENS1:CORR2:COLL:ACQ:OPEN")
+
+            ' Wait for measurement end
+            Me.Device.Session.Query("*OPC?")
+
+        End If
+
+        ' Perform Fixture Compensation
+        dlg = MessageBox.Show("Do you perform Short Fixture Compensation?", "Fixture Compensation", MessageBoxButtons.YesNo)
+
+        If dlg = DialogResult.Yes Then
+
+            MessageBox.Show("Connect Short Termination")
+
+            ' Execute short in fixture compensation
+            Me.Device.Session.Write(":SENS1:CORR2:COLL:ACQ:SHOR")
+
+            ' Wait for measurement end
+            Me.Device.Session.Query("*OPC?")
+
+        End If
+
+        ' Perform Fixture Compensation
+        dlg = MessageBox.Show("Do you perform Load Fixture Compensation?", "Fixture Compensation", MessageBoxButtons.YesNo)
+
+        If dlg = DialogResult.Yes Then
+
+            MessageBox.Show("Connect LOAD Termination")
+
+            ' Execute load in fixture compensation
+            Me.Device.Session.Write(":SENS1:CORR2:COLL:ACQ:LOAD")
+
+            ' Wait for measurement end
+            Me.Device.Session.Query("*OPC?")
+
+        End If
+
+    End Sub
+
+    Sub DefineTermination()
+        '
+        Dim LoadF() As String, n As Integer, i As Integer
+        ' Define Short termination by equivalent circuit model
+        ' Set equivalent circuit model for short
+        Me.Device.Session.Write(":SENS1:CORR2:CKIT:SHOR:MOD EQU")
+        ' Set short termination parameter (L)
+        Me.Device.Session.Write(":SENS1:CORR2:CKIT:SHOR:L 1E-9")
+        ' Set short termination parameter (R)  
+        Me.Device.Session.Write(":SENS1:CORR2:CKIT:SHOR:R 1E-4")
+        '
+        ' Define Load by f-Z table model
+        ' Set f-Z table model for short
+        Me.Device.Session.Write(":SENS1:CORR2:CKIT:LOAD:MOD TABL")
+        n = 4
+        ReDim LoadF(n)
+        ' Define f-Z table (freq, real, imaginary)
+        LoadF(1) = "20, 49.5, 1E-3"
+        LoadF(2) = "1E3, 49.9, 1.2E-3"
+        LoadF(3) = "1E6, 50, 1.5E-3"
+        LoadF(4) = "120E6, 50.9, 2E-3"
+        ' :SENS1:CORR2:CKIT:LOAD:TABL {n}, {freq 1}, {real 1}, {imaginary 1}, ... , {freq n}, {real n}, {imaginary n}
+        Me.Device.Session.Write(":SENS1:CORR2:CKIT:LOAD:TABL " & Str(n) & ",") ' Set f-Z table
+        For i = 1 To n - 1
+            Me.Device.Session.Write(LoadF(i) & ",")
+        Next i
+        Me.Device.Session.Write(LoadF(n))
+
+    End Sub
+
+#End Region
 
 #End Region
 
