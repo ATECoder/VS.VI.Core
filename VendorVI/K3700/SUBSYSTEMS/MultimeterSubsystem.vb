@@ -146,6 +146,14 @@ Public Class MultimeterSubsystem
 
 #End Region
 
+#Region " CONNECT/DISCONNECT "
+
+    Protected Overrides ReadOnly Property ConnectCommand As String = "if nil ~= dmm then dmm.connect = 7 end"
+
+    Protected Overrides ReadOnly Property DisconnectCommand As String = "if nil ~= dmm then dmm.connect = 0 end"
+
+#End Region
+
 #Region " FILTER "
 
 #Region " FILTER COUNT "

@@ -713,7 +713,7 @@ Public Class E4990Panel
     ''' <param name="level">         The level. </param>
     ''' <param name="lowFrequency">  The low frequency. </param>
     ''' <param name="highFrequency"> The high frequency. </param>
-    Public Sub ConfigureImpedanceMeasurement(ByVal sourceMode As SourceFunctionModes, aperture As Integer, ByVal level As Double,
+    Public Sub ConfigureImpedanceMeasurement(ByVal sourceMode As SourceFunctionModes, aperture As Double, ByVal level As Double,
                                              ByVal lowFrequency As Double, ByVal highFrequency As Double)
 
         Me.Device.Session.StoreTimeout(TimeSpan.FromSeconds(10))
@@ -746,7 +746,7 @@ Public Class E4990Panel
         Me.Device.Session.Write(":INIT1:CONT ON")
 
         ' Set aperture
-        Me.Device.Session.WriteLine(":SENS1:APER {0}", aperture)
+        Me.Device.Session.WriteLine(":SENS1:APER {0}", CInt(aperture))
 
         ' set a two point sweep.
         Me.ConfigureSweep(lowFrequency, highFrequency)
@@ -763,20 +763,6 @@ Public Class E4990Panel
             ' Set OSC level
             Me.Device.Session.WriteLine(":SOUR1:VOLT {0}", level)
         End If
-
-        ' MARKERS
-
-        ' Turn on marker 1
-        Me.Device.Session.Write(":CALC1:MARK1 ON")
-
-        ' set first marker position
-        Me.Device.Session.WriteLine(":CALC1:MARK1:X {0}", lowFrequency)
-
-        ' Turn on marker 2
-        Me.Device.Session.Write(":CALC1:MARK2 ON")
-
-        ' set marker 2 position 
-        Me.Device.Session.WriteLine(":CALC1:MARK2:X {0}", highFrequency)
 
     End Sub
 
@@ -811,6 +797,8 @@ Public Class E4990Panel
             If mode = SourceFunctionModes.Current Then level = 0.001 * level
             Me.ConfigureImpedanceMeasurement(mode, CInt(Me._ApertureNumeric.Value), level,
                                              Me._LowFrequencyNumeric.Value, Me._HighFrequencyNumeric.Value)
+            Me.EnableMarker(1, 1, Me._LowFrequencyNumeric.Value)
+            Me.EnableMarker(1, 2, Me._LowFrequencyNumeric.Value)
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred configuring a measurement;. Details: {0}", ex)

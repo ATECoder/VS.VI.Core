@@ -262,6 +262,26 @@ Public MustInherit Class MultimeterSubsystemBase
 
 #End Region
 
+#Region " CONNECT/DISCONNECT "
+
+    Protected Overridable ReadOnly Property ConnectCommand As String
+
+    ''' <summary> Connects this object. </summary>
+    ''' <remarks> David, 4/25/2016. </remarks>
+    Public Sub Connect()
+        Me.Session.Execute(Me.ConnectCommand)
+    End Sub
+
+    Protected Overridable ReadOnly Property DisconnectCommand As String
+
+    ''' <summary> Disconnects this object. </summary>
+    ''' <remarks> David, 4/25/2016. </remarks>
+    Public Sub Disconnect()
+        Me.Session.Execute(DisconnectCommand)
+    End Sub
+
+#End Region
+
 #Region " FILTER "
 
 #Region " FILTER COUNT "
