@@ -219,7 +219,7 @@ Public MustInherit Class RouteSubsystemBase
     ''' <value> The open channels command. </value>
     Protected Overridable ReadOnly Property OpenChannelsCommand As String
 
-    ''' <summary> Applies the open all command, wait for timeout and read back the closed channles. </summary>
+    ''' <summary> Applies the open all command, wait for timeout and read back the closed channels. </summary>
     ''' <remarks> David, 2/9/2016. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>

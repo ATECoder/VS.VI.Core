@@ -6,6 +6,13 @@
             <Word>ble</Word>
             <Word>tring</Word>
             <Word>allslots</Word>
+            <Word>accurrent</Word>
+            <Word>acvolts</Word>
+            <Word>commonsideohms</Word>
+            <Word>dccurrent</Word>
+            <Word>dcvolts</Word>
+            <Word>fourwireohms</Word>
+            <Word>twowireohmns</Word>
             <Word>CollectGarbage</Word>
             <Word>dmm</Word>
             <Word>EndScript</Word>

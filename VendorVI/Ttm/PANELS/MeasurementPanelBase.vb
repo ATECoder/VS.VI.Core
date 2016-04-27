@@ -539,7 +539,7 @@ Public Class MeasurementPanelBase
     ''' <param name="state"> The state. </param>
     Private Sub updateProgressbar(ByVal state As MeasurementSequenceState)
 
-        ' un-hide the progress bar.
+        ' unhide the progress bar.
         Me._TtmToolStripProgressBar.Visible = True
 
         If state = MeasurementSequenceState.Failed OrElse

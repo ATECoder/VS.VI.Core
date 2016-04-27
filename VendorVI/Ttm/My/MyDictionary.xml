@@ -2,9 +2,24 @@
 <Dictionary>
     <Words>
         <Recognized>
+            <Word>accurrent</Word>
+            <Word>acvolts</Word>
+            <Word>dccurrent</Word>
+            <Word>dcvolts</Word>
+            <Word>twowireohms</Word>
+            <Word>fourwireohms</Word>
+            <Word>commonsideohms</Word>
+            <Word>sc</Word>
+            <Word>lc</Word>
+            <Word>vp</Word>
+            <Word>unhide</Word>
+            <Word>args</Word>
             <Word>ieee</Word>
+            <Word>init</Word>
             <Word>isr</Word>
             <Word>ms</Word>
+            <Word>pre</Word>
+            <Word>param</Word>
             <Word>scpi</Word>
             <Word>smu</Word>
             <Word>smua</Word>

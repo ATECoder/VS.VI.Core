@@ -5,6 +5,9 @@
             <Word>na</Word>
             <Word>nv</Word>
             <Word>rc</Word>
+            <Word>sc</Word>
+            <Word>lc</Word>
+            <Word>vp</Word>
             <Word>mpty</Word>
             <Word>vld</Word>
             <Word>cmpl</Word>
@@ -19,6 +22,7 @@
             <Word>fourwireohms</Word>
             <Word>twowireohmns</Word>
             <Word>ieee</Word>
+            <Word>init</Word>
             <Word>isr</Word>
             <Word>Measurand</Word>
             <Word>Multimeter</Word>
