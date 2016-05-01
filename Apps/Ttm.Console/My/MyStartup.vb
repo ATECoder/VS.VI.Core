@@ -78,6 +78,8 @@ Namespace My
 
             Me.ApplyTraceLevel(isr.VI.Ttm.My.MySettings.Default.TraceLevel)
 
+            Return MyBase.OnInitialize(commandLineArgs)
+
         End Function
 
         ''' <summary> Applies the trace level described by value. </summary>

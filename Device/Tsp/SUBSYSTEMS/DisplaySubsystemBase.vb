@@ -89,7 +89,6 @@ Public MustInherit Class DisplaySubsystemBase
         Dim affirmative As Boolean = True
         Try
             Me.ClearDisplay()
-            Me.Session.WriteLine(TspSyntax.Display.ClearCommand)
             affirmative = Me.TraceVisaDeviceOperationOkay(False, "clearing display;. ")
         Catch ex As NativeException
             Me.TraceVisaOperation(ex, "clearing display;. ")
@@ -104,26 +103,22 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <summary> Clears the display if not in measurement mode and set measurement mode. </summary>
     ''' <remarks> Sets the display to the measurement. </remarks>
     Public Sub TryClearDisplayMeasurement()
-
         If Me.IsDisplayExists Then
             If (Me.DisplayScreen And DisplayScreens.Measurement) = 0 Then
                 Me.TryClearDisplay()
             End If
         End If
-
     End Sub
 
     ''' <summary> Clears the display if not in measurement mode and set measurement mode. </summary>
     ''' <remarks> Sets the display to the measurement. </remarks>
     Public Sub ClearDisplayMeasurement()
-
         If Me.ReadDisplayExists.GetValueOrDefault(False) Then
             If (Me.DisplayScreen And DisplayScreens.Measurement) = 0 Then
                 Me.ClearDisplay()
             End If
         End If
         Me.DisplayScreen = DisplayScreens.Measurement
-
     End Sub
 
 #End Region

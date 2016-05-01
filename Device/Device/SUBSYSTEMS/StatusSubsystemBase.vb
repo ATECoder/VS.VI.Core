@@ -83,7 +83,9 @@ Public MustInherit Class StatusSubsystemBase
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
         If Not String.IsNullOrWhiteSpace(Me.ClearExecutionStateCommand) Then
+            Me.QueryOperationCompleted()
             Me.Session.WriteLine(Me.ClearExecutionStateCommand)
+            Me.QueryOperationCompleted()
             Me.ReadServiceRequestStatus()
         End If
     End Sub
