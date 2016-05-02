@@ -407,7 +407,8 @@ Public MustInherit Class ScriptManagerBase
 
         Const scriptName As String = "CreateBinaries"
         Using script As New ScriptEntity(scriptName, Tsp.NodeEntity.ModelFamilyMask(Tsp.InstrumentModelFamily.K2600))
-            script.Source = isr.Core.Pith.EmbeddedResourceManager.ReadEmbeddedTextResource("BinaryScripts.tsp")
+            script.Source = isr.Core.Pith.EmbeddedResourceManager.TryReadEmbeddedTextResource(System.Reflection.Assembly.GetExecutingAssembly,
+                                                                                              "BinaryScripts.tsp")
             Me.LoadRunUserScript(script, node)
         End Using
         If (Me.StatusSubsystem.ReadServiceRequestStatus And Me.StatusSubsystem.ErrorAvailableBits) <> 0 Then

@@ -781,6 +781,9 @@ Public MustInherit Class SessionBase
     ''' <param name="dataToWrite"> The data to write. </param>
     Public Sub WriteLine(ByVal dataToWrite As String)
         Me.Write(dataToWrite)
+#If LogIO Then
+        My.Application.Log.WriteEntry($"w: {dataToWrite}")
+#End If
     End Sub
 
     ''' <summary>
@@ -789,7 +792,12 @@ Public MustInherit Class SessionBase
     ''' <remarks> David, 11/17/2015. </remarks>
     ''' <returns> The string. </returns>
     Public Function ReadLine() As String
+#If LogIO Then
+        Dim value As String = Me.ReadString()
+        My.Application.Log.WriteEntry($"r: {value.TrimEnd}")
+#Else
         Return Me.ReadString()
+#End If
     End Function
 
 #End Region

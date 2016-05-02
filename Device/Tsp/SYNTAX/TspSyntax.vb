@@ -250,14 +250,19 @@
 #Region " SERVICE REQUEST + STANDARD EVENTS "
 
         Private _StandardServiceEnableCommandFormat As String
+
         ''' <summary> The Standard Event and Service Request Enable command format. </summary>
-        ''' <remarks> Same as *CLS; *ESE {0:D}; *SRE {1:D}' </remarks>
+        ''' <remarks>
+        ''' Same as *CLS; *ESE {0:D}; *SRE {1:D}'
+        ''' <para>Using termination character as separator failed with the 2600 instruments.</para>
+        ''' </remarks>
+        ''' <value> The standard service enable command format. </value>
         Public Property StandardServiceEnableCommandFormat As String
             Get
                 If String.IsNullOrWhiteSpace(TspSyntax._StandardServiceEnableCommandFormat) Then
                     Dim commandLine As New System.Text.StringBuilder
-                    commandLine.AppendFormat("{0}{1}", TspSyntax.ClearExecutionStateCommand, TspSyntax.TerminationChar)
-                    commandLine.AppendFormat("{0}{1}", TspSyntax.StandardEventEnableCommandFormat, TspSyntax.TerminationChar)
+                    commandLine.AppendFormat("{0} ", TspSyntax.ClearExecutionStateCommand)
+                    commandLine.AppendFormat("{0} ", TspSyntax.StandardEventEnableCommandFormat)
                     commandLine.Append(TspSyntax.ServiceRequestEnableCommandFormat.Replace("{0}", "{1}"))
                     TspSyntax.StandardServiceEnableCommandFormat = commandLine.ToString
                 End If
@@ -269,15 +274,20 @@
         End Property
 
         Private _StandardServiceEnableCompleteCommandFormat As String
+
         ''' <summary> The  Standard Event and Service Request Enable command format. </summary>
-        ''' <remarks> Same as '*CLS; *ESE {0:D}; *SRE {1:D} *OPC' </remarks>
+        ''' <remarks>
+        ''' Same as '*CLS; *ESE {0:D}; *SRE {1:D} *OPC'
+        ''' <para>Using termination character as separator failed with the 2600 instruments.</para>
+        ''' </remarks>
+        ''' <value> The standard service enable complete command format. </value>
         Public Property StandardServiceEnableCompleteCommandFormat As String
             Get
                 If String.IsNullOrWhiteSpace(TspSyntax._StandardServiceEnableCompleteCommandFormat) Then
                     Dim commandLine As New System.Text.StringBuilder
-                    commandLine.AppendFormat("{0}{1}", TspSyntax.ClearExecutionStateCommand, TspSyntax.TerminationChar)
-                    commandLine.AppendFormat("{0}{1}", TspSyntax.StandardEventEnableCommandFormat, TspSyntax.TerminationChar)
-                    commandLine.AppendFormat("{0}{1}", TspSyntax.ServiceRequestEnableCommandFormat.Replace("{0}", "{1}"), TspSyntax.TerminationChar)
+                    commandLine.AppendFormat("{0} ", TspSyntax.ClearExecutionStateCommand)
+                    commandLine.AppendFormat("{0} ", TspSyntax.StandardEventEnableCommandFormat)
+                    commandLine.AppendFormat("{0} ", TspSyntax.ServiceRequestEnableCommandFormat.Replace("{0}", "{1}"))
                     commandLine.Append(TspSyntax.OperationCompletedCommand)
                     TspSyntax.StandardServiceEnableCompleteCommandFormat = commandLine.ToString
                 End If
