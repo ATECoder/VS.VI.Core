@@ -49,9 +49,6 @@
         ''' <summary> The  error prompt. </summary>
         Public Const ErrorPrompt As String = "TSP?"
 
-        ''' <summary> The termination character. </summary>
-        Public Const TerminationChar As Char = Global.Microsoft.VisualBasic.ChrW(10)
-
 #End Region
 
 #Region " DEFAULT ERROR MESSAGES "

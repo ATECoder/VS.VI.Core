@@ -91,4 +91,21 @@ Public Class BasicTests
         Assert.AreEqual(integerValue, nullInt.Value, "Set to  {0}", integerValue)
     End Sub
 
+
+    <TestMethod()>
+    Public Sub ParseBooleanTest()
+        Dim reading As String = "0"
+        Dim expectedResult As Boolean = False
+        Dim actualResult As Boolean = True
+        Dim successParsing As Boolean = False
+        successParsing = isr.VI.SessionBase.TryParse(reading, actualResult)
+        Assert.AreEqual(expectedResult, actualResult, "Value set to {0}", actualResult)
+        Assert.AreEqual(True, successParsing, "Success set to {0}", actualResult)
+        reading = "1"
+        expectedResult = True
+        successParsing = isr.VI.SessionBase.TryParse(reading, actualResult)
+        Assert.AreEqual(expectedResult, actualResult, "Value set to {0}", actualResult)
+        Assert.AreEqual(True, successParsing, "Success set to {0}", actualResult)
+    End Sub
+
 End Class

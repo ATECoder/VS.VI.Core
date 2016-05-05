@@ -52,9 +52,9 @@ Partial Public Class SessionBase
             returnValue = False
         ElseIf Integer.TryParse(value, numericValue) Then
             result = numericValue <> 0
-            returnValue = result
-        ElseIf Boolean.TryParse(value, returnValue) Then
-            result = returnValue
+            returnValue = True
+        ElseIf Boolean.TryParse(value, result) Then
+            returnValue = True
         Else
             returnValue = False
         End If

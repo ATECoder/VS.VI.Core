@@ -169,6 +169,24 @@ Public MustInherit Class ResourcesManagerBase
                                                     ByVal interfaceNumber As Integer,
                                                     ByRef resources As IEnumerable(Of String)) As Boolean
 
+
+    ''' <summary> Searches for the first resource. </summary>
+    ''' <remarks> David, 5/2/2016. </remarks>
+    ''' <param name="resourceNames"> List of names of the resources. </param>
+    ''' <returns> The found resource. </returns>
+    Public Function FindResource(ByVal resourceNames As IEnumerable(Of String)) As String
+        Dim result As String = ""
+        If resourceNames IsNot Nothing AndAlso resourceNames.Any Then
+            For Each rn As String In resourceNames
+                If Me.InstrumentExists(rn) Then
+                    result = rn
+                    Exit For
+                End If
+            Next
+        End If
+        Return result
+    End Function
+
 #End Region
 
 #Region " Disposable Support"
