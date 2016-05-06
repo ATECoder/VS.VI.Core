@@ -251,17 +251,17 @@
         ''' <summary> The Standard Event and Service Request Enable command format. </summary>
         ''' <remarks>
         ''' Same as *CLS; *ESE {0:D}; *SRE {1:D}'
-        ''' <para>Using termination character as separator failed with the 2600 instruments.</para>
+        ''' <para>Using line feed delimiter causes the 2600 instrument to fail when initializing.</para>
+        ''' <para>The command works fine with line feeds if issued on its own.</para>
         ''' </remarks>
         ''' <value> The standard service enable command format. </value>
         Public Property StandardServiceEnableCommandFormat As String
             Get
                 If String.IsNullOrWhiteSpace(TspSyntax._StandardServiceEnableCommandFormat) Then
-                    Dim commandLine As New System.Text.StringBuilder
-                    commandLine.AppendFormat("{0} ", TspSyntax.ClearExecutionStateCommand)
-                    commandLine.AppendFormat("{0} ", TspSyntax.StandardEventEnableCommandFormat)
-                    commandLine.Append(TspSyntax.ServiceRequestEnableCommandFormat.Replace("{0}", "{1}"))
-                    TspSyntax.StandardServiceEnableCommandFormat = commandLine.ToString
+                    TspSyntax.StandardServiceEnableCommandFormat = String.Format("{0} {1} {2}",
+                                                                                 TspSyntax.ClearExecutionStateCommand,
+                                                                                 TspSyntax.StandardEventEnableCommandFormat,
+                                                                                 TspSyntax.ServiceRequestEnableCommandFormat.Replace("{0}", "{1}"))
                 End If
                 Return TspSyntax._StandardServiceEnableCommandFormat
             End Get
@@ -275,18 +275,15 @@
         ''' <summary> The  Standard Event and Service Request Enable command format. </summary>
         ''' <remarks>
         ''' Same as '*CLS; *ESE {0:D}; *SRE {1:D} *OPC'
-        ''' <para>Using termination character as separator failed with the 2600 instruments.</para>
+        ''' <para>Using line feed delimiter causes the 2600 instrument to fail when initializing.</para>
         ''' </remarks>
         ''' <value> The standard service enable complete command format. </value>
         Public Property StandardServiceEnableCompleteCommandFormat As String
             Get
                 If String.IsNullOrWhiteSpace(TspSyntax._StandardServiceEnableCompleteCommandFormat) Then
-                    Dim commandLine As New System.Text.StringBuilder
-                    commandLine.AppendFormat("{0} ", TspSyntax.ClearExecutionStateCommand)
-                    commandLine.AppendFormat("{0} ", TspSyntax.StandardEventEnableCommandFormat)
-                    commandLine.AppendFormat("{0} ", TspSyntax.ServiceRequestEnableCommandFormat.Replace("{0}", "{1}"))
-                    commandLine.Append(TspSyntax.OperationCompletedCommand)
-                    TspSyntax.StandardServiceEnableCompleteCommandFormat = commandLine.ToString
+                    TspSyntax.StandardServiceEnableCompleteCommandFormat = String.Format("{0} {1}",
+                                                                                         TspSyntax.StandardServiceEnableCommandFormat,
+                                                                                         TspSyntax.OperationCompletedCommand)
                 End If
                 Return TspSyntax._StandardServiceEnableCompleteCommandFormat
             End Get
@@ -362,9 +359,9 @@
         Public Function BuildSmuReference(ByVal nodeNumber As Integer, ByVal localNodeNumber As Integer, ByVal smuNumber As String) As String
 
             If nodeNumber <= 0 Then
-                Throw New ArgumentException("Node number must be greater than or equal to 1.")
+                Throw New ArgumentException("Node number must be greater than Or equal To 1.")
             ElseIf localNodeNumber <= 0 Then
-                Throw New ArgumentException("Local node number must be greater than or equal to 1.")
+                Throw New ArgumentException("Local node number must be greater than Or equal To 1.")
             End If
             If nodeNumber = localNodeNumber Then
                 ' if node is number one, use the local node as reference in case
@@ -390,7 +387,7 @@
 
 #End Region
 
-#Region " FUNCTION "
+#Region " Function "
 
         ''' <summary> Returns a string from the parameter array of arguments for use when running the
         ''' function. </summary>
@@ -443,7 +440,7 @@
 
             Public Const InterlockStateFormat As String = "_G.slot[{0}].interlock.state"
 
-            Public Const PrintInterlockStateFormat As String = "_G.print(_G.string.format('%d',_G.slot[{0}].interlock.state))"
+            Public Const PrintInterlockStateFormat As String = "_G.print(_G.String.format('%d',_G.slot[{0}].interlock.state))"
 
         End Module
 
