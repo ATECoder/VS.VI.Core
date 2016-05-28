@@ -440,7 +440,7 @@
 
             Public Const InterlockStateFormat As String = "_G.slot[{0}].interlock.state"
 
-            Public Const PrintInterlockStateFormat As String = "_G.print(_G.String.format('%d',_G.slot[{0}].interlock.state))"
+            Public Const PrintInterlockStateFormat As String = "_G.print(_G.string.format('%d',_G.slot[{0}].interlock.state))"
 
         End Module
 

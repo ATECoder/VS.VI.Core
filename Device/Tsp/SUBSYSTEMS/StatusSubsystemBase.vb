@@ -56,6 +56,10 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary> Sets the subsystem to its initial post reset state. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Sub InitKnownState()
+
+        Me.SerialNumber = New Long?
+        Me.SerialNumberReading = ""
+
         MyBase.InitKnownState()
 
         Try
@@ -85,10 +89,6 @@ Public MustInherit Class StatusSubsystemBase
         ' enable service request on all events
         ' this is part of INIT already. Me.EnableServiceRequest(StandardEvents.All, ServiceRequests.All)
         Me.OperationCompleted = Me.QueryOperationCompleted
-
-        ' get prompt and errors status
-        Me.SerialNumber = New Long?
-        Me.SerialNumberReading = ""
 
     End Sub
 
