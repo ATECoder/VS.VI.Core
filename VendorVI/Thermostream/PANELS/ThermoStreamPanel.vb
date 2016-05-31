@@ -223,7 +223,7 @@ Public Class ThermostreamPanel
         Else
             Me._ReadingToolStripStatusLabel.SafeTextSetter(ThermostreamPanel.DegreesCaption(value))
             Me._ComplianceToolStripStatusLabel.Text = "  "
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Instruments parsed reading elements.")
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Instruments parsed reading elements.")
         End If
     End Sub
 

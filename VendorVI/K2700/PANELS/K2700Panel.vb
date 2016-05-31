@@ -272,7 +272,7 @@ Public Class K2700Panel
                 failureCaption = $"{metaStatus.ToShortDescription(""),4}"
                 failureToolTip = metaStatus.ToLongDescription("")
                 If String.IsNullOrEmpty(failureToolTip) Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Instruments parsed reading elements.")
+                    Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Instruments parsed reading elements.")
                 Else
                     Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, failureToolTip)
                 End If
