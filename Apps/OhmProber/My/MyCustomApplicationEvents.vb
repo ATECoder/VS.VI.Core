@@ -87,7 +87,7 @@ Namespace My
             If Not e.Cancel Then
                 MySplashScreen.CreateInstance(My.Application.SplashScreen)
                 Me.SplashTraceEvent(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Allowing library use of splash screen")
-                Me.SplashTraceEvent(TraceEventType.Information, My.MyApplication.TraceEventId, "Parsing command line")
+                Me.SplashTraceEvent(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Parsing command line")
                 e.Cancel = Not CommandLineInfo.TryParseCommandLine(e.CommandLine)
             End If
         End Sub

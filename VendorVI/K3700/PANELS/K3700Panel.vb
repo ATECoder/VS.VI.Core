@@ -318,7 +318,7 @@ Public Class K3700Panel
             Else
 
                 Me._ComplianceToolStripStatusLabel.Text = clear
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Instruments parsed reading elements.")
+                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Parsed {0}", Me.LastReading)
 
             End If
 

@@ -45,9 +45,9 @@ Partial Class MovingWindowMeter
         '
         Me._TopLayout.BackColor = System.Drawing.Color.Transparent
         Me._TopLayout.ColumnCount = 3
-        Me._TopLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90.0!))
+        Me._TopLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 84.0!))
         Me._TopLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me._TopLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90.0!))
+        Me._TopLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 84.0!))
         Me._TopLayout.Controls.Add(Me._RightLayout, 2, 0)
         Me._TopLayout.Controls.Add(Me._MiddleLayout, 1, 0)
         Me._TopLayout.Controls.Add(Me._LeftLayout, 0, 0)
@@ -56,7 +56,7 @@ Partial Class MovingWindowMeter
         Me._TopLayout.Name = "_TopLayout"
         Me._TopLayout.RowCount = 1
         Me._TopLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me._TopLayout.Size = New System.Drawing.Size(370, 104)
+        Me._TopLayout.Size = New System.Drawing.Size(370, 100)
         Me._TopLayout.TabIndex = 0
         '
         '_RightLayout
@@ -67,7 +67,8 @@ Partial Class MovingWindowMeter
         Me._RightLayout.Controls.Add(Me._MinimumLabel, 0, 2)
         Me._RightLayout.Controls.Add(Me._ReadingLabel, 0, 1)
         Me._RightLayout.Controls.Add(Me._StatusLabel, 0, 3)
-        Me._RightLayout.Location = New System.Drawing.Point(283, 3)
+        Me._RightLayout.Location = New System.Drawing.Point(286, 0)
+        Me._RightLayout.Margin = New System.Windows.Forms.Padding(0)
         Me._RightLayout.Name = "_RightLayout"
         Me._RightLayout.RowCount = 4
         Me._RightLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
@@ -139,20 +140,21 @@ Partial Class MovingWindowMeter
         Me._MiddleLayout.Controls.Add(Me._AverageProgressBar, 0, 1)
         Me._MiddleLayout.Controls.Add(Me._AverageLabel, 0, 0)
         Me._MiddleLayout.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._MiddleLayout.Location = New System.Drawing.Point(93, 3)
+        Me._MiddleLayout.Location = New System.Drawing.Point(84, 0)
+        Me._MiddleLayout.Margin = New System.Windows.Forms.Padding(0)
         Me._MiddleLayout.Name = "_MiddleLayout"
         Me._MiddleLayout.RowCount = 2
         Me._MiddleLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me._MiddleLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._MiddleLayout.Size = New System.Drawing.Size(184, 98)
+        Me._MiddleLayout.Size = New System.Drawing.Size(202, 100)
         Me._MiddleLayout.TabIndex = 3
         '
         '_AverageProgressBar
         '
         Me._AverageProgressBar.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._AverageProgressBar.Location = New System.Drawing.Point(3, 72)
+        Me._AverageProgressBar.Location = New System.Drawing.Point(3, 74)
         Me._AverageProgressBar.Name = "_AverageProgressBar"
-        Me._AverageProgressBar.Size = New System.Drawing.Size(178, 23)
+        Me._AverageProgressBar.Size = New System.Drawing.Size(196, 23)
         Me._AverageProgressBar.Step = 1
         Me._AverageProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         Me._AverageProgressBar.TabIndex = 0
@@ -167,7 +169,7 @@ Partial Class MovingWindowMeter
         Me._AverageLabel.ForeColor = System.Drawing.Color.Aquamarine
         Me._AverageLabel.Location = New System.Drawing.Point(3, 0)
         Me._AverageLabel.Name = "_AverageLabel"
-        Me._AverageLabel.Size = New System.Drawing.Size(178, 69)
+        Me._AverageLabel.Size = New System.Drawing.Size(196, 71)
         Me._AverageLabel.TabIndex = 1
         Me._AverageLabel.Text = "average"
         Me._AverageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -181,7 +183,8 @@ Partial Class MovingWindowMeter
         Me._LeftLayout.Controls.Add(Me._CountLabel, 0, 1)
         Me._LeftLayout.Controls.Add(Me._ReadingsCountLabel, 0, 2)
         Me._LeftLayout.Controls.Add(Me._WindowLabel, 0, 3)
-        Me._LeftLayout.Location = New System.Drawing.Point(3, 3)
+        Me._LeftLayout.Location = New System.Drawing.Point(0, 0)
+        Me._LeftLayout.Margin = New System.Windows.Forms.Padding(0)
         Me._LeftLayout.Name = "_LeftLayout"
         Me._LeftLayout.RowCount = 4
         Me._LeftLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25.0!))
@@ -250,7 +253,7 @@ Partial Class MovingWindowMeter
         '_SettingsToolStrip
         '
         Me._SettingsToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._LengthTextBoxLabel, Me._LengthTextBox, Me._WindowTextBoxLabel, Me._WindowTextBox, Me._TimeoutTextBoxLabel, Me._TimeoutTextBox, Me._StartMovingAverageButton})
-        Me._SettingsToolStrip.Location = New System.Drawing.Point(0, 104)
+        Me._SettingsToolStrip.Location = New System.Drawing.Point(0, 100)
         Me._SettingsToolStrip.Name = "_SettingsToolStrip"
         Me._SettingsToolStrip.Size = New System.Drawing.Size(370, 25)
         Me._SettingsToolStrip.TabIndex = 1
@@ -317,7 +320,7 @@ Partial Class MovingWindowMeter
         Me.Controls.Add(Me._SettingsToolStrip)
         Me.Controls.Add(Me._TopLayout)
         Me.Name = "MovingWindowMeter"
-        Me.Size = New System.Drawing.Size(370, 135)
+        Me.Size = New System.Drawing.Size(370, 127)
         Me._TopLayout.ResumeLayout(False)
         Me._RightLayout.ResumeLayout(False)
         Me._RightLayout.PerformLayout()

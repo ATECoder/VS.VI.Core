@@ -57,13 +57,14 @@ Namespace My
         Private Sub processShutDown()
             Try
                 If My.Application.SaveMySettingsOnExit Then
-                    Me.MyLog.TraceSource.TraceEventOverride(TraceEventType.Information, My.MyApplication.TraceEventId,
-                                                          "Saving assembly settings")
+                    Me.MyLog.TraceSource.TraceEventOverride(TraceEventType.Verbose, My.MyApplication.TraceEventId,
+                                                            "Saving assembly settings")
                     ' Save library settings here
                 End If
             Catch
             Finally
             End Try
+
         End Sub
 
         ''' <summary> Applies the given value. </summary>
@@ -81,7 +82,7 @@ Namespace My
         ''' instance containing the event data. </param>
         Private Sub ProcessStartup(ByVal e As Microsoft.VisualBasic.ApplicationServices.StartupEventArgs)
             If e IsNot Nothing Then
-                Me.SplashTraceEvent(TraceEventType.Information, My.MyApplication.TraceEventId, "Parsing command line")
+                Me.SplashTraceEvent(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Parsing command line")
                 e.Cancel = Not CommandLineInfo.TryParseCommandLine(e.CommandLine)
             End If
         End Sub
