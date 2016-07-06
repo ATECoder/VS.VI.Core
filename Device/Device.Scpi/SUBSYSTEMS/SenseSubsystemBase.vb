@@ -166,15 +166,23 @@ Public MustInherit Class SenseSubsystemBase
     ''' <returns> <c>True</c> if parsed. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
     Public Overloads Shared Function TryParse(ByVal functionMode As SenseFunctionModes, ByRef unit As Arebis.TypedUnits.Unit) As Boolean
+        unit = SenseSubsystemBase.ParseUnits(functionMode)
+        Return unit IsNot Nothing
+    End Function
+
+    ''' <summary> Parse units. </summary>
+    ''' <remarks> David, 6/27/2016. </remarks>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> An Arebis.TypedUnits.Unit. </returns>
+    Public Overloads Shared Function ParseUnits(ByVal functionMode As SenseFunctionModes) As Arebis.TypedUnits.Unit
+        Dim unit As Arebis.TypedUnits.Unit = Nothing
         If SenseSubsystemBase._UnitParserHash Is Nothing Then
             SenseSubsystemBase._UnitParserHash = SenseSubsystemBase.BuildUnitParserHash
         End If
         If SenseSubsystemBase._UnitParserHash.ContainsKey(functionMode) Then
             unit = SenseSubsystemBase._UnitParserHash(functionMode)
-        Else
-            unit = Nothing
         End If
-        Return unit IsNot Nothing
+        Return unit
     End Function
 
 #End Region

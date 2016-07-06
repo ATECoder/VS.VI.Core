@@ -42,8 +42,8 @@ Public Class VersionInfo
     ''' <value> The serial number. </value>
     Public Property SerialNumber() As String
 
-    ''' <summary>Gets or sets the list of board revisions.</summary>
-    Public Property BoardRevisions() As System.Collections.Specialized.StringDictionary
+    ''' <summary>Gets or sets the list of revision elements.</summary>
+    Public Property FirmwareRevisionElements() As System.Collections.Specialized.StringDictionary
 
 #End Region
 
@@ -51,7 +51,7 @@ Public Class VersionInfo
 
     ''' <summary> Clears this object to its blank/initial state. </summary>
     Private Sub _Clear()
-        Me._BoardRevisions = New System.Collections.Specialized.StringDictionary
+        Me._FirmwareRevisionElements = New System.Collections.Specialized.StringDictionary
         Me._Identity = ""
         Me._FirmwareRevision = ""
         Me._ManufacturerName = ""
@@ -68,7 +68,7 @@ Public Class VersionInfo
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="revision"> Specifies the instrument firmware revision.. </param>
     Protected Overridable Sub ParseFirmwareRevision(ByVal revision As String)
-        Me._BoardRevisions = New System.Collections.Specialized.StringDictionary
+        Me._FirmwareRevisionElements = New System.Collections.Specialized.StringDictionary
     End Sub
 
     ''' <summary> Builds the identity. </summary>
@@ -118,23 +118,25 @@ Public Class VersionInfo
             Me._Identity = value
 
             ' Parse the id to get the revision number
-            Dim idItems() As String = value.Split(","c)
+            Dim idItems As Queue(Of String) = New Queue(Of String)(value.Split(","c))
 
-            ' company, e.g., KEITHLEY INSTRUMENTS INC.,
-            Me._ManufacturerName = idItems(0).Trim
+            ' company, e.g., KEITHLEY INSTRUMENTS,
+            Me._ManufacturerName = idItems.Dequeue
 
-            ' model: MODEL 2420
-            Me._Model = idItems(1).Trim
+            ' 24xx: MODEL 2420
+            ' 7510: MODEL DMM7510
+            Me._Model = idItems.Dequeue
             Dim stripCandidate As String = "MODEL "
             If Me._Model.StartsWith(stripCandidate, StringComparison.OrdinalIgnoreCase) Then
-                Me._Model = Me.Model.TrimStart(stripCandidate.ToCharArray).Trim
+                Me._Model = Me.Model.Substring(stripCandidate.Length)
             End If
 
             ' Serial Number: 0669977
-            Me._SerialNumber = idItems(2).Trim
+            Me._SerialNumber = idItems.Dequeue
 
-            ' firmware: C11 Oct 10 1997 09:51:36/A02 /D/B/E
-            Me._FirmwareRevision = idItems(3).Trim
+            ' 2002: C11 Oct 10 1997 09:51:36/A02 /D/B/E
+            ' 7510: 1.0.0i
+            Me._FirmwareRevision = idItems.Dequeue
 
             ' parse thee firmware revision
             Me.ParseFirmwareRevision(Me._FirmwareRevision)
@@ -147,11 +149,19 @@ Public Class VersionInfo
 End Class
 
 ''' <summary> Enumerates the instrument board types as defined by the instrument identity. </summary>
-Public Enum BoardType
+Public Enum FirmwareRevisionElement
     <ComponentModel.Description("None")> None
     <ComponentModel.Description("Analog")> Analog
     <ComponentModel.Description("Digital")> Digital
     <ComponentModel.Description("Display")> Display
     <ComponentModel.Description("Contact Check")> ContactCheck
     <ComponentModel.Description("LED Display")> LedDisplay
+    <ComponentModel.Description("Primary")> Primary
+    <ComponentModel.Description("Secondary")> Secondary
+    <ComponentModel.Description("Ternary")> Ternary
+    <ComponentModel.Description("Quaternary")> Quaternary
+    <ComponentModel.Description("Mainframe")> Mainframe
+    <ComponentModel.Description("Boot code")> BootCode
+    <ComponentModel.Description("Front panel")> FrontPanel
+    <ComponentModel.Description("Internal Meter")> InternalMeter
 End Enum

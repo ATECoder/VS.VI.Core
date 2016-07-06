@@ -162,11 +162,11 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the clear error queue command. </summary>
     ''' <value> The clear error queue command. </value>
-    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = VI.Scpi.Syntax.ClearErrorQueueCommand
+    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = "SYST:CLE" ' VI.Scpi.Syntax.ClearErrorQueueCommand
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = VI.Scpi.Syntax.ErrorQueueQueryCommand
+    Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = "" ' = VI.Scpi.Syntax.ErrorQueueQueryCommand
 
 #End Region
 

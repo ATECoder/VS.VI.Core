@@ -181,6 +181,10 @@
       <Project>{9f4428b3-4e89-4154-be81-6e079c5d93b4}</Project>
       <Name>isr.VI.K2000.Library</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\K7500\isr.VI.K7500.Library.vbproj">
+      <Project>{b76a1d03-a4bc-437b-bda5-4da180725d26}</Project>
+      <Name>isr.VI.K7500.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\VendorVI\Tegam\isr.VI.Tegam.Library.vbproj">
       <Project>{3348577f-b095-4685-80bd-9f917ca52d6b}</Project>
       <Name>isr.VI.Tegam.Library</Name>

@@ -152,6 +152,7 @@ Public Class Switchboard
         <System.ComponentModel.Description("Service Request Events Requester")> ServiceRequester
         <System.ComponentModel.Description("Electroglass 2000")> Electroglass2000
         <System.ComponentModel.Description("Keithley 2002")> Keithley2002
+        <System.ComponentModel.Description("Keithley 7510")> Keithley7510
         <System.ComponentModel.Description("Tegam 1750")> Tegam1750
     End Enum
 
@@ -173,6 +174,8 @@ Public Class Switchboard
                 Me._OpenForms.ShowNew(New Instrument.ServiceRequesterForm, My.Application.MyLog)
             Case ActionOption.Keithley2002
                 Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K2000.K2000Panel, My.Application.MyLog)
+            Case ActionOption.Keithley7510
+                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K7500.K7500Panel, My.Application.MyLog)
             Case ActionOption.Electroglass2000
                 Me._OpenForms.ShowNew("Prober", New Instrument.InstrumentPanelForm, New EG2000.EG2000Panel, My.Application.MyLog)
             Case ActionOption.Tegam1750

@@ -178,24 +178,60 @@ Public MustInherit Class RouteSubsystemBase
         Me.Write(Me.ClosedChannelsCommandFormat, value)
         If timeout > TimeSpan.Zero Then Me.StatusSubsystem.AwaitOperationCompleted(timeout)
         Me.ClosedChannels = value
+        ' set to nothing to indicate that the value is not known -- requires reading.
         Me.ClosedChannel = Nothing
+        Me.OpenChannels = Nothing
         Return Me.ClosedChannels
+    End Function
+
+#End Region
+
+#Region " OPEN CHANNELS "
+
+    Private _OpenChannels As String
+
+    ''' <summary> Gets or sets the Open channels. </summary>
+    ''' <remarks> Nothing is not set. </remarks>
+    ''' <value> The Open channels. </value>
+    Public Overloads Property OpenChannels As String
+        Get
+            Return Me._OpenChannels
+        End Get
+        Protected Set(ByVal value As String)
+            If Not String.Equals(value, Me.OpenChannels) Then
+                Me._OpenChannels = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.OpenChannels))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Applies the Open channels described by value. </summary>
+    ''' <remarks> David, 1/5/2016. </remarks>
+    ''' <param name="value">   The scan list. </param>
+    ''' <param name="timeout"> The timeout. </param>
+    ''' <returns> A String. </returns>
+    Public Function ApplyOpenChannels(ByVal value As String, ByVal timeout As TimeSpan) As String
+        Me.WriteOpenChannels(value, timeout)
+        Return Me.QueryOpenChannels()
+    End Function
+
+    ''' <summary> Gets the Open channels query command. </summary>
+    ''' <value> The Open channels query command. </value>
+    ''' <remarks> :ROUT:CLOS </remarks>
+    Protected Overridable ReadOnly Property OpenChannelsQueryCommand As String
+
+    ''' <summary> Queries Open channels. </summary>
+    ''' <remarks> David, 1/5/2016. </remarks>
+    ''' <returns> The Open channels. </returns>
+    Public Function QueryOpenChannels() As String
+        Me.OpenChannels = Me.Query(Me.OpenChannels, Me.OpenChannelsQueryCommand)
+        Return Me.OpenChannels
     End Function
 
     ''' <summary> Gets the open channels command format. </summary>
     ''' <value> The open channels command format. </value>
-    ''' <remarks> :ROUT:OPEN:ALL </remarks>
+    ''' <remarks> :ROUT:OPEN </remarks>
     Protected Overridable ReadOnly Property OpenChannelsCommandFormat As String
-
-    ''' <summary> Applies the open channels command and read back the closed channels. </summary>
-    ''' <remarks> David, 2/9/2016. </remarks>
-    ''' <param name="channelList"> List of channels. </param>
-    ''' <param name="timeout">     The timeout. </param>
-    ''' <returns> A String. </returns>
-    Public Function ApplyOpenChannels(ByVal channelList As String, ByVal timeout As TimeSpan) As String
-        Me.WriteOpenChannels(channelList, timeout)
-        Return Me.QueryClosedChannels()
-    End Function
 
     ''' <summary> Opens the specified channels in the list. </summary>
     ''' <remarks> David, 2/9/2016. </remarks>
@@ -208,7 +244,8 @@ Public MustInherit Class RouteSubsystemBase
         ' set to nothing to indicate that the value is not known -- requires reading.
         Me.ClosedChannels = Nothing
         Me.ClosedChannel = Nothing
-        Return Me.ClosedChannels
+        Me.OpenChannels = channelList
+        Return Me.OpenChannels
     End Function
 
 #End Region
@@ -225,7 +262,7 @@ Public MustInherit Class RouteSubsystemBase
     ''' <returns> A String. </returns>
     Public Function ApplyOpenAll(ByVal timeout As TimeSpan) As String
         Me.WriteOpenAll(timeout)
-        Return Me.QueryClosedChannels
+        Return Me.QueryOpenChannels
     End Function
 
     ''' <summary> Opens all channels. </summary>
@@ -238,7 +275,8 @@ Public MustInherit Class RouteSubsystemBase
         ' set to nothing to indicate that the value is not known -- requires reading.
         Me.ClosedChannels = Nothing
         Me.ClosedChannel = Nothing
-        Return Me.ClosedChannels
+        Me.OpenChannels = Nothing
+        Return Me.OpenChannels
     End Function
 
 #End Region

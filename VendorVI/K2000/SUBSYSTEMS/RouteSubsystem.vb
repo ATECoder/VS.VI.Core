@@ -140,7 +140,7 @@ Public Class RouteSubsystem
 
     ''' <summary> Gets the terminal mode command format. </summary>
     ''' <value> The terminal mode command format. </value>
-    Protected Overrides ReadOnly Property TerminalModeCommandFormat As String = ":ROUT:TERM {0}"
+    Protected Overrides ReadOnly Property TerminalModeCommandFormat As String = "" ' read only; ":ROUT:TERM {0}"
 
 #End Region
 

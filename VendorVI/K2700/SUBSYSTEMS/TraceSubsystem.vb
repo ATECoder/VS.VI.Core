@@ -49,13 +49,9 @@ Public Class TraceSubsystem
 
 #Region " COMMAND SYNTAX "
 
-    ''' <summary> Gets the initiate command. </summary>
-    ''' <value> The initiate command. </value>
-    Protected Overrides ReadOnly Property InitiateCommand As String = ":INIT"
-
-    ''' <summary> Gets the Abort command. </summary>
-    ''' <value> The Abort command. </value>
-    Protected Overrides ReadOnly Property AbortCommand As String = ":ABOR"
+    ''' <summary> Gets or sets the Clear Buffer command. </summary>
+    ''' <value> The ClearBuffer command. </value>
+    Protected Overrides ReadOnly Property ClearBufferCommand As String = ":TRAC:CLE"
 
     ''' <summary> Gets the points count query command. </summary>
     ''' <value> The points count query command. </value>
@@ -84,3 +80,19 @@ Public Class TraceSubsystem
 #End Region
 
 End Class
+
+#Region " UNUSED "
+#If False Then
+' part of trigger subsystem.
+' 
+
+    ''' <summary> Gets the initiate command. </summary>
+    ''' <value> The initiate command. </value>
+    Protected Overrides ReadOnly Property InitiateCommand As String = ":INIT"
+
+    ''' <summary> Gets the Abort command. </summary>
+    ''' <value> The Abort command. </value>
+    Protected Overrides ReadOnly Property AbortCommand As String = ":ABOR"
+
+#End If
+#End Region

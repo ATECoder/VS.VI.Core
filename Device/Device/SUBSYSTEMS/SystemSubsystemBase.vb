@@ -1,3 +1,4 @@
+Imports System.ComponentModel
 ''' <summary> Defines the contract that must be implemented by System Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -58,4 +59,63 @@ Public MustInherit Class SystemSubsystemBase
 
 #End Region
 
+#Region " FAN LEVEL "
+
+    ''' <summary> The Route Fan Level. </summary>
+    Private _FanLevel As FanLevel?
+
+    ''' <summary> Gets or sets the cached Route Fan Level. </summary>
+    ''' <value> The Route Fan Level or null if unknown. </value>
+    Public Property FanLevel As FanLevel?
+        Get
+            Return Me._FanLevel
+        End Get
+        Protected Set(ByVal value As FanLevel?)
+            If Not Nullable.Equals(Me.FanLevel, value) Then
+                Me._FanLevel = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.FanLevel))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Route Fan Level. </summary>
+    ''' <param name="value"> The <see cref="FanLevel">Route Fan Level</see>. </param>
+    ''' <returns> The Route Fan Level or null if unknown. </returns>
+    Public Function ApplyFanLevel(ByVal value As FanLevel) As FanLevel?
+        Me.WriteFanLevel(value)
+        Return Me.QueryFanLevel()
+    End Function
+
+    ''' <summary> Gets the Fan Level query command. </summary>
+    ''' <value> The Fan Level command. </value>
+    Protected Overridable ReadOnly Property FanLevelQueryCommand As String
+
+    ''' <summary> Queries the Route Fan Level. Also sets the <see cref="FanLevel">output
+    ''' on</see> sentinel. </summary>
+    ''' <returns> The Route Fan Level or null if unknown. </returns>
+    Public Function QueryFanLevel() As FanLevel?
+        Me.FanLevel = Me.Query(Of FanLevel)(Me.FanLevelQueryCommand, Me.FanLevel)
+        Return Me.FanLevel
+    End Function
+
+    ''' <summary> Gets the Fan Level command format. </summary>
+    ''' <value> The Fan Level command format. </value>
+    Protected Overridable ReadOnly Property FanLevelCommandFormat As String
+
+    ''' <summary> Writes the Route Fan Level. Does not read back from the instrument. </summary>
+    ''' <param name="value"> The Fan Level. </param>
+    ''' <returns> The Route Fan Level or null if unknown. </returns>
+    Public Function WriteFanLevel(ByVal value As FanLevel) As FanLevel?
+        Me.FanLevel = Me.Write(Of FanLevel)(Me.FanLevelCommandFormat, value)
+        Return Me.FanLevel
+    End Function
+
+#End Region
+
 End Class
+
+Public Enum FanLevel
+    <Description("Not Specified")> NotSpecified
+    <Description("Normal")> Normal
+    <Description("Quiet")> Quiet
+End Enum

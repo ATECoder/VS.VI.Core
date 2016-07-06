@@ -51,31 +51,15 @@ Public Class MeasureSubsystem
 
 #Region " COMMAND SYNTAX "
 
-#Region "  INIT, READ, FETCH "
-
-    ''' <summary> Gets the initiate command. </summary>
-    ''' <value> The initiate command. </value>
-    Protected Overrides ReadOnly Property InitiateCommand As String
-        Get
-            Return ":INIT"
-        End Get
-    End Property
+#Region " READ, FETCH "
 
     ''' <summary> Gets the fetch command. </summary>
     ''' <value> The fetch command. </value>
-    Protected Overrides ReadOnly Property FetchCommand As String
-        Get
-            Return "FETCH?"
-        End Get
-    End Property
+    Protected Overrides ReadOnly Property FetchCommand As String = ":FETCH?"
 
     ''' <summary> Gets the read command. </summary>
     ''' <value> The read command. </value>
-    Protected Overrides ReadOnly Property ReadCommand As String
-        Get
-            Return "READ?"
-        End Get
-    End Property
+    Protected Overrides ReadOnly Property ReadCommand As String = ":READ?"
 
 #End Region
 
@@ -102,4 +86,12 @@ Public Class MeasureSubsystem
 #End Region
 
 End Class
+
+#Region " UNUSED "
+#If False Then
+    ''' <summary> Gets the initiate command. </summary>
+    ''' <value> The initiate command. </value>
+    Protected Overrides ReadOnly Property InitiateCommand As String = ""
+#End If
+#End Region
 

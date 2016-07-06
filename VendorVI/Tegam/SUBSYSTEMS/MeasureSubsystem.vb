@@ -84,10 +84,6 @@ Public Class MeasureSubsystem
 
 #Region "  INIT, READ, FETCH "
 
-    ''' <summary> Gets the initiate command. </summary>
-    ''' <value> The initiate command. </value>
-    Protected Overrides ReadOnly Property InitiateCommand As String = ""
-
     ''' <summary> Gets the fetch command. </summary>
     ''' <value> The fetch command. </value>
     <Obsolete("Not supported")>
@@ -825,3 +821,11 @@ Public Class MeasureSubsystem
 #End Region
 
 End Class
+
+#Region " UNUSED "
+#If False Then
+    ''' <summary> Gets the initiate command. </summary>
+    ''' <value> The initiate command. </value>
+    Protected Overrides ReadOnly Property InitiateCommand As String = ""
+#End If
+#End Region

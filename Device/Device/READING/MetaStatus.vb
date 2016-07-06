@@ -85,6 +85,8 @@ Public Class MetaStatus
             result = "or"
         ElseIf Me.HitVoltageProtection Then
             result = "vp"
+        ElseIf Me.Infinity Then
+            result = Convert.ToChar(&H221E) ' 236)
         Else
             ' if we do not return a value, raise an exception
             Debug.Assert(Not Debugger.IsAttached, "Unhandled case in determining two-char code.")
@@ -123,6 +125,8 @@ Public Class MetaStatus
             result = "over"
         ElseIf Me.HitVoltageProtection Then
             result = "volt"
+        ElseIf Me.Infinity Then
+            result = "inf"
         Else
             ' if we do not return a value, raise an exception
             Debug.Assert(Not Debugger.IsAttached, "Unhandled case in determining code.")
@@ -160,6 +164,8 @@ Public Class MetaStatus
             result = "Over range"
         ElseIf Me.HitVoltageProtection Then
             result = "Voltage protection"
+        ElseIf Me.Infinity Then
+            result = "infinity"
         Else
             ' if we do not return a value, raise an exception
             Debug.Assert(Not Debugger.IsAttached, "Unhandled case in determining long outcome.")

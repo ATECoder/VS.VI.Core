@@ -51,7 +51,7 @@ Public Class VersionInfo
     '''                         <see cref="FirmwareLevelDate">date</see>
     '''                         <see cref="FirmwareLevelMinorRevision">firmware level minor
     '''                         revision</see>
-    '''                         <see cref="BoardRevisions">board revisions</see>
+    '''                         <see cref="FirmwareRevisionElements">board revisions</see>
     '''                         e.g., <c>C11 Oct 10 1997 09:51:36/A02 /D/B/E.</c>.  
     '''                         The last three letters separated by "/" indicate the board revisions
     '''                         (i.e. /Analog/Digital/Contact Check). Contact Check board revisions
@@ -84,10 +84,10 @@ Public Class VersionInfo
             ' Minor revision: A02
             Me._FirmwareLevelMinorRevision = revSections.Dequeue.Trim
 
-            If revSections.Any Then Me.BoardRevisions.Add(BoardType.Analog.ToString, revSections.Dequeue.Trim)
-            If revSections.Any Then Me.BoardRevisions.Add(BoardType.Digital.ToString, revSections.Dequeue.Trim)
-            If revSections.Any Then Me.BoardRevisions.Add(BoardType.ContactCheck.ToString, revSections.Dequeue.Trim)
-            Me._SupportsContactCheck = Me.BoardRevisions.ContainsKey(BoardType.ContactCheck.ToString)
+            If revSections.Any Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.Analog.ToString, revSections.Dequeue.Trim)
+            If revSections.Any Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.Digital.ToString, revSections.Dequeue.Trim)
+            If revSections.Any Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.ContactCheck.ToString, revSections.Dequeue.Trim)
+            Me._SupportsContactCheck = Me.FirmwareRevisionElements.ContainsKey(FirmwareRevisionElement.ContactCheck.ToString)
 
         End If
 

@@ -33,40 +33,20 @@ Public MustInherit Class TraceSubsystemBase
 
 #Region " COMMANDS "
 
-    ''' <summary> Gets or sets the initiate command. </summary>
-    ''' <value> The initiate command. </value>
-    ''' <remarks> SCPI: ":INIT". </remarks>
-    Protected Overridable ReadOnly Property InitiateCommand As String
+    ''' <summary> Gets or sets the Clear Buffer command. </summary>
+    ''' <value> The ClearBuffer command. </value>
+    ''' <remarks> SCPI: ":TRAC:CLE". </remarks>
+    Protected Overridable ReadOnly Property ClearBufferCommand As String
 
-    ''' <summary> Initiates operations. </summary>
-    ''' <remarks> This command is used to initiate source-measure operation by taking the SourceMeter
-    ''' out of idle. The :READ? and :MEASure? commands also perform an initiation. Note that if auto
-    ''' output-off is disabled (SOURce1:CLEar:AUTO OFF), the source output must first be turned on
-    ''' before an initiation can be performed. The :MEASure? command automatically turns the output
-    ''' source on before performing the initiation. </remarks>
-    Public Sub Initiate()
-        If Not String.IsNullOrWhiteSpace(Me.InitiateCommand) Then
-            Me.Session.WriteLine(Me.InitiateCommand)
-        End If
-    End Sub
-
-    ''' <summary> Gets or sets the Abort command. </summary>
-    ''' <value> The Abort command. </value>
-    ''' <remarks> SCPI: ":ABOR". </remarks>
-    Protected Overridable ReadOnly Property AbortCommand As String
-
-    ''' <summary> Aborts operations. </summary>
-    ''' <remarks> When this action command is sent, the SourceMeter aborts operation and returns to the
-    ''' idle state. A faster way to return to idle is to use the DCL or SDC command. With auto output-
-    ''' off enabled (:SOURce1:CLEar:AUTO ON), the output will remain on if operation is terminated
-    ''' before the output has a chance to automatically turn off. </remarks>
-    Public Sub Abort()
-        If Not String.IsNullOrWhiteSpace(Me.AbortCommand) Then
-            Me.Session.WriteLine(Me.AbortCommand)
-        End If
+    ''' <summary> Clears the buffer. </summary>
+    ''' <remarks> David, 6/25/2016. </remarks>
+    Public Sub ClearBuffer()
+        Me.Write(Me.ClearBufferCommand)
     End Sub
 
 #End Region
+
+
 
 #Region " POINTS COUNT "
 
@@ -131,3 +111,48 @@ Public MustInherit Class TraceSubsystemBase
 
 End Class
 
+#Region " UNUSED "
+#If False Then
+' part of trigger subsystem
+
+#Region " COMMANDS "
+
+    ''' <summary> Gets or sets the initiate command. </summary>
+    ''' <value> The initiate command. </value>
+    ''' <remarks> SCPI: ":INIT". </remarks>
+    Protected Overridable ReadOnly Property InitiateCommand As String
+
+    ''' <summary> Initiates operations. </summary>
+    ''' <remarks> This command is used to initiate source-measure operation by taking the SourceMeter
+    ''' out of idle. The :READ? and :MEASure? commands also perform an initiation. Note that if auto
+    ''' output-off is disabled (SOURce1:CLEar:AUTO OFF), the source output must first be turned on
+    ''' before an initiation can be performed. The :MEASure? command automatically turns the output
+    ''' source on before performing the initiation. </remarks>
+    Public Sub Initiate()
+        If Not String.IsNullOrWhiteSpace(Me.InitiateCommand) Then
+            Me.Session.WriteLine(Me.InitiateCommand)
+        End If
+    End Sub
+
+    ''' <summary> Gets or sets the Abort command. </summary>
+    ''' <value> The Abort command. </value>
+    ''' <remarks> SCPI: ":ABOR". </remarks>
+    Protected Overridable ReadOnly Property AbortCommand As String
+
+    ''' <summary> Aborts operations. </summary>
+    ''' <remarks> When this action command is sent, the SourceMeter aborts operation and returns to the
+    ''' idle state. A faster way to return to idle is to use the DCL or SDC command. With auto output-
+    ''' off enabled (:SOURce1:CLEar:AUTO ON), the output will remain on if operation is terminated
+    ''' before the output has a chance to automatically turn off. </remarks>
+    Public Sub Abort()
+        If Not String.IsNullOrWhiteSpace(Me.AbortCommand) Then
+            Me.Session.WriteLine(Me.AbortCommand)
+        End If
+    End Sub
+
+#End Region
+
+
+#End If
+
+#End Region

@@ -250,6 +250,14 @@ Public MustInherit Class StatusSubsystemBase
         Me.AsyncNotifyPropertyChanged(NameOf(Me.LastDeviceError))
     End Sub
 
+    ''' <summary> Gets the last message that was sent before the error. </summary>
+    ''' <value> The message sent before error. </value>
+    Public ReadOnly Property MessageSentBeforeError As String
+
+    ''' <summary> Gets the last message that was received before the error. </summary>
+    ''' <value> The message received before error. </value>
+    Public ReadOnly Property MessageReceivedBeforeError As String
+
     ''' <summary> The device errors. </summary>
     Protected Property DeviceErrorBuilder As System.Text.StringBuilder
 
@@ -272,10 +280,18 @@ Public MustInherit Class StatusSubsystemBase
             If Me.StandardEventStatus.GetValueOrDefault(0) <> 0 Then
                 Dim report As String = StatusSubsystemBase.BuildReport(Me.StandardEventStatus.Value, ";")
                 If Not String.IsNullOrWhiteSpace(report) Then
-                    If builder.Length > 0 Then
-                        builder.AppendLine()
-                    End If
+                    If builder.Length > 0 Then builder.AppendLine()
                     builder.Append(report)
+                End If
+                If Not String.IsNullOrWhiteSpace(Me.MessageReceivedBeforeError) Then
+                    If builder.Length > 0 Then builder.AppendLine()
+                    builder.Append("Last received: ")
+                    builder.Append(Me.MessageReceivedBeforeError)
+                End If
+                If Not String.IsNullOrWhiteSpace(Me.MessageSentBeforeError) Then
+                    If builder.Length > 0 Then builder.AppendLine()
+                    builder.Append("Last sent: ")
+                    builder.Append(Me.MessageSentBeforeError)
                 End If
             End If
             Return builder.ToString
@@ -324,9 +340,12 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Reads the device errors. </summary>
     ''' <returns> The device errors. </returns>
-    Public Function QueryDeviceErrors() As String
+    Public Overridable Function QueryDeviceErrors() As String
         If Me.ReadingDeviceErrors Then Return ""
+        Dim notifyLastError As Boolean = False
         Try
+            Me._MessageSentBeforeError = Me.Session.LastMessageSent
+            Me._MessageReceivedBeforeError = Me.Session.LastMessageReceived
             Me.ReadingDeviceErrors = True
             Me.ClearErrorCache()
             If Not String.IsNullOrWhiteSpace(Me.ErrorQueueQueryCommand) AndAlso Me.IsErrorBitSet() Then
@@ -334,6 +353,7 @@ Public MustInherit Class StatusSubsystemBase
                 Do
                     Dim de As DeviceError = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.ErrorQueueQueryCommand))
                     If de.IsError Then
+                        notifyLastError = True
                         If builder.Length > 0 Then builder.AppendLine()
                         builder.Append(de.CompoundErrorMessage)
                     End If
@@ -343,6 +363,7 @@ Public MustInherit Class StatusSubsystemBase
                     Me.AppendDeviceErrorMessage(builder.ToString)
                 End If
             End If
+            If notifyLastError Then Me.AsyncNotifyPropertyChanged(NameOf(Me.LastDeviceError))
             Return Me.DeviceErrors
         Catch
             Throw
@@ -364,6 +385,50 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary> Gets the last error query command. </summary>
     ''' <value> The last error query command. </value>
     Protected Overridable ReadOnly Property LastErrorQueryCommand As String
+
+    ''' <summary> Queries the next error from the device error queue. </summary>
+    ''' <returns> The <see cref="DeviceError">Device Error structure.</see> </returns>
+    Public Function QueryNextError() As DeviceError
+        Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
+        If Not String.IsNullOrWhiteSpace(Me.LastErrorQueryCommand) Then
+            de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.LastErrorQueryCommand))
+        End If
+        Return de
+    End Function
+
+    ''' <summary> Reads the device errors. </summary>
+    ''' <returns> The device errors. </returns>
+    Public Function QueryErrorQueue() As String
+        If Me.ReadingDeviceErrors Then Return ""
+        Dim notifyLastError As Boolean = False
+        Try
+            Me._MessageSentBeforeError = Me.Session.LastMessageSent
+            Me._MessageReceivedBeforeError = Me.Session.LastMessageReceived
+            Me.ReadingDeviceErrors = True
+            Me.ClearErrorCache()
+            If Not String.IsNullOrWhiteSpace(Me.LastErrorQueryCommand) AndAlso Me.IsErrorBitSet() Then
+                Dim builder As New System.Text.StringBuilder
+                Do
+                    Dim de As DeviceError = Me.QueryNextError
+                    If de.IsError Then
+                        notifyLastError = True
+                        If builder.Length > 0 Then builder.AppendLine()
+                        builder.Append(de.CompoundErrorMessage)
+                    End If
+                Loop While Me.IsErrorBitSet
+                If builder.Length > 0 Then
+                    Me.QueryStandardEventStatus()
+                    Me.AppendDeviceErrorMessage(builder.ToString)
+                End If
+            End If
+            If notifyLastError Then Me.AsyncNotifyPropertyChanged(NameOf(Me.LastDeviceError))
+            Return Me.DeviceErrors
+        Catch
+            Throw
+        Finally
+            Me.ReadingDeviceErrors = False
+        End Try
+    End Function
 
     ''' <summary> Queries the last error from the device. </summary>
     ''' <returns> The <see cref="DeviceError">Device Error structure.</see> </returns>

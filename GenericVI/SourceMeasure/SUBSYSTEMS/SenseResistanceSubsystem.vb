@@ -22,6 +22,33 @@ Public Class SenseResistanceSubsystem
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
+    ''' <remarks> David, 6/27/2016. </remarks>
+    Public Overrides Sub InitKnownState()
+        MyBase.InitKnownState()
+        Me.PowerLineCyclesRange1 = New isr.Core.Pith.RangeR(0.01, 10)
+        Dim model As String = Me.StatusSubsystem.VersionInfo.Model
+        Select Case True
+            Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
+                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 210000000.0)
+            Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
+                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 210000000.0)
+            Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
+                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 21000000.0)
+            Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
+                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 21000000.0)
+            Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
+                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 21000000.0)
+            Case Else
+                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 21000000.0)
+        End Select
+    End Sub
+
+#End Region
+
+
 #Region " PUBLISHER "
 
     ''' <summary> Publishes all values by raising the property changed events. </summary>
@@ -128,30 +155,6 @@ Public Class SenseResistanceSubsystem
 #End Region
 
 #Region " RANGE "
-
-    ''' <summary> The Range of the power line cycles. </summary>
-    Public Overrides ReadOnly Property PowerLineCyclesRange As Core.Pith.RangeR = New Core.Pith.RangeR(0.01, 10)
-
-    ''' <summary> The Range of function values. </summary>
-    Public Overrides ReadOnly Property ValueRange As Core.Pith.RangeR
-        Get
-            Dim model As String = Me.StatusSubsystem.VersionInfo.Model
-            Select Case True
-                Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
-                    Return New isr.Core.Pith.RangeR(0, 210000000.0)
-                Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
-                    Return New isr.Core.Pith.RangeR(0, 210000000.0)
-                Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
-                    Return New isr.Core.Pith.RangeR(0, 21000000.0)
-                Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
-                    Return New isr.Core.Pith.RangeR(0, 21000000.0)
-                Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
-                    Return New isr.Core.Pith.RangeR(0, 21000000.0)
-                Case Else
-                    Return New isr.Core.Pith.RangeR(0, 21000000.0)
-            End Select
-        End Get
-    End Property
 
     ''' <summary> Find range match. The matched range is the first range with a range value
     ''' greater or equal to the specified range. </summary>

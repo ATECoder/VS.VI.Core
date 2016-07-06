@@ -49,17 +49,6 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <summary> Parses the reading into the data elements. </summary>
     Public MustOverride Sub ParseReading(ByVal reading As String)
 
-    ''' <summary> Gets the initiate command. </summary>
-    ''' <value> The initiate command. </value>
-    ''' <remarks> SCPI: :INIT'. </remarks>
-    Protected Overridable ReadOnly Property InitiateCommand As String
-
-    ''' <summary> Initiates operation. </summary>
-    ''' <remarks> issues the ':INIT' command. </remarks>
-    Public Sub Initiate()
-        Me.Session.Execute(Me.InitiateCommand)
-    End Sub
-
     ''' <summary> Gets the fetch command. </summary>
     ''' <value> The fetch command. </value>
     ''' <remarks> SCPI: 'FETCh?' </remarks>
@@ -82,7 +71,7 @@ Public MustInherit Class MeasureSubsystemBase
     Protected Overridable ReadOnly Property ReadCommand As String
 
     ''' <summary> Initiates an operation and then fetches the data. </summary>
-    ''' <remarks> Issues the 'READ?' query, which performs an <see cref="Initiate">INITIATE</see> and then a
+    ''' <remarks> Issues the 'READ?' query, which performs a trigger initiation and then a
     ''' <see cref="Fetch">FETCh? </see>
     ''' The initiate triggers a new measurement cycle which puts new data in the Sample Buffer. Fetch
     ''' reads that new data. The <see cref="MeasureCurrentSubsystemBase.Measure">Measure</see> command
@@ -119,3 +108,20 @@ Public MustInherit Class MeasureSubsystemBase
 #End Region
 
 End Class
+
+#Region " UNUSED "
+#If False Then
+
+    ''' <summary> Gets the initiate command. </summary>
+    ''' <value> The initiate command. </value>
+    ''' <remarks> SCPI: :INIT'. </remarks>
+    Protected Overridable ReadOnly Property InitiateCommand As String
+
+    ''' <summary> Initiates operation. </summary>
+    ''' <remarks> issues the ':INIT' command. </remarks>
+    Public Sub Initiate()
+        Me.Session.Execute(Me.InitiateCommand)
+    End Sub
+
+#End If
+#End Region

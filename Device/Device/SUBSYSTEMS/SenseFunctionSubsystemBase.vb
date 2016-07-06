@@ -21,6 +21,18 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.AutoZeroEnabled = True
+        Me.AutoRangeEnabled = True
+        Me.PowerLineCycles = 1
+    End Sub
+
+#End Region
+
 #Region " AUTO RANGE ENABLED "
 
     ''' <summary> Auto Range enabled. </summary>
@@ -51,7 +63,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
     ''' <summary> Gets or sets the automatic Range enabled query command. </summary>
     ''' <value> The automatic Range enabled query command. </value>
-    ''' <remarks> SCPI: "system:RANG:AUTO?" </remarks>
+    ''' <remarks> SCPI: "CURR:RANG:AUTO?" </remarks>
     Protected Overridable ReadOnly Property AutoRangeEnabledQueryCommand As String
 
     ''' <summary> Queries the Auto Range Enabled sentinel. Also sets the
@@ -64,7 +76,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
     ''' <summary> Gets or sets the automatic Range enabled command Format. </summary>
     ''' <value> The automatic Range enabled query command. </value>
-    ''' <remarks> SCPI: "CURR:RANGE:AUTO {0:'ON';'ON';'OFF'}" </remarks>
+    ''' <remarks> SCPI: "CURR:RANG:AUTO {0:'ON';'ON';'OFF'}" </remarks>
     Protected Overridable ReadOnly Property AutoRangeEnabledCommandFormat As String
 
     ''' <summary> Writes the Auto Range Enabled sentinel. Does not read back from the instrument. </summary>
@@ -77,10 +89,66 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #End Region
 
+#Region " AUTO ZERO ENABLED "
+
+    ''' <summary> Auto Zero enabled. </summary>
+    Private _AutoZeroEnabled As Boolean?
+
+    ''' <summary> Gets or sets the cached Auto Zero Enabled sentinel. </summary>
+    ''' <value> <c>null</c> if Auto Zero Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property AutoZeroEnabled As Boolean?
+        Get
+            Return Me._AutoZeroEnabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.AutoZeroEnabled, value) Then
+                Me._AutoZeroEnabled = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoZeroEnabled))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Auto Zero Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyAutoZeroEnabled(ByVal value As Boolean) As Boolean?
+        Me.WriteAutoZeroEnabled(value)
+        Return Me.QueryAutoZeroEnabled()
+    End Function
+
+    ''' <summary> Gets or sets the automatic Zero enabled query command. </summary>
+    ''' <value> The automatic Zero enabled query command. </value>
+    ''' <remarks> SCPI: "CURR:AZER?" </remarks>
+    Protected Overridable ReadOnly Property AutoZeroEnabledQueryCommand As String
+
+    ''' <summary> Queries the Auto Zero Enabled sentinel. Also sets the
+    ''' <see cref="AutoZeroEnabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryAutoZeroEnabled() As Boolean?
+        Me.AutoZeroEnabled = Me.Query(Me.AutoZeroEnabled, Me.AutoZeroEnabledQueryCommand)
+        Return Me.AutoZeroEnabled
+    End Function
+
+    ''' <summary> Gets or sets the automatic Zero enabled command Format. </summary>
+    ''' <value> The automatic Zero enabled query command. </value>
+    ''' <remarks> SCPI: "CURR:AZER {0:'ON';'ON';'OFF'}" </remarks>
+    Protected Overridable ReadOnly Property AutoZeroEnabledCommandFormat As String
+
+    ''' <summary> Writes the Auto Zero Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteAutoZeroEnabled(ByVal value As Boolean) As Boolean?
+        Me.AutoZeroEnabled = Me.Write(value, Me.AutoZeroEnabledCommandFormat)
+        Return Me.AutoZeroEnabled
+    End Function
+
+#End Region
+
 #Region " POWER LINE CYCLES (NPLC) "
 
     ''' <summary> The Range of the power line cycles. </summary>
-    Public Overridable ReadOnly Property PowerLineCyclesRange As Core.Pith.RangeR
+    Public Property PowerLineCyclesRange1 As Core.Pith.RangeR
 
     ''' <summary> The Power Line Cycles. </summary>
     Private _PowerLineCycles As Double?
@@ -150,7 +218,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
 #Region " RANGE "
 
     ''' <summary> The Range of function values. </summary>
-    Public Overridable ReadOnly Property ValueRange As Core.Pith.RangeR
+    Public Property ValueRange1 As Core.Pith.RangeR
 
     ''' <summary> The range. </summary>
     Private _Range As Double?

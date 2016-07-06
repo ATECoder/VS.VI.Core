@@ -30,7 +30,7 @@ Public Class VersionInfo
     ''' zzzzz Is the firmware revision level of the LED display</para>
     ''' </remarks>
     ''' <exception cref="ArgumentNullException" guarantee="strong"> . </exception>
-    ''' <param name="revision"> Specifies the instrument <see cref="BoardRevisions">board
+    ''' <param name="revision"> Specifies the instrument <see cref="FirmwareRevisionElements">board
     '''                         revisions</see>
     '''                         e.g., <c>xxxxx,/yyyyy/zzzzz</c> for the digital and display boards. </param>
     Protected Overrides Sub ParseFirmwareRevision(ByVal revision As String)
@@ -46,9 +46,9 @@ Public Class VersionInfo
             Dim revSections As Queue(Of String) = New Queue(Of String)(revision.Split("/"c))
 
             ' Rev: xxxxx,/yyyyy/zzzzz
-            If revSections.Any Then Me.BoardRevisions.Add(BoardType.Digital.ToString, revSections.Dequeue.Trim.TrimEnd(",".ToCharArray))
-            If revSections.Any Then Me.BoardRevisions.Add(BoardType.Display.ToString, revSections.Dequeue.Trim)
-            If revSections.Any Then Me.BoardRevisions.Add(BoardType.LedDisplay.ToString, revSections.Dequeue.Trim)
+            If revSections.Any Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.Digital.ToString, revSections.Dequeue.Trim.TrimEnd(",".ToCharArray))
+            If revSections.Any Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.Display.ToString, revSections.Dequeue.Trim)
+            If revSections.Any Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.LedDisplay.ToString, revSections.Dequeue.Trim)
 
         End If
 

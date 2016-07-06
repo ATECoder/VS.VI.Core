@@ -10,7 +10,7 @@
         End Sub
 
         ''' <summary> Gets the identifier of the trace source. </summary>
-        Public Const TraceEventId As Integer = VI.My.ProjectTraceEventId.Switch
+        Public Const TraceEventId As Integer = VI.My.ProjectTraceEventId.Scanner
 
         Public Const AssemblyTitle As String = "VI Tsp Instrument Library"
         Public Const AssemblyDescription As String = "Test Script Processor Virtual Instrument Library"

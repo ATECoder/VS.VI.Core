@@ -34,19 +34,21 @@
 
         <System.ComponentModel.Description("Power Supply")> PowerSupply = ProjectTraceEventId.Instrument + &H10
         <System.ComponentModel.Description("Source Measure")> SourceMeasure = ProjectTraceEventId.PowerSupply + &H1
-        <System.ComponentModel.Description("Switch")> Switch = ProjectTraceEventId.PowerSupply + &H2
+        <System.ComponentModel.Description("Scanner")> Scanner = ProjectTraceEventId.PowerSupply + &H2
         <System.ComponentModel.Description("Multimeter")> Multimeter = ProjectTraceEventId.PowerSupply + &H3
         <System.ComponentModel.Description("EG2000 Prober")> EG2000Prober = ProjectTraceEventId.PowerSupply + &H4
         <System.ComponentModel.Description("Thermostream")> Thermostream = ProjectTraceEventId.PowerSupply + &H5
-        <System.ComponentModel.Description("K2000 Multimeter")> K2000 = ProjectTraceEventId.PowerSupply + &H6
-        <System.ComponentModel.Description("K2700 Meter Switch")> K2700 = ProjectTraceEventId.PowerSupply + &H7
-        <System.ComponentModel.Description("Tegam Multimeter")> Tegam = ProjectTraceEventId.PowerSupply + &H8
+        <System.ComponentModel.Description("K2000 Meter")> K2000 = ProjectTraceEventId.PowerSupply + &H6
+        <System.ComponentModel.Description("K2700 Meter/Scanner")> K2700 = ProjectTraceEventId.PowerSupply + &H7
+        <System.ComponentModel.Description("Tegam Meter")> Tegam = ProjectTraceEventId.PowerSupply + &H8
         <System.ComponentModel.Description("K7000 Switch")> K7000 = ProjectTraceEventId.PowerSupply + &H9
-        <System.ComponentModel.Description("K3700 Meter Switch")> K3700 = ProjectTraceEventId.PowerSupply + &HA
+        <System.ComponentModel.Description("K3700 Meter/Scanner")> K3700 = ProjectTraceEventId.PowerSupply + &HA
         <System.ComponentModel.Description("TTM Driver")> TtmDriver = ProjectTraceEventId.PowerSupply + &HB
         <System.ComponentModel.Description("K2600 Source Meter")> K2600 = ProjectTraceEventId.PowerSupply + &HC
         <System.ComponentModel.Description("E4990 Impedance Analyzer")> E4990 = ProjectTraceEventId.PowerSupply + &HD
         <System.ComponentModel.Description("K2400 Source Meter")> K2400 = ProjectTraceEventId.PowerSupply + &HE
+        <System.ComponentModel.Description("K7500 Meter")> K7500 = ProjectTraceEventId.PowerSupply + &HF
+        <System.ComponentModel.Description("K34980 Meter/Scanner")> K34980 = ProjectTraceEventId.PowerSupply + &H10
 
         <System.ComponentModel.Description("Core Tester")> DeviceTester = ProjectTraceEventId.VI *
                                                                           TraceEventConstants.BaseScaleFactor +

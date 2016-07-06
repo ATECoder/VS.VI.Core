@@ -12,9 +12,9 @@
         ''' <summary> Gets the identifier of the trace source. </summary>
         Public Const TraceEventId As Integer = VI.My.ProjectTraceEventId.K2700
 
-        Public Const AssemblyTitle As String = "VI K2700 Multimeter Switch System Library"
-        Public Const AssemblyDescription As String = "K2700 Multimeter Switch System Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.K2700.Meter.Switch.2016"
+        Public Const AssemblyTitle As String = "VI K2700 Meter Scanner Library"
+        Public Const AssemblyDescription As String = "K2700 Meter Scanner Virtual Instrument Library"
+        Public Const AssemblyProduct As String = "VI.K2700.Meter.Scanner.2016"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

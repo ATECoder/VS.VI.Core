@@ -51,6 +51,7 @@ Public Enum ReadingTypes
     <ComponentModel.Description("Status (STAT)")> Status = Time << 1
     <ComponentModel.Description("Channel (CHAN)")> Channel = Status << 1
     <ComponentModel.Description("Limits (LIM)")> Limits = Channel << 1
+    <ComponentModel.Description("Seconds (SEC)")> Seconds = Limits << 1
 End Enum
 
 #End Region

@@ -61,6 +61,24 @@ Public Class SenseVoltageSubsystem
 
 #End Region
 
+#Region " RANGE "
+
+    ''' <summary> Gets the range command format. </summary>
+    ''' <value> The range command format. </value>
+    Protected Overrides ReadOnly Property RangeCommandFormat As String = ":SENS:VOLT:RANG {0}"
+
+    ''' <summary> Gets the range query command. </summary>
+    ''' <value> The range query command. </value>
+    Protected Overrides ReadOnly Property RangeQueryCommand As String = ":SENS:VOLT:RANG?"
+
+#End Region
+
+#End Region
+
+End Class
+
+#Region " UNUSED "
+#If False Then
 #Region " PROTECTION "
 
     ''' <summary> Gets the Protection enabled command Format. </summary>
@@ -84,19 +102,5 @@ Public Class SenseVoltageSubsystem
     Protected Overrides ReadOnly Property ProtectionLevelQueryCommand As String = ":SENS:VOLT:PROT?"
 
 #End Region
-
-#Region " RANGE "
-
-    ''' <summary> Gets the range command format. </summary>
-    ''' <value> The range command format. </value>
-    Protected Overrides ReadOnly Property RangeCommandFormat As String = ":SENS:VOLT:RANG {0}"
-
-    ''' <summary> Gets the range query command. </summary>
-    ''' <value> The range query command. </value>
-    Protected Overrides ReadOnly Property RangeQueryCommand As String = ":SENS:VOLT:RANG?"
-
+#End If
 #End Region
-
-#End Region
-
-End Class

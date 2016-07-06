@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0F61F251-CE7D-4CAC-923C-520143E85F83}"
 	ProjectSection(SolutionItems) = preProject
@@ -151,6 +151,10 @@ EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VI.Device.Console", "Apps\Device.Console\VI.Device.Console.vbproj", "{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.E4990.Library", "VendorVI\E4990\isr.VI.E4990.Library.vbproj", "{04DC1394-A7BF-4D31-8EC3-FCF42598FF9F}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K7500.Library", "VendorVI\K7500\isr.VI.K7500.Library.vbproj", "{B76A1D03-A4BC-437B-BDA5-4DA180725D26}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K34980.Library", "VendorVI\K34980\isr.VI.K34980.Library.vbproj", "{236C5EDE-C3E7-48CF-B651-3A5415958FCB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1107,6 +1111,38 @@ Global
 		{04DC1394-A7BF-4D31-8EC3-FCF42598FF9F}.Release|x64.Build.0 = Release|Any CPU
 		{04DC1394-A7BF-4D31-8EC3-FCF42598FF9F}.Release|x86.ActiveCfg = Release|Any CPU
 		{04DC1394-A7BF-4D31-8EC3-FCF42598FF9F}.Release|x86.Build.0 = Release|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Debug|x64.Build.0 = Debug|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Debug|x86.Build.0 = Debug|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Release|x64.ActiveCfg = Release|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Release|x64.Build.0 = Release|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Release|x86.ActiveCfg = Release|Any CPU
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26}.Release|x86.Build.0 = Release|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Debug|x64.Build.0 = Debug|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Debug|x86.Build.0 = Debug|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Release|x64.ActiveCfg = Release|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Release|x64.Build.0 = Release|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Release|x86.ActiveCfg = Release|Any CPU
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1173,6 +1209,8 @@ Global
 		{BF9426F2-B135-4BBB-9C16-D43BC6D37CF7} = {F464A367-2F81-4FBE-82B5-46C23622D518}
 		{26F5F5B8-4CDB-48CA-9DD0-2431FEC83D6C} = {5A67A281-8142-4FB8-8AFF-3EC87B02355F}
 		{04DC1394-A7BF-4D31-8EC3-FCF42598FF9F} = {38B40B9B-F77A-4F77-AF3C-AF44EEC41E6E}
+		{B76A1D03-A4BC-437B-BDA5-4DA180725D26} = {38B40B9B-F77A-4F77-AF3C-AF44EEC41E6E}
+		{236C5EDE-C3E7-48CF-B651-3A5415958FCB} = {38B40B9B-F77A-4F77-AF3C-AF44EEC41E6E}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = isr.IO.Visa.vsmdi

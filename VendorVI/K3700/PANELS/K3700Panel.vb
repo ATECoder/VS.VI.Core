@@ -1050,47 +1050,50 @@ Public Class K3700Panel
     ''' </summary>
     Private Sub applySenseSettings()
 
-        If Not Nullable.Equals(Me.Device.MultimeterSubsystem.PowerLineCycles, Me._PowerLineCyclesNumeric.Value) Then
-            Me.Device.MultimeterSubsystem.ApplyPowerLineCycles(Me._PowerLineCyclesNumeric.Value)
-        End If
+        With Me.Device.MultimeterSubsystem
+            If Not Nullable.Equals(.PowerLineCycles, Me._PowerLineCyclesNumeric.Value) Then
+                .ApplyPowerLineCycles(Me._PowerLineCyclesNumeric.Value)
+            End If
 
-        If Not Nullable.Equals(Me.Device.MultimeterSubsystem.AutoDelayMode, Me._AutoDelayMode) Then
-            Me.Device.MultimeterSubsystem.ApplyAutoDelayMode(Me._AutoDelayMode)
-        End If
+            If Not Nullable.Equals(.AutoDelayMode, Me._AutoDelayMode) Then
+                .ApplyAutoDelayMode(Me._AutoDelayMode)
+            End If
 
-        If Not Nullable.Equals(Me.Device.MultimeterSubsystem.AutoRangeEnabled, Me._AutoRangeCheckBox.Checked) Then
-            Me.Device.MultimeterSubsystem.ApplyAutoRangeEnabled(Me._AutoRangeCheckBox.Checked)
-        End If
+            If Not Nullable.Equals(.AutoRangeEnabled, Me._AutoRangeCheckBox.Checked) Then
+                .ApplyAutoRangeEnabled(Me._AutoRangeCheckBox.Checked)
+            End If
 
-        If Not Nullable.Equals(Me.Device.MultimeterSubsystem.AutoZeroEnabled, Me._AutoZeroCheckBox.Checked) Then
-            Me.Device.MultimeterSubsystem.ApplyAutoZeroEnabled(Me._AutoZeroCheckBox.Checked)
-        End If
+            If Not Nullable.Equals(.AutoZeroEnabled, Me._AutoZeroCheckBox.Checked) Then
+                .ApplyAutoZeroEnabled(Me._AutoZeroCheckBox.Checked)
+            End If
 
-        If Not Nullable.Equals(Me.Device.MultimeterSubsystem.FilterEnabled, Me._FilterEnabledCheckBox.Checked) Then
-            Me.Device.MultimeterSubsystem.ApplyFilterEnabled(Me._FilterEnabledCheckBox.Checked)
-        End If
+            If Not Nullable.Equals(.FilterEnabled, Me._FilterEnabledCheckBox.Checked) Then
+                .ApplyFilterEnabled(Me._FilterEnabledCheckBox.Checked)
+            End If
 
-        If Not Nullable.Equals(Me.Device.MultimeterSubsystem.FilterCount, Me._FilterCountNumeric.Value) Then
-            Me.Device.MultimeterSubsystem.ApplyFilterCount(CInt(Me._FilterCountNumeric.Value))
-        End If
+            If Not Nullable.Equals(.FilterCount, Me._FilterCountNumeric.Value) Then
+                .ApplyFilterCount(CInt(Me._FilterCountNumeric.Value))
+            End If
 
-        If Not Nullable.Equals(Me.Device.MultimeterSubsystem.MovingAverageFilterEnabled, Me._MovingAverageRadioButton.Checked) Then
-            Me.Device.MultimeterSubsystem.ApplyMovingAverageFilterEnabled(Me._MovingAverageRadioButton.Checked)
-        End If
+            If Not Nullable.Equals(.MovingAverageFilterEnabled, Me._MovingAverageRadioButton.Checked) Then
+                .ApplyMovingAverageFilterEnabled(Me._MovingAverageRadioButton.Checked)
+            End If
 
-        If Not Nullable.Equals(Me.Device.MultimeterSubsystem.OpenDetectorEnabled, Me._OpenDetectorCheckBox.Checked) Then
-            Me.Device.MultimeterSubsystem.ApplyOpenDetectorEnabled(Me._OpenDetectorCheckBox.Checked)
-        End If
+            If Not Nullable.Equals(.OpenDetectorEnabled, Me._OpenDetectorCheckBox.Checked) Then
+                .ApplyOpenDetectorEnabled(Me._OpenDetectorCheckBox.Checked)
+            End If
 
-        If Me.Device.MultimeterSubsystem.AutoRangeEnabled Then
-            Me.Device.MultimeterSubsystem.QueryRange()
-        ElseIf Not Nullable.Equals(Me.Device.MultimeterSubsystem.Range, Me._SenseRangeNumeric.Value) Then
-            Me.Device.MultimeterSubsystem.ApplyRange(CInt(Me._SenseRangeNumeric.Value))
-        End If
+            If .AutoRangeEnabled Then
+                .QueryRange()
+            ElseIf Not Nullable.Equals(.Range, Me._SenseRangeNumeric.Value) Then
+                .ApplyRange(CInt(Me._SenseRangeNumeric.Value))
+            End If
 
-        If Not Nullable.Equals(Me.Device.MultimeterSubsystem.FilterWindow, 0.01 * Me._FilterWindowNumeric.Value) Then
-            Me.Device.MultimeterSubsystem.ApplyFilterWindow(0.01 * Me._FilterWindowNumeric.Value)
-        End If
+            If Not Nullable.Equals(.FilterWindow, 0.01 * Me._FilterWindowNumeric.Value) Then
+                .ApplyFilterWindow(0.01 * Me._FilterWindowNumeric.Value)
+            End If
+        End With
+
 
     End Sub
 

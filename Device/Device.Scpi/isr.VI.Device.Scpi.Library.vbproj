@@ -94,6 +94,7 @@
     <Compile Include="SUBSYSTEMS\ArmLayerSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\Calculate2SubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\DigitalOutputBase.vb" />
+    <Compile Include="SUBSYSTEMS\InstrumentSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\FormatSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\MeasureCurrentSubsystemBase.vb" />

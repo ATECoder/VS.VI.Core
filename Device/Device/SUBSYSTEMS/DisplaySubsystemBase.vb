@@ -13,7 +13,7 @@ Public MustInherit Class DisplaySubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Initializes a new instance of the <see cref="Calculate3SubsystemBase" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="DisplaySubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -53,8 +53,8 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <value> The display enabled query command. </value>
     Protected Overridable ReadOnly Property DisplayEnabledQueryCommand As String
 
-    ''' <summary> Queries the Enabled sentinel. Also sets the 
-    '''           <see cref="Enabled">mode</see> sentinel. </summary>
+    ''' <summary> Queries the Enabled sentinel. Also sets the
+    '''           <see cref="Enabled">enabled</see> sentinel. </summary>
     ''' <returns> <c>null</c> display status is not known; <c>True</c> if enabled; otherwise, <c>False</c>. </returns>
     Public Function QueryEnabled() As Boolean?
         Me.Session.MakeEmulatedReplyIfEmpty(Me.Enabled.GetValueOrDefault(True))
@@ -81,4 +81,40 @@ Public MustInherit Class DisplaySubsystemBase
 
 #End Region
 
+#Region " INSTALLED "
+
+    ''' <summary> Installed. </summary>
+    Private _Installed As Boolean?
+
+    ''' <summary> Gets or sets the cached Installed sentinel. </summary>
+    ''' <value> <c>null</c> if Installed is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property Installed As Boolean?
+        Get
+            Return Me._Installed
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.Installed, value) Then
+                Me._Installed = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.Installed))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the display Installed query command. </summary>
+    ''' <value> The display Installed query command. </value>
+    Protected Overridable ReadOnly Property DisplayInstalledQueryCommand As String
+
+    ''' <summary> Queries the Installed sentinel. Also sets the 
+    '''           <see cref="Installed">installed</see> sentinel. </summary>
+    ''' <returns> <c>null</c> display status is not known; <c>True</c> if Installed; otherwise, <c>False</c>. </returns>
+    Public Function QueryInstalled() As Boolean?
+        Me.Session.MakeEmulatedReplyIfEmpty(Me.Installed.GetValueOrDefault(True))
+        If String.IsNullOrWhiteSpace(Me.DisplayInstalledQueryCommand) Then
+            Me.Installed = Me.Session.Query(Me.Installed.GetValueOrDefault(True), Me.DisplayInstalledQueryCommand)
+        End If
+        Return Me.Installed
+    End Function
+
+#End Region
 End Class

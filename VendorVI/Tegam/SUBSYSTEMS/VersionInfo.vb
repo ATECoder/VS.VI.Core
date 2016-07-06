@@ -24,7 +24,7 @@ Public Class VersionInfo
     ''' <summary> Parses the instrument firmware revision. </summary>
     ''' <remarks> <c>Tegam 1750 D02.20  Apr 26,2000.</c>. </remarks>
     ''' <exception cref="ArgumentNullException" guarantee="strong"> . </exception>
-    ''' <param name="revision"> Specifies the instrument <see cref="BoardRevisions">board
+    ''' <param name="revision"> Specifies the instrument <see cref="FirmwareRevisionElements">board
     '''                         revisions</see>
     '''                         e.g., <c>D02.20</c> for the digital and display boards. </param>
     Protected Overrides Sub ParseFirmwareRevision(ByVal revision As String)
@@ -40,8 +40,8 @@ Public Class VersionInfo
             Dim revSections As Queue(Of String) = New Queue(Of String)(revision.Split("."c))
 
             ' Rev: D02.20
-            If revSections.Count > 0 Then Me.BoardRevisions.Add(BoardType.Digital.ToString, revSections.Dequeue.Trim)
-            If revSections.Count > 0 Then Me.BoardRevisions.Add(BoardType.Display.ToString, revSections.Dequeue.Trim)
+            If revSections.Count > 0 Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.Digital.ToString, revSections.Dequeue.Trim)
+            If revSections.Count > 0 Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.Display.ToString, revSections.Dequeue.Trim)
 
         End If
 

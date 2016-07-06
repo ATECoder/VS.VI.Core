@@ -61,18 +61,6 @@ Public Class SenseCurrentSubsystem
 
 #End Region
 
-#Region " PROTECTION LEVEL "
-
-    ''' <summary> Gets the protection level command format. </summary>
-    ''' <value> the protection level command format. </value>
-    Protected Overrides ReadOnly Property ProtectionLevelCommandFormat As String = ":SENS:CURR:PROT {0}"
-
-    ''' <summary> Gets the protection level query command. </summary>
-    ''' <value> the protection level query command. </value>
-    Protected Overrides ReadOnly Property ProtectionLevelQueryCommand As String = ":SENS:CURR:PROT?"
-
-#End Region
-
 #Region " RANGE "
 
     ''' <summary> Gets the range command format. </summary>
