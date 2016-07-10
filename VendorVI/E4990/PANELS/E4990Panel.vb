@@ -172,6 +172,19 @@ Public Class E4990Panel
     Protected Overrides Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
         AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
         AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
+        AddHandler Me.Device.SenseChannelSubsystem.PropertyChanged, AddressOf Me.SenseChannelSubsystemPropertyChanged
+        AddHandler Me.Device.TriggerSubsystem.PropertyChanged, AddressOf Me.TriggerSubsystemPropertyChanged
+        AddHandler Me.Device.DisplaySubsystem.PropertyChanged, AddressOf Me.DisplaySubsystemPropertyChanged
+        AddHandler Me.Device.CalculateChannelSubsystem.PropertyChanged, AddressOf Me.CalculateChannelSubsystemPropertyChanged
+        AddHandler Me.Device.CompensateOpenSubsystem.PropertyChanged, AddressOf Me.CompensateChannelSubsystemPropertyChanged
+        AddHandler Me.Device.CompensateShortSubsystem.PropertyChanged, AddressOf Me.CompensateChannelSubsystemPropertyChanged
+        AddHandler Me.Device.CompensateLoadSubsystem.PropertyChanged, AddressOf Me.CompensateChannelSubsystemPropertyChanged
+        AddHandler Me.Device.PrimaryChannelTraceSubsystem.PropertyChanged, AddressOf Me.ChannelTraceSubsystemPropertyChanged
+        AddHandler Me.Device.SecondaryChannelTraceSubsystem.PropertyChanged, AddressOf Me.ChannelTraceSubsystemPropertyChanged
+        AddHandler Me.Device.ChannelTriggerSubsystem.PropertyChanged, AddressOf Me.ChannelTriggerSubsystemPropertyChanged
+        AddHandler Me.Device.ChannelMarkerSubsystem.PropertyChanged, AddressOf Me.ChannelmarkerSubsystemPropertyChanged
+        Me.Device.ChannelMarkerSubsystem.Readings.ListElements(Me._ReadingComboBox, VI.ReadingTypes.Units)
+        Me.Device.SenseChannelSubsystem.ListAdapters(Me._AdapterComboBox)
         MyBase.DeviceOpened(sender, e)
     End Sub
 
@@ -192,6 +205,17 @@ Public Class E4990Panel
         MyBase.DeviceClosing(sender, e)
         If e?.Cancel Then Return
         If Me.IsDeviceOpen Then
+            RemoveHandler Me.Device.CalculateChannelSubsystem.PropertyChanged, AddressOf Me.CalculateChannelSubsystemPropertyChanged
+            RemoveHandler Me.Device.CompensateOpenSubsystem.PropertyChanged, AddressOf Me.CompensateChannelSubsystemPropertyChanged
+            RemoveHandler Me.Device.CompensateShortSubsystem.PropertyChanged, AddressOf Me.CompensateChannelSubsystemPropertyChanged
+            RemoveHandler Me.Device.CompensateLoadSubsystem.PropertyChanged, AddressOf Me.CompensateChannelSubsystemPropertyChanged
+            RemoveHandler Me.Device.ChannelMarkerSubsystem.PropertyChanged, AddressOf Me.ChannelmarkerSubsystemPropertyChanged
+            RemoveHandler Me.Device.PrimaryChannelTraceSubsystem.PropertyChanged, AddressOf Me.ChannelTraceSubsystemPropertyChanged
+            RemoveHandler Me.Device.SecondaryChannelTraceSubsystem.PropertyChanged, AddressOf Me.ChannelTraceSubsystemPropertyChanged
+            RemoveHandler Me.Device.ChannelTriggerSubsystem.PropertyChanged, AddressOf Me.ChannelTriggerSubsystemPropertyChanged
+            RemoveHandler Me.Device.TriggerSubsystem.PropertyChanged, AddressOf Me.TriggerSubsystemPropertyChanged
+            RemoveHandler Me.Device.DisplaySubsystem.PropertyChanged, AddressOf Me.DisplaySubsystemPropertyChanged
+            RemoveHandler Me.Device.SenseChannelSubsystem.PropertyChanged, AddressOf Me.SenseChannelSubsystemPropertyChanged
             RemoveHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
             RemoveHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
         End If
@@ -228,6 +252,258 @@ Public Class E4990Panel
 #End Region
 
 #Region " SUBSYSTEMS "
+
+#Region " CALCULATE "
+
+    ''' <summary> Handle the Calculate channel subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As CalculateChannelSubsystemBase, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.AveragingEnabled)
+                Me._AveragingEnabledCheckBox.Checked = subsystem.AveragingEnabled.GetValueOrDefault(False)
+            Case NameOf(subsystem.AverageCount)
+                Me._AveragingCountNumeric.Value = subsystem.AverageCount.GetValueOrDefault(0)
+        End Select
+    End Sub
+
+    ''' <summary> Calculate channel subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub CalculateChannelSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, CalculateChannelSubsystem), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
+
+#Region " COMPENSATE "
+
+    ''' <summary> Handle the Compensate channel subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As CompensateChannelSubsystemBase, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        If subsystem.CompensationType = VI.CompensationTypes.OpenCircuit Then
+            Select Case propertyName
+                ' Case NameOf(subsystem.AdapterType)
+            End Select
+        ElseIf subsystem.CompensationType = VI.CompensationTypes.ShortCircuit Then
+            Select Case propertyName
+                ' Case NameOf(subsystem.AdapterType)
+            End Select
+        ElseIf subsystem.CompensationType = VI.CompensationTypes.Load Then
+            Select Case propertyName
+                ' Case NameOf(subsystem.AdapterType)
+            End Select
+        End If
+    End Sub
+
+    ''' <summary> Compensate channel subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub CompensateChannelSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, CompensateChannelSubsystemBase), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
+
+#Region " CHANNEL MARKER "
+
+    ''' <summary> Handle the channel marker subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelMarkerSubsystemBase, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.Abscissa)
+                Me._MarkerFrequencyComboBox.Text = subsystem.Abscissa.ToString
+        End Select
+    End Sub
+
+    ''' <summary> Channel marker subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub ChannelmarkerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, ChannelMarkerSubsystem), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
+
+#Region " CHANNEL TRACE "
+
+    ''' <summary> Handle the channel Trace subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelTraceSubsystemBase, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.Parameter)
+                Dim p As TraceParameters = subsystem.Parameter.GetValueOrDefault(VI.TraceParameters.None)
+                If subsystem.Parameter.HasValue Then
+                    If subsystem.TraceNumber = 1 Then
+                        Me.SelectPrimaryTraceParameter(p)
+                    Else
+                        Me.SelectSecondaryTraceParameter(p)
+                    End If
+                End If
+            Case NameOf(subsystem.TraceNumber)
+        End Select
+    End Sub
+
+    ''' <summary> Channel Trace subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub ChannelTraceSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, ChannelTraceSubsystem), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
+
+#Region " CHANNEL TRIGGER "
+
+    ''' <summary> Handle the channel Trigger subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelTriggerSubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            ' Case NameOf(subsystem.AdapterType)
+        End Select
+    End Sub
+
+    ''' <summary> Channel Trigger subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub ChannelTriggerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, ChannelTriggerSubsystem), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
+
+#Region " DISPLAY "
+
+    ''' <summary> Handle the Display subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As DisplaySubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            ' Case NameOf(subsystem.Delay)
+        End Select
+    End Sub
+
+    ''' <summary> Display subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub DisplaySubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, DisplaySubsystem), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
+
+#Region " SENSE "
+
+    ''' <summary> Handle the sense channel subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As SenseChannelSubsystemBase, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.AdapterType)
+                If subsystem.AdapterType.HasValue Then Me.SelectAdapter(subsystem.AdapterType.Value)
+            Case NameOf(subsystem.SweepStart)
+                If subsystem.SweepStart.HasValue Then Me._LowFrequencyNumeric.Value = CDec(subsystem.SweepStart.Value)
+            Case NameOf(subsystem.SweepStart)
+                If subsystem.SweepStart.HasValue Then Me._HighFrequencyNumeric.Value = CDec(subsystem.SweepStop.Value)
+        End Select
+    End Sub
+
+    ''' <summary> Sense channel subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SenseChannelSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, SenseChannelSubsystem), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
+
+#Region " TRIGGER "
+
+    ''' <summary> Handle the Trigger subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As TriggerSubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.Delay)
+        End Select
+    End Sub
+
+    ''' <summary> Trigger subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub TriggerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnPropertyChanged(TryCast(sender, TriggerSubsystem), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
 
 #Region " STATUS "
 
@@ -294,7 +570,7 @@ Public Class E4990Panel
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId:="menuItem")>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ContactCheckEnabledMenuItem_CheckStateChanged(sender As Object, e As EventArgs) Handles _ContactCheckEnabledMenuItem.CheckStateChanged
+    Private Sub _ContactCheckEnabledMenuItem_CheckStateChanged(sender As Object, e As EventArgs)
         If Me._InitializingComponents Then Return
         Me.ErrorProvider.Clear()
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
@@ -404,6 +680,7 @@ Public Class E4990Panel
             If Me.IsDeviceOpen Then
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "{0} resetting known state;. {1}", Me.ResourceTitle, Me.ResourceName)
+                Me.Device.SystemSubsystem.PresetKnownState()
                 Me.Device.ResetKnownState()
             End If
         Catch ex As Exception
@@ -442,6 +719,26 @@ Public Class E4990Panel
 #End Region
 
 #Region " CONTROL EVENT HANDLERS: READING "
+
+    ''' <summary> Selects a new reading to display.
+    ''' </summary>
+    Friend Function SelectReading(ByVal value As VI.ReadingTypes) As VI.ReadingTypes
+        If Me.IsDeviceOpen AndAlso
+                (value <> VI.ReadingTypes.None) AndAlso (value <> Me.SelectedReadingType) Then
+            Me._ReadingComboBox.SafeSelectItem(value.ValueDescriptionPair)
+        End If
+        Return Me.SelectedReadingType
+    End Function
+
+    ''' <summary> Gets the type of the selected reading. </summary>
+    ''' <value> The type of the selected reading. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Private ReadOnly Property SelectedReadingType() As VI.ReadingTypes
+        Get
+            Return CType(CType(Me._ReadingComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(
+                                            Of [Enum], String)).Key, VI.ReadingTypes)
+        End Get
+    End Property
 
     ''' <summary> Event handler. Called by InitButton for click events. Initiates a reading for
     ''' retrieval by way of the service request event. </summary>
@@ -506,7 +803,11 @@ Public Class E4990Panel
             Dim caption As String = ""
             Me.Device.ClearExecutionState()
             Me.EnableMeasurementAvailable()
-            Me.Device.Session.WriteLine(":TRIG")
+            ' clear the device display from warnings
+            ' Me.Device.Session.Write(":DISP:CCL")
+            Me.Device.DisplaySubsystem.ClearCautionMessages()
+            ' Me.Device.Session.WriteLine(":TRIG")
+            Me.Device.TriggerSubsystem.Initiate()
             If Me.Device.StatusSubsystem.TryAwaitServiceRequest(ServiceRequests.RequestingService, TimeSpan.FromSeconds(10),
                                                                 TimeSpan.FromMilliseconds(100)) Then
                 ' auto scale after measurement completes
@@ -628,36 +929,22 @@ Public Class E4990Panel
 
         ' Define Short termination by equivalent circuit model
 
-        ' Set equivalent circuit model for short
+        ' Set equivalent circuit model for short (that is the default)
         Me.Device.Session.Write(":SENS1:CORR2:CKIT:SHOR:MOD EQU")
 
         ' Set short termination parameter (L)
         Me.Device.Session.Write(String.Format(":SENS1:CORR2:CKIT:SHOR:L {0}", inductance))
+        'Me.Device.CompensateShortSubsystem.ApplyModelInductance(inductance)
 
         ' Set short termination parameter (R)  
         Me.Device.Session.Write(String.Format(":SENS1:CORR2:CKIT:SHOR:R {0}", resistance))
+        'Me.Device.CompensateShortSubsystem.ApplyModelResistance(resistance)
 
     End Sub
 
 #End Region
 
 #Region " Z: IMPEDANCE "
-
-    ''' <summary> Enables the marker. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
-    ''' <param name="channelNumber"> The channel number. </param>
-    ''' <param name="markerNumber">  The marker number. </param>
-    ''' <param name="frequency">     The frequency. </param>
-    Public Sub EnableMarker(ByVal channelNumber As Integer, ByVal markerNumber As Integer, ByVal frequency As Double)
-
-        ' Turn on marker 1
-        Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture,
-                                              ":CALC{0}:MARK{1} ON", channelNumber, markerNumber))
-
-        ' set marker position to 100 KHz
-        Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture,
-                                              ":CALC{0}:MARK{1}:X {2}", channelNumber, markerNumber, frequency))
-    End Sub
 
     ''' <summary> Select active trace. </summary>
     ''' <remarks> David, 4/15/2016. </remarks>
@@ -666,6 +953,7 @@ Public Class E4990Panel
     Public Sub SelectActiveTrace(ByVal channelNumber As Integer, ByVal traceNumber As Integer)
         Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture,
                                               ":CALC{0}:PAR{1}:SEL", channelNumber, traceNumber))
+        ' Me.Device.ChannelTraceSubsystem.Select()
     End Sub
 
     ''' <summary> Reads a marker. </summary>
@@ -678,6 +966,25 @@ Public Class E4990Panel
         result = Me.Device.Session.QueryTrimEnd(":CALC{0}:MARK{1}:Y?", channelNumber, markerNumber)
         ' marker returns two values.
         result = result.Split(","c)(0)
+        'Me.Device.ChannelMarkerSubsystem.FetchLatestData()
+        'result = Me.Device.ChannelMarkerSubsystem.Readings.PrimaryReading.ToString
+        Return result
+    End Function
+
+    ''' <summary> Attempts to averaging wait complete from the given data. </summary>
+    ''' <remarks> David, 7/6/2016. </remarks>
+    ''' <param name="count">   Number of. </param>
+    ''' <param name="timeout"> The timeout. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Function TryAveragingWaitComplete(ByVal count As Integer, ByVal timeout As TimeSpan) As Boolean
+        Dim result As Boolean = False
+        Me.Device.CalculateChannelSubsystem.ApplyAverageCount(count)
+        Me.Device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.Bus)
+        Me.Device.CalculateChannelSubsystem.ClearAverage()
+        Me.Device.TriggerSubsystem.ApplyAveragingEnabled(True)
+        Me.Device.TriggerSubsystem.Immediate()
+        Me.Device.StatusSubsystem.AwaitOperationCompleted(timeout)
+        result = Me.Device.StatusSubsystem.QueryOperationCompleted.GetValueOrDefault(False)
         Return result
     End Function
 
@@ -687,83 +994,7 @@ Public Class E4990Panel
     ''' <param name="traceNumber">   The trace number. </param>
     Public Sub AutoScale(ByVal channelNumber As Integer, ByVal traceNumber As Integer)
         Me.Device.Session.WriteLine(":DISP:WIND{0}:TRAC{1}:Y:SCAL:AUTO", channelNumber, traceNumber)
-    End Sub
-
-    ''' <summary> Configure sweep. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
-    ''' <param name="lowFrequency">  The low frequency. </param>
-    ''' <param name="highFrequency"> The high frequency. </param>
-    Public Sub ConfigureSweep(ByVal lowFrequency As Double, ByVal highFrequency As Double)
-
-        ' Set number of points
-        Me.Device.Session.Write(":SENS1:SWE:POIN 2")
-
-        ' Set start frequency
-        Me.Device.Session.WriteLine(":SENS1:FREQ:STAR {0}", lowFrequency)
-
-        ' Set stop frequency
-        Me.Device.Session.WriteLine(":SENS1:FREQ:STOP {0}", highFrequency)
-
-    End Sub
-
-    ''' <summary> Configure impedance measurement. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
-    ''' <param name="sourceMode">    Source mode. </param>
-    ''' <param name="aperture">      The aperture. </param>
-    ''' <param name="level">         The level. </param>
-    ''' <param name="lowFrequency">  The low frequency. </param>
-    ''' <param name="highFrequency"> The high frequency. </param>
-    Public Sub ConfigureImpedanceMeasurement(ByVal sourceMode As SourceFunctionModes, aperture As Double, ByVal level As Double,
-                                             ByVal lowFrequency As Double, ByVal highFrequency As Double)
-
-        Me.Device.Session.StoreTimeout(TimeSpan.FromSeconds(10))
-
-        ' Preset the equipment to its known state.
-        Me.Device.SystemSubsystem.PresetKnownState()
-
-        ' Clear the error queue
-        Me.Device.ClearExecutionState()
-
-        ' clear the device display from warnings
-        Me.Device.Session.Write(":DISP:CCL")
-
-        Me.Device.Session.RestoreTimeout()
-
-        ' Set trigger source at BUS
-        Me.Device.Session.Write(":TRIG:SOUR BUS")
-
-        ' Setup Channel 1
-
-        ' Allocate measurement parameter for trace 1: Rs
-        Me.Device.Session.Write(":CALC1:PAR1:DEF RS")
-
-        ' Allocate measurement parameter for trace 2: Ls
-        Me.Device.Session.Write(":CALC1:PAR2:DEF LS")
-
-        ' Stimulus Setup
-
-        ' Turn on Continuous Activation mode for channel 1
-        Me.Device.Session.Write(":INIT1:CONT ON")
-
-        ' Set aperture
-        Me.Device.Session.WriteLine(":SENS1:APER {0}", CInt(aperture))
-
-        ' set a two point sweep.
-        Me.ConfigureSweep(lowFrequency, highFrequency)
-
-        ' Set OSC mode
-        If sourceMode = SourceFunctionModes.Current Then
-            Me.Device.Session.Write(":SOUR1:MODE CURR")
-
-            ' Set OSC level
-            Me.Device.Session.WriteLine(":SOUR1:CURR {0}", level)
-        Else
-            Me.Device.Session.Write(":SOUR1:MODE VOLT")
-
-            ' Set OSC level
-            Me.Device.Session.WriteLine(":SOUR1:VOLT {0}", level)
-        End If
-
+        ' Me.Device.ChannelTraceSubsystem.AutoScale()
     End Sub
 
     ''' <summary> Enables the measurement available. </summary>
@@ -774,73 +1005,396 @@ Public Class E4990Panel
         ' so that the operation status event register at bit 4 is set to 1 only when the
         ' operation status condition register at bit 4 is changed from 1 to 0.
         Me.Device.Session.Write(":STAT:OPER:PTR 0")
+        'Me.Device.StatusSubsystem.ApplyOperationPositiveTransitionEventEnableBitmask(0)
         Me.Device.Session.Write(":STAT:OPER:NTR 16")
+        'Me.Device.StatusSubsystem.ApplyOperationNegativeTransitionEventEnableBitmask(16)
 
         ' Enables bit 4 in the operation status event register and bit 8 in the status byte register.
         Me.Device.Session.Write(":STAT:OPER:ENAB 16")
+        ' Me.Device.StatusSubsystem.ApplyOperationEventEnableBitmask(16)
         Me.Device.Session.Write("*SRE 128")
+        ' Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.OperationEvent) ' 128
 
     End Sub
 
-    ''' <summary> Applies the impedance settings button click. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
-    ''' <param name="sender"> <see cref="System.Object"/> instance of this
-    '''                       <see cref="System.Windows.Forms.Control"/> </param>
-    ''' <param name="e">      Event information. </param>
+#End Region
+
+#Region " SOURCE "
+
+    ''' <summary> Gets source mode. </summary>
+    ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
+    '''                                              null. </exception>
+    ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
+    ''' <value> The source mode. </value>
+    Private ReadOnly Property SelectedSourceMode As SourceFunctionModes
+        Get
+            Return If(Me._SourceToggle.Checked, SourceFunctionModes.Voltage, SourceFunctionModes.Current)
+        End Get
+    End Property
+
+    ''' <summary> Gets source level. </summary>
+    ''' <value> The source level. </value>
+    Private ReadOnly Property SourceLevel As Double
+        Get
+            If Me.SelectedSourceMode = SourceFunctionModes.Voltage Then
+                Return Me._LevelNumeric.Value
+            Else
+                Return 0.001 * Me._LevelNumeric.Value
+            End If
+        End Get
+    End Property
+
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ApplyImpedanceSettingsButton_Click(sender As Object, e As EventArgs) Handles _ApplyImpedanceSettingsButton.Click
+    Private Sub _ApplySourceSettingButton_Click(sender As Object, e As EventArgs) Handles _ApplySourceSettingButton.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Dim mode As SourceFunctionModes = If(_SourceToggle.Checked, SourceFunctionModes.Voltage, SourceFunctionModes.Current)
-            Dim level As Double = Me._LevelNumeric.Value
-            If mode = SourceFunctionModes.Current Then level = 0.001 * level
-            Me.ConfigureImpedanceMeasurement(mode, CInt(Me._ApertureNumeric.Value), level,
-                                             Me._LowFrequencyNumeric.Value, Me._HighFrequencyNumeric.Value)
-            Me.EnableMarker(1, 1, Me._LowFrequencyNumeric.Value)
-            Me.EnableMarker(1, 2, Me._LowFrequencyNumeric.Value)
+            ' Set OSC mode
+#If False Then
+            If Me.SelectedSourceMode = SourceFunctionModes.Current Then
+                Me.Device.Session.Write(":SOUR1:MODE CURR")
+                Me.Device.Session.WriteLine(":SOUR1:CURR {0}", Me.SourceLevel)
+            Else
+                Me.Device.Session.Write(":SOUR1:MODE VOLT")
+                Me.Device.Session.WriteLine(":SOUR1:VOLT {0}", Me.SourceLevel)
+            End If
+#Else
+            Me.Device.SourceChannelSubsystem.ApplyFunctionMode(Me.SelectedSourceMode)
+            Me.Device.SourceChannelSubsystem.ApplyLevel(Me.SourceLevel)
+#End If
+
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred configuring a measurement;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred applying source settings;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+
+    End Sub
+
+    ''' <summary> Source toggle checked changed. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="sender"> <see cref="Object"/> instance of this
+    '''                       <see cref="Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _SourceToggle_CheckedChanged(sender As Object, e As EventArgs) Handles _SourceToggle.CheckedChanged
+        If Me.InitializingComponents Then Return
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me._SourceToggle.Text = $"Source: {Me.SelectedSourceMode.ToString}"
+            With Me._LevelNumericLabel
+                If Me.SelectedSourceMode = SourceFunctionModes.Voltage Then
+                    .Text = "Level [V]:"
+                Else
+                    .Text = "Level [mA]:"
+                End If
+                .Left = Me._ApertureNumericLabel.Right - .Width
+            End With
+            With Me._LevelNumeric
+                If Me._SourceToggle.Checked Then
+                    .Minimum = 0.001D
+                    .Maximum = 1D
+                    .Value = 0.5D
+                Else
+                    .Minimum = 0.1D
+                    .Maximum = 10D
+                    .Value = 5D
+                End If
+            End With
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred toggling source settings;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
     End Sub
 
-    ''' <summary> Source toggle checked changed. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
-    ''' <param name="sender"> <see cref="System.Object"/> instance of this
-    '''                       <see cref="System.Windows.Forms.Control"/> </param>
-    ''' <param name="e">      Event information. </param>
-    Private Sub _SourceToggle_CheckedChanged(sender As Object, e As EventArgs) Handles _SourceToggle.CheckedChanged
-        If Me.InitializingComponents Then Return
-        _SourceToggle.Text = If(_SourceToggle.Checked, "Source: Voltage", "Source: Current")
-        With Me._LevelNumericLabel
-            If Me._SourceToggle.Checked Then
-                .Text = "Level [V]:"
-            Else
-                .Text = "Level [mA]:"
-            End If
-            .Left = Me._ApertureNumericLabel.Right - .Width
-        End With
-        With Me._LevelNumeric
-            If Me._SourceToggle.Checked Then
-                .Minimum = 0.001D
-                .Maximum = 1D
-                .Value = 0.5D
-            Else
-                .Minimum = 0.1D
-                .Maximum = 10D
-                .Value = 5D
-            End If
-        End With
+#End Region
+
+#Region " SENSE "
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ApplyMarkerSettingsButton_Click(sender As Object, e As EventArgs) Handles _ApplyMarkerSettingsButton.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Dim f As Double = Double.Parse(Me._MarkerFrequencyComboBox.Text)
+            ' to_do: use sense trace function to set the reading units.
+            ' Turn on marker 1
+            ' Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture, ":CALC{0}:MARK{1} ON", channelNumber, markerNumber))
+            Me.Device.ChannelMarkerSubsystem.ApplyEnabled(True)
+            ' set marker position
+            ' Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture, ":CALC{0}:MARK{1}:X {2}", channelNumber, markerNumber, frequency))
+            Me.Device.ChannelMarkerSubsystem.ApplyAbscissa(f)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred applying marker settings;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+
 
     End Sub
+
+    ''' <summary> Configure sweep. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="lowFrequency">  The low frequency. </param>
+    ''' <param name="highFrequency"> The high frequency. </param>
+    Public Sub ConfigureSweep(ByVal lowFrequency As Double, ByVal highFrequency As Double)
+
+        ' Set number of points
+        'Me.Device.Session.Write(":SENS1:SWE:POIN 2")
+        Me.Device.SenseChannelSubsystem.ApplySweepPoints(2)
+
+        ' Set start frequency
+        'Me.Device.Session.WriteLine(":SENS1:FREQ:STAR {0}", lowFrequency)
+        Me.Device.SenseChannelSubsystem.ApplySweepStart(lowFrequency)
+
+        ' Set stop frequency
+        'Me.Device.Session.WriteLine(":SENS1:FREQ:STOP {0}", highFrequency)
+        Me.Device.SenseChannelSubsystem.ApplySweepStop(highFrequency)
+
+    End Sub
+
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ApplySweepSettingsButton_Click(sender As Object, e As EventArgs) Handles _ApplySweepSettingsButton.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me._MarkerFrequencyComboBox.Items.Clear()
+            Me._MarkerFrequencyComboBox.Items.Add(Me._LowFrequencyNumeric.Value.ToString)
+            Me._MarkerFrequencyComboBox.Items.Add(Me._HighFrequencyNumeric.Value.ToString)
+            Me._MarkerFrequencyComboBox.SelectedIndex = 1
+            ' set a two point sweep.
+            Me.ConfigureSweep(Me._LowFrequencyNumeric.Value, Me._HighFrequencyNumeric.Value)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred applying sweep settings;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary> Configure sweep. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    Public Sub ConfigureTrace()
+
+        ' Set trigger source at BUS
+        ' Me.Device.Session.Write(":TRIG:SOUR BUS")
+        Me.Device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.Bus)
+
+        ' Setup Channel 1
+        Me.Device.CalculateChannelSubsystem.ApplyTraceCount(2)
+
+        ' Allocate measurement parameter for trace 1: Rs
+        ' Me.Device.Session.Write(":CALC1:PAR1:DEF RS")
+        Me.Device.PrimaryChannelTraceSubsystem.ApplyParameter(TraceParameters.SeriesResistance)
+
+        ' Allocate measurement parameter for trace 2: Ls
+        'Me.Device.Session.Write(":CALC1:PAR2:DEF LS")
+        Me.Device.SecondaryChannelTraceSubsystem.ApplyParameter(TraceParameters.SeriesInductance)
+
+        ' Stimulus Setup
+
+        ' Turn on Continuous Activation mode for channel 1
+        ' Me.Device.Session.Write(":INIT1:CONT ON")
+        Me.Device.ChannelTriggerSubsystem.ApplyContinuousEnabled(True)
+
+    End Sub
+
+    Private Function SelectPrimaryTraceParameter(ByVal value As VI.TraceParameters) As VI.TraceParameters
+        If Me.InitializingComponents Then Return TraceParameters.None
+        If (value <> VI.TraceParameters.None) AndAlso (value <> Me.SelectedPrimaryTraceParameter) Then
+            Me._PrimaryTraceParameterComboBox.SafeSelectItem(value.ValueDescriptionPair)
+        End If
+        Return Me.SelectedPrimaryTraceParameter
+    End Function
+
+    Private ReadOnly Property SelectedPrimaryTraceParameter() As VI.TraceParameters
+        Get
+            Return CType(CType(Me._PrimaryTraceParameterComboBox.SelectedItem,
+                System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, VI.TraceParameters)
+        End Get
+    End Property
+
+    Private Function SelectSecondaryTraceParameter(ByVal value As VI.TraceParameters) As VI.TraceParameters
+        If Me.InitializingComponents Then Return TraceParameters.None
+        If (value <> VI.TraceParameters.None) AndAlso (value <> Me.SelectedSecondaryTraceParameter) Then
+            Me._SecondaryTraceParameterComboBox.SafeSelectItem(value.ValueDescriptionPair)
+        End If
+        Return Me.SelectedSecondaryTraceParameter
+    End Function
+
+    Private ReadOnly Property SelectedSecondaryTraceParameter() As VI.TraceParameters
+        Get
+            Return CType(CType(Me._SecondaryTraceParameterComboBox.SelectedItem,
+                System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, VI.TraceParameters)
+        End Get
+    End Property
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ApplyTracesButton_Click(sender As Object, e As EventArgs) Handles _ApplyTracesButton.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            ' set a two point sweep.
+            Me.ConfigureTrace()
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred applying trace settings;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _RestartAveragingButton_Click(sender As Object, e As EventArgs) Handles _RestartAveragingButton.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.CalculateChannelSubsystem.ApplyAverageSettings(Me._AveragingEnabledCheckBox.Checked, CInt(Me._AveragingCountNumeric.Value))
+            Me.Device.CalculateChannelSubsystem.ClearAverage()
+            Me.Device.SenseChannelSubsystem.ApplyAdapterType(Me.SelectedAdapterType)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred applying average settings;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+
+    End Sub
+
 
 #End Region
 
 #Region " COMPENSATION "
+
+    ''' <summary> Selects a new Adapter to display. </summary>
+    ''' <remarks> David, 7/9/2016. </remarks>
+    ''' <param name="value"> True to show or False to hide the control. </param>
+    ''' <returns> A VI.AdapterType. </returns>
+    Friend Function SelectAdapter(ByVal value As String) As VI.AdapterType
+        Dim v As VI.AdapterType = VI.AdapterType.None
+        If Me.InitializingComponents Then Return v
+        If [Enum].GetNames(GetType(VI.AdapterType)).Contains(value) Then
+            v = CType([Enum].Parse(GetType(VI.AdapterType), value), VI.AdapterType)
+        End If
+        Return Me.SelectAdapter(v)
+    End Function
+
+
+    ''' <summary> Selects a new Adapter to display.
+    ''' </summary>
+    Friend Function SelectAdapter(ByVal value As VI.AdapterType) As VI.AdapterType
+        If Me.InitializingComponents Then Return AdapterType.None
+        If (value <> VI.AdapterType.None) AndAlso (value <> Me.SelectedAdapterType) Then
+            Me._AdapterComboBox.SafeSelectItem(value.ValueDescriptionPair)
+        End If
+        Return Me.SelectedAdapterType
+    End Function
+
+    ''' <summary> Gets the type of the selected Adapter. </summary>
+    ''' <value> The type of the selected Adapter. </value>
+    Private ReadOnly Property SelectedAdapterType() As VI.AdapterType
+        Get
+            Return CType(CType(Me._AdapterComboBox.SelectedItem,
+                               System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, VI.AdapterType)
+        End Get
+    End Property
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _AcquireCompensationButton_Click(sender As Object, e As EventArgs) Handles _AcquireCompensationButton.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Using w As New CompensationWizard
+                Dim result As DialogResult = w.ShowDialog(Me)
+                If result = DialogResult.OK Then
+                    My.Settings.AdapterType = Me.Device.SenseChannelSubsystem.AdapterType.ToString
+                    My.Settings.FrequencyArrayReading = Me.Device.CompensateOpenSubsystem.FrequencyArrayReading
+                    My.Settings.OpenCompensationReading = Me.Device.CompensateOpenSubsystem.ImpedanceArrayReading
+                    My.Settings.ShortCompensationReading = Me.Device.CompensateShortSubsystem.ImpedanceArrayReading
+                    My.Settings.LoadCompensationReading = Me.Device.CompensateLoadSubsystem.ImpedanceArrayReading
+                End If
+            End Using
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred acquiring compensation;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+
+
+    End Sub
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ApplyLoadButton_Click(sender As Object, e As EventArgs) Handles _ApplyLoadButton.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.CompensateLoadSubsystem.ApplyImpedanceArray(Me._LoadCompensationTextBox.Text)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred applying load compensation;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+
+
+    End Sub
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ApplyShortButton_Click(sender As Object, e As EventArgs) Handles _ApplyShortButton.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.CompensateShortSubsystem.ApplyImpedanceArray(Me._ShortCompensationTextBox.Text)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred applying short compensation;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+
+    End Sub
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ApplyOpenButton_Click(sender As Object, e As EventArgs) Handles _ApplyOpenButton.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.CompensateOpenSubsystem.ApplyImpedanceArray(Me._OpenCompensationTextBox.Text)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred applying open compensation;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+
+    End Sub
 
     ''' <summary> Adapter setup. </summary>
     ''' <remarks> David, 4/15/2016. </remarks>
@@ -993,6 +1547,7 @@ Public Class E4990Panel
     ''' <param name="enabled"> true to enable, false to disable. </param>
     Public Sub ToggleOpenCompensationState(ByVal enabled As Boolean)
         Me.Device.Session.WriteLine(":SENS1:CORR2:OPEN {0}", If(enabled, "1", "0"))
+        ' Me.Device.CompensateChannelSubsystem.ApplyEnabled(enabled)
     End Sub
 
     ''' <summary> Applies the open compensation. </summary>
@@ -1010,6 +1565,7 @@ Public Class E4990Panel
         If highFrequencyValues.Count <> 3 Then Throw New InvalidOperationException($"High frequency array has {highFrequencyValues.Count} values instead of 3")
         Me.Device.Session.WriteLine(":SENS1:CORR2:ZME:OPEN:DATA {0}",
                                     E4990Panel.BuildCompensationString(lowFrequencyValues, highFrequencyValues))
+        ' Me.Device.CompensateChannelSubsystem.WriteImpedanceArray(True, lowFrequencyValues, highFrequencyValues)
     End Sub
 
     ''' <summary> Reads open compensations. </summary>
@@ -1019,12 +1575,14 @@ Public Class E4990Panel
 
         ' read the frequencies
         Dim frequencies As String = Me.Device.Session.Query(":SENS1:CORR2:ZME:OPEN:FREQ?")
+        'Me.Device.CompensateChannelSubsystem.QueryFrequencyArray()
 
         ' read the data
         Dim values As String = Me.Device.Session.Query(":SENS1:CORR2:ZME:OPEN:DATA?")
+        ' Me.Device.CompensateChannelSubsystem.QueryImpedanceArray()
 
         Return E4990Panel.MergeCompensations(frequencies, values)
-
+        'Return CompensateChannelSubsystem.Merge(Me.Device.CompensateChannelSubsystem.FrequencyArrayReading,Me.Device.CompensateChannelSubsystem.ImpedanceArrayReading)
     End Function
 
     ''' <summary> Acquires the open compensation. </summary>
@@ -1036,17 +1594,20 @@ Public Class E4990Panel
         ' Compensation points will be acquired at the sweep points:
         Me.ConfigureSweep(lowFrequency, highFrequency)
 
-        ' Select arbitrary fixture model           
+        ' Select arbitrary fixture model (default)
         Me.Device.Session.Write(":SENS1:FIXT:SEL ARB")
 
         ' Set user-specified frequencies
         Me.Device.Session.Write(":SENS1:CORR:COLL:FPO USER")
+        ' Me.Device.SenseChannelSubsystem.ApplyFrequencyPointsType(FrequencyPointsType.User)
 
         ' Acquire open fixture compensation
         Me.Device.Session.Write(":SENS1:CORR2:COLL:ACQ:OPEN")
+        'Me.Device.CompensateChannelSubsystem.AcquireMeasurements()
 
         ' Wait for measurement end
         Me.Device.Session.Query("*OPC?")
+        ' Me.Device.StatusSubsystem.QueryOperationCompleted()
 
     End Sub
 
@@ -1059,6 +1620,7 @@ Public Class E4990Panel
     ''' <param name="enabled"> true to enable, false to disable. </param>
     Public Sub ToggleShortCompensationState(ByVal enabled As Boolean)
         Me.Device.Session.WriteLine(":SENS1:CORR2:SHOR {0}", If(enabled, "1", "0"))
+        ' Me.Device.CompensateChannelSubsystem.ApplyEnabled(enabled)
     End Sub
 
 
@@ -1231,3 +1793,64 @@ Public Class E4990Panel
 
 End Class
 
+#Region " unused "
+
+#If False Then
+    ''' <summary> Configure impedance measurement. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    ''' <param name="sourceMode">    Source mode. </param>
+    ''' <param name="aperture">      The aperture. </param>
+    ''' <param name="level">         The level. </param>
+    ''' <param name="lowFrequency">  The low frequency. </param>
+    ''' <param name="highFrequency"> The high frequency. </param>
+    Public Sub ConfigureImpedanceMeasurement(ByVal sourceMode As SourceFunctionModes, aperture As Double, ByVal level As Double,
+                                             ByVal lowFrequency As Double, ByVal highFrequency As Double)
+
+        Me.Device.Session.StoreTimeout(TimeSpan.FromSeconds(10))
+
+        ' Preset the equipment to its known state.
+        Me.Device.SystemSubsystem.PresetKnownState()
+
+        ' Clear the error queue
+        Me.Device.ClearExecutionState()
+
+        ' clear the device display from warnings
+        Me.Device.Session.Write(":DISP:CCL")
+        ' Me.Device.DisplaySubsystem.ClearCautionMessages
+
+        Me.Device.Session.RestoreTimeout()
+
+        ' Set trigger source at BUS
+        Me.Device.Session.Write(":TRIG:SOUR BUS")
+        ' Me.Device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.Bus)
+
+        ' Setup Channel 1
+        'Me.Device.CalculateChannelSubsystem.ApplyTraceCount(2)
+
+        ' Allocate measurement parameter for trace 1: Rs
+        Me.Device.Session.Write(":CALC1:PAR1:DEF RS")
+        'Me.Device.PrimaryChannelTraceSubsystem.ApplyParameter(TraceParameters.SeriesResistance)
+
+        ' Allocate measurement parameter for trace 2: Ls
+        Me.Device.Session.Write(":CALC1:PAR2:DEF LS")
+        'Me.Device.SecondaryChannelTraceSubsystem.ApplyParameter(TraceParameters.SeriesInductance)
+
+        ' Stimulus Setup
+
+        ' Turn on Continuous Activation mode for channel 1
+        Me.Device.Session.Write(":INIT1:CONT ON")
+        ' Me.Device.ChannelTriggerSubsystem.ApplyContinuousEnabled(True)
+
+        ' Set aperture
+        Me.Device.Session.WriteLine(":SENS1:APER {0}", CInt(aperture))
+        ' Me.Device.SenseChannelSubsystem.ApplyAperture(aperture)
+
+        ' set a two point sweep.
+        ' _ApplySweepSettingsButton_Click
+
+        ' _ApplySourceSettingButton_Click
+
+    End Sub
+
+#End If
+#End Region

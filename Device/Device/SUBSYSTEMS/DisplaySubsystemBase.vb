@@ -21,6 +21,24 @@ Public MustInherit Class DisplaySubsystemBase
 
 #End Region
 
+#Region " COMMANDS "
+
+
+    ''' <summary> Gets the clear caution messages command. </summary>
+    ''' <value> The Abort command. </value>
+    ''' <remarks> SCPI: ":DISP:CCL". </remarks>
+    Protected Overridable ReadOnly Property ClearCautionMessagesCommand As String
+
+    ''' <summary> Clears the caution messages. </summary>
+    ''' <remarks> David, 7/6/2016. </remarks>
+    Public Sub ClearCautionMessages()
+        If Not String.IsNullOrWhiteSpace(Me.ClearCautionMessagesCommand) Then
+            Me.Session.WriteLine(Me.ClearCautionMessagesCommand)
+        End If
+    End Sub
+
+#End Region
+
 #Region " ENABLED "
 
     ''' <summary> Enabled. </summary>

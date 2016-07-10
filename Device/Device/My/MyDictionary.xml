@@ -19,6 +19,7 @@
             <Word>commonsideohms</Word>
             <Word>dccurrent</Word>
             <Word>dcvolts</Word>
+            <Word>dmm</Word>
             <Word>fourwireohms</Word>
             <Word>twowireohmns</Word>
             <Word>ieee</Word>
@@ -31,6 +32,7 @@
             <Word>scpi</Word>
             <Word>presettable</Word>
             <Word>setpoint</Word>
+            <Word>susceptance</Word>
             <Word>thermostream</Word>
             <Word>tsp</Word>
         </Recognized>

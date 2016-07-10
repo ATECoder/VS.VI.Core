@@ -92,6 +92,11 @@
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
     <Compile Include="SUBSYSTEMS\ArmLayerSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\ChannelTriggerSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\ChannelTraceSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\ChannelMarkerSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\CompensateChannelSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\CalculateChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\Calculate2SubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\DigitalOutputBase.vb" />
     <Compile Include="SUBSYSTEMS\InstrumentSubsystemBase.vb" />
@@ -104,9 +109,11 @@
     <Compile Include="SUBSYSTEMS\RouteSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SenseCurrentSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SenseResistanceSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SenseChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SenseSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SenseVoltageSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SourceCurrentSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SourceChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SourceSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SourceVoltageSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\StatusSubsystemBase.vb" />

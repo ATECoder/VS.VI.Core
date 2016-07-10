@@ -29,9 +29,9 @@ Public Class SenseVoltageSubsystem
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         If Me.StatusSubsystem.LineFrequency.GetValueOrDefault(60) = 60 Then
-            Me.PowerLineCyclesRange1 = New isr.Core.Pith.RangeR(0.0005, 15)
+            Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.0005, 15)
         Else
-            Me.PowerLineCyclesRange1 = New isr.Core.Pith.RangeR(0.0005, 12)
+            Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.0005, 12)
         End If
         Me.ValueRange1 = New isr.Core.Pith.RangeR(0.1, 1000.0)
     End Sub

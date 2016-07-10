@@ -28,9 +28,9 @@ Public Class SenseResistanceSubsystem
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         If Me.StatusSubsystem.LineFrequency.GetValueOrDefault(60) = 60 Then
-            Me.PowerLineCyclesRange1 = New isr.Core.Pith.RangeR(0.02, 200)
+            Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.02, 200)
         Else
-            Me.PowerLineCyclesRange1 = New isr.Core.Pith.RangeR(0.02, 200)
+            Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.02, 200)
         End If
         Me.ValueRange1 = New isr.Core.Pith.RangeR(100, 100000000.0)
     End Sub

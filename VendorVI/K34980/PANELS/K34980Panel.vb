@@ -378,9 +378,9 @@ Public Class K34980Panel
             .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.ValueRange1.Min)))
         End With
         With Me._PowerLineCyclesNumeric
-            .Minimum = CDec(value.PowerLineCyclesRange1.Min)
-            .Maximum = CDec(value.PowerLineCyclesRange1.Max)
-            .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.PowerLineCyclesRange1.Min)))
+            .Minimum = CDec(value.PowerLineCyclesRange.Min)
+            .Maximum = CDec(value.PowerLineCyclesRange.Max)
+            .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.PowerLineCyclesRange.Min)))
         End With
         With value
             .QueryRange()

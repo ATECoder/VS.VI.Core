@@ -28,7 +28,7 @@ Public Class SenseCurrentSubsystem
     ''' <remarks> David, 6/27/2016. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me.PowerLineCyclesRange1 = New isr.Core.Pith.RangeR(0.01, 10)
+        Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.01, 10)
         Dim model As String = Me.StatusSubsystem.VersionInfo.Model
         Select Case True
             Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)

@@ -33,6 +33,18 @@ Public Class Device
     '''                          runtime finalize. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SystemSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_StatusSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_CalculateChannelSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_CompensateOpenSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_CompensateLoadSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_CompensateShortSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_ChannelMarkerSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_PrimaryChannelTraceSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SecondaryChannelTraceSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_ChannelTriggerSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SenseChannelSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SourceChannelSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_TriggerSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_DisplaySubsystem", Justification:="Disposed @Subsystems")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(disposing As Boolean)
@@ -110,11 +122,115 @@ Public Class Device
         Me.AddSubsystem(Me.SystemSubsystem)
         'AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
 
+        Me._CalculateChannelSubsystem = New CalculateChannelSubsystem(1, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.CalculateChannelSubsystem)
+
+        Me._CompensateOpenSubsystem = New CompensateChannelSubsystem(CompensationTypes.OpenCircuit, 1, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.CompensateOpenSubsystem)
+
+        Me._CompensateShortSubsystem = New CompensateChannelSubsystem(CompensationTypes.ShortCircuit, 1, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.CompensateShortSubsystem)
+
+        Me._CompensateLoadSubsystem = New CompensateChannelSubsystem(CompensationTypes.Load, 1, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.CompensateLoadSubsystem)
+
+        Me._ChannelMarkerSubsystem = New ChannelMarkerSubsystem(1, 1, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.ChannelMarkerSubsystem)
+
+        Me._PrimaryChannelTraceSubsystem = New ChannelTraceSubsystem(1, 1, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.PrimaryChannelTraceSubsystem)
+
+        Me._SecondaryChannelTraceSubsystem = New ChannelTraceSubsystem(1, 1, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.SecondaryChannelTraceSubsystem)
+
+        Me._ChannelTriggerSubsystem = New ChannelTriggerSubsystem(1, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.ChannelTriggerSubsystem)
+
+        Me._DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.DisplaySubsystem)
+
+        Me._SenseChannelSubsystem = New SenseChannelSubsystem(1, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.SenseChannelSubsystem)
+
+        Me._SourceChannelSubsystem = New SourceChannelSubsystem(1, Me.StatusSubsystem)
+        Me.AddSubsystem(Me.SourceChannelSubsystem)
+
+        Me._TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.TriggerSubsystem)
+
     End Sub
 
 #End Region
 
 #Region " SUBSYSTEMS "
+
+    ''' <summary> Gets or sets the calculate channel subsystem. </summary>
+    ''' <value> The calculate channel subsystem. </value>
+    Public Property CalculateChannelSubsystem As CalculateChannelSubsystem
+
+    ''' <summary> Gets or sets the channel marker subsystem. </summary>
+    ''' <value> The channel marker subsystem. </value>
+    Public Property ChannelMarkerSubsystem As ChannelMarkerSubsystem
+
+    ''' <summary> Gets or sets the primary channel Trace subsystem. </summary>
+    ''' <value> The primary channel Trace subsystem. </value>
+    Public Property PrimaryChannelTraceSubsystem As ChannelTraceSubsystem
+
+    ''' <summary> Gets or sets the Secondary channel Trace subsystem. </summary>
+    ''' <value> The Secondary channel Trace subsystem. </value>
+    Public Property SecondaryChannelTraceSubsystem As ChannelTraceSubsystem
+
+    ''' <summary> Gets or sets the channel Trigger subsystem. </summary>
+    ''' <value> The channel Trigger subsystem. </value>
+    Public Property ChannelTriggerSubsystem As ChannelTriggerSubsystem
+
+    ''' <summary> Gets or sets the Compensate open subsystem. </summary>
+    ''' <value> The Compensate open subsystem. </value>
+    Public Property CompensateOpenSubsystem As CompensateChannelSubsystem
+
+    ''' <summary> Gets or sets the Compensate Short subsystem. </summary>
+    ''' <value> The Compensate Short subsystem. </value>
+    Public Property CompensateShortSubsystem As CompensateChannelSubsystem
+
+    ''' <summary> Gets or sets the Compensate Load subsystem. </summary>
+    ''' <value> The Compensate Load subsystem. </value>
+    Public Property CompensateLoadSubsystem As CompensateChannelSubsystem
+
+    ''' <summary> Gets or sets Display subsystem. </summary>
+    ''' <value> The Display subsystem. </value>
+    Public Property DisplaySubsystem As DisplaySubsystem
+
+    ''' <summary> Gets or sets the sense channel subsystem. </summary>
+    ''' <value> The sense channel subsystem. </value>
+    Public Property SenseChannelSubsystem As SenseChannelSubsystem
+
+    ''' <summary> Gets or sets source channel subsystem. </summary>
+    ''' <value> The source channel subsystem. </value>
+    Public Property SourceChannelSubsystem As SourceChannelSubsystem
+
+    ''' <summary> Gets or sets trigger subsystem. </summary>
+    ''' <value> The trigger subsystem. </value>
+    Public Property TriggerSubsystem As TriggerSubsystem
+
+#Region " COMPENSATION "
+
+    ''' <summary> Clears the compensations. </summary>
+    ''' <remarks> David, 7/8/2016. </remarks>
+    Public Sub ClearCompensations()
+
+        ' clear the calibration parameters
+        Me.SenseChannelSubsystem.ClearCompensations()
+        Me.StatusSubsystem.QueryOperationCompleted()
+        Me.CompensateOpenSubsystem.ClearMeasurements()
+        Me.StatusSubsystem.QueryOperationCompleted()
+        Me.CompensateShortSubsystem.ClearMeasurements()
+        Me.StatusSubsystem.QueryOperationCompleted()
+        Me.CompensateLoadSubsystem.ClearMeasurements()
+        Me.StatusSubsystem.QueryOperationCompleted()
+
+    End Sub
+
+#End Region
 
 #Region " STATUS "
 

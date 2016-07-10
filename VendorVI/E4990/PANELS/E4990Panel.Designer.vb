@@ -22,80 +22,60 @@ Partial Class E4990Panel
         Me._SessionOptionsDownButton = New System.Windows.Forms.ToolStripDropDownButton()
         Me._ServiceRequestsHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._OutputDropDownButton = New System.Windows.Forms.ToolStripDropDownButton()
-        Me._ContactCheckEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._SourceAutoClearEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._OutputTerminalMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadingComboBoxLabel = New System.Windows.Forms.Label()
         Me._ReadingComboBox = New System.Windows.Forms.ComboBox()
         Me._ReadButton = New System.Windows.Forms.Button()
         Me._InitiateButton = New System.Windows.Forms.Button()
         Me._SourceTabPage = New System.Windows.Forms.TabPage()
-        Me._TriggerDelayNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._TriggerDelayNumericLabel = New System.Windows.Forms.Label()
-        Me._ApplySourceFunctionButton = New System.Windows.Forms.Button()
-        Me._SourceLimitNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._SourceLevelNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._SourceRangeNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._SourceDelayNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._sourceDelayTextBoxLabel = New System.Windows.Forms.Label()
-        Me._SourceLevelNumericLabel = New System.Windows.Forms.Label()
-        Me._ApplySourceSettingButton = New System.Windows.Forms.Button()
-        Me._SourceRangeNumericLabel = New System.Windows.Forms.Label()
-        Me._SourceFunctionComboBox = New System.Windows.Forms.ComboBox()
-        Me._SourceLimitNumericLabel = New System.Windows.Forms.Label()
-        Me._SourceFunctionComboBoxLabel = New System.Windows.Forms.Label()
-        Me._SenseTabPage = New System.Windows.Forms.TabPage()
-        Me._EnabledSenseFunctionsListBoxLabel = New System.Windows.Forms.Label()
-        Me._EnabledSenseFunctionsListBox = New System.Windows.Forms.CheckedListBox()
-        Me._ApplySenseFunctionButton = New System.Windows.Forms.Button()
-        Me._ConcurrentSenseCheckBox = New System.Windows.Forms.CheckBox()
-        Me._FourWireSenseCheckBox = New System.Windows.Forms.CheckBox()
-        Me._SenseRangeNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._NplcNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._SenseRangeNumericLabel = New System.Windows.Forms.Label()
-        Me._NplcNumericLabel = New System.Windows.Forms.Label()
-        Me._SenseFunctionComboBox = New System.Windows.Forms.ComboBox()
-        Me._SenseFunctionComboBoxLabel = New System.Windows.Forms.Label()
-        Me._SenseAutoRangeToggle = New System.Windows.Forms.CheckBox()
-        Me._ApplySenseSettingsButton = New System.Windows.Forms.Button()
-        Me._ImpedanceTabPage = New System.Windows.Forms.TabPage()
-        Me._HipotLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._ImpedanceGroupBox = New System.Windows.Forms.GroupBox()
         Me._SourceToggle = New System.Windows.Forms.CheckBox()
-        Me._ApplyImpedanceSettingsButton = New System.Windows.Forms.Button()
         Me._LevelNumericLabel = New System.Windows.Forms.Label()
         Me._LevelNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._HighFrequencyNumericLabel = New System.Windows.Forms.Label()
+        Me._ApplySourceFunctionButton = New System.Windows.Forms.Button()
+        Me._ApplySourceSettingButton = New System.Windows.Forms.Button()
+        Me._SourceFunctionComboBox = New System.Windows.Forms.ComboBox()
+        Me._SourceFunctionComboBoxLabel = New System.Windows.Forms.Label()
+        Me._SenseTabPage = New System.Windows.Forms.TabPage()
+        Me._SenseTabControl = New System.Windows.Forms.TabControl()
+        Me._AverageTabPage = New System.Windows.Forms.TabPage()
+        Me._AveragingLayout = New System.Windows.Forms.TableLayoutPanel()
+        Me._AveragingGroupBox = New System.Windows.Forms.GroupBox()
+        Me._ApertureNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._AveragingEnabledCheckBox = New System.Windows.Forms.CheckBox()
+        Me._ApertureNumericLabel = New System.Windows.Forms.Label()
+        Me._RestartAveragingButton = New System.Windows.Forms.Button()
+        Me._AveragingCountNumericLabel = New System.Windows.Forms.Label()
+        Me._AveragingCountNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._SweepTabPage = New System.Windows.Forms.TabPage()
+        Me._SweepLayout = New System.Windows.Forms.TableLayoutPanel()
+        Me._SweepGroupBox = New System.Windows.Forms.GroupBox()
         Me._LowFrequencyNumericLabel = New System.Windows.Forms.Label()
+        Me._ApplySweepSettingsButton = New System.Windows.Forms.Button()
         Me._HighFrequencyNumeric = New System.Windows.Forms.NumericUpDown()
         Me._LowFrequencyNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._ApertureNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._ApertureNumericLabel = New System.Windows.Forms.Label()
+        Me._HighFrequencyNumericLabel = New System.Windows.Forms.Label()
+        Me._MarkersTabPage = New System.Windows.Forms.TabPage()
+        Me._MarkersLayout = New System.Windows.Forms.TableLayoutPanel()
+        Me._MarkersGroupBox = New System.Windows.Forms.GroupBox()
+        Me._MarkerFrequencyComboBox = New System.Windows.Forms.ComboBox()
+        Me._MarkerFrequencyComboBoxLabel = New System.Windows.Forms.Label()
+        Me._ApplyMarkerSettingsButton = New System.Windows.Forms.Button()
+        Me._CompensationTabPage = New System.Windows.Forms.TabPage()
+        Me._CalLayout = New System.Windows.Forms.TableLayoutPanel()
         Me._CompensationGroupBox = New System.Windows.Forms.GroupBox()
-        Me._ComopensationTextBox = New System.Windows.Forms.TextBox()
-        Me._ShortButton = New System.Windows.Forms.Button()
-        Me._OpenButton = New System.Windows.Forms.Button()
-        Me._SotTabPage = New System.Windows.Forms.TabPage()
-        Me._BinningLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._TriggerToolStrip = New System.Windows.Forms.ToolStrip()
-        Me._AwaitTriggerToolStripButton = New System.Windows.Forms.ToolStripButton()
-        Me._WaitHourglassLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._AssertTriggerToolStripButton = New System.Windows.Forms.ToolStripButton()
-        Me._TriggerActionToolStripLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._BinningGroupBox = New System.Windows.Forms.GroupBox()
-        Me._ArmComboBoxLabel = New System.Windows.Forms.Label()
-        Me._ArmSourceComboBox = New System.Windows.Forms.ComboBox()
-        Me._ApplySotSettingsButton = New System.Windows.Forms.Button()
-        Me._ContactCheckSupportLabel = New System.Windows.Forms.Label()
-        Me._FailBitPatternNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._PassBitPatternNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._ContactCheckBitPatternNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._FailBitPatternNumericLabel = New System.Windows.Forms.Label()
-        Me._PassBitPatternNumericLabel = New System.Windows.Forms.Label()
-        Me._ContactCheckBitPatternNumericLabel = New System.Windows.Forms.Label()
-        Me._EotStrobeDurationNumericLabel = New System.Windows.Forms.Label()
-        Me._EotStrobeDurationNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._AdapterComboBox = New System.Windows.Forms.ComboBox()
+        Me._AdapterComboBoxLabel = New System.Windows.Forms.Label()
+        Me._AcquireCompensationButton = New System.Windows.Forms.Button()
+        Me._LoadCompensationTextBoxLabel = New System.Windows.Forms.Label()
+        Me._ShortCompensationTextBoxLabel = New System.Windows.Forms.Label()
+        Me._OpenCompensationTextBoxLabel = New System.Windows.Forms.Label()
+        Me._FrequencyStimulusTextBox = New System.Windows.Forms.TextBox()
+        Me._FrequencyStimulusTextBoxLabel = New System.Windows.Forms.Label()
+        Me._LoadCompensationTextBox = New System.Windows.Forms.TextBox()
+        Me._ShortCompensationTextBox = New System.Windows.Forms.TextBox()
+        Me._OpenCompensationTextBox = New System.Windows.Forms.TextBox()
+        Me._ApplyLoadButton = New System.Windows.Forms.Button()
+        Me._ApplyShortButton = New System.Windows.Forms.Button()
+        Me._ApplyOpenButton = New System.Windows.Forms.Button()
         Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
         Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
@@ -108,41 +88,47 @@ Partial Class E4990Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._TraceTabPage = New System.Windows.Forms.TabPage()
+        Me._TraceLayout = New System.Windows.Forms.TableLayoutPanel()
+        Me._TraceGroupBox = New System.Windows.Forms.GroupBox()
+        Me._PrimaryTraceParameterComboBox = New System.Windows.Forms.ComboBox()
+        Me._PrimaryTraceParameterComboBoxLabel = New System.Windows.Forms.Label()
+        Me._SecondaryTraceParameterComboBoxLabel = New System.Windows.Forms.Label()
+        Me._SecondaryTraceParameterComboBox = New System.Windows.Forms.ComboBox()
+        Me._ApplyTracesButton = New System.Windows.Forms.Button()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
         Me._ToolStripPanel.SuspendLayout()
         Me._SystemToolStrip.SuspendLayout()
         Me._SourceTabPage.SuspendLayout()
-        CType(Me._TriggerDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._SourceLimitNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._SourceLevelNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._SourceRangeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._SourceDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me._SenseTabPage.SuspendLayout()
-        CType(Me._SenseRangeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._NplcNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me._ImpedanceTabPage.SuspendLayout()
-        Me._HipotLayout.SuspendLayout()
-        Me._ImpedanceGroupBox.SuspendLayout()
         CType(Me._LevelNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._SenseTabPage.SuspendLayout()
+        Me._SenseTabControl.SuspendLayout()
+        Me._AverageTabPage.SuspendLayout()
+        Me._AveragingLayout.SuspendLayout()
+        Me._AveragingGroupBox.SuspendLayout()
+        CType(Me._ApertureNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me._AveragingCountNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._SweepTabPage.SuspendLayout()
+        Me._SweepLayout.SuspendLayout()
+        Me._SweepGroupBox.SuspendLayout()
         CType(Me._HighFrequencyNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._LowFrequencyNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._ApertureNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._MarkersTabPage.SuspendLayout()
+        Me._MarkersLayout.SuspendLayout()
+        Me._MarkersGroupBox.SuspendLayout()
+        Me._CompensationTabPage.SuspendLayout()
+        Me._CalLayout.SuspendLayout()
         Me._CompensationGroupBox.SuspendLayout()
-        Me._SotTabPage.SuspendLayout()
-        Me._BinningLayout.SuspendLayout()
-        Me._TriggerToolStrip.SuspendLayout()
-        Me._BinningGroupBox.SuspendLayout()
-        CType(Me._FailBitPatternNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._PassBitPatternNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._ContactCheckBitPatternNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._EotStrobeDurationNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
+        Me._TraceTabPage.SuspendLayout()
+        Me._TraceLayout.SuspendLayout()
+        Me._TraceGroupBox.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -164,8 +150,7 @@ Partial Class E4990Panel
         Me._Tabs.Controls.Add(Me._ReadingTabPage)
         Me._Tabs.Controls.Add(Me._SourceTabPage)
         Me._Tabs.Controls.Add(Me._SenseTabPage)
-        Me._Tabs.Controls.Add(Me._ImpedanceTabPage)
-        Me._Tabs.Controls.Add(Me._SotTabPage)
+        Me._Tabs.Controls.Add(Me._CompensationTabPage)
         Me._Tabs.Controls.Add(Me._ReadWriteTabPage)
         Me._Tabs.Controls.Add(Me._MessagesTabPage)
         Me._Tabs.Dock = System.Windows.Forms.DockStyle.Fill
@@ -205,10 +190,10 @@ Partial Class E4990Panel
         '
         Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.None
         Me._SystemToolStrip.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetsDropDownButton, Me._SessionOptionsDownButton, Me._OutputDropDownButton})
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetsDropDownButton, Me._SessionOptionsDownButton})
         Me._SystemToolStrip.Location = New System.Drawing.Point(3, 0)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
-        Me._SystemToolStrip.Size = New System.Drawing.Size(190, 25)
+        Me._SystemToolStrip.Size = New System.Drawing.Size(130, 25)
         Me._SystemToolStrip.TabIndex = 0
         '
         '_ResetsDropDownButton
@@ -283,44 +268,6 @@ Partial Class E4990Panel
         Me._SessionTraceEnabledMenuItem.Text = "Session Trace Enabled"
         Me._SessionTraceEnabledMenuItem.ToolTipText = "Check to trace all instrument messages "
         '
-        '_OutputDropDownButton
-        '
-        Me._OutputDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._OutputDropDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ContactCheckEnabledMenuItem, Me._SourceAutoClearEnabledMenuItem, Me._OutputTerminalMenuItem})
-        Me._OutputDropDownButton.Image = CType(resources.GetObject("_OutputDropDownButton.Image"), System.Drawing.Image)
-        Me._OutputDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._OutputDropDownButton.Name = "_OutputDropDownButton"
-        Me._OutputDropDownButton.Size = New System.Drawing.Size(60, 22)
-        Me._OutputDropDownButton.Text = "Output"
-        Me._OutputDropDownButton.ToolTipText = "Output control options"
-        '
-        '_ContactCheckEnabledMenuItem
-        '
-        Me._ContactCheckEnabledMenuItem.CheckOnClick = True
-        Me._ContactCheckEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ContactCheckEnabledMenuItem.Name = "_ContactCheckEnabledMenuItem"
-        Me._ContactCheckEnabledMenuItem.Size = New System.Drawing.Size(200, 22)
-        Me._ContactCheckEnabledMenuItem.Text = "Contact Check Enabled"
-        Me._ContactCheckEnabledMenuItem.ToolTipText = "Check to enable contact check"
-        '
-        '_SourceAutoClearEnabledMenuItem
-        '
-        Me._SourceAutoClearEnabledMenuItem.CheckOnClick = True
-        Me._SourceAutoClearEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SourceAutoClearEnabledMenuItem.Name = "_SourceAutoClearEnabledMenuItem"
-        Me._SourceAutoClearEnabledMenuItem.Size = New System.Drawing.Size(200, 22)
-        Me._SourceAutoClearEnabledMenuItem.Text = "Auto On"
-        Me._SourceAutoClearEnabledMenuItem.ToolTipText = "Check to turn on output automatically"
-        '
-        '_OutputTerminalMenuItem
-        '
-        Me._OutputTerminalMenuItem.CheckOnClick = True
-        Me._OutputTerminalMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._OutputTerminalMenuItem.Name = "_OutputTerminalMenuItem"
-        Me._OutputTerminalMenuItem.Size = New System.Drawing.Size(200, 22)
-        Me._OutputTerminalMenuItem.Text = "Front"
-        Me._OutputTerminalMenuItem.ToolTipText = "Check to toggle using rear or front terminals"
-        '
         '_ReadingComboBoxLabel
         '
         Me._ReadingComboBoxLabel.AutoSize = True
@@ -365,19 +312,12 @@ Partial Class E4990Panel
         '
         '_SourceTabPage
         '
-        Me._SourceTabPage.Controls.Add(Me._TriggerDelayNumeric)
-        Me._SourceTabPage.Controls.Add(Me._TriggerDelayNumericLabel)
+        Me._SourceTabPage.Controls.Add(Me._SourceToggle)
+        Me._SourceTabPage.Controls.Add(Me._LevelNumericLabel)
+        Me._SourceTabPage.Controls.Add(Me._LevelNumeric)
         Me._SourceTabPage.Controls.Add(Me._ApplySourceFunctionButton)
-        Me._SourceTabPage.Controls.Add(Me._SourceLimitNumeric)
-        Me._SourceTabPage.Controls.Add(Me._SourceLevelNumeric)
-        Me._SourceTabPage.Controls.Add(Me._SourceRangeNumeric)
-        Me._SourceTabPage.Controls.Add(Me._SourceDelayNumeric)
-        Me._SourceTabPage.Controls.Add(Me._sourceDelayTextBoxLabel)
-        Me._SourceTabPage.Controls.Add(Me._SourceLevelNumericLabel)
         Me._SourceTabPage.Controls.Add(Me._ApplySourceSettingButton)
-        Me._SourceTabPage.Controls.Add(Me._SourceRangeNumericLabel)
         Me._SourceTabPage.Controls.Add(Me._SourceFunctionComboBox)
-        Me._SourceTabPage.Controls.Add(Me._SourceLimitNumericLabel)
         Me._SourceTabPage.Controls.Add(Me._SourceFunctionComboBoxLabel)
         Me._SourceTabPage.Location = New System.Drawing.Point(4, 26)
         Me._SourceTabPage.Name = "_SourceTabPage"
@@ -386,24 +326,38 @@ Partial Class E4990Panel
         Me._SourceTabPage.Text = "Source"
         Me._SourceTabPage.UseVisualStyleBackColor = True
         '
-        '_TriggerDelayNumeric
+        '_SourceToggle
         '
-        Me._TriggerDelayNumeric.DecimalPlaces = 3
-        Me._TriggerDelayNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._TriggerDelayNumeric.Location = New System.Drawing.Point(116, 172)
-        Me._TriggerDelayNumeric.Name = "_TriggerDelayNumeric"
-        Me._TriggerDelayNumeric.Size = New System.Drawing.Size(76, 25)
-        Me._TriggerDelayNumeric.TabIndex = 22
+        Me._SourceToggle.Appearance = System.Windows.Forms.Appearance.Button
+        Me._SourceToggle.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._SourceToggle.Location = New System.Drawing.Point(42, 44)
+        Me._SourceToggle.Name = "_SourceToggle"
+        Me._SourceToggle.Size = New System.Drawing.Size(109, 28)
+        Me._SourceToggle.TabIndex = 23
+        Me._SourceToggle.Text = "Source: Current"
+        Me._SourceToggle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me._SourceToggle.UseVisualStyleBackColor = True
         '
-        '_TriggerDelayNumericLabel
+        '_LevelNumericLabel
         '
-        Me._TriggerDelayNumericLabel.AutoSize = True
-        Me._TriggerDelayNumericLabel.Location = New System.Drawing.Point(6, 176)
-        Me._TriggerDelayNumericLabel.Name = "_TriggerDelayNumericLabel"
-        Me._TriggerDelayNumericLabel.Size = New System.Drawing.Size(107, 17)
-        Me._TriggerDelayNumericLabel.TabIndex = 21
-        Me._TriggerDelayNumericLabel.Text = "Trigger Delay [s]:"
-        Me._TriggerDelayNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._LevelNumericLabel.AutoSize = True
+        Me._LevelNumericLabel.Location = New System.Drawing.Point(162, 50)
+        Me._LevelNumericLabel.Name = "_LevelNumericLabel"
+        Me._LevelNumericLabel.Size = New System.Drawing.Size(71, 17)
+        Me._LevelNumericLabel.TabIndex = 24
+        Me._LevelNumericLabel.Text = "Level [mA]:"
+        '
+        '_LevelNumeric
+        '
+        Me._LevelNumeric.Location = New System.Drawing.Point(236, 46)
+        Me._LevelNumeric.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
+        Me._LevelNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 196608})
+        Me._LevelNumeric.Name = "_LevelNumeric"
+        Me._LevelNumeric.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me._LevelNumeric.Size = New System.Drawing.Size(85, 25)
+        Me._LevelNumeric.TabIndex = 25
+        Me._LevelNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me._LevelNumeric.Value = New Decimal(New Integer() {5, 0, 0, 0})
         '
         '_ApplySourceFunctionButton
         '
@@ -416,85 +370,17 @@ Partial Class E4990Panel
         Me.TipsTooltip.SetToolTip(Me._ApplySourceFunctionButton, "Apply selected source function")
         Me._ApplySourceFunctionButton.UseVisualStyleBackColor = True
         '
-        '_SourceLimitNumeric
-        '
-        Me._SourceLimitNumeric.DecimalPlaces = 4
-        Me._SourceLimitNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SourceLimitNumeric.Location = New System.Drawing.Point(116, 126)
-        Me._SourceLimitNumeric.Name = "_SourceLimitNumeric"
-        Me._SourceLimitNumeric.Size = New System.Drawing.Size(77, 25)
-        Me._SourceLimitNumeric.TabIndex = 19
-        Me.TipsTooltip.SetToolTip(Me._SourceLimitNumeric, "Source limit")
-        '
-        '_SourceLevelNumeric
-        '
-        Me._SourceLevelNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SourceLevelNumeric.Location = New System.Drawing.Point(116, 95)
-        Me._SourceLevelNumeric.Maximum = New Decimal(New Integer() {1100, 0, 0, 0})
-        Me._SourceLevelNumeric.Name = "_SourceLevelNumeric"
-        Me._SourceLevelNumeric.Size = New System.Drawing.Size(77, 25)
-        Me._SourceLevelNumeric.TabIndex = 18
-        '
-        '_SourceRangeNumeric
-        '
-        Me._SourceRangeNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SourceRangeNumeric.Location = New System.Drawing.Point(116, 66)
-        Me._SourceRangeNumeric.Maximum = New Decimal(New Integer() {1100, 0, 0, 0})
-        Me._SourceRangeNumeric.Name = "_SourceRangeNumeric"
-        Me._SourceRangeNumeric.Size = New System.Drawing.Size(77, 25)
-        Me._SourceRangeNumeric.TabIndex = 18
-        '
-        '_SourceDelayNumeric
-        '
-        Me._SourceDelayNumeric.DecimalPlaces = 2
-        Me._SourceDelayNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SourceDelayNumeric.Location = New System.Drawing.Point(116, 37)
-        Me._SourceDelayNumeric.Name = "_SourceDelayNumeric"
-        Me._SourceDelayNumeric.Size = New System.Drawing.Size(77, 25)
-        Me._SourceDelayNumeric.TabIndex = 17
-        Me.TipsTooltip.SetToolTip(Me._SourceDelayNumeric, "Source delay in milliseconds")
-        '
-        '_sourceDelayTextBoxLabel
-        '
-        Me._sourceDelayTextBoxLabel.AutoSize = True
-        Me._sourceDelayTextBoxLabel.Location = New System.Drawing.Point(41, 41)
-        Me._sourceDelayTextBoxLabel.Name = "_sourceDelayTextBoxLabel"
-        Me._sourceDelayTextBoxLabel.Size = New System.Drawing.Size(72, 17)
-        Me._sourceDelayTextBoxLabel.TabIndex = 16
-        Me._sourceDelayTextBoxLabel.Text = "Delay [ms]:"
-        Me._sourceDelayTextBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        '_SourceLevelNumericLabel
-        '
-        Me._SourceLevelNumericLabel.AutoSize = True
-        Me._SourceLevelNumericLabel.Location = New System.Drawing.Point(53, 99)
-        Me._SourceLevelNumericLabel.Name = "_SourceLevelNumericLabel"
-        Me._SourceLevelNumericLabel.Size = New System.Drawing.Size(60, 17)
-        Me._SourceLevelNumericLabel.TabIndex = 9
-        Me._SourceLevelNumericLabel.Text = "Level [V]:"
-        Me._SourceLevelNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
         '_ApplySourceSettingButton
         '
         Me._ApplySourceSettingButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._ApplySourceSettingButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ApplySourceSettingButton.Location = New System.Drawing.Point(289, 230)
+        Me._ApplySourceSettingButton.Location = New System.Drawing.Point(264, 78)
         Me._ApplySourceSettingButton.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._ApplySourceSettingButton.Name = "_ApplySourceSettingButton"
         Me._ApplySourceSettingButton.Size = New System.Drawing.Size(58, 30)
         Me._ApplySourceSettingButton.TabIndex = 15
         Me._ApplySourceSettingButton.Text = "&Apply"
         Me._ApplySourceSettingButton.UseVisualStyleBackColor = True
-        '
-        '_SourceRangeNumericLabel
-        '
-        Me._SourceRangeNumericLabel.AutoSize = True
-        Me._SourceRangeNumericLabel.Location = New System.Drawing.Point(45, 70)
-        Me._SourceRangeNumericLabel.Name = "_SourceRangeNumericLabel"
-        Me._SourceRangeNumericLabel.Size = New System.Drawing.Size(68, 17)
-        Me._SourceRangeNumericLabel.TabIndex = 9
-        Me._SourceRangeNumericLabel.Text = "Range [V]:"
-        Me._SourceRangeNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         '_SourceFunctionComboBox
         '
@@ -509,16 +395,6 @@ Partial Class E4990Panel
         Me._SourceFunctionComboBox.Size = New System.Drawing.Size(150, 25)
         Me._SourceFunctionComboBox.TabIndex = 14
         '
-        '_SourceLimitNumericLabel
-        '
-        Me._SourceLimitNumericLabel.AutoSize = True
-        Me._SourceLimitNumericLabel.Location = New System.Drawing.Point(55, 130)
-        Me._SourceLimitNumericLabel.Name = "_SourceLimitNumericLabel"
-        Me._SourceLimitNumericLabel.Size = New System.Drawing.Size(58, 17)
-        Me._SourceLimitNumericLabel.TabIndex = 11
-        Me._SourceLimitNumericLabel.Text = "Limit [A]:"
-        Me._SourceLimitNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
         '_SourceFunctionComboBoxLabel
         '
         Me._SourceFunctionComboBoxLabel.AutoSize = True
@@ -530,19 +406,7 @@ Partial Class E4990Panel
         '
         '_SenseTabPage
         '
-        Me._SenseTabPage.Controls.Add(Me._EnabledSenseFunctionsListBoxLabel)
-        Me._SenseTabPage.Controls.Add(Me._EnabledSenseFunctionsListBox)
-        Me._SenseTabPage.Controls.Add(Me._ApplySenseFunctionButton)
-        Me._SenseTabPage.Controls.Add(Me._ConcurrentSenseCheckBox)
-        Me._SenseTabPage.Controls.Add(Me._FourWireSenseCheckBox)
-        Me._SenseTabPage.Controls.Add(Me._SenseRangeNumeric)
-        Me._SenseTabPage.Controls.Add(Me._NplcNumeric)
-        Me._SenseTabPage.Controls.Add(Me._SenseRangeNumericLabel)
-        Me._SenseTabPage.Controls.Add(Me._NplcNumericLabel)
-        Me._SenseTabPage.Controls.Add(Me._SenseFunctionComboBox)
-        Me._SenseTabPage.Controls.Add(Me._SenseFunctionComboBoxLabel)
-        Me._SenseTabPage.Controls.Add(Me._SenseAutoRangeToggle)
-        Me._SenseTabPage.Controls.Add(Me._ApplySenseSettingsButton)
+        Me._SenseTabPage.Controls.Add(Me._SenseTabControl)
         Me._SenseTabPage.Location = New System.Drawing.Point(4, 26)
         Me._SenseTabPage.Name = "_SenseTabPage"
         Me._SenseTabPage.Size = New System.Drawing.Size(356, 270)
@@ -550,268 +414,189 @@ Partial Class E4990Panel
         Me._SenseTabPage.Text = "Sense"
         Me._SenseTabPage.UseVisualStyleBackColor = True
         '
-        '_EnabledSenseFunctionsListBoxLabel
+        '_SenseTabControl
         '
-        Me._EnabledSenseFunctionsListBoxLabel.AutoSize = True
-        Me._EnabledSenseFunctionsListBoxLabel.Location = New System.Drawing.Point(13, 6)
-        Me._EnabledSenseFunctionsListBoxLabel.Name = "_EnabledSenseFunctionsListBoxLabel"
-        Me._EnabledSenseFunctionsListBoxLabel.Size = New System.Drawing.Size(65, 17)
-        Me._EnabledSenseFunctionsListBoxLabel.TabIndex = 14
-        Me._EnabledSenseFunctionsListBoxLabel.Text = "Functions:"
+        Me._SenseTabControl.Controls.Add(Me._AverageTabPage)
+        Me._SenseTabControl.Controls.Add(Me._SweepTabPage)
+        Me._SenseTabControl.Controls.Add(Me._TraceTabPage)
+        Me._SenseTabControl.Controls.Add(Me._MarkersTabPage)
+        Me._SenseTabControl.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._SenseTabControl.Location = New System.Drawing.Point(0, 0)
+        Me._SenseTabControl.Name = "_SenseTabControl"
+        Me._SenseTabControl.SelectedIndex = 0
+        Me._SenseTabControl.Size = New System.Drawing.Size(356, 270)
+        Me._SenseTabControl.TabIndex = 17
         '
-        '_EnabledSenseFunctionsListBox
+        '_AverageTabPage
         '
-        Me._EnabledSenseFunctionsListBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._EnabledSenseFunctionsListBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._EnabledSenseFunctionsListBox.FormattingEnabled = True
-        Me._EnabledSenseFunctionsListBox.Location = New System.Drawing.Point(81, 6)
-        Me._EnabledSenseFunctionsListBox.Name = "_EnabledSenseFunctionsListBox"
-        Me._EnabledSenseFunctionsListBox.Size = New System.Drawing.Size(144, 64)
-        Me._EnabledSenseFunctionsListBox.TabIndex = 13
-        Me.TipsTooltip.SetToolTip(Me._EnabledSenseFunctionsListBox, "Enabled functions")
+        Me._AverageTabPage.Controls.Add(Me._AveragingLayout)
+        Me._AverageTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._AverageTabPage.Name = "_AverageTabPage"
+        Me._AverageTabPage.Padding = New System.Windows.Forms.Padding(3)
+        Me._AverageTabPage.Size = New System.Drawing.Size(348, 240)
+        Me._AverageTabPage.TabIndex = 0
+        Me._AverageTabPage.Text = "Average"
+        Me._AverageTabPage.UseVisualStyleBackColor = True
         '
-        '_ApplySenseFunctionButton
+        '_AveragingLayout
         '
-        Me._ApplySenseFunctionButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ApplySenseFunctionButton.Location = New System.Drawing.Point(288, 57)
-        Me._ApplySenseFunctionButton.Name = "_ApplySenseFunctionButton"
-        Me._ApplySenseFunctionButton.Size = New System.Drawing.Size(53, 30)
-        Me._ApplySenseFunctionButton.TabIndex = 12
-        Me._ApplySenseFunctionButton.Text = "Apply"
-        Me.TipsTooltip.SetToolTip(Me._ApplySenseFunctionButton, "Click to apply")
-        Me._ApplySenseFunctionButton.UseVisualStyleBackColor = True
+        Me._AveragingLayout.ColumnCount = 3
+        Me._AveragingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._AveragingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me._AveragingLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._AveragingLayout.Controls.Add(Me._AveragingGroupBox, 1, 1)
+        Me._AveragingLayout.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._AveragingLayout.Location = New System.Drawing.Point(3, 3)
+        Me._AveragingLayout.Name = "_AveragingLayout"
+        Me._AveragingLayout.RowCount = 3
+        Me._AveragingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._AveragingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me._AveragingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._AveragingLayout.Size = New System.Drawing.Size(342, 234)
+        Me._AveragingLayout.TabIndex = 2
         '
-        '_ConcurrentSenseCheckBox
+        '_AveragingGroupBox
         '
-        Me._ConcurrentSenseCheckBox.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ConcurrentSenseCheckBox.AutoSize = True
-        Me._ConcurrentSenseCheckBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ConcurrentSenseCheckBox.Location = New System.Drawing.Point(233, 6)
-        Me._ConcurrentSenseCheckBox.Name = "_ConcurrentSenseCheckBox"
-        Me._ConcurrentSenseCheckBox.Size = New System.Drawing.Size(95, 21)
-        Me._ConcurrentSenseCheckBox.TabIndex = 11
-        Me._ConcurrentSenseCheckBox.Text = "Concurrent"
-        Me._ConcurrentSenseCheckBox.UseVisualStyleBackColor = True
+        Me._AveragingGroupBox.Controls.Add(Me._ApertureNumeric)
+        Me._AveragingGroupBox.Controls.Add(Me._AveragingEnabledCheckBox)
+        Me._AveragingGroupBox.Controls.Add(Me._ApertureNumericLabel)
+        Me._AveragingGroupBox.Controls.Add(Me._RestartAveragingButton)
+        Me._AveragingGroupBox.Controls.Add(Me._AveragingCountNumericLabel)
+        Me._AveragingGroupBox.Controls.Add(Me._AveragingCountNumeric)
+        Me._AveragingGroupBox.Location = New System.Drawing.Point(101, 36)
+        Me._AveragingGroupBox.Name = "_AveragingGroupBox"
+        Me._AveragingGroupBox.Size = New System.Drawing.Size(139, 161)
+        Me._AveragingGroupBox.TabIndex = 1
+        Me._AveragingGroupBox.TabStop = False
+        Me._AveragingGroupBox.Text = "Averaging"
         '
-        '_FourWireSenseCheckBox
+        '_ApertureNumeric
         '
-        Me._FourWireSenseCheckBox.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._FourWireSenseCheckBox.AutoSize = True
-        Me._FourWireSenseCheckBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._FourWireSenseCheckBox.Location = New System.Drawing.Point(233, 32)
-        Me._FourWireSenseCheckBox.Name = "_FourWireSenseCheckBox"
-        Me._FourWireSenseCheckBox.Size = New System.Drawing.Size(88, 21)
-        Me._FourWireSenseCheckBox.TabIndex = 10
-        Me._FourWireSenseCheckBox.Text = "Four Wire"
-        Me._FourWireSenseCheckBox.UseVisualStyleBackColor = True
+        Me._ApertureNumeric.Location = New System.Drawing.Point(73, 30)
+        Me._ApertureNumeric.Maximum = New Decimal(New Integer() {5, 0, 0, 0})
+        Me._ApertureNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
+        Me._ApertureNumeric.Name = "_ApertureNumeric"
+        Me._ApertureNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ApertureNumeric.TabIndex = 1
+        Me._ApertureNumeric.Value = New Decimal(New Integer() {1, 0, 0, 0})
         '
-        '_SenseRangeNumeric
+        '_AveragingEnabledCheckBox
         '
-        Me._SenseRangeNumeric.DecimalPlaces = 3
-        Me._SenseRangeNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SenseRangeNumeric.Location = New System.Drawing.Point(116, 179)
-        Me._SenseRangeNumeric.Maximum = New Decimal(New Integer() {1010, 0, 0, 0})
-        Me._SenseRangeNumeric.Name = "_SenseRangeNumeric"
-        Me._SenseRangeNumeric.Size = New System.Drawing.Size(76, 25)
-        Me._SenseRangeNumeric.TabIndex = 5
-        Me.TipsTooltip.SetToolTip(Me._SenseRangeNumeric, "Range")
-        Me._SenseRangeNumeric.Value = New Decimal(New Integer() {105, 0, 0, 196608})
+        Me._AveragingEnabledCheckBox.AutoSize = True
+        Me._AveragingEnabledCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._AveragingEnabledCheckBox.Location = New System.Drawing.Point(10, 94)
+        Me._AveragingEnabledCheckBox.Name = "_AveragingEnabledCheckBox"
+        Me._AveragingEnabledCheckBox.Size = New System.Drawing.Size(77, 21)
+        Me._AveragingEnabledCheckBox.TabIndex = 4
+        Me._AveragingEnabledCheckBox.Text = "Enabled:"
+        Me._AveragingEnabledCheckBox.UseVisualStyleBackColor = True
         '
-        '_NplcNumeric
+        '_ApertureNumericLabel
         '
-        Me._NplcNumeric.DecimalPlaces = 3
-        Me._NplcNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._NplcNumeric.Location = New System.Drawing.Point(116, 208)
-        Me._NplcNumeric.Maximum = New Decimal(New Integer() {50, 0, 0, 0})
-        Me._NplcNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 131072})
-        Me._NplcNumeric.Name = "_NplcNumeric"
-        Me._NplcNumeric.Size = New System.Drawing.Size(76, 25)
-        Me._NplcNumeric.TabIndex = 3
-        Me.TipsTooltip.SetToolTip(Me._NplcNumeric, "Number of power line cycles")
-        Me._NplcNumeric.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        Me._ApertureNumericLabel.AutoSize = True
+        Me._ApertureNumericLabel.Location = New System.Drawing.Point(9, 34)
+        Me._ApertureNumericLabel.Name = "_ApertureNumericLabel"
+        Me._ApertureNumericLabel.Size = New System.Drawing.Size(62, 17)
+        Me._ApertureNumericLabel.TabIndex = 0
+        Me._ApertureNumericLabel.Text = "Aperture:"
         '
-        '_SenseRangeNumericLabel
+        '_RestartAveragingButton
         '
-        Me._SenseRangeNumericLabel.AutoSize = True
-        Me._SenseRangeNumericLabel.Location = New System.Drawing.Point(45, 182)
-        Me._SenseRangeNumericLabel.Name = "_SenseRangeNumericLabel"
-        Me._SenseRangeNumericLabel.Size = New System.Drawing.Size(68, 17)
-        Me._SenseRangeNumericLabel.TabIndex = 4
-        Me._SenseRangeNumericLabel.Text = "Range [V]:"
-        Me._SenseRangeNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._RestartAveragingButton.Location = New System.Drawing.Point(23, 120)
+        Me._RestartAveragingButton.Name = "_RestartAveragingButton"
+        Me._RestartAveragingButton.Size = New System.Drawing.Size(101, 28)
+        Me._RestartAveragingButton.TabIndex = 5
+        Me._RestartAveragingButton.Text = "Apply/Restart"
+        Me._RestartAveragingButton.UseVisualStyleBackColor = True
         '
-        '_NplcNumericLabel
+        '_AveragingCountNumericLabel
         '
-        Me._NplcNumericLabel.AutoSize = True
-        Me._NplcNumericLabel.Location = New System.Drawing.Point(8, 212)
-        Me._NplcNumericLabel.Name = "_NplcNumericLabel"
-        Me._NplcNumericLabel.Size = New System.Drawing.Size(105, 17)
-        Me._NplcNumericLabel.TabIndex = 2
-        Me._NplcNumericLabel.Text = "Aperture [NPLC]:"
-        Me._NplcNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._AveragingCountNumericLabel.AutoSize = True
+        Me._AveragingCountNumericLabel.Location = New System.Drawing.Point(26, 67)
+        Me._AveragingCountNumericLabel.Name = "_AveragingCountNumericLabel"
+        Me._AveragingCountNumericLabel.Size = New System.Drawing.Size(45, 17)
+        Me._AveragingCountNumericLabel.TabIndex = 2
+        Me._AveragingCountNumericLabel.Text = "Count:"
         '
-        '_SenseFunctionComboBox
+        '_AveragingCountNumeric
         '
-        Me._SenseFunctionComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._SenseFunctionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me._SenseFunctionComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._SenseFunctionComboBox.Items.AddRange(New Object() {"I", "V"})
-        Me._SenseFunctionComboBox.Location = New System.Drawing.Point(116, 148)
-        Me._SenseFunctionComboBox.Name = "_SenseFunctionComboBox"
-        Me._SenseFunctionComboBox.Size = New System.Drawing.Size(187, 25)
-        Me._SenseFunctionComboBox.TabIndex = 1
+        Me._AveragingCountNumeric.Location = New System.Drawing.Point(73, 63)
+        Me._AveragingCountNumeric.Maximum = New Decimal(New Integer() {999, 0, 0, 0})
+        Me._AveragingCountNumeric.Name = "_AveragingCountNumeric"
+        Me._AveragingCountNumeric.Size = New System.Drawing.Size(50, 25)
+        Me._AveragingCountNumeric.TabIndex = 3
+        Me._AveragingCountNumeric.Value = New Decimal(New Integer() {999, 0, 0, 0})
         '
-        '_SenseFunctionComboBoxLabel
+        '_SweepTabPage
         '
-        Me._SenseFunctionComboBoxLabel.AutoSize = True
-        Me._SenseFunctionComboBoxLabel.Location = New System.Drawing.Point(57, 152)
-        Me._SenseFunctionComboBoxLabel.Name = "_SenseFunctionComboBoxLabel"
-        Me._SenseFunctionComboBoxLabel.Size = New System.Drawing.Size(59, 17)
-        Me._SenseFunctionComboBoxLabel.TabIndex = 0
-        Me._SenseFunctionComboBoxLabel.Text = "Function:"
-        Me._SenseFunctionComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._SweepTabPage.Controls.Add(Me._SweepLayout)
+        Me._SweepTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._SweepTabPage.Name = "_SweepTabPage"
+        Me._SweepTabPage.Padding = New System.Windows.Forms.Padding(3)
+        Me._SweepTabPage.Size = New System.Drawing.Size(348, 240)
+        Me._SweepTabPage.TabIndex = 1
+        Me._SweepTabPage.Text = "Sweep"
+        Me._SweepTabPage.UseVisualStyleBackColor = True
         '
-        '_SenseAutoRangeToggle
+        '_SweepLayout
         '
-        Me._SenseAutoRangeToggle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._SenseAutoRangeToggle.Location = New System.Drawing.Point(198, 181)
-        Me._SenseAutoRangeToggle.Name = "_SenseAutoRangeToggle"
-        Me._SenseAutoRangeToggle.Size = New System.Drawing.Size(103, 21)
-        Me._SenseAutoRangeToggle.TabIndex = 6
-        Me._SenseAutoRangeToggle.Text = "Auto Range"
-        Me._SenseAutoRangeToggle.UseVisualStyleBackColor = True
+        Me._SweepLayout.ColumnCount = 3
+        Me._SweepLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._SweepLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me._SweepLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._SweepLayout.Controls.Add(Me._SweepGroupBox, 1, 1)
+        Me._SweepLayout.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._SweepLayout.Location = New System.Drawing.Point(3, 3)
+        Me._SweepLayout.Name = "_SweepLayout"
+        Me._SweepLayout.RowCount = 3
+        Me._SweepLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._SweepLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me._SweepLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._SweepLayout.Size = New System.Drawing.Size(342, 234)
+        Me._SweepLayout.TabIndex = 18
         '
-        '_ApplySenseSettingsButton
+        '_SweepGroupBox
         '
-        Me._ApplySenseSettingsButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ApplySenseSettingsButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ApplySenseSettingsButton.Location = New System.Drawing.Point(290, 232)
-        Me._ApplySenseSettingsButton.Name = "_ApplySenseSettingsButton"
-        Me._ApplySenseSettingsButton.Size = New System.Drawing.Size(58, 30)
-        Me._ApplySenseSettingsButton.TabIndex = 9
-        Me._ApplySenseSettingsButton.Text = "&Apply"
-        Me._ApplySenseSettingsButton.UseVisualStyleBackColor = True
-        '
-        '_ImpedanceTabPage
-        '
-        Me._ImpedanceTabPage.Controls.Add(Me._HipotLayout)
-        Me._ImpedanceTabPage.Location = New System.Drawing.Point(4, 26)
-        Me._ImpedanceTabPage.Name = "_ImpedanceTabPage"
-        Me._ImpedanceTabPage.Size = New System.Drawing.Size(356, 270)
-        Me._ImpedanceTabPage.TabIndex = 6
-        Me._ImpedanceTabPage.Text = "Z"
-        Me._ImpedanceTabPage.UseVisualStyleBackColor = True
-        '
-        '_HipotLayout
-        '
-        Me._HipotLayout.ColumnCount = 3
-        Me._HipotLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._HipotLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me._HipotLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._HipotLayout.Controls.Add(Me._ImpedanceGroupBox, 1, 1)
-        Me._HipotLayout.Controls.Add(Me._CompensationGroupBox, 1, 2)
-        Me._HipotLayout.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._HipotLayout.Location = New System.Drawing.Point(0, 0)
-        Me._HipotLayout.Name = "_HipotLayout"
-        Me._HipotLayout.RowCount = 4
-        Me._HipotLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._HipotLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._HipotLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._HipotLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._HipotLayout.Size = New System.Drawing.Size(356, 270)
-        Me._HipotLayout.TabIndex = 3
-        '
-        '_ImpedanceGroupBox
-        '
-        Me._ImpedanceGroupBox.Controls.Add(Me._SourceToggle)
-        Me._ImpedanceGroupBox.Controls.Add(Me._ApplyImpedanceSettingsButton)
-        Me._ImpedanceGroupBox.Controls.Add(Me._LevelNumericLabel)
-        Me._ImpedanceGroupBox.Controls.Add(Me._LevelNumeric)
-        Me._ImpedanceGroupBox.Controls.Add(Me._HighFrequencyNumericLabel)
-        Me._ImpedanceGroupBox.Controls.Add(Me._LowFrequencyNumericLabel)
-        Me._ImpedanceGroupBox.Controls.Add(Me._HighFrequencyNumeric)
-        Me._ImpedanceGroupBox.Controls.Add(Me._LowFrequencyNumeric)
-        Me._ImpedanceGroupBox.Controls.Add(Me._ApertureNumeric)
-        Me._ImpedanceGroupBox.Controls.Add(Me._ApertureNumericLabel)
-        Me._ImpedanceGroupBox.Location = New System.Drawing.Point(36, 10)
-        Me._ImpedanceGroupBox.Name = "_ImpedanceGroupBox"
-        Me._ImpedanceGroupBox.Size = New System.Drawing.Size(283, 160)
-        Me._ImpedanceGroupBox.TabIndex = 2
-        Me._ImpedanceGroupBox.TabStop = False
-        Me._ImpedanceGroupBox.Text = "IMPEDANCE SETTINGS"
-        '
-        '_SourceToggle
-        '
-        Me._SourceToggle.Appearance = System.Windows.Forms.Appearance.Button
-        Me._SourceToggle.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me._SourceToggle.Location = New System.Drawing.Point(3, 41)
-        Me._SourceToggle.Name = "_SourceToggle"
-        Me._SourceToggle.Size = New System.Drawing.Size(109, 28)
-        Me._SourceToggle.TabIndex = 2
-        Me._SourceToggle.Text = "Source: Current"
-        Me._SourceToggle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        Me._SourceToggle.UseVisualStyleBackColor = True
-        '
-        '_ApplyImpedanceSettingsButton
-        '
-        Me._ApplyImpedanceSettingsButton.Location = New System.Drawing.Point(202, 126)
-        Me._ApplyImpedanceSettingsButton.Name = "_ApplyImpedanceSettingsButton"
-        Me._ApplyImpedanceSettingsButton.Size = New System.Drawing.Size(75, 28)
-        Me._ApplyImpedanceSettingsButton.TabIndex = 9
-        Me._ApplyImpedanceSettingsButton.Text = "Apply"
-        Me.TipsTooltip.SetToolTip(Me._ApplyImpedanceSettingsButton, "Configures an impedance measurement")
-        Me._ApplyImpedanceSettingsButton.UseVisualStyleBackColor = True
-        '
-        '_LevelNumericLabel
-        '
-        Me._LevelNumericLabel.AutoSize = True
-        Me._LevelNumericLabel.Location = New System.Drawing.Point(117, 47)
-        Me._LevelNumericLabel.Name = "_LevelNumericLabel"
-        Me._LevelNumericLabel.Size = New System.Drawing.Size(71, 17)
-        Me._LevelNumericLabel.TabIndex = 3
-        Me._LevelNumericLabel.Text = "Level [mA]:"
-        '
-        '_LevelNumeric
-        '
-        Me._LevelNumeric.Location = New System.Drawing.Point(191, 43)
-        Me._LevelNumeric.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
-        Me._LevelNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 196608})
-        Me._LevelNumeric.Name = "_LevelNumeric"
-        Me._LevelNumeric.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._LevelNumeric.Size = New System.Drawing.Size(85, 25)
-        Me._LevelNumeric.TabIndex = 4
-        Me._LevelNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._LevelNumeric.Value = New Decimal(New Integer() {5, 0, 0, 0})
-        '
-        '_HighFrequencyNumericLabel
-        '
-        Me._HighFrequencyNumericLabel.AutoSize = True
-        Me._HighFrequencyNumericLabel.Location = New System.Drawing.Point(60, 103)
-        Me._HighFrequencyNumericLabel.Name = "_HighFrequencyNumericLabel"
-        Me._HighFrequencyNumericLabel.Size = New System.Drawing.Size(128, 17)
-        Me._HighFrequencyNumericLabel.TabIndex = 7
-        Me._HighFrequencyNumericLabel.Text = "High Frequency [Hz]:"
+        Me._SweepGroupBox.Controls.Add(Me._LowFrequencyNumericLabel)
+        Me._SweepGroupBox.Controls.Add(Me._ApplySweepSettingsButton)
+        Me._SweepGroupBox.Controls.Add(Me._HighFrequencyNumeric)
+        Me._SweepGroupBox.Controls.Add(Me._LowFrequencyNumeric)
+        Me._SweepGroupBox.Controls.Add(Me._HighFrequencyNumericLabel)
+        Me._SweepGroupBox.Location = New System.Drawing.Point(44, 53)
+        Me._SweepGroupBox.Name = "_SweepGroupBox"
+        Me._SweepGroupBox.Size = New System.Drawing.Size(253, 128)
+        Me._SweepGroupBox.TabIndex = 17
+        Me._SweepGroupBox.TabStop = False
+        Me._SweepGroupBox.Text = "Sweep"
         '
         '_LowFrequencyNumericLabel
         '
         Me._LowFrequencyNumericLabel.AutoSize = True
-        Me._LowFrequencyNumericLabel.Location = New System.Drawing.Point(64, 75)
+        Me._LowFrequencyNumericLabel.Location = New System.Drawing.Point(25, 31)
         Me._LowFrequencyNumericLabel.Name = "_LowFrequencyNumericLabel"
         Me._LowFrequencyNumericLabel.Size = New System.Drawing.Size(124, 17)
-        Me._LowFrequencyNumericLabel.TabIndex = 5
+        Me._LowFrequencyNumericLabel.TabIndex = 12
         Me._LowFrequencyNumericLabel.Text = "Low Frequency [Hz]:"
+        '
+        '_ApplySweepSettingsButton
+        '
+        Me._ApplySweepSettingsButton.Location = New System.Drawing.Point(162, 90)
+        Me._ApplySweepSettingsButton.Name = "_ApplySweepSettingsButton"
+        Me._ApplySweepSettingsButton.Size = New System.Drawing.Size(75, 28)
+        Me._ApplySweepSettingsButton.TabIndex = 16
+        Me._ApplySweepSettingsButton.Text = "Apply"
+        Me.TipsTooltip.SetToolTip(Me._ApplySweepSettingsButton, "Configures an impedance measurement")
+        Me._ApplySweepSettingsButton.UseVisualStyleBackColor = True
         '
         '_HighFrequencyNumeric
         '
         Me._HighFrequencyNumeric.Increment = New Decimal(New Integer() {100000, 0, 0, 0})
-        Me._HighFrequencyNumeric.Location = New System.Drawing.Point(191, 99)
+        Me._HighFrequencyNumeric.Location = New System.Drawing.Point(152, 58)
         Me._HighFrequencyNumeric.Maximum = New Decimal(New Integer() {10000000, 0, 0, 0})
         Me._HighFrequencyNumeric.Minimum = New Decimal(New Integer() {20, 0, 0, 0})
         Me._HighFrequencyNumeric.Name = "_HighFrequencyNumeric"
         Me._HighFrequencyNumeric.Size = New System.Drawing.Size(85, 25)
-        Me._HighFrequencyNumeric.TabIndex = 8
+        Me._HighFrequencyNumeric.TabIndex = 15
         Me._HighFrequencyNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me._HighFrequencyNumeric.ThousandsSeparator = True
         Me._HighFrequencyNumeric.Value = New Decimal(New Integer() {10000000, 0, 0, 0})
@@ -819,291 +604,278 @@ Partial Class E4990Panel
         '_LowFrequencyNumeric
         '
         Me._LowFrequencyNumeric.Increment = New Decimal(New Integer() {100000, 0, 0, 0})
-        Me._LowFrequencyNumeric.Location = New System.Drawing.Point(191, 71)
+        Me._LowFrequencyNumeric.Location = New System.Drawing.Point(152, 27)
         Me._LowFrequencyNumeric.Maximum = New Decimal(New Integer() {10000000, 0, 0, 0})
         Me._LowFrequencyNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
         Me._LowFrequencyNumeric.Name = "_LowFrequencyNumeric"
         Me._LowFrequencyNumeric.Size = New System.Drawing.Size(85, 25)
-        Me._LowFrequencyNumeric.TabIndex = 6
+        Me._LowFrequencyNumeric.TabIndex = 13
         Me._LowFrequencyNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         Me._LowFrequencyNumeric.ThousandsSeparator = True
         Me._LowFrequencyNumeric.Value = New Decimal(New Integer() {1000000, 0, 0, 0})
         '
-        '_ApertureNumeric
+        '_HighFrequencyNumericLabel
         '
-        Me._ApertureNumeric.Location = New System.Drawing.Point(191, 15)
-        Me._ApertureNumeric.Maximum = New Decimal(New Integer() {5, 0, 0, 0})
-        Me._ApertureNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 131072})
-        Me._ApertureNumeric.Name = "_ApertureNumeric"
-        Me._ApertureNumeric.Size = New System.Drawing.Size(85, 25)
-        Me._ApertureNumeric.TabIndex = 1
-        Me._ApertureNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._ApertureNumeric.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        Me._HighFrequencyNumericLabel.AutoSize = True
+        Me._HighFrequencyNumericLabel.Location = New System.Drawing.Point(21, 62)
+        Me._HighFrequencyNumericLabel.Name = "_HighFrequencyNumericLabel"
+        Me._HighFrequencyNumericLabel.Size = New System.Drawing.Size(128, 17)
+        Me._HighFrequencyNumericLabel.TabIndex = 14
+        Me._HighFrequencyNumericLabel.Text = "High Frequency [Hz]:"
         '
-        '_ApertureNumericLabel
+        '_MarkersTabPage
         '
-        Me._ApertureNumericLabel.AutoSize = True
-        Me._ApertureNumericLabel.Location = New System.Drawing.Point(86, 19)
-        Me._ApertureNumericLabel.Name = "_ApertureNumericLabel"
-        Me._ApertureNumericLabel.Size = New System.Drawing.Size(102, 17)
-        Me._ApertureNumericLabel.TabIndex = 0
-        Me._ApertureNumericLabel.Text = "Aperture [NPLC]"
+        Me._MarkersTabPage.Controls.Add(Me._MarkersLayout)
+        Me._MarkersTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._MarkersTabPage.Name = "_MarkersTabPage"
+        Me._MarkersTabPage.Size = New System.Drawing.Size(348, 240)
+        Me._MarkersTabPage.TabIndex = 2
+        Me._MarkersTabPage.Text = "Markers"
+        Me._MarkersTabPage.UseVisualStyleBackColor = True
+        '
+        '_MarkersLayout
+        '
+        Me._MarkersLayout.ColumnCount = 3
+        Me._MarkersLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._MarkersLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me._MarkersLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._MarkersLayout.Controls.Add(Me._MarkersGroupBox, 1, 1)
+        Me._MarkersLayout.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._MarkersLayout.Location = New System.Drawing.Point(0, 0)
+        Me._MarkersLayout.Name = "_MarkersLayout"
+        Me._MarkersLayout.RowCount = 3
+        Me._MarkersLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._MarkersLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me._MarkersLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._MarkersLayout.Size = New System.Drawing.Size(348, 240)
+        Me._MarkersLayout.TabIndex = 3
+        '
+        '_MarkersGroupBox
+        '
+        Me._MarkersGroupBox.Controls.Add(Me._MarkerFrequencyComboBox)
+        Me._MarkersGroupBox.Controls.Add(Me._MarkerFrequencyComboBoxLabel)
+        Me._MarkersGroupBox.Controls.Add(Me._ApplyMarkerSettingsButton)
+        Me._MarkersGroupBox.Location = New System.Drawing.Point(34, 34)
+        Me._MarkersGroupBox.Name = "_MarkersGroupBox"
+        Me._MarkersGroupBox.Size = New System.Drawing.Size(279, 171)
+        Me._MarkersGroupBox.TabIndex = 4
+        Me._MarkersGroupBox.TabStop = False
+        Me._MarkersGroupBox.Text = "Markers"
+        '
+        '_MarkerFrequencyComboBox
+        '
+        Me._MarkerFrequencyComboBox.FormattingEnabled = True
+        Me._MarkerFrequencyComboBox.Location = New System.Drawing.Point(83, 95)
+        Me._MarkerFrequencyComboBox.Name = "_MarkerFrequencyComboBox"
+        Me._MarkerFrequencyComboBox.Size = New System.Drawing.Size(186, 25)
+        Me._MarkerFrequencyComboBox.TabIndex = 6
+        '
+        '_MarkerFrequencyComboBoxLabel
+        '
+        Me._MarkerFrequencyComboBoxLabel.AutoSize = True
+        Me._MarkerFrequencyComboBoxLabel.Location = New System.Drawing.Point(10, 99)
+        Me._MarkerFrequencyComboBoxLabel.Name = "_MarkerFrequencyComboBoxLabel"
+        Me._MarkerFrequencyComboBoxLabel.Size = New System.Drawing.Size(70, 17)
+        Me._MarkerFrequencyComboBoxLabel.TabIndex = 5
+        Me._MarkerFrequencyComboBoxLabel.Text = "Frequency:"
+        '
+        '_ApplyMarkerSettingsButton
+        '
+        Me._ApplyMarkerSettingsButton.Location = New System.Drawing.Point(194, 129)
+        Me._ApplyMarkerSettingsButton.Name = "_ApplyMarkerSettingsButton"
+        Me._ApplyMarkerSettingsButton.Size = New System.Drawing.Size(75, 28)
+        Me._ApplyMarkerSettingsButton.TabIndex = 2
+        Me._ApplyMarkerSettingsButton.Text = "Apply"
+        Me._ApplyMarkerSettingsButton.UseVisualStyleBackColor = True
+        '
+        '_CompensationTabPage
+        '
+        Me._CompensationTabPage.Controls.Add(Me._CalLayout)
+        Me._CompensationTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._CompensationTabPage.Name = "_CompensationTabPage"
+        Me._CompensationTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._CompensationTabPage.TabIndex = 6
+        Me._CompensationTabPage.Text = "Cal"
+        Me._CompensationTabPage.UseVisualStyleBackColor = True
+        '
+        '_CalLayout
+        '
+        Me._CalLayout.ColumnCount = 3
+        Me._CalLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._CalLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me._CalLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._CalLayout.Controls.Add(Me._CompensationGroupBox, 1, 1)
+        Me._CalLayout.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._CalLayout.Location = New System.Drawing.Point(0, 0)
+        Me._CalLayout.Name = "_CalLayout"
+        Me._CalLayout.RowCount = 3
+        Me._CalLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._CalLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me._CalLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._CalLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me._CalLayout.Size = New System.Drawing.Size(356, 270)
+        Me._CalLayout.TabIndex = 3
         '
         '_CompensationGroupBox
         '
-        Me._CompensationGroupBox.Controls.Add(Me._ComopensationTextBox)
-        Me._CompensationGroupBox.Controls.Add(Me._ShortButton)
-        Me._CompensationGroupBox.Controls.Add(Me._OpenButton)
-        Me._CompensationGroupBox.Location = New System.Drawing.Point(36, 176)
+        Me._CompensationGroupBox.Controls.Add(Me._AdapterComboBox)
+        Me._CompensationGroupBox.Controls.Add(Me._AdapterComboBoxLabel)
+        Me._CompensationGroupBox.Controls.Add(Me._AcquireCompensationButton)
+        Me._CompensationGroupBox.Controls.Add(Me._LoadCompensationTextBoxLabel)
+        Me._CompensationGroupBox.Controls.Add(Me._ShortCompensationTextBoxLabel)
+        Me._CompensationGroupBox.Controls.Add(Me._OpenCompensationTextBoxLabel)
+        Me._CompensationGroupBox.Controls.Add(Me._FrequencyStimulusTextBox)
+        Me._CompensationGroupBox.Controls.Add(Me._FrequencyStimulusTextBoxLabel)
+        Me._CompensationGroupBox.Controls.Add(Me._LoadCompensationTextBox)
+        Me._CompensationGroupBox.Controls.Add(Me._ShortCompensationTextBox)
+        Me._CompensationGroupBox.Controls.Add(Me._OpenCompensationTextBox)
+        Me._CompensationGroupBox.Controls.Add(Me._ApplyLoadButton)
+        Me._CompensationGroupBox.Controls.Add(Me._ApplyShortButton)
+        Me._CompensationGroupBox.Controls.Add(Me._ApplyOpenButton)
+        Me._CompensationGroupBox.Location = New System.Drawing.Point(36, 16)
         Me._CompensationGroupBox.Name = "_CompensationGroupBox"
-        Me._CompensationGroupBox.Size = New System.Drawing.Size(283, 84)
-        Me._CompensationGroupBox.TabIndex = 3
+        Me._CompensationGroupBox.Size = New System.Drawing.Size(283, 237)
+        Me._CompensationGroupBox.TabIndex = 0
         Me._CompensationGroupBox.TabStop = False
         Me._CompensationGroupBox.Text = "Compensation"
         '
-        '_ComopensationTextBox
+        '_AdapterComboBox
         '
-        Me._ComopensationTextBox.Location = New System.Drawing.Point(89, 24)
-        Me._ComopensationTextBox.Multiline = True
-        Me._ComopensationTextBox.Name = "_ComopensationTextBox"
-        Me._ComopensationTextBox.Size = New System.Drawing.Size(187, 52)
-        Me._ComopensationTextBox.TabIndex = 2
+        Me._AdapterComboBox.Location = New System.Drawing.Point(164, 202)
+        Me._AdapterComboBox.Name = "_AdapterComboBox"
+        Me._AdapterComboBox.Size = New System.Drawing.Size(108, 25)
+        Me._AdapterComboBox.TabIndex = 10
         '
-        '_ShortButton
+        '_AdapterComboBoxLabel
         '
-        Me._ShortButton.Location = New System.Drawing.Point(6, 51)
-        Me._ShortButton.Name = "_ShortButton"
-        Me._ShortButton.Size = New System.Drawing.Size(75, 28)
-        Me._ShortButton.TabIndex = 1
-        Me._ShortButton.Text = "Short"
-        Me.TipsTooltip.SetToolTip(Me._ShortButton, "Acquire short compensation")
-        Me._ShortButton.UseVisualStyleBackColor = True
+        Me._AdapterComboBoxLabel.AutoSize = True
+        Me._AdapterComboBoxLabel.Location = New System.Drawing.Point(103, 206)
+        Me._AdapterComboBoxLabel.Name = "_AdapterComboBoxLabel"
+        Me._AdapterComboBoxLabel.Size = New System.Drawing.Size(58, 17)
+        Me._AdapterComboBoxLabel.TabIndex = 9
+        Me._AdapterComboBoxLabel.Text = "Adapter:"
         '
-        '_OpenButton
+        '_AcquireCompensationButton
         '
-        Me._OpenButton.Location = New System.Drawing.Point(6, 21)
-        Me._OpenButton.Name = "_OpenButton"
-        Me._OpenButton.Size = New System.Drawing.Size(75, 28)
-        Me._OpenButton.TabIndex = 0
-        Me._OpenButton.Text = "Open"
-        Me._OpenButton.UseVisualStyleBackColor = True
+        Me._AcquireCompensationButton.Location = New System.Drawing.Point(6, 201)
+        Me._AcquireCompensationButton.Name = "_AcquireCompensationButton"
+        Me._AcquireCompensationButton.Size = New System.Drawing.Size(55, 26)
+        Me._AcquireCompensationButton.TabIndex = 8
+        Me._AcquireCompensationButton.Text = "New"
+        Me.TipsTooltip.SetToolTip(Me._AcquireCompensationButton, "Acquire a new compensation of validate existing compensation")
+        Me._AcquireCompensationButton.UseVisualStyleBackColor = True
         '
-        '_SotTabPage
+        '_LoadCompensationTextBoxLabel
         '
-        Me._SotTabPage.Controls.Add(Me._BinningLayout)
-        Me._SotTabPage.Location = New System.Drawing.Point(4, 26)
-        Me._SotTabPage.Name = "_SotTabPage"
-        Me._SotTabPage.Size = New System.Drawing.Size(356, 270)
-        Me._SotTabPage.TabIndex = 2
-        Me._SotTabPage.Text = "SOT"
-        Me._SotTabPage.UseVisualStyleBackColor = True
+        Me._LoadCompensationTextBoxLabel.AutoSize = True
+        Me._LoadCompensationTextBoxLabel.Location = New System.Drawing.Point(20, 149)
+        Me._LoadCompensationTextBoxLabel.Name = "_LoadCompensationTextBoxLabel"
+        Me._LoadCompensationTextBoxLabel.Size = New System.Drawing.Size(40, 17)
+        Me._LoadCompensationTextBoxLabel.TabIndex = 7
+        Me._LoadCompensationTextBoxLabel.Text = "Load:"
         '
-        '_BinningLayout
+        '_ShortCompensationTextBoxLabel
         '
-        Me._BinningLayout.ColumnCount = 3
-        Me._BinningLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._BinningLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me._BinningLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._BinningLayout.Controls.Add(Me._TriggerToolStrip, 1, 3)
-        Me._BinningLayout.Controls.Add(Me._BinningGroupBox, 1, 1)
-        Me._BinningLayout.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._BinningLayout.Location = New System.Drawing.Point(0, 0)
-        Me._BinningLayout.Name = "_BinningLayout"
-        Me._BinningLayout.RowCount = 5
-        Me._BinningLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
-        Me._BinningLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._BinningLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
-        Me._BinningLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._BinningLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333!))
-        Me._BinningLayout.Size = New System.Drawing.Size(356, 270)
-        Me._BinningLayout.TabIndex = 0
+        Me._ShortCompensationTextBoxLabel.AutoSize = True
+        Me._ShortCompensationTextBoxLabel.Location = New System.Drawing.Point(18, 100)
+        Me._ShortCompensationTextBoxLabel.Name = "_ShortCompensationTextBoxLabel"
+        Me._ShortCompensationTextBoxLabel.Size = New System.Drawing.Size(42, 17)
+        Me._ShortCompensationTextBoxLabel.TabIndex = 5
+        Me._ShortCompensationTextBoxLabel.Text = "Short:"
         '
-        '_TriggerToolStrip
+        '_OpenCompensationTextBoxLabel
         '
-        Me._TriggerToolStrip.Dock = System.Windows.Forms.DockStyle.None
-        Me._TriggerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._AwaitTriggerToolStripButton, Me._WaitHourglassLabel, Me._AssertTriggerToolStripButton, Me._TriggerActionToolStripLabel})
-        Me._TriggerToolStrip.Location = New System.Drawing.Point(13, 219)
-        Me._TriggerToolStrip.Name = "_TriggerToolStrip"
-        Me._TriggerToolStrip.Size = New System.Drawing.Size(270, 25)
-        Me._TriggerToolStrip.Stretch = True
-        Me._TriggerToolStrip.TabIndex = 6
-        Me._TriggerToolStrip.Text = "Trigger Tool Strip"
+        Me._OpenCompensationTextBoxLabel.AutoSize = True
+        Me._OpenCompensationTextBoxLabel.Location = New System.Drawing.Point(17, 52)
+        Me._OpenCompensationTextBoxLabel.Name = "_OpenCompensationTextBoxLabel"
+        Me._OpenCompensationTextBoxLabel.Size = New System.Drawing.Size(43, 17)
+        Me._OpenCompensationTextBoxLabel.TabIndex = 3
+        Me._OpenCompensationTextBoxLabel.Text = "Open:"
         '
-        '_AwaitTriggerToolStripButton
+        '_FrequencyStimulusTextBox
         '
-        Me._AwaitTriggerToolStripButton.CheckOnClick = True
-        Me._AwaitTriggerToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._AwaitTriggerToolStripButton.Image = CType(resources.GetObject("_AwaitTriggerToolStripButton.Image"), System.Drawing.Image)
-        Me._AwaitTriggerToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._AwaitTriggerToolStripButton.Name = "_AwaitTriggerToolStripButton"
-        Me._AwaitTriggerToolStripButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
-        Me._AwaitTriggerToolStripButton.Size = New System.Drawing.Size(34, 22)
-        Me._AwaitTriggerToolStripButton.Text = "Arm"
-        Me._AwaitTriggerToolStripButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText
-        Me._AwaitTriggerToolStripButton.ToolTipText = "Depress to wait for trigger or release to abort."
+        Me._FrequencyStimulusTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.isr.VI.E4990.My.MySettings.Default, "FrequencyArrayReading", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me._FrequencyStimulusTextBox.Location = New System.Drawing.Point(63, 22)
+        Me._FrequencyStimulusTextBox.Name = "_FrequencyStimulusTextBox"
+        Me._FrequencyStimulusTextBox.ReadOnly = True
+        Me._FrequencyStimulusTextBox.Size = New System.Drawing.Size(211, 25)
+        Me._FrequencyStimulusTextBox.TabIndex = 1
+        Me._FrequencyStimulusTextBox.Text = Global.isr.VI.E4990.My.MySettings.Default.FrequencyArrayReading
+        Me.TipsTooltip.SetToolTip(Me._FrequencyStimulusTextBox, "Compensation frequencies")
         '
-        '_WaitHourglassLabel
+        '_FrequencyStimulusTextBoxLabel
         '
-        Me._WaitHourglassLabel.Name = "_WaitHourglassLabel"
-        Me._WaitHourglassLabel.Size = New System.Drawing.Size(20, 22)
-        Me._WaitHourglassLabel.Text = "[-]"
-        Me._WaitHourglassLabel.ToolTipText = "Waiting for trigger"
+        Me._FrequencyStimulusTextBoxLabel.AutoSize = True
+        Me._FrequencyStimulusTextBoxLabel.Location = New System.Drawing.Point(17, 26)
+        Me._FrequencyStimulusTextBoxLabel.Name = "_FrequencyStimulusTextBoxLabel"
+        Me._FrequencyStimulusTextBoxLabel.Size = New System.Drawing.Size(44, 17)
+        Me._FrequencyStimulusTextBoxLabel.TabIndex = 0
+        Me._FrequencyStimulusTextBoxLabel.Text = "F [Hz]:"
         '
-        '_AssertTriggerToolStripButton
+        '_LoadCompensationTextBox
         '
-        Me._AssertTriggerToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._AssertTriggerToolStripButton.Image = CType(resources.GetObject("_AssertTriggerToolStripButton.Image"), System.Drawing.Image)
-        Me._AssertTriggerToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._AssertTriggerToolStripButton.Margin = New System.Windows.Forms.Padding(6, 1, 0, 2)
-        Me._AssertTriggerToolStripButton.Name = "_AssertTriggerToolStripButton"
-        Me._AssertTriggerToolStripButton.Size = New System.Drawing.Size(38, 22)
-        Me._AssertTriggerToolStripButton.Text = "*TRG"
+        Me._LoadCompensationTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.isr.VI.E4990.My.MySettings.Default, "LoadCompensationReading", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me._LoadCompensationTextBox.Location = New System.Drawing.Point(62, 149)
+        Me._LoadCompensationTextBox.Multiline = True
+        Me._LoadCompensationTextBox.Name = "_LoadCompensationTextBox"
+        Me._LoadCompensationTextBox.ReadOnly = True
+        Me._LoadCompensationTextBox.Size = New System.Drawing.Size(212, 45)
+        Me._LoadCompensationTextBox.TabIndex = 3
+        Me._LoadCompensationTextBox.Text = Global.isr.VI.E4990.My.MySettings.Default.LoadCompensationReading
+        Me.TipsTooltip.SetToolTip(Me._LoadCompensationTextBox, "Load compensation values")
         '
-        '_TriggerActionToolStripLabel
+        '_ShortCompensationTextBox
         '
-        Me._TriggerActionToolStripLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._TriggerActionToolStripLabel.Name = "_TriggerActionToolStripLabel"
-        Me._TriggerActionToolStripLabel.Size = New System.Drawing.Size(160, 22)
-        Me._TriggerActionToolStripLabel.Text = "Click wait to 'Arm' for trigger"
-        Me._TriggerActionToolStripLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me._ShortCompensationTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.isr.VI.E4990.My.MySettings.Default, "ShortCompensationReading", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me._ShortCompensationTextBox.Location = New System.Drawing.Point(62, 100)
+        Me._ShortCompensationTextBox.Multiline = True
+        Me._ShortCompensationTextBox.Name = "_ShortCompensationTextBox"
+        Me._ShortCompensationTextBox.ReadOnly = True
+        Me._ShortCompensationTextBox.Size = New System.Drawing.Size(212, 45)
+        Me._ShortCompensationTextBox.TabIndex = 3
+        Me._ShortCompensationTextBox.Text = Global.isr.VI.E4990.My.MySettings.Default.ShortCompensationReading
+        Me.TipsTooltip.SetToolTip(Me._ShortCompensationTextBox, "Short compensation values")
         '
-        '_BinningGroupBox
+        '_OpenCompensationTextBox
         '
-        Me._BinningGroupBox.Controls.Add(Me._ArmComboBoxLabel)
-        Me._BinningGroupBox.Controls.Add(Me._ArmSourceComboBox)
-        Me._BinningGroupBox.Controls.Add(Me._ApplySotSettingsButton)
-        Me._BinningGroupBox.Controls.Add(Me._ContactCheckSupportLabel)
-        Me._BinningGroupBox.Controls.Add(Me._FailBitPatternNumeric)
-        Me._BinningGroupBox.Controls.Add(Me._PassBitPatternNumeric)
-        Me._BinningGroupBox.Controls.Add(Me._ContactCheckBitPatternNumeric)
-        Me._BinningGroupBox.Controls.Add(Me._FailBitPatternNumericLabel)
-        Me._BinningGroupBox.Controls.Add(Me._PassBitPatternNumericLabel)
-        Me._BinningGroupBox.Controls.Add(Me._ContactCheckBitPatternNumericLabel)
-        Me._BinningGroupBox.Controls.Add(Me._EotStrobeDurationNumericLabel)
-        Me._BinningGroupBox.Controls.Add(Me._EotStrobeDurationNumeric)
-        Me._BinningGroupBox.Location = New System.Drawing.Point(16, 29)
-        Me._BinningGroupBox.Name = "_BinningGroupBox"
-        Me._BinningGroupBox.Size = New System.Drawing.Size(323, 161)
-        Me._BinningGroupBox.TabIndex = 2
-        Me._BinningGroupBox.TabStop = False
-        Me._BinningGroupBox.Text = "SOT, EOT, BINNING"
+        Me._OpenCompensationTextBox.DataBindings.Add(New System.Windows.Forms.Binding("Text", Global.isr.VI.E4990.My.MySettings.Default, "OpenCompensationReading", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
+        Me._OpenCompensationTextBox.Location = New System.Drawing.Point(62, 51)
+        Me._OpenCompensationTextBox.Multiline = True
+        Me._OpenCompensationTextBox.Name = "_OpenCompensationTextBox"
+        Me._OpenCompensationTextBox.ReadOnly = True
+        Me._OpenCompensationTextBox.Size = New System.Drawing.Size(212, 45)
+        Me._OpenCompensationTextBox.TabIndex = 2
+        Me._OpenCompensationTextBox.Text = Global.isr.VI.E4990.My.MySettings.Default.OpenCompensationReading
+        Me.TipsTooltip.SetToolTip(Me._OpenCompensationTextBox, "Open compensation data")
         '
-        '_ArmComboBoxLabel
+        '_ApplyLoadButton
         '
-        Me._ArmComboBoxLabel.AutoSize = True
-        Me._ArmComboBoxLabel.Location = New System.Drawing.Point(73, 23)
-        Me._ArmComboBoxLabel.Name = "_ArmComboBoxLabel"
-        Me._ArmComboBoxLabel.Size = New System.Drawing.Size(91, 17)
-        Me._ArmComboBoxLabel.TabIndex = 0
-        Me._ArmComboBoxLabel.Text = "Trigger signal:"
+        Me._ApplyLoadButton.Location = New System.Drawing.Point(6, 168)
+        Me._ApplyLoadButton.Name = "_ApplyLoadButton"
+        Me._ApplyLoadButton.Size = New System.Drawing.Size(55, 26)
+        Me._ApplyLoadButton.TabIndex = 6
+        Me._ApplyLoadButton.Text = "Apply"
+        Me._ApplyLoadButton.UseVisualStyleBackColor = True
         '
-        '_ArmSourceComboBox
+        '_ApplyShortButton
         '
-        Me._ArmSourceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me._ArmSourceComboBox.FormattingEnabled = True
-        Me._ArmSourceComboBox.Location = New System.Drawing.Point(167, 19)
-        Me._ArmSourceComboBox.Name = "_ArmSourceComboBox"
-        Me._ArmSourceComboBox.Size = New System.Drawing.Size(149, 25)
-        Me._ArmSourceComboBox.TabIndex = 1
-        Me.TipsTooltip.SetToolTip(Me._ArmSourceComboBox, "Available trigger modes")
+        Me._ApplyShortButton.Location = New System.Drawing.Point(6, 119)
+        Me._ApplyShortButton.Name = "_ApplyShortButton"
+        Me._ApplyShortButton.Size = New System.Drawing.Size(55, 26)
+        Me._ApplyShortButton.TabIndex = 4
+        Me._ApplyShortButton.Text = "Apply"
+        Me.TipsTooltip.SetToolTip(Me._ApplyShortButton, "Sense the short compensation values to the instrument")
+        Me._ApplyShortButton.UseVisualStyleBackColor = True
         '
-        '_ApplySotSettingsButton
+        '_ApplyOpenButton
         '
-        Me._ApplySotSettingsButton.Location = New System.Drawing.Point(253, 124)
-        Me._ApplySotSettingsButton.Name = "_ApplySotSettingsButton"
-        Me._ApplySotSettingsButton.Size = New System.Drawing.Size(57, 28)
-        Me._ApplySotSettingsButton.TabIndex = 11
-        Me._ApplySotSettingsButton.Text = "Apply"
-        Me._ApplySotSettingsButton.UseVisualStyleBackColor = True
-        '
-        '_ContactCheckSupportLabel
-        '
-        Me._ContactCheckSupportLabel.AutoSize = True
-        Me._ContactCheckSupportLabel.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._ContactCheckSupportLabel.Location = New System.Drawing.Point(3, 141)
-        Me._ContactCheckSupportLabel.Name = "_ContactCheckSupportLabel"
-        Me._ContactCheckSupportLabel.Size = New System.Drawing.Size(0, 17)
-        Me._ContactCheckSupportLabel.TabIndex = 9
-        Me._ContactCheckSupportLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        '_FailBitPatternNumeric
-        '
-        Me._FailBitPatternNumeric.Location = New System.Drawing.Point(167, 100)
-        Me._FailBitPatternNumeric.Maximum = New Decimal(New Integer() {7, 0, 0, 0})
-        Me._FailBitPatternNumeric.Name = "_FailBitPatternNumeric"
-        Me._FailBitPatternNumeric.Size = New System.Drawing.Size(35, 25)
-        Me._FailBitPatternNumeric.TabIndex = 7
-        Me._FailBitPatternNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._FailBitPatternNumeric.Value = New Decimal(New Integer() {4, 0, 0, 0})
-        '
-        '_PassBitPatternNumeric
-        '
-        Me._PassBitPatternNumeric.Location = New System.Drawing.Point(167, 73)
-        Me._PassBitPatternNumeric.Maximum = New Decimal(New Integer() {7, 0, 0, 0})
-        Me._PassBitPatternNumeric.Name = "_PassBitPatternNumeric"
-        Me._PassBitPatternNumeric.Size = New System.Drawing.Size(35, 25)
-        Me._PassBitPatternNumeric.TabIndex = 5
-        Me._PassBitPatternNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._PassBitPatternNumeric.Value = New Decimal(New Integer() {1, 0, 0, 0})
-        '
-        '_ContactCheckBitPatternNumeric
-        '
-        Me._ContactCheckBitPatternNumeric.Location = New System.Drawing.Point(167, 127)
-        Me._ContactCheckBitPatternNumeric.Maximum = New Decimal(New Integer() {7, 0, 0, 0})
-        Me._ContactCheckBitPatternNumeric.Name = "_ContactCheckBitPatternNumeric"
-        Me._ContactCheckBitPatternNumeric.Size = New System.Drawing.Size(35, 25)
-        Me._ContactCheckBitPatternNumeric.TabIndex = 9
-        Me._ContactCheckBitPatternNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._ContactCheckBitPatternNumeric.Value = New Decimal(New Integer() {2, 0, 0, 0})
-        '
-        '_FailBitPatternNumericLabel
-        '
-        Me._FailBitPatternNumericLabel.AutoSize = True
-        Me._FailBitPatternNumericLabel.Location = New System.Drawing.Point(69, 104)
-        Me._FailBitPatternNumericLabel.Name = "_FailBitPatternNumericLabel"
-        Me._FailBitPatternNumericLabel.Size = New System.Drawing.Size(95, 17)
-        Me._FailBitPatternNumericLabel.TabIndex = 6
-        Me._FailBitPatternNumericLabel.Text = "Fail bit pattern:"
-        Me._FailBitPatternNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        '_PassBitPatternNumericLabel
-        '
-        Me._PassBitPatternNumericLabel.AutoSize = True
-        Me._PassBitPatternNumericLabel.Location = New System.Drawing.Point(62, 77)
-        Me._PassBitPatternNumericLabel.Name = "_PassBitPatternNumericLabel"
-        Me._PassBitPatternNumericLabel.Size = New System.Drawing.Size(102, 17)
-        Me._PassBitPatternNumericLabel.TabIndex = 4
-        Me._PassBitPatternNumericLabel.Text = "Pass bit pattern:"
-        Me._PassBitPatternNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        '_ContactCheckBitPatternNumericLabel
-        '
-        Me._ContactCheckBitPatternNumericLabel.AutoSize = True
-        Me._ContactCheckBitPatternNumericLabel.Location = New System.Drawing.Point(8, 131)
-        Me._ContactCheckBitPatternNumericLabel.Name = "_ContactCheckBitPatternNumericLabel"
-        Me._ContactCheckBitPatternNumericLabel.Size = New System.Drawing.Size(156, 17)
-        Me._ContactCheckBitPatternNumericLabel.TabIndex = 8
-        Me._ContactCheckBitPatternNumericLabel.Text = "Contact check bit pattern:"
-        Me._ContactCheckBitPatternNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        '_EotStrobeDurationNumericLabel
-        '
-        Me._EotStrobeDurationNumericLabel.AutoSize = True
-        Me._EotStrobeDurationNumericLabel.Location = New System.Drawing.Point(4, 50)
-        Me._EotStrobeDurationNumericLabel.Name = "_EotStrobeDurationNumericLabel"
-        Me._EotStrobeDurationNumericLabel.Size = New System.Drawing.Size(160, 17)
-        Me._EotStrobeDurationNumericLabel.TabIndex = 2
-        Me._EotStrobeDurationNumericLabel.Text = "EOT Strobe duration [mS]:"
-        '
-        '_EotStrobeDurationNumeric
-        '
-        Me._EotStrobeDurationNumeric.DecimalPlaces = 3
-        Me._EotStrobeDurationNumeric.Location = New System.Drawing.Point(167, 46)
-        Me._EotStrobeDurationNumeric.Name = "_EotStrobeDurationNumeric"
-        Me._EotStrobeDurationNumeric.Size = New System.Drawing.Size(71, 25)
-        Me._EotStrobeDurationNumeric.TabIndex = 3
-        Me._EotStrobeDurationNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._EotStrobeDurationNumeric.Value = New Decimal(New Integer() {1, 0, 0, 131072})
+        Me._ApplyOpenButton.Location = New System.Drawing.Point(6, 70)
+        Me._ApplyOpenButton.Name = "_ApplyOpenButton"
+        Me._ApplyOpenButton.Size = New System.Drawing.Size(55, 26)
+        Me._ApplyOpenButton.TabIndex = 2
+        Me._ApplyOpenButton.Text = "Apply"
+        Me.TipsTooltip.SetToolTip(Me._ApplyOpenButton, "Sense the open compensation values to the instrument")
+        Me._ApplyOpenButton.UseVisualStyleBackColor = True
         '
         '_ReadWriteTabPage
         '
@@ -1255,6 +1027,97 @@ Partial Class E4990Panel
         Me._TitleLabel.Text = "KE4990"
         Me._TitleLabel.UseMnemonic = False
         '
+        '_TraceTabPage
+        '
+        Me._TraceTabPage.Controls.Add(Me._TraceLayout)
+        Me._TraceTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._TraceTabPage.Name = "_TraceTabPage"
+        Me._TraceTabPage.Size = New System.Drawing.Size(348, 240)
+        Me._TraceTabPage.TabIndex = 3
+        Me._TraceTabPage.Text = "Trace"
+        Me._TraceTabPage.UseVisualStyleBackColor = True
+        '
+        '_TraceLayout
+        '
+        Me._TraceLayout.ColumnCount = 3
+        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.522124!))
+        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 92.47787!))
+        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me._TraceLayout.Controls.Add(Me._TraceGroupBox, 1, 1)
+        Me._TraceLayout.Location = New System.Drawing.Point(13, 13)
+        Me._TraceLayout.Name = "_TraceLayout"
+        Me._TraceLayout.RowCount = 3
+        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.54839!))
+        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 81.45161!))
+        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me._TraceLayout.Size = New System.Drawing.Size(308, 215)
+        Me._TraceLayout.TabIndex = 0
+        '
+        '_TraceGroupBox
+        '
+        Me._TraceGroupBox.Controls.Add(Me._ApplyTracesButton)
+        Me._TraceGroupBox.Controls.Add(Me._PrimaryTraceParameterComboBox)
+        Me._TraceGroupBox.Controls.Add(Me._PrimaryTraceParameterComboBoxLabel)
+        Me._TraceGroupBox.Controls.Add(Me._SecondaryTraceParameterComboBoxLabel)
+        Me._TraceGroupBox.Controls.Add(Me._SecondaryTraceParameterComboBox)
+        Me._TraceGroupBox.Location = New System.Drawing.Point(24, 39)
+        Me._TraceGroupBox.Name = "_TraceGroupBox"
+        Me._TraceGroupBox.Size = New System.Drawing.Size(255, 143)
+        Me._TraceGroupBox.TabIndex = 1
+        Me._TraceGroupBox.TabStop = False
+        Me._TraceGroupBox.Text = "Traces"
+        '
+        '_PrimaryTraceParameterComboBox
+        '
+        Me._PrimaryTraceParameterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me._PrimaryTraceParameterComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._PrimaryTraceParameterComboBox.Items.AddRange(New Object() {"I", "V"})
+        Me._PrimaryTraceParameterComboBox.Location = New System.Drawing.Point(83, 31)
+        Me._PrimaryTraceParameterComboBox.Name = "_PrimaryTraceParameterComboBox"
+        Me._PrimaryTraceParameterComboBox.Size = New System.Drawing.Size(163, 25)
+        Me._PrimaryTraceParameterComboBox.TabIndex = 4
+        Me.TipsTooltip.SetToolTip(Me._PrimaryTraceParameterComboBox, "Parameter of the primary trace")
+        '
+        '_PrimaryTraceParameterComboBoxLabel
+        '
+        Me._PrimaryTraceParameterComboBoxLabel.AutoSize = True
+        Me._PrimaryTraceParameterComboBoxLabel.Location = New System.Drawing.Point(25, 35)
+        Me._PrimaryTraceParameterComboBoxLabel.Name = "_PrimaryTraceParameterComboBoxLabel"
+        Me._PrimaryTraceParameterComboBoxLabel.Size = New System.Drawing.Size(55, 17)
+        Me._PrimaryTraceParameterComboBoxLabel.TabIndex = 2
+        Me._PrimaryTraceParameterComboBoxLabel.Text = "Primary:"
+        Me._PrimaryTraceParameterComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        '_SecondaryTraceParameterComboBoxLabel
+        '
+        Me._SecondaryTraceParameterComboBoxLabel.AutoSize = True
+        Me._SecondaryTraceParameterComboBoxLabel.Location = New System.Drawing.Point(8, 69)
+        Me._SecondaryTraceParameterComboBoxLabel.Name = "_SecondaryTraceParameterComboBoxLabel"
+        Me._SecondaryTraceParameterComboBoxLabel.Size = New System.Drawing.Size(72, 17)
+        Me._SecondaryTraceParameterComboBoxLabel.TabIndex = 3
+        Me._SecondaryTraceParameterComboBoxLabel.Text = "Secondary:"
+        Me._SecondaryTraceParameterComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        '_SecondaryTraceParameterComboBox
+        '
+        Me._SecondaryTraceParameterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me._SecondaryTraceParameterComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._SecondaryTraceParameterComboBox.Items.AddRange(New Object() {"I", "V"})
+        Me._SecondaryTraceParameterComboBox.Location = New System.Drawing.Point(83, 65)
+        Me._SecondaryTraceParameterComboBox.Name = "_SecondaryTraceParameterComboBox"
+        Me._SecondaryTraceParameterComboBox.Size = New System.Drawing.Size(162, 25)
+        Me._SecondaryTraceParameterComboBox.TabIndex = 5
+        Me.TipsTooltip.SetToolTip(Me._SecondaryTraceParameterComboBox, "Parameter of the secondary trace")
+        '
+        '_ApplyTracesButton
+        '
+        Me._ApplyTracesButton.Location = New System.Drawing.Point(170, 104)
+        Me._ApplyTracesButton.Name = "_ApplyTracesButton"
+        Me._ApplyTracesButton.Size = New System.Drawing.Size(75, 28)
+        Me._ApplyTracesButton.TabIndex = 6
+        Me._ApplyTracesButton.Text = "Apply"
+        Me._ApplyTracesButton.UseVisualStyleBackColor = True
+        '
         'E4990Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -1272,36 +1135,29 @@ Partial Class E4990Panel
         Me._SystemToolStrip.PerformLayout()
         Me._SourceTabPage.ResumeLayout(False)
         Me._SourceTabPage.PerformLayout()
-        CType(Me._TriggerDelayNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._SourceLimitNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._SourceLevelNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._SourceRangeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._SourceDelayNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        Me._SenseTabPage.ResumeLayout(False)
-        Me._SenseTabPage.PerformLayout()
-        CType(Me._SenseRangeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._NplcNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        Me._ImpedanceTabPage.ResumeLayout(False)
-        Me._HipotLayout.ResumeLayout(False)
-        Me._ImpedanceGroupBox.ResumeLayout(False)
-        Me._ImpedanceGroupBox.PerformLayout()
         CType(Me._LevelNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._SenseTabPage.ResumeLayout(False)
+        Me._SenseTabControl.ResumeLayout(False)
+        Me._AverageTabPage.ResumeLayout(False)
+        Me._AveragingLayout.ResumeLayout(False)
+        Me._AveragingGroupBox.ResumeLayout(False)
+        Me._AveragingGroupBox.PerformLayout()
+        CType(Me._ApertureNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me._AveragingCountNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._SweepTabPage.ResumeLayout(False)
+        Me._SweepLayout.ResumeLayout(False)
+        Me._SweepGroupBox.ResumeLayout(False)
+        Me._SweepGroupBox.PerformLayout()
         CType(Me._HighFrequencyNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._LowFrequencyNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._ApertureNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._MarkersTabPage.ResumeLayout(False)
+        Me._MarkersLayout.ResumeLayout(False)
+        Me._MarkersGroupBox.ResumeLayout(False)
+        Me._MarkersGroupBox.PerformLayout()
+        Me._CompensationTabPage.ResumeLayout(False)
+        Me._CalLayout.ResumeLayout(False)
         Me._CompensationGroupBox.ResumeLayout(False)
         Me._CompensationGroupBox.PerformLayout()
-        Me._SotTabPage.ResumeLayout(False)
-        Me._BinningLayout.ResumeLayout(False)
-        Me._BinningLayout.PerformLayout()
-        Me._TriggerToolStrip.ResumeLayout(False)
-        Me._TriggerToolStrip.PerformLayout()
-        Me._BinningGroupBox.ResumeLayout(False)
-        Me._BinningGroupBox.PerformLayout()
-        CType(Me._FailBitPatternNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._PassBitPatternNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._ContactCheckBitPatternNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._EotStrobeDurationNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         Me._ReadWriteTabPage.ResumeLayout(False)
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
@@ -1310,6 +1166,10 @@ Partial Class E4990Panel
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
+        Me._TraceTabPage.ResumeLayout(False)
+        Me._TraceLayout.ResumeLayout(False)
+        Me._TraceGroupBox.ResumeLayout(False)
+        Me._TraceGroupBox.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1318,16 +1178,9 @@ Partial Class E4990Panel
     Private WithEvents _ReadingComboBox As System.Windows.Forms.ComboBox
     Private WithEvents _ReadButton As System.Windows.Forms.Button
     Private WithEvents _InitiateButton As System.Windows.Forms.Button
-    Private WithEvents _SotTabPage As System.Windows.Forms.TabPage
     Private WithEvents _SourceTabPage As System.Windows.Forms.TabPage
     Private WithEvents _SenseTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _ApplySenseSettingsButton As System.Windows.Forms.Button
     Private WithEvents _MessagesTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _SenseAutoRangeToggle As System.Windows.Forms.CheckBox
-    Private WithEvents _SenseFunctionComboBox As System.Windows.Forms.ComboBox
-    Private WithEvents _SenseFunctionComboBoxLabel As System.Windows.Forms.Label
-    Private WithEvents _NplcNumericLabel As System.Windows.Forms.Label
-    Private WithEvents _SenseRangeNumericLabel As System.Windows.Forms.Label
     Private WithEvents _ReadingComboBoxLabel As System.Windows.Forms.Label
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
@@ -1336,16 +1189,11 @@ Partial Class E4990Panel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _TbdToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _LastReadingTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _SenseRangeNumeric As System.Windows.Forms.NumericUpDown
-    Private WithEvents _NplcNumeric As System.Windows.Forms.NumericUpDown
     Private WithEvents _Panel As System.Windows.Forms.Panel
     Private WithEvents _Layout As System.Windows.Forms.TableLayoutPanel
     Private WithEvents _TitleLabel As System.Windows.Forms.Label
-    Private WithEvents _sourceDelayTextBoxLabel As Windows.Forms.Label
     Private WithEvents _ApplySourceSettingButton As Windows.Forms.Button
-    Private WithEvents _SourceRangeNumericLabel As Windows.Forms.Label
     Private WithEvents _SourceFunctionComboBox As Windows.Forms.ComboBox
-    Private WithEvents _SourceLimitNumericLabel As Windows.Forms.Label
     Private WithEvents _SourceFunctionComboBoxLabel As Windows.Forms.Label
     Private WithEvents _ReadWriteTabPage As Windows.Forms.TabPage
     Private WithEvents _SimpleReadWriteControl As Instrument.SimpleReadWriteControl
@@ -1359,57 +1207,57 @@ Partial Class E4990Panel
     Private WithEvents _SessionOptionsDownButton As Windows.Forms.ToolStripDropDownButton
     Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ResetsDropDownButton As Windows.Forms.ToolStripDropDownButton
-    Private WithEvents _ImpedanceTabPage As Windows.Forms.TabPage
-    Private WithEvents _HipotLayout As Windows.Forms.TableLayoutPanel
-    Private WithEvents _ImpedanceGroupBox As Windows.Forms.GroupBox
+    Private WithEvents _CompensationTabPage As Windows.Forms.TabPage
+    Private WithEvents _CalLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _ApplySourceFunctionButton As Windows.Forms.Button
+    Friend WithEvents _CompensationGroupBox As Windows.Forms.GroupBox
+    Private WithEvents _SourceToggle As Windows.Forms.CheckBox
     Private WithEvents _LevelNumericLabel As Windows.Forms.Label
     Private WithEvents _LevelNumeric As Windows.Forms.NumericUpDown
+    Private WithEvents _ApplySweepSettingsButton As Windows.Forms.Button
     Private WithEvents _HighFrequencyNumericLabel As Windows.Forms.Label
     Private WithEvents _LowFrequencyNumericLabel As Windows.Forms.Label
     Private WithEvents _HighFrequencyNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _LowFrequencyNumeric As Windows.Forms.NumericUpDown
+    Private WithEvents _SenseTabControl As Windows.Forms.TabControl
+    Friend WithEvents _AverageTabPage As Windows.Forms.TabPage
+    Friend WithEvents _SweepTabPage As Windows.Forms.TabPage
+    Private WithEvents _MarkersTabPage As Windows.Forms.TabPage
+    Private WithEvents _ApplyMarkerSettingsButton As Windows.Forms.Button
+    Friend WithEvents _AveragingGroupBox As Windows.Forms.GroupBox
     Private WithEvents _ApertureNumeric As Windows.Forms.NumericUpDown
+    Friend WithEvents _AveragingEnabledCheckBox As Windows.Forms.CheckBox
     Private WithEvents _ApertureNumericLabel As Windows.Forms.Label
-    Private WithEvents _BinningLayout As Windows.Forms.TableLayoutPanel
-    Private WithEvents _BinningGroupBox As Windows.Forms.GroupBox
-    Private WithEvents _ContactCheckSupportLabel As Windows.Forms.Label
-    Private WithEvents _FailBitPatternNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _PassBitPatternNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _ContactCheckBitPatternNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _FailBitPatternNumericLabel As Windows.Forms.Label
-    Private WithEvents _ContactCheckBitPatternNumericLabel As Windows.Forms.Label
-    Private WithEvents _EotStrobeDurationNumericLabel As Windows.Forms.Label
-    Private WithEvents _EotStrobeDurationNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _TriggerToolStrip As Windows.Forms.ToolStrip
-    Private WithEvents _AwaitTriggerToolStripButton As Windows.Forms.ToolStripButton
-    Private WithEvents _WaitHourglassLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _AssertTriggerToolStripButton As Windows.Forms.ToolStripButton
-    Private WithEvents _TriggerActionToolStripLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _ApplyImpedanceSettingsButton As Windows.Forms.Button
-    Private WithEvents _ApplySotSettingsButton As Windows.Forms.Button
-    Private WithEvents _ArmSourceComboBox As Windows.Forms.ComboBox
-    Private WithEvents _PassBitPatternNumericLabel As Windows.Forms.Label
-    Private WithEvents _ArmComboBoxLabel As Windows.Forms.Label
-    Private WithEvents _FourWireSenseCheckBox As Windows.Forms.CheckBox
-    Private WithEvents _ConcurrentSenseCheckBox As Windows.Forms.CheckBox
-    Private WithEvents _SourceLimitNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _SourceRangeNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _SourceDelayNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _ApplySenseFunctionButton As Windows.Forms.Button
-    Private WithEvents _SourceLevelNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _SourceLevelNumericLabel As Windows.Forms.Label
-    Private WithEvents _ApplySourceFunctionButton As Windows.Forms.Button
-    Private WithEvents _OutputDropDownButton As Windows.Forms.ToolStripDropDownButton
-    Private WithEvents _ContactCheckEnabledMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _SourceAutoClearEnabledMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _OutputTerminalMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _SourceToggle As Windows.Forms.CheckBox
-    Private WithEvents _EnabledSenseFunctionsListBoxLabel As Windows.Forms.Label
-    Private WithEvents _EnabledSenseFunctionsListBox As Windows.Forms.CheckedListBox
-    Private WithEvents _TriggerDelayNumericLabel As Windows.Forms.Label
-    Private WithEvents _TriggerDelayNumeric As Windows.Forms.NumericUpDown
-    Friend WithEvents _CompensationGroupBox As Windows.Forms.GroupBox
-    Private WithEvents _ComopensationTextBox As Windows.Forms.TextBox
-    Friend WithEvents _ShortButton As Windows.Forms.Button
-    Friend WithEvents _OpenButton As Windows.Forms.Button
+    Private WithEvents _RestartAveragingButton As Windows.Forms.Button
+    Private WithEvents _AveragingCountNumericLabel As Windows.Forms.Label
+    Private WithEvents _AveragingCountNumeric As Windows.Forms.NumericUpDown
+    Friend WithEvents _AveragingLayout As Windows.Forms.TableLayoutPanel
+    Friend WithEvents _SweepLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _SweepGroupBox As Windows.Forms.GroupBox
+    Friend WithEvents _MarkersLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _MarkersGroupBox As Windows.Forms.GroupBox
+    Private WithEvents _ApplyOpenButton As Windows.Forms.Button
+    Friend WithEvents _AcquireCompensationButton As Windows.Forms.Button
+    Friend WithEvents _OpenCompensationTextBoxLabel As Windows.Forms.Label
+    Private WithEvents _FrequencyStimulusTextBox As Windows.Forms.TextBox
+    Private WithEvents _FrequencyStimulusTextBoxLabel As Windows.Forms.Label
+    Private WithEvents _LoadCompensationTextBox As Windows.Forms.TextBox
+    Private WithEvents _ShortCompensationTextBox As Windows.Forms.TextBox
+    Private WithEvents _OpenCompensationTextBox As Windows.Forms.TextBox
+    Private WithEvents _ApplyLoadButton As Windows.Forms.Button
+    Private WithEvents _ApplyShortButton As Windows.Forms.Button
+    Friend WithEvents _LoadCompensationTextBoxLabel As Windows.Forms.Label
+    Private WithEvents _ShortCompensationTextBoxLabel As Windows.Forms.Label
+    Private WithEvents _MarkerFrequencyComboBox As Windows.Forms.ComboBox
+    Friend WithEvents _MarkerFrequencyComboBoxLabel As Windows.Forms.Label
+    Private WithEvents _AdapterComboBox As Windows.Forms.ComboBox
+    Friend WithEvents _AdapterComboBoxLabel As Windows.Forms.Label
+    Friend WithEvents _TraceTabPage As Windows.Forms.TabPage
+    Friend WithEvents _TraceLayout As Windows.Forms.TableLayoutPanel
+    Friend WithEvents _TraceGroupBox As Windows.Forms.GroupBox
+    Private WithEvents _ApplyTracesButton As Windows.Forms.Button
+    Private WithEvents _PrimaryTraceParameterComboBox As Windows.Forms.ComboBox
+    Private WithEvents _PrimaryTraceParameterComboBoxLabel As Windows.Forms.Label
+    Private WithEvents _SecondaryTraceParameterComboBoxLabel As Windows.Forms.Label
+    Private WithEvents _SecondaryTraceParameterComboBox As Windows.Forms.ComboBox
 End Class

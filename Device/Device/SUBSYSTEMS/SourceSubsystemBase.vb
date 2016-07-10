@@ -1,3 +1,5 @@
+Imports isr.Core.Pith
+Imports isr.Core.Pith.EnumExtensions
 ''' <summary> Defines the contract that must be implemented by a Source Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -36,6 +38,343 @@ Public MustInherit Class SourceSubsystemBase
 
 #End Region
 
+#Region " AUTO CLEAR ENABLED "
+
+    Private _AutoClearEnabled As Boolean?
+    ''' <summary> Gets or sets the cached Auto Clear Enabled sentinel. </summary>
+    ''' <value> <c>null</c> if Auto Clear Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property AutoClearEnabled As Boolean?
+        Get
+            Return Me._AutoClearEnabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.AutoClearEnabled, value) Then
+                Me._AutoClearEnabled = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoClearEnabled))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Auto Clear Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyAutoClearEnabled(ByVal value As Boolean) As Boolean?
+        Me.WriteAutoClearEnabled(value)
+        Return Me.QueryAutoClearEnabled()
+    End Function
+
+    ''' <summary> Gets the automatic Clear enabled query command. </summary>
+    ''' <value> The automatic Clear enabled query command. </value>
+    ''' <remarks> SCPI: ":SOUR:CLE:AUTO?" </remarks>
+    Protected Overridable ReadOnly Property AutoClearEnabledQueryCommand As String
+
+    ''' <summary> Queries the Auto Clear Enabled sentinel. Also sets the
+    ''' <see cref="AutoClearEnabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryAutoClearEnabled() As Boolean?
+        Me.AutoClearEnabled = Me.Query(Me.AutoClearEnabled, Me.AutoClearEnabledQueryCommand)
+        Return Me.AutoClearEnabled
+    End Function
+
+    ''' <summary> Gets the automatic Clear enabled command Format. </summary>
+    ''' <value> The automatic Clear enabled query command. </value>
+    ''' <remarks> SCPI: ":SOU:CLE:AUTO {0:'ON';'ON';'OFF'}" </remarks>
+    Protected Overridable ReadOnly Property AutoClearEnabledCommandFormat As String
+
+    ''' <summary> Writes the Auto Clear Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteAutoClearEnabled(ByVal value As Boolean) As Boolean?
+        Me.AutoClearEnabled = Me.Write(value, Me.AutoClearEnabledCommandFormat)
+        Return Me.AutoClearEnabled
+    End Function
+
+#End Region
+
+#Region " AUTO DELAY ENABLED "
+
+    Private _AutoDelayEnabled As Boolean?
+    ''' <summary> Gets or sets the cached Auto Delay Enabled sentinel. </summary>
+    ''' <value> <c>null</c> if Auto Delay Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property AutoDelayEnabled As Boolean?
+        Get
+            Return Me._AutoDelayEnabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.AutoDelayEnabled, value) Then
+                Me._AutoDelayEnabled = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoDelayEnabled))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Auto Delay Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyAutoDelayEnabled(ByVal value As Boolean) As Boolean?
+        Me.WriteAutoDelayEnabled(value)
+        Return Me.QueryAutoDelayEnabled()
+    End Function
+
+    ''' <summary> Gets the automatic delay enabled query command. </summary>
+    ''' <value> The automatic delay enabled query command. </value>
+    ''' <remarks> SCPI: ":SOUR:DEL:AUTO?" </remarks>
+    Protected Overridable ReadOnly Property AutoDelayEnabledQueryCommand As String
+
+    ''' <summary> Queries the Auto Delay Enabled sentinel. Also sets the
+    ''' <see cref="AutoDelayEnabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryAutoDelayEnabled() As Boolean?
+        Me.AutoDelayEnabled = Me.Query(Me.AutoDelayEnabled, Me.AutoDelayEnabledQueryCommand)
+        Return Me.AutoDelayEnabled
+    End Function
+
+    ''' <summary> Gets the automatic delay enabled command Format. </summary>
+    ''' <value> The automatic delay enabled query command. </value>
+    ''' <remarks> SCPI: ":SOUR:DEL:AUTO {0:'ON';'ON';'OFF'}" </remarks>
+    Protected Overridable ReadOnly Property AutoDelayEnabledCommandFormat As String
+
+    ''' <summary> Writes the Auto Delay Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteAutoDelayEnabled(ByVal value As Boolean) As Boolean?
+        Me.AutoDelayEnabled = Me.Write(value, Me.AutoDelayEnabledCommandFormat)
+        Return Me.AutoDelayEnabled
+    End Function
+
+#End Region
+
+#Region " DELAY "
+
+    ''' <summary> The delay. </summary>
+    Private _Delay As TimeSpan?
+
+    ''' <summary> Gets or sets the cached Source Delay. </summary>
+    ''' <remarks> The delay is used to delay operation in the Source layer. After the programmed
+    ''' Source event occurs, the instrument waits until the delay period expires before performing
+    ''' the Device Action. </remarks>
+    ''' <value> The Source Delay or none if not set or unknown. </value>
+    Public Overloads Property Delay As TimeSpan?
+        Get
+            Return Me._Delay
+        End Get
+        Protected Set(ByVal value As TimeSpan?)
+            If Not Nullable.Equals(Me.Delay, value) Then
+                Me._Delay = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.Delay))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Source Delay. </summary>
+    ''' <param name="value"> The current Delay. </param>
+    ''' <returns> The Source Delay or none if unknown. </returns>
+    Public Function ApplyDelay(ByVal value As TimeSpan) As TimeSpan?
+        Me.WriteDelay(value)
+        Me.QueryDelay()
+    End Function
+
+    ''' <summary> Gets or sets the delay query command. </summary>
+    ''' <value> The delay query command. </value>
+    ''' <remarks> SCPI: ":SOUR:DEL?" </remarks>
+    Protected Overridable ReadOnly Property DelayQueryCommand As String
+
+    ''' <summary> Gets or sets the Delay format for converting the query to time span. </summary>
+    ''' <value> The Delay query command. </value>
+    ''' <remarks> For example: "s\.FFFFFFF" will convert the result from seconds. </remarks>
+    Protected Overridable ReadOnly Property DelayFormat As String
+
+    ''' <summary> Queries the Delay. </summary>
+    ''' <returns> The Delay or none if unknown. </returns>
+    Public Function QueryDelay() As TimeSpan?
+        Me.Delay = Me.Query(Me.Delay, Me.DelayFormat, Me.DelayQueryCommand)
+        Return Me.Delay
+    End Function
+
+    ''' <summary> Gets or sets the delay command format. </summary>
+    ''' <value> The delay command format. </value>
+    ''' <remarks> SCPI: ":SOUR:DEL {0:s\.FFFFFFF}" </remarks>
+    Protected Overridable ReadOnly Property DelayCommandFormat As String
+
+    ''' <summary> Writes the Source Delay without reading back the value from the device. </summary>
+    ''' <param name="value"> The current Delay. </param>
+    ''' <returns> The Source Delay or none if unknown. </returns>
+    Public Function WriteDelay(ByVal value As TimeSpan) As TimeSpan?
+        Me.Delay = Me.Write(value, Me.DelayCommandFormat)
+        Return Me.Delay
+    End Function
+
+#End Region
+
+#Region " FUNCTION MODE "
+
+    Private _SupportedFunctionModes As SourceFunctionModes
+    ''' <summary>
+    ''' Gets or sets the supported Function Mode.
+    ''' This is a subset of the functions supported by the instrument.
+    ''' </summary>
+    Public Property SupportedFunctionModes() As SourceFunctionModes
+        Get
+            Return _SupportedFunctionModes
+        End Get
+        Set(ByVal value As SourceFunctionModes)
+            If Not Me.SupportedFunctionModes.Equals(value) Then
+                Me._SupportedFunctionModes = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedFunctionModes))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> The function mode. </summary>
+    Private _FunctionMode As SourceFunctionModes?
+
+    ''' <summary> Gets or sets the cached source FunctionMode. </summary>
+    ''' <value> The <see cref="SourceFunctionModes">source Function Mode</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property FunctionMode As SourceFunctionModes?
+        Get
+            Return Me._FunctionMode
+        End Get
+        Protected Set(ByVal value As SourceFunctionModes?)
+            If Not Nullable.Equals(Me.FunctionMode, value) Then
+                Me._FunctionMode = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.FunctionMode))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the source Function Mode. </summary>
+    ''' <param name="value"> The  Source Function Mode. </param>
+    ''' <returns> The <see cref="SourceFunctionModes">source Function Mode</see> or none if unknown. </returns>
+    Public Function ApplyFunctionMode(ByVal value As SourceFunctionModes) As SourceFunctionModes?
+        Me.WriteFunctionMode(value)
+        Return Me.QueryFunctionMode()
+    End Function
+
+    ''' <summary> Gets or sets the function mode query command. </summary>
+    ''' <value> The function mode query command, e.g., :SOUR:FUNC? </value>
+    Protected Overridable ReadOnly Property FunctionModeQueryCommand As String
+
+    ''' <summary> Queries the Source Function Mode. </summary>
+    ''' <returns> The <see cref="SourceFunctionModes">source Function Mode</see> or none if unknown. </returns>
+    Public Function QueryFunctionMode() As SourceFunctionModes?
+        If String.IsNullOrWhiteSpace(Me.FunctionModeQueryCommand) Then
+            Me.FunctionMode = New SourceFunctionModes?
+        Else
+            Dim mode As String = Me.FunctionMode.ToString
+            Me.Session.MakeEmulatedReplyIfEmpty(mode)
+            mode = Me.Session.QueryTrimEnd(Me.FunctionModeQueryCommand)
+            If String.IsNullOrWhiteSpace(mode) Then
+                Dim message As String = "Failed fetching source function mode"
+                Debug.Assert(Not Debugger.IsAttached, message)
+                Me.FunctionMode = New SourceFunctionModes?
+            Else
+                Dim se As New StringEnumerator(Of SourceFunctionModes)
+                Me.FunctionMode = se.ParseContained(mode.BuildDelimitedValue)
+            End If
+        End If
+        Return Me.FunctionMode
+    End Function
+
+    ''' <summary> Gets or sets the function mode command. </summary>
+    ''' <value> The function mode command, e.g., :SOUR:FUNC {0}. </value>
+    Protected Overridable ReadOnly Property FunctionModeCommandFormat As String
+
+    ''' <summary> Writes the source Function Mode without reading back the value from the device. </summary>
+    ''' <param name="value"> The Function Mode. </param>
+    ''' <returns> The <see cref="SourceFunctionModes">source Function Mode</see> or none if unknown. </returns>
+    Public Function WriteFunctionMode(ByVal value As SourceFunctionModes) As SourceFunctionModes?
+        If Not String.IsNullOrWhiteSpace(Me.FunctionModeCommandFormat) Then
+            Me.Session.WriteLine(Me.FunctionModeCommandFormat, value.ExtractBetween())
+        End If
+        Me.FunctionMode = value
+        Return Me.FunctionMode
+    End Function
+
+#End Region
+
+#Region " SWEEP POINTS "
+
+    Private _SweepPoint As Integer?
+    ''' <summary> Gets or sets the cached Sweep Points. </summary>
+    ''' <remarks> Specifies how many times an operation is performed in the specified layer of the
+    ''' trigger model. </remarks>
+    ''' <value> The Sweep Points or none if not set or unknown. </value>
+    Public Overloads Property SweepPoints As Integer?
+        Get
+            Return Me._SweepPoint
+        End Get
+        Protected Set(ByVal value As Integer?)
+            If Not Nullable.Equals(Me.SweepPoints, value) Then
+                Me._SweepPoint = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.SweepPoints))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Sweep Points. </summary>
+    ''' <param name="value"> The current SweepPoints. </param>
+    ''' <returns> The SweepPoints or none if unknown. </returns>
+    Public Function ApplySweepPoints(ByVal value As Integer) As Integer?
+        Me.WriteSweepPoints(value)
+        Return Me.QuerySweepPoints()
+    End Function
+
+    ''' <summary> Gets Sweep Points query command. </summary>
+    ''' <value> The Sweep Points query command. </value>
+    ''' <remarks> SCPI: ":SOUR:SWE:POIN?" </remarks>
+    Protected Overridable ReadOnly Property SweepPointsQueryCommand As String
+
+    ''' <summary> Queries the current Sweep Points. </summary>
+    ''' <returns> The Sweep Points or none if unknown. </returns>
+    Public Function QuerySweepPoints() As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.SweepPointsQueryCommand) Then
+            Me.SweepPoints = Me.Session.Query(0I, Me.SweepPointsQueryCommand)
+        End If
+        Return Me.SweepPoints
+    End Function
+
+    ''' <summary> Gets Sweep Points command format. </summary>
+    ''' <value> The Sweep Points command format. </value>
+    ''' <remarks> SCPI: ":SOUR:SWE:POIN {0}" </remarks>
+    Protected Overridable ReadOnly Property SweepPointsCommandFormat As String
+
+    ''' <summary> Write the Trace PointsSweepPoints without reading back the value from the device. </summary>
+    ''' <param name="value"> The current PointsSweepPoints. </param>
+    ''' <returns> The PointsSweepPoints or none if unknown. </returns>
+    Public Function WriteSweepPoints(ByVal value As Integer) As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.SweepPointsCommandFormat) Then
+            Me.Session.WriteLine(Me.SweepPointsCommandFormat, value)
+        End If
+        Me.SweepPoints = value
+        Return Me.SweepPoints
+    End Function
+
+#End Region
+
+End Class
+
+''' <summary>
+''' Specifies the source function modes. Using flags permits using these values to define the
+''' supported function modes.
+''' </summary>
+''' <remarks> David, 3/12/2016. </remarks>
+<Flags>
+Public Enum SourceFunctionModes
+    <ComponentModel.Description("None")> None = 0
+    <ComponentModel.Description("Voltage (VOLT)")> Voltage = 1
+    <ComponentModel.Description("Current (CURR)")> Current = Voltage << 1
+    <ComponentModel.Description("Memory (MEM)")> Memory = Current << 1
+    <ComponentModel.Description("DC Voltage (VOLT:DC)")> VoltageDC = Memory << 1
+    <ComponentModel.Description("DC Current (CURR:DC)")> CurrentDC = VoltageDC << 1
+    <ComponentModel.Description("AC Voltage (VOLT:AC)")> VoltageAC = CurrentDC << 1
+    <ComponentModel.Description("AC Current (CURR:AC)")> CurrentAC = VoltageAC << 1
+End Enum
+
+#Region " UNUSED "
+#If False Then
 #Region " AUTO CLEAR "
 
     ''' <summary> The automatic clear enabled. </summary>
@@ -278,22 +617,6 @@ Public MustInherit Class SourceSubsystemBase
 
 #End Region
 
-End Class
 
-''' <summary>
-''' Specifies the source function modes. Using flags permits using these values to define the
-''' supported function modes.
-''' </summary>
-''' <remarks> David, 3/12/2016. </remarks>
-<Flags>
-Public Enum SourceFunctionModes
-    <ComponentModel.Description("None")> None = 0
-    <ComponentModel.Description("Voltage (VOLT)")> Voltage = 1
-    <ComponentModel.Description("Current (CURR)")> Current = Voltage << 1
-    <ComponentModel.Description("Memory (MEM)")> Memory = Current << 1
-    <ComponentModel.Description("DC Voltage (VOLT:DC)")> VoltageDC = Memory << 1
-    <ComponentModel.Description("DC Current (CURR:DC)")> CurrentDC = VoltageDC << 1
-    <ComponentModel.Description("AC Voltage (VOLT:AC)")> VoltageAC = CurrentDC << 1
-    <ComponentModel.Description("AC Current (CURR:AC)")> CurrentAC = VoltageAC << 1
-End Enum
-
+#End If
+#End Region

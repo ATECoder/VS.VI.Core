@@ -966,7 +966,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <see cref="Ieee488.Syntax.ServiceRequestEnableCommandFormat"> </see> </remarks>
     ''' <value> The service request enable command format. </value>
     Protected Overridable ReadOnly Property ServiceRequestEnableCommandFormat As String
-    '
+
     ''' <summary> Program the device to issue an SRQ upon any of the SCPI events. Uses *SRE to select
     ''' (mask) the event registers to be included in the bits that will issue an SRQ. </summary>
     ''' <param name="serviceRequestEnableBitmask"> Specifies which status registers will issue an

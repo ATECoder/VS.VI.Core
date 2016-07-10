@@ -68,10 +68,21 @@
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
+    <Compile Include="GlobalSuppressions.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
@@ -81,22 +92,54 @@
     <Compile Include="PANELS\E4990Panel.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="PANELS\CompensationWizard.Designer.vb">
+      <DependentUpon>CompensationWizard.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\CompensationWizard.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SUBSYSTEMS\ChannelTriggerSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\ChannelTraceSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\ChannelMarkerSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\CompensateChannelSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\Device.vb" />
+    <Compile Include="SUBSYSTEMS\CalculateChannelSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\DisplaySubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\MarkerReadings.vb" />
+    <Compile Include="SUBSYSTEMS\SenseChannelSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\SourceChannelSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\StatusSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SystemSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\TriggerSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\VersionInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
     <Content Include="PANELS\E4990Panel.bmp" />
+    <Content Include="Resources\WelcomeImage.jpg" />
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\CompensationWizard.resx">
+      <DependentUpon>CompensationWizard.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\HeaderIcon.png" />
     <None Include="..\..\resource\pith\my\keyPair.snk">
       <Link>My\keyPair.snk</Link>
     </None>
+    <None Include="app.config" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
     <Content Include="My\isr.VI.E4990.History.rtf" />
+    <None Include="My Project\Settings.settings">
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
@@ -138,6 +181,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -36,26 +36,12 @@ Public MustInherit Class TriggerSubsystemBase
         Me._OutputLineNumber = 2
         Me._TriggerSource = VI.TriggerSources.Immediate
         Me._TimerInterval = TimeSpan.FromSeconds(0.1)
+        Me._SupportedTriggerSources = TriggerSources.Bus Or TriggerSources.External Or TriggerSources.Immediate
     End Sub
 
 #End Region
 
 #Region " COMMANDS "
-
-    ''' <summary> Gets the initiate command. </summary>
-    ''' <value> The initiate command. </value>
-    ''' <remarks> SCPI: ":INIT". </remarks>
-    Protected Overridable ReadOnly Property InitiateCommand As String
-
-    ''' <summary> Initiates operations. </summary>
-    ''' <remarks> This command is used to initiate source-measure operation by taking the SourceMeter
-    ''' out of idle. The :READ? and :MEASure? commands also perform an initiation. Note that if auto
-    ''' output-off is disabled (SOURce1:CLEar:AUTO OFF), the source output must first be turned on
-    ''' before an initiation can be performed. The :MEASure? command automatically turns the output
-    ''' source on before performing the initiation. </remarks>
-    Public Sub Initiate()
-        Me.Write(Me.InitiateCommand)
-    End Sub
 
     ''' <summary> Gets the Abort command. </summary>
     ''' <value> The Abort command. </value>
@@ -82,6 +68,21 @@ Public MustInherit Class TriggerSubsystemBase
     ''' <remarks> David, 3/10/2016. </remarks>
     Public Sub ClearTriggers()
         Me.Write(Me.ClearCommand)
+    End Sub
+
+    ''' <summary> Gets the initiate command. </summary>
+    ''' <value> The initiate command. </value>
+    ''' <remarks> SCPI: ":INIT". </remarks>
+    Protected Overridable ReadOnly Property InitiateCommand As String
+
+    ''' <summary> Initiates operations. </summary>
+    ''' <remarks> This command is used to initiate source-measure operation by taking the SourceMeter
+    ''' out of idle. The :READ? and :MEASure? commands also perform an initiation. Note that if auto
+    ''' output-off is disabled (SOURce1:CLEar:AUTO OFF), the source output must first be turned on
+    ''' before an initiation can be performed. The :MEASure? command automatically turns the output
+    ''' source on before performing the initiation. </remarks>
+    Public Sub Initiate()
+        Me.Write(Me.InitiateCommand)
     End Sub
 
     ''' <summary> Gets the Immediate command. </summary>
@@ -146,6 +147,60 @@ Public MustInherit Class TriggerSubsystemBase
     Public Function WriteAutoDelayEnabled(ByVal value As Boolean) As Boolean?
         Me.AutoDelayEnabled = Me.Write(value, Me.AutoDelayEnabledCommandFormat)
         Return Me.AutoDelayEnabled
+    End Function
+
+#End Region
+
+#Region " AVERAGING ENABLED "
+
+    Private _AveragingEnabled As Boolean?
+    ''' <summary> Gets or sets the cached Averaging Enabled sentinel. </summary>
+    ''' <value> <c>null</c> if Averaging Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property AveragingEnabled As Boolean?
+        Get
+            Return Me._AveragingEnabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.AveragingEnabled, value) Then
+                Me._AveragingEnabled = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.AveragingEnabled))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Averaging Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyAveragingEnabled(ByVal value As Boolean) As Boolean?
+        Me.WriteAveragingEnabled(value)
+        Return Me.QueryAveragingEnabled()
+    End Function
+
+    ''' <summary> Gets the automatic delay enabled query command. </summary>
+    ''' <value> The automatic delay enabled query command. </value>
+    ''' <remarks> SCPI: ":TRIG:AVER?" </remarks>
+    Protected Overridable ReadOnly Property AveragingEnabledQueryCommand As String
+
+    ''' <summary> Queries the Averaging Enabled sentinel. Also sets the
+    ''' <see cref="AveragingEnabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryAveragingEnabled() As Boolean?
+        Me.AveragingEnabled = Me.Query(Me.AveragingEnabled, Me.AveragingEnabledQueryCommand)
+        Return Me.AveragingEnabled
+    End Function
+
+    ''' <summary> Gets the automatic delay enabled command Format. </summary>
+    ''' <value> The automatic delay enabled query command. </value>
+    ''' <remarks> SCPI: ":TRIG:AVER {0:1;1;0}" </remarks>
+    Protected Overridable ReadOnly Property AveragingEnabledCommandFormat As String
+
+    ''' <summary> Writes the Averaging Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteAveragingEnabled(ByVal value As Boolean) As Boolean?
+        Me.AveragingEnabled = Me.Write(value, Me.AveragingEnabledCommandFormat)
+        Return Me.AveragingEnabled
     End Function
 
 #End Region
@@ -597,4 +652,6 @@ Public Enum TriggerSources
     <ComponentModel.Description("External (Ext)")> External
     <ComponentModel.Description("Immediate (IMM)")> Immediate
     <ComponentModel.Description("Trigger Link (TLIN)")> TriggerLink
+    <ComponentModel.Description("Internal (INT)")> Internal
+    <ComponentModel.Description("Manual (MAN)")> Manual
 End Enum

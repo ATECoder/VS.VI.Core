@@ -148,7 +148,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
 #Region " POWER LINE CYCLES (NPLC) "
 
     ''' <summary> The Range of the power line cycles. </summary>
-    Public Property PowerLineCyclesRange1 As Core.Pith.RangeR
+    Public Property PowerLineCyclesRange As Core.Pith.RangeR
 
     ''' <summary> The Power Line Cycles. </summary>
     Private _PowerLineCycles As Double?
