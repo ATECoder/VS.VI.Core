@@ -324,16 +324,7 @@ Public Class K2000Panel
     ''' <param name="subsystem"> The subsystem. </param>
     Private Sub onSupportedFunctionModesChanged(ByVal subsystem As SenseSubsystem)
         If subsystem IsNot Nothing AndAlso subsystem.SupportedFunctionModes <> VI.Scpi.SenseFunctionModes.None Then
-            With Me._SenseFunctionComboBox
-                .DataSource = Nothing
-                .Items.Clear()
-                .DataSource = GetType(VI.Scpi.SenseFunctionModes).ValueDescriptionPairs(subsystem.SupportedFunctionModes)
-                .DisplayMember = "Value"
-                .ValueMember = "Key"
-                If .Items.Count > 0 Then
-                    .SelectedItem = VI.Scpi.SenseFunctionModes.VoltageDC.ValueDescriptionPair()
-                End If
-            End With
+            subsystem.DisplaySupportedFunctionModes(Me._SenseFunctionComboBox)
         End If
     End Sub
 

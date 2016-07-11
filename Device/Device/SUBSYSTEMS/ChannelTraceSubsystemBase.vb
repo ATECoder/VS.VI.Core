@@ -1,5 +1,6 @@
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.VI.ComboBoxExtensions
 ''' <summary> Defines the Channel Trace subsystem. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -53,6 +54,8 @@ Public MustInherit Class ChannelTraceSubsystemBase
     ''' <remarks> SCPI: ":DISP:WIND&lt;c#&gt;:TRAC&lt;t#&gt;:Y:AUTO". </remarks>
     Protected Overridable ReadOnly Property AutoScaleCommand As String
 
+    ''' <summary> Automatic scale. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
     Public Sub AutoScale()
         If Not String.IsNullOrWhiteSpace(Me.SelectCommand) Then
             Me.Session.WriteLine(Me.SelectCommand)
@@ -60,7 +63,6 @@ Public MustInherit Class ChannelTraceSubsystemBase
     End Sub
 
 #End Region
-
 
 #Region " SELECT "
 
@@ -98,6 +100,28 @@ Public MustInherit Class ChannelTraceSubsystemBase
             End If
         End With
     End Sub
+
+    ''' <summary> Returns the function mode selected by the list control. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    ''' <returns> The SenseTraceParameters. </returns>
+    Public Shared Function SelectedTraceParameters(ByVal listControl As Windows.Forms.ComboBox) As TraceParameters
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        Return CType(CType(listControl.SelectedItem, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, TraceParameters)
+    End Function
+
+    ''' <summary> Safe select function mode. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    Public Sub SafeSelectTraceParameters(ByVal listControl As Windows.Forms.ComboBox)
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        If Me.Parameter.HasValue Then
+            listControl.SafeSelectItem(Me.Parameter.Value, Me.Parameter.Value.Description)
+        End If
+    End Sub
+
 
     Private _SupportedParameters As TraceParameters
     ''' <summary>

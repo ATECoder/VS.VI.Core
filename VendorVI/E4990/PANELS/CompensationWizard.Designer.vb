@@ -903,40 +903,40 @@ Partial Class CompensationWizard
     Private WithEvents _ProgressBar As Windows.Forms.ToolStripProgressBar
     Private WithEvents _InfoProvider As Core.Controls.InfoProvider
     Private WithEvents _SettingsWizardPage As Core.Controls.WizardPage
-    Friend WithEvents _AveragingGroupBox As Windows.Forms.GroupBox
-    Friend WithEvents _AveragingEnabledCheckBox As Windows.Forms.CheckBox
+    Private WithEvents _AveragingGroupBox As Windows.Forms.GroupBox
+    Private WithEvents _AveragingEnabledCheckBox As Windows.Forms.CheckBox
     Private WithEvents _AveragingCountNumericLabel As Windows.Forms.Label
     Private WithEvents _RestartAveragingButton As Windows.Forms.Button
-    Friend WithEvents _ToolTip As Windows.Forms.ToolTip
+    Private WithEvents _ToolTip As Windows.Forms.ToolTip
     Private WithEvents _AveragingCountNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _OpenWizardPage As Core.Controls.WizardPage
     Private WithEvents _YardstickWizardPage As Core.Controls.WizardPage
-    Friend WithEvents _LoadWizardPage As Core.Controls.WizardPage
+    Private WithEvents _LoadWizardPage As Core.Controls.WizardPage
     Private WithEvents _ShortWizardPage As Core.Controls.WizardPage
     Private WithEvents _ApertureNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _ApertureNumericLabel As Windows.Forms.Label
-    Friend WithEvents _LoadPageLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _LoadPageLayout As Windows.Forms.TableLayoutPanel
     Private WithEvents _LoadCompensationTextBox As Windows.Forms.TextBox
-    Friend WithEvents _AcquireLoadCompensationButton As Windows.Forms.Button
-    Friend WithEvents _ShortPagePanel As Windows.Forms.Panel
+    Private WithEvents _AcquireLoadCompensationButton As Windows.Forms.Button
+    Private WithEvents _ShortPagePanel As Windows.Forms.Panel
     Private WithEvents _ShortCompensationValuesTextBox As Windows.Forms.TextBox
-    Friend WithEvents _AcquireShortCompensationButton As Windows.Forms.Button
-    Friend WithEvents _OpenPagePanel As Windows.Forms.Panel
+    Private WithEvents _AcquireShortCompensationButton As Windows.Forms.Button
+    Private WithEvents _OpenPagePanel As Windows.Forms.Panel
     Private WithEvents _OpenCompensationValuesTextBox As Windows.Forms.TextBox
-    Friend WithEvents _AcquireOpenCompensationButton As Windows.Forms.Button
-    Friend WithEvents _YardstickPageLayout As Windows.Forms.TableLayoutPanel
-    Friend WithEvents _YardstickPagePanel As Windows.Forms.Panel
+    Private WithEvents _AcquireOpenCompensationButton As Windows.Forms.Button
+    Private WithEvents _YardstickPageLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _YardstickPagePanel As Windows.Forms.Panel
     Private WithEvents _YardstickValuesTextBox As Windows.Forms.TextBox
-    Friend WithEvents _MeasureYardstickButton As Windows.Forms.Button
+    Private WithEvents _MeasureYardstickButton As Windows.Forms.Button
     Private WithEvents _YardstickInductanceLimitNumeric As Windows.Forms.NumericUpDown
-    Friend WithEvents _YardstickMeasuredInductanceTextBox As Windows.Forms.TextBox
-    Friend WithEvents _YardstickMeasuredInductanceTextBoxLabel As Windows.Forms.Label
+    Private WithEvents _YardstickMeasuredInductanceTextBox As Windows.Forms.TextBox
+    Private WithEvents _YardstickMeasuredInductanceTextBoxLabel As Windows.Forms.Label
     Private WithEvents _YardstickDeltaLabel As Windows.Forms.Label
     Private WithEvents _YardstickActualLabel As Windows.Forms.Label
     Private WithEvents _YardstickResistanceDeviationTextBox As Windows.Forms.TextBox
     Private WithEvents _MeasuredYardstickResistanceTextBox As Windows.Forms.TextBox
     Private WithEvents _YardstickAcceptanceToleranceNumeric As Windows.Forms.NumericUpDown
-    Friend WithEvents _YardstickResistanceNumeric As Windows.Forms.NumericUpDown
+    Private WithEvents _YardstickResistanceNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _YardstickAcceptanceToleranceNumericLabel As Windows.Forms.Label
     Private WithEvents _YardstickResistanceNumericLabel As Windows.Forms.Label
     Private WithEvents _LoadResistanceNumeric As Windows.Forms.NumericUpDown
@@ -947,7 +947,7 @@ Partial Class CompensationWizard
     Private WithEvents _OpenPageLayout As Windows.Forms.TableLayoutPanel
     Private WithEvents _CompensationGroupBox As Windows.Forms.GroupBox
     Private WithEvents _AdapterComboBox As Windows.Forms.ComboBox
-    Friend WithEvents _AdapterComboBoxLabel As Windows.Forms.Label
-    Friend WithEvents _ApplySettingsPanel As Windows.Forms.Panel
+    Private WithEvents _AdapterComboBoxLabel As Windows.Forms.Label
+    Private WithEvents _ApplySettingsPanel As Windows.Forms.Panel
     Private WithEvents _ApplySettingsButton As Windows.Forms.Button
 End Class

@@ -1,5 +1,6 @@
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.VI.ComboBoxExtensions
 ''' <summary> Defines the contract that must be implemented by a Sense Channel Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific ReSenses, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -70,6 +71,27 @@ Public MustInherit Class SenseChannelSubsystemBase
         End With
     End Sub
 
+    ''' <summary> Returns the function mode selected by the list control. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    ''' <returns> The SenseAdapterType. </returns>
+    Public Shared Function SelectedAdapterType(ByVal listControl As Windows.Forms.ComboBox) As AdapterType
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        Return CType(CType(listControl.SelectedItem, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, AdapterType)
+    End Function
+
+    ''' <summary> Safe select function mode. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    Public Sub SafeSelectAdapterType(ByVal listControl As Windows.Forms.ComboBox)
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        If Me.AdapterType.HasValue Then
+            listControl.SafeSelectItem(Me.AdapterType.Value, Me.AdapterType.Value.Description)
+        End If
+    End Sub
+
     Private _SupportedAdapterTypes As AdapterType
     ''' <summary>
     ''' Gets or sets the supported Adapter Type.
@@ -86,6 +108,8 @@ Public MustInherit Class SenseChannelSubsystemBase
             End If
         End Set
     End Property
+
+
 
     ''' <summary> The Adapter Type. </summary>
     Private _AdapterType As AdapterType?

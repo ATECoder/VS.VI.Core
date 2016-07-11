@@ -690,6 +690,16 @@ Public Class CompensationWizard
 
 #Region " YARDSTICK "
 
+    Private Sub _YardstickAcceptanceToleranceNumeric_ValueChanged(sender As Object, e As EventArgs) Handles _YardstickAcceptanceToleranceNumeric.ValueChanged
+        If Me.InitializingComponents Then Return
+        Me.AnnunciateYardstickResult()
+    End Sub
+
+    Private Sub _YardstickInductanceLimitNumeric_ValueChanged(sender As Object, e As EventArgs) Handles _YardstickInductanceLimitNumeric.ValueChanged
+        If Me.InitializingComponents Then Return
+        Me.AnnunciateYardstickResult()
+    End Sub
+
     ''' <summary> Gets the yardstick resistance validated. </summary>
     ''' <value> The yardstick resistance validated. </value>
     Private ReadOnly Property YardstickResistanceValidated As Boolean?
@@ -730,28 +740,35 @@ Public Class CompensationWizard
     ''' <remarks> David, 7/8/2016. </remarks>
     Private Sub UpdateYardstickValues()
 
+        Me._InfoProvider.Clear()
         Me._YardstickValuesTextBox.Text = Me.Device.ChannelMarkerSubsystem.Readings.RawReading
         Dim r As Double = Me.Device.ChannelMarkerSubsystem.Readings.PrimaryReading.Value.GetValueOrDefault(0)
         Me._MeasuredYardstickResistanceTextBox.Text = String.Format("{0:0.###}", r)
         Dim delta As Double = 100 * (r / Me._YardstickResistanceNumeric.Value - 1)
         Me._YardstickResistanceDeviationTextBox.Text = String.Format("{0:0.##}", delta)
-        If Math.Abs(delta) > Me._YardstickAcceptanceToleranceNumeric.Value Then
-            Me._InfoProvider.Annunciate(Me._YardstickAcceptanceToleranceNumeric, InfoProviderLevel.Alert, "Exceeds minimum")
-        End If
 
         Dim l As Double = 1000000.0 * Me.Device.ChannelMarkerSubsystem.Readings.SecondaryReading.Value.GetValueOrDefault(0)
         Me._YardstickMeasuredInductanceTextBox.Text = String.Format("{0:0.###}", l)
-        If Math.Abs(l) > Me._YardstickInductanceLimitNumeric.Value Then
+
+        Me.AnnunciateYardstickResult()
+
+    End Sub
+
+    ''' <summary> Annunciate yardstick result. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    Private Sub AnnunciateYardstickResult()
+        If Not Me.YardstickResistanceValidated Then
+            Me._InfoProvider.Annunciate(Me._YardstickAcceptanceToleranceNumeric, InfoProviderLevel.Alert, "Exceeds minimum")
+        End If
+        If Not Me.YardstickInductanceValidated Then
             Me._InfoProvider.Annunciate(Me._YardstickInductanceLimitNumeric, InfoProviderLevel.Alert, "Exceeds minimum")
         End If
-
     End Sub
 
     ''' <summary> Measure yardstick button click. </summary>
     ''' <remarks> David, 7/8/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
-
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _MeasureYardstickButton_Click(sender As Object, e As EventArgs) Handles _MeasureYardstickButton.Click
         Try
@@ -1009,7 +1026,6 @@ Public Class CompensationWizard
     Public Sub ClearListeners() Implements ITalker.ClearListeners
         Me.Talker.Listeners.Clear()
     End Sub
-
 
 #End Region
 

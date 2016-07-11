@@ -100,6 +100,7 @@
     </Compile>
     <Compile Include="PRIMITIVES\BinningInfo.vb" />
     <Compile Include="PRIMITIVES\ChannelListBuilder.vb" />
+    <Compile Include="PRIMITIVES\Extensions.vb" />
     <Compile Include="PRIMITIVES\InsulationResistance.vb" />
     <Compile Include="PRIMITIVES\InterlockInfo.vb" />
     <Compile Include="PRIMITIVES\VersionInfo.vb" />

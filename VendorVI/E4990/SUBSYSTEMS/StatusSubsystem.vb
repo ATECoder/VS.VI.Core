@@ -81,4 +81,28 @@ Public Class StatusSubsystem
 
 #End Region
 
+#Region " MEASUREMENET AVAILABLE "
+
+    ''' <summary> Enables the measurement available. </summary>
+    ''' <remarks> David, 4/15/2016. </remarks>
+    Public Sub EnableMeasurementAvailable()
+
+        ' Sets the positive transition filter to 0 and the negative transition filter to 1 
+        ' so that the operation status event register at bit 4 is set to 1 only when the
+        ' operation status condition register at bit 4 is changed from 1 to 0.
+        ' Me.Device.Session.Write(":STAT:OPER:PTR 0")
+        Me.ApplyOperationPositiveTransitionEventEnableBitmask(0)
+        ' Me.Device.Session.Write(":STAT:OPER:NTR 16")
+        Me.ApplyOperationNegativeTransitionEventEnableBitmask(16)
+
+        ' Enables bit 4 in the operation status event register and bit 8 in the status byte register.
+        ' Me.Device.Session.Write(":STAT:OPER:ENAB 16")
+        Me.ApplyOperationEventEnableBitmask(16)
+        ' Me.Device.Session.Write("*SRE 128")
+        Me.EnableServiceRequest(ServiceRequests.OperationEvent) ' 128
+
+    End Sub
+
+#End Region
+
 End Class

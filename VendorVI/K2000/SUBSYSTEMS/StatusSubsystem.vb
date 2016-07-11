@@ -98,7 +98,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the standard service enable and complete command format. </summary>
     ''' <value> The standard service enable command and complete format. </value>
-    Protected Overrides ReadOnly Property StandardServiceEnableCompleteCommandFormat As String  = Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat
+    Protected Overrides ReadOnly Property StandardServiceEnableCompleteCommandFormat As String = Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat
 
     ''' <summary> Gets the service request enable command format. </summary>
     ''' <value> The service request enable command format. </value>

@@ -48,13 +48,16 @@ Public Class ChannelMarkerSubsystem
     ''' </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me._readings.Reset()
+        Me._Readings.Reset()
+        Me.MeasurementAvailable = False
     End Sub
 
-    ''' <summary> Sets the subsystem to its reset state. </summary>
-    Public Overrides Sub ResetKnownState()
-        MyBase.ResetKnownState()
-        Me._readings.Initialize(ReadingTypes.Primary Or ReadingTypes.Secondary)
+    ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
+    ''' <remarks> Use this method to customize the reset. </remarks>
+    Public Overrides Sub InitKnownState()
+        MyBase.InitKnownState()
+        Me._Readings.Initialize(ReadingTypes.Primary Or ReadingTypes.Secondary)
+        Me.AsyncNotifyPropertyChanged(NameOf(Me.Readings))
     End Sub
 
 #End Region
@@ -118,13 +121,9 @@ Public Class ChannelMarkerSubsystem
 
 #Region " LATEST DATA "
 
-    Private _readings As MarkerReadings
-
     ''' <summary> Returns the readings. </summary>
     ''' <returns> The readings. </returns>
-    Public Function Readings() As MarkerReadings
-        Return Me._readings
-    End Function
+    Public ReadOnly Property Readings() As MarkerReadings
 
     ''' <summary> Parses a new set of reading elements. </summary>
     ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
@@ -140,16 +139,25 @@ Public Class ChannelMarkerSubsystem
 
     End Sub
 
-    ''' <summary> Reads marker average. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
+    ''' <summary> Initializes the marker average. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="device"> The device. </param>
-    Public Sub ReadMarkerAverage(ByVal device As Device)
+    Public Sub InitializeMarkerAverage(ByVal device As Device)
         If device Is Nothing Then Throw New ArgumentNullException(NameOf(device))
         Me.Readings.Reset()
         device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.Bus)
         device.CalculateChannelSubsystem.ClearAverage()
         device.TriggerSubsystem.ApplyAveragingEnabled(True)
         device.TriggerSubsystem.Immediate()
+    End Sub
+
+    ''' <summary> Reads marker average. </summary>
+    ''' <remarks> David, 7/8/2016. </remarks>
+    ''' <param name="device"> The device. </param>
+    Public Sub ReadMarkerAverage(ByVal device As Device)
+        If device Is Nothing Then Throw New ArgumentNullException(NameOf(device))
+        Me.InitializeMarkerAverage(device)
         Me.StatusSubsystem.QueryOperationCompleted.GetValueOrDefault(False)
         Me.FetchLatestData()
     End Sub

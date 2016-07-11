@@ -1,5 +1,6 @@
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.VI.ComboBoxExtensions
 ''' <summary> Defines the contract that must be implemented by a Source Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -226,6 +227,44 @@ Public MustInherit Class SourceSubsystemBase
             End If
         End Set
     End Property
+
+    ''' <summary> Displays a supported function modes. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    ''' <param name="listControl"> The list control. </param>
+    Public Sub DisplaySupportedFunctionModes(ByVal listControl As Windows.Forms.ComboBox)
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        With listControl
+            .DataSource = Nothing
+            .Items.Clear()
+            .DataSource = GetType(SourceFunctionModes).ValueDescriptionPairs(Me.SupportedFunctionModes)
+            .DisplayMember = "Value"
+            .ValueMember = "Key"
+            If .Items.Count > 0 AndAlso Me.FunctionMode.HasValue Then
+                .SelectedItem = Me.FunctionMode.Value.ValueDescriptionPair()
+            End If
+        End With
+    End Sub
+
+    ''' <summary> Returns the function mode selected by the list control. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    ''' <returns> The SenseFunctionModes. </returns>
+    Public Shared Function SelectedFunctionMode(ByVal listControl As Windows.Forms.ComboBox) As SourceFunctionModes
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        Return CType(CType(listControl.SelectedItem, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, SourceFunctionModes)
+    End Function
+
+    ''' <summary> Safe select function mode. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    Public Sub SafeSelectFunctionMode(ByVal listControl As Windows.Forms.ComboBox)
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        If Me.FunctionMode.HasValue Then
+            listControl.SafeSelectItem(Me.FunctionMode.Value, Me.FunctionMode.Value.Description)
+        End If
+    End Sub
 
     ''' <summary> The function mode. </summary>
     Private _FunctionMode As SourceFunctionModes?

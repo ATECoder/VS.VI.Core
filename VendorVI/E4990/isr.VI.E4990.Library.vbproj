@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <None Include="Examples\KeysightExamples.txt" />
     <Content Include="PANELS\E4990Panel.bmp" />
     <Content Include="Resources\WelcomeImage.jpg" />
     <EmbeddedResource Include="My Project\Resources.resx">

@@ -64,9 +64,9 @@ Public Class SourceChannelSubsystem
             If Not Nullable.Equals(Me.FunctionMode, value) Then
                 If value.HasValue Then
                     If value.Value = SourceFunctionModes.Voltage Then
-                        Me.LevelRange = New Core.Pith.RangeR(0.005, 1)
+                        Me.LevelRange = New Core.Pith.RangeR(0.005, 1, 0.001)
                     ElseIf value.Value = SourceFunctionModes.Current Then
-                        Me.LevelRange = New Core.Pith.RangeR(0.0002, 0.02)
+                        Me.LevelRange = New Core.Pith.RangeR(0.0002, 0.02, 0.00002)
                     Else
                         Me.LevelRange = New Core.Pith.RangeR(0, 0)
                     End If

@@ -27,7 +27,6 @@ Partial Class E4990Panel
         Me._ReadButton = New System.Windows.Forms.Button()
         Me._InitiateButton = New System.Windows.Forms.Button()
         Me._SourceTabPage = New System.Windows.Forms.TabPage()
-        Me._SourceToggle = New System.Windows.Forms.CheckBox()
         Me._LevelNumericLabel = New System.Windows.Forms.Label()
         Me._LevelNumeric = New System.Windows.Forms.NumericUpDown()
         Me._ApplySourceFunctionButton = New System.Windows.Forms.Button()
@@ -53,6 +52,14 @@ Partial Class E4990Panel
         Me._HighFrequencyNumeric = New System.Windows.Forms.NumericUpDown()
         Me._LowFrequencyNumeric = New System.Windows.Forms.NumericUpDown()
         Me._HighFrequencyNumericLabel = New System.Windows.Forms.Label()
+        Me._TraceTabPage = New System.Windows.Forms.TabPage()
+        Me._TraceLayout = New System.Windows.Forms.TableLayoutPanel()
+        Me._TraceGroupBox = New System.Windows.Forms.GroupBox()
+        Me._ApplyTracesButton = New System.Windows.Forms.Button()
+        Me._PrimaryTraceParameterComboBox = New System.Windows.Forms.ComboBox()
+        Me._PrimaryTraceParameterComboBoxLabel = New System.Windows.Forms.Label()
+        Me._SecondaryTraceParameterComboBoxLabel = New System.Windows.Forms.Label()
+        Me._SecondaryTraceParameterComboBox = New System.Windows.Forms.ComboBox()
         Me._MarkersTabPage = New System.Windows.Forms.TabPage()
         Me._MarkersLayout = New System.Windows.Forms.TableLayoutPanel()
         Me._MarkersGroupBox = New System.Windows.Forms.GroupBox()
@@ -88,14 +95,6 @@ Partial Class E4990Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._TraceTabPage = New System.Windows.Forms.TabPage()
-        Me._TraceLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._TraceGroupBox = New System.Windows.Forms.GroupBox()
-        Me._PrimaryTraceParameterComboBox = New System.Windows.Forms.ComboBox()
-        Me._PrimaryTraceParameterComboBoxLabel = New System.Windows.Forms.Label()
-        Me._SecondaryTraceParameterComboBoxLabel = New System.Windows.Forms.Label()
-        Me._SecondaryTraceParameterComboBox = New System.Windows.Forms.ComboBox()
-        Me._ApplyTracesButton = New System.Windows.Forms.Button()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -115,6 +114,9 @@ Partial Class E4990Panel
         Me._SweepGroupBox.SuspendLayout()
         CType(Me._HighFrequencyNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._LowFrequencyNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._TraceTabPage.SuspendLayout()
+        Me._TraceLayout.SuspendLayout()
+        Me._TraceGroupBox.SuspendLayout()
         Me._MarkersTabPage.SuspendLayout()
         Me._MarkersLayout.SuspendLayout()
         Me._MarkersGroupBox.SuspendLayout()
@@ -126,9 +128,6 @@ Partial Class E4990Panel
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
-        Me._TraceTabPage.SuspendLayout()
-        Me._TraceLayout.SuspendLayout()
-        Me._TraceGroupBox.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -312,7 +311,6 @@ Partial Class E4990Panel
         '
         '_SourceTabPage
         '
-        Me._SourceTabPage.Controls.Add(Me._SourceToggle)
         Me._SourceTabPage.Controls.Add(Me._LevelNumericLabel)
         Me._SourceTabPage.Controls.Add(Me._LevelNumeric)
         Me._SourceTabPage.Controls.Add(Me._ApplySourceFunctionButton)
@@ -326,22 +324,11 @@ Partial Class E4990Panel
         Me._SourceTabPage.Text = "Source"
         Me._SourceTabPage.UseVisualStyleBackColor = True
         '
-        '_SourceToggle
-        '
-        Me._SourceToggle.Appearance = System.Windows.Forms.Appearance.Button
-        Me._SourceToggle.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me._SourceToggle.Location = New System.Drawing.Point(42, 44)
-        Me._SourceToggle.Name = "_SourceToggle"
-        Me._SourceToggle.Size = New System.Drawing.Size(109, 28)
-        Me._SourceToggle.TabIndex = 23
-        Me._SourceToggle.Text = "Source: Current"
-        Me._SourceToggle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        Me._SourceToggle.UseVisualStyleBackColor = True
-        '
         '_LevelNumericLabel
         '
+        Me._LevelNumericLabel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._LevelNumericLabel.AutoSize = True
-        Me._LevelNumericLabel.Location = New System.Drawing.Point(162, 50)
+        Me._LevelNumericLabel.Location = New System.Drawing.Point(162, 47)
         Me._LevelNumericLabel.Name = "_LevelNumericLabel"
         Me._LevelNumericLabel.Size = New System.Drawing.Size(71, 17)
         Me._LevelNumericLabel.TabIndex = 24
@@ -349,7 +336,7 @@ Partial Class E4990Panel
         '
         '_LevelNumeric
         '
-        Me._LevelNumeric.Location = New System.Drawing.Point(236, 46)
+        Me._LevelNumeric.Location = New System.Drawing.Point(236, 43)
         Me._LevelNumeric.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
         Me._LevelNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 196608})
         Me._LevelNumeric.Name = "_LevelNumeric"
@@ -362,7 +349,7 @@ Partial Class E4990Panel
         '_ApplySourceFunctionButton
         '
         Me._ApplySourceFunctionButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ApplySourceFunctionButton.Location = New System.Drawing.Point(269, 4)
+        Me._ApplySourceFunctionButton.Location = New System.Drawing.Point(269, 6)
         Me._ApplySourceFunctionButton.Name = "_ApplySourceFunctionButton"
         Me._ApplySourceFunctionButton.Size = New System.Drawing.Size(53, 30)
         Me._ApplySourceFunctionButton.TabIndex = 20
@@ -372,14 +359,14 @@ Partial Class E4990Panel
         '
         '_ApplySourceSettingButton
         '
-        Me._ApplySourceSettingButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ApplySourceSettingButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ApplySourceSettingButton.Location = New System.Drawing.Point(264, 78)
+        Me._ApplySourceSettingButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me._ApplySourceSettingButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._ApplySourceSettingButton.Location = New System.Drawing.Point(264, 77)
         Me._ApplySourceSettingButton.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._ApplySourceSettingButton.Name = "_ApplySourceSettingButton"
         Me._ApplySourceSettingButton.Size = New System.Drawing.Size(58, 30)
         Me._ApplySourceSettingButton.TabIndex = 15
-        Me._ApplySourceSettingButton.Text = "&Apply"
+        Me._ApplySourceSettingButton.Text = "Apply"
         Me._ApplySourceSettingButton.UseVisualStyleBackColor = True
         '
         '_SourceFunctionComboBox
@@ -389,7 +376,7 @@ Partial Class E4990Panel
         Me._SourceFunctionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me._SourceFunctionComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._SourceFunctionComboBox.Items.AddRange(New Object() {"I", "V"})
-        Me._SourceFunctionComboBox.Location = New System.Drawing.Point(116, 6)
+        Me._SourceFunctionComboBox.Location = New System.Drawing.Point(116, 9)
         Me._SourceFunctionComboBox.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._SourceFunctionComboBox.Name = "_SourceFunctionComboBox"
         Me._SourceFunctionComboBox.Size = New System.Drawing.Size(150, 25)
@@ -398,7 +385,7 @@ Partial Class E4990Panel
         '_SourceFunctionComboBoxLabel
         '
         Me._SourceFunctionComboBoxLabel.AutoSize = True
-        Me._SourceFunctionComboBoxLabel.Location = New System.Drawing.Point(54, 10)
+        Me._SourceFunctionComboBoxLabel.Location = New System.Drawing.Point(54, 13)
         Me._SourceFunctionComboBoxLabel.Name = "_SourceFunctionComboBoxLabel"
         Me._SourceFunctionComboBoxLabel.Size = New System.Drawing.Size(59, 17)
         Me._SourceFunctionComboBoxLabel.TabIndex = 13
@@ -623,6 +610,97 @@ Partial Class E4990Panel
         Me._HighFrequencyNumericLabel.TabIndex = 14
         Me._HighFrequencyNumericLabel.Text = "High Frequency [Hz]:"
         '
+        '_TraceTabPage
+        '
+        Me._TraceTabPage.Controls.Add(Me._TraceLayout)
+        Me._TraceTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._TraceTabPage.Name = "_TraceTabPage"
+        Me._TraceTabPage.Size = New System.Drawing.Size(348, 240)
+        Me._TraceTabPage.TabIndex = 3
+        Me._TraceTabPage.Text = "Trace"
+        Me._TraceTabPage.UseVisualStyleBackColor = True
+        '
+        '_TraceLayout
+        '
+        Me._TraceLayout.ColumnCount = 3
+        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.522124!))
+        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 92.47787!))
+        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me._TraceLayout.Controls.Add(Me._TraceGroupBox, 1, 1)
+        Me._TraceLayout.Location = New System.Drawing.Point(13, 13)
+        Me._TraceLayout.Name = "_TraceLayout"
+        Me._TraceLayout.RowCount = 3
+        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.54839!))
+        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 81.45161!))
+        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me._TraceLayout.Size = New System.Drawing.Size(308, 215)
+        Me._TraceLayout.TabIndex = 0
+        '
+        '_TraceGroupBox
+        '
+        Me._TraceGroupBox.Controls.Add(Me._ApplyTracesButton)
+        Me._TraceGroupBox.Controls.Add(Me._PrimaryTraceParameterComboBox)
+        Me._TraceGroupBox.Controls.Add(Me._PrimaryTraceParameterComboBoxLabel)
+        Me._TraceGroupBox.Controls.Add(Me._SecondaryTraceParameterComboBoxLabel)
+        Me._TraceGroupBox.Controls.Add(Me._SecondaryTraceParameterComboBox)
+        Me._TraceGroupBox.Location = New System.Drawing.Point(24, 39)
+        Me._TraceGroupBox.Name = "_TraceGroupBox"
+        Me._TraceGroupBox.Size = New System.Drawing.Size(255, 143)
+        Me._TraceGroupBox.TabIndex = 1
+        Me._TraceGroupBox.TabStop = False
+        Me._TraceGroupBox.Text = "Traces"
+        '
+        '_ApplyTracesButton
+        '
+        Me._ApplyTracesButton.Location = New System.Drawing.Point(170, 104)
+        Me._ApplyTracesButton.Name = "_ApplyTracesButton"
+        Me._ApplyTracesButton.Size = New System.Drawing.Size(75, 28)
+        Me._ApplyTracesButton.TabIndex = 6
+        Me._ApplyTracesButton.Text = "Apply"
+        Me._ApplyTracesButton.UseVisualStyleBackColor = True
+        '
+        '_PrimaryTraceParameterComboBox
+        '
+        Me._PrimaryTraceParameterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me._PrimaryTraceParameterComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._PrimaryTraceParameterComboBox.Items.AddRange(New Object() {"I", "V"})
+        Me._PrimaryTraceParameterComboBox.Location = New System.Drawing.Point(83, 31)
+        Me._PrimaryTraceParameterComboBox.Name = "_PrimaryTraceParameterComboBox"
+        Me._PrimaryTraceParameterComboBox.Size = New System.Drawing.Size(163, 25)
+        Me._PrimaryTraceParameterComboBox.TabIndex = 4
+        Me.TipsTooltip.SetToolTip(Me._PrimaryTraceParameterComboBox, "Parameter of the primary trace")
+        '
+        '_PrimaryTraceParameterComboBoxLabel
+        '
+        Me._PrimaryTraceParameterComboBoxLabel.AutoSize = True
+        Me._PrimaryTraceParameterComboBoxLabel.Location = New System.Drawing.Point(25, 35)
+        Me._PrimaryTraceParameterComboBoxLabel.Name = "_PrimaryTraceParameterComboBoxLabel"
+        Me._PrimaryTraceParameterComboBoxLabel.Size = New System.Drawing.Size(55, 17)
+        Me._PrimaryTraceParameterComboBoxLabel.TabIndex = 2
+        Me._PrimaryTraceParameterComboBoxLabel.Text = "Primary:"
+        Me._PrimaryTraceParameterComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        '_SecondaryTraceParameterComboBoxLabel
+        '
+        Me._SecondaryTraceParameterComboBoxLabel.AutoSize = True
+        Me._SecondaryTraceParameterComboBoxLabel.Location = New System.Drawing.Point(8, 69)
+        Me._SecondaryTraceParameterComboBoxLabel.Name = "_SecondaryTraceParameterComboBoxLabel"
+        Me._SecondaryTraceParameterComboBoxLabel.Size = New System.Drawing.Size(72, 17)
+        Me._SecondaryTraceParameterComboBoxLabel.TabIndex = 3
+        Me._SecondaryTraceParameterComboBoxLabel.Text = "Secondary:"
+        Me._SecondaryTraceParameterComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        '_SecondaryTraceParameterComboBox
+        '
+        Me._SecondaryTraceParameterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me._SecondaryTraceParameterComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._SecondaryTraceParameterComboBox.Items.AddRange(New Object() {"I", "V"})
+        Me._SecondaryTraceParameterComboBox.Location = New System.Drawing.Point(83, 65)
+        Me._SecondaryTraceParameterComboBox.Name = "_SecondaryTraceParameterComboBox"
+        Me._SecondaryTraceParameterComboBox.Size = New System.Drawing.Size(162, 25)
+        Me._SecondaryTraceParameterComboBox.TabIndex = 5
+        Me.TipsTooltip.SetToolTip(Me._SecondaryTraceParameterComboBox, "Parameter of the secondary trace")
+        '
         '_MarkersTabPage
         '
         Me._MarkersTabPage.Controls.Add(Me._MarkersLayout)
@@ -655,9 +733,9 @@ Partial Class E4990Panel
         Me._MarkersGroupBox.Controls.Add(Me._MarkerFrequencyComboBox)
         Me._MarkersGroupBox.Controls.Add(Me._MarkerFrequencyComboBoxLabel)
         Me._MarkersGroupBox.Controls.Add(Me._ApplyMarkerSettingsButton)
-        Me._MarkersGroupBox.Location = New System.Drawing.Point(34, 34)
+        Me._MarkersGroupBox.Location = New System.Drawing.Point(34, 68)
         Me._MarkersGroupBox.Name = "_MarkersGroupBox"
-        Me._MarkersGroupBox.Size = New System.Drawing.Size(279, 171)
+        Me._MarkersGroupBox.Size = New System.Drawing.Size(279, 103)
         Me._MarkersGroupBox.TabIndex = 4
         Me._MarkersGroupBox.TabStop = False
         Me._MarkersGroupBox.Text = "Markers"
@@ -665,7 +743,7 @@ Partial Class E4990Panel
         '_MarkerFrequencyComboBox
         '
         Me._MarkerFrequencyComboBox.FormattingEnabled = True
-        Me._MarkerFrequencyComboBox.Location = New System.Drawing.Point(83, 95)
+        Me._MarkerFrequencyComboBox.Location = New System.Drawing.Point(83, 23)
         Me._MarkerFrequencyComboBox.Name = "_MarkerFrequencyComboBox"
         Me._MarkerFrequencyComboBox.Size = New System.Drawing.Size(186, 25)
         Me._MarkerFrequencyComboBox.TabIndex = 6
@@ -673,7 +751,7 @@ Partial Class E4990Panel
         '_MarkerFrequencyComboBoxLabel
         '
         Me._MarkerFrequencyComboBoxLabel.AutoSize = True
-        Me._MarkerFrequencyComboBoxLabel.Location = New System.Drawing.Point(10, 99)
+        Me._MarkerFrequencyComboBoxLabel.Location = New System.Drawing.Point(10, 27)
         Me._MarkerFrequencyComboBoxLabel.Name = "_MarkerFrequencyComboBoxLabel"
         Me._MarkerFrequencyComboBoxLabel.Size = New System.Drawing.Size(70, 17)
         Me._MarkerFrequencyComboBoxLabel.TabIndex = 5
@@ -681,7 +759,7 @@ Partial Class E4990Panel
         '
         '_ApplyMarkerSettingsButton
         '
-        Me._ApplyMarkerSettingsButton.Location = New System.Drawing.Point(194, 129)
+        Me._ApplyMarkerSettingsButton.Location = New System.Drawing.Point(194, 57)
         Me._ApplyMarkerSettingsButton.Name = "_ApplyMarkerSettingsButton"
         Me._ApplyMarkerSettingsButton.Size = New System.Drawing.Size(75, 28)
         Me._ApplyMarkerSettingsButton.TabIndex = 2
@@ -1027,97 +1105,6 @@ Partial Class E4990Panel
         Me._TitleLabel.Text = "KE4990"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_TraceTabPage
-        '
-        Me._TraceTabPage.Controls.Add(Me._TraceLayout)
-        Me._TraceTabPage.Location = New System.Drawing.Point(4, 26)
-        Me._TraceTabPage.Name = "_TraceTabPage"
-        Me._TraceTabPage.Size = New System.Drawing.Size(348, 240)
-        Me._TraceTabPage.TabIndex = 3
-        Me._TraceTabPage.Text = "Trace"
-        Me._TraceTabPage.UseVisualStyleBackColor = True
-        '
-        '_TraceLayout
-        '
-        Me._TraceLayout.ColumnCount = 3
-        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.522124!))
-        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 92.47787!))
-        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me._TraceLayout.Controls.Add(Me._TraceGroupBox, 1, 1)
-        Me._TraceLayout.Location = New System.Drawing.Point(13, 13)
-        Me._TraceLayout.Name = "_TraceLayout"
-        Me._TraceLayout.RowCount = 3
-        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.54839!))
-        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 81.45161!))
-        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me._TraceLayout.Size = New System.Drawing.Size(308, 215)
-        Me._TraceLayout.TabIndex = 0
-        '
-        '_TraceGroupBox
-        '
-        Me._TraceGroupBox.Controls.Add(Me._ApplyTracesButton)
-        Me._TraceGroupBox.Controls.Add(Me._PrimaryTraceParameterComboBox)
-        Me._TraceGroupBox.Controls.Add(Me._PrimaryTraceParameterComboBoxLabel)
-        Me._TraceGroupBox.Controls.Add(Me._SecondaryTraceParameterComboBoxLabel)
-        Me._TraceGroupBox.Controls.Add(Me._SecondaryTraceParameterComboBox)
-        Me._TraceGroupBox.Location = New System.Drawing.Point(24, 39)
-        Me._TraceGroupBox.Name = "_TraceGroupBox"
-        Me._TraceGroupBox.Size = New System.Drawing.Size(255, 143)
-        Me._TraceGroupBox.TabIndex = 1
-        Me._TraceGroupBox.TabStop = False
-        Me._TraceGroupBox.Text = "Traces"
-        '
-        '_PrimaryTraceParameterComboBox
-        '
-        Me._PrimaryTraceParameterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me._PrimaryTraceParameterComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._PrimaryTraceParameterComboBox.Items.AddRange(New Object() {"I", "V"})
-        Me._PrimaryTraceParameterComboBox.Location = New System.Drawing.Point(83, 31)
-        Me._PrimaryTraceParameterComboBox.Name = "_PrimaryTraceParameterComboBox"
-        Me._PrimaryTraceParameterComboBox.Size = New System.Drawing.Size(163, 25)
-        Me._PrimaryTraceParameterComboBox.TabIndex = 4
-        Me.TipsTooltip.SetToolTip(Me._PrimaryTraceParameterComboBox, "Parameter of the primary trace")
-        '
-        '_PrimaryTraceParameterComboBoxLabel
-        '
-        Me._PrimaryTraceParameterComboBoxLabel.AutoSize = True
-        Me._PrimaryTraceParameterComboBoxLabel.Location = New System.Drawing.Point(25, 35)
-        Me._PrimaryTraceParameterComboBoxLabel.Name = "_PrimaryTraceParameterComboBoxLabel"
-        Me._PrimaryTraceParameterComboBoxLabel.Size = New System.Drawing.Size(55, 17)
-        Me._PrimaryTraceParameterComboBoxLabel.TabIndex = 2
-        Me._PrimaryTraceParameterComboBoxLabel.Text = "Primary:"
-        Me._PrimaryTraceParameterComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        '_SecondaryTraceParameterComboBoxLabel
-        '
-        Me._SecondaryTraceParameterComboBoxLabel.AutoSize = True
-        Me._SecondaryTraceParameterComboBoxLabel.Location = New System.Drawing.Point(8, 69)
-        Me._SecondaryTraceParameterComboBoxLabel.Name = "_SecondaryTraceParameterComboBoxLabel"
-        Me._SecondaryTraceParameterComboBoxLabel.Size = New System.Drawing.Size(72, 17)
-        Me._SecondaryTraceParameterComboBoxLabel.TabIndex = 3
-        Me._SecondaryTraceParameterComboBoxLabel.Text = "Secondary:"
-        Me._SecondaryTraceParameterComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        '_SecondaryTraceParameterComboBox
-        '
-        Me._SecondaryTraceParameterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me._SecondaryTraceParameterComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._SecondaryTraceParameterComboBox.Items.AddRange(New Object() {"I", "V"})
-        Me._SecondaryTraceParameterComboBox.Location = New System.Drawing.Point(83, 65)
-        Me._SecondaryTraceParameterComboBox.Name = "_SecondaryTraceParameterComboBox"
-        Me._SecondaryTraceParameterComboBox.Size = New System.Drawing.Size(162, 25)
-        Me._SecondaryTraceParameterComboBox.TabIndex = 5
-        Me.TipsTooltip.SetToolTip(Me._SecondaryTraceParameterComboBox, "Parameter of the secondary trace")
-        '
-        '_ApplyTracesButton
-        '
-        Me._ApplyTracesButton.Location = New System.Drawing.Point(170, 104)
-        Me._ApplyTracesButton.Name = "_ApplyTracesButton"
-        Me._ApplyTracesButton.Size = New System.Drawing.Size(75, 28)
-        Me._ApplyTracesButton.TabIndex = 6
-        Me._ApplyTracesButton.Text = "Apply"
-        Me._ApplyTracesButton.UseVisualStyleBackColor = True
-        '
         'E4990Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -1150,6 +1137,10 @@ Partial Class E4990Panel
         Me._SweepGroupBox.PerformLayout()
         CType(Me._HighFrequencyNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._LowFrequencyNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._TraceTabPage.ResumeLayout(False)
+        Me._TraceLayout.ResumeLayout(False)
+        Me._TraceGroupBox.ResumeLayout(False)
+        Me._TraceGroupBox.PerformLayout()
         Me._MarkersTabPage.ResumeLayout(False)
         Me._MarkersLayout.ResumeLayout(False)
         Me._MarkersGroupBox.ResumeLayout(False)
@@ -1166,10 +1157,6 @@ Partial Class E4990Panel
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
-        Me._TraceTabPage.ResumeLayout(False)
-        Me._TraceLayout.ResumeLayout(False)
-        Me._TraceGroupBox.ResumeLayout(False)
-        Me._TraceGroupBox.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1210,8 +1197,7 @@ Partial Class E4990Panel
     Private WithEvents _CompensationTabPage As Windows.Forms.TabPage
     Private WithEvents _CalLayout As Windows.Forms.TableLayoutPanel
     Private WithEvents _ApplySourceFunctionButton As Windows.Forms.Button
-    Friend WithEvents _CompensationGroupBox As Windows.Forms.GroupBox
-    Private WithEvents _SourceToggle As Windows.Forms.CheckBox
+    Private WithEvents _CompensationGroupBox As Windows.Forms.GroupBox
     Private WithEvents _LevelNumericLabel As Windows.Forms.Label
     Private WithEvents _LevelNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _ApplySweepSettingsButton As Windows.Forms.Button
@@ -1220,25 +1206,25 @@ Partial Class E4990Panel
     Private WithEvents _HighFrequencyNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _LowFrequencyNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _SenseTabControl As Windows.Forms.TabControl
-    Friend WithEvents _AverageTabPage As Windows.Forms.TabPage
-    Friend WithEvents _SweepTabPage As Windows.Forms.TabPage
+    Private WithEvents _AverageTabPage As Windows.Forms.TabPage
+    Private WithEvents _SweepTabPage As Windows.Forms.TabPage
     Private WithEvents _MarkersTabPage As Windows.Forms.TabPage
     Private WithEvents _ApplyMarkerSettingsButton As Windows.Forms.Button
-    Friend WithEvents _AveragingGroupBox As Windows.Forms.GroupBox
+    Private WithEvents _AveragingGroupBox As Windows.Forms.GroupBox
     Private WithEvents _ApertureNumeric As Windows.Forms.NumericUpDown
-    Friend WithEvents _AveragingEnabledCheckBox As Windows.Forms.CheckBox
+    Private WithEvents _AveragingEnabledCheckBox As Windows.Forms.CheckBox
     Private WithEvents _ApertureNumericLabel As Windows.Forms.Label
     Private WithEvents _RestartAveragingButton As Windows.Forms.Button
     Private WithEvents _AveragingCountNumericLabel As Windows.Forms.Label
     Private WithEvents _AveragingCountNumeric As Windows.Forms.NumericUpDown
-    Friend WithEvents _AveragingLayout As Windows.Forms.TableLayoutPanel
-    Friend WithEvents _SweepLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _AveragingLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _SweepLayout As Windows.Forms.TableLayoutPanel
     Private WithEvents _SweepGroupBox As Windows.Forms.GroupBox
-    Friend WithEvents _MarkersLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _MarkersLayout As Windows.Forms.TableLayoutPanel
     Private WithEvents _MarkersGroupBox As Windows.Forms.GroupBox
     Private WithEvents _ApplyOpenButton As Windows.Forms.Button
-    Friend WithEvents _AcquireCompensationButton As Windows.Forms.Button
-    Friend WithEvents _OpenCompensationTextBoxLabel As Windows.Forms.Label
+    Private WithEvents _AcquireCompensationButton As Windows.Forms.Button
+    Private WithEvents _OpenCompensationTextBoxLabel As Windows.Forms.Label
     Private WithEvents _FrequencyStimulusTextBox As Windows.Forms.TextBox
     Private WithEvents _FrequencyStimulusTextBoxLabel As Windows.Forms.Label
     Private WithEvents _LoadCompensationTextBox As Windows.Forms.TextBox
@@ -1246,15 +1232,15 @@ Partial Class E4990Panel
     Private WithEvents _OpenCompensationTextBox As Windows.Forms.TextBox
     Private WithEvents _ApplyLoadButton As Windows.Forms.Button
     Private WithEvents _ApplyShortButton As Windows.Forms.Button
-    Friend WithEvents _LoadCompensationTextBoxLabel As Windows.Forms.Label
+    Private WithEvents _LoadCompensationTextBoxLabel As Windows.Forms.Label
     Private WithEvents _ShortCompensationTextBoxLabel As Windows.Forms.Label
     Private WithEvents _MarkerFrequencyComboBox As Windows.Forms.ComboBox
-    Friend WithEvents _MarkerFrequencyComboBoxLabel As Windows.Forms.Label
+    Private WithEvents _MarkerFrequencyComboBoxLabel As Windows.Forms.Label
     Private WithEvents _AdapterComboBox As Windows.Forms.ComboBox
-    Friend WithEvents _AdapterComboBoxLabel As Windows.Forms.Label
-    Friend WithEvents _TraceTabPage As Windows.Forms.TabPage
-    Friend WithEvents _TraceLayout As Windows.Forms.TableLayoutPanel
-    Friend WithEvents _TraceGroupBox As Windows.Forms.GroupBox
+    Private WithEvents _AdapterComboBoxLabel As Windows.Forms.Label
+    Private WithEvents _TraceTabPage As Windows.Forms.TabPage
+    Private WithEvents _TraceLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _TraceGroupBox As Windows.Forms.GroupBox
     Private WithEvents _ApplyTracesButton As Windows.Forms.Button
     Private WithEvents _PrimaryTraceParameterComboBox As Windows.Forms.ComboBox
     Private WithEvents _PrimaryTraceParameterComboBoxLabel As Windows.Forms.Label
