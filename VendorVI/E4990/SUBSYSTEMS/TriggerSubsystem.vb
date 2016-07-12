@@ -29,7 +29,7 @@ Public Class TriggerSubsystem
         MyBase.ResetKnownState()
         Me.AveragingEnabled = False
         Me.TriggerSource = VI.TriggerSources.Internal
-        Me.SupportedTriggerSources = TriggerSources.Bus Or TriggerSources.External Or TriggerSources.Immediate
+        Me.SupportedTriggerSources = TriggerSources.Bus Or TriggerSources.External Or TriggerSources.Immediate Or TriggerSources.Internal
     End Sub
 
 #End Region
@@ -98,6 +98,19 @@ Public Class TriggerSubsystem
     ''' <summary> Gets the delay query command. </summary>
     ''' <value> The delay query command. </value>
     Protected Overrides ReadOnly Property DelayQueryCommand As String = ":TRIG:EXT:DEL?"
+
+#End Region
+
+#Region " SOURCE "
+
+    ''' <summary> Gets or sets the Trigger source query command. </summary>
+    ''' <value> The Trigger source query command. </value>
+    Protected Overrides ReadOnly Property TriggerSourceQueryCommand As String = ":TRIG:SOUR?"
+
+    ''' <summary> Gets or sets the Trigger source command format. </summary>
+    ''' <remarks> SCPI: ":TRIG:SOUR {0}". </remarks>
+    ''' <value> The write Trigger source command format. </value>
+    Protected Overrides ReadOnly Property TriggerSourceCommandFormat As String = ":TRIG:SOUR {0}"
 
 #End Region
 

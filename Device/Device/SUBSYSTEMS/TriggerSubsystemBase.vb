@@ -1,5 +1,6 @@
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.VI.ComboBoxExtensions
 ''' <summary> Defines the contract that must be implemented by a Trigger Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -546,6 +547,46 @@ Public MustInherit Class TriggerSubsystemBase
 
 #Region " TRIGGER SOURCE "
 
+    ''' <summary> List Trigger Sources. </summary>
+    ''' <remarks> David, 7/8/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    Public Sub ListTriggerSources(ByVal listControl As Windows.Forms.ComboBox)
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        Dim selectedIndex As Integer = listControl.SelectedIndex
+        With listControl
+            .DataSource = Nothing
+            .Items.Clear()
+            .DataSource = GetType(TriggerSources).ValueDescriptionPairs(Me.SupportedTriggerSources)
+            .DisplayMember = "Value"
+            .ValueMember = "Key"
+            If .Items.Count > 0 Then
+                .SelectedIndex = Math.Max(selectedIndex, 0)
+            End If
+        End With
+    End Sub
+
+    ''' <summary> Returns the function mode selected by the list control. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    ''' <returns> The SenseTriggerSource. </returns>
+    Public Shared Function SelectedTriggerSource(ByVal listControl As Windows.Forms.ComboBox) As TriggerSources
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        Return CType(CType(listControl.SelectedItem, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, TriggerSources)
+    End Function
+
+    ''' <summary> Safe select function mode. </summary>
+    ''' <remarks> David, 7/11/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    Public Sub SafeSelectTriggerSource(ByVal listControl As Windows.Forms.ComboBox)
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        If Me.TriggerSource.HasValue Then
+            listControl.SafeSelectItem(Me.TriggerSource.Value, Me.TriggerSource.Value.Description)
+        End If
+    End Sub
+
     Private _SupportedTriggerSources As TriggerSources
     ''' <summary>
     ''' Gets or sets the supported Function Mode.
@@ -648,10 +689,10 @@ End Enum
 <Flags>
 Public Enum TriggerSources
     <ComponentModel.Description("Not Defined ()")> None
-    <ComponentModel.Description("Bus (BUS)")> Bus
-    <ComponentModel.Description("External (Ext)")> External
-    <ComponentModel.Description("Immediate (IMM)")> Immediate
-    <ComponentModel.Description("Trigger Link (TLIN)")> TriggerLink
-    <ComponentModel.Description("Internal (INT)")> Internal
-    <ComponentModel.Description("Manual (MAN)")> Manual
+    <ComponentModel.Description("Bus (BUS)")> Bus = 1
+    <ComponentModel.Description("External (EXT)")> External = Bus << 1
+    <ComponentModel.Description("Immediate (IMM)")> Immediate = External << 1
+    <ComponentModel.Description("Trigger Link (TLIN)")> TriggerLink = Immediate << 1
+    <ComponentModel.Description("Internal (INT)")> Internal = TriggerLink << 1
+    <ComponentModel.Description("Manual (MAN)")> Manual = Internal << 1
 End Enum

@@ -75,7 +75,7 @@ Public Class SenseChannelSubsystem
     ''' <value> The Adapter Type query command, e.g., :SENSE:ADAPT? </value>
     Protected Overrides ReadOnly Property AdapterTypeQueryCommand As String
         Get
-            Return ":SENSE:ADAPT?"
+            Return ":SENS:ADAP?"
         End Get
     End Property
 
@@ -83,7 +83,7 @@ Public Class SenseChannelSubsystem
     ''' <value> The Adapter Type command, e.g., :SENSE:ADAPT {0}. </value>
     Protected Overrides ReadOnly Property AdapterTypeCommandFormat As String
         Get
-            Return "SENSE:ADAPT {0}"
+            Return "SENS:ADAP {0}"
         End Get
     End Property
 
@@ -95,7 +95,7 @@ Public Class SenseChannelSubsystem
     ''' <value> The Aperture command format. </value>
     Protected Overrides ReadOnly Property ApertureCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:APER {0}"
+            Return $":SENS{Me.ChannelNumber}:APER {{0}}"
         End Get
     End Property
 
@@ -124,7 +124,7 @@ Public Class SenseChannelSubsystem
     ''' <value> The Frequency Points Type command format. </value>
     Protected Overrides ReadOnly Property FrequencyPointsTypeCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:CORR:COLL:FPO {0}"
+            Return $":SENS{Me.ChannelNumber}:CORR:COLL:FPO {{0}}"
         End Get
     End Property
 
@@ -144,7 +144,7 @@ Public Class SenseChannelSubsystem
     ''' <value> The Sweep Points command format. </value>
     Protected Overrides ReadOnly Property SweepPointsCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:SWE:POIN {0}"
+            Return $":SENS{Me.ChannelNumber}:SWE:POIN {{0}}"
         End Get
     End Property
 
@@ -160,7 +160,7 @@ Public Class SenseChannelSubsystem
     ''' <value> The Sweep Start command format. </value>
     Protected Overrides ReadOnly Property SweepStartCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:FREQ:STAR {0}"
+            Return $":SENS{Me.ChannelNumber}:FREQ:STAR {{0}}"
         End Get
     End Property
 
@@ -176,7 +176,7 @@ Public Class SenseChannelSubsystem
     ''' <value> The Sweep Stop command format. </value>
     Protected Overrides ReadOnly Property SweepStopCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:FREQ:STOP {0}"
+            Return $":SENS{Me.ChannelNumber}:FREQ:STOP {{0}}"
         End Get
     End Property
 
@@ -192,7 +192,7 @@ Public Class SenseChannelSubsystem
     ''' <value> The Sweep Type command format. </value>
     Protected Overrides ReadOnly Property SweepTypeCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:SWE:TYPE {0}"
+            Return $":SENS{Me.ChannelNumber}:SWE:TYPE {{0}}"
         End Get
     End Property
 

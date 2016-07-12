@@ -62,7 +62,7 @@ Public MustInherit Class SenseChannelSubsystemBase
         With listControl
             .DataSource = Nothing
             .Items.Clear()
-            .DataSource = GetType(ReadingTypes).ValueDescriptionPairs(Me.SupportedAdapterTypes)
+            .DataSource = GetType(AdapterType).ValueDescriptionPairs(Me.SupportedAdapterTypes)
             .DisplayMember = "Value"
             .ValueMember = "Key"
             If .Items.Count > 0 Then

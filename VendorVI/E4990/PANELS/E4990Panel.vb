@@ -309,6 +309,8 @@ Public Class E4990Panel
                 Me._AveragingEnabledCheckBox.Checked = subsystem.AveragingEnabled.GetValueOrDefault(False)
             Case NameOf(subsystem.AverageCount)
                 Me._AveragingCountNumeric.Value = subsystem.AverageCount.GetValueOrDefault(0)
+            Case NameOf(subsystem.TraceCount)
+                If subsystem.TraceCount.HasValue Then Me._TraceGroupBox.Text = $"Traces ({subsystem.TraceCount.Value})"
         End Select
     End Sub
 
@@ -474,10 +476,11 @@ Public Class E4990Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelTriggerSubsystem, ByVal propertyName As String)
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelTriggerSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            ' Case NameOf(subsystem.AdapterType)
+            Case NameOf(subsystem.ContinuousEnabled)
+                If subsystem.ContinuousEnabled.HasValue Then Me._ContinuousEnabledMenuItem.Checked = subsystem.ContinuousEnabled.Value
         End Select
     End Sub
 
@@ -535,8 +538,12 @@ Public Class E4990Panel
         Select Case propertyName
             Case NameOf(subsystem.SupportedAdapterTypes)
                 subsystem.ListAdapters(Me._AdapterComboBox)
+            Case NameOf(subsystem.Aperture)
+                If subsystem.Aperture.HasValue Then Me._ApertureNumeric.Value = CDec(subsystem.Aperture.Value)
             Case NameOf(subsystem.AdapterType)
                 If subsystem.AdapterType.HasValue Then Me.SelectAdapter(subsystem.AdapterType.Value)
+            Case NameOf(subsystem.SweepPoints)
+                If subsystem.SweepPoints.HasValue Then Me._SweepGroupBox.Text = $"Sweep points: {subsystem.SweepPoints.Value}"
             Case NameOf(subsystem.SweepStart)
                 If subsystem.SweepStart.HasValue Then Me._LowFrequencyNumeric.Value = CDec(subsystem.SweepStart.Value)
             Case NameOf(subsystem.SweepStart)
@@ -573,7 +580,7 @@ Public Class E4990Panel
             Case NameOf(subsystem.FunctionMode)
                 Me.SelectSourceFunctionMode()
             Case NameOf(subsystem.Level)
-                If subsystem.Level.HasValue Then Me._LevelNumeric.Value = CDec(subsystem.Level.Value)
+                If subsystem.Level.HasValue Then Me.SourceLevel = subsystem.Level.Value
         End Select
     End Sub
 
@@ -598,9 +605,13 @@ Public Class E4990Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As TriggerSubsystem, ByVal propertyName As String)
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As TriggerSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
+            Case NameOf(subsystem.SafeSelectTriggerSource)
+                subsystem.ListTriggerSources(Me._TriggerSourceComboBox.ComboBox)
+            Case NameOf(subsystem.TriggerSource)
+                If subsystem.TriggerSource.HasValue Then subsystem.SafeSelectTriggerSource(Me._TriggerSourceComboBox.ComboBox)
             Case NameOf(subsystem.Delay)
         End Select
     End Sub
@@ -843,10 +854,17 @@ Public Class E4990Panel
 
     ''' <summary> Gets source level. </summary>
     ''' <value> The source level. </value>
-    Private ReadOnly Property SourceLevel As Double
+    Private Property SourceLevel As Double
         Get
             Return If(Me.SelectedSourceFunctionMode = SourceFunctionModes.Voltage, Me._LevelNumeric.Value, 0.001 * Me._LevelNumeric.Value)
         End Get
+        Set(value As Double)
+            If Me.SelectedSourceFunctionMode = SourceFunctionModes.Voltage Then
+                Me._LevelNumeric.Value = CDec(value)
+            Else
+                Me._LevelNumeric.Value = CDec(1000 * value)
+            End If
+        End Set
     End Property
 
     ''' <summary> Gets the selected source function mode. </summary>
@@ -880,11 +898,29 @@ Public Class E4990Panel
     Private Sub SelectSourceFunctionMode()
         Me.Device.SourceChannelSubsystem.SafeSelectFunctionMode(Me._SourceFunctionComboBox)
         If Me.Device.SourceChannelSubsystem.FunctionMode.HasValue Then
-            With Me._LevelNumeric
-                .Minimum = CDec(Me.Device.SourceChannelSubsystem.LevelRange.Min)
-                .Maximum = CDec(Me.Device.SourceChannelSubsystem.LevelRange.Max)
-                .DecimalPlaces = Me.Device.SourceChannelSubsystem.LevelRange.DecimalPlaces
-            End With
+            If Me.Device.SourceChannelSubsystem.FunctionMode.Value = SourceFunctionModes.Current Then
+                With Me._LevelNumeric
+                    .Minimum = CDec(1000 * Me.Device.SourceChannelSubsystem.LevelRange.Min)
+                    .Maximum = CDec(1000 * Me.Device.SourceChannelSubsystem.LevelRange.Max)
+                    .DecimalPlaces = Math.Max(0, Me.Device.SourceChannelSubsystem.LevelRange.DecimalPlaces - 3)
+                    If .Minimum > 0 Then
+                        .Increment = .Minimum
+                    Else
+                        .Increment = 0.1D * (.Maximum - .Minimum)
+                    End If
+                End With
+            Else
+                With Me._LevelNumeric
+                    .Minimum = CDec(Me.Device.SourceChannelSubsystem.LevelRange.Min)
+                    .Maximum = CDec(Me.Device.SourceChannelSubsystem.LevelRange.Max)
+                    .DecimalPlaces = Me.Device.SourceChannelSubsystem.LevelRange.DecimalPlaces
+                    If .Minimum > 0 Then
+                        .Increment = .Minimum
+                    Else
+                        .Increment = 0.1D * (.Maximum - .Minimum)
+                    End If
+                End With
+            End If
         End If
     End Sub
 
@@ -901,6 +937,7 @@ Public Class E4990Panel
                     .Text = "Level [mA]:"
                 End If
                 .Left = Me._LevelNumeric.Left - .Width
+                .Invalidate()
             End With
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -934,30 +971,45 @@ Public Class E4990Panel
 
 #Region " CONTROL EVENT HANDLERS: SENSE "
 
+#Region " SENSE / AVERAGING "
+
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ApplyMarkerSettingsButton_Click(sender As Object, e As EventArgs) Handles _ApplyMarkerSettingsButton.Click
+    Private Sub _ApplyAveragingButton_Click(sender As Object, e As EventArgs) Handles _ApplyAveragingButton.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Dim f As Double = Double.Parse(Me._MarkerFrequencyComboBox.Text)
-            ' to_do: use sense trace function to set the reading units.
-            ' Turn on marker 1
-            ' Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture, ":CALC{0}:MARK{1} ON", channelNumber, markerNumber))
-            Me.Device.ChannelMarkerSubsystem.ApplyEnabled(True)
-            ' set marker position
-            ' Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture, ":CALC{0}:MARK{1}:X {2}", channelNumber, markerNumber, frequency))
-            Me.Device.ChannelMarkerSubsystem.ApplyAbscissa(f)
+            Me.Device.SenseChannelSubsystem.ApplyAperture(Me._ApertureNumeric.Value)
+            Me.Device.CalculateChannelSubsystem.ApplyAverageSettings(Me._AveragingEnabledCheckBox.Checked, CInt(Me._AveragingCountNumeric.Value))
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred applying marker settings;. Details: {0}", ex)
+                               "Exception occurred applying average settings;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _RestartAveragingButton_Click(sender As Object, e As EventArgs) Handles _RestartAveragingButton.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.CalculateChannelSubsystem.ClearAverage()
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred applying average settings;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
 
-
     End Sub
+
+#End Region
+
+#Region " SENSE / SWEEP "
 
     ''' <summary> Configure sweep. </summary>
     ''' <remarks> David, 4/15/2016. </remarks>
@@ -1000,30 +1052,26 @@ Public Class E4990Panel
         End Try
     End Sub
 
+#End Region
+
+#Region " SENSE / TRACES "
+
     ''' <summary> Configure sweep. </summary>
     ''' <remarks> David, 4/15/2016. </remarks>
     Public Sub ConfigureTrace()
-
-        ' Set trigger source at BUS
-        ' Me.Device.Session.Write(":TRIG:SOUR BUS")
-        Me.Device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.Bus)
 
         ' Setup Channel 1
         Me.Device.CalculateChannelSubsystem.ApplyTraceCount(2)
 
         ' Allocate measurement parameter for trace 1: Rs
         ' Me.Device.Session.Write(":CALC1:PAR1:DEF RS")
-        Me.Device.PrimaryChannelTraceSubsystem.ApplyParameter(TraceParameters.SeriesResistance)
+        Me.Device.PrimaryChannelTraceSubsystem.ApplyParameter(VI.ChannelTraceSubsystemBase.SelectedTraceParameters(Me._PrimaryTraceParameterComboBox))
+        Me.Device.PrimaryChannelTraceSubsystem.AutoScale()
 
         ' Allocate measurement parameter for trace 2: Ls
         'Me.Device.Session.Write(":CALC1:PAR2:DEF LS")
-        Me.Device.SecondaryChannelTraceSubsystem.ApplyParameter(TraceParameters.SeriesInductance)
-
-        ' Stimulus Setup
-
-        ' Turn on Continuous Activation mode for channel 1
-        ' Me.Device.Session.Write(":INIT1:CONT ON")
-        Me.Device.ChannelTriggerSubsystem.ApplyContinuousEnabled(True)
+        Me.Device.SecondaryChannelTraceSubsystem.ApplyParameter(VI.ChannelTraceSubsystemBase.SelectedTraceParameters(Me._SecondaryTraceParameterComboBox))
+        Me.Device.SecondaryChannelTraceSubsystem.AutoScale()
 
     End Sub
 
@@ -1074,24 +1122,36 @@ Public Class E4990Panel
         End Try
     End Sub
 
+#End Region
+
+#Region " SENSE / MARKERS "
+
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _RestartAveragingButton_Click(sender As Object, e As EventArgs) Handles _RestartAveragingButton.Click
+    Private Sub _ApplyMarkerSettingsButton_Click(sender As Object, e As EventArgs) Handles _ApplyMarkerSettingsButton.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Me.Device.CalculateChannelSubsystem.ApplyAverageSettings(Me._AveragingEnabledCheckBox.Checked, CInt(Me._AveragingCountNumeric.Value))
-            Me.Device.CalculateChannelSubsystem.ClearAverage()
-            Me.Device.SenseChannelSubsystem.ApplyAdapterType(Me.SelectedAdapterType)
+            Dim f As Double = Double.Parse(Me._MarkerFrequencyComboBox.Text)
+            ' to_do: use sense trace function to set the reading units.
+            ' Turn on marker 1
+            ' Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture, ":CALC{0}:MARK{1} ON", channelNumber, markerNumber))
+            Me.Device.ChannelMarkerSubsystem.ApplyEnabled(True)
+            ' set marker position
+            ' Me.Device.Session.Write(String.Format(Globalization.CultureInfo.InvariantCulture, ":CALC{0}:MARK{1}:X {2}", channelNumber, markerNumber, frequency))
+            Me.Device.ChannelMarkerSubsystem.ApplyAbscissa(f)
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred applying average settings;. Details: {0}", ex)
+                               "Exception occurred applying marker settings;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
 
+
     End Sub
+
+#End Region
 
 #End Region
 
@@ -1211,39 +1271,61 @@ Public Class E4990Panel
 
 #End Region
 
-#Region " READ AND WRITE "
+#Region " CONTROL EVENT HANDLERS: SCALE "
 
-    ''' <summary> Executes the simple read write control property changed action. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
-    ''' <param name="sender">       Source of the event. </param>
-    ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSimpleReadWriteControlPropertyChanged(sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
-        If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
-            Select Case propertyName
-                Case NameOf(sender.ReceivedMessage)
-                Case NameOf(sender.SentMessage)
-                Case NameOf(sender.StatusMessage)
-                    Me.StatusLabel.Text = sender.StatusMessage
-                Case NameOf(sender.ServiceRequestValue)
-                    Me.StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
-                Case NameOf(sender.ElapsedTime)
-            End Select
-        End If
+    ''' <summary> Automatic scale menu item click. </summary>
+    ''' <remarks> David, 7/12/2016. </remarks>
+    ''' <param name="sender"> <see cref="T:System.Object" />
+    '''                                             instance of this
+    '''                       <see cref="T:System.Windows.Forms.Control" /> </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _AutoScaleMenuItem_Click(sender As Object, e As EventArgs) Handles _AutoScaleMenuItem.Click
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.PrimaryChannelTraceSubsystem.AutoScale()
+            Me.Device.SecondaryChannelTraceSubsystem.AutoScale()
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred applying auto scale;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
     End Sub
 
-    ''' <summary> Simple read write control property changed. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _SimpleReadWriteControl_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
+#End Region
+
+#Region " CONTROL EVENT HANDLERS: TRIGGER "
+
+    ''' <summary> Applies the trigger options menu item click. </summary>
+    ''' <remarks> David, 7/12/2016. </remarks>
+    ''' <param name="sender"> <see cref="T:System.Object" />
+    '''                                             instance of this
+    '''                       <see cref="T:System.Windows.Forms.Control" /> </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ApplyTriggerOptionsMenuItem_Click(sender As Object, e As EventArgs) Handles _ApplyTriggerOptionsMenuItem.Click
         Try
-            Me.OnSimpleReadWriteControlPropertyChanged(TryCast(sender, Instrument.SimpleReadWriteControl), e?.PropertyName)
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+
+            ' Turn on Continuous Activation mode for channel 1
+            ' Me.Device.Session.Write(":INIT1:CONT ON")
+            Me.Device.ChannelTriggerSubsystem.ApplyContinuousEnabled(Me._ContinuousEnabledMenuItem.Checked)
+
+            ' Set trigger source, e.g., 
+            ' Me.Device.Session.Write(":TRIG:SOUR BUS")
+            Me.Device.TriggerSubsystem.ApplyTriggerSource(VI.TriggerSubsystemBase.SelectedTriggerSource(Me._TriggerSourceComboBox.ComboBox))
         Catch ex As Exception
-            Me.StatusLabel.Text = "Exception occurred handling change"
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling Simple Read and Write property changed Event;. Failed property {0}. Details: {1}",
-                               e?.PropertyName, ex)
+                               "Exception occurred applying trigger source;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
         End Try
     End Sub
 
@@ -1355,6 +1437,44 @@ Public Class E4990Panel
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initializing known state;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+#End Region
+
+#Region " READ AND WRITE "
+
+    ''' <summary> Executes the simple read write control property changed action. </summary>
+    ''' <remarks> David, 12/29/2015. </remarks>
+    ''' <param name="sender">       Source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnSimpleReadWriteControlPropertyChanged(sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
+        If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
+            Select Case propertyName
+                Case NameOf(sender.ReceivedMessage)
+                Case NameOf(sender.SentMessage)
+                Case NameOf(sender.StatusMessage)
+                    Me.StatusLabel.Text = sender.StatusMessage
+                Case NameOf(sender.ServiceRequestValue)
+                    Me.StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
+                Case NameOf(sender.ElapsedTime)
+            End Select
+        End If
+    End Sub
+
+    ''' <summary> Simple read write control property changed. </summary>
+    ''' <remarks> David, 12/29/2015. </remarks>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _SimpleReadWriteControl_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
+        Try
+            Me.OnSimpleReadWriteControlPropertyChanged(TryCast(sender, Instrument.SimpleReadWriteControl), e?.PropertyName)
+        Catch ex As Exception
+            Me.StatusLabel.Text = "Exception occurred handling change"
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling Simple Read and Write property changed Event;. Failed property {0}. Details: {1}",
+                               e?.PropertyName, ex)
         End Try
     End Sub
 

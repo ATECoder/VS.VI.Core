@@ -83,7 +83,7 @@ Public Class ChannelMarkerSubsystem
     ''' <value> The Abscissa command format. </value>
     Protected Overrides ReadOnly Property AbscissaCommandFormat As String
         Get
-            Return $":CALC{Me.ChannelNumber}:MARK{Me.MarkerNumber}:X {0}"
+            Return $":CALC{Me.ChannelNumber}:MARK{Me.MarkerNumber}:X {{0}}"
         End Get
     End Property
 
@@ -111,7 +111,7 @@ Public Class ChannelMarkerSubsystem
     ''' <value> The automatic delay enabled query command. </value>
     Protected Overrides ReadOnly Property EnabledCommandFormat As String
         Get
-            Return $":CALC{Me.ChannelNumber}:MARK{Me.MarkerNumber}:STAT {0:1;1;0}"
+            Return $":CALC{Me.ChannelNumber}:MARK{Me.MarkerNumber}:STAT {{0:1;1;0}}"
         End Get
     End Property
 

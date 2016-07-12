@@ -98,7 +98,7 @@ Public Class CompensateChannelSubsystem
     ''' <value> The compensation enabled query command. </value>
     Protected Overrides ReadOnly Property EnabledCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:CORR2:{Me.CompensationTypeCode}:STAT {0:1;1;0}"
+            Return $":SENS{Me.ChannelNumber}:CORR2:{Me.CompensationTypeCode}:STAT {{0:1;1;0}}"
         End Get
     End Property
 
@@ -144,7 +144,7 @@ Public Class CompensateChannelSubsystem
     ''' <value> The Impedance Array query command. </value>
     Protected Overrides ReadOnly Property ImpedanceArrayCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:CORR2:ZME:{Me.CompensationTypeCode}:DATA {0}"
+            Return $":SENS{Me.ChannelNumber}:CORR2:ZME:{Me.CompensationTypeCode}:DATA {{0}}"
         End Get
     End Property
 
@@ -164,7 +164,7 @@ Public Class CompensateChannelSubsystem
     ''' <value> The Model Resistance query command. </value>
     Protected Overrides ReadOnly Property ModelResistanceCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:CORR2:CKIT:{Me.CompensationTypeCode}:R {0}"
+            Return $":SENS{Me.ChannelNumber}:CORR2:CKIT:{Me.CompensationTypeCode}:R {{0}}"
         End Get
     End Property
 
@@ -184,7 +184,7 @@ Public Class CompensateChannelSubsystem
     ''' <value> The Model Conductance query command. </value>
     Protected Overrides ReadOnly Property ModelConductanceCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:CORR2:CKIT:{Me.CompensationTypeCode}:G {0}"
+            Return $":SENS{Me.ChannelNumber}:CORR2:CKIT:{Me.CompensationTypeCode}:G {{0}}"
         End Get
     End Property
 
@@ -204,7 +204,7 @@ Public Class CompensateChannelSubsystem
     ''' <value> The Model Capacitance query command. </value>
     Protected Overrides ReadOnly Property ModelCapacitanceCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:CORR2:CKIT:{Me.CompensationTypeCode}:C {0}"
+            Return $":SENS{Me.ChannelNumber}:CORR2:CKIT:{Me.CompensationTypeCode}:C {{0}}"
         End Get
     End Property
 
@@ -224,7 +224,7 @@ Public Class CompensateChannelSubsystem
     ''' <value> The Model Inductance query command. </value>
     Protected Overrides ReadOnly Property ModelInductanceCommandFormat As String
         Get
-            Return $":SENS{Me.ChannelNumber}:CORR2:CKIT:{Me.CompensationTypeCode}:L {0}"
+            Return $":SENS{Me.ChannelNumber}:CORR2:CKIT:{Me.CompensationTypeCode}:L {{0}}"
         End Get
     End Property
 

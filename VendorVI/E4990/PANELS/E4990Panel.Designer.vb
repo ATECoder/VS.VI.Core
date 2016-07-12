@@ -22,23 +22,31 @@ Partial Class E4990Panel
         Me._SessionOptionsDownButton = New System.Windows.Forms.ToolStripDropDownButton()
         Me._ServiceRequestsHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ScaleSplitButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._AutoScaleMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._TriggerActivationSplitButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._TriggerSourceComboBox = New System.Windows.Forms.ToolStripComboBox()
+        Me._ContinuousEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadingComboBoxLabel = New System.Windows.Forms.Label()
         Me._ReadingComboBox = New System.Windows.Forms.ComboBox()
         Me._ReadButton = New System.Windows.Forms.Button()
         Me._InitiateButton = New System.Windows.Forms.Button()
         Me._SourceTabPage = New System.Windows.Forms.TabPage()
+        Me._SourceLayout = New System.Windows.Forms.TableLayoutPanel()
+        Me._SourcePanel = New System.Windows.Forms.Panel()
+        Me._ApplySourceSettingButton = New System.Windows.Forms.Button()
+        Me._SourceFunctionComboBoxLabel = New System.Windows.Forms.Label()
         Me._LevelNumericLabel = New System.Windows.Forms.Label()
+        Me._SourceFunctionComboBox = New System.Windows.Forms.ComboBox()
         Me._LevelNumeric = New System.Windows.Forms.NumericUpDown()
         Me._ApplySourceFunctionButton = New System.Windows.Forms.Button()
-        Me._ApplySourceSettingButton = New System.Windows.Forms.Button()
-        Me._SourceFunctionComboBox = New System.Windows.Forms.ComboBox()
-        Me._SourceFunctionComboBoxLabel = New System.Windows.Forms.Label()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
         Me._SenseTabControl = New System.Windows.Forms.TabControl()
         Me._AverageTabPage = New System.Windows.Forms.TabPage()
         Me._AveragingLayout = New System.Windows.Forms.TableLayoutPanel()
         Me._AveragingGroupBox = New System.Windows.Forms.GroupBox()
         Me._ApertureNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._ApplyAveragingButton = New System.Windows.Forms.Button()
         Me._AveragingEnabledCheckBox = New System.Windows.Forms.CheckBox()
         Me._ApertureNumericLabel = New System.Windows.Forms.Label()
         Me._RestartAveragingButton = New System.Windows.Forms.Button()
@@ -95,12 +103,15 @@ Partial Class E4990Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._ApplyTriggerOptionsMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
         Me._ToolStripPanel.SuspendLayout()
         Me._SystemToolStrip.SuspendLayout()
         Me._SourceTabPage.SuspendLayout()
+        Me._SourceLayout.SuspendLayout()
+        Me._SourcePanel.SuspendLayout()
         CType(Me._LevelNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._SenseTabPage.SuspendLayout()
         Me._SenseTabControl.SuspendLayout()
@@ -189,10 +200,10 @@ Partial Class E4990Panel
         '
         Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.None
         Me._SystemToolStrip.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetsDropDownButton, Me._SessionOptionsDownButton})
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetsDropDownButton, Me._SessionOptionsDownButton, Me._ScaleSplitButton, Me._TriggerActivationSplitButton})
         Me._SystemToolStrip.Location = New System.Drawing.Point(3, 0)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
-        Me._SystemToolStrip.Size = New System.Drawing.Size(130, 25)
+        Me._SystemToolStrip.Size = New System.Drawing.Size(245, 25)
         Me._SystemToolStrip.TabIndex = 0
         '
         '_ResetsDropDownButton
@@ -267,6 +278,48 @@ Partial Class E4990Panel
         Me._SessionTraceEnabledMenuItem.Text = "Session Trace Enabled"
         Me._SessionTraceEnabledMenuItem.ToolTipText = "Check to trace all instrument messages "
         '
+        '_ScaleSplitButton
+        '
+        Me._ScaleSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ScaleSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._AutoScaleMenuItem})
+        Me._ScaleSplitButton.Image = CType(resources.GetObject("_ScaleSplitButton.Image"), System.Drawing.Image)
+        Me._ScaleSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ScaleSplitButton.Name = "_ScaleSplitButton"
+        Me._ScaleSplitButton.Size = New System.Drawing.Size(52, 22)
+        Me._ScaleSplitButton.Text = "Scale"
+        Me._ScaleSplitButton.ToolTipText = "Scale Options"
+        '
+        '_AutoScaleMenuItem
+        '
+        Me._AutoScaleMenuItem.Name = "_AutoScaleMenuItem"
+        Me._AutoScaleMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me._AutoScaleMenuItem.Text = "Auto"
+        Me._AutoScaleMenuItem.ToolTipText = "Auto scale all traces"
+        '
+        '_TriggerActivationSplitButton
+        '
+        Me._TriggerActivationSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._TriggerActivationSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerSourceComboBox, Me._ContinuousEnabledMenuItem, Me._ApplyTriggerOptionsMenuItem})
+        Me._TriggerActivationSplitButton.Image = CType(resources.GetObject("_TriggerActivationSplitButton.Image"), System.Drawing.Image)
+        Me._TriggerActivationSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._TriggerActivationSplitButton.Name = "_TriggerActivationSplitButton"
+        Me._TriggerActivationSplitButton.Size = New System.Drawing.Size(63, 22)
+        Me._TriggerActivationSplitButton.Text = "Trigger"
+        '
+        '_TriggerSourceComboBox
+        '
+        Me._TriggerSourceComboBox.Name = "_TriggerSourceComboBox"
+        Me._TriggerSourceComboBox.Size = New System.Drawing.Size(121, 23)
+        Me._TriggerSourceComboBox.ToolTipText = "Trigger Sources"
+        '
+        '_ContinuousEnabledMenuItem
+        '
+        Me._ContinuousEnabledMenuItem.CheckOnClick = True
+        Me._ContinuousEnabledMenuItem.Name = "_ContinuousEnabledMenuItem"
+        Me._ContinuousEnabledMenuItem.Size = New System.Drawing.Size(181, 22)
+        Me._ContinuousEnabledMenuItem.Text = "Continuous"
+        Me._ContinuousEnabledMenuItem.ToolTipText = "Checked when continuous initiation is enabled."
+        '
         '_ReadingComboBoxLabel
         '
         Me._ReadingComboBoxLabel.AutoSize = True
@@ -311,12 +364,7 @@ Partial Class E4990Panel
         '
         '_SourceTabPage
         '
-        Me._SourceTabPage.Controls.Add(Me._LevelNumericLabel)
-        Me._SourceTabPage.Controls.Add(Me._LevelNumeric)
-        Me._SourceTabPage.Controls.Add(Me._ApplySourceFunctionButton)
-        Me._SourceTabPage.Controls.Add(Me._ApplySourceSettingButton)
-        Me._SourceTabPage.Controls.Add(Me._SourceFunctionComboBox)
-        Me._SourceTabPage.Controls.Add(Me._SourceFunctionComboBoxLabel)
+        Me._SourceTabPage.Controls.Add(Me._SourceLayout)
         Me._SourceTabPage.Location = New System.Drawing.Point(4, 26)
         Me._SourceTabPage.Name = "_SourceTabPage"
         Me._SourceTabPage.Size = New System.Drawing.Size(356, 270)
@@ -324,19 +372,79 @@ Partial Class E4990Panel
         Me._SourceTabPage.Text = "Source"
         Me._SourceTabPage.UseVisualStyleBackColor = True
         '
+        '_SourceLayout
+        '
+        Me._SourceLayout.ColumnCount = 3
+        Me._SourceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._SourceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me._SourceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._SourceLayout.Controls.Add(Me._SourcePanel, 1, 1)
+        Me._SourceLayout.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._SourceLayout.Location = New System.Drawing.Point(0, 0)
+        Me._SourceLayout.Name = "_SourceLayout"
+        Me._SourceLayout.RowCount = 3
+        Me._SourceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._SourceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me._SourceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._SourceLayout.Size = New System.Drawing.Size(356, 270)
+        Me._SourceLayout.TabIndex = 26
+        '
+        '_SourcePanel
+        '
+        Me._SourcePanel.Controls.Add(Me._ApplySourceSettingButton)
+        Me._SourcePanel.Controls.Add(Me._SourceFunctionComboBoxLabel)
+        Me._SourcePanel.Controls.Add(Me._LevelNumericLabel)
+        Me._SourcePanel.Controls.Add(Me._SourceFunctionComboBox)
+        Me._SourcePanel.Controls.Add(Me._LevelNumeric)
+        Me._SourcePanel.Controls.Add(Me._ApplySourceFunctionButton)
+        Me._SourcePanel.Location = New System.Drawing.Point(28, 73)
+        Me._SourcePanel.Name = "_SourcePanel"
+        Me._SourcePanel.Size = New System.Drawing.Size(299, 124)
+        Me._SourcePanel.TabIndex = 27
+        '
+        '_ApplySourceSettingButton
+        '
+        Me._ApplySourceSettingButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._ApplySourceSettingButton.Location = New System.Drawing.Point(224, 81)
+        Me._ApplySourceSettingButton.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me._ApplySourceSettingButton.Name = "_ApplySourceSettingButton"
+        Me._ApplySourceSettingButton.Size = New System.Drawing.Size(58, 30)
+        Me._ApplySourceSettingButton.TabIndex = 15
+        Me._ApplySourceSettingButton.Text = "Apply"
+        Me._ApplySourceSettingButton.UseVisualStyleBackColor = True
+        '
+        '_SourceFunctionComboBoxLabel
+        '
+        Me._SourceFunctionComboBoxLabel.AutoSize = True
+        Me._SourceFunctionComboBoxLabel.Location = New System.Drawing.Point(14, 17)
+        Me._SourceFunctionComboBoxLabel.Name = "_SourceFunctionComboBoxLabel"
+        Me._SourceFunctionComboBoxLabel.Size = New System.Drawing.Size(59, 17)
+        Me._SourceFunctionComboBoxLabel.TabIndex = 13
+        Me._SourceFunctionComboBoxLabel.Text = "Function:"
+        '
         '_LevelNumericLabel
         '
-        Me._LevelNumericLabel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._LevelNumericLabel.AutoSize = True
-        Me._LevelNumericLabel.Location = New System.Drawing.Point(162, 47)
+        Me._LevelNumericLabel.Location = New System.Drawing.Point(122, 51)
         Me._LevelNumericLabel.Name = "_LevelNumericLabel"
         Me._LevelNumericLabel.Size = New System.Drawing.Size(71, 17)
         Me._LevelNumericLabel.TabIndex = 24
         Me._LevelNumericLabel.Text = "Level [mA]:"
         '
+        '_SourceFunctionComboBox
+        '
+        Me._SourceFunctionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me._SourceFunctionComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._SourceFunctionComboBox.Items.AddRange(New Object() {"I", "V"})
+        Me._SourceFunctionComboBox.Location = New System.Drawing.Point(76, 13)
+        Me._SourceFunctionComboBox.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me._SourceFunctionComboBox.Name = "_SourceFunctionComboBox"
+        Me._SourceFunctionComboBox.Size = New System.Drawing.Size(150, 25)
+        Me._SourceFunctionComboBox.TabIndex = 14
+        '
         '_LevelNumeric
         '
-        Me._LevelNumeric.Location = New System.Drawing.Point(236, 43)
+        Me._LevelNumeric.Location = New System.Drawing.Point(196, 47)
         Me._LevelNumeric.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
         Me._LevelNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 196608})
         Me._LevelNumeric.Name = "_LevelNumeric"
@@ -348,48 +456,13 @@ Partial Class E4990Panel
         '
         '_ApplySourceFunctionButton
         '
-        Me._ApplySourceFunctionButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ApplySourceFunctionButton.Location = New System.Drawing.Point(269, 6)
+        Me._ApplySourceFunctionButton.Location = New System.Drawing.Point(229, 10)
         Me._ApplySourceFunctionButton.Name = "_ApplySourceFunctionButton"
         Me._ApplySourceFunctionButton.Size = New System.Drawing.Size(53, 30)
         Me._ApplySourceFunctionButton.TabIndex = 20
         Me._ApplySourceFunctionButton.Text = "Apply"
         Me.TipsTooltip.SetToolTip(Me._ApplySourceFunctionButton, "Apply selected source function")
         Me._ApplySourceFunctionButton.UseVisualStyleBackColor = True
-        '
-        '_ApplySourceSettingButton
-        '
-        Me._ApplySourceSettingButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ApplySourceSettingButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ApplySourceSettingButton.Location = New System.Drawing.Point(264, 77)
-        Me._ApplySourceSettingButton.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me._ApplySourceSettingButton.Name = "_ApplySourceSettingButton"
-        Me._ApplySourceSettingButton.Size = New System.Drawing.Size(58, 30)
-        Me._ApplySourceSettingButton.TabIndex = 15
-        Me._ApplySourceSettingButton.Text = "Apply"
-        Me._ApplySourceSettingButton.UseVisualStyleBackColor = True
-        '
-        '_SourceFunctionComboBox
-        '
-        Me._SourceFunctionComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._SourceFunctionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me._SourceFunctionComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SourceFunctionComboBox.Items.AddRange(New Object() {"I", "V"})
-        Me._SourceFunctionComboBox.Location = New System.Drawing.Point(116, 9)
-        Me._SourceFunctionComboBox.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me._SourceFunctionComboBox.Name = "_SourceFunctionComboBox"
-        Me._SourceFunctionComboBox.Size = New System.Drawing.Size(150, 25)
-        Me._SourceFunctionComboBox.TabIndex = 14
-        '
-        '_SourceFunctionComboBoxLabel
-        '
-        Me._SourceFunctionComboBoxLabel.AutoSize = True
-        Me._SourceFunctionComboBoxLabel.Location = New System.Drawing.Point(54, 13)
-        Me._SourceFunctionComboBoxLabel.Name = "_SourceFunctionComboBoxLabel"
-        Me._SourceFunctionComboBoxLabel.Size = New System.Drawing.Size(59, 17)
-        Me._SourceFunctionComboBoxLabel.TabIndex = 13
-        Me._SourceFunctionComboBoxLabel.Text = "Function:"
         '
         '_SenseTabPage
         '
@@ -445,14 +518,15 @@ Partial Class E4990Panel
         '_AveragingGroupBox
         '
         Me._AveragingGroupBox.Controls.Add(Me._ApertureNumeric)
+        Me._AveragingGroupBox.Controls.Add(Me._ApplyAveragingButton)
         Me._AveragingGroupBox.Controls.Add(Me._AveragingEnabledCheckBox)
         Me._AveragingGroupBox.Controls.Add(Me._ApertureNumericLabel)
         Me._AveragingGroupBox.Controls.Add(Me._RestartAveragingButton)
         Me._AveragingGroupBox.Controls.Add(Me._AveragingCountNumericLabel)
         Me._AveragingGroupBox.Controls.Add(Me._AveragingCountNumeric)
-        Me._AveragingGroupBox.Location = New System.Drawing.Point(101, 36)
+        Me._AveragingGroupBox.Location = New System.Drawing.Point(85, 36)
         Me._AveragingGroupBox.Name = "_AveragingGroupBox"
-        Me._AveragingGroupBox.Size = New System.Drawing.Size(139, 161)
+        Me._AveragingGroupBox.Size = New System.Drawing.Size(171, 161)
         Me._AveragingGroupBox.TabIndex = 1
         Me._AveragingGroupBox.TabStop = False
         Me._AveragingGroupBox.Text = "Averaging"
@@ -466,6 +540,15 @@ Partial Class E4990Panel
         Me._ApertureNumeric.Size = New System.Drawing.Size(41, 25)
         Me._ApertureNumeric.TabIndex = 1
         Me._ApertureNumeric.Value = New Decimal(New Integer() {1, 0, 0, 0})
+        '
+        '_ApplyAveragingButton
+        '
+        Me._ApplyAveragingButton.Location = New System.Drawing.Point(35, 123)
+        Me._ApplyAveragingButton.Name = "_ApplyAveragingButton"
+        Me._ApplyAveragingButton.Size = New System.Drawing.Size(101, 28)
+        Me._ApplyAveragingButton.TabIndex = 2
+        Me._ApplyAveragingButton.Text = "Apply"
+        Me._ApplyAveragingButton.UseVisualStyleBackColor = True
         '
         '_AveragingEnabledCheckBox
         '
@@ -489,11 +572,12 @@ Partial Class E4990Panel
         '
         '_RestartAveragingButton
         '
-        Me._RestartAveragingButton.Location = New System.Drawing.Point(23, 120)
+        Me._RestartAveragingButton.Location = New System.Drawing.Point(94, 89)
         Me._RestartAveragingButton.Name = "_RestartAveragingButton"
-        Me._RestartAveragingButton.Size = New System.Drawing.Size(101, 28)
+        Me._RestartAveragingButton.Size = New System.Drawing.Size(63, 28)
         Me._RestartAveragingButton.TabIndex = 5
-        Me._RestartAveragingButton.Text = "Apply/Restart"
+        Me._RestartAveragingButton.Text = "Restart"
+        Me.TipsTooltip.SetToolTip(Me._RestartAveragingButton, "Restarts the moving average")
         Me._RestartAveragingButton.UseVisualStyleBackColor = True
         '
         '_AveragingCountNumericLabel
@@ -517,10 +601,10 @@ Partial Class E4990Panel
         '_SweepTabPage
         '
         Me._SweepTabPage.Controls.Add(Me._SweepLayout)
-        Me._SweepTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._SweepTabPage.Location = New System.Drawing.Point(4, 22)
         Me._SweepTabPage.Name = "_SweepTabPage"
         Me._SweepTabPage.Padding = New System.Windows.Forms.Padding(3)
-        Me._SweepTabPage.Size = New System.Drawing.Size(348, 240)
+        Me._SweepTabPage.Size = New System.Drawing.Size(348, 244)
         Me._SweepTabPage.TabIndex = 1
         Me._SweepTabPage.Text = "Sweep"
         Me._SweepTabPage.UseVisualStyleBackColor = True
@@ -539,7 +623,7 @@ Partial Class E4990Panel
         Me._SweepLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._SweepLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._SweepLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._SweepLayout.Size = New System.Drawing.Size(342, 234)
+        Me._SweepLayout.Size = New System.Drawing.Size(342, 238)
         Me._SweepLayout.TabIndex = 18
         '
         '_SweepGroupBox
@@ -549,9 +633,9 @@ Partial Class E4990Panel
         Me._SweepGroupBox.Controls.Add(Me._HighFrequencyNumeric)
         Me._SweepGroupBox.Controls.Add(Me._LowFrequencyNumeric)
         Me._SweepGroupBox.Controls.Add(Me._HighFrequencyNumericLabel)
-        Me._SweepGroupBox.Location = New System.Drawing.Point(44, 53)
+        Me._SweepGroupBox.Location = New System.Drawing.Point(44, 50)
         Me._SweepGroupBox.Name = "_SweepGroupBox"
-        Me._SweepGroupBox.Size = New System.Drawing.Size(253, 128)
+        Me._SweepGroupBox.Size = New System.Drawing.Size(253, 138)
         Me._SweepGroupBox.TabIndex = 17
         Me._SweepGroupBox.TabStop = False
         Me._SweepGroupBox.Text = "Sweep"
@@ -559,7 +643,7 @@ Partial Class E4990Panel
         '_LowFrequencyNumericLabel
         '
         Me._LowFrequencyNumericLabel.AutoSize = True
-        Me._LowFrequencyNumericLabel.Location = New System.Drawing.Point(25, 31)
+        Me._LowFrequencyNumericLabel.Location = New System.Drawing.Point(26, 34)
         Me._LowFrequencyNumericLabel.Name = "_LowFrequencyNumericLabel"
         Me._LowFrequencyNumericLabel.Size = New System.Drawing.Size(124, 17)
         Me._LowFrequencyNumericLabel.TabIndex = 12
@@ -567,7 +651,7 @@ Partial Class E4990Panel
         '
         '_ApplySweepSettingsButton
         '
-        Me._ApplySweepSettingsButton.Location = New System.Drawing.Point(162, 90)
+        Me._ApplySweepSettingsButton.Location = New System.Drawing.Point(163, 93)
         Me._ApplySweepSettingsButton.Name = "_ApplySweepSettingsButton"
         Me._ApplySweepSettingsButton.Size = New System.Drawing.Size(75, 28)
         Me._ApplySweepSettingsButton.TabIndex = 16
@@ -578,7 +662,7 @@ Partial Class E4990Panel
         '_HighFrequencyNumeric
         '
         Me._HighFrequencyNumeric.Increment = New Decimal(New Integer() {100000, 0, 0, 0})
-        Me._HighFrequencyNumeric.Location = New System.Drawing.Point(152, 58)
+        Me._HighFrequencyNumeric.Location = New System.Drawing.Point(153, 61)
         Me._HighFrequencyNumeric.Maximum = New Decimal(New Integer() {10000000, 0, 0, 0})
         Me._HighFrequencyNumeric.Minimum = New Decimal(New Integer() {20, 0, 0, 0})
         Me._HighFrequencyNumeric.Name = "_HighFrequencyNumeric"
@@ -591,7 +675,7 @@ Partial Class E4990Panel
         '_LowFrequencyNumeric
         '
         Me._LowFrequencyNumeric.Increment = New Decimal(New Integer() {100000, 0, 0, 0})
-        Me._LowFrequencyNumeric.Location = New System.Drawing.Point(152, 27)
+        Me._LowFrequencyNumeric.Location = New System.Drawing.Point(153, 30)
         Me._LowFrequencyNumeric.Maximum = New Decimal(New Integer() {10000000, 0, 0, 0})
         Me._LowFrequencyNumeric.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
         Me._LowFrequencyNumeric.Name = "_LowFrequencyNumeric"
@@ -604,7 +688,7 @@ Partial Class E4990Panel
         '_HighFrequencyNumericLabel
         '
         Me._HighFrequencyNumericLabel.AutoSize = True
-        Me._HighFrequencyNumericLabel.Location = New System.Drawing.Point(21, 62)
+        Me._HighFrequencyNumericLabel.Location = New System.Drawing.Point(22, 65)
         Me._HighFrequencyNumericLabel.Name = "_HighFrequencyNumericLabel"
         Me._HighFrequencyNumericLabel.Size = New System.Drawing.Size(128, 17)
         Me._HighFrequencyNumericLabel.TabIndex = 14
@@ -613,9 +697,9 @@ Partial Class E4990Panel
         '_TraceTabPage
         '
         Me._TraceTabPage.Controls.Add(Me._TraceLayout)
-        Me._TraceTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._TraceTabPage.Location = New System.Drawing.Point(4, 22)
         Me._TraceTabPage.Name = "_TraceTabPage"
-        Me._TraceTabPage.Size = New System.Drawing.Size(348, 240)
+        Me._TraceTabPage.Size = New System.Drawing.Size(348, 244)
         Me._TraceTabPage.TabIndex = 3
         Me._TraceTabPage.Text = "Trace"
         Me._TraceTabPage.UseVisualStyleBackColor = True
@@ -623,17 +707,17 @@ Partial Class E4990Panel
         '_TraceLayout
         '
         Me._TraceLayout.ColumnCount = 3
-        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.522124!))
-        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 92.47787!))
-        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
+        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
+        Me._TraceLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._TraceLayout.Controls.Add(Me._TraceGroupBox, 1, 1)
         Me._TraceLayout.Location = New System.Drawing.Point(13, 13)
         Me._TraceLayout.Name = "_TraceLayout"
         Me._TraceLayout.RowCount = 3
-        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.54839!))
-        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 81.45161!))
-        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me._TraceLayout.Size = New System.Drawing.Size(308, 215)
+        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me._TraceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
+        Me._TraceLayout.Size = New System.Drawing.Size(321, 215)
         Me._TraceLayout.TabIndex = 0
         '
         '_TraceGroupBox
@@ -643,16 +727,16 @@ Partial Class E4990Panel
         Me._TraceGroupBox.Controls.Add(Me._PrimaryTraceParameterComboBoxLabel)
         Me._TraceGroupBox.Controls.Add(Me._SecondaryTraceParameterComboBoxLabel)
         Me._TraceGroupBox.Controls.Add(Me._SecondaryTraceParameterComboBox)
-        Me._TraceGroupBox.Location = New System.Drawing.Point(24, 39)
+        Me._TraceGroupBox.Location = New System.Drawing.Point(12, 36)
         Me._TraceGroupBox.Name = "_TraceGroupBox"
-        Me._TraceGroupBox.Size = New System.Drawing.Size(255, 143)
+        Me._TraceGroupBox.Size = New System.Drawing.Size(297, 143)
         Me._TraceGroupBox.TabIndex = 1
         Me._TraceGroupBox.TabStop = False
         Me._TraceGroupBox.Text = "Traces"
         '
         '_ApplyTracesButton
         '
-        Me._ApplyTracesButton.Location = New System.Drawing.Point(170, 104)
+        Me._ApplyTracesButton.Location = New System.Drawing.Point(212, 104)
         Me._ApplyTracesButton.Name = "_ApplyTracesButton"
         Me._ApplyTracesButton.Size = New System.Drawing.Size(75, 28)
         Me._ApplyTracesButton.TabIndex = 6
@@ -664,16 +748,16 @@ Partial Class E4990Panel
         Me._PrimaryTraceParameterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me._PrimaryTraceParameterComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._PrimaryTraceParameterComboBox.Items.AddRange(New Object() {"I", "V"})
-        Me._PrimaryTraceParameterComboBox.Location = New System.Drawing.Point(83, 31)
+        Me._PrimaryTraceParameterComboBox.Location = New System.Drawing.Point(81, 31)
         Me._PrimaryTraceParameterComboBox.Name = "_PrimaryTraceParameterComboBox"
-        Me._PrimaryTraceParameterComboBox.Size = New System.Drawing.Size(163, 25)
+        Me._PrimaryTraceParameterComboBox.Size = New System.Drawing.Size(206, 25)
         Me._PrimaryTraceParameterComboBox.TabIndex = 4
         Me.TipsTooltip.SetToolTip(Me._PrimaryTraceParameterComboBox, "Parameter of the primary trace")
         '
         '_PrimaryTraceParameterComboBoxLabel
         '
         Me._PrimaryTraceParameterComboBoxLabel.AutoSize = True
-        Me._PrimaryTraceParameterComboBoxLabel.Location = New System.Drawing.Point(25, 35)
+        Me._PrimaryTraceParameterComboBoxLabel.Location = New System.Drawing.Point(23, 35)
         Me._PrimaryTraceParameterComboBoxLabel.Name = "_PrimaryTraceParameterComboBoxLabel"
         Me._PrimaryTraceParameterComboBoxLabel.Size = New System.Drawing.Size(55, 17)
         Me._PrimaryTraceParameterComboBoxLabel.TabIndex = 2
@@ -683,7 +767,7 @@ Partial Class E4990Panel
         '_SecondaryTraceParameterComboBoxLabel
         '
         Me._SecondaryTraceParameterComboBoxLabel.AutoSize = True
-        Me._SecondaryTraceParameterComboBoxLabel.Location = New System.Drawing.Point(8, 69)
+        Me._SecondaryTraceParameterComboBoxLabel.Location = New System.Drawing.Point(6, 69)
         Me._SecondaryTraceParameterComboBoxLabel.Name = "_SecondaryTraceParameterComboBoxLabel"
         Me._SecondaryTraceParameterComboBoxLabel.Size = New System.Drawing.Size(72, 17)
         Me._SecondaryTraceParameterComboBoxLabel.TabIndex = 3
@@ -695,18 +779,18 @@ Partial Class E4990Panel
         Me._SecondaryTraceParameterComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me._SecondaryTraceParameterComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._SecondaryTraceParameterComboBox.Items.AddRange(New Object() {"I", "V"})
-        Me._SecondaryTraceParameterComboBox.Location = New System.Drawing.Point(83, 65)
+        Me._SecondaryTraceParameterComboBox.Location = New System.Drawing.Point(81, 65)
         Me._SecondaryTraceParameterComboBox.Name = "_SecondaryTraceParameterComboBox"
-        Me._SecondaryTraceParameterComboBox.Size = New System.Drawing.Size(162, 25)
+        Me._SecondaryTraceParameterComboBox.Size = New System.Drawing.Size(206, 25)
         Me._SecondaryTraceParameterComboBox.TabIndex = 5
         Me.TipsTooltip.SetToolTip(Me._SecondaryTraceParameterComboBox, "Parameter of the secondary trace")
         '
         '_MarkersTabPage
         '
         Me._MarkersTabPage.Controls.Add(Me._MarkersLayout)
-        Me._MarkersTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._MarkersTabPage.Location = New System.Drawing.Point(4, 22)
         Me._MarkersTabPage.Name = "_MarkersTabPage"
-        Me._MarkersTabPage.Size = New System.Drawing.Size(348, 240)
+        Me._MarkersTabPage.Size = New System.Drawing.Size(348, 244)
         Me._MarkersTabPage.TabIndex = 2
         Me._MarkersTabPage.Text = "Markers"
         Me._MarkersTabPage.UseVisualStyleBackColor = True
@@ -725,7 +809,7 @@ Partial Class E4990Panel
         Me._MarkersLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._MarkersLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._MarkersLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._MarkersLayout.Size = New System.Drawing.Size(348, 240)
+        Me._MarkersLayout.Size = New System.Drawing.Size(348, 244)
         Me._MarkersLayout.TabIndex = 3
         '
         '_MarkersGroupBox
@@ -733,7 +817,7 @@ Partial Class E4990Panel
         Me._MarkersGroupBox.Controls.Add(Me._MarkerFrequencyComboBox)
         Me._MarkersGroupBox.Controls.Add(Me._MarkerFrequencyComboBoxLabel)
         Me._MarkersGroupBox.Controls.Add(Me._ApplyMarkerSettingsButton)
-        Me._MarkersGroupBox.Location = New System.Drawing.Point(34, 68)
+        Me._MarkersGroupBox.Location = New System.Drawing.Point(34, 70)
         Me._MarkersGroupBox.Name = "_MarkersGroupBox"
         Me._MarkersGroupBox.Size = New System.Drawing.Size(279, 103)
         Me._MarkersGroupBox.TabIndex = 4
@@ -1105,6 +1189,13 @@ Partial Class E4990Panel
         Me._TitleLabel.Text = "KE4990"
         Me._TitleLabel.UseMnemonic = False
         '
+        '_ApplyTriggerOptionsMenuItem
+        '
+        Me._ApplyTriggerOptionsMenuItem.Name = "_ApplyTriggerOptionsMenuItem"
+        Me._ApplyTriggerOptionsMenuItem.Size = New System.Drawing.Size(181, 22)
+        Me._ApplyTriggerOptionsMenuItem.Text = "Apply"
+        Me._ApplyTriggerOptionsMenuItem.ToolTipText = "Applies the trigger options"
+        '
         'E4990Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -1121,7 +1212,9 @@ Partial Class E4990Panel
         Me._SystemToolStrip.ResumeLayout(False)
         Me._SystemToolStrip.PerformLayout()
         Me._SourceTabPage.ResumeLayout(False)
-        Me._SourceTabPage.PerformLayout()
+        Me._SourceLayout.ResumeLayout(False)
+        Me._SourcePanel.ResumeLayout(False)
+        Me._SourcePanel.PerformLayout()
         CType(Me._LevelNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         Me._SenseTabPage.ResumeLayout(False)
         Me._SenseTabControl.ResumeLayout(False)
@@ -1246,4 +1339,13 @@ Partial Class E4990Panel
     Private WithEvents _PrimaryTraceParameterComboBoxLabel As Windows.Forms.Label
     Private WithEvents _SecondaryTraceParameterComboBoxLabel As Windows.Forms.Label
     Private WithEvents _SecondaryTraceParameterComboBox As Windows.Forms.ComboBox
+    Friend WithEvents _SourceLayout As Windows.Forms.TableLayoutPanel
+    Friend WithEvents _SourcePanel As Windows.Forms.Panel
+    Friend WithEvents _ApplyAveragingButton As Windows.Forms.Button
+    Friend WithEvents _ScaleSplitButton As Windows.Forms.ToolStripSplitButton
+    Private WithEvents _AutoScaleMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _TriggerActivationSplitButton As Windows.Forms.ToolStripSplitButton
+    Friend WithEvents _TriggerSourceComboBox As Windows.Forms.ToolStripComboBox
+    Friend WithEvents _ContinuousEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ApplyTriggerOptionsMenuItem As Windows.Forms.ToolStripMenuItem
 End Class

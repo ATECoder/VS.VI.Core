@@ -45,8 +45,12 @@ Public Class ChannelTraceSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.SupportedParameters = CType(-1 + TraceParameters.AbsoluteAdmittance << 1, TraceParameters)
-        Me.Parameter = TraceParameters.AbsoluteImpedance
+        Me.SupportedParameters = CType(-1 + (TraceParameters.ComplexAdmittance << 1), TraceParameters)
+        If Me.TraceNumber = 1 Then
+            Me.Parameter = TraceParameters.AbsoluteImpedance
+        Else
+            Me.Parameter = TraceParameters.ImpedancePhase
+        End If
     End Sub
 
 #End Region
@@ -70,7 +74,7 @@ Public Class ChannelTraceSubsystem
     ''' <value> The trace parameter command format. </value>
     Protected Overrides ReadOnly Property ParameterCommandFormat As String
         Get
-            Return $":CALC{Me.ChannelNumber}:PAR{Me.TraceNumber}:DEF {0}"
+            Return $":CALC{Me.ChannelNumber}:PAR{Me.TraceNumber}:DEF {{0}}"
         End Get
     End Property
 

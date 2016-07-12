@@ -140,7 +140,7 @@ Public Class Device
         Me._PrimaryChannelTraceSubsystem = New ChannelTraceSubsystem(1, 1, Me.StatusSubsystem)
         Me.AddSubsystem(Me.PrimaryChannelTraceSubsystem)
 
-        Me._SecondaryChannelTraceSubsystem = New ChannelTraceSubsystem(1, 1, Me.StatusSubsystem)
+        Me._SecondaryChannelTraceSubsystem = New ChannelTraceSubsystem(2, 1, Me.StatusSubsystem)
         Me.AddSubsystem(Me.SecondaryChannelTraceSubsystem)
 
         Me._ChannelTriggerSubsystem = New ChannelTriggerSubsystem(1, Me.StatusSubsystem)

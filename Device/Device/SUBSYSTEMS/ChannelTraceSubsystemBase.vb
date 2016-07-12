@@ -92,7 +92,7 @@ Public MustInherit Class ChannelTraceSubsystemBase
         With listControl
             .DataSource = Nothing
             .Items.Clear()
-            .DataSource = GetType(ReadingTypes).ValueDescriptionPairs(Me.SupportedParameters)
+            .DataSource = GetType(TraceParameters).ValueDescriptionPairs(Me.SupportedParameters)
             .DisplayMember = "Value"
             .ValueMember = "Key"
             If .Items.Count > 0 Then
@@ -122,12 +122,12 @@ Public MustInherit Class ChannelTraceSubsystemBase
         End If
     End Sub
 
-
     Private _SupportedParameters As TraceParameters
     ''' <summary>
-    ''' Gets or sets the supported Trace Parameter.
-    ''' This is a subset of the functions supported by the instrument.
+    ''' Gets or sets the supported Trace Parameter. This is a subset of the functions supported by
+    ''' the instrument.
     ''' </summary>
+    ''' <value> Options that control the supported. </value>
     Public Property SupportedParameters() As TraceParameters
         Get
             Return _SupportedParameters

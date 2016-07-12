@@ -43,7 +43,7 @@ Public Class SourceChannelSubsystem
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.FunctionMode = SourceFunctionModes.Voltage
-        Me.Level = 1 ' 1 volt RMS
+        Me.Level = 0.5 ' volt RMS
         Me.SupportedFunctionModes = SourceFunctionModes.Current Or SourceFunctionModes.Voltage
     End Sub
 
@@ -90,7 +90,7 @@ Public Class SourceChannelSubsystem
     ''' <value> The function mode command, e.g., :SOUR:FUNC {0}. </value>
     Protected Overrides ReadOnly Property FunctionModeCommandFormat As String
         Get
-            Return $":SOUR{Me.ChannelNumber}:MODE {0}"
+            Return $":SOUR{Me.ChannelNumber}:MODE {{0}}"
         End Get
     End Property
 
@@ -102,7 +102,7 @@ Public Class SourceChannelSubsystem
     ''' <value> The Level command format. </value>
     Protected Overrides ReadOnly Property LevelCommandFormat As String
         Get
-            Return $":SOUR{Me.ChannelNumber}:{Me.FunctionCode}:LEV {0}"
+            Return $":SOUR{Me.ChannelNumber}:{Me.FunctionCode}:LEV {{0}}"
         End Get
     End Property
 
@@ -110,7 +110,7 @@ Public Class SourceChannelSubsystem
     ''' <value> The Level query command. </value>
     Protected Overrides ReadOnly Property LevelQueryCommand As String
         Get
-            Return $":SOUR{Me.ChannelNumber}::{Me.FunctionCode}:LEV?"
+            Return $":SOUR{Me.ChannelNumber}:{Me.FunctionCode}:LEV?"
         End Get
     End Property
 

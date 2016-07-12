@@ -61,7 +61,7 @@ Public Class CalculateChannelSubsystem
 
     Protected Overrides ReadOnly Property AverageCountCommandFormat As String
         Get
-            Return $":CALC{Me.ChannelNumber}:AVER:COUN {0}"
+            Return $":CALC{Me.ChannelNumber}:AVER:COUN {{0}}"
         End Get
     End Property
 
@@ -85,7 +85,7 @@ Public Class CalculateChannelSubsystem
     ''' <value> The averaging enabled query command. </value>
     Protected Overrides ReadOnly Property AveragingEnabledCommandFormat As String
         Get
-            Return $":CALC{Me.ChannelNumber}:AVER {0:1;1;0}"
+            Return $":CALC{Me.ChannelNumber}:AVER {{0:1;1;0}}"
         End Get
     End Property
 
@@ -100,7 +100,7 @@ Public Class CalculateChannelSubsystem
     ''' <value> The Trace Count command format. </value>
     Protected Overrides ReadOnly Property TraceCountCommandFormat As String
         Get
-            Return $":CALC{Me.ChannelNumber}:PAR:COUN {0}"
+            Return $":CALC{Me.ChannelNumber}:PAR:COUN {{0}}"
         End Get
     End Property
 

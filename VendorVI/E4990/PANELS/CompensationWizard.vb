@@ -354,6 +354,8 @@ Public Class CompensationWizard
         Select Case propertyName
             Case NameOf(subsystem.AdapterType)
                 If subsystem.AdapterType.HasValue Then Me.SelectAdapter(subsystem.AdapterType.Value)
+            Case NameOf(subsystem.Aperture)
+                If subsystem.Aperture.HasValue Then Me._ApertureNumeric.Value = CDec(subsystem.Aperture.Value)
         End Select
     End Sub
 
@@ -496,11 +498,12 @@ Public Class CompensationWizard
 
 #Region " CONTROL EVENTS HANDLERS "
 
+#Region " SETTINGS "
+
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _RestartAveragingButton_Click(sender As Object, e As EventArgs) Handles _RestartAveragingButton.Click
         Try
             Me._InfoProvider.Clear()
-            Me.Device.CalculateChannelSubsystem.ApplyAverageSettings(Me._AveragingEnabledCheckBox.Checked, CInt(Me._AveragingCountNumeric.Value))
             Me.Device.CalculateChannelSubsystem.ClearAverage()
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
@@ -514,9 +517,10 @@ Public Class CompensationWizard
     Private Sub _ApplySettingsButton_Click(sender As Object, e As EventArgs) Handles _ApplySettingsButton.Click
         Try
             Me._InfoProvider.Clear()
+            Me.Device.SenseChannelSubsystem.ApplyAdapterType(Me.SelectedAdapterType)
+            Me.Device.SenseChannelSubsystem.ApplyAperture(Me._ApertureNumeric.Value)
             Me.Device.CalculateChannelSubsystem.ApplyAverageSettings(Me._AveragingEnabledCheckBox.Checked, CInt(Me._AveragingCountNumeric.Value))
             Me.Device.CalculateChannelSubsystem.ClearAverage()
-            Me.Device.SenseChannelSubsystem.ApplyAdapterType(Me.SelectedAdapterType)
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
@@ -524,6 +528,9 @@ Public Class CompensationWizard
         Finally
         End Try
     End Sub
+
+#End Region
+
 
 #Region " OPEN "
 

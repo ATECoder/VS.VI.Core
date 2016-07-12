@@ -71,7 +71,7 @@ Public Class ChannelTriggerSubsystem
     ''' <value> The continuous initiation enabled query command. </value>
     Protected Overrides ReadOnly Property ContinuousEnabledCommandFormat As String
         Get
-            Return $":CALC{Me.ChannelNumber}:AVER {0:1;1;0}"
+            Return $":CALC{Me.ChannelNumber}:AVER {{0:1;1;0}}"
         End Get
     End Property
 

@@ -301,12 +301,12 @@ Partial Class CompensationWizard
         '
         '_RestartAveragingButton
         '
-        Me._RestartAveragingButton.Location = New System.Drawing.Point(47, 120)
+        Me._RestartAveragingButton.Location = New System.Drawing.Point(31, 120)
         Me._RestartAveragingButton.Name = "_RestartAveragingButton"
         Me._RestartAveragingButton.Size = New System.Drawing.Size(76, 28)
         Me._RestartAveragingButton.TabIndex = 5
         Me._RestartAveragingButton.Text = "Restart"
-        Me._ToolTip.SetToolTip(Me._RestartAveragingButton, "Restarts averaging")
+        Me._ToolTip.SetToolTip(Me._RestartAveragingButton, "Restarts the moving average")
         Me._RestartAveragingButton.UseVisualStyleBackColor = True
         '
         '_AveragingCountNumericLabel
@@ -373,6 +373,7 @@ Partial Class CompensationWizard
         Me._ApplySettingsButton.Size = New System.Drawing.Size(75, 52)
         Me._ApplySettingsButton.TabIndex = 0
         Me._ApplySettingsButton.Text = "Apply"
+        Me._ToolTip.SetToolTip(Me._ApplySettingsButton, "Applies averaging and compensation settings")
         Me._ApplySettingsButton.UseVisualStyleBackColor = True
         '
         '_WelcomeWizardPage
