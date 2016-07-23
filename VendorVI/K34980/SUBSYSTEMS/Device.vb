@@ -132,6 +132,7 @@ Public Class Device
         Me._InstrumentSubsystem = New InstrumentSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.InstrumentSubsystem)
         Me.InstrumentSubsystem.QueryDmmInstalled()
+        Me.StatusSubsystem.DmmInstalled = Me.InstrumentSubsystem.DmmInstalled.GetValueOrDefault(False)
 
         Me._RouteSubsystem = New RouteSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.RouteSubsystem)

@@ -40,9 +40,17 @@ Public Class StatusSubsystem
 
 #Region " LINE FREQUENCY "
 
+    ''' <summary> Gets the DMM installed sentinel. </summary>
+    ''' <value> The DMM installed sentinel. </value>
+    Public Property DmmInstalled As Boolean
+
     ''' <summary> Gets line frequency query command. </summary>
     ''' <value> The line frequency query command. </value>
-    Protected Overrides ReadOnly Property LineFrequencyQueryCommand As String = "CAL:LFR?"
+    Protected Overrides ReadOnly Property LineFrequencyQueryCommand As String
+        Get
+            Return If(Me.DmmInstalled, "CAL:LFR?", "")
+        End Get
+    End Property
 
 #End Region
 

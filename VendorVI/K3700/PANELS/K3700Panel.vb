@@ -180,7 +180,11 @@ Public Class K3700Panel
     ''' <summary> Releases the device. </summary>
     ''' <remarks> David, 1/21/2016. </remarks>
     Protected Overrides Sub ReleaseDevice()
-        MyBase.ReleaseDevice()
+        If Me.IsDeviceOwner Then
+            MyBase.ReleaseDevice()
+        Else
+            Me._Device = Nothing
+        End If
     End Sub
 
     ''' <value> Gets a reference to the Keithley 3700 device. </value>

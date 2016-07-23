@@ -158,6 +158,7 @@ Public Class InstrumentPanelForm
     ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
     Public Sub AddInstrumentPanel(ByVal title As String, ByVal value As Instrument.ResourcePanelBase, ByVal disposeEnabled As Boolean)
         Me._InstrumentPanel = value
+        Me._TalkerControl = value
         Me.AddListeners()
         Me._InstrumentPanelDisposeEnabled = disposeEnabled
         With Me._InstrumentPanel
@@ -206,13 +207,81 @@ Public Class InstrumentPanelForm
 
 #End Region
 
+#Region " Talker Control "
+
+    ''' <summary> true to enable, false to disable the instrument panel dispose. </summary>
+    Private _TalkerControlDisposeEnabled As Boolean
+
+    Private WithEvents _TalkerControl As TalkerControlBase
+
+    ''' <summary> Adds an instrument panel. </summary>
+    ''' <remarks> David, 1/15/2016. </remarks>
+    ''' <param name="value"> The value. </param>
+    Public Sub AddTalkerControl(ByVal value As TalkerControlBase)
+        Me.AddTalkerControl("Instrument", value, True)
+    End Sub
+
+    ''' <summary> Adds an instrument panel. </summary>
+    ''' <remarks> David, 1/15/2016. </remarks>
+    ''' <param name="title"> The title. </param>
+    ''' <param name="value"> The value. </param>
+    Public Sub AddTalkerControl(ByVal title As String, ByVal value As TalkerControlBase)
+        Me.AddTalkerControl(title, value, True)
+    End Sub
+
+    ''' <summary> Adds an instrument panel. </summary>
+    ''' <remarks> David, 1/15/2016. </remarks>
+    ''' <param name="title">          The title. </param>
+    ''' <param name="value">          The value. </param>
+    ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
+    Public Sub AddTalkerControl(ByVal title As String, ByVal value As TalkerControlBase, ByVal disposeEnabled As Boolean)
+        Me._TalkerControl = value
+        Me.AddListeners()
+        Me._TalkerControlDisposeEnabled = disposeEnabled
+        With Me._TalkerControl
+            Me._TalkerControl.Dock = Windows.Forms.DockStyle.Fill
+            Me._TalkerControl.TabIndex = 0
+            Me._TalkerControl.BackColor = System.Drawing.Color.Transparent
+            Me._TalkerControl.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Regular)
+            Me._TalkerControl.Name = "_TalkerControl"
+            Me._InstrumentTabPage.Text = title
+            Me._InstrumentTabPage.ToolTipText = title
+        End With
+        Me._InstrumentLayout.Controls.Add(Me._TalkerControl, 1, 1)
+    End Sub
+
+    ''' <summary> Executes the property change action. </summary>
+    ''' <remarks> David, 1/14/2016. </remarks>
+    ''' <param name="sender">       The sender. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnPropertyChange(sender As TalkerControlBase, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+    End Sub
+
+    ''' <summary> Instrument panel property changed. </summary>
+    ''' <remarks> David, 1/14/2016. </remarks>
+    ''' <param name="sender"> The sender. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _TalkerControl_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TalkerControl.PropertyChanged
+        Try
+            Me.OnPropertyChange(TryCast(sender, TalkerControlBase), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Failed handling property {0} change;. Details: {1}", e?.PropertyName, ex)
+
+        End Try
+    End Sub
+
+#End Region
+
 #Region " TALKER "
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
     ''' <remarks> David, 12/29/2015. </remarks>
     Protected Overloads Sub AddListeners()
         Me.Talker.Listeners.Add(Me._TraceMessagesBox)
-        Me._InstrumentPanel.AddListeners(Me.Talker.Listeners)
+        If Me._TalkerControl IsNot Nothing Then Me._TalkerControl.AddListeners(Me.Talker.Listeners)
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
@@ -220,7 +289,7 @@ Public Class InstrumentPanelForm
     Public Overrides Sub AddListeners(ByVal log As MyLog)
         If log Is Nothing Then Throw New ArgumentNullException(NameOf(log))
         MyBase.AddListeners(log)
-        Me._InstrumentPanel.AddListeners(log)
+        If Me._TalkerControl IsNot Nothing Then Me._TalkerControl.AddListeners(log)
     End Sub
 
     ''' <summary> Executes the trace messages box property changed action. </summary>
