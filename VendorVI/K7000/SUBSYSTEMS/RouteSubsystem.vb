@@ -123,15 +123,15 @@ Public Class RouteSubsystem
 
 #Region " TERMINAL MODE "
 
-    ''' <summary> Gets the terminal mode query command. </summary>
-    ''' <value> The terminal mode command. </value>
+    ''' <summary> Gets the terminals mode query command. </summary>
+    ''' <value> The terminals mode command. </value>
     <Obsolete("Not supported for 7000 Series Switches.")>
-    Protected Overrides ReadOnly Property TerminalModeQueryCommand As String = ""
+    Protected Overrides ReadOnly Property TerminalsModeQueryCommand As String = ""
 
-    ''' <summary> Gets the terminal mode command format. </summary>
-    ''' <value> The terminal mode command format. </value>
+    ''' <summary> Gets the terminals mode command format. </summary>
+    ''' <value> The terminals mode command format. </value>
     <Obsolete("Not supported for 7000 Series Switches.")>
-    Protected Overrides ReadOnly Property TerminalModeCommandFormat As String = ""
+    Protected Overrides ReadOnly Property TerminalsModeCommandFormat As String = ""
 
 #End Region
 

@@ -89,6 +89,14 @@ Public MustInherit Class StatusSubsystemBase
 
 #Region " COMMAND SYNTAX "
 
+#Region " OPC "
+
+    ''' <summary> Gets or sets the wait command. </summary>
+    ''' <value> The wait command. </value>
+    Protected Overrides ReadOnly Property WaitCommand As String = Ieee488.Syntax.WaitCommand
+
+#End Region
+
 #Region " EXECUTION STATE "
 
     ''' <summary> Gets the preset command. </summary>

@@ -54,6 +54,30 @@ Public Class K7500Panel
             .Minimum = 0
             .Maximum = 63
         End With
+        With Me._LowLimit1Numeric.NumericUpDownControl
+            .Minimum = 0
+            .Maximum = 5000000D
+            .DecimalPlaces = 3
+            .Value = 0
+        End With
+        With Me._HighLimit1Numeric.NumericUpDownControl
+            .Minimum = 0
+            .Maximum = 5000000D
+            .DecimalPlaces = 3
+            .Value = 0
+        End With
+        With Me._BinningTriggerCountNumeric.NumericUpDownControl
+            .Minimum = 0
+            .Maximum = 5000000D
+            .DecimalPlaces = 0
+            .Value = 100
+        End With
+        With Me._SimpleLoopCountNumeric.NumericUpDownControl
+            .Minimum = 0
+            .Maximum = 1000D
+            .DecimalPlaces = 0
+            .Value = 10
+        End With
     End Sub
 
     ''' <summary>
@@ -152,7 +176,7 @@ Public Class K7500Panel
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
             Case NameOf(device.IsServiceRequestEventEnabled)
-                Me._HandleServiceRequestsCheckBox.Checked = device.IsServiceRequestEventEnabled
+                Me._HandleServiceRequestsMenuItem.Checked = device.IsServiceRequestEventEnabled
         End Select
     End Sub
 
@@ -169,7 +193,7 @@ Public Class K7500Panel
         AddHandler Me.Device.SenseCurrentSubsystem.PropertyChanged, AddressOf Me.SenseCurrentSubsystemPropertyChanged
         AddHandler Me.Device.SenseFourWireResistanceSubsystem.PropertyChanged, AddressOf Me.SenseFourWireResistanceSubsystemPropertyChanged
         AddHandler Me.Device.SenseResistanceSubsystem.PropertyChanged, AddressOf Me.SenseResistanceSubsystemPropertyChanged
-        'AddHandler Me.Device.TraceSubsystem.PropertyChanged, AddressOf Me.TraceSubsystemPropertyChanged
+        AddHandler Me.Device.TraceSubsystem.PropertyChanged, AddressOf Me.TraceSubsystemPropertyChanged
         'AddHandler Me.Device.TriggerSubsystem.PropertyChanged, AddressOf Me.TriggerSubsystemPropertyChanged
         AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
         AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
@@ -201,7 +225,7 @@ Public Class K7500Panel
             RemoveHandler Me.Device.SenseFourWireResistanceSubsystem.PropertyChanged, AddressOf Me.SenseFourWireResistanceSubsystemPropertyChanged
             RemoveHandler Me.Device.SenseVoltageSubsystem.PropertyChanged, AddressOf Me.SenseVoltageSubsystemPropertyChanged
             RemoveHandler Me.Device.SenseSubsystem.PropertyChanged, AddressOf Me.SenseSubsystemPropertyChanged
-            'RemoveHandler Me.Device.TraceSubsystem.PropertyChanged, AddressOf Me.TraceSubsystemPropertyChanged
+            RemoveHandler Me.Device.TraceSubsystem.PropertyChanged, AddressOf Me.TraceSubsystemPropertyChanged
             'RemoveHandler Me.Device.TriggerSubsystem.PropertyChanged, AddressOf Me.TriggerSubsystemPropertyChanged
             RemoveHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
             RemoveHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
@@ -218,7 +242,7 @@ Public Class K7500Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
                 If Me.Device IsNot Nothing AndAlso subsystem.Elements <> ReadingTypes.None Then
@@ -334,8 +358,12 @@ Public Class K7500Panel
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As RouteSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.TerminalMode)
-                Me._TerminalsToggle.SafeSilentCheckedSetter(subsystem.TerminalMode.GetValueOrDefault(RouteTerminalMode.None) = RouteTerminalMode.Rear)
+            Case NameOf(subsystem.TerminalsMode)
+                If subsystem.TerminalsMode.HasValue Then
+                    Me._TerminalStateLabel.SafeTextSetter(subsystem.TerminalsMode.Value.Description)
+                Else
+                    Me._TerminalStateLabel.SafeTextSetter("Rear/Front?")
+                End If
                 Windows.Forms.Application.DoEvents()
         End Select
     End Sub
@@ -343,7 +371,7 @@ Public Class K7500Panel
     ''' <summary> Route subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031: DoNotCatchGeneralExceptionTypes")>
     Private Sub RouteSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, RouteSubsystem), e?.PropertyName)
@@ -446,7 +474,7 @@ Public Class K7500Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -484,7 +512,7 @@ Public Class K7500Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseVoltageSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -527,7 +555,7 @@ Public Class K7500Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseCurrentSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -570,7 +598,7 @@ Public Class K7500Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseFourWireResistanceSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -613,7 +641,7 @@ Public Class K7500Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseResistanceSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -666,7 +694,7 @@ Public Class K7500Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Protected Overrides Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
             Case NameOf(subsystem.DeviceErrors)
@@ -736,6 +764,44 @@ Public Class K7500Panel
 
 #End Region
 
+#Region " TRACE "
+
+    ''' <summary> Handle the Trace subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As TraceSubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.PointsCount)
+            Case NameOf(subsystem.ActualPointCount)
+                Me._BufferCountLabel.Text = CStr(subsystem.ActualPointCount.GetValueOrDefault(0))
+                Me._BufferCountLabel.Invalidate()
+            Case NameOf(subsystem.FirstPointNumber)
+                Me._FirstPointNumberLabel.Text = CStr(subsystem.FirstPointNumber.GetValueOrDefault(0))
+                Me._BufferCountLabel.Invalidate()
+            Case NameOf(subsystem.LastPointNumber)
+                Me._LastPointNumberLabel.Text = CStr(subsystem.LastPointNumber.GetValueOrDefault(0))
+                Me._BufferCountLabel.Invalidate()
+        End Select
+        Windows.Forms.Application.DoEvents()
+    End Sub
+
+    ''' <summary> Trace subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031: DoNotCatchGeneralExceptionTypes")>
+    Private Sub TraceSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnSubsystemPropertyChanged(TryCast(sender, TraceSubsystem), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling Trace subsystem property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
+
+
 #End Region
 
 #Region " DISPLAY SETTINGS: READING "
@@ -788,11 +854,8 @@ Public Class K7500Panel
 
 #Region " CONTROL EVENT HANDLERS: RESET "
 
-    ''' <summary> Event handler. Called by _SessionTraceEnableCheckBox for checked changed events. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _SessionTraceEnableCheckBox_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _SessionTraceEnableCheckBox.CheckedChanged
+    Private Sub _TraceInstrumentMessagesMenuItem_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _TraceInstrumentMessagesMenuItem.CheckedChanged
         If Me._InitializingComponents Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -810,11 +873,11 @@ Public Class K7500Panel
         End Try
     End Sub
 
-    ''' <summary> Event handler. Called by interfaceClearButton for click events. </summary>
+    ''' <summary> Event handler. Called by _ClearInterfaceMenuItem for click events. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _InterfaceClearButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InterfaceClearButton.Click
+    Private Sub _ClearInterfaceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearInterfaceMenuItem.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
@@ -830,12 +893,12 @@ Public Class K7500Panel
         End Try
     End Sub
 
-    ''' <summary> Event handler. Called by _SelectiveDeviceClearButton for click events. </summary>
+    ''' <summary> Event handler. Called by _ClearDeviceMenuItem for click events. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _SelectiveDeviceClearButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _SelectiveDeviceClearButton.Click
+    Private Sub _ClearDeviceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearDeviceMenuItem.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
@@ -851,11 +914,11 @@ Public Class K7500Panel
         End Try
     End Sub
 
-    ''' <summary> Issue RST. </summary>
+    ''' <summary> Issues RST. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ResetButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResetButton.Click
+    Private Sub _ResetKnownStateMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResetKnownStateMenuItem.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
@@ -873,12 +936,12 @@ Public Class K7500Panel
         End Try
     End Sub
 
-    ''' <summary> Event handler. Called by _InitializeKnownStateButton for click events. </summary>
+    ''' <summary> Event handler. Called by _InitKnownStateMenuItem for click events. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _InitializeKnownStateButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InitializeKnownStateButton.Click
+    Private Sub _InitKnownStateMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InitKnownStateMenuItem.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
@@ -898,6 +961,62 @@ Public Class K7500Panel
             Me.Cursor = Cursors.Default
         End Try
     End Sub
+
+    ''' <summary> Reads terminals state menu item click. </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
+    ''' <param name="sender"> <see cref="Object"/>
+    '''                       instance of this
+    '''                       <see cref="Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ReadTerminalsStateMenuItem_Click(sender As Object, e As EventArgs) Handles _ReadTerminalsStateMenuItem.Click
+        If Me._InitializingComponents Then Return
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.RouteSubsystem.QueryTerminalsMode()
+            Me.Device.StatusSubsystem.ReadRegisters()
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred initializing known state;. Details: {0}", ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+
+    End Sub
+
+    ''' <summary> Event handler. Called by _HandleServiceRequestsMenuItem for check state changed
+    ''' events. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _HandleServiceRequestsMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _HandleServiceRequestsMenuItem.CheckStateChanged
+        If Me._InitializingComponents Then Return
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
+            If menuItem IsNot Nothing AndAlso
+                    Not menuItem.Checked = Me.Device.Session.IsServiceRequestEventEnabled Then
+                If menuItem IsNot Nothing AndAlso menuItem.Checked Then
+                    Me.EnableServiceRequestEventHandler()
+                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+                Else
+                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
+                    Me.DisableServiceRequestEventHandler()
+                End If
+                Me.Device.StatusSubsystem.ReadRegisters()
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred toggling service request handling mode;. Details: {0}", ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
 
 #End Region
 
@@ -964,7 +1083,7 @@ Public Class K7500Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Me.Device.RouteSubsystem.QueryTerminalMode()
+            Me.Device.RouteSubsystem.QueryTerminalsMode()
             Me.Device.MeasureSubsystem.Read()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -973,47 +1092,6 @@ Public Class K7500Panel
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
-    End Sub
-
-    ''' <summary> Event handler. Called by _terminalsToggle for click events. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    Private Sub _TerminalsToggle_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _TerminalsToggle.CheckStateChanged
-        If Me._InitializingComponents Then Return
-        Dim checkBox As Windows.Forms.CheckBox = TryCast(sender, Windows.Forms.CheckBox)
-        If checkBox IsNot Nothing Then
-            If checkBox.CheckState = Windows.Forms.CheckState.Indeterminate Then
-                checkBox.Text = "R/F?"
-            Else
-                checkBox.Text = CStr(IIf(checkBox.Checked, "Rear", "Front"))
-            End If
-        End If
-    End Sub
-
-    Private Sub _TerminalsToggle_Click(sender As Object, e As EventArgs) Handles _TerminalsToggle.Click
-        If Me._InitializingComponents Then Return
-        Dim checkBox As CheckBox = TryCast(sender, CheckBox)
-        Me.Device.RouteSubsystem.ApplyTerminalMode(If(checkBox.Checked, RouteTerminalMode.Rear, RouteTerminalMode.Front))
-    End Sub
-
-    ''' <summary> Event handler. Called by _HandleServiceRequestsCheckBox for check state changed
-    ''' events. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    Private Sub _HandleServiceRequestsCheckBox_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _HandleServiceRequestsCheckBox.CheckStateChanged
-        If Me._InitializingComponents Then Return
-        Dim checkBox As CheckBox = TryCast(sender, CheckBox)
-        If checkBox IsNot Nothing AndAlso
-                    Not checkBox.Checked = Me.Device.Session.IsServiceRequestEventEnabled Then
-            If checkBox IsNot Nothing AndAlso checkBox.Checked Then
-                Me.EnableServiceRequestEventHandler()
-                Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
-            Else
-                Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
-                Me.DisableServiceRequestEventHandler()
-            End If
-            Me.Device.StatusSubsystem.ReadRegisters()
-        End If
     End Sub
 
 #End Region
@@ -1094,6 +1172,145 @@ Public Class K7500Panel
 
 #End Region
 
+#Region " CONTROL EVENT HANDLERS: BUFFER "
+
+    Private Sub ReadBuffer()
+        If Me.IsDeviceOpen Then
+            With Me._BufferDataGridView
+                .DataSource = Nothing
+                .Columns.Clear()
+                .Invalidate()
+                .DataSource = Me.Device.TraceSubsystem.QueryBufferReadings()
+                For Each col As DataGridViewColumn In .Columns
+                    If String.Equals(col.Name, NameOf(BufferReading.ElementCount)) Then
+                        col.Visible = False
+                    Else
+                        col.HeaderText = isr.Core.Pith.SplitExtensions.SplitWords(col.Name)
+                    End If
+                Next
+                .ScrollBars = ScrollBars.Both
+            End With
+        End If
+    End Sub
+
+    ''' <summary> Reads buffer button click. </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/>
+    '''                       instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ReadBufferButton_Click(sender As Object, e As EventArgs) Handles _ReadBufferButton.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "reading buffer"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+            Me.ReadBuffer()
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred {0};. Details: {1}", activity, ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+
+    End Sub
+
+#End Region
+
+#Region " CONTROL EVENT HANDLERS: TRIGGER "
+
+    Private Sub _BitPatternFormatCheckBox_Click(sender As Object, e As EventArgs) Handles _BitPatternFormatCheckBox.Click
+        If Me._InitializingComponents Then Return
+        Me._PassBitPatternNumeric.NumericUpDownControl.Hexadecimal = _BitPatternFormatCheckBox.Checked
+    End Sub
+
+    Private Sub _HexLimit1CheckBox_Click(sender As Object, e As EventArgs) Handles _HexLimit1CheckBox.Click
+        If Me._InitializingComponents Then Return
+        Me._FailLimit1BitPatternNumeric.NumericUpDownControl.Hexadecimal = _BitPatternFormatCheckBox.Checked
+    End Sub
+
+    Private Sub _Limit1DecimalsNumeric_ValueChanged(sender As Object, e As EventArgs) Handles _Limit1DecimalsNumeric.ValueChanged
+        If Me._InitializingComponents Then Return
+        Me._LowLimit1Numeric.NumericUpDownControl.DecimalPlaces = CInt(Me._Limit1DecimalsNumeric.Value)
+        Me._HighLimit1Numeric.NumericUpDownControl.DecimalPlaces = CInt(Me._Limit1DecimalsNumeric.Value)
+    End Sub
+
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ApplyGradeBinTriggerModelButton_Click(sender As Object, e As EventArgs) Handles _ApplyGradeBinTriggerModelButton.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "applying grade binning trigger model"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            If Me.IsDeviceOpen Then
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+                Dim count As Integer = CInt(Me._BinningTriggerCountNumeric.Value)
+                Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
+                Dim endDelay As TimeSpan = TimeSpan.FromSeconds(Me._EndTriggerDelayNumeric.Value)
+                Me.Device.TriggerSubsystem.LoadGradeBinning(count, startDelay, endDelay,
+                                                            Me._HighLimit1Numeric.Value, Me._LowLimit1Numeric.Value,
+                                                           CInt(Me._FailLimit1BitPatternNumeric.Value), CInt(Me._PassBitPatternNumeric.Value))
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred {0};. Details: {1}", activity, ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    Private Sub LoadSimpleModel()
+        If Me.IsDeviceOpen Then
+            Dim count As Integer = CInt(Me._SimpleLoopCountNumeric.Value)
+            Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
+            Me.Device.TriggerSubsystem.LoadSimpleLoop(count, startDelay)
+        End If
+    End Sub
+
+    Private Sub RunSimpleModel()
+        Me.Device.TraceSubsystem.ClearBuffer()
+        Me.Device.TriggerSubsystem.Initiate()
+        Me.Device.StatusSubsystem.Wait()
+        Me.ReadBuffer()
+    End Sub
+
+    ''' <summary> Simple loop load run button click. </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
+    ''' <param name="sender"> <see cref="Object"/>
+    '''                       instance of this
+    '''                       <see cref="Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _SimpleLoopLoadRunButton_Click(sender As Object, e As EventArgs) Handles _SimpleLoopLoadRunButton.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "applying simple loop trigger model"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+            Me.LoadSimpleModel()
+            activity = "running simple loop trigger model"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+            Me.RunSimpleModel()
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred {0};. Details: {1}", activity, ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+#End Region
+
 #Region " READ AND WRITE "
 
     ''' <summary> Executes the simple read write control property changed action. </summary>
@@ -1118,7 +1335,7 @@ Public Class K7500Panel
     ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
-                           <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SimpleReadWriteControl_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
         Try
             Me.OnSimpleReadWriteControlPropertyChanged(TryCast(sender, Instrument.SimpleReadWriteControl), e?.PropertyName)
@@ -1157,47 +1374,6 @@ Public Class K7500Panel
         If log Is Nothing Then Throw New ArgumentNullException(NameOf(log))
         MyBase.AddListeners(log)
         My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-
-#End Region
-
-#Region " TRIGGER "
-
-    Private Sub _BitPatternFormatCheckBox_Click(sender As Object, e As EventArgs) Handles _BitPatternFormatCheckBox.Click
-        If Me._InitializingComponents Then Return
-        Me._PassBitPatternNumeric.NumericUpDownControl.Hexadecimal = _BitPatternFormatCheckBox.Checked
-    End Sub
-
-    Private Sub _HexLimit1CheckBox_Click(sender As Object, e As EventArgs) Handles _HexLimit1CheckBox.Click
-        If Me._InitializingComponents Then Return
-        Me._FailLimit1BitPatternNumeric.NumericUpDownControl.Hexadecimal = _BitPatternFormatCheckBox.Checked
-    End Sub
-
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ApplyGradeBinTriggerModelButton_Click(sender As Object, e As EventArgs) Handles _ApplyGradeBinTriggerModelButton.Click
-        If Me._InitializingComponents Then Return
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            If Me.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "{0} applying trigger model;. {1}", Me.ResourceTitle, Me.ResourceName)
-                Dim count As Integer = Integer.Parse(Me._TriggerCountTextBox.Text)
-                Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
-                Dim endDelay As TimeSpan = TimeSpan.FromSeconds(Me._EndTriggerDelayNumeric.Value)
-                Me.Device.TriggerSubsystem.LoadGradeBinning(count, startDelay, endDelay,
-                                                            Double.Parse(Me._HighLimit1TextBox.Text), Double.Parse(Me._HighLimit1TextBox.Text),
-                                                           CInt(Me._FailLimit1BitPatternNumeric.Value), CInt(Me._PassBitPatternNumeric.Value))
-            End If
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initializing known state;. Details: {0}", ex)
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
-
     End Sub
 
 #End Region

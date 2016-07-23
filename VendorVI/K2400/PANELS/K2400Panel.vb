@@ -607,10 +607,10 @@ Public Class K2400Panel
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As RouteSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.TerminalMode)
+            Case NameOf(subsystem.TerminalsMode)
                 Dim value As Boolean? = New Boolean?
-                If subsystem.TerminalMode.HasValue Then
-                    value = subsystem.TerminalMode.Value = RouteTerminalMode.Front
+                If subsystem.TerminalsMode.HasValue Then
+                    value = subsystem.TerminalsMode.Value = RouteTerminalsMode.Front
                 End If
                 Me._OutputTerminalMenuItem.SafeSilentCheckStateSetter(value.ToCheckState)
         End Select
@@ -638,12 +638,12 @@ Public Class K2400Panel
         Me.ErrorProvider.Clear()
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
-            If Not Me.Device.RouteSubsystem.TerminalMode.HasValue OrElse
-                (Me.Device.RouteSubsystem.TerminalMode.Value = RouteTerminalMode.Front) <> menuItem.Checked Then
+            If Not Me.Device.RouteSubsystem.TerminalsMode.HasValue OrElse
+                (Me.Device.RouteSubsystem.TerminalsMode.Value = RouteTerminalsMode.Front) <> menuItem.Checked Then
                 If menuItem.Checked Then
-                    Me.Device.RouteSubsystem.ApplyTerminalMode(RouteTerminalMode.Front)
+                    Me.Device.RouteSubsystem.ApplyTerminalsMode(RouteTerminalsMode.Front)
                 Else
-                    Me.Device.RouteSubsystem.ApplyTerminalMode(RouteTerminalMode.Rear)
+                    Me.Device.RouteSubsystem.ApplyTerminalsMode(RouteTerminalsMode.Rear)
                 End If
             End If
         Catch ex As Exception
@@ -2116,7 +2116,7 @@ Public Class K2400Panel
 
         ' initialize the known state.
         Me.Device.ResetClearInit()
-        Me.Device.RouteSubsystem.ApplyTerminalMode(VI.RouteTerminalMode.Rear)
+        Me.Device.RouteSubsystem.ApplyTerminalsMode(VI.RouteTerminalsMode.Rear)
         Me.Device.SenseSubsystem.ApplyFunctionModes(Scpi.SenseFunctionModes.Resistance)
 
         ' set to manual mode to require manually setting the measurement as voltage source

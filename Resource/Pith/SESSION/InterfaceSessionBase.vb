@@ -104,22 +104,15 @@ Public MustInherit Class InterfaceSessionBase
     <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
-            If Not Me.IsDisposed AndAlso disposing Then
+            If Not Me.IsDisposed Then
+                If disposing Then
+                Else
+                    ' put finalize code here.
+                End If
             End If
         Finally
             MyBase.Dispose(disposing)
         End Try
-    End Sub
-
-    ''' <summary> Finalizes this object. </summary>
-    ''' <remarks>
-    ''' David, 11/21/2015.
-    ''' Override because Dispose(disposing As Boolean) above has code to free unmanaged resources.
-    ''' </remarks>
-    Protected Overrides Sub Finalize()
-        ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
-        Dispose(False)
-        MyBase.Finalize()
     End Sub
 
 #End Region

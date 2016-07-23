@@ -183,6 +183,7 @@ Public MustInherit Class ExceptionBase
     End Property
 
     ''' <summary> Gathers environment information safely. </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub obtainEnvironmentInformation()
 
         Const unknown As String = "N/A"

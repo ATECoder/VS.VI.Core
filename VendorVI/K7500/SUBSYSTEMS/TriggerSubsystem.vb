@@ -60,10 +60,22 @@ Public Class TriggerSubsystem
 
 #End Region
 
-#Region " GRAD Binning "
+#Region " SIMPLE LOOP "
+
+    ''' <summary> Loads simple loop. </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
+    ''' <param name="count"> Number of. </param>
+    ''' <param name="delay"> The delay. </param>
+    Public Sub LoadSimpleLoop(ByVal count As Integer, ByVal delay As TimeSpan)
+        Me.Write(":TRIG:LOAD 'SimpleLoop',{0},{1}", count, delay.TotalSeconds)
+    End Sub
+
+#End Region
+
+#Region " GRAD BINNING "
 
     ''' <summary> Loads grade binning. </summary>
-    ''' <remarks> David, 6/27/2016. </remarks>
+    ''' <remarks> Uses external trigger (start line = 7). </remarks>
     ''' <param name="count">            Number of. </param>
     ''' <param name="startDelay">       The start delay. </param>
     ''' <param name="endDelay">         The end delay. </param>
@@ -79,7 +91,7 @@ Public Class TriggerSubsystem
     End Sub
 
     ''' <summary> Loads grade binning. </summary>
-    ''' <remarks> David, 6/27/2016. </remarks>
+    ''' <remarks> Uses external trigger (start line = 7) and maximum count (268000000). </remarks>
     ''' <param name="startDelay">       The start delay. </param>
     ''' <param name="endDelay">         The end delay. </param>
     ''' <param name="highLimit">        The high limit. </param>

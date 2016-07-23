@@ -109,6 +109,10 @@ Public Class StatusSubsystem
     ''' <value> The service request enable command format. </value>
     Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = TspSyntax.ServiceRequestEnableCommandFormat
 
+    ''' <summary> Gets the wait command. </summary>
+    ''' <value> The wait command. </value>
+    Protected Overrides ReadOnly Property WaitCommand As String = Ieee488.Syntax.WaitCommand
+
 #End Region
 
 #Region " MEASUREMENT REGISTER EVENTS "

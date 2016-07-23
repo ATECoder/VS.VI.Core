@@ -13,13 +13,22 @@ Partial Class K7500Panel
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(K7500Panel))
         Me._Tabs = New System.Windows.Forms.TabControl()
         Me._ReadingTabPage = New System.Windows.Forms.TabPage()
-        Me._HandleServiceRequestsCheckBox = New System.Windows.Forms.CheckBox()
+        Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._TraceInstrumentMessagesMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._HandleServiceRequestsMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ReadTerminalsStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._TerminalStateLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ReadingComboBoxLabel = New System.Windows.Forms.Label()
-        Me._TerminalsToggle = New isr.Core.Controls.CheckBox()
         Me._ReadingComboBox = New System.Windows.Forms.ComboBox()
         Me._ReadButton = New System.Windows.Forms.Button()
         Me._InitiateButton = New System.Windows.Forms.Button()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
+        Me._ApplyFunctionModeButton = New System.Windows.Forms.Button()
         Me._TriggerDelayNumeric = New System.Windows.Forms.NumericUpDown()
         Me._SenseRangeNumeric = New System.Windows.Forms.NumericUpDown()
         Me._PowerLineCyclesNumeric = New System.Windows.Forms.NumericUpDown()
@@ -35,7 +44,6 @@ Partial Class K7500Panel
         Me._GradeBinningToolStrip = New System.Windows.Forms.ToolStrip()
         Me._BinningToolStripLabel = New System.Windows.Forms.ToolStripLabel()
         Me._TriggerCountTextBoxLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._TriggerCountTextBox = New System.Windows.Forms.ToolStripTextBox()
         Me._PassBitPatternNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._BitPatternFormatCheckBox = New isr.Core.Controls.ToolStripCheckBox()
         Me._PassBitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
@@ -46,18 +54,25 @@ Partial Class K7500Panel
         Me._EndTriggerDelayNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._Limit1ToolStrip = New System.Windows.Forms.ToolStrip()
         Me._Limits1Label = New System.Windows.Forms.ToolStripLabel()
-        Me._LowLimit1TextBox = New System.Windows.Forms.ToolStripTextBox()
-        Me._HighLimit1TextBox = New System.Windows.Forms.ToolStripTextBox()
+        Me._Limit1DecimalsNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._LowLimit1Numeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._HighLimit1Numeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._FailBitToolStripLabel = New System.Windows.Forms.ToolStripLabel()
         Me._HexLimit1CheckBox = New isr.Core.Controls.ToolStripCheckBox()
         Me._FailLimit1BitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._ResetTabPage = New System.Windows.Forms.TabPage()
-        Me._ResetLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._InitializeKnownStateButton = New System.Windows.Forms.Button()
-        Me._InterfaceClearButton = New System.Windows.Forms.Button()
-        Me._ResetButton = New System.Windows.Forms.Button()
-        Me._SelectiveDeviceClearButton = New System.Windows.Forms.Button()
-        Me._SessionTraceEnableCheckBox = New System.Windows.Forms.CheckBox()
+        Me._SimpleLoopToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._SimpleLoopLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._SimpleLoopCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._SimpleLoopCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._SimpleLoopLoadRunButton = New System.Windows.Forms.ToolStripButton()
+        Me._BufferTabPage = New System.Windows.Forms.TabPage()
+        Me._BufferDataGridView = New System.Windows.Forms.DataGridView()
+        Me._BufferToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ReadBufferButton = New System.Windows.Forms.ToolStripButton()
+        Me._BufferCountLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._LastPointNumberLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._FirstPointNumberLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._BufferNameLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
         Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
@@ -70,10 +85,11 @@ Partial Class K7500Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._ApplyFunctionModeButton = New System.Windows.Forms.Button()
+        Me._BinningTriggerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
+        Me._SystemToolStrip.SuspendLayout()
         Me._SenseTabPage.SuspendLayout()
         CType(Me._TriggerDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._SenseRangeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -83,8 +99,10 @@ Partial Class K7500Panel
         Me._GradeBinningToolStrip.SuspendLayout()
         Me._TriggerDelayToolStrip.SuspendLayout()
         Me._Limit1ToolStrip.SuspendLayout()
-        Me._ResetTabPage.SuspendLayout()
-        Me._ResetLayout.SuspendLayout()
+        Me._SimpleLoopToolStrip.SuspendLayout()
+        Me._BufferTabPage.SuspendLayout()
+        CType(Me._BufferDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._BufferToolStrip.SuspendLayout()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
         Me._ReadingStatusStrip.SuspendLayout()
@@ -111,7 +129,7 @@ Partial Class K7500Panel
         Me._Tabs.Controls.Add(Me._ReadingTabPage)
         Me._Tabs.Controls.Add(Me._SenseTabPage)
         Me._Tabs.Controls.Add(Me._TriggerTabPage)
-        Me._Tabs.Controls.Add(Me._ResetTabPage)
+        Me._Tabs.Controls.Add(Me._BufferTabPage)
         Me._Tabs.Controls.Add(Me._ReadWriteTabPage)
         Me._Tabs.Controls.Add(Me._MessagesTabPage)
         Me._Tabs.Dock = System.Windows.Forms.DockStyle.Fill
@@ -124,9 +142,8 @@ Partial Class K7500Panel
         '
         '_ReadingTabPage
         '
-        Me._ReadingTabPage.Controls.Add(Me._HandleServiceRequestsCheckBox)
+        Me._ReadingTabPage.Controls.Add(Me._SystemToolStrip)
         Me._ReadingTabPage.Controls.Add(Me._ReadingComboBoxLabel)
-        Me._ReadingTabPage.Controls.Add(Me._TerminalsToggle)
         Me._ReadingTabPage.Controls.Add(Me._ReadingComboBox)
         Me._ReadingTabPage.Controls.Add(Me._ReadButton)
         Me._ReadingTabPage.Controls.Add(Me._InitiateButton)
@@ -137,17 +154,76 @@ Partial Class K7500Panel
         Me._ReadingTabPage.Text = "Reading"
         Me._ReadingTabPage.UseVisualStyleBackColor = True
         '
-        '_HandleServiceRequestsCheckBox
+        '_SystemToolStrip
         '
-        Me._HandleServiceRequestsCheckBox.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me._HandleServiceRequestsCheckBox.AutoSize = True
-        Me._HandleServiceRequestsCheckBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._HandleServiceRequestsCheckBox.Location = New System.Drawing.Point(12, 238)
-        Me._HandleServiceRequestsCheckBox.Name = "_HandleServiceRequestsCheckBox"
-        Me._HandleServiceRequestsCheckBox.Size = New System.Drawing.Size(178, 21)
-        Me._HandleServiceRequestsCheckBox.TabIndex = 4
-        Me._HandleServiceRequestsCheckBox.Text = "Handle Service Requests"
-        Me._HandleServiceRequestsCheckBox.UseVisualStyleBackColor = True
+        Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._TerminalStateLabel})
+        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 245)
+        Me._SystemToolStrip.Name = "_SystemToolStrip"
+        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._SystemToolStrip.TabIndex = 6
+        Me._SystemToolStrip.Text = "System Tools"
+        Me.TipsTooltip.SetToolTip(Me._SystemToolStrip, "System operations")
+        '
+        '_ResetSplitButton
+        '
+        Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._TraceInstrumentMessagesMenuItem, Me._HandleServiceRequestsMenuItem, Me._ReadTerminalsStateMenuItem})
+        Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
+        Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ResetSplitButton.Name = "_ResetSplitButton"
+        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 22)
+        Me._ResetSplitButton.Text = "Reset"
+        Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
+        '
+        '_ClearInterfaceMenuItem
+        '
+        Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
+        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearInterfaceMenuItem.Text = "Clear Interface"
+        '
+        '_ClearDeviceMenuItem
+        '
+        Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
+        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
+        '
+        '_ResetKnownStateMenuItem
+        '
+        Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
+        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ResetKnownStateMenuItem.Text = "Reset to Known State (RST)"
+        '
+        '_InitKnownStateMenuItem
+        '
+        Me._InitKnownStateMenuItem.Name = "_InitKnownStateMenuItem"
+        Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._InitKnownStateMenuItem.Text = "Init to Known State"
+        '
+        '_TraceInstrumentMessagesMenuItem
+        '
+        Me._TraceInstrumentMessagesMenuItem.Name = "_TraceInstrumentMessagesMenuItem"
+        Me._TraceInstrumentMessagesMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._TraceInstrumentMessagesMenuItem.Text = "Trace Instrument Messages"
+        '
+        '_HandleServiceRequestsMenuItem
+        '
+        Me._HandleServiceRequestsMenuItem.Name = "_HandleServiceRequestsMenuItem"
+        Me._HandleServiceRequestsMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._HandleServiceRequestsMenuItem.Text = "Handle Service Requests"
+        '
+        '_ReadTerminalsStateMenuItem
+        '
+        Me._ReadTerminalsStateMenuItem.Name = "_ReadTerminalsStateMenuItem"
+        Me._ReadTerminalsStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ReadTerminalsStateMenuItem.Text = "Read Terminals State"
+        '
+        '_TerminalStateLabel
+        '
+        Me._TerminalStateLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._TerminalStateLabel.Name = "_TerminalStateLabel"
+        Me._TerminalStateLabel.Size = New System.Drawing.Size(35, 22)
+        Me._TerminalStateLabel.Text = "Front"
         '
         '_ReadingComboBoxLabel
         '
@@ -159,21 +235,6 @@ Partial Class K7500Panel
         Me._ReadingComboBoxLabel.TabIndex = 2
         Me._ReadingComboBoxLabel.Text = "Reading:"
         Me._ReadingComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        '_TerminalsToggle
-        '
-        Me._TerminalsToggle.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._TerminalsToggle.Appearance = System.Windows.Forms.Appearance.Button
-        Me._TerminalsToggle.Enabled = False
-        Me._TerminalsToggle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._TerminalsToggle.Location = New System.Drawing.Point(290, 229)
-        Me._TerminalsToggle.Name = "_TerminalsToggle"
-        Me._TerminalsToggle.Size = New System.Drawing.Size(58, 30)
-        Me._TerminalsToggle.TabIndex = 5
-        Me._TerminalsToggle.Text = "Front"
-        Me._TerminalsToggle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        Me.TipsTooltip.SetToolTip(Me._TerminalsToggle, "Reads front/rear terminals state")
-        Me._TerminalsToggle.UseVisualStyleBackColor = True
         '
         '_ReadingComboBox
         '
@@ -225,6 +286,17 @@ Partial Class K7500Panel
         Me._SenseTabPage.TabIndex = 4
         Me._SenseTabPage.Text = "Sense"
         Me._SenseTabPage.UseVisualStyleBackColor = True
+        '
+        '_ApplyFunctionModeButton
+        '
+        Me._ApplyFunctionModeButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me._ApplyFunctionModeButton.Location = New System.Drawing.Point(306, 12)
+        Me._ApplyFunctionModeButton.Name = "_ApplyFunctionModeButton"
+        Me._ApplyFunctionModeButton.Size = New System.Drawing.Size(39, 25)
+        Me._ApplyFunctionModeButton.TabIndex = 10
+        Me._ApplyFunctionModeButton.Text = "SET"
+        Me.TipsTooltip.SetToolTip(Me._ApplyFunctionModeButton, "Selects this function mode")
+        Me._ApplyFunctionModeButton.UseVisualStyleBackColor = True
         '
         '_TriggerDelayNumeric
         '
@@ -346,9 +418,10 @@ Partial Class K7500Panel
         '
         '_TriggerToolStripPanel
         '
-        Me._TriggerToolStripPanel.Controls.Add(Me._GradeBinningToolStrip)
         Me._TriggerToolStripPanel.Controls.Add(Me._TriggerDelayToolStrip)
         Me._TriggerToolStripPanel.Controls.Add(Me._Limit1ToolStrip)
+        Me._TriggerToolStripPanel.Controls.Add(Me._GradeBinningToolStrip)
+        Me._TriggerToolStripPanel.Controls.Add(Me._SimpleLoopToolStrip)
         Me._TriggerToolStripPanel.Dock = System.Windows.Forms.DockStyle.Fill
         Me._TriggerToolStripPanel.Location = New System.Drawing.Point(0, 0)
         Me._TriggerToolStripPanel.Name = "_TriggerToolStripPanel"
@@ -359,10 +432,10 @@ Partial Class K7500Panel
         '_GradeBinningToolStrip
         '
         Me._GradeBinningToolStrip.Dock = System.Windows.Forms.DockStyle.None
-        Me._GradeBinningToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._BinningToolStripLabel, Me._TriggerCountTextBoxLabel, Me._TriggerCountTextBox, Me._PassBitPatternNumericLabel, Me._BitPatternFormatCheckBox, Me._PassBitPatternNumeric, Me._ApplyGradeBinTriggerModelButton})
-        Me._GradeBinningToolStrip.Location = New System.Drawing.Point(3, 0)
+        Me._GradeBinningToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._BinningToolStripLabel, Me._TriggerCountTextBoxLabel, Me._BinningTriggerCountNumeric, Me._PassBitPatternNumericLabel, Me._PassBitPatternNumeric, Me._ApplyGradeBinTriggerModelButton, Me._BitPatternFormatCheckBox})
+        Me._GradeBinningToolStrip.Location = New System.Drawing.Point(3, 56)
         Me._GradeBinningToolStrip.Name = "_GradeBinningToolStrip"
-        Me._GradeBinningToolStrip.Size = New System.Drawing.Size(336, 28)
+        Me._GradeBinningToolStrip.Size = New System.Drawing.Size(284, 28)
         Me._GradeBinningToolStrip.TabIndex = 0
         '
         '_BinningToolStripLabel
@@ -374,21 +447,14 @@ Partial Class K7500Panel
         '_TriggerCountTextBoxLabel
         '
         Me._TriggerCountTextBoxLabel.Name = "_TriggerCountTextBoxLabel"
-        Me._TriggerCountTextBoxLabel.Size = New System.Drawing.Size(43, 25)
-        Me._TriggerCountTextBoxLabel.Text = "Count:"
-        '
-        '_TriggerCountTextBox
-        '
-        Me._TriggerCountTextBox.AutoSize = False
-        Me._TriggerCountTextBox.Name = "_TriggerCountTextBox"
-        Me._TriggerCountTextBox.Size = New System.Drawing.Size(50, 25)
-        Me._TriggerCountTextBox.Text = "10000"
+        Me._TriggerCountTextBoxLabel.Size = New System.Drawing.Size(19, 25)
+        Me._TriggerCountTextBoxLabel.Text = "N:"
         '
         '_PassBitPatternNumericLabel
         '
         Me._PassBitPatternNumericLabel.Name = "_PassBitPatternNumericLabel"
-        Me._PassBitPatternNumericLabel.Size = New System.Drawing.Size(50, 25)
-        Me._PassBitPatternNumericLabel.Text = "Pass Bit:"
+        Me._PassBitPatternNumericLabel.Size = New System.Drawing.Size(33, 25)
+        Me._PassBitPatternNumericLabel.Text = "Pass:"
         '
         '_BitPatternFormatCheckBox
         '
@@ -396,6 +462,7 @@ Partial Class K7500Panel
         Me._BitPatternFormatCheckBox.Name = "_BitPatternFormatCheckBox"
         Me._BitPatternFormatCheckBox.Size = New System.Drawing.Size(46, 25)
         Me._BitPatternFormatCheckBox.Text = "Hex"
+        Me._BitPatternFormatCheckBox.ToolTipText = "Check for using HEX values for setting the pass bit."
         '
         '_PassBitPatternNumeric
         '
@@ -408,6 +475,7 @@ Partial Class K7500Panel
         '
         '_ApplyGradeBinTriggerModelButton
         '
+        Me._ApplyGradeBinTriggerModelButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._ApplyGradeBinTriggerModelButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
         Me._ApplyGradeBinTriggerModelButton.Image = CType(resources.GetObject("_ApplyGradeBinTriggerModelButton.Image"), System.Drawing.Image)
         Me._ApplyGradeBinTriggerModelButton.ImageTransparentColor = System.Drawing.Color.Magenta
@@ -420,9 +488,9 @@ Partial Class K7500Panel
         '
         Me._TriggerDelayToolStrip.Dock = System.Windows.Forms.DockStyle.None
         Me._TriggerDelayToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerDelaysToolStripLabel, Me._StartTriggerDelayNumeric, Me._EndTriggerDelayNumeric})
-        Me._TriggerDelayToolStrip.Location = New System.Drawing.Point(3, 28)
+        Me._TriggerDelayToolStrip.Location = New System.Drawing.Point(3, 0)
         Me._TriggerDelayToolStrip.Name = "_TriggerDelayToolStrip"
-        Me._TriggerDelayToolStrip.Size = New System.Drawing.Size(181, 28)
+        Me._TriggerDelayToolStrip.Size = New System.Drawing.Size(202, 28)
         Me._TriggerDelayToolStrip.TabIndex = 1
         '
         '_TriggerDelaysToolStripLabel
@@ -442,8 +510,9 @@ Partial Class K7500Panel
         '
         '_EndTriggerDelayNumeric
         '
+        Me._EndTriggerDelayNumeric.AutoSize = False
         Me._EndTriggerDelayNumeric.Name = "_EndTriggerDelayNumeric"
-        Me._EndTriggerDelayNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._EndTriggerDelayNumeric.Size = New System.Drawing.Size(62, 25)
         Me._EndTriggerDelayNumeric.Text = "0"
         Me._EndTriggerDelayNumeric.ToolTipText = "End delay in seconds"
         Me._EndTriggerDelayNumeric.Value = New Decimal(New Integer() {1, 0, 0, 196608})
@@ -451,10 +520,10 @@ Partial Class K7500Panel
         '_Limit1ToolStrip
         '
         Me._Limit1ToolStrip.Dock = System.Windows.Forms.DockStyle.None
-        Me._Limit1ToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._Limits1Label, Me._LowLimit1TextBox, Me._HighLimit1TextBox, Me._FailBitToolStripLabel, Me._HexLimit1CheckBox, Me._FailLimit1BitPatternNumeric})
-        Me._Limit1ToolStrip.Location = New System.Drawing.Point(3, 56)
+        Me._Limit1ToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._Limits1Label, Me._Limit1DecimalsNumeric, Me._LowLimit1Numeric, Me._HighLimit1Numeric, Me._FailBitToolStripLabel, Me._FailLimit1BitPatternNumeric, Me._HexLimit1CheckBox})
+        Me._Limit1ToolStrip.Location = New System.Drawing.Point(3, 28)
         Me._Limit1ToolStrip.Name = "_Limit1ToolStrip"
-        Me._Limit1ToolStrip.Size = New System.Drawing.Size(314, 28)
+        Me._Limit1ToolStrip.Size = New System.Drawing.Size(296, 28)
         Me._Limit1ToolStrip.TabIndex = 2
         '
         '_Limits1Label
@@ -463,27 +532,35 @@ Partial Class K7500Panel
         Me._Limits1Label.Size = New System.Drawing.Size(46, 25)
         Me._Limits1Label.Text = "LIMIT1:"
         '
-        '_LowLimit1TextBox
+        '_Limit1DecimalsNumeric
         '
-        Me._LowLimit1TextBox.AutoSize = False
-        Me._LowLimit1TextBox.Name = "_LowLimit1TextBox"
-        Me._LowLimit1TextBox.Size = New System.Drawing.Size(60, 25)
-        Me._LowLimit1TextBox.Text = "0.000"
-        Me._LowLimit1TextBox.ToolTipText = "Low limit"
+        Me._Limit1DecimalsNumeric.Name = "_Limit1DecimalsNumeric"
+        Me._Limit1DecimalsNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._Limit1DecimalsNumeric.Text = "3"
+        Me._Limit1DecimalsNumeric.ToolTipText = "Number of decimal places for setting the limits"
+        Me._Limit1DecimalsNumeric.Value = New Decimal(New Integer() {3, 0, 0, 0})
         '
-        '_HighLimit1TextBox
+        '_LowLimit1Numeric
         '
-        Me._HighLimit1TextBox.AutoSize = False
-        Me._HighLimit1TextBox.Name = "_HighLimit1TextBox"
-        Me._HighLimit1TextBox.Size = New System.Drawing.Size(60, 25)
-        Me._HighLimit1TextBox.Text = "0.000"
-        Me._HighLimit1TextBox.ToolTipText = "High limit"
+        Me._LowLimit1Numeric.Name = "_LowLimit1Numeric"
+        Me._LowLimit1Numeric.Size = New System.Drawing.Size(41, 25)
+        Me._LowLimit1Numeric.Text = "0"
+        Me._LowLimit1Numeric.ToolTipText = "Low limit"
+        Me._LowLimit1Numeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        '_HighLimit1Numeric
+        '
+        Me._HighLimit1Numeric.Name = "_HighLimit1Numeric"
+        Me._HighLimit1Numeric.Size = New System.Drawing.Size(41, 25)
+        Me._HighLimit1Numeric.Text = "0"
+        Me._HighLimit1Numeric.ToolTipText = "High limit"
+        Me._HighLimit1Numeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         '_FailBitToolStripLabel
         '
         Me._FailBitToolStripLabel.Name = "_FailBitToolStripLabel"
-        Me._FailBitToolStripLabel.Size = New System.Drawing.Size(45, 25)
-        Me._FailBitToolStripLabel.Text = "Fail Bit:"
+        Me._FailBitToolStripLabel.Size = New System.Drawing.Size(28, 25)
+        Me._FailBitToolStripLabel.Text = "Fail:"
         '
         '_HexLimit1CheckBox
         '
@@ -491,6 +568,7 @@ Partial Class K7500Panel
         Me._HexLimit1CheckBox.Name = "_HexLimit1CheckBox"
         Me._HexLimit1CheckBox.Size = New System.Drawing.Size(46, 25)
         Me._HexLimit1CheckBox.Text = "Hex"
+        Me._HexLimit1CheckBox.ToolTipText = "Check to use HEX values for setting the Fail bit."
         '
         '_FailLimit1BitPatternNumeric
         '
@@ -500,101 +578,115 @@ Partial Class K7500Panel
         Me._FailLimit1BitPatternNumeric.ToolTipText = "Failed bit pattern"
         Me._FailLimit1BitPatternNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
-        '_ResetTabPage
+        '_SimpleLoopToolStrip
         '
-        Me._ResetTabPage.Controls.Add(Me._ResetLayout)
-        Me._ResetTabPage.Location = New System.Drawing.Point(4, 26)
-        Me._ResetTabPage.Name = "_ResetTabPage"
-        Me._ResetTabPage.Size = New System.Drawing.Size(356, 270)
-        Me._ResetTabPage.TabIndex = 2
-        Me._ResetTabPage.Text = "Reset"
-        Me._ResetTabPage.UseVisualStyleBackColor = True
+        Me._SimpleLoopToolStrip.Dock = System.Windows.Forms.DockStyle.None
+        Me._SimpleLoopToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SimpleLoopLabel, Me._SimpleLoopCountNumericLabel, Me._SimpleLoopCountNumeric, Me._SimpleLoopLoadRunButton})
+        Me._SimpleLoopToolStrip.Location = New System.Drawing.Point(3, 84)
+        Me._SimpleLoopToolStrip.Name = "_SimpleLoopToolStrip"
+        Me._SimpleLoopToolStrip.Size = New System.Drawing.Size(150, 28)
+        Me._SimpleLoopToolStrip.TabIndex = 3
+        Me.TipsTooltip.SetToolTip(Me._SimpleLoopToolStrip, "Simple trigger loop")
         '
-        '_ResetLayout
+        '_SimpleLoopLabel
         '
-        Me._ResetLayout.ColumnCount = 3
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._ResetLayout.Controls.Add(Me._InitializeKnownStateButton, 1, 7)
-        Me._ResetLayout.Controls.Add(Me._InterfaceClearButton, 1, 1)
-        Me._ResetLayout.Controls.Add(Me._ResetButton, 1, 5)
-        Me._ResetLayout.Controls.Add(Me._SelectiveDeviceClearButton, 1, 3)
-        Me._ResetLayout.Controls.Add(Me._SessionTraceEnableCheckBox, 1, 9)
-        Me._ResetLayout.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._ResetLayout.Location = New System.Drawing.Point(0, 0)
-        Me._ResetLayout.Name = "_ResetLayout"
-        Me._ResetLayout.RowCount = 11
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.Size = New System.Drawing.Size(356, 270)
-        Me._ResetLayout.TabIndex = 5
+        Me._SimpleLoopLabel.Name = "_SimpleLoopLabel"
+        Me._SimpleLoopLabel.Size = New System.Drawing.Size(46, 25)
+        Me._SimpleLoopLabel.Text = "SIMPLE"
         '
-        '_InitializeKnownStateButton
+        '_SimpleLoopCountNumericLabel
         '
-        Me._InitializeKnownStateButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InitializeKnownStateButton.Location = New System.Drawing.Point(84, 175)
-        Me._InitializeKnownStateButton.Name = "_InitializeKnownStateButton"
-        Me._InitializeKnownStateButton.Size = New System.Drawing.Size(182, 30)
-        Me._InitializeKnownStateButton.TabIndex = 3
-        Me._InitializeKnownStateButton.Text = "Initialize to Known State"
-        Me.TipsTooltip.SetToolTip(Me._InitializeKnownStateButton, "Reset and Initialize Response Modes")
-        Me._InitializeKnownStateButton.UseVisualStyleBackColor = True
+        Me._SimpleLoopCountNumericLabel.Name = "_SimpleLoopCountNumericLabel"
+        Me._SimpleLoopCountNumericLabel.Size = New System.Drawing.Size(19, 25)
+        Me._SimpleLoopCountNumericLabel.Text = "N:"
         '
-        '_InterfaceClearButton
+        '_SimpleLoopCountNumeric
         '
-        Me._InterfaceClearButton.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._InterfaceClearButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InterfaceClearButton.Location = New System.Drawing.Point(84, 19)
-        Me._InterfaceClearButton.Name = "_InterfaceClearButton"
-        Me._InterfaceClearButton.Size = New System.Drawing.Size(187, 30)
-        Me._InterfaceClearButton.TabIndex = 0
-        Me._InterfaceClearButton.Text = "&Clear Interface"
-        Me._InterfaceClearButton.UseVisualStyleBackColor = True
+        Me._SimpleLoopCountNumeric.Name = "_SimpleLoopCountNumeric"
+        Me._SimpleLoopCountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._SimpleLoopCountNumeric.Text = "5"
+        Me._SimpleLoopCountNumeric.ToolTipText = "Number of triggers"
+        Me._SimpleLoopCountNumeric.Value = New Decimal(New Integer() {5, 0, 0, 0})
         '
-        '_ResetButton
+        '_SimpleLoopLoadRunButton
         '
-        Me._ResetButton.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ResetButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ResetButton.Location = New System.Drawing.Point(84, 123)
-        Me._ResetButton.Name = "_ResetButton"
-        Me._ResetButton.Size = New System.Drawing.Size(187, 30)
-        Me._ResetButton.TabIndex = 2
-        Me._ResetButton.Text = "&Reset to Known State"
-        Me._ResetButton.UseVisualStyleBackColor = True
+        Me._SimpleLoopLoadRunButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._SimpleLoopLoadRunButton.Image = CType(resources.GetObject("_SimpleLoopLoadRunButton.Image"), System.Drawing.Image)
+        Me._SimpleLoopLoadRunButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._SimpleLoopLoadRunButton.Name = "_SimpleLoopLoadRunButton"
+        Me._SimpleLoopLoadRunButton.Size = New System.Drawing.Size(32, 25)
+        Me._SimpleLoopLoadRunButton.Text = "Run"
+        Me._SimpleLoopLoadRunButton.ToolTipText = "Loads and runs the simple loop and displays the data."
         '
-        '_SelectiveDeviceClearButton
+        '_BufferTabPage
         '
-        Me._SelectiveDeviceClearButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._SelectiveDeviceClearButton.Location = New System.Drawing.Point(84, 71)
-        Me._SelectiveDeviceClearButton.Name = "_SelectiveDeviceClearButton"
-        Me._SelectiveDeviceClearButton.Size = New System.Drawing.Size(182, 30)
-        Me._SelectiveDeviceClearButton.TabIndex = 1
-        Me._SelectiveDeviceClearButton.Text = "Clear Device (SDC)"
-        Me.TipsTooltip.SetToolTip(Me._SelectiveDeviceClearButton, "Issues Selective Device Clear.")
-        Me._SelectiveDeviceClearButton.UseVisualStyleBackColor = True
+        Me._BufferTabPage.Controls.Add(Me._BufferDataGridView)
+        Me._BufferTabPage.Controls.Add(Me._BufferToolStrip)
+        Me._BufferTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._BufferTabPage.Name = "_BufferTabPage"
+        Me._BufferTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._BufferTabPage.TabIndex = 2
+        Me._BufferTabPage.Text = "Buffer"
+        Me._BufferTabPage.UseVisualStyleBackColor = True
         '
-        '_SessionTraceEnableCheckBox
+        '_BufferDataGridView
         '
-        Me._SessionTraceEnableCheckBox.AutoSize = True
-        Me._SessionTraceEnableCheckBox.Location = New System.Drawing.Point(84, 227)
-        Me._SessionTraceEnableCheckBox.Name = "_SessionTraceEnableCheckBox"
-        Me._SessionTraceEnableCheckBox.Size = New System.Drawing.Size(186, 21)
-        Me._SessionTraceEnableCheckBox.TabIndex = 4
-        Me._SessionTraceEnableCheckBox.Text = "Trace Instrument Messages"
-        Me.TipsTooltip.SetToolTip(Me._SessionTraceEnableCheckBox, "Check to trace all instrument messages ")
-        Me._SessionTraceEnableCheckBox.UseVisualStyleBackColor = True
+        Me._BufferDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me._BufferDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._BufferDataGridView.Location = New System.Drawing.Point(0, 25)
+        Me._BufferDataGridView.Name = "_BufferDataGridView"
+        Me._BufferDataGridView.Size = New System.Drawing.Size(356, 245)
+        Me._BufferDataGridView.TabIndex = 1
+        Me.TipsTooltip.SetToolTip(Me._BufferDataGridView, "Buffer data")
+        '
+        '_BufferToolStrip
+        '
+        Me._BufferToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadBufferButton, Me._BufferCountLabel, Me._LastPointNumberLabel, Me._FirstPointNumberLabel, Me._BufferNameLabel})
+        Me._BufferToolStrip.Location = New System.Drawing.Point(0, 0)
+        Me._BufferToolStrip.Name = "_BufferToolStrip"
+        Me._BufferToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._BufferToolStrip.TabIndex = 0
+        Me._BufferToolStrip.Text = "Buffer"
+        '
+        '_ReadBufferButton
+        '
+        Me._ReadBufferButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ReadBufferButton.Image = CType(resources.GetObject("_ReadBufferButton.Image"), System.Drawing.Image)
+        Me._ReadBufferButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ReadBufferButton.Name = "_ReadBufferButton"
+        Me._ReadBufferButton.Size = New System.Drawing.Size(37, 22)
+        Me._ReadBufferButton.Text = "Read"
+        '
+        '_BufferCountLabel
+        '
+        Me._BufferCountLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._BufferCountLabel.Name = "_BufferCountLabel"
+        Me._BufferCountLabel.Size = New System.Drawing.Size(13, 22)
+        Me._BufferCountLabel.Text = "0"
+        Me._BufferCountLabel.ToolTipText = "Buffer count"
+        '
+        '_LastPointNumberLabel
+        '
+        Me._LastPointNumberLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._LastPointNumberLabel.Name = "_LastPointNumberLabel"
+        Me._LastPointNumberLabel.Size = New System.Drawing.Size(13, 22)
+        Me._LastPointNumberLabel.Text = "2"
+        Me._LastPointNumberLabel.ToolTipText = "Number of last buffer reading"
+        '
+        '_FirstPointNumberLabel
+        '
+        Me._FirstPointNumberLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._FirstPointNumberLabel.Name = "_FirstPointNumberLabel"
+        Me._FirstPointNumberLabel.Size = New System.Drawing.Size(13, 22)
+        Me._FirstPointNumberLabel.Text = "1"
+        Me._FirstPointNumberLabel.ToolTipText = "Number of the first buffer reading"
+        '
+        '_BufferNameLabel
+        '
+        Me._BufferNameLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._BufferNameLabel.Name = "_BufferNameLabel"
+        Me._BufferNameLabel.Size = New System.Drawing.Size(62, 22)
+        Me._BufferNameLabel.Text = "defbuffer1"
         '
         '_ReadWriteTabPage
         '
@@ -747,16 +839,13 @@ Partial Class K7500Panel
         Me._TitleLabel.Text = "K7500"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_ApplyFunctionModeButton
+        '_BinningTriggerCountNumericNumeric
         '
-        Me._ApplyFunctionModeButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ApplyFunctionModeButton.Location = New System.Drawing.Point(306, 12)
-        Me._ApplyFunctionModeButton.Name = "_ApplyFunctionModeButton"
-        Me._ApplyFunctionModeButton.Size = New System.Drawing.Size(39, 25)
-        Me._ApplyFunctionModeButton.TabIndex = 10
-        Me._ApplyFunctionModeButton.Text = "SET"
-        Me.TipsTooltip.SetToolTip(Me._ApplyFunctionModeButton, "Selects this function mode")
-        Me._ApplyFunctionModeButton.UseVisualStyleBackColor = True
+        Me._BinningTriggerCountNumeric.Name = "_BinningTriggerCountNumericNumeric"
+        Me._BinningTriggerCountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._BinningTriggerCountNumeric.Text = "100"
+        Me._BinningTriggerCountNumeric.ToolTipText = "Model stops after receiving this number of triggers"
+        Me._BinningTriggerCountNumeric.Value = New Decimal(New Integer() {100, 0, 0, 0})
         '
         'K7500Panel
         '
@@ -769,6 +858,8 @@ Partial Class K7500Panel
         Me._Tabs.ResumeLayout(False)
         Me._ReadingTabPage.ResumeLayout(False)
         Me._ReadingTabPage.PerformLayout()
+        Me._SystemToolStrip.ResumeLayout(False)
+        Me._SystemToolStrip.PerformLayout()
         Me._SenseTabPage.ResumeLayout(False)
         Me._SenseTabPage.PerformLayout()
         CType(Me._TriggerDelayNumeric, System.ComponentModel.ISupportInitialize).EndInit()
@@ -784,9 +875,13 @@ Partial Class K7500Panel
         Me._TriggerDelayToolStrip.PerformLayout()
         Me._Limit1ToolStrip.ResumeLayout(False)
         Me._Limit1ToolStrip.PerformLayout()
-        Me._ResetTabPage.ResumeLayout(False)
-        Me._ResetLayout.ResumeLayout(False)
-        Me._ResetLayout.PerformLayout()
+        Me._SimpleLoopToolStrip.ResumeLayout(False)
+        Me._SimpleLoopToolStrip.PerformLayout()
+        Me._BufferTabPage.ResumeLayout(False)
+        Me._BufferTabPage.PerformLayout()
+        CType(Me._BufferDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._BufferToolStrip.ResumeLayout(False)
+        Me._BufferToolStrip.PerformLayout()
         Me._ReadWriteTabPage.ResumeLayout(False)
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
@@ -800,11 +895,10 @@ Partial Class K7500Panel
 
     End Sub
     Private WithEvents _ReadingTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _TerminalsToggle As Core.Controls.CheckBox
     Private WithEvents _ReadingComboBox As System.Windows.Forms.ComboBox
     Private WithEvents _ReadButton As System.Windows.Forms.Button
     Private WithEvents _InitiateButton As System.Windows.Forms.Button
-    Private WithEvents _ResetTabPage As System.Windows.Forms.TabPage
+    Private WithEvents _BufferTabPage As System.Windows.Forms.TabPage
     Private WithEvents _SenseTabPage As System.Windows.Forms.TabPage
     Private WithEvents _ApplySenseSettingsButton As System.Windows.Forms.Button
     Private WithEvents _MessagesTabPage As System.Windows.Forms.TabPage
@@ -817,17 +911,10 @@ Partial Class K7500Panel
     Private WithEvents _ReadingComboBoxLabel As System.Windows.Forms.Label
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _ResetLayout As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _InitializeKnownStateButton As System.Windows.Forms.Button
-    Private WithEvents _InterfaceClearButton As System.Windows.Forms.Button
-    Private WithEvents _ResetButton As System.Windows.Forms.Button
-    Private WithEvents _SelectiveDeviceClearButton As System.Windows.Forms.Button
-    Private WithEvents _SessionTraceEnableCheckBox As System.Windows.Forms.CheckBox
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
     Private WithEvents _FailureCodeToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _TbdToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
-    Private WithEvents _HandleServiceRequestsCheckBox As System.Windows.Forms.CheckBox
     Private WithEvents _LastReadingTextBox As System.Windows.Forms.TextBox
     Private WithEvents _TriggerDelayNumeric As System.Windows.Forms.NumericUpDown
     Private WithEvents _SenseRangeNumeric As System.Windows.Forms.NumericUpDown
@@ -842,7 +929,6 @@ Partial Class K7500Panel
     Private WithEvents _GradeBinningToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _BinningToolStripLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _TriggerCountTextBoxLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _TriggerCountTextBox As Windows.Forms.ToolStripTextBox
     Private WithEvents _TriggerDelayToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _TriggerDelaysToolStripLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _StartTriggerDelayNumeric As Core.Controls.ToolStripNumericUpDown
@@ -852,11 +938,35 @@ Partial Class K7500Panel
     Private WithEvents _PassBitPatternNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _Limit1ToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _Limits1Label As Windows.Forms.ToolStripLabel
-    Private WithEvents _LowLimit1TextBox As Windows.Forms.ToolStripTextBox
-    Private WithEvents _HighLimit1TextBox As Windows.Forms.ToolStripTextBox
     Private WithEvents _FailBitToolStripLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _HexLimit1CheckBox As Core.Controls.ToolStripCheckBox
     Private WithEvents _FailLimit1BitPatternNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _ApplyGradeBinTriggerModelButton As Windows.Forms.ToolStripButton
     Private WithEvents _ApplyFunctionModeButton As Windows.Forms.Button
+    Private WithEvents _Limit1DecimalsNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _LowLimit1Numeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _HighLimit1Numeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _SystemToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ResetSplitButton As Windows.Forms.ToolStripSplitButton
+    Private WithEvents _ClearInterfaceMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ResetKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _InitKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _HandleServiceRequestsMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _TraceInstrumentMessagesMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ReadTerminalsStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _TerminalStateLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _BufferToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ReadBufferButton As Windows.Forms.ToolStripButton
+    Private WithEvents _BufferDataGridView As Windows.Forms.DataGridView
+    Private WithEvents _BufferCountLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _LastPointNumberLabel As Windows.Forms.ToolStripLabel
+    Friend WithEvents _FirstPointNumberLabel As Windows.Forms.ToolStripLabel
+    Friend WithEvents _BufferNameLabel As Windows.Forms.ToolStripLabel
+    Friend WithEvents _SimpleLoopToolStrip As Windows.Forms.ToolStrip
+    Friend WithEvents _SimpleLoopLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _SimpleLoopCountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _SimpleLoopCountNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _SimpleLoopLoadRunButton As Windows.Forms.ToolStripButton
+    Private WithEvents _BinningTriggerCountNumeric As Core.Controls.ToolStripNumericUpDown
 End Class

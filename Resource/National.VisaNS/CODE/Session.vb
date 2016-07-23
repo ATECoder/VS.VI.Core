@@ -265,13 +265,39 @@ Public Class Session
     End Property
 
     ''' <summary>
+    ''' Synchronously reads ASCII-encoded string data. </summary>
+    ''' <remarks> David, 11/24/2015. </remarks>
+    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <returns> The received message. </returns>
+    Public Overrides Function ReadFreeLine() As String
+        Try
+            Me._LastNativeError = NativeError.Success
+            If Me.IsSessionOpen Then
+                Me.LastMessageReceived = Me.VisaSession.ReadString()
+            Else
+                Me.LastMessageReceived = Me.EmulatedReply
+            End If
+            Return Me.LastMessageReceived
+        Catch ex As NationalInstruments.VisaNS.VisaException
+            If Me.LastNodeNumber.HasValue Then
+                Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, Me.LastNodeNumber.Value, Me.LastMessageSent, Me.LastAction)
+            Else
+                Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, Me.LastMessageSent, Me.LastAction)
+            End If
+            Throw New NativeException(Me._LastNativeError, ex)
+        Finally
+            Me.LastInputOutputTime = DateTime.Now
+        End Try
+    End Function
+
+    ''' <summary>
     ''' Synchronously reads ASCII-encoded string data. Reads up to the
     ''' <see cref="TerminationCharacter">termination character</see>.
     ''' </summary>
     ''' <remarks> David, 11/24/2015. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
-    Public Overrides Function ReadString() As String
+    Public Overrides Function ReadFiniteLine() As String
         Try
             Me._LastNativeError = NativeError.Success
             If Me.IsSessionOpen Then
@@ -335,6 +361,20 @@ Public Class Session
         End If
         Return affirmative
     End Function
+
+    Private _InputBufferSize As Integer
+    ''' <summary> Gets the size of the input buffer. </summary>
+    ''' <value> The size of the input buffer. </value>
+    Public Overrides ReadOnly Property InputBufferSize As Integer
+        Get
+            If Me.IsSessionOpen Then
+                If Me._InputBufferSize = 0 Then Me._InputBufferSize = Me.VisaSession.DefaultBufferSize
+                Return Me._InputBufferSize
+            Else
+                Return 4096
+            End If
+        End Get
+    End Property
 
 #End Region
 

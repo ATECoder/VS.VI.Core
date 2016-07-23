@@ -116,6 +116,7 @@
     <Compile Include="READING\ReadingStatus.vb" />
     <Compile Include="DEVICE\SessionFactory.vb" />
     <Compile Include="SUBSYSTEMS\ArmLayerSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\BufferReading.vb" />
     <Compile Include="SUBSYSTEMS\ChannelTriggerSusystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ChannelTraceSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ChannelMarkerSubsystemBase.vb" />

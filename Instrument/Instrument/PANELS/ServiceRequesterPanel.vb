@@ -247,7 +247,7 @@ Public Class ServiceRequesterPanel
                 Me._ServiceRequestStatusLabel.BackColor = System.Drawing.Color.Aqua
                 Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Service requested...;. {0}", Me._ServiceRequestStatusLabel.Text)
                 If (sb And CInt(Me._MessageStatusBitValueNumeric.Value)) <> 0 Then
-                    Dim textRead As String = sender.ReadString()
+                    Dim textRead As String = sender.ReadFiniteLine()
                     If timer IsNot Nothing Then
                         Me._ElapsedTimeTextBox.Text = timer.Elapsed.TotalMilliseconds.ToString("0.0", Globalization.CultureInfo.CurrentCulture)
                     End If

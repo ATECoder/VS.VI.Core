@@ -631,6 +631,16 @@ Public MustInherit Class StatusSubsystemBase
 
 #Region " OPC "
 
+    ''' <summary> Gets or sets the wait command. </summary>
+    ''' <value> The wait command. </value>
+    Protected Overridable ReadOnly Property WaitCommand As String = Ieee488.Syntax.WaitCommand
+
+    ''' <summary> Issues the wait command. </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
+    Public Sub Wait()
+        Me.Write(Me.WaitCommand)
+    End Sub
+
     ''' <summary> The operation completed. </summary>
     Private _OperationCompleted As Boolean?
 

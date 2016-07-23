@@ -39,13 +39,13 @@ Public Class OutputSubsystem
 
 #Region " TERMINAL MODE "
 
-    ''' <summary> Gets the terminal mode query command. </summary>
-    ''' <value> The terminal mode query command. </value>
-    Protected Overrides ReadOnly Property TerminalModeQueryCommand As String = ":OUTP:ROUT:TERM?"
+    ''' <summary> Gets the terminals mode query command. </summary>
+    ''' <value> The terminals mode query command. </value>
+    Protected Overrides ReadOnly Property TerminalsModeQueryCommand As String = ":OUTP:ROUT:TERM?"
 
-    ''' <summary> Gets the terminal mode command format. </summary>
-    ''' <value> The terminal mode command format. </value>
-    Protected Overrides ReadOnly Property TerminalModeCommandFormat As String = ":OUTP:ROUT:TERM {0}"
+    ''' <summary> Gets the terminals mode command format. </summary>
+    ''' <value> The terminals mode command format. </value>
+    Protected Overrides ReadOnly Property TerminalsModeCommandFormat As String = ":OUTP:ROUT:TERM {0}"
 
 #End Region
 

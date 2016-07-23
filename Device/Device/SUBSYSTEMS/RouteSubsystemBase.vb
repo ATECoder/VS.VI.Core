@@ -28,7 +28,7 @@ Public MustInherit Class RouteSubsystemBase
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.ScanList = ""
-        Me.TerminalMode = RouteTerminalMode.Front
+        Me.TerminalsMode = RouteTerminalsMode.Front
     End Sub
 
 #End Region
@@ -550,63 +550,63 @@ Public MustInherit Class RouteSubsystemBase
 
 #End Region
 
-#Region " TERMINAL MODE "
+#Region " TERMINALS MODE "
 
-    ''' <summary> The Route Terminal mode. </summary>
-    Private _TerminalMode As RouteTerminalMode?
+    ''' <summary> The Route Terminals mode. </summary>
+    Private _TerminalsMode As RouteTerminalsMode?
 
-    ''' <summary> Gets or sets the cached Route Terminal mode. </summary>
-    ''' <value> The Route Terminal mode or null if unknown. </value>
-    Public Property TerminalMode As RouteTerminalMode?
+    ''' <summary> Gets or sets the cached Route Terminals mode. </summary>
+    ''' <value> The Route Terminals mode or null if unknown. </value>
+    Public Property TerminalsMode As RouteTerminalsMode?
         Get
-            Return Me._TerminalMode
+            Return Me._TerminalsMode
         End Get
-        Protected Set(ByVal value As RouteTerminalMode?)
-            If Not Nullable.Equals(Me.TerminalMode, value) Then
-                Me._TerminalMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TerminalMode))
+        Protected Set(ByVal value As RouteTerminalsMode?)
+            If Not Nullable.Equals(Me.TerminalsMode, value) Then
+                Me._TerminalsMode = value
+                Me.AsyncNotifyPropertyChanged()
             End If
         End Set
     End Property
 
-    ''' <summary> Writes and reads back the Route Terminal mode. </summary>
-    ''' <param name="value"> The <see cref="RouteTerminalMode">Route Terminal mode</see>. </param>
-    ''' <returns> The Route Terminal mode or null if unknown. </returns>
-    Public Function ApplyTerminalMode(ByVal value As RouteTerminalMode) As RouteTerminalMode?
-        Me.WriteTerminalMode(value)
-        Return Me.QueryTerminalMode()
+    ''' <summary> Writes and reads back the Route Terminals mode. </summary>
+    ''' <param name="value"> The <see cref="RouteTerminalsMode">Route Terminals mode</see>. </param>
+    ''' <returns> The Route Terminals mode or null if unknown. </returns>
+    Public Function ApplyTerminalsMode(ByVal value As RouteTerminalsMode) As RouteTerminalsMode?
+        Me.WriteTerminalsMode(value)
+        Return Me.QueryTerminalsMode()
     End Function
 
-    ''' <summary> Gets the terminal mode query command. </summary>
-    ''' <value> The terminal mode command. </value>
-    Protected Overridable ReadOnly Property TerminalModeQueryCommand As String
+    ''' <summary> Gets the terminals mode query command. </summary>
+    ''' <value> The terminals mode command. </value>
+    Protected Overridable ReadOnly Property TerminalsModeQueryCommand As String
 
-    ''' <summary> Queries the Route Terminal Mode. Also sets the <see cref="TerminalMode">output
+    ''' <summary> Queries the Route Terminals Mode. Also sets the <see cref="TerminalsMode">output
     ''' on</see> sentinel. </summary>
-    ''' <returns> The Route Terminal mode or null if unknown. </returns>
-    Public Function QueryTerminalMode() As RouteTerminalMode?
-        Me.TerminalMode = Me.Query(Of RouteTerminalMode)(Me.TerminalModeQueryCommand, Me.TerminalMode)
-        Return Me.TerminalMode
+    ''' <returns> The Route Terminals mode or null if unknown. </returns>
+    Public Function QueryTerminalsMode() As RouteTerminalsMode?
+        Me.TerminalsMode = Me.Query(Of RouteTerminalsMode)(Me.TerminalsModeQueryCommand, Me.TerminalsMode)
+        Return Me.TerminalsMode
     End Function
 
-    ''' <summary> Gets the terminal mode command format. </summary>
-    ''' <value> The terminal mode command format. </value>
-    Protected Overridable ReadOnly Property TerminalModeCommandFormat As String
+    ''' <summary> Gets the terminals mode command format. </summary>
+    ''' <value> The terminals mode command format. </value>
+    Protected Overridable ReadOnly Property TerminalsModeCommandFormat As String
 
-    ''' <summary> Writes the Route Terminal mode. Does not read back from the instrument. </summary>
+    ''' <summary> Writes the Route Terminals mode. Does not read back from the instrument. </summary>
     ''' <param name="value"> The Terminal mode. </param>
-    ''' <returns> The Route Terminal mode or null if unknown. </returns>
-    Public Function WriteTerminalMode(ByVal value As RouteTerminalMode) As RouteTerminalMode?
-        Me.TerminalMode = Me.Write(Of RouteTerminalMode)(Me.TerminalModeCommandFormat, value)
-        Return Me.TerminalMode
+    ''' <returns> The Route Terminals mode or null if unknown. </returns>
+    Public Function WriteTerminalsMode(ByVal value As RouteTerminalsMode) As RouteTerminalsMode?
+        Me.TerminalsMode = Me.Write(Of RouteTerminalsMode)(Me.TerminalsModeCommandFormat, value)
+        Return Me.TerminalsMode
     End Function
 
 #End Region
 
 End Class
 
-''' <summary> Specifies the route terminal mode. </summary>
-Public Enum RouteTerminalMode
+''' <summary> Specifies the route terminals mode. </summary>
+Public Enum RouteTerminalsMode
     <ComponentModel.Description("Not set")> None
     <ComponentModel.Description("Front (FRON)")> Front
     <ComponentModel.Description("Rear (REAR)")> Rear

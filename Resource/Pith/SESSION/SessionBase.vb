@@ -48,27 +48,22 @@ Public MustInherit Class SessionBase
     <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
-            If Not Me.IsDisposed AndAlso disposing Then
-                If Me._KeepAliveTimer IsNot Nothing Then
-                    Me._KeepAliveTimer.Enabled = False
-                    Me._KeepAliveTimer.Dispose()
-                    Me._KeepAliveTimer = Nothing
+            If Not Me.IsDisposed Then
+                If disposing Then
+                    If Me._KeepAliveTimer IsNot Nothing Then
+                        Me._KeepAliveTimer.Enabled = False
+                        Me._KeepAliveTimer.Dispose()
+                        Me._KeepAliveTimer = Nothing
+                    End If
+                    Me.RemoveEventHandler(Me.ServiceRequestedEvent)
+                    Me.Timeouts?.Clear() : Me._Timeouts = Nothing
+                Else
+                    ' put finalize code here
                 End If
-                Me.RemoveEventHandler(Me.ServiceRequestedEvent)
-                Me.Timeouts?.Clear() : Me._Timeouts = Nothing
             End If
         Finally
             MyBase.Dispose(disposing)
         End Try
-    End Sub
-
-    ''' <summary> Finalizes this object. </summary>
-    ''' <remarks> David, 11/21/2015.
-    '''           override because disposing unmanaged resources. </remarks>
-    Protected Overrides Sub Finalize()
-        ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
-        Dispose(False)
-        MyBase.Finalize()
     End Sub
 
 #End Region
@@ -416,10 +411,24 @@ Public MustInherit Class SessionBase
     ''' <value> The emulated reply. </value>
     Public Property EmulatedReply As String
 
-    ''' <summary> Synchronously reads ASCII-encoded string data. Reads up to the
-    ''' <see cref="TerminationCharacter">termination character</see>. </summary>
+    ''' <summary>
+    ''' Synchronously reads ASCII-encoded string data. Reads up to the
+    ''' <see cref="TerminationCharacter">termination character</see>. Limited by the
+    ''' <see cref="InputBufferSize"/>. Will time out if end of line is not read before reading a
+    ''' buffer.
+    ''' </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <returns> The received message. </returns>
-    Public MustOverride Function ReadString() As String
+    Public MustOverride Function ReadFiniteLine() As String
+
+    ''' <summary>
+    ''' Synchronously reads ASCII-encoded string data until reaching the
+    ''' <see cref="TerminationCharacter">termination character</see>. Not limited by the
+    ''' <see cref="InputBufferSize"/>.
+    ''' </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
+    ''' <returns> The received message. </returns>
+    Public MustOverride Function ReadFreeLine() As String
 
     ''' <summary> Writes. </summary>
     ''' <param name="dataToWrite"> The data to write to write. </param>
@@ -432,6 +441,10 @@ Public MustInherit Class SessionBase
     ''' <summary> Reads status byte. </summary>
     ''' <returns> The status byte. </returns>
     Public MustOverride Function ReadStatusByte() As ServiceRequests
+
+    ''' <summary> Gets or sets the size of the input buffer. </summary>
+    ''' <value> The size of the input buffer. </value>
+    Public MustOverride ReadOnly Property InputBufferSize() As Integer
 
 #End Region
 
@@ -796,7 +809,7 @@ Public MustInherit Class SessionBase
         Dim value As String = Me.ReadString()
         My.Application.Log.WriteEntry($"r: {value.TrimEnd}")
 #Else
-        Return Me.ReadString()
+        Return Me.ReadFiniteLine()
 #End If
     End Function
 

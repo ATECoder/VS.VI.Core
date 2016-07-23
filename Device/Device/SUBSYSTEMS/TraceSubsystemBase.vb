@@ -46,8 +46,6 @@ Public MustInherit Class TraceSubsystemBase
 
 #End Region
 
-
-
 #Region " POINTS COUNT "
 
     ''' <summary> Number of points. </summary>
@@ -105,6 +103,165 @@ Public MustInherit Class TraceSubsystemBase
         End If
         Me.PointsCount = value
         Return Me.PointsCount
+    End Function
+
+#End Region
+
+#Region " ACTUAL POINT COUNT "
+
+    ''' <summary> Number of ActualPoint. </summary>
+    Private _ActualPointCount As Integer?
+
+    ''' <summary> Gets or sets the cached Trace ActualPointCount. </summary>
+    ''' <remarks> Specifies how many times an operation is performed in the specified layer of the
+    ''' Trace model. </remarks>
+    ''' <value> The Trace ActualPointCount or none if not set or unknown. </value>
+    Public Overloads Property ActualPointCount As Integer?
+        Get
+            Return Me._ActualPointCount
+        End Get
+        Protected Set(ByVal value As Integer?)
+            If Not Nullable.Equals(Me.ActualPointCount, value) Then
+                Me._ActualPointCount = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.ActualPointCount))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the ActualPoint count query command. </summary>
+    ''' <value> The ActualPoint count query command. </value>
+    ''' <remarks> SCPI: ":TRAC:ACT?" </remarks>
+    Protected Overridable ReadOnly Property ActualPointCountQueryCommand As String
+
+    ''' <summary> Queries the current ActualPointCount. </summary>
+    ''' <returns> The ActualPointCount or none if unknown. </returns>
+    Public Function QueryActualPointCount() As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.ActualPointCountQueryCommand) Then
+            Me.ActualPointCount = Me.Session.Query(0I, Me.ActualPointCountQueryCommand)
+        End If
+        Return Me.ActualPointCount
+    End Function
+
+#End Region
+
+#Region " FIRST POINT NUMBER "
+
+    ''' <summary> Number of First Point. </summary>
+    Private _FirstPointNumber As Integer?
+
+    ''' <summary> Gets or sets the cached buffer First Point Number. </summary>
+    ''' <remarks> Specifies how many times an operation is performed in the specified layer of the
+    ''' Trace model. </remarks>
+    ''' <value> The buffer First Point Number or none if not set or unknown. </value>
+    Public Overloads Property FirstPointNumber As Integer?
+        Get
+            Return Me._FirstPointNumber
+        End Get
+        Protected Set(ByVal value As Integer?)
+            If Not Nullable.Equals(Me.FirstPointNumber, value) Then
+                Me._FirstPointNumber = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.FirstPointNumber))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets The First Point Number query command. </summary>
+    ''' <value> The First Point Number query command. </value>
+    ''' <remarks> SCPI: ":TRAC:ACT:STA?" </remarks>
+    Protected Overridable ReadOnly Property FirstPointNumberQueryCommand As String
+
+    ''' <summary> Queries the current FirstPointNumber. </summary>
+    ''' <returns> The First Point Number or none if unknown. </returns>
+    Public Function QueryFirstPointNumber() As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.FirstPointNumberQueryCommand) Then
+            Me.FirstPointNumber = Me.Session.Query(0I, Me.FirstPointNumberQueryCommand)
+        End If
+        Return Me.FirstPointNumber
+    End Function
+
+#End Region
+
+#Region " LAST POINT NUMBER "
+
+    ''' <summary> Number of Last Point. </summary>
+    Private _LastPointNumber As Integer?
+
+    ''' <summary> Gets or sets the cached buffer Last Point Number. </summary>
+    ''' <remarks> Specifies how many times an operation is performed in the specified layer of the
+    ''' Trace model. </remarks>
+    ''' <value> The buffer Last Point Number or none if not set or unknown. </value>
+    Public Overloads Property LastPointNumber As Integer?
+        Get
+            Return Me._LastPointNumber
+        End Get
+        Protected Set(ByVal value As Integer?)
+            If Not Nullable.Equals(Me.LastPointNumber, value) Then
+                Me._LastPointNumber = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.LastPointNumber))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets The Last Point Number query command. </summary>
+    ''' <value> The Last Point Number query command. </value>
+    ''' <remarks> SCPI: ":TRAC:ACT:END?" </remarks>
+    Protected Overridable ReadOnly Property LastPointNumberQueryCommand As String
+
+    ''' <summary> Queries the current Last Point Number. </summary>
+    ''' <returns> The LastPointNumber or none if unknown. </returns>
+    Public Function QueryLastPointNumber() As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.LastPointNumberQueryCommand) Then
+            Me.LastPointNumber = Me.Session.Query(0I, Me.LastPointNumberQueryCommand)
+        End If
+        Return Me.LastPointNumber
+    End Function
+
+#End Region
+
+#Region " DATA "
+
+    ''' <summary> String. </summary>
+    Private _Data As String
+
+    ''' <summary> Gets or sets the cached Trace Data. </summary>
+    Public Overloads Property Data As String
+        Get
+            Return Me._Data
+        End Get
+        Protected Set(ByVal value As String)
+            If Not Nullable.Equals(Me.Data, value) Then
+                Me._Data = value
+                Me.AsyncNotifyPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the points count query command. </summary>
+    ''' <value> The points count query command. </value>
+    ''' <remarks> SCPI: ":TRAC:DATA?" </remarks>
+    Protected Overridable ReadOnly Property DataQueryCommand As String
+
+    ''' <summary> Queries the current Data. </summary>
+    ''' <returns> The Data or none if unknown. </returns>
+    Public Function QueryData() As String
+        If Not String.IsNullOrWhiteSpace(Me.DataQueryCommand) Then
+            Me.Session.WriteLine(Me.DataQueryCommand)
+            ' read the entire data.
+            Me.Data = Me.Session.ReadFreeLine()
+        End If
+        Return Me.Data
+    End Function
+
+    ''' <summary> Queries the current Data. </summary>
+    ''' <returns> The Data or empty if none. </returns>
+    Public Function QueryData(ByVal queryCommand As String) As String
+        If Not String.IsNullOrWhiteSpace(queryCommand) Then
+            Me.Data = ""
+            Me.Session.WriteLine(queryCommand)
+            ' read the entire data.
+            Me.Data = Me.Session.ReadFreeLine()
+        End If
+        Return Me.Data
     End Function
 
 #End Region

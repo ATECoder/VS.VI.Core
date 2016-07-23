@@ -222,7 +222,7 @@ Public Class Session
         If s IsNot Nothing Then
             Return s.GetAttributeInt32(Ivi.Visa.NativeVisaAttribute.ReadBufferSize)
         Else
-            Return 0
+            Return 1024
         End If
     End Function
 
@@ -268,6 +268,62 @@ Public Class Session
         End Set
     End Property
 
+    ''' <summary> Query if 'readStatus' is read ended. </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
+    ''' <param name="readStatus"> The read status. </param>
+    ''' <returns> <c>true</c> if read ended; otherwise <c>false</c> </returns>
+    Private Shared Function IsReadEnded(ByVal readStatus As Ivi.Visa.ReadStatus) As Boolean
+        Return readStatus = Ivi.Visa.ReadStatus.EndReceived OrElse
+               readStatus = Ivi.Visa.ReadStatus.TerminationCharacterEncountered
+    End Function
+
+    ''' <summary>
+    ''' Synchronously reads ASCII-encoded string data irrespective of the buffer size. 
+    ''' </summary>
+    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <returns> The received message. </returns>
+    Public Overrides Function ReadFreeLine() As String
+        Dim builder As New System.Text.StringBuilder
+        Try
+            Me._LastNativeError = NativeError.Success
+            Dim endReadstatus As Ivi.Visa.ReadStatus = Ivi.Visa.ReadStatus.Unknown
+            Dim bufferSize As Integer = Me.Get_ReadBufferSize
+            If Me.IsSessionOpen Then
+                Dim hitEndRead As Boolean = False
+                Do
+                    Dim msg As String = Me.VisaSession.RawIO.ReadString(bufferSize, endReadstatus)
+                    hitEndRead = Session.IsReadEnded(endReadstatus)
+                    If hitEndRead Then Me.LastMessageReceived = msg
+                    builder.Append(msg)
+                    Windows.Forms.Application.DoEvents()
+                Loop Until hitEndRead
+            Else
+                Me.LastMessageReceived = Me.EmulatedReply
+            End If
+            Return builder.ToString
+        Catch ex As Ivi.Visa.NativeVisaException
+            If Me.LastNodeNumber.HasValue Then
+                Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, Me.LastNodeNumber.Value, Me.LastMessageSent, Me.LastAction)
+            Else
+                Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, Me.LastMessageSent, Me.LastAction)
+            End If
+            Throw New NativeException(Me._LastNativeError, ex)
+        Catch ex As Ivi.Visa.IOTimeoutException
+            If Me.LastNodeNumber.HasValue Then
+                Me._LastNativeError = New NativeError(Ivi.Visa.NativeErrorCode.Timeout, Me.ResourceName,
+                                                      Me.LastNodeNumber.Value, Me.LastMessageSent, Me.LastAction)
+            Else
+                Me._LastNativeError = New NativeError(Ivi.Visa.NativeErrorCode.Timeout, Me.ResourceName,
+                                                      Me.LastMessageSent, Me.LastAction)
+            End If
+            Throw New NativeException(Me._LastNativeError, ex)
+        Finally
+            ' must clear the reply after each reading otherwise could get cross information.
+            Me.EmulatedReply = ""
+            Me.LastInputOutputTime = DateTime.Now
+        End Try
+    End Function
+
     ''' <summary>
     ''' Synchronously reads ASCII-encoded string data. Reads up to the
     ''' <see cref="TerminationCharacter">termination character</see>.
@@ -275,7 +331,7 @@ Public Class Session
     ''' <remarks> David, 11/24/2015. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
-    Public Overrides Function ReadString() As String
+    Public Overrides Function ReadFiniteLine() As String
         Try
             Me._LastNativeError = NativeError.Success
             If Me.IsSessionOpen Then
@@ -355,6 +411,16 @@ Public Class Session
         End If
         Return affirmative
     End Function
+
+    Private _InputBufferSize As Integer
+    ''' <summary> Gets the size of the input buffer. </summary>
+    ''' <value> The size of the input buffer. </value>
+    Public Overrides ReadOnly Property InputBufferSize As Integer
+        Get
+            If Me._InputBufferSize = 0 Then Me._InputBufferSize = Me.Get_ReadBufferSize()
+            Return Me._InputBufferSize
+        End Get
+    End Property
 
 #End Region
 

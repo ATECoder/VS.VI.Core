@@ -154,13 +154,24 @@ Public Class DummySession
     Public Overrides Property Timeout As TimeSpan
 
     ''' <summary>
+    ''' Synchronously reads ASCII-encoded string data. </summary>
+    ''' <remarks> David, 11/24/2015. </remarks>
+    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <returns> The received message. </returns>
+    Public Overrides Function ReadFreeLine() As String
+        Me._LastNativeError = DummyNativeError.Success
+        Me.LastMessageReceived = Me.EmulatedReply
+        Return Me.LastMessageReceived
+    End Function
+
+    ''' <summary>
     ''' Synchronously reads ASCII-encoded string data. Reads up to the
     ''' <see cref="TerminationCharacter">termination character</see>.
     ''' </summary>
     ''' <remarks> David, 11/24/2015. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
-    Public Overrides Function ReadString() As String
+    Public Overrides Function ReadFiniteLine() As String
         Me._LastNativeError = DummyNativeError.Success
         Me.LastMessageReceived = Me.EmulatedReply
         Return Me.LastMessageReceived
@@ -186,6 +197,14 @@ Public Class DummySession
     Public Overrides Function KeepAlive() As Boolean
         Return True
     End Function
+
+    ''' <summary> Gets the size of the input buffer. </summary>
+    ''' <value> The size of the input buffer. </value>
+    Public Overrides ReadOnly Property InputBufferSize As Integer
+        Get
+            Return 4096
+        End Get
+    End Property
 
 #End Region
 

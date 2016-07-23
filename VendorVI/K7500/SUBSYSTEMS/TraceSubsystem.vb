@@ -61,6 +61,34 @@ Public Class TraceSubsystem
     ''' <value> The points count command format. </value>
     Protected Overrides ReadOnly Property PointsCountCommandFormat As String = ":TRAC:POIN {0}"
 
+    Protected Overrides ReadOnly Property ActualPointCountQueryCommand As String = ":TRAC:ACT?"
+
+    Protected Overrides ReadOnly Property FirstPointNumberQueryCommand As String = ":TRAC:ACT:STAR?"
+
+    Protected Overrides ReadOnly Property LastPointNumberQueryCommand As String = ":TRAC:ACT:END?"
+
+#End Region
+
+#Region " DATA "
+
+    Protected Overrides ReadOnly Property DataQueryCommand As String = ":TRAC:DATA?"
+
+    Public ReadOnly Property DefaultBuffer1ReadCommandFormat As String = ":TRAC:DATA? {0},{1},'defbuffer1',READ,TST"
+
+    ''' <summary> Queries the current Data. </summary>
+    ''' <returns> The Data or empty if none. </returns>
+    Public Function QueryBufferReadings() As IEnumerable(Of BufferReading)
+        Dim bd As New BufferReadingCollection
+        Dim count As Integer = Me.QueryActualPointCount().GetValueOrDefault(0)
+        Dim first As Integer = Me.QueryFirstPointNumber().GetValueOrDefault(0)
+        Dim last As Integer = Me.QueryLastPointNumber().GetValueOrDefault(0)
+        If count > 0 Then
+            Me.QueryData(String.Format(Me.DefaultBuffer1ReadCommandFormat, first, last))
+            bd.Parse(Me.Data)
+        End If
+        Return bd.ToArray
+    End Function
+
 #End Region
 
 End Class
