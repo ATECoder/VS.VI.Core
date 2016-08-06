@@ -59,7 +59,7 @@
         <System.ComponentModel.Description("Ohm Prober Tester")> OhmProberTester = ProjectTraceEventId.DeviceTester + &H4
         <System.ComponentModel.Description("TTM Console")> TtmConsole = ProjectTraceEventId.DeviceTester + &H5
         <System.ComponentModel.Description("K3700 Console")> K3700Console = ProjectTraceEventId.DeviceTester + &H6
-        <System.ComponentModel.Description("Solomon Gauge Console")> SolomonGaugeConsole = ProjectTraceEventId.DeviceTester + &H7
+        <System.ComponentModel.Description("Gauge Console")> GaugeConsole = ProjectTraceEventId.DeviceTester + &H7
 
         <System.ComponentModel.Description("Code Units")> CoreUnits = ProjectTraceEventId.VI *
                                                                       TraceEventConstants.BaseScaleFactor +

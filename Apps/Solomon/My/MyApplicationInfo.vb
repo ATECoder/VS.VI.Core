@@ -3,7 +3,7 @@
     Partial Friend Class MyApplication
 
         ''' <summary> Gets the identifier of the trace source. </summary>
-        Public Const TraceEventId As Integer = isr.VI.My.ProjectTraceEventId.SolomonGaugeConsole
+        Public Const TraceEventId As Integer = isr.VI.My.ProjectTraceEventId.GaugeConsole
 
         Public Const AssemblyTitle As String = "Solomon Gauge Console"
         Public Const AssemblyDescription As String = "Solomon Gauge Virtual Instrument Console"
