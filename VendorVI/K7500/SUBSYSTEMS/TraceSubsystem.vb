@@ -61,10 +61,16 @@ Public Class TraceSubsystem
     ''' <value> The points count command format. </value>
     Protected Overrides ReadOnly Property PointsCountCommandFormat As String = ":TRAC:POIN {0}"
 
+    ''' <summary> Gets or sets the ActualPoint count query command. </summary>
+    ''' <value> The ActualPoint count query command. </value>
     Protected Overrides ReadOnly Property ActualPointCountQueryCommand As String = ":TRAC:ACT?"
 
+    ''' <summary> Gets or sets The First Point Number query command. </summary>
+    ''' <value> The First Point Number query command. </value>
     Protected Overrides ReadOnly Property FirstPointNumberQueryCommand As String = ":TRAC:ACT:STAR?"
 
+    ''' <summary> Gets or sets The Last Point Number query command. </summary>
+    ''' <value> The Last Point Number query command. </value>
     Protected Overrides ReadOnly Property LastPointNumberQueryCommand As String = ":TRAC:ACT:END?"
 
 #End Region
