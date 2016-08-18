@@ -9,8 +9,18 @@ Partial Class K7000Panel
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(K7000Panel))
         Me._Tabs = New System.Windows.Forms.TabControl()
         Me._SlotTabPage = New System.Windows.Forms.TabPage()
+        Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._TraceInstrumentMessagesMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._HandleServiceRequestsMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._TerminalStateLabel = New System.Windows.Forms.ToolStripLabel()
         Me._UpdateSlotConfigurationButton = New System.Windows.Forms.Button()
         Me._ReadSlotConfigurationButton = New System.Windows.Forms.Button()
         Me._CardTypeTextBox = New System.Windows.Forms.TextBox()
@@ -52,13 +62,10 @@ Partial Class K7000Panel
         Me._EnableServiceRequestToggle = New System.Windows.Forms.CheckBox()
         Me._ServiceRequestByteTextBoxLabel = New System.Windows.Forms.Label()
         Me._ServiceRequestMaskTextBox = New System.Windows.Forms.TextBox()
-        Me._ResetTabPage = New System.Windows.Forms.TabPage()
-        Me._ResetLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._InitializeKnownStateButton = New System.Windows.Forms.Button()
-        Me._InterfaceClearButton = New System.Windows.Forms.Button()
-        Me._ResetButton = New System.Windows.Forms.Button()
-        Me._SelectiveDeviceClearButton = New System.Windows.Forms.Button()
-        Me._SessionTraceEnableCheckBox = New System.Windows.Forms.CheckBox()
+        Me._TriggerTabPage = New System.Windows.Forms.TabPage()
+        Me._ArmLayerToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ArmLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ArmLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
         Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
@@ -71,21 +78,43 @@ Partial Class K7000Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._ArmLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ScanLayerToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ScanLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ScanLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ScanLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ChannelLayerToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ChannelLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ChannelLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ChannelLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ChannelLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ChannelLayerTriggerSourceLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ArmLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ArmLayerTriggerLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ScanLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._TriggerToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ApplyTriggerPlanButton = New System.Windows.Forms.ToolStripButton()
+        Me._ScanLayerTriggerLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._SlotTabPage.SuspendLayout()
+        Me._SystemToolStrip.SuspendLayout()
         Me._ChannelTabPage.SuspendLayout()
         Me._ChannelListBuilderGroupBox.SuspendLayout()
         Me._ScanTabPage.SuspendLayout()
         Me._ServiceRequestTabPage.SuspendLayout()
         Me._ServiceRequestRegisterGroupBox.SuspendLayout()
-        Me._ResetTabPage.SuspendLayout()
-        Me._ResetLayout.SuspendLayout()
+        Me._TriggerTabPage.SuspendLayout()
+        Me._ArmLayerToolStrip.SuspendLayout()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
+        Me._ScanLayerToolStrip.SuspendLayout()
+        Me._ChannelLayerToolStrip.SuspendLayout()
+        Me._TriggerToolStrip.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -108,7 +137,7 @@ Partial Class K7000Panel
         Me._Tabs.Controls.Add(Me._ChannelTabPage)
         Me._Tabs.Controls.Add(Me._ScanTabPage)
         Me._Tabs.Controls.Add(Me._ServiceRequestTabPage)
-        Me._Tabs.Controls.Add(Me._ResetTabPage)
+        Me._Tabs.Controls.Add(Me._TriggerTabPage)
         Me._Tabs.Controls.Add(Me._ReadWriteTabPage)
         Me._Tabs.Controls.Add(Me._MessagesTabPage)
         Me._Tabs.Dock = System.Windows.Forms.DockStyle.Fill
@@ -123,6 +152,7 @@ Partial Class K7000Panel
         '
         '_SlotTabPage
         '
+        Me._SlotTabPage.Controls.Add(Me._SystemToolStrip)
         Me._SlotTabPage.Controls.Add(Me._UpdateSlotConfigurationButton)
         Me._SlotTabPage.Controls.Add(Me._ReadSlotConfigurationButton)
         Me._SlotTabPage.Controls.Add(Me._CardTypeTextBox)
@@ -137,6 +167,72 @@ Partial Class K7000Panel
         Me._SlotTabPage.TabIndex = 0
         Me._SlotTabPage.Text = "Slot"
         Me._SlotTabPage.UseVisualStyleBackColor = True
+        '
+        '_SystemToolStrip
+        '
+        Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._TerminalStateLabel})
+        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 245)
+        Me._SystemToolStrip.Name = "_SystemToolStrip"
+        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._SystemToolStrip.TabIndex = 16
+        Me._SystemToolStrip.Text = "System Tools"
+        Me.TipsTooltip.SetToolTip(Me._SystemToolStrip, "System operations")
+        '
+        '_ResetSplitButton
+        '
+        Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._TraceInstrumentMessagesMenuItem, Me._HandleServiceRequestsMenuItem})
+        Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
+        Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ResetSplitButton.Name = "_ResetSplitButton"
+        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 22)
+        Me._ResetSplitButton.Text = "Reset"
+        Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
+        '
+        '_ClearInterfaceMenuItem
+        '
+        Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
+        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearInterfaceMenuItem.Text = "Clear Interface"
+        '
+        '_ClearDeviceMenuItem
+        '
+        Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
+        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
+        '
+        '_ResetKnownStateMenuItem
+        '
+        Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
+        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ResetKnownStateMenuItem.Text = "Reset to Known State (RST)"
+        '
+        '_InitKnownStateMenuItem
+        '
+        Me._InitKnownStateMenuItem.Name = "_InitKnownStateMenuItem"
+        Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._InitKnownStateMenuItem.Text = "Init to Known State"
+        '
+        '_TraceInstrumentMessagesMenuItem
+        '
+        Me._TraceInstrumentMessagesMenuItem.Name = "_TraceInstrumentMessagesMenuItem"
+        Me._TraceInstrumentMessagesMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._TraceInstrumentMessagesMenuItem.Text = "Trace Instrument Messages"
+        '
+        '_HandleServiceRequestsMenuItem
+        '
+        Me._HandleServiceRequestsMenuItem.Name = "_HandleServiceRequestsMenuItem"
+        Me._HandleServiceRequestsMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._HandleServiceRequestsMenuItem.Text = "Handle Service Requests"
+        '
+        '_TerminalStateLabel
+        '
+        Me._TerminalStateLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._TerminalStateLabel.Name = "_TerminalStateLabel"
+        Me._TerminalStateLabel.Size = New System.Drawing.Size(35, 22)
+        Me._TerminalStateLabel.Text = "Front"
+        Me._TerminalStateLabel.Visible = False
         '
         '_UpdateSlotConfigurationButton
         '
@@ -465,6 +561,7 @@ Partial Class K7000Panel
         '
         Me._ScanListComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me._ScanListComboBox.Items.AddRange(New Object() {"(@1!1:1!10)", "(@M1,M2)"})
         Me._ScanListComboBox.Location = New System.Drawing.Point(8, 32)
         Me._ScanListComboBox.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._ScanListComboBox.Name = "_ScanListComboBox"
@@ -580,101 +677,40 @@ Partial Class K7000Panel
         Me._ServiceRequestMaskTextBox.TabIndex = 2
         Me._ServiceRequestMaskTextBox.Text = "239"
         '
-        '_ResetTabPage
+        '_TriggerTabPage
         '
-        Me._ResetTabPage.Controls.Add(Me._ResetLayout)
-        Me._ResetTabPage.Location = New System.Drawing.Point(4, 26)
-        Me._ResetTabPage.Name = "_ResetTabPage"
-        Me._ResetTabPage.Size = New System.Drawing.Size(356, 270)
-        Me._ResetTabPage.TabIndex = 2
-        Me._ResetTabPage.Text = "Reset"
-        Me._ResetTabPage.UseVisualStyleBackColor = True
+        Me._TriggerTabPage.Controls.Add(Me._TriggerToolStrip)
+        Me._TriggerTabPage.Controls.Add(Me._ScanLayerToolStrip)
+        Me._TriggerTabPage.Controls.Add(Me._ArmLayerToolStrip)
+        Me._TriggerTabPage.Controls.Add(Me._ChannelLayerToolStrip)
+        Me._TriggerTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._TriggerTabPage.Name = "_TriggerTabPage"
+        Me._TriggerTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._TriggerTabPage.TabIndex = 2
+        Me._TriggerTabPage.Text = "Trigger"
+        Me._TriggerTabPage.UseVisualStyleBackColor = True
         '
-        '_ResetLayout
+        '_ArmLayerToolStrip
         '
-        Me._ResetLayout.ColumnCount = 3
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._ResetLayout.Controls.Add(Me._InitializeKnownStateButton, 1, 7)
-        Me._ResetLayout.Controls.Add(Me._InterfaceClearButton, 1, 1)
-        Me._ResetLayout.Controls.Add(Me._ResetButton, 1, 5)
-        Me._ResetLayout.Controls.Add(Me._SelectiveDeviceClearButton, 1, 3)
-        Me._ResetLayout.Controls.Add(Me._SessionTraceEnableCheckBox, 1, 9)
-        Me._ResetLayout.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._ResetLayout.Location = New System.Drawing.Point(0, 0)
-        Me._ResetLayout.Name = "_ResetLayout"
-        Me._ResetLayout.RowCount = 11
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.Size = New System.Drawing.Size(356, 270)
-        Me._ResetLayout.TabIndex = 5
+        Me._ArmLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ArmLayerToolStripLabel, Me._ArmLayerCountNumericLabel, Me._ArmLayerCountNumeric, Me._ArmLayerSpacingLabel, Me._ArmLayerTriggerLabel})
+        Me._ArmLayerToolStrip.Location = New System.Drawing.Point(0, 26)
+        Me._ArmLayerToolStrip.Name = "_ArmLayerToolStrip"
+        Me._ArmLayerToolStrip.Size = New System.Drawing.Size(356, 28)
+        Me._ArmLayerToolStrip.TabIndex = 0
+        Me._ArmLayerToolStrip.Text = "Arm"
         '
-        '_InitializeKnownStateButton
+        '_ArmLayerToolStripLabel
         '
-        Me._InitializeKnownStateButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InitializeKnownStateButton.Location = New System.Drawing.Point(84, 175)
-        Me._InitializeKnownStateButton.Name = "_InitializeKnownStateButton"
-        Me._InitializeKnownStateButton.Size = New System.Drawing.Size(182, 30)
-        Me._InitializeKnownStateButton.TabIndex = 3
-        Me._InitializeKnownStateButton.Text = "Initialize to Known State"
-        Me.TipsTooltip.SetToolTip(Me._InitializeKnownStateButton, "Reset and Initialize Response Modes")
-        Me._InitializeKnownStateButton.UseVisualStyleBackColor = True
+        Me._ArmLayerToolStripLabel.Name = "_ArmLayerToolStripLabel"
+        Me._ArmLayerToolStripLabel.Size = New System.Drawing.Size(36, 25)
+        Me._ArmLayerToolStripLabel.Text = "ARM:"
+        Me._ArmLayerToolStripLabel.ToolTipText = "Arm layer settings"
         '
-        '_InterfaceClearButton
+        '_ArmLayerCountNumericLabel
         '
-        Me._InterfaceClearButton.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._InterfaceClearButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InterfaceClearButton.Location = New System.Drawing.Point(84, 19)
-        Me._InterfaceClearButton.Name = "_InterfaceClearButton"
-        Me._InterfaceClearButton.Size = New System.Drawing.Size(187, 30)
-        Me._InterfaceClearButton.TabIndex = 0
-        Me._InterfaceClearButton.Text = "&Clear Interface"
-        Me._InterfaceClearButton.UseVisualStyleBackColor = True
-        '
-        '_ResetButton
-        '
-        Me._ResetButton.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ResetButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ResetButton.Location = New System.Drawing.Point(84, 123)
-        Me._ResetButton.Name = "_ResetButton"
-        Me._ResetButton.Size = New System.Drawing.Size(187, 30)
-        Me._ResetButton.TabIndex = 2
-        Me._ResetButton.Text = "&Reset to Known State"
-        Me._ResetButton.UseVisualStyleBackColor = True
-        '
-        '_SelectiveDeviceClearButton
-        '
-        Me._SelectiveDeviceClearButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._SelectiveDeviceClearButton.Location = New System.Drawing.Point(84, 71)
-        Me._SelectiveDeviceClearButton.Name = "_SelectiveDeviceClearButton"
-        Me._SelectiveDeviceClearButton.Size = New System.Drawing.Size(182, 30)
-        Me._SelectiveDeviceClearButton.TabIndex = 1
-        Me._SelectiveDeviceClearButton.Text = "Clear Device (SDC)"
-        Me.TipsTooltip.SetToolTip(Me._SelectiveDeviceClearButton, "Issues Selective Device Clear.")
-        Me._SelectiveDeviceClearButton.UseVisualStyleBackColor = True
-        '
-        '_SessionTraceEnableCheckBox
-        '
-        Me._SessionTraceEnableCheckBox.AutoSize = True
-        Me._SessionTraceEnableCheckBox.Location = New System.Drawing.Point(84, 227)
-        Me._SessionTraceEnableCheckBox.Name = "_SessionTraceEnableCheckBox"
-        Me._SessionTraceEnableCheckBox.Size = New System.Drawing.Size(186, 21)
-        Me._SessionTraceEnableCheckBox.TabIndex = 4
-        Me._SessionTraceEnableCheckBox.Text = "Trace Instrument Messages"
-        Me.TipsTooltip.SetToolTip(Me._SessionTraceEnableCheckBox, "Check to trace all instrument messages ")
-        Me._SessionTraceEnableCheckBox.UseVisualStyleBackColor = True
+        Me._ArmLayerCountNumericLabel.Name = "_ArmLayerCountNumericLabel"
+        Me._ArmLayerCountNumericLabel.Size = New System.Drawing.Size(43, 25)
+        Me._ArmLayerCountNumericLabel.Text = "Count:"
         '
         '_ReadWriteTabPage
         '
@@ -692,7 +728,6 @@ Partial Class K7000Panel
         Me._SimpleReadWriteControl.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._SimpleReadWriteControl.Location = New System.Drawing.Point(0, 0)
         Me._SimpleReadWriteControl.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me._SimpleReadWriteControl.MultipleSyncContextsExpected = False
         Me._SimpleReadWriteControl.Name = "_SimpleReadWriteControl"
         Me._SimpleReadWriteControl.ReadEnabled = False
         Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 270)
@@ -827,6 +862,139 @@ Partial Class K7000Panel
         Me._TitleLabel.Text = "K7000"
         Me._TitleLabel.UseMnemonic = False
         '
+        '_ArmLayerCountNumeric
+        '
+        Me._ArmLayerCountNumeric.Name = "_ArmLayerCountNumeric"
+        Me._ArmLayerCountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ArmLayerCountNumeric.Text = "0"
+        Me._ArmLayerCountNumeric.ToolTipText = "Arm layer count"
+        Me._ArmLayerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        '_ScanLayerToolStrip
+        '
+        Me._ScanLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ScanLayerToolStripLabel, Me._ScanLayerCountNumericLabel, Me._ScanLayerCountNumeric, Me._ScanLayerSpacingLabel, Me._ScanLayerTriggerLabel})
+        Me._ScanLayerToolStrip.Location = New System.Drawing.Point(0, 54)
+        Me._ScanLayerToolStrip.Name = "_ScanLayerToolStrip"
+        Me._ScanLayerToolStrip.Size = New System.Drawing.Size(356, 26)
+        Me._ScanLayerToolStrip.TabIndex = 1
+        Me._ScanLayerToolStrip.Text = "Scan"
+        '
+        '_ScanLayerToolStripLabel
+        '
+        Me._ScanLayerToolStripLabel.Name = "_ScanLayerToolStripLabel"
+        Me._ScanLayerToolStripLabel.Size = New System.Drawing.Size(41, 23)
+        Me._ScanLayerToolStripLabel.Text = "SCAN:"
+        Me._ScanLayerToolStripLabel.ToolTipText = "Scan layer settings"
+        '
+        '_ScanLayerCountNumericLabel
+        '
+        Me._ScanLayerCountNumericLabel.Name = "_ScanLayerCountNumericLabel"
+        Me._ScanLayerCountNumericLabel.Size = New System.Drawing.Size(43, 23)
+        Me._ScanLayerCountNumericLabel.Text = "Count:"
+        '
+        '_ScanLayerCountNumeric
+        '
+        Me._ScanLayerCountNumeric.Name = "_ScanLayerCountNumeric"
+        Me._ScanLayerCountNumeric.Size = New System.Drawing.Size(41, 23)
+        Me._ScanLayerCountNumeric.Text = "0"
+        Me._ScanLayerCountNumeric.ToolTipText = "Scan layer count"
+        Me._ScanLayerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        '_ChannelLayerToolStrip
+        '
+        Me._ChannelLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ChannelLayerToolStripLabel, Me._ChannelLayerCountNumericLabel, Me._ChannelLayerCountNumeric, Me._ChannelLayerSpacingLabel, Me._ChannelLayerTriggerSourceLabel})
+        Me._ChannelLayerToolStrip.Location = New System.Drawing.Point(0, 0)
+        Me._ChannelLayerToolStrip.Name = "_ChannelLayerToolStrip"
+        Me._ChannelLayerToolStrip.Size = New System.Drawing.Size(356, 26)
+        Me._ChannelLayerToolStrip.TabIndex = 2
+        Me._ChannelLayerToolStrip.Text = "Channel"
+        Me.TipsTooltip.SetToolTip(Me._ChannelLayerToolStrip, "Channel layer settings")
+        '
+        '_ChannelLayerToolStripLabel
+        '
+        Me._ChannelLayerToolStripLabel.Name = "_ChannelLayerToolStripLabel"
+        Me._ChannelLayerToolStripLabel.Size = New System.Drawing.Size(65, 23)
+        Me._ChannelLayerToolStripLabel.Text = "CHANNEL:"
+        Me._ChannelLayerToolStripLabel.ToolTipText = "Channel layer settings"
+        '
+        '_ChannelLayerCountNumericLabel
+        '
+        Me._ChannelLayerCountNumericLabel.Name = "_ChannelLayerCountNumericLabel"
+        Me._ChannelLayerCountNumericLabel.Size = New System.Drawing.Size(43, 23)
+        Me._ChannelLayerCountNumericLabel.Text = "Count:"
+        '
+        '_ChannelLayerCountNumeric
+        '
+        Me._ChannelLayerCountNumeric.Name = "_ChannelLayerCountNumeric"
+        Me._ChannelLayerCountNumeric.Size = New System.Drawing.Size(41, 23)
+        Me._ChannelLayerCountNumeric.Text = "0"
+        Me._ChannelLayerCountNumeric.ToolTipText = "Channel Layer count"
+        Me._ChannelLayerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        '_ChannelLayerSpacingLabel
+        '
+        Me._ChannelLayerSpacingLabel.Name = "_ChannelLayerSpacingLabel"
+        Me._ChannelLayerSpacingLabel.Size = New System.Drawing.Size(96, 23)
+        Me._ChannelLayerSpacingLabel.Text = "Spacing: External"
+        '
+        '_ChannelLayerTriggerSourceLabel
+        '
+        Me._ChannelLayerTriggerSourceLabel.Name = "_ChannelLayerTriggerSourceLabel"
+        Me._ChannelLayerTriggerSourceLabel.Size = New System.Drawing.Size(86, 23)
+        Me._ChannelLayerTriggerSourceLabel.Text = "Trigger: Source"
+        '
+        '_ArmLayerSpacingLabel
+        '
+        Me._ArmLayerSpacingLabel.Name = "_ArmLayerSpacingLabel"
+        Me._ArmLayerSpacingLabel.Size = New System.Drawing.Size(112, 25)
+        Me._ArmLayerSpacingLabel.Text = "Spacing: Immediate"
+        '
+        '_ArmLayerTriggerLabel
+        '
+        Me._ArmLayerTriggerLabel.Name = "_ArmLayerTriggerLabel"
+        Me._ArmLayerTriggerLabel.Size = New System.Drawing.Size(98, 25)
+        Me._ArmLayerTriggerLabel.Text = "Trigger: Acceptor"
+        '
+        '_ScanLayerSpacingLabel
+        '
+        Me._ScanLayerSpacingLabel.Name = "_ScanLayerSpacingLabel"
+        Me._ScanLayerSpacingLabel.Size = New System.Drawing.Size(112, 23)
+        Me._ScanLayerSpacingLabel.Text = "Spacing: Immediate"
+        '
+        '_TriggerToolStrip
+        '
+        Me._TriggerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ApplyTriggerPlanButton, Me._InitiateButton})
+        Me._TriggerToolStrip.Location = New System.Drawing.Point(0, 80)
+        Me._TriggerToolStrip.Name = "_TriggerToolStrip"
+        Me._TriggerToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._TriggerToolStrip.TabIndex = 3
+        Me._TriggerToolStrip.Text = "Trigger"
+        '
+        '_ApplyTriggerPlanButton
+        '
+        Me._ApplyTriggerPlanButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ApplyTriggerPlanButton.Image = CType(resources.GetObject("_ApplyTriggerPlanButton.Image"), System.Drawing.Image)
+        Me._ApplyTriggerPlanButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ApplyTriggerPlanButton.Name = "_ApplyTriggerPlanButton"
+        Me._ApplyTriggerPlanButton.Size = New System.Drawing.Size(42, 22)
+        Me._ApplyTriggerPlanButton.Text = "Apply"
+        '
+        '_ScanLayerTriggerLabel
+        '
+        Me._ScanLayerTriggerLabel.Name = "_ScanLayerTriggerLabel"
+        Me._ScanLayerTriggerLabel.Size = New System.Drawing.Size(98, 23)
+        Me._ScanLayerTriggerLabel.Text = "Trigger: Acceptor"
+        '
+        '_InitiateButton
+        '
+        Me._InitiateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._InitiateButton.Image = CType(resources.GetObject("_InitiateButton.Image"), System.Drawing.Image)
+        Me._InitiateButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._InitiateButton.Name = "_InitiateButton"
+        Me._InitiateButton.Size = New System.Drawing.Size(47, 22)
+        Me._InitiateButton.Text = "Initiate"
+        Me._InitiateButton.ToolTipText = "Starts the trigger plan"
+        '
         'K7000Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -838,6 +1006,8 @@ Partial Class K7000Panel
         Me._Tabs.ResumeLayout(False)
         Me._SlotTabPage.ResumeLayout(False)
         Me._SlotTabPage.PerformLayout()
+        Me._SystemToolStrip.ResumeLayout(False)
+        Me._SystemToolStrip.PerformLayout()
         Me._ChannelTabPage.ResumeLayout(False)
         Me._ChannelTabPage.PerformLayout()
         Me._ChannelListBuilderGroupBox.ResumeLayout(False)
@@ -848,9 +1018,10 @@ Partial Class K7000Panel
         Me._ServiceRequestTabPage.PerformLayout()
         Me._ServiceRequestRegisterGroupBox.ResumeLayout(False)
         Me._ServiceRequestRegisterGroupBox.PerformLayout()
-        Me._ResetTabPage.ResumeLayout(False)
-        Me._ResetLayout.ResumeLayout(False)
-        Me._ResetLayout.PerformLayout()
+        Me._TriggerTabPage.ResumeLayout(False)
+        Me._TriggerTabPage.PerformLayout()
+        Me._ArmLayerToolStrip.ResumeLayout(False)
+        Me._ArmLayerToolStrip.PerformLayout()
         Me._ReadWriteTabPage.ResumeLayout(False)
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
@@ -859,23 +1030,23 @@ Partial Class K7000Panel
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
+        Me._ScanLayerToolStrip.ResumeLayout(False)
+        Me._ScanLayerToolStrip.PerformLayout()
+        Me._ChannelLayerToolStrip.ResumeLayout(False)
+        Me._ChannelLayerToolStrip.PerformLayout()
+        Me._TriggerToolStrip.ResumeLayout(False)
+        Me._TriggerToolStrip.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
     Private WithEvents _SlotTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _ResetTabPage As System.Windows.Forms.TabPage
+    Private WithEvents _TriggerTabPage As System.Windows.Forms.TabPage
     Private WithEvents _ChannelTabPage As System.Windows.Forms.TabPage
     Private WithEvents _ScanTabPage As System.Windows.Forms.TabPage
     Private WithEvents _MessagesTabPage As System.Windows.Forms.TabPage
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _ResetLayout As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _InitializeKnownStateButton As System.Windows.Forms.Button
-    Private WithEvents _InterfaceClearButton As System.Windows.Forms.Button
-    Private WithEvents _ResetButton As System.Windows.Forms.Button
-    Private WithEvents _SelectiveDeviceClearButton As System.Windows.Forms.Button
-    Private WithEvents _SessionTraceEnableCheckBox As System.Windows.Forms.CheckBox
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
     Private WithEvents _ComplianceToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
@@ -925,4 +1096,34 @@ Partial Class K7000Panel
     Private WithEvents _ServiceRequestMaskTextBox As Windows.Forms.TextBox
     Private WithEvents _ReadWriteTabPage As Windows.Forms.TabPage
     Private WithEvents _SimpleReadWriteControl As Instrument.SimpleReadWriteControl
+    Private WithEvents _SystemToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ResetSplitButton As Windows.Forms.ToolStripSplitButton
+    Private WithEvents _ClearInterfaceMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ResetKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _InitKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _TraceInstrumentMessagesMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _HandleServiceRequestsMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _TerminalStateLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ArmLayerToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ArmLayerToolStripLabel As Windows.Forms.ToolStripLabel
+    Friend WithEvents _ArmLayerCountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _TriggerToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ApplyTriggerPlanButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ScanLayerToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ScanLayerToolStripLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ScanLayerCountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ScanLayerCountNumeric As Core.Controls.ToolStripNumericUpDown
+    Friend WithEvents _ScanLayerSpacingLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ScanLayerTriggerLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ArmLayerCountNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ArmLayerSpacingLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ArmLayerTriggerLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ChannelLayerToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ChannelLayerToolStripLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ChannelLayerCountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ChannelLayerCountNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ChannelLayerSpacingLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ChannelLayerTriggerSourceLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _InitiateButton As Windows.Forms.ToolStripButton
 End Class
