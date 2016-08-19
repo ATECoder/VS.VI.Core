@@ -487,12 +487,14 @@ Partial Public Class SessionBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="values"> Specifies a list of nil objects to check. </param>
     ''' <returns> <c>True </c> if any value is nil; otherwise, <c>False</c> </returns>
-    Public Function IsNil(ByVal ParamArray values() As String) As Boolean
+    Public Function IsNil(ByVal values() As String) As Boolean
         If values Is Nothing OrElse values.Length = 0 Then
             Throw New ArgumentNullException(NameOf(values))
         Else
             For Each value As String In values
                 If Not String.IsNullOrWhiteSpace(value) Then
+
+
                     If Me.IsNil(value) Then
                         Return True
                     End If
