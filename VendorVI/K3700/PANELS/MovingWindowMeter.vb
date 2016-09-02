@@ -47,18 +47,20 @@ Public Class MovingWindowMeter
     <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
-            If Not Me.IsDisposed AndAlso disposing Then
-                If Me._MovingAverage IsNot Nothing Then
-                    Me.MovingAverage.ClearKnownState()
-                    Me._MovingAverage = Nothing
+            If Not Me.IsDisposed Then
+                If disposing Then
+                    If Me._MovingAverage IsNot Nothing Then
+                        Me.MovingAverage.ClearKnownState()
+                        Me._MovingAverage = Nothing
+                    End If
+                    If Me._worker IsNot Nothing Then
+                        Me._worker.Dispose()
+                        Me._worker = Nothing
+                    End If
+                    ' release the device.
+                    If Me._Device IsNot Nothing Then Me._Device = Nothing
+                    If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
                 End If
-                If Me._worker IsNot Nothing Then
-                    Me._worker.Dispose()
-                    Me._worker = Nothing
-                End If
-                ' release the device.
-                If Me._Device IsNot Nothing Then Me._Device = Nothing
-                If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
         Finally
             MyBase.Dispose(disposing)
@@ -158,6 +160,21 @@ Public Class MovingWindowMeter
         End Get
         Protected Set(value As Boolean)
             Me._MeasurementAvailable = value
+            Me.AsyncNotifyPropertyChanged()
+        End Set
+    End Property
+
+    Private _MeasurementStarted As Boolean
+
+    ''' <summary> Gets or sets the measurement Started. </summary>
+    ''' <value> The measurement Started. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property MeasurementStarted As Boolean
+        Get
+            Return Me._MeasurementStarted
+        End Get
+        Protected Set(value As Boolean)
+            Me._MeasurementStarted = value
             Me.AsyncNotifyPropertyChanged()
         End Set
     End Property
@@ -282,6 +299,7 @@ Public Class MovingWindowMeter
     ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="e">      Event information to send to registered event handlers. </param>
     Private Sub OnWorkerRunWorkerCompleted(ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
+        Dim ma As Boolean = False
         Dim result As WorkResult = TryCast(e.Result, WorkResult)
         If result?.Cancelled Then
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Work canceled;. Details: {0}", result.Details)
@@ -290,8 +308,10 @@ Public Class MovingWindowMeter
         ElseIf e?.Error IsNot Nothing Then
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred doing work;. Details: {0}", e?.Error)
         Else
-            Me.MeasurementAvailable = True
+            ma = True
         End If
+        ' set the outcome for reading the data. 
+        Me.MeasurementAvailable = ma
     End Sub
 
     ''' <summary> Worker run worker completed. </summary>
@@ -397,10 +417,11 @@ Public Class MovingWindowMeter
 
         If Not (Me.IsDisposed OrElse Me.worker.IsBusy) Then
             Me.worker.RunWorkerAsync(payload)
-            Return True
+            Me.MeasurementStarted = True
         Else
-            Return False
+            Me.MeasurementStarted = False
         End If
+        Return Me.MeasurementStarted
     End Function
 
     ''' <summary> Clears the send sentinels. </summary>

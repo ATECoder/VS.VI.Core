@@ -4,155 +4,155 @@
 	<Fragment>
 
         <!-- Assembly Assemblies -->
-        <ComponentGroup Id ='cg.MyAssemblyPrograms' Directory='EXEDIR' Source='$(var.VI.Solomon.Gauge.TargetDir)' >
+    <ComponentGroup Id ='cg.MyAssemblyPrograms' Directory='EXEDIR' Source='$(var.VI.Solomon.Gauge.TargetDir)' >
             <!-- MyAssembly is the primary assembly for this product. -->
-            <Component Id='cid.MyAssembly' Guid='*' >
+      <Component Id='cid.MyAssembly' Guid='*' >
                 <!-- Workaround version binding bug - create a short file id. -->
-                <File Id='fid.MyAssembly' Name='$(var.VI.Solomon.Gauge.TargetFileName)'
+        <File Id='fid.MyAssembly' Name='$(var.VI.Solomon.Gauge.TargetFileName)'
                       Source='$(var.VI.Solomon.Gauge.TargetPath)' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyApplication='fid.MyAssembly' AssemblyManifest='fid.MyAssembly' >
                     <Shortcut Id='scid.MyAssembly' Directory='ProductMenuDir' 
                               Name='$(var.VI.Solomon.Gauge.TargetName)'
                               Icon='Product.ico' Advertise='yes' Arguments='nop' />
                 </File>
-            </Component>
-            <Component Id='cid.Arebis.StandardUnits.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.Arebis.StandardUnits.dll' Guid='*'>
                 <File Name='Arebis.StandardUnits.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='Arebis.StandardUnits.dll' AssemblyApplication='Arebis.StandardUnits.dll' />
-            </Component>
-            <Component Id='cid.Arebis.TypedUnits.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.Arebis.TypedUnits.dll' Guid='*'>
                 <File Name='Arebis.TypedUnits.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='Arebis.TypedUnits.dll' AssemblyApplication='Arebis.TypedUnits.dll' />
-            </Component>
-            <Component Id='cid.isr.Core.Controls.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.Core.Controls.dll' Guid='*'>
                 <File Name='isr.Core.Controls.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.Core.Controls.dll' AssemblyApplication='isr.Core.Controls.dll' />
-            </Component>
-            <Component Id='cid.isr.Core.Engineering.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.Core.Engineering.dll' Guid='*'>
                 <File Name='isr.Core.Engineering.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.Core.Engineering.dll' AssemblyApplication='isr.Core.Engineering.dll' />
-            </Component>
-            <Component Id='cid.isr.Core.Forms.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.Core.Forms.dll' Guid='*'>
                 <File Name='isr.Core.Forms.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.Core.Forms.dll' AssemblyApplication='isr.Core.Forms.dll' />
-            </Component>
-            <Component Id='cid.isr.Core.MessageBox.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.Core.MessageBox.dll' Guid='*'>
                 <File Name='isr.Core.MessageBox.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.Core.MessageBox.dll' AssemblyApplication='isr.Core.MessageBox.dll' />
-            </Component>
-            <Component Id='cid.isr.Core.Pith.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.Core.Pith.dll' Guid='*'>
                 <File Name='isr.Core.Pith.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.Core.Pith.dll' AssemblyApplication='isr.Core.Pith.dll' />
-            </Component>
-            <Component Id='cid.isr.VI.Device.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.VI.Device.dll' Guid='*'>
                 <File Name='isr.VI.Device.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.VI.Device.dll' AssemblyApplication='isr.VI.Device.dll' />
-            </Component>
-            <Component Id='cid.isr.VI.Device.Scpi.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.VI.Device.Scpi.dll' Guid='*'>
                 <File Name='isr.VI.Device.Scpi.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.VI.Device.Scpi.dll' AssemblyApplication='isr.VI.Device.Scpi.dll' />
-            </Component>
-            <Component Id='cid.isr.VI.Device.Tsp.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.VI.Device.Tsp.dll' Guid='*'>
                 <File Name='isr.VI.Device.Tsp.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.VI.Device.Tsp.dll' AssemblyApplication='isr.VI.Device.Tsp.dll' />
-            </Component>
-            <Component Id='cid.isr.VI.Instrument.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.VI.Instrument.dll' Guid='*'>
                 <File Name='isr.VI.Instrument.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.VI.Instrument.dll' AssemblyApplication='isr.VI.Instrument.dll' />
-            </Component>
-            <Component Id='cid.isr.VI.K3700.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.VI.K3700.dll' Guid='*'>
                 <File Name='isr.VI.K3700.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.VI.K3700.dll' AssemblyApplication='isr.VI.K3700.dll' />
-            </Component>
-            <Component Id='cid.isr.VI.Pith.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.VI.Pith.dll' Guid='*'>
                 <File Name='isr.VI.Pith.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.VI.Pith.dll' AssemblyApplication='isr.VI.Pith.dll' />
-            </Component>
-        </ComponentGroup>
+      </Component>
+    </ComponentGroup>
 
-        <ComponentGroup Id ='cg.MyAssemblyDocs' Directory='DocsDir' Source='$(var.VI.Solomon.Gauge.ProjectDir)My\' >
-            <Component Id='cid.MyAssembly.Readme' Guid='*' >
+    <ComponentGroup Id ='cg.MyAssemblyDocs' Directory='DocsDir' Source='$(var.VI.Solomon.Gauge.ProjectDir)My\' >
+      <Component Id='cid.MyAssembly.Readme' Guid='*' >
                 <File Name='$(var.VI.Solomon.Gauge.TargetName)Readme.rtf'
                       Source='$(var.VI.Solomon.Gauge.ProjectDir)My\readme.rtf' KeyPath='yes' DiskId='1'>
                     <Shortcut Id='scid.MyAssembly.Readme' Directory='ProductMenuDir'
                               Name='$(var.VI.Solomon.Gauge.TargetName) Info' Advertise='yes' />
                 </File>
-            </Component>
-            <Component Id='cid.MyAssembly.LicenseNotice' Guid='*'>
+      </Component>
+      <Component Id='cid.MyAssembly.LicenseNotice' Guid='*'>
                 <File Name='The MIT License.rtf' KeyPath='yes' DiskId='1' 
                       Source='$(var.LicenseFilePath)' />
-            </Component>
+      </Component>
             <!--
             
                 <File Name='$(var.VI.Solomon.Gauge.TargetName)Readme.rtf'
             
-            <Component Id='cid.MyAssembly.RevisionHistory' Guid='*'>
+      <Component Id='cid.MyAssembly.RevisionHistory' Guid='*'>
                 <File Name='VI.Solomon.Gauge.History.rtf' KeyPath='yes' DiskId='1' >
                     <Shortcut Id='scid.MyAssembly.RevisionHistory' Directory='ProductMenuDir' Name='Revision History'
                               Show='normal' Advertise='yes' />
                 </File>
-            </Component>
-            <Component Id='cid.MyLibrary.RevisionHistory' Guid='*'>
+      </Component>
+      <Component Id='cid.MyLibrary.RevisionHistory' Guid='*'>
                 <File Name='isr.VI.Core.Library.History.rtf' KeyPath='yes' DiskId='1' 
                       Source='$(var.isr.VI.Library.ProjectDir)Docs\isr.VI.Library.History.rtf' />
-            </Component>
-            <Component Id='cid.MyAssembly.Guide' Guid='*'>
-                <File Id='fid.MyAssembly.Guide' Name='Visa Core Tester Guide.html' KeyPath='yes' DiskId='1' >
+      </Component>
+      <Component Id='cid.MyAssembly.Guide' Guid='*'>
+        <File Id='fid.MyAssembly.Guide' Name='Visa Core Tester Guide.html' KeyPath='yes' DiskId='1' >
                     <Shortcut Id='scid.MyAssembly.Guide' Directory='ProductMenuDir' Name='Visa Core Tester Guide'
                               Show='normal' Advertise='yes' />
                 </File>
-            </Component>
-            <Component Id='cid.isr.Core.Primitives.dll' Guid='*'>
+      </Component>
+      <Component Id='cid.isr.Core.Primitives.dll' Guid='*'>
                 <File Name='isr.Core.Primitives.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='isr.Core.Primitives.dll' AssemblyApplication='isr.Core.Primitives.dll' />
-            </Component>
+      </Component>
             -->
-        </ComponentGroup>
+    </ComponentGroup>
 
         <!-- VISA Assemblies -->
-        <ComponentGroup Id ='cg.VisaAssemblies' Directory='EXEDIR' Source='$(var.VI.Solomon.Gauge.TargetDir)' >
-            <Component Id='cid.Ivi.Visa.dll' Guid='*'>
+    <ComponentGroup Id ='cg.VisaAssemblies' Directory='EXEDIR' Source='$(var.VI.Solomon.Gauge.TargetDir)' >
+      <Component Id='cid.Ivi.Visa.dll' Guid='*'>
                 <File Name='Ivi.Visa.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='Ivi.Visa.dll' AssemblyApplication='Ivi.Visa.dll' />
-            </Component>
+      </Component>
             <?ifdef NI_VISA ?>
-                <Component Id='cid.NationalInstruments.Visa.dll' Guid='*'>
+          <Component Id='cid.NationalInstruments.Visa.dll' Guid='*'>
                     <File Name='NationalInstruments.Visa.dll' KeyPath='yes' DiskId='1'
                           Assembly='.net' AssemblyManifest='NationalInstruments.Visa.dll' AssemblyApplication='NationalInstruments.Visa.dll' />
-                </Component>
-                <Component Id='cid.isr.VI.National.Visa.dll' Guid='*'>
+          </Component>
+          <Component Id='cid.isr.VI.National.Visa.dll' Guid='*'>
                     <File Name='isr.VI.National.Visa.dll' KeyPath='yes' DiskId='1'
                           Assembly='.net' AssemblyManifest='isr.VI.National.Visa.dll' AssemblyApplication='isr.VI.National.Visa.dll' />
-                </Component>
+          </Component>
             <?endif?>
             <?ifdef NI_VISA_NS ?>
-                <Component Id='cid.NationalInstruments.VisaNS.dll' Guid='*'>
+          <Component Id='cid.NationalInstruments.VisaNS.dll' Guid='*'>
                     <File Name='NationalInstruments.VisaNS.dll' KeyPath='yes' DiskId='1'
                           Assembly='.net' AssemblyManifest='NationalInstruments.VisaNS.dll' AssemblyApplication='NationalInstruments.VisaNS.dll' />
-                </Component>
-                <Component Id='cid.isr.VI.National.VisaNS.dll' Guid='*'>
+          </Component>
+          <Component Id='cid.isr.VI.National.VisaNS.dll' Guid='*'>
                     <File Name='isr.VI.National.VisaNS.dll' KeyPath='yes' DiskId='1'
                           Assembly='.net' AssemblyManifest='isr.VI.National.VisaNS.dll' AssemblyApplication='isr.VI.National.VisaNS.dll' />
-                </Component>
+          </Component>
             <?endif?>
-        </ComponentGroup>
+    </ComponentGroup>
 
         <!-- Exception Message Assembly -->
-        <ComponentGroup Id ='cg.ExceptionMessage' Directory='EXEDIR' Source='$(var.VI.Solomon.Gauge.TargetDir)' >
-            <Component Id='cid.Microsoft.ExceptionMessageBox.dll' Guid='*'>
+    <ComponentGroup Id ='cg.ExceptionMessage' Directory='EXEDIR' Source='$(var.VI.Solomon.Gauge.TargetDir)' >
+      <Component Id='cid.Microsoft.ExceptionMessageBox.dll' Guid='*'>
                 <File Name='Microsoft.ExceptionMessageBox.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='Microsoft.ExceptionMessageBox.dll' AssemblyApplication='Microsoft.ExceptionMessageBox.dll' />
-            </Component>
-        </ComponentGroup>
+      </Component>
+    </ComponentGroup>
 
 
         <!-- Features -->
-        <FeatureGroup Id='fgid.MyAssembly'>
-            <ComponentGroupRef Id='cg.MyAssemblyPrograms' Primary='yes' />
-            <ComponentGroupRef Id='cg.MyAssemblyDocs' Primary='yes' />
-            <ComponentGroupRef Id='cg.VisaAssemblies' Primary='yes' />
-            <ComponentGroupRef Id='cg.ExceptionMessage' Primary='yes' />
-        </FeatureGroup>
+    <FeatureGroup Id='fgid.MyAssembly'>
+      <ComponentGroupRef Id='cg.MyAssemblyPrograms' Primary='yes' />
+      <ComponentGroupRef Id='cg.MyAssemblyDocs' Primary='yes' />
+      <ComponentGroupRef Id='cg.VisaAssemblies' Primary='yes' />
+      <ComponentGroupRef Id='cg.ExceptionMessage' Primary='yes' />
+    </FeatureGroup>
 
-    </Fragment>
+  </Fragment>
 </Wix>
