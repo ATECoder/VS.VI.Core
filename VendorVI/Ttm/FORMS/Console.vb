@@ -920,12 +920,17 @@ Public Class Console
     End Sub
 
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _TTMConfigurationPanel_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _TTMConfigurationPanel.PropertyChanged
+    Private Sub _TTMConfigurationPanel_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TTMConfigurationPanel.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, ConfigurationPanel), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._TTMConfigurationPanel_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, ConfigurationPanel), e?.PropertyName)
+            End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. Details: {1}.",
                                e.PropertyName, ex.Message)
+
         End Try
     End Sub
 
@@ -970,7 +975,11 @@ Public Class Console
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _meter_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _meter.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, Meter), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._meter_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, Meter), e?.PropertyName)
+            End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. Details: {1}.",
                                e.PropertyName, ex.Message)
@@ -1009,14 +1018,19 @@ Public Class Console
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _MeasureSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _MeasureSequencer.PropertyChanged
+    Private Sub _MeasureSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _MeasureSequencer.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, MeasureSequencer), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._MeasureSequencer_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, MeasureSequencer), e?.PropertyName)
+            End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
         End Try
     End Sub
+
 
     ''' <summary> Ends a completed sequence. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -1096,7 +1110,11 @@ Public Class Console
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TriggerSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _TriggerSequencer.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, TriggerSequencer), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._TriggerSequencer_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, TriggerSequencer), e?.PropertyName)
+            End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
@@ -1375,16 +1393,19 @@ Public Class Console
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
-            Application.DoEvents()
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._TraceMessagesBox_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
+            End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed reporting Trace Message Property Change;. Details: {0}", ex)
+                               "Failed reporting Trace Message {0} Property Change;. Details: {1}", e?.PropertyName, ex)
         End Try
-
     End Sub
 
 #End Region
+
 
 End Class
 

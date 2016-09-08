@@ -61,10 +61,15 @@ Public Class ThermalTransientHeader
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _DeviceUnderTest_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _DeviceUnderTest.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._DeviceUnderTest_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
+            End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
+
         End Try
     End Sub
 
@@ -122,9 +127,13 @@ Public Class ThermalTransientHeader
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ThermalTransient_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _ThermalTransient.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, ThermalTransient), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._ThermalTransient_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, ThermalTransient), e?.PropertyName)
+            End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
         End Try
     End Sub

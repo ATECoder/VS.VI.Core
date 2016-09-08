@@ -110,10 +110,15 @@ Public Class PartsPanel
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Part_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _Part.PropertyChanged
         Try
-            Me.OnPartPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf _Part_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPartPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
+            End If
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                               "Exception handling property '{0}'. Details: {1}.", e.PropertyName, ex.Message)
+
         End Try
     End Sub
 

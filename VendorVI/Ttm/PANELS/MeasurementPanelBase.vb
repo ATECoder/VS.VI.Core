@@ -526,12 +526,17 @@ Public Class MeasurementPanelBase
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _MeasureSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _MeasureSequencer.PropertyChanged
+    Private Sub _MeasureSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _MeasureSequencer.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, MeasureSequencer), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._MeasureSequencer_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, MeasureSequencer), e?.PropertyName)
+            End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+
         End Try
     End Sub
 
@@ -648,9 +653,13 @@ Public Class MeasurementPanelBase
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _TriggerSequencer_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _TriggerSequencer.PropertyChanged
+    Private Sub _TriggerSequencer_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TriggerSequencer.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, TriggerSequencer), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._TriggerSequencer_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, TriggerSequencer), e?.PropertyName)
+            End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
@@ -661,6 +670,7 @@ Public Class MeasurementPanelBase
     ''' <summary> Handles the change in measurement state. </summary>
     ''' <param name="state"> The state. </param>
     Private Sub OnTriggerSequenceStateChanged(ByVal state As TriggerSequenceState)
+
         Me._TriggerActionToolStripLabel.Text = Me.TriggerSequencer.ProgressMessage(lastStatusBar)
         Select Case state
             Case TriggerSequenceState.Aborted

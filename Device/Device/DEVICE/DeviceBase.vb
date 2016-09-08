@@ -677,13 +677,13 @@ Public MustInherit Class DeviceBase
             End If
         Catch ex As Exception
             If e Is Nothing Then
-                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          "Null event arguments", ex.Message)
             ElseIf String.IsNullOrEmpty(e.PropertyName) Then
-                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          "Empty", ex.Message)
             Else
-                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
             End If
         End Try
@@ -847,48 +847,6 @@ Public MustInherit Class DeviceBase
 
 #End Region
 
-#Region " SAFE EVENTS "
-
-    ''' <summary> Synchronously notifies (Invokes a <see cref="ISynchronizeInvoke">sync enabled
-    ''' entity</see>) or (Dynamically Invokes) an
-    ''' <see cref="EventHandler(Of EventArgs)">Event</see>. </summary>
-    ''' <param name="handler"> The event handler. </param>
-    Private Overloads Sub SafeInvoke(ByVal handler As EventHandler(Of EventArgs), ByVal e As EventArgs)
-        For Each d As [Delegate] In handler.SafeInvocationList
-            If d.Target Is Nothing Then
-                d.DynamicInvoke(New Object() {Me, e})
-            Else
-                Dim target As ISynchronizeInvoke = TryCast(d.Target, ISynchronizeInvoke)
-                If target Is Nothing Then
-                    d.DynamicInvoke(New Object() {Me, e})
-                Else
-                    target.Invoke(d, New Object() {Me, e})
-                End If
-            End If
-        Next
-    End Sub
-
-    ''' <summary> Asynchronously (Begins Invoke a <see cref="ISynchronizeInvoke">sync enabled
-    ''' entity</see>) or synchronously (Dynamically Invokes) notifies an 
-    ''' <see cref="EventHandler(Of EventArgs)">Event</see>. </summary>
-    ''' <param name="handler"> The event handler. </param>
-    Private Overloads Sub SafeBeginInvoke(ByVal handler As EventHandler(Of EventArgs), ByVal e As EventArgs)
-        For Each d As [Delegate] In handler.SafeInvocationList
-            If d.Target Is Nothing Then
-                d.DynamicInvoke(New Object() {Me, e})
-            Else
-                Dim target As ISynchronizeInvoke = TryCast(d.Target, ISynchronizeInvoke)
-                If target Is Nothing Then
-                    d.DynamicInvoke(New Object() {Me, e})
-                Else
-                    target.BeginInvoke(d, New Object() {Me, e})
-                End If
-            End If
-        Next
-    End Sub
-
-#End Region
-
 #Region " EVENT HANDLERS "
 
     ''' <summary> Synchronously handles the Service Request event of the <see cref="Session">session</see> control. </summary>
@@ -901,7 +859,7 @@ Public MustInherit Class DeviceBase
             If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
                 ' Even though the current sync context is nothing, one of the targets might 
                 ' still require invocation. Therefore, save invoke is implemented.
-                Me.SafeInvoke(Me.ServiceRequestedEvent, e)
+                Me.ServiceRequestedEvent.SafeInvoke(Me, e)
             Else
                 SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf InvokeServiceRequested), e)
             End If
@@ -909,7 +867,7 @@ Public MustInherit Class DeviceBase
             If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
                 ' Even though the current sync context is nothing, one of the targets might 
                 ' still require invocation. Therefore, save invoke is implemented.
-                Me.SafeBeginInvoke(Me.ServiceRequestedEvent, e)
+                Me.ServiceRequestedEvent.SafeBeginInvoke(Me, e)
             Else
                 SynchronizationContext.Current.Post(New SendOrPostCallback(AddressOf InvokeServiceRequested), e)
             End If
@@ -949,7 +907,7 @@ Public MustInherit Class DeviceBase
         If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
             ' Even though the current sync context is nothing, one of the targets might 
             ' still require invocation. Therefore, save invoke is implemented.
-            Me.SafeInvoke(Me.OpeningEvent, e)
+            Me.OpeningEvent.SafeInvoke(Me, e)
         Else
             SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeOpening), e)
         End If
@@ -962,8 +920,7 @@ Public MustInherit Class DeviceBase
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
     ''' the event data. </param>
     Private Sub InvokeOpening(ByVal e As ComponentModel.CancelEventArgs)
-        Dim evt As EventHandler(Of ComponentModel.CancelEventArgs) = Me.OpeningEvent
-        evt?.Invoke(Me, e)
+        Me.OpeningEvent.UnsafeInvoke(Me, e)
     End Sub
 
     ''' <summary> Synchronously Invokes the <see cref="Opening">Opening Event</see>. Must be
@@ -1003,7 +960,7 @@ Public MustInherit Class DeviceBase
         If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
             ' Even though the current sync context is nothing, one of the targets might 
             ' still require invocation. Therefore, save invoke is implemented.
-            Me.SafeInvoke(Me.OpenedEvent)
+            Me.OpenedEvent.SafeInvoke(Me)
         Else
             SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeOpened), e)
         End If
@@ -1016,8 +973,7 @@ Public MustInherit Class DeviceBase
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
     ''' the event data. </param>
     Private Sub InvokeOpened(ByVal e As System.EventArgs)
-        Dim evt As EventHandler(Of System.EventArgs) = Me.OpenedEvent
-        evt?.Invoke(Me, e)
+        Me.OpenedEvent.UnsafeInvoke(Me, e)
     End Sub
 
     ''' <summary> Synchronously Invokes the <see cref="Opened">Opened Event</see>. Must be
@@ -1057,7 +1013,7 @@ Public MustInherit Class DeviceBase
         If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
             ' Even though the current sync context is nothing, one of the targets might 
             ' still require invocation. Therefore, save invoke is implemented.
-            Me.SafeInvoke(Me.ClosingEvent, e)
+            Me.ClosingEvent.SafeInvoke(Me, e)
         Else
             SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeClosing), e)
         End If
@@ -1070,8 +1026,7 @@ Public MustInherit Class DeviceBase
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
     ''' the event data. </param>
     Private Sub InvokeClosing(ByVal e As System.ComponentModel.CancelEventArgs)
-        Dim evt As EventHandler(Of System.ComponentModel.CancelEventArgs) = Me.ClosingEvent
-        evt?.Invoke(Me, e)
+        Me.ClosingEvent.UnsafeInvoke(Me, e)
     End Sub
 
     ''' <summary> Synchronously Invokes the <see cref="Closing">Closing Event</see>. Must be
@@ -1111,7 +1066,7 @@ Public MustInherit Class DeviceBase
         If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
             ' Even though the current sync context is nothing, one of the targets might 
             ' still require invocation. Therefore, save invoke is implemented.
-            Me.SafeInvoke(Me.ClosedEvent)
+            Me.ClosedEvent.SafeInvoke(Me, e)
         Else
             SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeClosed), e)
         End If
@@ -1124,8 +1079,7 @@ Public MustInherit Class DeviceBase
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
     ''' the event data. </param>
     Private Sub InvokeClosed(ByVal e As System.EventArgs)
-        Dim evt As EventHandler(Of System.EventArgs) = Me.ClosedEvent
-        evt?.Invoke(Me, e)
+        Me.ClosedEvent.UnsafeInvoke(Me, e)
     End Sub
 
     ''' <summary> Synchronously Invokes the <see cref="Closed">Closed Event</see>. Must be
@@ -1165,7 +1119,7 @@ Public MustInherit Class DeviceBase
         If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
             ' Even though the current sync context is nothing, one of the targets might 
             ' still require invocation. Therefore, save invoke is implemented.
-            Me.SafeInvoke(Me.InitializingEvent, e)
+            Me.InitializingEvent.SafeInvoke(Me, e)
         Else
             SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeInitializing), e)
         End If
@@ -1178,8 +1132,7 @@ Public MustInherit Class DeviceBase
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
     ''' the event data. </param>
     Private Sub InvokeInitializing(ByVal e As System.ComponentModel.CancelEventArgs)
-        Dim evt As EventHandler(Of System.ComponentModel.CancelEventArgs) = Me.InitializingEvent
-        evt?.Invoke(Me, e)
+        Me.InitializingEvent.UnsafeInvoke(Me, e)
     End Sub
 
     ''' <summary> Synchronously Invokes the <see cref="Initializing">Initializing Event</see>. Must be
@@ -1219,7 +1172,7 @@ Public MustInherit Class DeviceBase
         If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
             ' Even though the current sync context is nothing, one of the targets might 
             ' still require invocation. Therefore, save invoke is implemented.
-            Me.SafeInvoke(Me.InitializedEvent)
+            Me.InitializedEvent.SafeInvoke(Me)
         Else
             SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeInitialized), e)
         End If
@@ -1232,8 +1185,7 @@ Public MustInherit Class DeviceBase
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
     ''' the event data. </param>
     Private Sub InvokeInitialized(ByVal e As System.EventArgs)
-        Dim evt As EventHandler(Of System.EventArgs) = Me.InitializedEvent
-        evt?.Invoke(Me, e)
+        Me.InitializedEvent.UnsafeInvoke(Me, e)
     End Sub
 
     ''' <summary> Synchronously Invokes the <see cref="Initialized">Initialized Event</see>. Must be
@@ -1284,3 +1236,51 @@ Public MustInherit Class DeviceBase
 #End Region
 
 End Class
+
+#Region " UNUSED "
+' using event handler extensions.
+#If False Then
+#Region " SAFE EVENTS "
+
+    ''' <summary> Synchronously notifies (Invokes a <see cref="ISynchronizeInvoke">sync enabled
+    ''' entity</see>) or (Dynamically Invokes) an
+    ''' <see cref="EventHandler(Of EventArgs)">Event</see>. </summary>
+    ''' <param name="handler"> The event handler. </param>
+    Private Overloads Sub SafeInvoke(ByVal handler As EventHandler(Of EventArgs), ByVal e As EventArgs)
+        For Each d As [Delegate] In handler.SafeInvocationList
+            If d.Target Is Nothing Then
+                d.DynamicInvoke(New Object() {Me, e})
+            Else
+                Dim target As ISynchronizeInvoke = TryCast(d . Target, ISynchronizeInvoke)
+                If target Is Nothing Then
+                    d.DynamicInvoke(New Object() {Me, e})
+                Else
+                    target.Invoke(d, New Object() {Me, e})
+                End If
+            End If
+        Next
+    End Sub
+
+    ''' <summary> Asynchronously (Begins Invoke a <see cref="ISynchronizeInvoke">sync enabled
+    ''' entity</see>) or synchronously (Dynamically Invokes) notifies an 
+    ''' <see cref="EventHandler(Of EventArgs)">Event</see>. </summary>
+    ''' <param name="handler"> The event handler. </param>
+    Private Overloads Sub SafeBeginInvoke(ByVal handler As EventHandler(Of EventArgs), ByVal e As EventArgs)
+        For Each d As [Delegate] In handler.SafeInvocationList
+            If d.Target Is Nothing Then
+                d.DynamicInvoke(New Object() {Me, e})
+            Else
+                Dim target As ISynchronizeInvoke = TryCast(d . Target, ISynchronizeInvoke)
+                If target Is Nothing Then
+                    d.DynamicInvoke(New Object() {Me, e})
+                Else
+                    target.BeginInvoke(d, New Object() {Me, e})
+                End If
+            End If
+        Next
+    End Sub
+
+#End Region
+
+#End If
+#End Region

@@ -410,7 +410,7 @@ Public Class DeviceUnderTest
         Try
             Me.OnPropertyChanged(TryCast(sender, ResistanceMeasureBase), e?.PropertyName)
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
         Finally
             Me.AsyncNotifyPropertyChanged(NameOf(Me.InitialResistance))
@@ -438,7 +438,7 @@ Public Class DeviceUnderTest
         Try
             Me.OnPropertyChanged(TryCast(sender, ResistanceMeasureBase), e?.PropertyName)
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
         Finally
             Me.AsyncNotifyPropertyChanged(NameOf(Me.FinalResistance))
@@ -485,7 +485,7 @@ Public Class DeviceUnderTest
         Try
             Me.OnPropertyChanged(TryCast(sender, ResistanceMeasureBase), e?.PropertyName)
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
         Finally
             Me.AsyncNotifyPropertyChanged(NameOf(Me.ThermalTransient))

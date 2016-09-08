@@ -1444,11 +1444,10 @@ Public Class E4990Panel
 
 #Region " READ AND WRITE "
 
-    ''' <summary> Executes the simple read write control property changed action. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
+    ''' <summary> Executes the property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSimpleReadWriteControlPropertyChanged(sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
+    Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
                 Case NameOf(sender.ReceivedMessage)
@@ -1462,18 +1461,21 @@ Public Class E4990Panel
         End If
     End Sub
 
-    ''' <summary> Simple read write control property changed. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
+    ''' <summary> Event handler. Called by <see crefname="_SimpleReadWriteControl"/> for property changed
+    ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _SimpleReadWriteControl_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
+    Private Sub _SimpleReadWriteControl_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
         Try
-            Me.OnSimpleReadWriteControlPropertyChanged(TryCast(sender, Instrument.SimpleReadWriteControl), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._SimpleReadWriteControl_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, Instrument.SimpleReadWriteControl), e?.PropertyName)
+            End If
         Catch ex As Exception
-            Me.StatusLabel.Text = "Exception occurred handling change"
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling Simple Read and Write property changed Event;. Failed property {0}. Details: {1}",
+                               "Exception handling {0} property change;. Details: {1}",
                                e?.PropertyName, ex)
         End Try
     End Sub

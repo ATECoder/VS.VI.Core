@@ -78,12 +78,17 @@ Public Class MeasurementsHeader
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _DeviceUnderTest_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _DeviceUnderTest.PropertyChanged
+    Private Sub _DeviceUnderTest_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _DeviceUnderTest.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._DeviceUnderTest_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
+            End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
+
         End Try
     End Sub
 
@@ -302,11 +307,15 @@ Public Class MeasurementsHeader
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _InitialResistance_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _InitialResistance.PropertyChanged
+    Private Sub _InitialResistance_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _InitialResistance.PropertyChanged
         Try
-            Me.OnInitialResistancePropertyChanged(TryCast(sender, ColdResistance), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._InitialResistance_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnInitialResistancePropertyChanged(TryCast(sender, ColdResistance), e?.PropertyName)
+            End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
         End Try
     End Sub
@@ -314,6 +323,7 @@ Public Class MeasurementsHeader
 #End Region
 
 #Region " PART: FINAL RESISTANCE "
+
 
     ''' <summary> The Part Final Resistance. </summary>
     Private WithEvents _FinalResistance As ColdResistance
@@ -340,14 +350,19 @@ Public Class MeasurementsHeader
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _FinalResistance_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _FinalResistance.PropertyChanged
+    Private Sub _FinalResistance_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _FinalResistance.PropertyChanged
         Try
-            Me.OnFinalResistancePropertyChanged(TryCast(sender, ColdResistance), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._FinalResistance_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnFinalResistancePropertyChanged(TryCast(sender, ColdResistance), e?.PropertyName)
+            End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
         End Try
     End Sub
+
 
 #End Region
 
@@ -360,7 +375,7 @@ Public Class MeasurementsHeader
     ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnThermalTransientPropertyChanged(ByVal sender As ResistanceMeasureBase, ByVal propertyName As String)
+    Private Sub OnPropertyChanged(ByVal sender As ResistanceMeasureBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.MeasurementAvailable)
@@ -380,9 +395,13 @@ Public Class MeasurementsHeader
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ThermalTransient_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _ThermalTransient.PropertyChanged
         Try
-            Me.OnThermalTransientPropertyChanged(TryCast(sender, ResistanceMeasureBase), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._ThermalTransient_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, ResistanceMeasureBase), e?.PropertyName)
+            End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
         End Try
     End Sub

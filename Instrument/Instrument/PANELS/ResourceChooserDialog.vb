@@ -1,3 +1,4 @@
+Imports System.ComponentModel
 ''' <summary> Selects a resource. </summary>
 ''' <license> (c) 2006 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -167,11 +168,15 @@ Public Class ResourceChooserDialog
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ResourceNameSelectorConnector_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _ResourceNameSelectorConnector.PropertyChanged
+    Private Sub _ResourceNameSelectorConnector_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _ResourceNameSelectorConnector.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._ResourceNameSelectorConnector_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
+            End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                          e.PropertyName, ex.Message)
         End Try
     End Sub

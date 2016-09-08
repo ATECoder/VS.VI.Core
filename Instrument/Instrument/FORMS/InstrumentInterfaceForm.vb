@@ -402,10 +402,15 @@ Public Class InstrumentInterfaceForm
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InterfacePanel_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _InterfacePanel.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, InterfacePanel), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._InterfacePanel_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, InterfacePanel), e?.PropertyName)
+            End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+
         End Try
     End Sub
 
@@ -780,31 +785,35 @@ Public Class InstrumentInterfaceForm
         My.MyLibrary.Identify(Me.Talker)
     End Sub
 
-    ''' <summary> Executes the trace messages box property changed action. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
-    ''' <param name="sender">       The sender. </param>
+    ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
+    ''' <remarks> David, 9/5/2016. </remarks>
+    ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnTraceMessagesBoxPropertyChanged(sender As TraceMessagesBox, ByVal propertyName As String)
-        If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
+    Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
             If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
                 Me._StatusLabel.Text = sender.StatusPrompt
+                Me._StatusLabel.ToolTipText = sender.StatusPrompt
             End If
-        End If
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
-    ''' <param name="sender"> The sender. </param>
+    ''' <remarks> David, 9/5/2016. </remarks>
+    ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
         Try
-            Me.OnTraceMessagesBoxPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
+            ' there was a cross thread exception because this event is invoked from the control thread.
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._TraceMessagesBox_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
+            End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Failed reporting Trace Message Property Change;. Details: {0}", ex)
         End Try
-
     End Sub
 
 #End Region

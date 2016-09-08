@@ -192,7 +192,7 @@ Public Class Device
                 Me.OnSubsystemPropertyChanged(TryCast(sender, FormatSubsystem), e.PropertyName)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling property '{0}'. Details: {1}.",
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
                              e.PropertyName, ex.Message)
         End Try
     End Sub

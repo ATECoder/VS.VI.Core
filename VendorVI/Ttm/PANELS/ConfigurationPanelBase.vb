@@ -96,12 +96,17 @@ Public Class ConfigurationPanelBase
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _part_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _Part.PropertyChanged
+    Private Sub _part_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _Part.PropertyChanged
         Try
-            Me.OnPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._part_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}'. Details: {1}.",
-                         e?.PropertyName, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling {0} property change;. Details: {1}",
+                               e?.PropertyName, ex)
         End Try
     End Sub
 
