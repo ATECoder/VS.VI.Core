@@ -212,7 +212,79 @@ Public Class InstrumentPanelForm
 
 #End Region
 
-#Region " Talker Control "
+#Region " PropertyNotify CONTROL "
+
+    ''' <summary> true to enable, false to disable the instrument panel dispose. </summary>
+    Private _PropertyNotifyControlDisposeEnabled As Boolean
+
+    Private WithEvents _PropertyNotifyControl As PropertyNotifyControlBase
+
+    ''' <summary> Adds an instrument panel. </summary>
+    ''' <remarks> David, 1/15/2016. </remarks>
+    ''' <param name="value"> The value. </param>
+    Public Sub AddPropertyNotifyControl(ByVal value As PropertyNotifyControlBase)
+        Me.AddPropertyNotifyControl("Instrument", value, True)
+    End Sub
+
+    ''' <summary> Adds an instrument panel. </summary>
+    ''' <remarks> David, 1/15/2016. </remarks>
+    ''' <param name="title"> The title. </param>
+    ''' <param name="value"> The value. </param>
+    Public Sub AddPropertyNotifyControl(ByVal title As String, ByVal value As PropertyNotifyControlBase)
+        Me.AddPropertyNotifyControl(title, value, True)
+    End Sub
+
+    ''' <summary> Adds an instrument panel. </summary>
+    ''' <remarks> David, 1/15/2016. </remarks>
+    ''' <param name="title">          The title. </param>
+    ''' <param name="value">          The value. </param>
+    ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
+    Public Sub AddPropertyNotifyControl(ByVal title As String, ByVal value As PropertyNotifyControlBase, ByVal disposeEnabled As Boolean)
+        Me._PropertyNotifyControl = value
+        Me.AddListeners()
+        Me._PropertyNotifyControlDisposeEnabled = disposeEnabled
+        With Me._PropertyNotifyControl
+            Me._PropertyNotifyControl.Dock = Windows.Forms.DockStyle.Fill
+            Me._PropertyNotifyControl.TabIndex = 0
+            Me._PropertyNotifyControl.BackColor = System.Drawing.Color.Transparent
+            Me._PropertyNotifyControl.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Regular)
+            Me._PropertyNotifyControl.Name = "_PropertyNotifyControl"
+            Me._InstrumentTabPage.Text = title
+            Me._InstrumentTabPage.ToolTipText = title
+        End With
+        Me._InstrumentLayout.Controls.Add(Me._PropertyNotifyControl, 1, 1)
+    End Sub
+
+    ''' <summary> Executes the property change action. </summary>
+    ''' <remarks> David, 1/14/2016. </remarks>
+    ''' <param name="sender">       The sender. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnPropertyChange(sender As PropertyNotifyControlBase, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+    End Sub
+
+    ''' <summary> Instrument panel property changed. </summary>
+    ''' <remarks> David, 1/14/2016. </remarks>
+    ''' <param name="sender"> The sender. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _PropertyNotifyControl_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _PropertyNotifyControl.PropertyChanged
+        Try
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._PropertyNotifyControl_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChange(TryCast(sender, PropertyNotifyControlBase), e?.PropertyName)
+            End If
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Failed handling property {0} change;. Details: {1}", e?.PropertyName, ex)
+
+        End Try
+    End Sub
+
+#End Region
+
+#Region " TALKER CONTROL "
 
     ''' <summary> true to enable, false to disable the instrument panel dispose. </summary>
     Private _TalkerControlDisposeEnabled As Boolean
@@ -393,6 +465,19 @@ Public Class InstrumentPanelFormCollection
                                  ByVal log As MyLog)
         If form Is Nothing Then Throw New ArgumentNullException(NameOf(form))
         form.AddInstrumentPanel(panel)
+        Me.ShowNew(form, log)
+    End Sub
+
+    ''' <summary> Adds and shows the form. </summary>
+    ''' <remarks> David, 1/15/2016. </remarks>
+    ''' <param name="form">  The form. </param>
+    ''' <param name="panel"> The panel. </param>
+    ''' <param name="log">   The log. </param>
+    Public Overloads Sub ShowNew(ByVal form As Instrument.InstrumentPanelForm,
+                                 ByVal panel As isr.Core.Pith.PropertyNotifyControlBase,
+                                 ByVal log As MyLog)
+        If form Is Nothing Then Throw New ArgumentNullException(NameOf(form))
+        form.AddPropertyNotifyControl(panel)
         Me.ShowNew(form, log)
     End Sub
 
