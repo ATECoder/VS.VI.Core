@@ -2,6 +2,7 @@
 Imports System.Threading
 Imports System.Windows.Forms
 Imports isr.Core.Pith
+Imports isr.Core.Controls.ProgressBarExtensions
 
 ''' <summary> A moving average meter. </summary>
 ''' <remarks> David, 1/30/2016. </remarks>
@@ -423,7 +424,7 @@ Public Class MovingWindowMeter
             Dim ma As isr.Core.Engineering.MovingWindow = movingWindow
             If ma IsNot Nothing Then
                 Me._WindowLabel.Text = ma.Window.ToString
-                Me._AverageProgressBar.Value = Math.Max(Me._AverageProgressBar.Minimum, Math.Min(Me._AverageProgressBar.Maximum, percentProgress))
+                Me._AverageProgressBar.ValueSetter(percentProgress)
                 Me._ElapsedTimeLabel.Text = ma.ElapsedTime.ToString("mm\:ss\.ff", Globalization.CultureInfo.CurrentCulture)
                 Me._CountLabel.Text = ma.Count.ToString
                 Me._ReadingsCountLabel.Text = ma.ReadingsQueue.Count.ToString

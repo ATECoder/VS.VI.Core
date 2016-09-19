@@ -38,6 +38,8 @@ Public Class Device
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                'listeners must clear, otherwise closing could raise an exception.
+                Me.Talker?.Listeners.Clear()
                 If Me.IsDeviceOpen Then Me.OnClosing(New ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception

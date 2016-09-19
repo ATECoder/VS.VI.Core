@@ -34,7 +34,7 @@ Public Class ReadingStatus
     Public ReadOnly Property StatusValue As Long?
         Get
             If Me.Value.HasValue Then
-                Return CLng(Math.Min(Math.Max(0, Me.Value.Value), Long.MaxValue))
+                Return CLng(If(Me.Value.Value < 0, 0, If(Me.Value.Value > Long.MaxValue, Long.MaxValue, Me.Value.Value)))
             Else
                 Return New Integer?
             End If
