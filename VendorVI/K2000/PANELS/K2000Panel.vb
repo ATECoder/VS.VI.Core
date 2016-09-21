@@ -60,6 +60,11 @@ Public Class K2000Panel
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                Try
+                    If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
+                Catch ex As Exception
+                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception details: {0}", ex)
+                End Try
                 ' the device gets closed and disposed (if panel is device owner) in the base class
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
@@ -108,7 +113,11 @@ Public Class K2000Panel
     ''' <summary> Releases the device. </summary>
     ''' <remarks> David, 1/21/2016. </remarks>
     Protected Overrides Sub ReleaseDevice()
-        MyBase.ReleaseDevice()
+        If Me.IsDeviceOwner Then
+            MyBase.ReleaseDevice()
+        Else
+            Me._Device = Nothing
+        End If
     End Sub
 
     ''' <summary> Gets a reference to the Keithley 2000 Device. </summary>

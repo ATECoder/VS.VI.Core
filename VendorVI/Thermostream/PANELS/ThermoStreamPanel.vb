@@ -116,7 +116,11 @@ Public Class ThermostreamPanel
     ''' <summary> Releases the device. </summary>
     ''' <remarks> David, 1/21/2016. </remarks>
     Protected Overrides Sub ReleaseDevice()
-        MyBase.ReleaseDevice()
+        If Me.IsDeviceOwner Then
+            MyBase.ReleaseDevice()
+        Else
+            Me._Device = Nothing
+        End If
     End Sub
 
     ''' <summary> Gets a reference to the InTest Thermo Stream Device. </summary>
