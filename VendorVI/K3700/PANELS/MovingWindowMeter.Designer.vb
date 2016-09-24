@@ -24,7 +24,7 @@ Partial Class MovingWindowMeter
         Me._ElapsedTimeLabel = New System.Windows.Forms.Label()
         Me._CountLabel = New System.Windows.Forms.Label()
         Me._ReadingsCountLabel = New System.Windows.Forms.Label()
-        Me._WindowLabel = New System.Windows.Forms.Label()
+        Me._ReadingTimeSpanLabel = New System.Windows.Forms.Label()
         Me._ToolTip = New System.Windows.Forms.ToolTip(Me.components)
         Me._SettingsToolStrip = New System.Windows.Forms.ToolStrip()
         Me._LengthTextBoxLabel = New System.Windows.Forms.ToolStripLabel()
@@ -182,7 +182,7 @@ Partial Class MovingWindowMeter
         Me._LeftLayout.Controls.Add(Me._ElapsedTimeLabel, 0, 0)
         Me._LeftLayout.Controls.Add(Me._CountLabel, 0, 1)
         Me._LeftLayout.Controls.Add(Me._ReadingsCountLabel, 0, 2)
-        Me._LeftLayout.Controls.Add(Me._WindowLabel, 0, 3)
+        Me._LeftLayout.Controls.Add(Me._ReadingTimeSpanLabel, 0, 3)
         Me._LeftLayout.Location = New System.Drawing.Point(0, 0)
         Me._LeftLayout.Margin = New System.Windows.Forms.Padding(0)
         Me._LeftLayout.Name = "_LeftLayout"
@@ -236,19 +236,19 @@ Partial Class MovingWindowMeter
         Me._ReadingsCountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me._ToolTip.SetToolTip(Me._ReadingsCountLabel, "Number of readings")
         '
-        '_WindowLabel
+        '_ReadingTimeSpanLabel
         '
-        Me._WindowLabel.AutoSize = True
-        Me._WindowLabel.BackColor = System.Drawing.Color.Black
-        Me._WindowLabel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._WindowLabel.ForeColor = System.Drawing.Color.LightGreen
-        Me._WindowLabel.Location = New System.Drawing.Point(3, 72)
-        Me._WindowLabel.Name = "_WindowLabel"
-        Me._WindowLabel.Size = New System.Drawing.Size(78, 26)
-        Me._WindowLabel.TabIndex = 0
-        Me._WindowLabel.Text = "window"
-        Me._WindowLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
-        Me._ToolTip.SetToolTip(Me._WindowLabel, "Window")
+        Me._ReadingTimeSpanLabel.AutoSize = True
+        Me._ReadingTimeSpanLabel.BackColor = System.Drawing.Color.Black
+        Me._ReadingTimeSpanLabel.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._ReadingTimeSpanLabel.ForeColor = System.Drawing.Color.LightGreen
+        Me._ReadingTimeSpanLabel.Location = New System.Drawing.Point(3, 72)
+        Me._ReadingTimeSpanLabel.Name = "_ReadingTimeSpanLabel"
+        Me._ReadingTimeSpanLabel.Size = New System.Drawing.Size(78, 26)
+        Me._ReadingTimeSpanLabel.TabIndex = 0
+        Me._ReadingTimeSpanLabel.Text = "read time"
+        Me._ReadingTimeSpanLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me._ToolTip.SetToolTip(Me._ReadingTimeSpanLabel, "Single measurement time")
         '
         '_SettingsToolStrip
         '
@@ -344,7 +344,7 @@ Partial Class MovingWindowMeter
     Private WithEvents _ElapsedTimeLabel As Windows.Forms.Label
     Private WithEvents _CountLabel As Windows.Forms.Label
     Private WithEvents _ReadingsCountLabel As Windows.Forms.Label
-    Private WithEvents _WindowLabel As Windows.Forms.Label
+    Private WithEvents _ReadingTimeSpanLabel As Windows.Forms.Label
     Private WithEvents _RightLayout As Windows.Forms.TableLayoutPanel
     Private WithEvents _MaximumLabel As Windows.Forms.Label
     Private WithEvents _MinimumLabel As Windows.Forms.Label

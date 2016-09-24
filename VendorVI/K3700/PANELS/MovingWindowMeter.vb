@@ -145,39 +145,34 @@ Public Class MovingWindowMeter
             Return Me.MovingWindow.Window
         End Get
         Set(value As Double)
-            Me.MovingWindow.Window = value
-            Me.WindowCaptionValue = value
-        End Set
-    End Property
-
-    Private _WindowCaptionValue As Double
-    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property WindowCaptionValue As Double
-        Get
-            Return Me._WindowCaptionValue
-        End Get
-        Set(value As Double)
-            If value <> Me.WindowCaptionValue Then
-                Me._WindowCaptionValue = value
-                Me._WindowLabel.Text = $"{value:0.####%}"
+            If value <> Me.Window Then
+                Me.MovingWindow.Window = value
+                Me._WindowTextBox.Text = $"{(100 * value):0.####}"
             End If
         End Set
     End Property
 
-    Private _MeasurementFailed As Boolean
-
-    ''' <summary> Gets or sets the measurement Failed. </summary>
-    ''' <value> The measurement Failed. </value>
+    Private _ReadingTimespan As TimeSpan
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property MeasurementFailed As Boolean
+    Public Property ReadingTimespan As TimeSpan
         Get
-            Return Me._MeasurementFailed
+            Return Me._ReadingTimespan
         End Get
-        Protected Set(value As Boolean)
-            Me._MeasurementFailed = value
-            Me.SafePostPropertyChanged()
+        Set(value As TimeSpan)
+            If value <> Me.ReadingTimespan Then
+                Me._ReadingTimespan = value
+                Me.UpdateReadingTimespanCaption(value)
+            End If
         End Set
     End Property
+
+    ''' <summary> Updates the reading timespan caption described by value. </summary>
+    ''' <remarks> David, 9/24/2016. </remarks>
+    ''' <param name="value"> The value. </param>
+    Private Sub UpdateReadingTimespanCaption(ByVal value As TimeSpan)
+        Dim caption As String = $"{value.TotalMilliseconds:0}"
+        If Not String.Equals(caption, Me._ReadingTimeSpanLabel.Text) Then Me._ReadingTimeSpanLabel.Text = caption
+    End Sub
 
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Public ReadOnly Property HasMovingAverageTaskResult As Boolean
@@ -186,13 +181,26 @@ Public Class MovingWindowMeter
         End Get
     End Property
 
+    ''' <summary> Gets or sets the measurement Failed. </summary>
+    ''' <value> The measurement Failed. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public ReadOnly Property MeasurementFailed As Boolean
+        Get
+            Return Me.HasMovingAverageTaskResult AndAlso Me.MovingAverageTaskResult.Failed
+        End Get
+    End Property
+
     ''' <summary> Gets the failure details. </summary>
     ''' <value> The failure details. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Public ReadOnly Property FailureDetails As String
         Get
-            If Me.HasMovingAverageTaskResult Then
-                Return Me.MovingAverageTaskResult.Details
+            If Me.MeasurementFailed Then
+                If Me.MovingAverageTaskResult.Exception IsNot Nothing Then
+                    Return Me.MovingAverageTaskResult.Exception.ToString
+                Else
+                    Return Me.MovingAverageTaskResult.Details
+                End If
             Else
                 Return ""
             End If
@@ -208,17 +216,17 @@ Public Class MovingWindowMeter
         End Get
     End Property
 
-    Private _MeasurementAvailable As Boolean
+    Private _MeasurementCompleted As Boolean
 
-    ''' <summary> Gets or sets the measurement available. </summary>
-    ''' <value> The measurement available. </value>
+    ''' <summary> Gets or sets the measurement Completed. </summary>
+    ''' <value> The measurement Completed. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property MeasurementAvailable As Boolean
+    Public Property MeasurementCompleted As Boolean
         Get
-            Return Me._MeasurementAvailable
+            Return Me._MeasurementCompleted
         End Get
         Protected Set(value As Boolean)
-            Me._MeasurementAvailable = value
+            Me._MeasurementCompleted = value
             Me.SafePostPropertyChanged()
         End Set
     End Property
@@ -434,7 +442,8 @@ Public Class MovingWindowMeter
                     Dim value As Double = 0
                     Dim hasReading As Boolean = Core.Engineering.MovingWindow.HasReading(ma.Status)
                     If hasReading Then value = ma.Mean
-                    Me.WindowCaptionValue = ma.Window
+                    Me.Window = ma.Window
+                    Me.ReadingTimespan = ma.ReadingTimespan
                     Me.PercentProgress = percentProgress
                     Me.ElapsedTime = ma.ElapsedTime
                     Me.Count = ma.Count
@@ -447,10 +456,7 @@ Public Class MovingWindowMeter
                     ' this helps flash out exceptions:
                     Application.DoEvents()
                 Catch ex As Exception
-                    result.Cancelled = True
-                    result.Details = "Exception reporting progress"
-                    result.Exception = ex
-                    Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, ex.ToString)
+                    result.RegisterFailure(ex, "exception reporting progress")
                 End Try
             End If
         End If
@@ -463,37 +469,17 @@ Public Class MovingWindowMeter
         Me.ReportProgressChanged(movingWindow, movingWindow.PercentProgress, Me.MovingAverageTaskResult)
     End Sub
 
-    Private Class TaskResult
-        Public Property Cancelled As Boolean
-
-        Public Property Details As String
-
-        Public Property Exception As Exception
-
-    End Class
-
     ''' <summary> Process the completion described by result. </summary>
     ''' <remarks> David, 9/17/2016. </remarks>
     ''' <param name="result"> The result. </param>
     Private Sub ProcessCompletion(ByVal result As TaskResult)
-        Me._MovingAverageTaskResult = result
-        Dim ma As Boolean = False
-        If Me.MovingAverageTaskResult Is Nothing Then
-            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Unexpected null result;. Contact the developer")
-        ElseIf Me.MovingAverageTaskResult.Cancelled Then
-            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Task canceled;. Details: {0}", Me.FailureDetails)
-        ElseIf Me.MovingAverageTaskResult.Exception IsNot Nothing Then
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred doing work;. Details: {0}", Me.FailureException)
+        If result Is Nothing Then
+            Me._MovingAverageTaskResult = New TaskResult
+            Me._MovingAverageTaskResult.RegisterFailure("Unexpected null task result when completing the task;. Contact the developer")
         Else
-            ma = True
+            Me._MovingAverageTaskResult = result
         End If
-        If ma Then
-            ' set the outcome for reading the data. 
-            Me.MeasurementAvailable = True
-        Else
-            ' set the outcome to signal failure
-            Me.MeasurementFailed = True
-        End If
+        Me.MeasurementCompleted = True
     End Sub
 
 #End Region
@@ -508,35 +494,22 @@ Public Class MovingWindowMeter
     ''' <param name="progress"> The progress reporter. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub MeasureMovingAverage(progress As IProgress(Of isr.Core.Engineering.MovingWindow))
+        Me._MovingAverageTaskResult = New TaskResult
         Try
             If Me.CapturedSyncContext Is Nothing Then Throw New InvalidOperationException("Sync context not set")
             SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
-            Dim eventCount As Integer = 10
-            Me._MovingAverageTaskResult = New TaskResult
             Me.MovingWindow.ClearKnownState()
+            Dim measureStopWatch As New Stopwatch
             Do
-                eventCount = 0
-                Do While eventCount > 0
-                    Windows.Forms.Application.DoEvents()
-                    eventCount -= 1
-                Loop
-                Dim value As Double? = Me.Device.MultimeterSubsystem.Measure()
-                If value.HasValue Then
-                    Me.MovingWindow.AddValue(value.Value)
+                ' measure and time
+                If Me.MovingWindow.ReadValue(Function() Me.Device.MultimeterSubsystem.Measure()) Then
                     progress.Report(New isr.Core.Engineering.MovingWindow(Me.MovingWindow))
-                    ' Me.ReportProgressChanged(Me.MovingWindow)
                 Else
-                    Me.MovingAverageTaskResult.Cancelled = True
-                    Me.MovingAverageTaskResult.Details = "device returned a null value"
+                    Me.MovingAverageTaskResult.RegisterFailure("device returned a null value")
                 End If
-            Loop Until Me.IsCancellationRequested OrElse Me.MovingAverageTaskResult.Cancelled OrElse Me.MovingWindow.IsCompleted OrElse Me.MovingWindow.IsTimeout
-            eventCount = 0
-            Do While eventCount > 0
-                Windows.Forms.Application.DoEvents()
-                eventCount -= 1
-            Loop
+            Loop Until Me.IsCancellationRequested OrElse Me.MovingAverageTaskResult.Failed OrElse Me.MovingWindow.IsCompleted OrElse Me.MovingWindow.IsTimeout
         Catch ex As Exception
-            Me.MovingAverageTaskResult.Exception = ex
+            Me.MovingAverageTaskResult.RegisterFailure(ex)
         Finally
             Me.ProcessCompletion(Me.MovingAverageTaskResult)
         End Try
@@ -688,6 +661,59 @@ Public Class MovingWindowMeter
             button.Text = $"{button.Checked.GetHashCode:'Stop';'Stop';'Start'}"
         End Try
     End Sub
+
+#End Region
+
+#Region " TASK RESULT "
+
+    ''' <summary> Encapsulates the result of a task. </summary>
+    ''' <remarks> David, 9/24/2016. </remarks>
+    ''' <license>
+    ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
+    ''' Licensed under The MIT License.</para><para>
+    ''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+    ''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    ''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    ''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+    ''' </license>
+    ''' <history date="9/24/2016" by="David" revision=""> Created. </history>
+    Private Class TaskResult
+
+        ''' <summary> Registers the failure described by exception. </summary>
+        ''' <remarks> David, 9/24/2016. </remarks>
+        ''' <param name="details"> The details. </param>
+        Public Sub RegisterFailure(ByVal details As String)
+            Me._Failed = True
+            Me._Details = details
+        End Sub
+
+        ''' <summary> Registers the failure described by exception. </summary>
+        ''' <remarks> David, 9/24/2016. </remarks>
+        ''' <param name="exception"> The exception. </param>
+        Public Sub RegisterFailure(ByVal exception As Exception)
+            Me.RegisterFailure(exception, "Exception occurred")
+        End Sub
+
+        Public Sub RegisterFailure(ByVal exception As Exception, ByVal details As String)
+            Me._Failed = True
+            Me._Details = details
+            Me._Exception = exception
+        End Sub
+
+        ''' <summary> Gets the failed sentinel. </summary>
+        ''' <value> The failed sentinel. </value>
+        Public ReadOnly Property Failed As Boolean
+
+        ''' <summary> Gets the failure details. </summary>
+        ''' <value> The details. </value>
+        Public ReadOnly Property Details As String
+
+        ''' <summary> Gets the exception. </summary>
+        ''' <value> The exception. </value>
+        Public ReadOnly Property Exception As Exception
+
+    End Class
 
 #End Region
 

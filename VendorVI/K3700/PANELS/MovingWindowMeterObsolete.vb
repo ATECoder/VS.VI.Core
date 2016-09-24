@@ -94,8 +94,8 @@ Partial Public Class MovingWindowMeter
         Dim userState As New UserState
         Dim payload As WorkerPayLoad = TryCast(e.Argument, WorkerPayLoad)
         If payload Is Nothing Then
-            userState.Result.Cancelled = True
-            userState.Result.Details = "Payload Not assigned to worker"
+
+            userState.Result.RegisterFailure("Payload Not assigned to worker")
             e.Result = userState.Result
             e.Cancel = True
             Return
@@ -105,16 +105,13 @@ Partial Public Class MovingWindowMeter
         userState.MovingAverage = Me.MovingWindow
         userState.EstimatedCountout = payload.EstimatedCountout
         Do
-            Dim value As Double? = payload.Device.MultimeterSubsystem.Measure()
-            If value.HasValue Then
-                payload.MovingWindow.AddValue(value.Value)
+            If payload.MovingWindow.ReadValue(Function() payload.Device.MultimeterSubsystem.Measure()) Then
                 w.ReportProgress(userState.PercentProgress, userState)
             Else
-                userState.Result.Cancelled = True
-                userState.Result.Details = "device returned a null value"
+                userState.Result.RegisterFailure("device returned a null value")
             End If
             e.Result = userState.Result
-            e.Cancel = userState.Result.Cancelled
+            e.Cancel = userState.Result.Failed
             If Not e.Cancel Then
                 Dim eventCount As Integer = payload.DoEventCount
                 Do While eventCount > 0
@@ -143,12 +140,11 @@ Partial Public Class MovingWindowMeter
         If e Is Nothing Then Return
         Dim result As TaskResult = TryCast(e.Result, TaskResult)
         If result Is Nothing Then Return
-        If e.Cancelled AndAlso Not result.Cancelled Then
-            result.Cancelled = e.Cancelled
-            result.Details = "Worker canceled"
+        If e.Cancelled AndAlso Not result.Failed Then
+            result.RegisterFailure("Worker canceled")
         End If
         If e.Error IsNot Nothing AndAlso result.Exception Is Nothing Then
-            result.Exception = e.Error
+            result.RegisterFailure(e.Error, "Worker exception")
         End If
         Me.ProcessCompletion(result)
     End Sub
@@ -293,5 +289,24 @@ End Class
             End If
         End If
     End Sub
+#If False Then
+                Dim value As Double? = Me.Device.MultimeterSubsystem.Measure()
+                If value.HasValue Then
+                    Me.MovingWindow.AddValue(value.Value)
+                    progress.Report(New isr.Core.Engineering.MovingWindow(Me.MovingWindow))
+                Else
+                    Me.MovingAverageTaskResult.Cancelled = True
+                    Me.MovingAverageTaskResult.Details = "device returned a null value"
+                End If
+#Else
+                ' measure and time
+                If Me.MovingWindow.ReadValue(Function() Me.Device.MultimeterSubsystem.Measure()) Then
+                    progress.Report(New isr.Core.Engineering.MovingWindow(Me.MovingWindow))
+                Else
+                    Me.MovingAverageTaskResult.Failed = True
+                    Me.MovingAverageTaskResult.Details = "device returned a null value"
+                End If
+#End If
+
 #End If
 #End Region
