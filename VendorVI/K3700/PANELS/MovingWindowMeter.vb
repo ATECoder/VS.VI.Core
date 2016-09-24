@@ -4,7 +4,7 @@ Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Controls.ProgressBarExtensions
 
-''' <summary> A moving average meter. </summary>
+''' <summary> A moving window averaging meter. </summary>
 ''' <remarks> David, 1/30/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
@@ -33,9 +33,6 @@ Public Class MovingWindowMeter
 
         Me._MeasurementFormatString = "G8"
         Me._MovingWindow = New isr.Core.Engineering.MovingWindow
-        Me.worker = New System.ComponentModel.BackgroundWorker()
-        Me.worker.WorkerSupportsCancellation = True
-        Me.worker.WorkerReportsProgress = True
 
     End Sub
 
@@ -57,7 +54,6 @@ Public Class MovingWindowMeter
                         Me._MovingWindow = Nothing
                     End If
                     If Me._task IsNot Nothing Then Me._task.Dispose() : Me._task = Nothing
-                    If Me._worker IsNot Nothing Then Me._worker.Dispose() : Me._worker = Nothing
                     ' release the device.
                     If Me._Device IsNot Nothing Then Me._Device = Nothing
                     If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
@@ -80,6 +76,10 @@ Public Class MovingWindowMeter
 
 #Region " MOVING AVERAGE "
 
+    ''' <summary> Device open changed. </summary>
+    ''' <remarks> David, 9/23/2016. </remarks>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
     Private Sub _Device_OpenChanged(sender As Object, e As EventArgs) Handles _Device.Opened, _Device.Closed
         Me._StartMovingAverageButton.Enabled = Me._Device.IsDeviceOpen
     End Sub
@@ -146,8 +146,66 @@ Public Class MovingWindowMeter
         End Get
         Set(value As Double)
             Me.MovingWindow.Window = value
-            Me._WindowLabel.Text = CStr(100 * value)
+            Me.WindowCaptionValue = value
         End Set
+    End Property
+
+    Private _WindowCaptionValue As Double
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property WindowCaptionValue As Double
+        Get
+            Return Me._WindowCaptionValue
+        End Get
+        Set(value As Double)
+            If value <> Me.WindowCaptionValue Then
+                Me._WindowCaptionValue = value
+                Me._WindowLabel.Text = $"{value:0.####%}"
+            End If
+        End Set
+    End Property
+
+    Private _MeasurementFailed As Boolean
+
+    ''' <summary> Gets or sets the measurement Failed. </summary>
+    ''' <value> The measurement Failed. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property MeasurementFailed As Boolean
+        Get
+            Return Me._MeasurementFailed
+        End Get
+        Protected Set(value As Boolean)
+            Me._MeasurementFailed = value
+            Me.SafePostPropertyChanged()
+        End Set
+    End Property
+
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public ReadOnly Property HasMovingAverageTaskResult As Boolean
+        Get
+            Return Me.MovingAverageTaskResult IsNot Nothing
+        End Get
+    End Property
+
+    ''' <summary> Gets the failure details. </summary>
+    ''' <value> The failure details. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public ReadOnly Property FailureDetails As String
+        Get
+            If Me.HasMovingAverageTaskResult Then
+                Return Me.MovingAverageTaskResult.Details
+            Else
+                Return ""
+            End If
+        End Get
+    End Property
+
+    ''' <summary> Gets the failure exception. </summary>
+    ''' <value> The failure exception. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public ReadOnly Property FailureException As Exception
+        Get
+            Return Me.MovingAverageTaskResult.Exception
+        End Get
     End Property
 
     Private _MeasurementAvailable As Boolean
@@ -161,7 +219,7 @@ Public Class MovingWindowMeter
         End Get
         Protected Set(value As Boolean)
             Me._MeasurementAvailable = value
-            Me.AsyncNotifyPropertyChanged()
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -176,7 +234,7 @@ Public Class MovingWindowMeter
         End Get
         Protected Set(value As Boolean)
             Me._MeasurementStarted = value
-            Me.AsyncNotifyPropertyChanged()
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -191,265 +249,209 @@ Public Class MovingWindowMeter
         End Get
         Protected Set(value As String)
             Me._MeasurementFormatString = value
-            Me.AsyncNotifyPropertyChanged()
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
 #End Region
 
-#Region " BACKGROUND WORKER "
-
-    ''' <summary> Gets the measurement rate. </summary>
-    ''' <value> The measurement rate. </value>
-    Public Property MeasurementRate As Double = 25
-
-    ''' <summary> Worker payload. </summary>
-    Private Class WorkerPayLoad
-        Public Property Device As K3700.Device
-        Public Property MovingWindow As isr.Core.Engineering.MovingWindow
-        Public Property EstimatedCountout As Integer
-        Public Property DoEventCount As Integer = 10
-        Public Sub ClearKnownState()
-            Me.MovingWindow.ClearKnownState()
-        End Sub
-        Public Sub InitializeKnownState(ByVal measurementRate As Double)
-            Me.EstimatedCountout = CInt(measurementRate * Me.MovingWindow.TimeoutInterval.TotalSeconds)
-        End Sub
-    End Class
-
-    ''' <summary> A user state. </summary>
-    Private Class UserState
-        Public Property MovingAverage As isr.Core.Engineering.MovingWindow
-        Public Property EstimatedCountout As Integer
-        Public ReadOnly Property PercentProgress As Integer
-            Get
-                Dim baseCount As Integer = 0
-                If Me.MovingAverage.ReadingsQueue.Count < 2 * Me.MovingAverage.Length Then
-                    baseCount = 2 * Me.MovingAverage.Length
-                ElseIf Me.EstimatedCountout > 0 Then
-                    baseCount = Me.EstimatedCountout
-                End If
-                If baseCount > 0 Then
-                    Return CInt(100 * MovingAverage.ReadingsQueue.Count / baseCount)
-                ElseIf Me.MovingAverage.TimeoutInterval > TimeSpan.Zero Then
-                    Return CInt(100 * MovingAverage.ElapsedMilliseconds / Me.MovingAverage.TimeoutInterval.TotalMilliseconds)
-                Else
-                    Return Me.LogPercentProgress
-                End If
-            End Get
-        End Property
-        Public ReadOnly Property LogPercentProgress As Integer
-            Get
-                If Me.EstimatedCountout > 0 Then
-                    Return CInt(100 * Math.Log(MovingAverage.ReadingsQueue.Count) / Math.Log(Me.EstimatedCountout))
-                ElseIf Me.MovingAverage.TimeoutInterval > TimeSpan.Zero Then
-                    Return CInt(100 * Math.Log(MovingAverage.ElapsedMilliseconds) / Math.Log(Me.MovingAverage.TimeoutInterval.TotalMilliseconds))
-                Else
-                    Return CInt(100 * MovingAverage.ReadingsQueue.Count / Me.MovingAverage.Length)
-                End If
-            End Get
-        End Property
-    End Class
-
-    Private WithEvents worker As System.ComponentModel.BackgroundWorker
-
-    ''' <summary> Worker do work. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Do work event information. </param>
-    Private Sub worker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles worker.DoWork
-
-        Dim w As BackgroundWorker = TryCast(sender, BackgroundWorker)
-        If w Is Nothing OrElse Me.IsDisposed OrElse e Is Nothing OrElse e.Cancel Then Return
-
-        Dim result As New TaskResult
-
-        Dim payload As WorkerPayLoad = TryCast(e.Argument, WorkerPayLoad)
-        If payload Is Nothing Then
-            result.Cancelled = True
-            result.Details = "Payload not assigned to worker"
-            e.Result = result
-            e.Cancel = True
-            Return
-        End If
-
-        payload.MovingWindow.ClearKnownState()
-        Dim userState As New UserState
-        userState.MovingAverage = Me.MovingWindow
-        userState.EstimatedCountout = payload.EstimatedCountout
-        Do
-            Dim value As Double? = payload.Device.MultimeterSubsystem.Measure()
-            If value.HasValue Then
-                payload.MovingWindow.AddValue(value.Value)
-                w.ReportProgress(userState.PercentProgress, userState)
-            Else
-                result.Cancelled = True
-                result.Details = "device returned a null value"
-                e.Result = result
-                e.Cancel = True
-            End If
-            Dim eventCount As Integer = payload.DoEventCount
-            Do While eventCount > 0
-                Windows.Forms.Application.DoEvents()
-                eventCount -= 1
-            Loop
-        Loop Until w.CancellationPending OrElse e.Cancel OrElse payload.MovingWindow.IsCompleted OrElse payload.MovingWindow.IsTimeout
-
-        Do Until e.Cancel OrElse payload.MovingWindow.IsCompleted OrElse payload.MovingWindow.IsTimeout
-            Dim eventCount As Integer = payload.DoEventCount
-            Do While eventCount > 0
-                Windows.Forms.Application.DoEvents()
-                eventCount -= 1
-            Loop
-        Loop
-
-    End Sub
-
-    ''' <summary> Handles run worker completed event. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
-    ''' <param name="e">      Event information to send to registered event handlers. </param>
-    Private Sub OnWorkerRunWorkerCompleted(ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
-        If e Is Nothing Then Return
-        Dim result As TaskResult = TryCast(e.Result, TaskResult)
-        If result Is Nothing Then Return
-        If e.Cancelled AndAlso Not result.Cancelled Then
-            result.Cancelled = e.Cancelled
-            result.Details = "Worker canceled"
-        End If
-        If e.Error IsNot Nothing AndAlso result.Exception Is Nothing Then
-            result.Exception = e.Error
-        End If
-        Me.ProcessCompletion(result)
-    End Sub
-
-    ''' <summary> Worker run worker completed. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Run worker completed event information. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub worker_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles worker.RunWorkerCompleted
-        Me.OnWorkerRunWorkerCompleted(e)
-    End Sub
-
-    ''' <summary> Worker progress changed. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Progress changed event information. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub worker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles worker.ProgressChanged
-        Dim us As UserState = TryCast(e.UserState, UserState)
-        Dim ma As isr.Core.Engineering.MovingWindow = TryCast(us.MovingAverage, isr.Core.Engineering.MovingWindow)
-        Me.ReportProgressChanged(ma, us.PercentProgress)
-    End Sub
-
-    ''' <summary> Stops measure asynchronous if. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
-    ''' <param name="timeout"> The timeout. </param>
-    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Function StopMeasureAsyncIf(ByVal timeout As TimeSpan) As Boolean
-        Dim stopped As Boolean = worker Is Nothing OrElse Not worker.IsBusy
-        If Not stopped Then
-            ' wait for previous operation to complete.
-            Dim endTime As DateTime = DateTime.Now.Add(timeout)
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for worker to complete previous task")
-            Do Until Me.IsDisposed OrElse Not worker.IsBusy OrElse DateTime.Now > endTime
-                Windows.Forms.Application.DoEvents()
-            Loop
-            If worker.IsBusy Then
-                worker.CancelAsync()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for worker to cancel previous task")
-                endTime = DateTime.Now.Add(timeout)
-                Do Until Me.IsDisposed OrElse Not worker.IsBusy OrElse DateTime.Now > endTime
-                    Windows.Forms.Application.DoEvents()
-                Loop
-            End If
-            stopped = Not worker.IsBusy
-            If Not stopped Then
-                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed when waiting for worker to complete previous task")
-                Return False
-            End If
-        End If
-        Return stopped
-    End Function
-
-    ''' <summary> Starts measure asynchronous. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
-    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Function StartMeasureAsync() As Boolean
-
-        Dim stopped As Boolean = StopMeasureAsyncIf(TimeSpan.FromSeconds(1))
-        If Not stopped Then Return False
-
-        Dim payload As New WorkerPayLoad
-        payload.Device = Me.Device
-        payload.MovingWindow = Me.MovingWindow
-        payload.ClearKnownState()
-        payload.InitializeKnownState(Me.MeasurementRate)
-
-        If Not (Me.IsDisposed OrElse Me.worker.IsBusy) Then
-            Me.worker.RunWorkerAsync(payload)
-            Me.MeasurementStarted = True
-        Else
-            Me.MeasurementStarted = False
-        End If
-        Return Me.MeasurementStarted
-    End Function
-
-    ''' <summary> Clears the send sentinels. </summary>
-    Public Sub StartMeasure()
-        If Me.StartMeasureAsync() Then
-            ' wait for worker to get busy.
-            Do While Not (Me.IsDisposed OrElse worker.IsBusy)
-                Windows.Forms.Application.DoEvents()
-            Loop
-            ' wait till worker is done
-            Do Until Me.IsDisposed OrElse Not worker.IsBusy
-                Windows.Forms.Application.DoEvents()
-            Loop
-        End If
-    End Sub
-
-#End Region
-
 #Region " PROGRESS REPORTING "
+
+    Private _Count As Integer
+
+    ''' <summary> Gets or sets the number of.  </summary>
+    ''' <value> The count. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property Count As Integer
+        Get
+            Return Me._Count
+        End Get
+        Protected Set(value As Integer)
+            If Me.Count <> value Then
+                Me._Count = value
+                Me._CountLabel.Text = value.ToString
+                ' Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ReadingsCount As Integer
+
+    ''' <summary> Gets or sets the number of readings. </summary>
+    ''' <value> The number of readings. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property ReadingsCount As Integer
+        Get
+            Return Me._ReadingsCount
+        End Get
+        Protected Set(value As Integer)
+            If Me.ReadingsCount <> value Then
+                Me._ReadingsCount = value
+                Me._ReadingsCountLabel.Text = value.ToString
+                ' Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _PercentProgress As Integer
+
+    ''' <summary> Gets or sets the percent progress. </summary>
+    ''' <value> The percent progress. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property PercentProgress As Integer
+        Get
+            Return Me._PercentProgress
+        End Get
+        Protected Set(value As Integer)
+            If Me.PercentProgress <> value Then
+                Me._PercentProgress = value
+                Me._AverageProgressBar.ValueSetter(value)
+                ' Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ElapsedTime As TimeSpan
+
+    ''' <summary> Gets or sets the elapsed time. </summary>
+    ''' <value> The elapsed time. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property ElapsedTime As TimeSpan
+        Get
+            Return Me._ElapsedTime
+        End Get
+        Protected Set(value As TimeSpan)
+            If Me.ElapsedTime <> value Then
+                Me._ElapsedTime = value
+                Me._ElapsedTimeLabel.Text = value.ToString("mm\:ss\.ff", Globalization.CultureInfo.CurrentCulture)
+                ' Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _MaximumReading As Double
+
+    ''' <summary> Gets or sets the maximum reading. </summary>
+    ''' <value> The maximum reading. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property MaximumReading As Double
+        Get
+            Return Me._MaximumReading
+        End Get
+        Protected Set(value As Double)
+            If Me.MaximumReading <> value Then
+                Me._MaximumReading = value
+                Me._MaximumLabel.Text = value.ToString(Me.MeasurementFormatString)
+                ' Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _MinimumReading As Double
+
+    ''' <summary> Gets or sets the minimum reading. </summary>
+    ''' <value> The minimum reading. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property MinimumReading As Double
+        Get
+            Return Me._MinimumReading
+        End Get
+        Protected Set(value As Double)
+            If Me.MinimumReading <> value Then
+                Me._MinimumReading = value
+                Me._MinimumLabel.Text = value.ToString(Me.MeasurementFormatString)
+                ' Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _Reading As Double
+
+    ''' <summary> Gets or sets the reading. </summary>
+    ''' <value> The reading. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property Reading As Double
+        Get
+            Return Me._Reading
+        End Get
+        Protected Set(value As Double)
+            If value <> Me.Reading Then
+                Me._Reading = value
+                Me._AverageLabel.Text = value.ToString(Me.MeasurementFormatString)
+                ' Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _LastReading As Double?
+
+    ''' <summary> Gets or sets the last reading. </summary>
+    ''' <value> The last reading. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property LastReading As Double?
+        Get
+            Return Me._LastReading
+        End Get
+        Protected Set(value As Double?)
+            If Not Nullable.Equals(value, Me.LastReading) Then
+                Me._LastReading = value
+                If value.HasValue Then Me._ReadingLabel.Text = value.Value.ToString(Me.MeasurementFormatString)
+                ' Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ReadingStatus As Core.Engineering.MovingWindowStatus
+
+    ''' <summary> Gets or sets the reading status. </summary>
+    ''' <value> The reading status. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property ReadingStatus As Core.Engineering.MovingWindowStatus
+        Get
+            Return Me._ReadingStatus
+        End Get
+        Protected Set(value As Core.Engineering.MovingWindowStatus)
+            If Me.ReadingStatus <> value Then
+                Me._ReadingStatus = value
+                Me._StatusLabel.Text = Core.Engineering.MovingWindow.StatusAnnunciationCaption(value)
+                ' Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> Reports progress changed. </summary>
     ''' <remarks> David, 9/17/2016. </remarks>
     ''' <param name="movingWindow">    The moving window. </param>
     ''' <param name="percentProgress"> The percent progress. </param>
-    Private Sub ReportProgressChanged(ByVal movingWindow As isr.Core.Engineering.MovingWindow, ByVal percentProgress As Integer)
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub ReportProgressChanged(ByVal movingWindow As isr.Core.Engineering.MovingWindow, ByVal percentProgress As Integer, ByVal result As TaskResult)
         If Me.InvokeRequired Then
-            Me.Invoke(New Action(Of isr.Core.Engineering.MovingWindow, Integer)(AddressOf ReportProgressChanged), New Object() {movingWindow, percentProgress})
+            Me.Invoke(New Action(Of isr.Core.Engineering.MovingWindow, Integer, TaskResult)(AddressOf ReportProgressChanged), New Object() {movingWindow, percentProgress, result})
         Else
             Dim ma As isr.Core.Engineering.MovingWindow = movingWindow
-            If ma IsNot Nothing Then
-                Me._WindowLabel.Text = ma.Window.ToString
-                Me._AverageProgressBar.ValueSetter(percentProgress)
-                Me._ElapsedTimeLabel.Text = ma.ElapsedTime.ToString("mm\:ss\.ff", Globalization.CultureInfo.CurrentCulture)
-                Me._CountLabel.Text = ma.Count.ToString
-                Me._ReadingsCountLabel.Text = ma.ReadingsQueue.Count.ToString
-                Me._MaximumLabel.Text = ma.Maximum.ToString(Me.MeasurementFormatString)
-                Me._MinimumLabel.Text = ma.Minimum.ToString(Me.MeasurementFormatString)
-                With ma
-                    If .Status = Core.Engineering.MovingWindowStatus.AboveWindow Then
-                        Me._StatusLabel.Text = "high"
-                        Me._AverageLabel.Text = .Mean.ToString(Me.MeasurementFormatString)
-                    ElseIf .Status = Core.Engineering.MovingWindowStatus.BelowWindow Then
-                        Me._StatusLabel.Text = "low"
-                        Me._AverageLabel.Text = .Mean.ToString(Me.MeasurementFormatString)
-                    ElseIf .Status = Core.Engineering.MovingWindowStatus.Filling Then
-                        Me._StatusLabel.Text = "filling"
-                    ElseIf .Status = Core.Engineering.MovingWindowStatus.None Then
-                        Me._StatusLabel.Text = "n/a"
-                    Else
-                        Me._StatusLabel.Text = "within"
-                        Me._AverageLabel.Text = .Mean.ToString(Me.MeasurementFormatString)
-                    End If
-                    If ma.LastReading.HasValue Then
-                        Me._ReadingLabel.Text = ma.LastReading.Value.ToString(Me.MeasurementFormatString)
-                    End If
-                End With
-                System.Windows.Forms.Application.DoEvents()
+            If ma IsNot Nothing AndAlso ma.ReadingsCount > 0 Then
+                Try
+                    Dim value As Double = 0
+                    Dim hasReading As Boolean = Core.Engineering.MovingWindow.HasReading(ma.Status)
+                    If hasReading Then value = ma.Mean
+                    Me.WindowCaptionValue = ma.Window
+                    Me.PercentProgress = percentProgress
+                    Me.ElapsedTime = ma.ElapsedTime
+                    Me.Count = ma.Count
+                    Me.ReadingsCount = ma.ReadingsCount
+                    Me.MaximumReading = ma.Maximum
+                    Me.MinimumReading = ma.Minimum
+                    Me.LastReading = ma.LastReading
+                    Me.ReadingStatus = ma.Status
+                    If hasReading Then Me.Reading = value
+                    ' this helps flash out exceptions:
+                    Application.DoEvents()
+                Catch ex As Exception
+                    result.Cancelled = True
+                    result.Details = "Exception reporting progress"
+                    result.Exception = ex
+                    Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, ex.ToString)
+                End Try
             End If
         End If
     End Sub
@@ -458,7 +460,7 @@ Public Class MovingWindowMeter
     ''' <remarks> David, 9/17/2016. </remarks>
     ''' <param name="movingWindow"> The moving window. </param>
     Private Sub ReportProgressChanged(ByVal movingWindow As isr.Core.Engineering.MovingWindow)
-        Me.ReportProgressChanged(movingWindow, movingWindow.PercentProgress)
+        Me.ReportProgressChanged(movingWindow, movingWindow.PercentProgress, Me.MovingAverageTaskResult)
     End Sub
 
     Private Class TaskResult
@@ -474,18 +476,24 @@ Public Class MovingWindowMeter
     ''' <remarks> David, 9/17/2016. </remarks>
     ''' <param name="result"> The result. </param>
     Private Sub ProcessCompletion(ByVal result As TaskResult)
+        Me._MovingAverageTaskResult = result
         Dim ma As Boolean = False
-        If result Is Nothing Then
+        If Me.MovingAverageTaskResult Is Nothing Then
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Unexpected null result;. Contact the developer")
-        ElseIf result?.Cancelled Then
-            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Task canceled;. Details: {0}", result.Details)
-        ElseIf result?.Exception IsNot Nothing Then
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred doing work;. Details: {0}", result?.Exception)
+        ElseIf Me.MovingAverageTaskResult.Cancelled Then
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Task canceled;. Details: {0}", Me.FailureDetails)
+        ElseIf Me.MovingAverageTaskResult.Exception IsNot Nothing Then
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred doing work;. Details: {0}", Me.FailureException)
         Else
             ma = True
         End If
-        ' set the outcome for reading the data. 
-        Me.MeasurementAvailable = ma
+        If ma Then
+            ' set the outcome for reading the data. 
+            Me.MeasurementAvailable = True
+        Else
+            ' set the outcome to signal failure
+            Me.MeasurementFailed = True
+        End If
     End Sub
 
 #End Region
@@ -496,28 +504,33 @@ Public Class MovingWindowMeter
 
     ''' <summary> Measure moving average. </summary>
     ''' <remarks> David, 9/17/2016. </remarks>
+    ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
+    ''' <param name="progress"> The progress reporter. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub MeasureMovingAverage()
+    Private Sub MeasureMovingAverage(progress As IProgress(Of isr.Core.Engineering.MovingWindow))
         Try
+            If Me.CapturedSyncContext Is Nothing Then Throw New InvalidOperationException("Sync context not set")
             SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
             Dim eventCount As Integer = 10
             Me._MovingAverageTaskResult = New TaskResult
             Me.MovingWindow.ClearKnownState()
             Do
-                Dim value As Double? = Me.Device.MultimeterSubsystem.Measure()
-                If value.HasValue Then
-                    Me.MovingWindow.AddValue(value.Value)
-                    Me.ReportProgressChanged(Me.MovingWindow)
-                Else
-                    Me.MovingAverageTaskResult.Cancelled = True
-                    Me.MovingAverageTaskResult.Details = "device returned a null value"
-                End If
+                eventCount = 0
                 Do While eventCount > 0
                     Windows.Forms.Application.DoEvents()
                     eventCount -= 1
                 Loop
+                Dim value As Double? = Me.Device.MultimeterSubsystem.Measure()
+                If value.HasValue Then
+                    Me.MovingWindow.AddValue(value.Value)
+                    progress.Report(New isr.Core.Engineering.MovingWindow(Me.MovingWindow))
+                    ' Me.ReportProgressChanged(Me.MovingWindow)
+                Else
+                    Me.MovingAverageTaskResult.Cancelled = True
+                    Me.MovingAverageTaskResult.Details = "device returned a null value"
+                End If
             Loop Until Me.IsCancellationRequested OrElse Me.MovingAverageTaskResult.Cancelled OrElse Me.MovingWindow.IsCompleted OrElse Me.MovingWindow.IsTimeout
-            eventCount = 10
+            eventCount = 0
             Do While eventCount > 0
                 Windows.Forms.Application.DoEvents()
                 eventCount -= 1
@@ -603,19 +616,20 @@ Public Class MovingWindowMeter
     ''' <summary> The synchronization context that is captured from the UI thread. </summary>
     Public ReadOnly Property CapturedSyncContext As SynchronizationContext
 
-
     ''' <summary> Activates the machine asynchronous task. </summary>
     ''' <remarks> David, 9/1/2016. </remarks>
     ''' <returns> A Task. </returns>
-    Public Function ActivateTask(ByVal runSynchronously As Boolean, ByVal syncContext As SynchronizationContext) As Boolean
+    Public Function StartMeasureTask(ByVal runSynchronously As Boolean, ByVal syncContext As SynchronizationContext) As Boolean
         If syncContext Is Nothing Then Throw New ArgumentNullException(NameOf(syncContext),
              "This call must pass a valid synchronization context from the UI thread in order to capture the synchronization context for the machine thread")
-        Me._CapturedSyncContext = SynchronizationContext.Current
+        Me._CapturedSyncContext = syncContext
+        SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
         Dim stopped As Boolean = Me.StopAsyncTaskIf(TimeSpan.FromSeconds(1))
         If stopped Then
             Me.CancellationTokenSource = New CancellationTokenSource
             Me.CancellationToken = CancellationTokenSource.Token
-            Me._task = New Task(AddressOf Me.MeasureMovingAverage)
+            Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
+            Me._task = New Task(Sub() Me.MeasureMovingAverage(progress))
             If runSynchronously Then
                 Me.MeasurementStarted = True
                 Me.Task.RunSynchronously(TaskScheduler.FromCurrentSynchronizationContext)
@@ -629,8 +643,14 @@ Public Class MovingWindowMeter
         Return Me.MeasurementStarted
     End Function
 
+    Public Function StartMeasureAsync(ByVal syncContext As SynchronizationContext) As Boolean
+        Return Me.StartMeasureTask(False, syncContext)
+        ' Return Me.StartMeasureWork(syncContext)
+    End Function
+
     Public Async Function AsyncTask() As Task
-        Await Task.Run(AddressOf Me.MeasureMovingAverage)
+        Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
+        Await Task.Run(Sub() Me.MeasureMovingAverage(progress))
     End Function
 
 #End Region
@@ -652,14 +672,14 @@ Public Class MovingWindowMeter
                 Me.MovingWindow.Window = 0.01 * CDbl(Me._WindowTextBox.Text)
                 Me.MovingWindow.UpdateRule = Core.Engineering.MovingWindowUpdateRule.StopOnWithinWindow
                 Me.MovingWindow.TimeoutInterval = TimeSpan.FromSeconds(CDbl(Me._TimeoutTextBox.Text))
-                Dim started As Boolean = Me.StartMeasureAsync()
+                Dim started As Boolean = Me.StartMeasureAsync(SynchronizationContext.Current)
                 If Not started Then
-                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed starting the moving average worker")
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed starting the moving window task")
                 End If
             Else
-                Dim stopped As Boolean = StopMeasureAsyncIf(TimeSpan.FromSeconds(1))
+                Dim stopped As Boolean = StopAsyncTaskIf(TimeSpan.FromSeconds(1))
                 If Not stopped Then
-                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed stopping the moving average worker")
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed stopping the moving window task")
                 End If
             End If
         Catch ex As Exception
@@ -673,47 +693,5 @@ Public Class MovingWindowMeter
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    ''' <summary> Executes the worker progress changed action. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
-    Private Sub OnWorkerProgressChanged(ByVal userState1 As UserState)
-        If Me.InvokeRequired Then
-            Me.Invoke(New Action(Of UserState)(AddressOf OnWorkerProgressChanged), New Object() {UserState})
-        Else
-            Dim ma As isr.Core.Engineering.MovingWindow = Me.MovingAverage
-            ma = TryCast(userState1.MovingAverage, isr.Core.Engineering.MovingWindow)
-            If ma IsNot Nothing Then
-                Me._WindowLabel.Text = Me.MovingAverage.Window.ToString
-                Me._AverageProgressBar.Value = Math.Min(Me._AverageProgressBar.Maximum, UserState.PercentProgress)
-                Me._ElapsedTimeLabel.Text = ma.ElapsedTime.ToString("mm\:ss\.ff", Globalization.CultureInfo.CurrentCulture)
-                Me._CountLabel.Text = ma.Count.ToString
-                Me._ReadingsCountLabel.Text = ma.ReadingsQueue.Count.ToString
-                Me._MaximumLabel.Text = ma.Maximum.ToString(Me.MeasurementFormatString)
-                Me._MinimumLabel.Text = ma.Minimum.ToString(Me.MeasurementFormatString)
-                With ma
-                    If .Status = Core.Engineering.MovingWindowStatus.AboveWindow Then
-                        Me._StatusLabel.Text = "high"
-                        Me._AverageLabel.Text = .Mean.ToString(Me.MeasurementFormatString)
-                    ElseIf .Status = Core.Engineering.MovingWindowStatus.BelowWindow Then
-                        Me._StatusLabel.Text = "low"
-                        Me._AverageLabel.Text = .Mean.ToString(Me.MeasurementFormatString)
-                    ElseIf .Status = Core.Engineering.MovingWindowStatus.Filling Then
-                        Me._StatusLabel.Text = "filling"
-                    ElseIf .Status = Core.Engineering.MovingWindowStatus.None Then
-                        Me._StatusLabel.Text = "n/a"
-                    Else
-                        Me._StatusLabel.Text = "within"
-                        Me._AverageLabel.Text = .Mean.ToString(Me.MeasurementFormatString)
-                    End If
-                    If ma.LastReading.HasValue Then
-                        Me._ReadingLabel.Text = ma.LastReading.Value.ToString(Me.MeasurementFormatString)
-                    End If
-                End With
-                System.Windows.Forms.Application.DoEvents()
-            End If
-        End If
-    End Sub
-#End If
-#End Region
+
 

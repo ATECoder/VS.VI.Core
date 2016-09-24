@@ -93,7 +93,9 @@ Public MustInherit Class ChannelSubsystemBase
     ''' <returns> A String. </returns>
     Public Function WriteClosedChannels(ByVal value As String, ByVal timeout As TimeSpan) As String
         Me.Write(Me.ClosedChannelsCommandFormat, value)
-        If timeout > TimeSpan.Zero Then Me.StatusSubsystem.AwaitOperationCompleted(timeout)
+        If timeout > TimeSpan.Zero Then
+            Me.StatusSubsystem.AwaitOperationCompleted(timeout)
+        End If
         Me.ClosedChannels = value
         Return Me.ClosedChannels
     End Function

@@ -105,6 +105,9 @@
     <Compile Include="PANELS\MovingWindowMeter.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="PANELS\MovingWindowMeterObsolete.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SUBSYSTEMS\SlotsSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SlotSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\MultimeterSubsystem.vb" />
