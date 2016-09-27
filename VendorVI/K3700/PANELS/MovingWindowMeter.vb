@@ -34,6 +34,8 @@ Public Class MovingWindowMeter
         Me._MeasurementFormatString = "G8"
         Me._MovingWindow = New isr.Core.Engineering.MovingWindow
 
+        Me._ExpectedStopTimeout = TimeSpan.FromMilliseconds(100)
+
     End Sub
 
     ''' <summary>
@@ -544,6 +546,26 @@ Public Class MovingWindowMeter
             Return Me.CancellationToken.IsCancellationRequested
         End Get
     End Property
+
+    ''' <summary> Gets the sentinel indicating if the meter is running. </summary>
+    ''' <value> The sentinel indicating if the meter is running. </value>
+    Public ReadOnly Property IsRunning As Boolean
+        Get
+            Return Task IsNot Nothing AndAlso Task.Status = TaskStatus.Running
+        End Get
+    End Property
+
+    ''' <summary> Gets the expected stop timeout. </summary>
+    ''' <value> The expected stop timeout. </value>
+    Public Property ExpectedStopTimeout As TimeSpan
+
+    ''' <summary> Stops measure asynchronous if. </summary>
+    ''' <remarks> David, 9/26/2016. </remarks>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c>
+    ''' </returns>
+    Public Function StopAsyncTaskIf() As Boolean
+        Return Me.StopAsyncTaskIf(ExpectedStopTimeout)
+    End Function
 
     ''' <summary> Stops measure asynchronous if. </summary>
     ''' <remarks> David, 1/30/2016. </remarks>
