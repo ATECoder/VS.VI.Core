@@ -133,6 +133,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PANELS\MovingWindowMeter.resx">
       <DependentUpon>MovingWindowMeter.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
