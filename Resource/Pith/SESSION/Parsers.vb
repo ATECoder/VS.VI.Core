@@ -15,12 +15,11 @@ Partial Public Class SessionBase
     ''' <param name="dummy"> A dummy that distinguishes this method. </param>
     ''' <param name="value"> The value. </param>
     ''' <returns> <c>True</c> if the value equals '1' or <c>False</c> if '0'; otherwise an exception is thrown. </returns>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId:="dummy")>
-    Public Shared Function Parse(ByVal dummy As Boolean, ByVal value As String) As Boolean
-        If TryParse(value, dummy) Then
+    Public Function Parse(ByVal dummy As Boolean, ByVal value As String) As Boolean
+        If SessionBase.TryParse(value, dummy) Then
             Return dummy
         Else
-            Throw New FormatException($"'{value}' is not a valid Boolean value")
+            Throw New FormatException($"{Me.ResourceName} '{value}' is invalid Boolean format")
         End If
     End Function
 
@@ -74,15 +73,18 @@ Partial Public Class SessionBase
     ''' <param name="dummy"> A dummy that distinguishes this method. </param>
     ''' <param name="value"> The value. </param>
     ''' <returns> Value if the value is a valid number; otherwise, Default. </returns>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId:="dummy")>
-    Public Shared Function Parse(ByVal dummy As Decimal, ByVal value As String) As Decimal
+    Public Function Parse(ByVal dummy As Decimal, ByVal value As String) As Decimal
         If value Is Nothing Then
             Throw New ArgumentNullException(NameOf(value), "Query not executed")
         ElseIf String.IsNullOrWhiteSpace(value) Then
             Throw New ArgumentException("Query returned an empty string", "value")
         Else
-            Return Decimal.Parse(value, Globalization.NumberStyles.Number Or Globalization.NumberStyles.AllowExponent,
-                                 Globalization.CultureInfo.InvariantCulture)
+            If Decimal.TryParse(value, Globalization.NumberStyles.Number Or Globalization.NumberStyles.AllowExponent,
+                             Globalization.CultureInfo.InvariantCulture, dummy) Then
+                Return dummy
+            Else
+                Throw New FormatException($"{Me.ResourceName} '{value}' is invalid Decimal format")
+            End If
         End If
     End Function
 
@@ -117,14 +119,18 @@ Partial Public Class SessionBase
     ''' <param name="value"> The value. </param>
     ''' <returns> Value if the value is a valid number; otherwise, Default. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId:="dummy")>
-    Public Shared Function Parse(ByVal dummy As Double, ByVal value As String) As Double
+    Public Function Parse(ByVal dummy As Double, ByVal value As String) As Double
         If value Is Nothing Then
             Throw New ArgumentNullException(NameOf(value), "Query not executed")
         ElseIf String.IsNullOrWhiteSpace(value) Then
             Throw New ArgumentException("Query returned an empty string", "value")
         Else
-            Return Double.Parse(value, Globalization.NumberStyles.Number Or Globalization.NumberStyles.AllowExponent,
-                                 Globalization.CultureInfo.InvariantCulture)
+            If Double.TryParse(value, Globalization.NumberStyles.Number Or Globalization.NumberStyles.AllowExponent,
+                               Globalization.CultureInfo.InvariantCulture, dummy) Then
+                Return dummy
+            Else
+                Throw New FormatException($"{Me.ResourceName} '{value}' is invalid Double format")
+            End If
         End If
     End Function
 
@@ -157,15 +163,18 @@ Partial Public Class SessionBase
     ''' <param name="dummy"> A dummy that distinguishes this method. </param>
     ''' <param name="value"> The value. </param>
     ''' <returns> Value if the value is a valid number; otherwise, Default. </returns>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId:="dummy")>
-    Public Shared Function Parse(ByVal dummy As Integer, ByVal value As String) As Integer
+    Public Function Parse(ByVal dummy As Integer, ByVal value As String) As Integer
         If value Is Nothing Then
             Throw New ArgumentNullException(NameOf(value), "Query not executed")
         ElseIf String.IsNullOrWhiteSpace(value) Then
             Throw New ArgumentException("Query returned an empty string", "value")
         Else
-            Return Integer.Parse(value, Globalization.NumberStyles.Number Or Globalization.NumberStyles.AllowExponent,
-                                 Globalization.CultureInfo.InvariantCulture)
+            If Integer.TryParse(value, Globalization.NumberStyles.Number Or Globalization.NumberStyles.AllowExponent,
+                                Globalization.CultureInfo.InvariantCulture, dummy) Then
+                Return dummy
+            Else
+                Throw New FormatException($"{Me.ResourceName} '{value}' is invalid Integer format")
+            End If
         End If
     End Function
 
@@ -216,7 +225,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Overloads Function Query(ByVal dummy As Boolean, ByVal format As String, ByVal ParamArray args() As Object) As Boolean?
         Me.MakeEmulatedReplyIfEmpty(dummy)
-        Return SessionBase.Parse(dummy, Me.QueryTrimEnd(format, args))
+        Return Me.Parse(dummy, Me.QueryTrimEnd(format, args))
     End Function
 
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
@@ -242,7 +251,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Overloads Function Query(ByVal dummy As Boolean, ByVal dataToWrite As String) As Boolean
         Me.MakeEmulatedReplyIfEmpty(dummy)
-        Return SessionBase.Parse(dummy, Me.QueryTrimEnd(dataToWrite))
+        Return Me.Parse(dummy, Me.QueryTrimEnd(dataToWrite))
     End Function
 
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
@@ -272,7 +281,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Overloads Function Query(ByVal dummy As Decimal, ByVal format As String, ByVal ParamArray args() As Object) As Decimal
         Me.MakeEmulatedReplyIfEmpty(dummy)
-        Return SessionBase.Parse(dummy, Me.QueryTrimEnd(format, args))
+        Return Me.Parse(dummy, Me.QueryTrimEnd(format, args))
     End Function
 
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
@@ -298,7 +307,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Overloads Function Query(ByVal dummy As Decimal, ByVal dataToWrite As String) As Decimal
         Me.MakeEmulatedReplyIfEmpty(dummy)
-        Return SessionBase.Parse(dummy, Me.QueryTrimEnd(dataToWrite))
+        Return Me.Parse(dummy, Me.QueryTrimEnd(dataToWrite))
     End Function
 
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
@@ -328,7 +337,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Overloads Function Query(ByVal dummy As Double, ByVal format As String, ByVal ParamArray args() As Object) As Double
         Me.MakeEmulatedReplyIfEmpty(dummy)
-        Return SessionBase.Parse(dummy, Me.QueryTrimEnd(format, args))
+        Return Me.Parse(dummy, Me.QueryTrimEnd(format, args))
     End Function
 
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
@@ -354,7 +363,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Overloads Function Query(ByVal dummy As Double, ByVal dataToWrite As String) As Double
         Me.MakeEmulatedReplyIfEmpty(dummy)
-        Return SessionBase.Parse(dummy, Me.QueryTrimEnd(dataToWrite))
+        Return Me.Parse(dummy, Me.QueryTrimEnd(dataToWrite))
     End Function
 
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
@@ -413,7 +422,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Overloads Function Query(ByVal dummy As Integer, ByVal format As String, ByVal ParamArray args() As Object) As Integer
         Me.MakeEmulatedReplyIfEmpty(dummy)
-        Return SessionBase.Parse(dummy, Me.QueryTrimEnd(format, args))
+        Return Me.Parse(dummy, Me.QueryTrimEnd(format, args))
     End Function
 
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
@@ -439,7 +448,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Overloads Function Query(ByVal dummy As Integer, ByVal dataToWrite As String) As Integer
         Me.MakeEmulatedReplyIfEmpty(dummy)
-        Return SessionBase.Parse(dummy, Me.QueryTrimEnd(dataToWrite))
+        Return Me.Parse(dummy, Me.QueryTrimEnd(dataToWrite))
     End Function
 
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous

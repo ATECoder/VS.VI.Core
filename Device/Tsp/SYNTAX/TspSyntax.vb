@@ -83,12 +83,13 @@
 
         ''' <summary> Gets or set the operation completed query command. </summary>
         ''' <remarks> Same as '*OPC?'. </remarks>
-        Public Const OperationCompletedQueryCommand As String = "_G.waitcomplete() print(""1"")"
+        Public Const OperationCompletedQueryCommand As String = "_G.waitcomplete() print('1') "
 
         ''' <summary> The print command format. </summary>
         Public Const PrintCommandFormat As String = "_G.print({0})"
 
         ''' <summary> The print command to send to the instrument. The
+
         ''' format conforms to the 'C' query command and returns the Boolean outcome. </summary>
         ''' <remarks> The format string follows the same rules as the printf family of standard C
         ''' functions. The only differences are that the options or modifiers *, l, L, n, p, and h are

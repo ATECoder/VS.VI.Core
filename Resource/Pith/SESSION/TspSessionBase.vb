@@ -40,7 +40,7 @@ Partial Public Class SessionBase
     ''' <param name="args">    The format arguments. </param>
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Boolean, ByVal format As String, ByVal ParamArray args() As Object) As Boolean
-        Return SessionBase.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(1, format, args))
+        Return Me.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(1, format, args))
     End Function
 
     ''' <summary> Performs a synchronous write of a LUA print of the data to print, followed by a synchronous
@@ -64,7 +64,7 @@ Partial Public Class SessionBase
     ''' <param name="dataToPrint"> The data to print. </param>
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Boolean, ByVal dataToPrint As String) As Boolean
-        Return SessionBase.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(1, dataToPrint))
+        Return Me.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(1, dataToPrint))
     End Function
 
     ''' <summary> Performs a synchronous write of a LUA print of the data to print, followed by a synchronous
@@ -92,7 +92,7 @@ Partial Public Class SessionBase
     ''' <param name="args">    The format arguments. </param>
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Double, ByVal format As String, ByVal ParamArray args() As Object) As Double
-        Return SessionBase.Parse(dummy, Me.QueryPrintTrimEnd(format, args))
+        Return Me.Parse(dummy, Me.QueryPrintTrimEnd(format, args))
     End Function
 
     ''' <summary> Performs a synchronous write of a LUA print of the data to print, followed by a synchronous
@@ -116,7 +116,7 @@ Partial Public Class SessionBase
     ''' <param name="dataToPrint"> The data to print. </param>
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Double, ByVal dataToPrint As String) As Double
-        Return SessionBase.Parse(dummy, Me.QueryPrintTrimEnd(dataToPrint))
+        Return Me.Parse(dummy, Me.QueryPrintTrimEnd(dataToPrint))
     End Function
 
     ''' <summary> Performs a synchronous write of a LUA print of the data to print, followed by a synchronous
@@ -144,7 +144,7 @@ Partial Public Class SessionBase
     ''' <param name="args">    The format arguments. </param>
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Integer, ByVal format As String, ByVal ParamArray args() As Object) As Integer
-        Return SessionBase.Parse(dummy, Me.QueryPrintTrimEnd(format, args))
+        Return Me.Parse(dummy, Me.QueryPrintTrimEnd(format, args))
     End Function
 
     ''' <summary> Performs a synchronous write of a LUA print of the data to print, followed by a synchronous
@@ -168,7 +168,7 @@ Partial Public Class SessionBase
     ''' <param name="dataToPrint"> The data to print. </param>
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Integer, ByVal dataToPrint As String) As Integer
-        Return SessionBase.Parse(dummy, Me.QueryPrintTrimEnd(dataToPrint))
+        Return Me.Parse(dummy, Me.QueryPrintTrimEnd(dataToPrint))
     End Function
 
     ''' <summary> Performs a synchronous write of a LUA print of the data to print, followed by a synchronous
@@ -292,7 +292,7 @@ Partial Public Class SessionBase
     ''' <param name="dataToPrint">  The data to print. </param>
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Decimal, ByVal numberFormat As Decimal, ByVal dataToPrint As String) As Decimal
-        Return SessionBase.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, dataToPrint))
+        Return Me.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, dataToPrint))
     End Function
 
     ''' <summary> Performs a synchronous write of a Lua print string format command, followed by a synchronous read. 
@@ -320,7 +320,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Decimal, ByVal numberFormat As Decimal,
                                        ByVal format As String, ByVal ParamArray args() As Object) As Decimal
-        Return SessionBase.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, format, args))
+        Return Me.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, format, args))
     End Function
 
     ''' <summary> Performs a synchronous write of a Lua print string format command, followed by a synchronous read. 
@@ -348,7 +348,7 @@ Partial Public Class SessionBase
     ''' <param name="dataToPrint">  The data to print. </param>
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Double, ByVal numberFormat As Decimal, ByVal dataToPrint As String) As Double
-        Return SessionBase.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, dataToPrint))
+        Return Me.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, dataToPrint))
     End Function
 
     ''' <summary> Performs a synchronous write of a Lua print string format command, followed by a synchronous read. 
@@ -377,7 +377,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Double, ByVal numberFormat As Decimal,
                                ByVal format As String, ByVal ParamArray args() As Object) As Double
-        Return SessionBase.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, format, args))
+        Return Me.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, format, args))
     End Function
 
     ''' <summary> Performs a synchronous write of a Lua print string format command, followed by a synchronous read. 
@@ -406,7 +406,7 @@ Partial Public Class SessionBase
     ''' <param name="dataToPrint"> The data to print. </param>
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Integer, ByVal numberFormat As Integer, ByVal dataToPrint As String) As Integer
-        Return SessionBase.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, dataToPrint))
+        Return Me.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, dataToPrint))
     End Function
 
     ''' <summary> Performs a synchronous write of a Lua print string format command, followed by a synchronous read. 
@@ -436,7 +436,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Integer, ByVal numberFormat As Integer,
                                ByVal format As String, ByVal ParamArray args() As Object) As Integer
-        Return SessionBase.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, format, args))
+        Return Me.Parse(dummy, Me.QueryPrintStringFormatTrimEnd(numberFormat, format, args))
     End Function
 
     ''' <summary> Performs a synchronous write of a Lua print string format command, followed by a synchronous read. 
@@ -635,7 +635,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Boolean, ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object) As Boolean?
         Me.ExecuteQuery(nodeNumber, format, args)
-        Return SessionBase.Parse(dummy, Me.ReadLineTrimEnd())
+        Return Me.Parse(dummy, Me.ReadLineTrimEnd())
     End Function
 
     ''' <summary> Executes a command on the remote node and prints the result, followed by a synchronous
@@ -664,7 +664,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Boolean, ByVal nodeNumber As Integer, ByVal dataToWrite As String) As Boolean
         Me.ExecuteQuery(nodeNumber, dataToWrite)
-        Return SessionBase.Parse(dummy, Me.ReadLineTrimEnd())
+        Return Me.Parse(dummy, Me.ReadLineTrimEnd())
     End Function
 
     ''' <summary> Executes a command on the remote node and prints the result, followed by a synchronous
@@ -697,7 +697,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Double, ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object) As Double?
         Me.ExecuteQuery(nodeNumber, format, args)
-        Return SessionBase.Parse(dummy, Me.ReadLineTrimEnd())
+        Return Me.Parse(dummy, Me.ReadLineTrimEnd())
     End Function
 
     ''' <summary> Executes a command on the remote node and retrieves a Double. </summary>
@@ -725,7 +725,7 @@ Partial Public Class SessionBase
     ''' <returns> The parsed value or default. </returns>
     Public Function QueryPrint(ByVal dummy As Double, ByVal nodeNumber As Integer, ByVal dataToWrite As String) As Double
         Me.ExecuteQuery(nodeNumber, dataToWrite)
-        Return SessionBase.Parse(dummy, Me.ReadLineTrimEnd())
+        Return Me.Parse(dummy, Me.ReadLineTrimEnd())
     End Function
 
     ''' <summary> Executes a command on the remote node and retrieves a Double. </summary>
