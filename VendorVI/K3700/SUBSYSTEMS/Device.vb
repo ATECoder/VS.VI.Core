@@ -253,6 +253,40 @@ Public Class Device
 
 #End Region
 
+#Region " DISPLAY "
+
+    ''' <summary> Gets or sets the Display Subsystem. </summary>
+    ''' <value> Display Subsystem. </value>
+    Public Property DisplaySubsystem As DisplaySubsystem
+
+    ''' <summary> Display subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Overloads Sub OnPropertyChanged(ByVal sender As DisplaySubsystem, ByVal propertyName As String)
+        Try
+            If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
+                Select Case propertyName
+                    Case NameOf(sender.ClosedDisplays)
+
+                End Select
+            End If
+        Catch ex As Exception
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
+                         propertyName, ex.Message)
+        End Try
+    End Sub
+
+    ''' <summary> Display subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub DisplaySubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Me.OnPropertyChanged(TryCast(sender, DisplaySubsystem), e?.PropertyName)
+    End Sub
+
+#End Region
+
 #Region " MULTIMETER "
 
     ''' <summary> Gets or sets the Multimeter Subsystem. </summary>

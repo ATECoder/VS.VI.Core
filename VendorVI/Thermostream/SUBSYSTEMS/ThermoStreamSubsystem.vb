@@ -141,7 +141,7 @@ Public Class ThermostreamSubsystem
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="countdown"> The countdown. </param>
     ''' <param name="e">         Event information to send to registered event handlers. </param>
-    Public Overloads Sub StartCycling(ByVal countdown As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Overloads Sub StartCycling(ByVal countdown As Integer, ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
 
         If Not e.Cancel Then
@@ -164,14 +164,14 @@ Public Class ThermostreamSubsystem
                 End If
             Loop Until countdown = 0 OrElse (cycleNumber > 0 AndAlso Not cycleCompleted AndAlso setpointNumber = 0)
             If Me.IsCyclingStopped Then
-                e.CancelDetails("Thermo-Stream cycle stopped on error. Testing will stop.")
+                e.RegisterCancellation("Thermo-Stream cycle stopped on error. Testing will stop.")
             ElseIf e.Cancel Then
             ElseIf Not cycleCompleted Then
-                e.CancelDetails("Thermo-Stream failed starting - cycle is tagged as completed after sending start. Testing will stop.")
+                e.RegisterCancellation("Thermo-Stream failed starting - cycle is tagged as completed after sending start. Testing will stop.")
             ElseIf cycleNumber <= 0 Then
-                e.CancelDetails("Thermo-Stream failed starting - cycle number = {0}. Testing will stop.", cycleNumber)
+                e.RegisterCancellation("Thermo-Stream failed starting - cycle number = {0}. Testing will stop.", cycleNumber)
             ElseIf setpointNumber > 0 Then
-                e.CancelDetails("Thermo-Stream failed starting - set point = {0}. Testing will stop.", setpointNumber)
+                e.RegisterCancellation("Thermo-Stream failed starting - set point = {0}. Testing will stop.", setpointNumber)
             Else
                 ' got a start
             End If
@@ -183,7 +183,7 @@ Public Class ThermostreamSubsystem
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="countdown"> The countdown. </param>
     ''' <param name="e">         Event information to send to registered event handlers. </param>
-    Public Overloads Sub StopCycling(ByVal countdown As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Overloads Sub StopCycling(ByVal countdown As Integer, ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
 
         If Not e.Cancel Then
@@ -204,9 +204,9 @@ Public Class ThermostreamSubsystem
             Loop Until countdown = 0 OrElse cycleNumber = 0 AndAlso headUp
             If e.Cancel Then
             ElseIf Not headUp Then
-                e.CancelDetails("Thermo-Stream failed stopping--head is not up. Testing will stop.")
+                e.RegisterCancellation("Thermo-Stream failed stopping--head is not up. Testing will stop.")
             ElseIf cycleNumber > 0 Then
-                e.CancelDetails("Thermo-Stream failed starting--cycle number = {0}. Testing will stop.", cycleNumber)
+                e.RegisterCancellation("Thermo-Stream failed starting--cycle number = {0}. Testing will stop.", cycleNumber)
             Else
                 ' got a stop
             End If
@@ -435,7 +435,7 @@ Public Class ThermostreamSubsystem
 
     ''' <summary> Query if this object is cycle ended. </summary>
     ''' <returns> <c>true</c> if cycle ended; otherwise <c>false</c> </returns>
-    Public Function QueryCycleCompleted(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
+    Public Function QueryCycleCompleted(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.QueryTemperatureEventStatus()
@@ -455,7 +455,7 @@ Public Class ThermostreamSubsystem
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="countdown"> The countdown. </param>
     ''' <param name="e">         Cancel event information. </param>
-    Public Sub MoveNextSetpoint(ByVal countdown As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Sub MoveNextSetpoint(ByVal countdown As Integer, ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         ' otherwise, save the current setpoint number
         Me.QuerySetpointNumber()
@@ -475,17 +475,17 @@ Public Class ThermostreamSubsystem
             Loop Until countdown = 0 OrElse Me._cycleCompletedCache OrElse e.Cancel OrElse
                     Me.SetpointNumber.GetValueOrDefault(setpointNumber) <> setpointNumber
             If Me.IsCyclingStopped Then
-                e.CancelDetails("Thermo-Stream cycle stopped on error. Testing will stop.")
+                e.RegisterCancellation("Thermo-Stream cycle stopped on error. Testing will stop.")
             ElseIf e.Cancel Then
             ElseIf Me._cycleCompletedCache Then
                 ' done with this cycle, no need to check the new setpoint number
             ElseIf Me.SetpointNumber.GetValueOrDefault(setpointNumber) = setpointNumber Then
-                e.CancelDetails("Thermo-Stream failed advancing the setpoint number from {0}. Testing will stop.", setpointNumber)
+                e.RegisterCancellation("Thermo-Stream failed advancing the setpoint number from {0}. Testing will stop.", setpointNumber)
             Else
                 ' got a new setpoint number
             End If
         Else
-            e.CancelDetails("Thermo-Stream failed reading the setpoint number--value is empty. Testing will stop.")
+            e.RegisterCancellation("Thermo-Stream failed reading the setpoint number--value is empty. Testing will stop.")
             Application.DoEvents()
         End If
     End Sub
@@ -496,20 +496,20 @@ Public Class ThermostreamSubsystem
     ''' <param name="countdown"> The countdown. </param>
     ''' <param name="e">         Cancel event information. </param>
     Public Sub ConditionalCycleMoveNext(ByVal countdown As Integer, ByVal additionalInfo As String,
-                                        ByVal e As isr.Core.Pith.CancelEventArgs)
+                                        ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If String.IsNullOrEmpty(additionalInfo) Then additionalInfo = "waiting for At-Temp"
         Me.QueryTemperatureEventStatus()
         If Me.IsCycleCompleted Then
-            e.CancelDetails("Thermo-Stream cycle completed while {0}", additionalInfo)
+            e.RegisterCancellation("Thermo-Stream cycle completed while {0}", additionalInfo)
         ElseIf ThermostreamSubsystem.UseCyclesCompleted AndAlso Me.IsCyclesCompleted Then
-            e.CancelDetails("Thermo-Stream completed all cycles while  {0}", additionalInfo)
+            e.RegisterCancellation("Thermo-Stream completed all cycles while  {0}", additionalInfo)
         ElseIf Me.IsCyclingStopped Then
-            e.CancelDetails("Thermo-Stream cycle was stopped while  {0}", additionalInfo)
+            e.RegisterCancellation("Thermo-Stream cycle was stopped while  {0}", additionalInfo)
         Else
             Me.ValidateHandlerHeadDown(e)
             If e.Cancel Then
-                e.CancelDetails("Unable to proceed {0};. Details: {1}", additionalInfo, e.Details)
+                e.RegisterCancellation("Unable to proceed {0};. Details: {1}", additionalInfo, e.Details)
             Else
                 Me.MoveNextSetpoint(countdown, e)
             End If
@@ -677,16 +677,16 @@ Public Class ThermostreamSubsystem
     ''' <summary> Select active thermal setpoint. </summary>
     ''' <param name="thermalProfileSetpointNumber"> The thermal profile setpoint number. </param>
     ''' <param name="e">                            Cancel event information. </param>
-    Public Sub SelectActiveThermalSetpoint(ByVal thermalProfileSetpointNumber As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Sub SelectActiveThermalSetpoint(ByVal thermalProfileSetpointNumber As Integer, ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Me.ThermalProfile Is Nothing Then
-            e.CancelDetails("Thermo-Stream thermal profile not set")
+            e.RegisterCancellation("Thermo-Stream thermal profile not set")
         ElseIf Me.ThermalProfile.Count = 0 Then
-            e.CancelDetails("Thermo-Stream thermal profile is empty")
+            e.RegisterCancellation("Thermo-Stream thermal profile is empty")
         ElseIf thermalProfileSetpointNumber < 1 Then
-            e.CancelDetails("Thermo-Stream thermal profile setpoint number {0} must be positive", thermalProfileSetpointNumber)
+            e.RegisterCancellation("Thermo-Stream thermal profile setpoint number {0} must be positive", thermalProfileSetpointNumber)
         ElseIf thermalProfileSetpointNumber > Me.ThermalProfile.Count Then
-            e.CancelDetails("Thermo-Stream thermal profile setpoint number {0} is out of range [1,{0}]", thermalProfileSetpointNumber, Me.ThermalProfile.Count)
+            e.RegisterCancellation("Thermo-Stream thermal profile setpoint number {0} is out of range [1,{0}]", thermalProfileSetpointNumber, Me.ThermalProfile.Count)
         Else
             Me._ActiveThermalSetpoint = Me.ThermalProfile.Item(thermalProfileSetpointNumber)
         End If
@@ -696,10 +696,10 @@ Public Class ThermostreamSubsystem
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="setpoint"> The setpoint. </param>
     ''' <param name="e">        Cancel event information. </param>
-    Public Sub ValidateThermalSetpoint(ByVal setpoint As ThermalSetpoint, ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Sub ValidateThermalSetpoint(ByVal setpoint As ThermalSetpoint, ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If setpoint Is Nothing Then Throw New ArgumentNullException(NameOf(setpoint))
-        e.CancelDetails("")
+        e.RegisterCancellation("")
         Me.QuerySetpointNumber()
         If Me.SetpointNumber.HasValue Then
             Me.QuerySetpoint()
@@ -716,39 +716,39 @@ Public Class ThermostreamSubsystem
                                         If Math.Abs(Me.SoakTime.Value - setpoint.SoakSeconds) < 1.1F Then
                                             If Math.Abs(Me.SetpointWindow.Value - setpoint.Window) < 0.1F Then
                                             Else
-                                                e.CancelDetails("Thermo-Stream failed setting the setpoint window {0} to {1}.",
+                                                e.RegisterCancellation("Thermo-Stream failed setting the setpoint window {0} to {1}.",
                                                                     Me.SetpointWindow.Value, setpoint.Window)
                                             End If
                                         Else
-                                            e.CancelDetails("Thermo-Stream failed setting the soak time {0} to {1}.",
+                                            e.RegisterCancellation("Thermo-Stream failed setting the soak time {0} to {1}.",
                                                                 Me.SoakTime.Value, setpoint.SoakSeconds)
                                         End If
                                     Else
-                                        e.CancelDetails("Thermo-Stream failed setting the ramp rate {0} to {1}.",
+                                        e.RegisterCancellation("Thermo-Stream failed setting the ramp rate {0} to {1}.",
                                                             Me.RampRate.Value, 60 * setpoint.RampRate)
                                     End If
                                 Else
-                                    e.CancelDetails("Thermo-Stream failed setting the setpoint {0} to {1}.",
+                                    e.RegisterCancellation("Thermo-Stream failed setting the setpoint {0} to {1}.",
                                                         Me.Setpoint.Value, setpoint.Temperature)
                                 End If
                             Else
-                                e.CancelDetails("Thermo-Stream failed setting the setpoint number {0} to {1}.",
+                                e.RegisterCancellation("Thermo-Stream failed setting the setpoint number {0} to {1}.",
                                                     Me.SetpointNumber.Value, Me.ParseSetpointNumber(setpoint.Temperature))
                             End If
                         Else
-                            e.CancelDetails("Thermo-Stream failed reading the setpoint window--value is empty.")
+                            e.RegisterCancellation("Thermo-Stream failed reading the setpoint window--value is empty.")
                         End If
                     Else
-                        e.CancelDetails("Thermo-Stream failed reading the soak time--value is empty.")
+                        e.RegisterCancellation("Thermo-Stream failed reading the soak time--value is empty.")
                     End If
                 Else
-                    e.CancelDetails("Thermo-Stream failed reading the ramp rate--value is empty.")
+                    e.RegisterCancellation("Thermo-Stream failed reading the ramp rate--value is empty.")
                 End If
             Else
-                e.CancelDetails("Thermo-Stream failed reading the setpoint--value is empty.")
+                e.RegisterCancellation("Thermo-Stream failed reading the setpoint--value is empty.")
             End If
         Else
-            e.CancelDetails("Thermo-Stream failed reading the setpoint number--value is empty.")
+            e.RegisterCancellation("Thermo-Stream failed reading the setpoint number--value is empty.")
         End If
         Application.DoEvents()
     End Sub
@@ -759,7 +759,7 @@ Public Class ThermostreamSubsystem
     ''' <param name="countdown">                    The countdown. </param>
     ''' <param name="e">                            Cancel event information. </param>
     Public Sub ConditionalApplySetpoint(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
-                                        ByVal additionalInfo As String, ByVal e As isr.Core.Pith.CancelEventArgs)
+                                        ByVal additionalInfo As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Not e.Cancel Then
             If String.IsNullOrWhiteSpace(additionalInfo) Then additionalInfo = $"applying setpoint {thermalProfileSetpointNumber};"
@@ -773,7 +773,7 @@ Public Class ThermostreamSubsystem
                 Loop Until Not e.Cancel OrElse countdown = 0
             End If
             If e.Cancel Then
-                e.CancelDetails("Thermo-Stream failed {0};. Details: {1}", additionalInfo, e.Details)
+                e.RegisterCancellation("Thermo-Stream failed {0};. Details: {1}", additionalInfo, e.Details)
             End If
         End If
     End Sub
@@ -784,12 +784,12 @@ Public Class ThermostreamSubsystem
     ''' <param name="countdown">                    The countdown. </param>
     ''' <param name="e">                            Cancel event information. </param>
     Public Sub ConditionalMoveFirst1(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
-                                    ByVal additionalInfo As String, ByVal e As isr.Core.Pith.CancelEventArgs)
+                                    ByVal additionalInfo As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If String.IsNullOrWhiteSpace(additionalInfo) Then additionalInfo = "selecting first profile @ head up; clear to start"
         Me.ValidateHandlerHeadUp(e)
         If e.Cancel Then
-            e.CancelDetails("Thermo-Stream is unable to start while {0};. Details: {1}", additionalInfo, e.Details)
+            e.RegisterCancellation("Thermo-Stream is unable to start while {0};. Details: {1}", additionalInfo, e.Details)
         Else
             Me.ConditionalApplySetpoint(thermalProfileSetpointNumber, countdown, additionalInfo, e)
         End If
@@ -802,12 +802,12 @@ Public Class ThermostreamSubsystem
     ''' <param name="e">                            Cancel event information. </param>
     Public Sub ConditionalMoveNext1(ByVal thermalProfileSetpointNumber As Integer, ByVal countdown As Integer,
                                    ByVal additionalInfo As String,
-                                   ByVal e As isr.Core.Pith.CancelEventArgs)
+                                   ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If String.IsNullOrWhiteSpace(additionalInfo) Then additionalInfo = "moving to next profile"
         Me.ValidateHandlerHeadDown(e)
         If e.Cancel Then
-            e.CancelDetails("Thermo-Stream is unable to start while {0};. Details: {1}", additionalInfo, e.Details)
+            e.RegisterCancellation("Thermo-Stream is unable to start while {0};. Details: {1}", additionalInfo, e.Details)
         Else
             Me.ConditionalApplySetpoint(thermalProfileSetpointNumber, countdown, additionalInfo, e)
         End If
@@ -831,15 +831,15 @@ Public Class ThermostreamSubsystem
     ''' <param name="setpointNumber"> The setpoint number. </param>
     ''' <param name="e">              Cancel event information. </param>
     ''' <returns> <c>true</c> if profile completed; otherwise <c>false</c> </returns>
-    Public Function IsProfileCompleted(ByVal setpointNumber As Integer, ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
+    Public Function IsProfileCompleted(ByVal setpointNumber As Integer, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         If Me.ThermalProfile Is Nothing Then
-            e.CancelDetails("Thermo-Stream thermal profile not set")
+            e.RegisterCancellation("Thermo-Stream thermal profile not set")
         ElseIf Me.ThermalProfile.Count = 0 Then
-            e.CancelDetails("Thermo-Stream thermal profile is empty")
+            e.RegisterCancellation("Thermo-Stream thermal profile is empty")
         ElseIf setpointNumber < 1 Then
-            e.CancelDetails("Thermo-Stream thermal profile setpoint number {0} must be positive", setpointNumber)
+            e.RegisterCancellation("Thermo-Stream thermal profile setpoint number {0} must be positive", setpointNumber)
         ElseIf setpointNumber > Me.ThermalProfile.Count Then
             affirmative = True
         End If
@@ -1011,20 +1011,20 @@ Public Class ThermostreamSubsystem
     ''' <summary> Query if cycles stopped or terminated; Otherwise, queries if reached setpoint. </summary>
     ''' <remarks> This is the same as indicating that the start of test signal was received. </remarks>
     ''' <returns> <c>true</c> if at temperature; otherwise <c>false</c> </returns>
-    Public Function QueryCyclingAtTemperature(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
+    Public Function QueryCyclingAtTemperature(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.QueryTemperatureEventStatus()
         If Me.IsCycleCompleted Then
-            e.CancelDetails("Thermo-Stream cycle completed while waiting for At-Temp")
+            e.RegisterCancellation("Thermo-Stream cycle completed while waiting for At-Temp")
         ElseIf ThermostreamSubsystem.UseCyclesCompleted AndAlso Me.IsCyclesCompleted Then
-            e.CancelDetails("Thermo-Stream completed all cycles while waiting for At-Temp")
+            e.RegisterCancellation("Thermo-Stream completed all cycles while waiting for At-Temp")
         ElseIf Me.IsCyclingStopped Then
-            e.CancelDetails("Thermo-Stream cycle was stopped while waiting for At-Temp")
+            e.RegisterCancellation("Thermo-Stream cycle was stopped while waiting for At-Temp")
         Else
             Me.ValidateHandlerHeadDown(e)
             If e.Cancel Then
-                e.CancelDetails("Thermo-Stream is unable to wait for At-Temp;. Details: {0}", e.Details)
+                e.RegisterCancellation("Thermo-Stream is unable to wait for At-Temp;. Details: {0}", e.Details)
             Else
                 ' problem is: at temp may falsely show at temp.
                 affirmative = Me.IsAtTemperature AndAlso Not Me.IsNotAtTemperature
@@ -1036,12 +1036,12 @@ Public Class ThermostreamSubsystem
     ''' <summary> Query if cycles stopped or terminated; Otherwise, queries if reached setpoint. </summary>
     ''' <remarks> This is the same as indicating that the start of test signal was received. </remarks>
     ''' <returns> <c>true</c> if at temperature; otherwise <c>false</c> </returns>
-    Public Function QueryAtTemperature(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
+    Public Function QueryAtTemperature(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.ValidateHandlerHeadDown(e)
         If e.Cancel Then
-            e.CancelDetails("Thermo-Stream is unable to wait for At-Temp;. Details: {0}", e.Details)
+            e.RegisterCancellation("Thermo-Stream is unable to wait for At-Temp;. Details: {0}", e.Details)
         Else
             Me.QueryTemperatureEventStatus()
             ' problem is: at temp may falsely show at temp.
@@ -1052,16 +1052,16 @@ Public Class ThermostreamSubsystem
 
     ''' <summary> Queries head down. </summary>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Overloads Function QueryCyclingHeadDown(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
+    Public Overloads Function QueryCyclingHeadDown(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.QueryTemperatureEventStatus()
         If Me.IsCycleCompleted Then
-            e.CancelDetails("Thermo-Stream cycle completed while waiting for head down")
+            e.RegisterCancellation("Thermo-Stream cycle completed while waiting for head down")
         ElseIf ThermostreamSubsystem.UseCyclesCompleted AndAlso Me.IsCyclesCompleted Then
-            e.CancelDetails("Thermo-Stream completed all cycles while waiting for head down")
+            e.RegisterCancellation("Thermo-Stream completed all cycles while waiting for head down")
         ElseIf Me.IsCyclingStopped Then
-            e.CancelDetails("Thermo-Stream cycle was stopped while waiting for head down")
+            e.RegisterCancellation("Thermo-Stream cycle was stopped while waiting for head down")
         Else
             affirmative = Me.QueryHeadDown(e)
         End If
@@ -1070,12 +1070,12 @@ Public Class ThermostreamSubsystem
 
     ''' <summary> Queries head down. </summary>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Overloads Function QueryHeadDown(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
+    Public Overloads Function QueryHeadDown(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.QueryAuxiliaryEventStatus()
         If Not Me.IsReady Then
-            e.CancelDetails("Thermo-Stream is no longer ready while waiting for head down;. Ready={0}.and.{1}",
+            e.RegisterCancellation("Thermo-Stream is no longer ready while waiting for head down;. Ready={0}.and.{1}",
                                 CInt(AuxiliaryStatuses.ReadyStartup), CInt(Me.AuxiliaryStatusInfo.AuxiliaryStatus))
         Else
             affirmative = Not Me.IsHeadUp
@@ -1085,12 +1085,12 @@ Public Class ThermostreamSubsystem
 
     ''' <summary> Queries head down. </summary>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Overloads Function QueryHeadUp(ByVal e As isr.Core.Pith.CancelEventArgs) As Boolean
+    Public Overloads Function QueryHeadUp(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim affirmative As Boolean = False
         Me.QueryAuxiliaryEventStatus()
         If Not Me.IsReady Then
-            e.CancelDetails("Thermo-Stream is no longer ready while waiting for head up;. Ready={0}.and.{1}",
+            e.RegisterCancellation("Thermo-Stream is no longer ready while waiting for head up;. Ready={0}.and.{1}",
                                 CInt(AuxiliaryStatuses.ReadyStartup), CInt(Me.AuxiliaryStatusInfo.AuxiliaryStatus))
         Else
             affirmative = Me.IsHeadUp
@@ -1101,16 +1101,16 @@ Public Class ThermostreamSubsystem
     ''' <summary> Check if the handler is ready and cycle not completed and head is down. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Public Sub ValidateCyclingHandlerReady(ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Sub ValidateCyclingHandlerReady(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         ' check if handler is ready and head is up
         Me.ValidateHandlerHeadUp(e)
         If Not e.Cancel Then
             Me.QueryTemperatureEventStatus()
             If Not Me.IsCycleCompleted Then
-                e.CancelDetails("Thermo-Stream seems busy--cycle not completed--stop and try again")
+                e.RegisterCancellation("Thermo-Stream seems busy--cycle not completed--stop and try again")
             ElseIf ThermostreamSubsystem.UseCyclesCompleted AndAlso Not Me.IsCyclesCompleted Then
-                e.CancelDetails("Thermo-Stream seems busy--cycles not all completed--stop and try again")
+                e.RegisterCancellation("Thermo-Stream seems busy--cycles not all completed--stop and try again")
             End If
         End If
     End Sub
@@ -1118,16 +1118,16 @@ Public Class ThermostreamSubsystem
     ''' <summary> Check if the handler is ready and cycle not completed and head is down. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Public Sub ValidateHandlerHeadUp(ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Sub ValidateHandlerHeadUp(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         ' check if handler is ready
         Me.QueryAuxiliaryEventStatus()
         If Not Me.IsReady Then
-            e.CancelDetails("Thermo-Stream is not ready--wait for startup operation to complete and try again;. Ready={0}.and.{1}",
+            e.RegisterCancellation("Thermo-Stream is not ready--wait for startup operation to complete and try again;. Ready={0}.and.{1}",
                                 CInt(AuxiliaryStatuses.ReadyStartup), CInt(Me.AuxiliaryStatusInfo.AuxiliaryStatus))
             ' check if head is up.
         ElseIf Not Me.IsHeadUp Then
-            e.CancelDetails("Thermo-Stream head is down;. Up={0}.and.{1}",
+            e.RegisterCancellation("Thermo-Stream head is down;. Up={0}.and.{1}",
                                 CInt(AuxiliaryStatuses.HeadUpDown), CInt(Me.AuxiliaryStatusInfo.AuxiliaryStatus))
         End If
     End Sub
@@ -1135,15 +1135,15 @@ Public Class ThermostreamSubsystem
     ''' <summary> Check if the handler is ready and cycle not completed and head is down. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Public Sub ValidateHandlerHeadDown(ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Sub ValidateHandlerHeadDown(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         ' check if handler is ready
         Me.QueryAuxiliaryEventStatus()
         If Not Me.IsReady Then
-            e.CancelDetails("Thermo-Stream is not ready--wait for startup operation to complete and try again;. Ready={0}.and.{1}",
+            e.RegisterCancellation("Thermo-Stream is not ready--wait for startup operation to complete and try again;. Ready={0}.and.{1}",
                                 CInt(AuxiliaryStatuses.ReadyStartup), CInt(Me.AuxiliaryStatusInfo.AuxiliaryStatus))
         ElseIf Me.IsHeadUp Then
-            e.CancelDetails("Thermo-Stream head is up;. Up={0}.and.{1}",
+            e.RegisterCancellation("Thermo-Stream head is up;. Up={0}.and.{1}",
                                 CInt(AuxiliaryStatuses.HeadUpDown), CInt(Me.AuxiliaryStatusInfo.AuxiliaryStatus))
         End If
     End Sub
@@ -1152,7 +1152,7 @@ Public Class ThermostreamSubsystem
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="repeatCount"> Number of repeats. </param>
     ''' <param name="e">           Cancel event information. </param>
-    Public Sub ConditionalResetOperatorMode(ByVal repeatCount As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Sub ConditionalResetOperatorMode(ByVal repeatCount As Integer, ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Me.QuerySystemScreen()
         If Not Me.OperatorScreen.GetValueOrDefault(False) Then
@@ -1163,11 +1163,11 @@ Public Class ThermostreamSubsystem
     ''' <summary> Check if the handler is ready and head is up and switch to operator screen mode then wait tile mode established. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Public Sub ResetOperatorMode(ByVal repeatCount As Integer, ByVal e As isr.Core.Pith.CancelEventArgs)
+    Public Sub ResetOperatorMode(ByVal repeatCount As Integer, ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Me.ValidateHandlerHeadUp(e)
         If e.Cancel Then
-            e.CancelDetails("Unable to reset operator mode;. Details: {0}", e.Details)
+            e.RegisterCancellation("Unable to reset operator mode;. Details: {0}", e.Details)
         Else
             Me.ResetOperatorScreen()
             Diagnostics.Stopwatch.StartNew.Wait(Me.CommandRefractoryTimeSpan)
@@ -1181,7 +1181,7 @@ Public Class ThermostreamSubsystem
                 End If
             Loop Until opMode OrElse repeatCount = 0
             If Not opMode Then
-                e.CancelDetails("Thermo-Stream seems failed switching to operator mode--stop and try again")
+                e.RegisterCancellation("Thermo-Stream seems failed switching to operator mode--stop and try again")
             End If
         End If
     End Sub

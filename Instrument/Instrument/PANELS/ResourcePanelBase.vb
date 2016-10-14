@@ -518,7 +518,8 @@ Public Class ResourcePanelBase
         Try
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opening {0};. ", resourceName)
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
-            If Me.Device.TryOpenSession(resourceName, resourceTitle) Then
+            Me.Device.OpenSession(resourceName, resourceTitle)
+            If Me.Device.IsDeviceOpen Then
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opened {0};. ", resourceName)
             Else
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Open {0} Failed;. ", resourceName)

@@ -505,6 +505,7 @@ Public MustInherit Class DeviceBase
     ''' <param name="resourceName"> Name of the resource. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overridable Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
+        Dim success As Boolean = False
         Try
             If Me.Enabled Then Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Opening session to {resourceName};. ")
             Me.Session.ResourceTitle = resourceTitle
@@ -512,63 +513,61 @@ Public MustInherit Class DeviceBase
             If Me.Session.IsSessionOpen Then
                 Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Session open to {resourceName};. ")
             ElseIf Me.Session.Enabled Then
-                ' if session did not open and the session is enabled, then we have an error, which could be stressed.
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Unable to open session to {resourceName};. ")
+                Throw New OperationFailedException($"Unable to open session to {resourceName};. ")
             ElseIf Not Me.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Unable to emulate {resourceName};. ")
+                Throw New OperationFailedException($"Unable to emulate {resourceName};. ")
             End If
             If Me.Session.IsSessionOpen OrElse (Me.IsDeviceOpen AndAlso Not Me.Session.Enabled) Then
+
                 Dim e As New ComponentModel.CancelEventArgs
                 Me.OnOpening(e)
+
                 If e.Cancel Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opening {resourceTitle}:{resourceName} canceled;. ")
-                    Me.TryCloseSession()
-                Else
-                    Me.OnOpened()
-                    Try
-                        If Me.IsDeviceOpen Then
-                            Me.OnInitializing(e)
-                        Else
-                            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opening {resourceTitle}:{resourceName} failed;. ")
-                        End If
-                    Catch ex As Exception
-                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} initializing failed;. Details: {0}", ex)
-                    End Try
-                    Try
-                        If Not e.Cancel AndAlso Me.IsDeviceOpen Then Me.OnInitialized()
-                    Catch ex As Exception
-                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} initialize actions failed;. Details: {0}", ex)
-                    End Try
+                    Throw New OperationCanceledException($"Opening {resourceTitle}:{resourceName} canceled;. ")
                 End If
+
+                Me.OnOpened()
+
+                If Me.IsDeviceOpen Then
+
+                    Me.OnInitializing(e)
+                    If e.Cancel Then Throw New OperationCanceledException($"{resourceTitle}:{resourceName} initialization canceled;. ")
+
+                    Me.OnInitialized()
+
+                Else
+                    Throw New OperationFailedException($"Opening {resourceTitle}:{resourceName} device failed;. ")
+                End If
+
             Else
-                ' if failed to open, close
-                Me.CloseSession()
+                Throw New OperationFailedException($"Opening {resourceTitle}:{resourceName} session failed;. ")
             End If
-        Catch ex As OperationFailedException
+            success = True
+        Catch
             Throw
-        Catch ex As NativeException
-            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} failed connecting. Disconnecting.")
-            Me.TryCloseSession()
-            Throw New OperationFailedException($"VISA exception occurred opening session to '{resourceName}'.", ex)
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} failed connecting. Disconnecting.")
-            Me.TryCloseSession()
-            Throw New OperationFailedException($"Exception occurred opening session to '{resourceName}'.", ex)
+        Finally
+            If Not success Then
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} failed connecting. Disconnecting.")
+                Me.TryCloseSession()
+            End If
         End Try
     End Sub
 
     ''' <summary> Try open session. </summary>
-    ''' <param name="resourceName"> Name of the resource. </param>
+    ''' <remarks> David, 10/13/2016. </remarks>
+    ''' <param name="resourceName">  Name of the resource. </param>
+    ''' <param name="resourceTitle"> The resource title. </param>
+    ''' <param name="e">             Cancel details event information. </param>
     ''' <returns> <c>True</c> if success; <c>False</c> otherwise. </returns>
-    Public Overridable Function TryOpenSession(ByVal resourceName As String, ByVal resourceTitle As String) As Boolean
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Overridable Function TryOpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal e As CancelDetailsEventArgs) As Boolean
         Try
             Me.OpenSession(resourceName, resourceTitle)
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception opening {resourceTitle}:{resourceName};. Details: {ex.ToString}")
-            Return False
+            e.RegisterCancellation($"Exception opening {resourceTitle}:{resourceName};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, e.Details)
         End Try
-        Return Me.IsDeviceOpen
+        Return Not e.Cancel AndAlso Me.IsDeviceOpen
     End Function
 
     ''' <summary> Allows the derived device to take actions before closing. </summary>
@@ -1282,5 +1281,67 @@ End Class
 
 #End Region
 
+#End If
+#End Region
+
+#Region " OLD OPEN SESSION THAT PREVENTED EXCEPTIONS "
+#If False Then
+    ''' <summary> Opens the session. </summary>
+    ''' <remarks> Register the device trace notifier before opening the session. </remarks>
+    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <param name="resourceName"> Name of the resource. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Overridable Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
+        Try
+            If Me.Enabled Then Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Opening session to {resourceName};. ")
+            Me.Session.ResourceTitle = resourceTitle
+            Me.Session.OpenSession(resourceName, resourceTitle)
+            If Me.Session.IsSessionOpen Then
+                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Session open to {resourceName};. ")
+            ElseIf Me.Session.Enabled Then
+                ' if session did not open and the session is enabled, then we have an error, which could be stressed.
+                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Unable to open session to {resourceName};. ")
+            ElseIf Not Me.IsDeviceOpen Then
+                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Unable to emulate {resourceName};. ")
+            End If
+            If Me.Session.IsSessionOpen OrElse (Me.IsDeviceOpen AndAlso Not Me.Session.Enabled) Then
+                Dim e As New ComponentModel.CancelEventArgs
+                Me.OnOpening(e)
+                If e.Cancel Then
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opening {resourceTitle}:{resourceName} canceled;. ")
+                    Me.TryCloseSession()
+                Else
+                    Me.OnOpened()
+                    Try
+                        If Me.IsDeviceOpen Then
+                            Me.OnInitializing(e)
+                        Else
+                            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opening {resourceTitle}:{resourceName} failed;. ")
+                        End If
+                    Catch ex As Exception
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} initializing failed;. Details: {0}", ex)
+                    End Try
+                    Try
+                        If Not e.Cancel AndAlso Me.IsDeviceOpen Then Me.OnInitialized()
+                    Catch ex As Exception
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} initialize actions failed;. Details: {0}", ex)
+                    End Try
+                End If
+            Else
+                ' if failed to open, close
+                Me.CloseSession()
+            End If
+        Catch ex As OperationFailedException
+            Throw
+        Catch ex As NativeException
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} failed connecting. Disconnecting.")
+            Me.TryCloseSession()
+            Throw New OperationFailedException($"VISA exception occurred opening session to '{resourceName}'.", ex)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} failed connecting. Disconnecting.")
+            Me.TryCloseSession()
+            Throw New OperationFailedException($"Exception occurred opening session to '{resourceName}'.", ex)
+        End Try
+    End Sub
 #End If
 #End Region

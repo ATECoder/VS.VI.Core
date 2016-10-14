@@ -23,6 +23,19 @@ Public Class StatusSubsystem
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Clears the active state. Issues selective device clear. </summary>
+    Public Overrides Sub ClearActiveState()
+        ' without this small delay, the instrument had error -286 TSP Runtime Error and User Abort error 
+        ' if the clear command was issued after turning off the status _G.status.request_enable=0
+        Threading.Thread.Sleep(1)
+        MyBase.ClearActiveState()
+        Me.QueryOperationCompleted()
+    End Sub
+
+#End Region
+
 #Region " PUBLISHER "
 
     ''' <summary> Publishes all values by raising the property changed events. </summary>
