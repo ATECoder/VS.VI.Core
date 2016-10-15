@@ -37,6 +37,35 @@ Public MustInherit Class DisplaySubsystemBase
         End If
     End Sub
 
+    ''' <summary> Gets the clear command. </summary>
+    ''' <remarks> SCPI: ":DISP:CLE". </remarks>
+    ''' <value> The clear command. </value>
+    Protected Overridable ReadOnly Property ClearCommand As String
+
+    ''' <summary> Clears the triggers. </summary>
+    ''' <remarks> David, 3/10/2016. </remarks>
+    Public Sub ClearDisplay()
+        Me.Write(Me.ClearCommand)
+    End Sub
+
+    ''' <summary> Gets the DisplayText command. </summary>
+    ''' <remarks> SCPI: ":DISP:USER{0}:TEXT ""{1}""". </remarks>
+    ''' <value> The DisplayText command. </value>
+    Protected Overridable ReadOnly Property DisplayTextCommandFormat As String
+
+    ''' <summary> Displays a text. </summary>
+    ''' <remarks> David, 10/15/2016. </remarks>
+    ''' <param name="lineNumber"> The line number. </param>
+    ''' <param name="value">      if set to <c>
+    '''                           True</c>
+    '''                           if enabling; False if disabling. </param>
+    Public Sub DisplayText(ByVal lineNumber As Integer, ByVal value As String)
+        If Not String.IsNullOrWhiteSpace(Me.DisplayTextCommandFormat) Then
+            Me.Write(String.Format(Me.DisplayTextCommandFormat, lineNumber, value))
+        End If
+    End Sub
+
+
 #End Region
 
 #Region " ENABLED "
@@ -135,4 +164,76 @@ Public MustInherit Class DisplaySubsystemBase
     End Function
 
 #End Region
+
+#Region " DISPLAY SCREEN  "
+
+    ''' <summary> The Display Screen. </summary>
+    Private _DisplayScreen As DisplayScreens?
+
+    ''' <summary> Gets or sets the cached Display Screen. </summary>
+    ''' <value> <c>null</c> if value is not known. </value>
+    Public Overloads Property DisplayScreen As DisplayScreens?
+        Get
+            Return Me._DisplayScreen
+        End Get
+        Protected Set(ByVal value As DisplayScreens?)
+            If Not Nullable.Equals(Me.DisplayScreen, value) Then
+                Me._DisplayScreen = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.DisplayScreen))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Display Screen. </summary>
+    ''' <param name="value"> The Display Screen. </param>
+    ''' <returns> The Display Screen. </returns>
+    Public Function ApplyDisplayScreen(ByVal value As DisplayScreens) As DisplayScreens?
+        Me.WriteDisplayScreens(value)
+        Return Me.QueryDisplayScreens
+    End Function
+
+    ''' <summary> Gets or sets the Display Screen  query command. </summary>
+    ''' <value> The Display Screen  query command. </value>
+    Protected Overridable ReadOnly Property DisplayScreenQueryCommand As String
+
+    ''' <summary> Queries the Display Screen. </summary>
+    ''' <returns> The Display Screen  or none if unknown. </returns>
+    Public Function QueryDisplayScreens() As DisplayScreens?
+        Me.DisplayScreen = Me.Query(Me.DisplayScreenQueryCommand, Me.DisplayScreen)
+        Return Me.DisplayScreen
+    End Function
+
+    ''' <summary> Gets or sets the Display Screen  command format. </summary>
+    ''' <value> The Display Screen  command format. </value>
+    Protected Overridable ReadOnly Property DisplayScreenCommandFormat As String
+
+    ''' <summary> Writes the Display Screen  without reading back the value from the device. </summary>
+    ''' <remarks> This command sets the Display Screen. </remarks>
+    ''' <param name="value"> The Display Screen. </param>
+    ''' <returns> The Display Screen. </returns>
+    Public Function WriteDisplayScreens(ByVal value As DisplayScreens) As DisplayScreens?
+        Me.DisplayScreen = Me.Write(Me.DisplayScreenCommandFormat, value)
+        Return Me.DisplayScreen
+    End Function
+
+#End Region
+
 End Class
+
+''' <summary> A bit-field of flags for specifying display screens. </summary>
+''' <remarks> David, 10/15/2016. </remarks>
+<Flags>
+Public Enum DisplayScreens
+    <ComponentModel.Description("None")> None
+    <ComponentModel.Description("Home (HOME)")> Home
+    <ComponentModel.Description("Home Large Reading (HOME_LARG)")> HomeLargeReading
+    <ComponentModel.Description("Reading Table (READ)")> RreadingTable
+    <ComponentModel.Description("Graph (GRAP)")> Graph
+    <ComponentModel.Description("Histogram  (HIST)")> Histogram
+    <ComponentModel.Description("Functions swipe screen (SWIPE_FUNC)")> FunctionsSwipe
+    <ComponentModel.Description("Graph swipe screen (SWIPE_GRAP)")> GraphSwipe
+    <ComponentModel.Description("Secondary swipe screen (SWIPE_SEC)")> SecondarySwipe
+    <ComponentModel.Description("Settings swipe screen (SWIPE_SETT)")> SettingsSwipe
+    <ComponentModel.Description("Statistics swipe screen (SWIPE_STAT)")> StatisticsSwipe
+    <ComponentModel.Description("USER swipe screen (SWIPE_USER)")> UserSwipe
+End Enum

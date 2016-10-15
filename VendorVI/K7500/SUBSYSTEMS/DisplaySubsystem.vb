@@ -41,7 +41,12 @@ Public Class DisplaySubsystem
 
     ''' <summary> Gets or sets the clear caution messages command. </summary>
     ''' <value> The clear caution messages command. </value>
-    Protected Overrides ReadOnly Property ClearCautionMessagesCommand As String = ":DISP:CCL"
+    Protected Overrides ReadOnly Property ClearCautionMessagesCommand As String = ""
+
+    ''' <summary> Gets or sets the clear command. </summary>
+    ''' <value> The clear command. </value>
+    Protected Overrides ReadOnly Property ClearCommand As String = ":DISP:CLE"
+
 #End Region
 
 #Region " ENABLED "
@@ -55,6 +60,28 @@ Public Class DisplaySubsystem
     Protected Overrides ReadOnly Property DisplayEnabledQueryCommand As String = ""
 
 #End Region
+
+#Region " DISPLAY SCREEN  "
+
+    ''' <summary> Gets the display Screen command format. </summary>
+    ''' <value> The display Screen command format. </value>
+    Protected Overrides ReadOnly Property DisplayScreenCommandFormat As String = ":DISP:SCR {0}"
+
+    ''' <summary> Gets the display Screen query command. </summary>
+    ''' <value> The display Screen query command. </value>
+    Protected Overrides ReadOnly Property DisplayScreenQueryCommand As String = ""
+
+#End Region
+
+#Region " DISPLAY TEXT "
+
+    ''' <summary> Gets or sets the DisplayText command. </summary>
+    ''' <remarks> SCPI: ":DISP:USER{0}:TEXT ""{1}""". </remarks>
+    ''' <value> The DisplayText command. </value>
+    Protected Overrides ReadOnly Property DisplayTextCommandFormat As String = ":DISP:USER{0}:TEXT ""{1}"""
+
+#End Region
+
 
 #End Region
 

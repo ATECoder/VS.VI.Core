@@ -45,6 +45,7 @@ Public Class Device
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_RouteSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_MeasureSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_FormatSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_DisplaySubsystem", Justification:="Disposed @Subsystems")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(disposing As Boolean)
@@ -104,12 +105,8 @@ Public Class Device
     Protected Overrides Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
         MyBase.OnClosing(e)
         If e?.Cancel Then Return
-        If Me._FormatSubsystem IsNot Nothing Then
-            RemoveHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
-        End If
-        If Me._StatusSubsystem IsNot Nothing Then
-            RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
-        End If
+        If Me._FormatSubsystem IsNot Nothing Then RemoveHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
+        If Me._StatusSubsystem IsNot Nothing Then RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
         Me.Subsystems.DisposeItems()
     End Sub
 
@@ -136,6 +133,9 @@ Public Class Device
         Me._FormatSubsystem = New FormatSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.FormatSubsystem)
         AddHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
+
+        Me._DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.DisplaySubsystem)
 
         Me._RouteSubsystem = New RouteSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.RouteSubsystem)
@@ -166,6 +166,10 @@ Public Class Device
 #End Region
 
 #Region " SUBSYSTEMS "
+
+    ''' <summary> Gets or sets the Display Subsystem. </summary>
+    ''' <value> The Display Subsystem. </value>
+    Public Property DisplaySubsystem As DisplaySubsystem
 
     ''' <summary> Gets or sets the measure Subsystem. </summary>
     ''' <value> The measure Subsystem. </value>
@@ -213,7 +217,7 @@ Public Class Device
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
                 Me.MeasureSubsystem.Readings.Initialize(subsystem.Elements)
@@ -225,13 +229,14 @@ Public Class Device
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub FormatSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As FormatSubsystem = TryCast(sender, FormatSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnSubsystemPropertyChanged(TryCast(sender, FormatSubsystem), e.PropertyName)
-            End If
+            Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                             e.PropertyName, ex.Message)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "{0} exception handling Display subsystem {1} property change;. Details: {2}.",
+                               Me.ResourceName, e.PropertyName, ex)
         End Try
     End Sub
 
@@ -251,11 +256,14 @@ Public Class Device
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "{0} exception handling Status subsystem {1} property change;. Details: {2}.",
+                               Me.ResourceName, e.PropertyName, ex)
         End Try
     End Sub
 
