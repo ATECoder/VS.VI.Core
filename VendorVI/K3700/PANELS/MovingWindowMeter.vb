@@ -501,7 +501,6 @@ Public Class MovingWindowMeter
             If Me.CapturedSyncContext Is Nothing Then Throw New InvalidOperationException("Sync context not set")
             SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
             Me.MovingWindow.ClearKnownState()
-            Dim measureStopWatch As New Stopwatch
             Do
                 ' measure and time
                 If Me.MovingWindow.ReadValue(Function() Me.Device.MultimeterSubsystem.Measure()) Then

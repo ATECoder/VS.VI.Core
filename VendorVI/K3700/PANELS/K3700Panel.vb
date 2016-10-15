@@ -32,6 +32,13 @@ Public Class K3700Panel
     Public Sub New()
         Me.New(New Device)
         Me.IsDeviceOwner = True
+
+        With Me.TraceMessagesBox
+            ' set defaults for the messages box.
+            .ResetCount = 500
+            .PresetCount = 250
+            .SupportsOpenLogFolderRequest = False
+        End With
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
@@ -232,6 +239,7 @@ Public Class K3700Panel
     Protected Overrides Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
         AddHandler Me.Device.MultimeterSubsystem.PropertyChanged, AddressOf Me.MultimeterSubsystemPropertyChanged
         AddHandler Me.Device.ChannelSubsystem.PropertyChanged, AddressOf Me.ChannelSubsystemPropertyChanged
+        AddHandler Me.Device.DisplaySubsystem.PropertyChanged, AddressOf Me.DisplaySubsystemPropertyChanged
         AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
         AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
         MyBase.DeviceOpened(sender, e)
@@ -274,6 +282,7 @@ Public Class K3700Panel
         If Me.IsDeviceOpen Then
             RemoveHandler Me.Device.MultimeterSubsystem.PropertyChanged, AddressOf Me.MultimeterSubsystemPropertyChanged
             RemoveHandler Me.Device.ChannelSubsystem.PropertyChanged, AddressOf Me.ChannelSubsystemPropertyChanged
+            RemoveHandler Me.Device.DisplaySubsystem.PropertyChanged, AddressOf Me.DisplaySubsystemPropertyChanged
             RemoveHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
             RemoveHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
         End If
@@ -396,14 +405,14 @@ Public Class K3700Panel
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub MultimeterSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As MultimeterSubsystem = TryCast(sender, MultimeterSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnSubsystemPropertyChanged(TryCast(sender, MultimeterSubsystem), e.PropertyName)
-            End If
+            Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling Multimeter Subsystem property changed Event;. Failed property {0}. Details: {1}",
-                               e.PropertyName, ex)
+                               "{0} exception handling Multimeter subsystem {1} property change;. Details: {2}.",
+                               Me.Name, e.PropertyName, ex)
         End Try
     End Sub
 
@@ -427,14 +436,45 @@ Public Class K3700Panel
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ChannelSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As ChannelSubsystem = TryCast(sender, ChannelSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnSubsystemPropertyChanged(TryCast(sender, ChannelSubsystem), e.PropertyName)
-            End If
+            Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling Channel Subsystem property changed Event;. Failed property {0}. Details: {1}",
-                               e.PropertyName, ex)
+                               "{0} exception handling Channel subsystem {1} property change;. Details: {2}.",
+                               Me.Name, e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
+
+#Region " DISPLAY "
+
+    ''' <summary> Handles the Display subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As DisplaySubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.DisplayScreen)
+        End Select
+    End Sub
+
+    ''' <summary> Display subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub DisplaySubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As DisplaySubsystem = TryCast(sender, DisplaySubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "{0} exception handling Display subsystem {1} property change;. Details: {2}.",
+                               Me.Name, e.PropertyName, ex)
         End Try
     End Sub
 
@@ -476,11 +516,14 @@ Public Class K3700Panel
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
+            Me.OnPropertyChanged(subsystem, e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "{0} exception handling Status subsystem {1} property change;. Details: {2}.",
+                               Me.Name, e.PropertyName, ex)
         End Try
     End Sub
 
@@ -514,12 +557,14 @@ Public Class K3700Panel
     ''' <param name="e">      Property changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As SystemSubsystem = TryCast(sender, SystemSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
+            Me.OnSubsystemPropertyChanged(subsystem, e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling System Subsystem property changed Event;. Failed property {0}. Details: {1}",
-                               e.PropertyName, ex)
+                               "{0} exception handling System subsystem {1} property change;. Details: {2}.",
+                               Me.Name, e.PropertyName, ex)
         End Try
     End Sub
 
