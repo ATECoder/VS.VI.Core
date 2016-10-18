@@ -106,7 +106,7 @@ Public MustInherit Class SubsystemPlusStatusBase
     ''' <param name="args">           A variable-length parameters list containing arguments. </param>
     ''' <returns><c>True</c> if okay; otherwise, <c>False</c>. </returns>
     Public Function TraceVisaDeviceOperationOkay(ByVal flushReadFirst As Boolean, ByVal format As String,
-                                                  ByVal ParamArray args() As Object) As Boolean
+                                                 ByVal ParamArray args() As Object) As Boolean
         Return Me.StatusSubsystem.TraceVisaDeviceOperationOkay(flushReadFirst, format, args)
     End Function
 

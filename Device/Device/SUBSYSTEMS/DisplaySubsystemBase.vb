@@ -21,8 +21,7 @@ Public MustInherit Class DisplaySubsystemBase
 
 #End Region
 
-#Region " COMMANDS "
-
+#Region " CLEAR CAUTION MESSAGES (IMPEDANCE METER)"
 
     ''' <summary> Gets the clear caution messages command. </summary>
     ''' <value> The Abort command. </value>
@@ -37,6 +36,10 @@ Public MustInherit Class DisplaySubsystemBase
         End If
     End Sub
 
+#End Region
+
+#Region " CLEAR DISPLAY "
+
     ''' <summary> Gets the clear command. </summary>
     ''' <remarks> SCPI: ":DISP:CLE". </remarks>
     ''' <value> The clear command. </value>
@@ -44,25 +47,55 @@ Public MustInherit Class DisplaySubsystemBase
 
     ''' <summary> Clears the triggers. </summary>
     ''' <remarks> David, 3/10/2016. </remarks>
-    Public Sub ClearDisplay()
-        Me.Write(Me.ClearCommand)
+    Public Overridable Sub ClearDisplay()
+        If Me.QueryExists.GetValueOrDefault(False) Then
+            Me.Write(Me.ClearCommand)
+        End If
     End Sub
 
-    ''' <summary> Gets the DisplayText command. </summary>
+    ''' <summary> Clears the display without raising exceptions. </summary>
+    ''' <returns> <c>True</c> if okay; otherwise, <c>False</c>. </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Function TryClearDisplay() As Boolean
+        Dim affirmative As Boolean = True
+        Try
+            Me.ClearDisplay()
+            affirmative = Me.TraceVisaDeviceOperationOkay(False, "clearing display;. ")
+        Catch ex As NativeException
+            Me.TraceVisaOperation(ex, "clearing display;. ")
+            affirmative = False
+        Catch ex As Exception
+            Me.TraceOperation(ex, "clearing display;. ")
+            affirmative = False
+        End Try
+        Return affirmative
+    End Function
+
+#End Region
+
+#Region " DISPLAY LINE "
+
+    ''' <summary> Gets the Display Line command. </summary>
     ''' <remarks> SCPI: ":DISP:USER{0}:TEXT ""{1}""". </remarks>
     ''' <value> The DisplayText command. </value>
-    Protected Overridable ReadOnly Property DisplayTextCommandFormat As String
+    Protected Overridable ReadOnly Property DisplayLineCommandFormat As String
 
-    ''' <summary> Displays a text. </summary>
+    ''' <summary> Displays a line of text. </summary>
     ''' <remarks> David, 10/15/2016. </remarks>
     ''' <param name="lineNumber"> The line number. </param>
-    ''' <param name="value">      if set to <c>
-    '''                           True</c>
-    '''                           if enabling; False if disabling. </param>
-    Public Sub DisplayText(ByVal lineNumber As Integer, ByVal value As String)
-        If Not String.IsNullOrWhiteSpace(Me.DisplayTextCommandFormat) Then
-            Me.Write(String.Format(Me.DisplayTextCommandFormat, lineNumber, value))
+    Public Overridable Sub DisplayLine(ByVal lineNumber As Integer, ByVal value As String)
+        If Not String.IsNullOrWhiteSpace(Me.DisplayLineCommandFormat) Then
+            Me.Write(String.Format(Me.DisplayLineCommandFormat, lineNumber, value))
         End If
+    End Sub
+
+    ''' <summary> Displays a line of text. </summary>
+    ''' <remarks> David, 10/17/2016. </remarks>
+    ''' <param name="lineNumber"> The line number. </param>
+    ''' <param name="format">     Describes the format to use. </param>
+    ''' <param name="args">       A variable-length parameters list containing arguments. </param>
+    Public Overridable Sub DisplayLine(ByVal lineNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
+        Me.DisplayLine(lineNumber, String.Format(format, args))
     End Sub
 
 
@@ -128,39 +161,38 @@ Public MustInherit Class DisplaySubsystemBase
 
 #End Region
 
-#Region " INSTALLED "
+#Region " EXISTS "
 
-    ''' <summary> Installed. </summary>
-    Private _Installed As Boolean?
+    Private _Exists As Boolean?
 
-    ''' <summary> Gets or sets the cached Installed sentinel. </summary>
-    ''' <value> <c>null</c> if Installed is not known; <c>True</c> if output is on; otherwise,
+    ''' <summary> Gets or sets the cached Exists sentinel. </summary>
+    ''' <value> <c>null</c> if display exists is not known; <c>True</c> if display exists is on; otherwise,
     ''' <c>False</c>. </value>
-    Public Property Installed As Boolean?
+    Public Property Exists As Boolean?
         Get
-            Return Me._Installed
+            Return Me._Exists
         End Get
         Protected Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.Installed, value) Then
-                Me._Installed = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Installed))
+            If Not Boolean?.Equals(Me.Exists, value) Then
+                Me._Exists = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.Exists))
             End If
         End Set
     End Property
 
-    ''' <summary> Gets or sets the display Installed query command. </summary>
+    ''' <summary> Gets or sets the display exists query command. </summary>
     ''' <value> The display Installed query command. </value>
-    Protected Overridable ReadOnly Property DisplayInstalledQueryCommand As String
+    Protected Overridable ReadOnly Property DisplayExistsQueryCommand As String
 
-    ''' <summary> Queries the Installed sentinel. Also sets the 
-    '''           <see cref="Installed">installed</see> sentinel. </summary>
-    ''' <returns> <c>null</c> display status is not known; <c>True</c> if Installed; otherwise, <c>False</c>. </returns>
-    Public Function QueryInstalled() As Boolean?
-        Me.Session.MakeEmulatedReplyIfEmpty(Me.Installed.GetValueOrDefault(True))
-        If String.IsNullOrWhiteSpace(Me.DisplayInstalledQueryCommand) Then
-            Me.Installed = Me.Session.Query(Me.Installed.GetValueOrDefault(True), Me.DisplayInstalledQueryCommand)
+    ''' <summary> Queries the display existence sentinel. Also sets the 
+    '''           <see cref="Exists">installed</see> sentinel. </summary>
+    ''' <returns> <c>null</c> status is not known; <c>True</c> if display exists; otherwise, <c>False</c>. </returns>
+    Public Overridable Function QueryExists() As Boolean?
+        Me.Session.MakeEmulatedReplyIfEmpty(Me.Exists.GetValueOrDefault(True))
+        If String.IsNullOrWhiteSpace(Me.DisplayExistsQueryCommand) Then
+            Me.Exists = Me.Session.Query(Me.Exists.GetValueOrDefault(True), Me.DisplayExistsQueryCommand)
         End If
-        Return Me.Installed
+        Return Me.Exists
     End Function
 
 #End Region
@@ -224,10 +256,12 @@ End Class
 ''' <remarks> David, 10/15/2016. </remarks>
 <Flags>
 Public Enum DisplayScreens
-    <ComponentModel.Description("None")> None
+    <ComponentModel.Description("Not specified")> None
+
+    ''' <summary> 7500 SCREENS. </summary>
     <ComponentModel.Description("Home (HOME)")> Home
     <ComponentModel.Description("Home Large Reading (HOME_LARG)")> HomeLargeReading
-    <ComponentModel.Description("Reading Table (READ)")> RreadingTable
+    <ComponentModel.Description("Reading Table (READ)")> ReadingTable
     <ComponentModel.Description("Graph (GRAP)")> Graph
     <ComponentModel.Description("Histogram  (HIST)")> Histogram
     <ComponentModel.Description("Functions swipe screen (SWIPE_FUNC)")> FunctionsSwipe
@@ -236,4 +270,22 @@ Public Enum DisplayScreens
     <ComponentModel.Description("Settings swipe screen (SWIPE_SETT)")> SettingsSwipe
     <ComponentModel.Description("Statistics swipe screen (SWIPE_STAT)")> StatisticsSwipe
     <ComponentModel.Description("USER swipe screen (SWIPE_USER)")> UserSwipe
+
+    ''' <summary> Special User Screens </summary>
+    <System.ComponentModel.Description("Default screen")> [Default] = 1
+
+    ''' <summary>Cleared user screen mode.</summary>
+    <System.ComponentModel.Description("User screen")> User = 128
+
+    ''' <summary>Last command displayed title.</summary>
+    <System.ComponentModel.Description("Title is displayed")> Title = 256
+
+    ''' <summary>Custom lines are displayed.</summary>
+    <System.ComponentModel.Description("Special display")> Custom = 512
+
+    ''' <summary>Measurement displayed.</summary>
+    <System.ComponentModel.Description("Measurement is displayed")> Measurement = 1024
+
 End Enum
+
+

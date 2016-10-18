@@ -42,88 +42,51 @@ Public MustInherit Class DisplaySubsystemBase
 
 #Region " EXISTS "
 
-    Private _isDisplayExists As Boolean?
-
-    ''' <summary> Gets or sets (Protected) the display existence indicator.
-    '''           Some TSP instruments (e.g., 3706) may have no display. </summary>
-    ''' <value> The is display exists. </value>
-    Public Property IsDisplayExists() As Boolean?
-        Get
-            Return Me._isDisplayExists
-        End Get
-        Protected Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(value, Me.IsDisplayExists) Then
-                Me._isDisplayExists = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDisplayExists))
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Reads  the display existence indicator.
+    ''' <summary> Reads the display existence indicator.
     '''           Some TSP instruments (e.g., 3706) may have no display. </summary>
     ''' <returns> <c>True</c> if the display exists; otherwise, <c>False</c>. </returns>
-    Public Function ReadDisplayExists() As Boolean?
+    Public Overrides Function QueryExists() As Boolean?
         ' detect the display
-        Me.IsDisplayExists = Not Me.Session.IsNil(TspSyntax.Display.SubsystemName)
-        Return Me.IsDisplayExists
+        Me.Session.MakeEmulatedReplyIfEmpty(Me.Exists.GetValueOrDefault(True))
+        Me.Exists = Not Me.Session.IsNil(TspSyntax.Display.SubsystemName)
+        Return Me.Exists
     End Function
 
 #End Region
 
 #Region " CLEAR "
 
+    Protected Overrides ReadOnly Property ClearCommand As String = TspSyntax.Display.ClearCommand
+
     ''' <summary> Clears the display. </summary>
     ''' <remarks> Sets the display to the user mode. </remarks>
-    Public Sub ClearDisplay()
-        Me.DisplayScreen = DisplayScreens.User
-        If Me.ReadDisplayExists.GetValueOrDefault(False) Then
+    Public Overrides Sub ClearDisplay()
+        Me.DisplayScreen = VI.DisplayScreens.User
+        If Me.QueryExists.GetValueOrDefault(False) Then
             Me.Session.WriteLine(TspSyntax.Display.ClearCommand)
         End If
     End Sub
 
-    ''' <summary> Clears the display. </summary>
-    ''' <remarks> Sets the display to the user mode. </remarks>
-    ''' <returns> <c>True</c> if okay; otherwise, <c>False</c>. </returns>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Function TryClearDisplay() As Boolean
-        Dim affirmative As Boolean = True
-        Try
-            Me.ClearDisplay()
-            affirmative = Me.TraceVisaDeviceOperationOkay(False, "clearing display;. ")
-        Catch ex As NativeException
-            Me.TraceVisaOperation(ex, "clearing display;. ")
-            affirmative = False
-        Catch ex As Exception
-            Me.TraceOperation(ex, "clearing display;. ")
-            affirmative = False
-        End Try
-        Return affirmative
-    End Function
-
     ''' <summary> Clears the display if not in measurement mode and set measurement mode. </summary>
-    ''' <remarks> Sets the display to the measurement. </remarks>
+    ''' <remarks> Sets the display to user. </remarks>
     Public Sub TryClearDisplayMeasurement()
-        If Me.IsDisplayExists Then
-            If (Me.DisplayScreen And DisplayScreens.Measurement) = 0 Then
-                Me.TryClearDisplay()
-            End If
+        If Me.Exists AndAlso ((Me.DisplayScreen And DisplayScreens.Measurement) = 0) Then
+            Me.TryClearDisplay()
         End If
     End Sub
 
     ''' <summary> Clears the display if not in measurement mode and set measurement mode. </summary>
     ''' <remarks> Sets the display to the measurement. </remarks>
     Public Sub ClearDisplayMeasurement()
-        If Me.ReadDisplayExists.GetValueOrDefault(False) Then
-            If (Me.DisplayScreen And DisplayScreens.Measurement) = 0 Then
-                Me.ClearDisplay()
-            End If
+        If Me.QueryExists.GetValueOrDefault(False) AndAlso ((Me.DisplayScreen And DisplayScreens.Measurement) = 0) Then
+            Me.ClearDisplay()
         End If
         Me.DisplayScreen = DisplayScreens.Measurement
     End Sub
 
 #End Region
 
-#Region " DISPLAY COMMANDS "
+#Region " DISPLAY CHARACTER "
 
     ''' <summary> Displays the character. </summary>
     ''' <param name="lineNumber">      The line number. </param>
@@ -132,7 +95,7 @@ Public MustInherit Class DisplaySubsystemBase
     Public Sub DisplayCharacter(ByVal lineNumber As Integer, ByVal position As Integer,
                                 ByVal characterNumber As Integer)
         Me.DisplayScreen = DisplayScreens.User Or DisplayScreens.Custom
-        If Not Me.ReadDisplayExists.GetValueOrDefault(False) Then
+        If Not Me.QueryExists.GetValueOrDefault(False) Then
             Return
         End If
         ' ignore empty character.
@@ -143,21 +106,17 @@ Public MustInherit Class DisplaySubsystemBase
         Me.Session.WriteLine(TspSyntax.Display.SetCharacterCommandFormat, characterNumber)
     End Sub
 
-    ''' <summary> Displays message on line one of the display. </summary>
-    ''' <param name="lineNumber"> The line number. </param>
-    ''' <param name="format">     Describes the format to use. </param>
-    ''' <param name="args">       A variable-length parameters list containing arguments. </param>
-    Public Sub DisplayLine(ByVal lineNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
-        Me.DisplayLine(lineNumber, String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
-    End Sub
+#End Region
+
+#Region " DISPLAY LINE "
 
     ''' <summary> Displays a message on the display. </summary>
     ''' <param name="lineNumber"> The line number. </param>
     ''' <param name="value">      The value. </param>
-    Public Sub DisplayLine(ByVal lineNumber As Integer, ByVal value As String)
+    Public Overrides Sub DisplayLine(ByVal lineNumber As Integer, ByVal value As String)
 
         Me.DisplayScreen = DisplayScreens.User Or DisplayScreens.Custom
-        If Not Me.ReadDisplayExists.GetValueOrDefault(False) Then
+        If Not Me.QueryExists.GetValueOrDefault(False) Then
             Return
         End If
 
@@ -178,9 +137,7 @@ Public MustInherit Class DisplaySubsystemBase
         End If
 
         Me.Session.WriteLine(TspSyntax.Display.SetCursorLineCommandFormat, lineNumber)
-        If value.Length < length Then
-            value = value.PadRight(length)
-        End If
+        If value.Length < length Then value = value.PadRight(length)
         Me.Session.WriteLine(TspSyntax.Display.SetTextCommandFormat, value)
 
     End Sub
@@ -195,27 +152,6 @@ Public MustInherit Class DisplaySubsystemBase
 
 #End Region
 
-#Region " SCREEN "
-
-    Private _DisplayScreen As DisplayScreens
-
-    ''' <summary> Gets or sets (Protected) the <see cref="DisplayScreens">display screen and
-    ''' status</see>. </summary>
-    ''' <value> The display screen. </value>
-    Public Property DisplayScreen() As DisplayScreens
-        Get
-            Return Me._DisplayScreen
-        End Get
-        Protected Set(ByVal value As DisplayScreens)
-            If Not value.Equals(Me.DisplayScreen) Then
-                Me._DisplayScreen = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.DisplayScreen))
-            End If
-        End Set
-    End Property
-
-#End Region
-
 #Region " RESTORE "
 
     ''' <summary> Gets or sets the restore display command. </summary>
@@ -226,8 +162,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <param name="timeout"> The timeout. </param>
     Public Sub RestoreDisplay(ByVal timeout As TimeSpan)
         Me.DisplayScreen = DisplayScreens.Default
-        If Me.IsDisplayExists.HasValue AndAlso Me.IsDisplayExists.Value AndAlso
-            Not String.IsNullOrWhiteSpace(Me.RestoreMainScreenWaitCompleteCommand) Then
+        If Me.Exists.HasValue AndAlso Me.Exists.Value AndAlso Not String.IsNullOrWhiteSpace(Me.RestoreMainScreenWaitCompleteCommand) Then
             Me.StatusSubsystem.EnableWaitComplete()
             ' Documentation error: Display Main equals 1, not 0. This code should work on other instruments.
             Me.Session.WriteLine(Me.RestoreMainScreenWaitCompleteCommand)
@@ -238,8 +173,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <summary> Restores the instrument display. </summary>
     Public Sub RestoreDisplay()
         Me.DisplayScreen = DisplayScreens.Default
-        If Me.IsDisplayExists.HasValue AndAlso Me.IsDisplayExists.Value AndAlso
-            Not String.IsNullOrWhiteSpace(Me.RestoreMainScreenWaitCompleteCommand) Then
+        If Me.Exists.HasValue AndAlso Me.Exists.Value AndAlso Not String.IsNullOrWhiteSpace(Me.RestoreMainScreenWaitCompleteCommand) Then
             ' Documentation error: Display Main equals 1, not 0. This code should work on other instruments.
             Me.Session.WriteLine(Me.RestoreMainScreenWaitCompleteCommand)
             Me.StatusSubsystem.QueryOperationCompleted()
@@ -250,26 +184,25 @@ Public MustInherit Class DisplaySubsystemBase
 
 End Class
 
-''' <summary>Enumerates the display screens and special status.</summary>
-<Flags()> Public Enum DisplayScreens
+#Region " UNUSED "
+#If False Then
+    Private _isDisplayExists As Boolean?
 
-    ''' <summary>Not defined.</summary>
-    <System.ComponentModel.Description("Not defined")> None = 0
+    ''' <summary> Gets or sets (Protected) the display existence indicator.
+    '''           Some TSP instruments (e.g., 3706) may have no display. </summary>
+    ''' <value> The is display exists. </value>
+    Public Property IsDisplayExists() As Boolean?
+        Get
+            Return Me._isDisplayExists
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(value, Me.IsDisplayExists) Then
+                Me._isDisplayExists = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDisplayExists))
+            End If
+        End Set
+    End Property
 
-    ''' <summary>Custom lines are displayed.</summary>
-    <System.ComponentModel.Description("Default screen")> [Default] = 1
 
-    ''' <summary>Cleared user screen mode.</summary>
-    <System.ComponentModel.Description("User screen")> User = 128
-
-    ''' <summary>Last command displayed title.</summary>
-    <System.ComponentModel.Description("Title is displayed")> Title = 256
-
-    ''' <summary>Custom lines are displayed.</summary>
-    <System.ComponentModel.Description("Special display")> Custom = 512
-
-    ''' <summary>Measurement displayed.</summary>
-    <System.ComponentModel.Description("Measurement is displayed")> Measurement = 1024
-
-End Enum
-
+#End If
+#End Region
