@@ -75,10 +75,10 @@ Public Class DisplaySubsystem
 
 #Region " DISPLAY TEXT "
 
-    ''' <summary> Gets or sets the DisplayText command. </summary>
+    ''' <summary> Gets or sets the Display Line command. </summary>
     ''' <remarks> SCPI: ":DISP:USER{0}:TEXT ""{1}""". </remarks>
-    ''' <value> The DisplayText command. </value>
-    Protected Overrides ReadOnly Property DisplayTextCommandFormat As String = ":DISP:USER{0}:TEXT ""{1}"""
+    ''' <value> The Display Line command. </value>
+    Protected Overrides ReadOnly Property DisplayLineCommandFormat As String = ":DISP:USER{0}:TEXT ""{1}"""
 
 #End Region
 
