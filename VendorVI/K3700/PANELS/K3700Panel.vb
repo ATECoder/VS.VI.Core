@@ -308,35 +308,26 @@ Public Class K3700Panel
             Me._ReadingToolStripStatusLabel.Text = "-.------- V"
             Me._ComplianceToolStripStatusLabel.Text = clear
             Me._TbdToolStripStatusLabel.Text = clear
-            Me.LastReading = "<last reading>"
+            Me.LastReading = ""
         Else
             Me._ReadingToolStripStatusLabel.SafeTextSetter($"{subsystem.Amount.ToString} {subsystem.Amount.Unit.ToString}")
             Me.LastReading = subsystem.Amount.ToString
             If subsystem.Amount.MetaStatus.HitCompliance Then
-
                 Me._ComplianceToolStripStatusLabel.Text = compliance
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Real Compliance.  Instrument sensed an output overflow of the measured value.")
-
+                                   "Real Compliance;. Instrument sensed an output overflow of the measured value.")
             ElseIf subsystem.Amount.MetaStatus.HitRangeCompliance Then
-
                 Me._ComplianceToolStripStatusLabel.Text = rangeCompliance
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Range Compliance.  Instrument sensed an output overflow of the measured value.")
-
+                                   "Range Compliance;. Instrument sensed an output overflow of the measured value.")
             ElseIf subsystem.Amount.MetaStatus.HitLevelCompliance Then
-
                 Me._ComplianceToolStripStatusLabel.Text = levelCompliance
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Level Compliance.  Instrument sensed an output overflow of the measured value.")
-
+                                   "Level Compliance;. Instrument sensed an output overflow of the measured value.")
             Else
-
                 Me._ComplianceToolStripStatusLabel.Text = clear
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Parsed {0}", Me.LastReading)
-
+                ' Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Parsed {0}", Me.LastReading)
             End If
-
         End If
 
     End Sub
@@ -584,13 +575,19 @@ Public Class K3700Panel
             Return Me._LastReading
         End Get
         Set(value As String)
-            Me._LastReading = value
-            If Me.ElapsedTimeStopwatch.IsRunning Then
-                Me.ElapsedTimeStopwatch.Stop()
-                Me._LastReadingTextBox.SafeTextSetter($"{value} @{Me.ElapsedTimeStopwatch.ElapsedMilliseconds}ms")
+            If value Is Nothing Then value = ""
+            If String.IsNullOrWhiteSpace(value) Then
+                Me._LastReadingTextBox.SafeTextSetter("<last reading>")
             Else
-                Me._LastReadingTextBox.SafeTextSetter(value)
+                Me._LastReading = value
+                If Me.ElapsedTimeStopwatch.IsRunning Then
+                    Me.ElapsedTimeStopwatch.Stop()
+                    Me._LastReadingTextBox.SafeTextSetter($"{value} @{Me.ElapsedTimeStopwatch.ElapsedMilliseconds}ms")
+                Else
+                    Me._LastReadingTextBox.SafeTextSetter(value)
+                End If
             End If
+            Me.SafeInvokePropertyChanged()
         End Set
     End Property
 
