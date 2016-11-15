@@ -229,7 +229,8 @@ Public Class MovingWindowMeter
         End Get
         Protected Set(value As Boolean)
             Me._MeasurementCompleted = value
-            Me.SafePostPropertyChanged()
+            ' this needs to be issued synchronously to make sure the state transition takes place. 
+            Me.SafeSendPropertyChanged()
         End Set
     End Property
 
@@ -244,7 +245,8 @@ Public Class MovingWindowMeter
         End Get
         Protected Set(value As Boolean)
             Me._MeasurementStarted = value
-            Me.SafePostPropertyChanged()
+            ' this needs to be issued synchronously to make sure the state transition takes place. 
+            Me.SafeSendPropertyChanged()
         End Set
     End Property
 
@@ -501,6 +503,7 @@ Public Class MovingWindowMeter
             If Me.CapturedSyncContext Is Nothing Then Throw New InvalidOperationException("Sync context not set")
             SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
             Me.MovingWindow.ClearKnownState()
+            Me.MeasurementStarted = True
             Do
                 ' measure and time
                 If Me.MovingWindow.ReadValue(Function() Me.Device.MultimeterSubsystem.Measure()) Then
@@ -550,7 +553,15 @@ Public Class MovingWindowMeter
     ''' <value> The sentinel indicating if the meter is running. </value>
     Public ReadOnly Property IsRunning As Boolean
         Get
-            Return Task IsNot Nothing AndAlso Task.Status = TaskStatus.Running
+            Return Me.Task IsNot Nothing AndAlso Me.Task.Status = TaskStatus.Running
+        End Get
+    End Property
+
+    ''' <summary> Gets the is stopped. </summary>
+    ''' <value> The is stopped. </value>
+    Public ReadOnly Property IsStopped As Boolean
+        Get
+            Return Me.Task Is Nothing OrElse Me.Task.Status <> TaskStatus.Running
         End Get
     End Property
 
@@ -563,7 +574,7 @@ Public Class MovingWindowMeter
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c>
     ''' </returns>
     Public Function StopAsyncTaskIf() As Boolean
-        Return Me.StopAsyncTaskIf(ExpectedStopTimeout)
+        Return Me.StopAsyncTaskIf(Me.ExpectedStopTimeout)
     End Function
 
     ''' <summary> Stops measure asynchronous if. </summary>
@@ -571,29 +582,25 @@ Public Class MovingWindowMeter
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function StopAsyncTaskIf(ByVal timeout As TimeSpan) As Boolean
-        Dim stopped As Boolean = Task Is Nothing OrElse Task.Status <> TaskStatus.Running
-        If Not stopped Then
+        If Me.IsStopped Then
             ' wait for previous operation to complete.
             Dim endTime As DateTime = DateTime.Now.Add(timeout)
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for task to complete")
-            Do Until Me.IsDisposed OrElse Task.Status <> TaskStatus.Running OrElse DateTime.Now > endTime
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for previous task to complete")
+            Do Until Me.IsStopped OrElse DateTime.Now > endTime
                 Windows.Forms.Application.DoEvents()
             Loop
-            If Task.Status <> TaskStatus.Running Then
+            If Not Me.IsStopped Then
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Requesting cancellation of previous tasks")
                 Me.RequestCancellation()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for tasks to cancel")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for previous task to stop")
                 endTime = DateTime.Now.Add(timeout)
-                Do Until Me.IsDisposed OrElse Task.Status <> TaskStatus.Running OrElse DateTime.Now > endTime
+                Do Until Me.IsStopped OrElse DateTime.Now > endTime
                     Windows.Forms.Application.DoEvents()
                 Loop
             End If
-            stopped = Task.Status <> TaskStatus.Running
-            If Not stopped Then
-                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed when waiting for task to complete")
-                Return False
-            End If
         End If
-        Return stopped
+        If Not Me.IsStopped Then Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed when waiting for previous task to complete")
+        Return Me.IsStopped
     End Function
 
     ''' <summary> The task. </summary>
@@ -612,35 +619,30 @@ Public Class MovingWindowMeter
 
     ''' <summary> Activates the machine asynchronous task. </summary>
     ''' <remarks> David, 9/1/2016. </remarks>
-    ''' <returns> A Task. </returns>
-    Public Function StartMeasureTask(ByVal runSynchronously As Boolean, ByVal syncContext As SynchronizationContext) As Boolean
+    Public Sub StartMeasureTask(ByVal runSynchronously As Boolean, ByVal syncContext As SynchronizationContext)
         If syncContext Is Nothing Then Throw New ArgumentNullException(NameOf(syncContext),
              "This call must pass a valid synchronization context from the UI thread in order to capture the synchronization context for the machine thread")
         Me._CapturedSyncContext = syncContext
         SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
-        Dim stopped As Boolean = Me.StopAsyncTaskIf(TimeSpan.FromSeconds(1))
-        If stopped Then
+        If Me.StopAsyncTaskIf(TimeSpan.FromSeconds(1)) Then
             Me.CancellationTokenSource = New CancellationTokenSource
             Me.CancellationToken = CancellationTokenSource.Token
             Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
             Me._task = New Task(Sub() Me.MeasureMovingAverage(progress))
             If runSynchronously Then
-                Me.MeasurementStarted = True
                 Me.Task.RunSynchronously(TaskScheduler.FromCurrentSynchronizationContext)
             Else
                 Me.Task.Start()
-                Me.MeasurementStarted = True
             End If
         Else
             Me.MeasurementStarted = False
         End If
-        Return Me.MeasurementStarted
-    End Function
+    End Sub
 
-    Public Function StartMeasureAsync(ByVal syncContext As SynchronizationContext) As Boolean
-        Return Me.StartMeasureTask(False, syncContext)
+    Public Sub StartMeasureAsync(ByVal syncContext As SynchronizationContext)
+        Me.StartMeasureTask(False, syncContext)
         ' Return Me.StartMeasureWork(syncContext)
-    End Function
+    End Sub
 
     Public Async Function AsyncTask() As Task
         Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
@@ -666,13 +668,13 @@ Public Class MovingWindowMeter
                 Me.MovingWindow.Window = 0.01 * CDbl(Me._WindowTextBox.Text)
                 Me.MovingWindow.UpdateRule = Core.Engineering.MovingWindowUpdateRule.StopOnWithinWindow
                 Me.MovingWindow.TimeoutInterval = TimeSpan.FromSeconds(CDbl(Me._TimeoutTextBox.Text))
-                Dim started As Boolean = Me.StartMeasureAsync(SynchronizationContext.Current)
-                If Not started Then
+                Me.StartMeasureAsync(SynchronizationContext.Current)
+                If Not Me.IsRunning Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed starting the moving window task")
                 End If
             Else
-                Dim stopped As Boolean = StopAsyncTaskIf(TimeSpan.FromSeconds(1))
-                If Not stopped Then
+                Me.StopAsyncTaskIf(TimeSpan.FromSeconds(1))
+                If Not Me.IsStopped Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed stopping the moving window task")
                 End If
             End If
