@@ -582,7 +582,7 @@ Public Class MovingWindowMeter
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function StopAsyncTaskIf(ByVal timeout As TimeSpan) As Boolean
-        If Me.IsStopped Then
+        If Not Me.IsStopped Then
             ' wait for previous operation to complete.
             Dim endTime As DateTime = DateTime.Now.Add(timeout)
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for previous task to complete")
@@ -641,7 +641,6 @@ Public Class MovingWindowMeter
 
     Public Sub StartMeasureAsync(ByVal syncContext As SynchronizationContext)
         Me.StartMeasureTask(False, syncContext)
-        ' Return Me.StartMeasureWork(syncContext)
     End Sub
 
     Public Async Function AsyncTask() As Task
