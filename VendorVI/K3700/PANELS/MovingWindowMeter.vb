@@ -599,7 +599,7 @@ Public Class MovingWindowMeter
                 Loop
             End If
         End If
-        If Not Me.IsStopped Then Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed when waiting for previous task to complete")
+        If Not Me.IsStopped Then Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Attempt to stop previous task failed")
         Return Me.IsStopped
     End Function
 
@@ -625,6 +625,7 @@ Public Class MovingWindowMeter
         Me._CapturedSyncContext = syncContext
         SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
         If Me.StopAsyncTaskIf(TimeSpan.FromSeconds(1)) Then
+            Me._MeasurementStarted = False
             Me.CancellationTokenSource = New CancellationTokenSource
             Me.CancellationToken = CancellationTokenSource.Token
             Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
