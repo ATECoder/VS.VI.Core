@@ -78,14 +78,14 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\..\Share\Core\BlueSplashScreen.vb">
+    <Compile Include="..\..\..\..\..\Share\Core\ShareBlueSplashScreen.vb">
       <Link>My\BlueSplashScreen.vb</Link>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="..\..\..\..\..\Share\Core\CommandLineInfo.vb">
+    <Compile Include="..\..\..\..\..\Share\Core\ShareCommandLineInfo.vb">
       <Link>My\CommandLineInfo.vb</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\Share\Pith\BlueApplicationEvents.vb">
+    <Compile Include="..\..\..\..\..\Share\Pith\ShareBlueApplicationEvents.vb">
       <Link>My\BlueApplicationEvents.vb</Link>
     </Compile>
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
