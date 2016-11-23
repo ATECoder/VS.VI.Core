@@ -10,12 +10,13 @@
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
-    <IncludeSearchPaths>C:\My\LIBRARIES\VS\Share\WiX\DirectoryTree\;C:\My\LIBRARIES\VS\VI\CORE\VI\WiX\OhmProber\OhmProber.Tester.WiX\</IncludeSearchPaths>
+    <IncludeSearchPaths>C:\My\LIBRARIES\VS\Share\WiX\DirectoryTree\;..\OhmProber.Tester.WiX\</IncludeSearchPaths>
     <Name>VI.OhmProber.Tester.WiX</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+
     <DefineConstants>Debug;NI_VISA=1</DefineConstants>
     <SuppressValidation>False</SuppressValidation>
     <SuppressIces>ICE30;ICE61</SuppressIces>
