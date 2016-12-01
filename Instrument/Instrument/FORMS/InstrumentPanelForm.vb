@@ -35,6 +35,7 @@ Public Class InstrumentPanelForm
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 If Me._InstrumentPanel IsNot Nothing Then
+                    Me._InstrumentLayout.Controls.Remove(Me._InstrumentPanel)
                     If Me._InstrumentPanelDisposeEnabled Then
                         Me._InstrumentPanel.Dispose()
                     End If
@@ -138,21 +139,6 @@ Public Class InstrumentPanelForm
 
     ''' <summary> Adds an instrument panel. </summary>
     ''' <remarks> David, 1/15/2016. </remarks>
-    ''' <param name="value"> The value. </param>
-    Public Sub AddInstrumentPanel(ByVal value As Instrument.ResourcePanelBase)
-        Me.AddInstrumentPanel("Instrument", value, True)
-    End Sub
-
-    ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
-    ''' <param name="title"> The title. </param>
-    ''' <param name="value"> The value. </param>
-    Public Sub AddInstrumentPanel(ByVal title As String, ByVal value As Instrument.ResourcePanelBase)
-        Me.AddInstrumentPanel(title, value, True)
-    End Sub
-
-    ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="title">          The title. </param>
     ''' <param name="value">          The value. </param>
     ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
@@ -212,7 +198,7 @@ Public Class InstrumentPanelForm
 
 #End Region
 
-#Region " PropertyNotify CONTROL "
+#Region " PROPERTY NOTIFY CONTROL "
 
     ''' <summary> true to enable, false to disable the instrument panel dispose. </summary>
     Private _PropertyNotifyControlDisposeEnabled As Boolean
@@ -440,6 +426,25 @@ Public Class InstrumentPanelFormCollection
         Me.ShowNew(form, log)
     End Sub
 
+End Class
+
+#Region " UNUSED "
+#If False Then
+    ''' <summary> Adds an instrument panel. </summary>
+    ''' <remarks> David, 1/15/2016. </remarks>
+    ''' <param name="value"> The value. </param>
+    Public Sub AddInstrumentPanel(ByVal value As Instrument.ResourcePanelBase)
+        Me.AddInstrumentPanel("Instrument", value, True)
+    End Sub
+
+    ''' <summary> Adds an instrument panel. </summary>
+    ''' <remarks> David, 1/15/2016. </remarks>
+    ''' <param name="title"> The title. </param>
+    ''' <param name="value"> The value. </param>
+    Public Sub AddInstrumentPanel(ByVal title As String, ByVal value As Instrument.ResourcePanelBase)
+        Me.AddInstrumentPanel(title, value, True)
+    End Sub
+
     ''' <summary> Adds and shows the form. </summary>
     ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="title"> The title. </param>
@@ -451,7 +456,7 @@ Public Class InstrumentPanelFormCollection
                                  ByVal panel As Instrument.ResourcePanelBase,
                                  ByVal log As MyLog)
         If form Is Nothing Then Throw New ArgumentNullException(NameOf(form))
-        form.AddInstrumentPanel(title, panel)
+        form.AddInstrumentPanel(title, panel, False)
         Me.ShowNew(form, log)
     End Sub
 
@@ -464,7 +469,7 @@ Public Class InstrumentPanelFormCollection
                                  ByVal panel As Instrument.ResourcePanelBase,
                                  ByVal log As MyLog)
         If form Is Nothing Then Throw New ArgumentNullException(NameOf(form))
-        form.AddInstrumentPanel(panel)
+        form.AddInstrumentPanel(panel, False)
         Me.ShowNew(form, log)
     End Sub
 
@@ -481,4 +486,5 @@ Public Class InstrumentPanelFormCollection
         Me.ShowNew(form, log)
     End Sub
 
-End Class
+#End If
+#End Region

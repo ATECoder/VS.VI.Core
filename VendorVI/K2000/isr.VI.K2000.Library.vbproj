@@ -78,7 +78,7 @@
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="SUBSYSTEMS\ArmLayer2Subsystem.vb" />
-    <Compile Include="SUBSYSTEMS\ArmLayerSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\ArmLayer1Subsystem.vb" />
     <Compile Include="SUBSYSTEMS\ConstantsEnums.vb" />
     <Compile Include="SUBSYSTEMS\SenseResistanceSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\Device.vb" />

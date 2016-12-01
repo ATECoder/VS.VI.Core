@@ -1,4 +1,4 @@
-﻿''' <summary> Information about the version of a Keithley 2700 instrument. </summary>
+﻿''' <summary> Information about the version of a Keithley 7000 instrument. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
 ''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING

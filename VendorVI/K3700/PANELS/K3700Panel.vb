@@ -32,13 +32,6 @@ Public Class K3700Panel
     Public Sub New()
         Me.New(New Device)
         Me.IsDeviceOwner = True
-
-        With Me.TraceMessagesBox
-            ' set defaults for the messages box.
-            .ResetCount = 500
-            .PresetCount = 250
-            .SupportsOpenLogFolderRequest = False
-        End With
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
@@ -50,6 +43,13 @@ Public Class K3700Panel
         Me.InitializeComponent()
         Me._InitializingComponents = False
         Me._AssignDevice(device)
+        With Me.TraceMessagesBox
+            ' set defaults for the messages box.
+            .ResetCount = 500
+            .PresetCount = 250
+            .SupportsOpenLogFolderRequest = False
+            .ContainerPanel = Me._MessagesTabPage
+        End With
     End Sub
 
     ''' <summary>

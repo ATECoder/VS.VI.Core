@@ -38,6 +38,14 @@ Public Class EG2000Panel
         Me.InitializeComponent()
         Me._InitializingComponents = False
         Me._AssignDevice(device)
+        ' note that the caption is not set if this is run inside the On Load function.
+        With Me.TraceMessagesBox
+            ' set defaults for the messages box.
+            .ResetCount = 500
+            .PresetCount = 250
+            .SupportsOpenLogFolderRequest = False
+            .ContainerPanel = Me._MessagesTabPage
+        End With
     End Sub
 
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -67,7 +75,6 @@ Public Class EG2000Panel
     ''' <param name="e"> An <see cref="T:System.EventArgs" /> that contains the event data. </param>
     Protected Overrides Sub OnLoad(e As EventArgs)
         Try
-            Me.TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
             Me.onLastReadingAvailable(Nothing)
         Finally
             MyBase.OnLoad(e)

@@ -56,7 +56,7 @@ Public Class ArmLayer2Subsystem
 
     ''' <summary> Gets or sets the Immediate command. </summary>
     ''' <value> The Immediate command. </value>
-    Protected Overrides ReadOnly Property ImmediateCommand As String = ":ARM:LAY{0}:IMM"
+    Protected Overrides ReadOnly Property ImmediateCommand As String = ":ARM:LAY2:IMM"
 
 #End Region
 
@@ -64,11 +64,11 @@ Public Class ArmLayer2Subsystem
 
     ''' <summary> Gets Arm count query command. </summary>
     ''' <value> The Arm count query command. </value>
-    Protected Overrides ReadOnly Property ArmCountQueryCommand As String = ":ARM:LAY{0}:COUN?"
+    Protected Overrides ReadOnly Property ArmCountQueryCommand As String = ":ARM:LAY2:COUN?"
 
     ''' <summary> Gets Arm count command format. </summary>
     ''' <value> The Arm count command format. </value>
-    Protected Overrides ReadOnly Property ArmCountCommandFormat As String = ":ARM:LAY{0}:COUN {{0}}"
+    Protected Overrides ReadOnly Property ArmCountCommandFormat As String = ":ARM:LAY2:COUN {0}"
 
 #End Region
 
@@ -76,11 +76,11 @@ Public Class ArmLayer2Subsystem
 
     ''' <summary> Gets the Trigger Direction query command. </summary>
     ''' <value> The Trigger Direction query command. </value>
-    Protected Overrides ReadOnly Property DirectionQueryCommand As String = ":ARM:LAY{0}:TCON:DIR?"
+    Protected Overrides ReadOnly Property DirectionQueryCommand As String = ":ARM:LAY2:TCON:DIR?"
 
     ''' <summary> Gets the Trigger Direction command format. </summary>
     ''' <value> The Trigger Direction command format. </value>
-    Protected Overrides ReadOnly Property DirectionCommandFormat As String = ":ARM:LAY{0}:TCON:DIR {{0}}"
+    Protected Overrides ReadOnly Property DirectionCommandFormat As String = ":ARM:LAY2:TCON:DIR {0}"
 
 #End Region
 
@@ -88,11 +88,11 @@ Public Class ArmLayer2Subsystem
 
     ''' <summary> Gets the Arm source command format. </summary>
     ''' <value> The write Arm source command format. </value>
-    Protected Overrides ReadOnly Property ArmSourceCommandFormat As String = ":ARM:LAY{0}:SOUR {{0}}"
+    Protected Overrides ReadOnly Property ArmSourceCommandFormat As String = ":ARM:LAY2:SOUR {0}"
 
     ''' <summary> Gets the Arm source query command. </summary>
     ''' <value> The Arm source query command. </value>
-    Protected Overrides ReadOnly Property ArmSourceQueryCommand As String = ":ARM:LAY{0}:SOUR?"
+    Protected Overrides ReadOnly Property ArmSourceQueryCommand As String = ":ARM:LAY2:SOUR?"
 
 #End Region
 
@@ -100,7 +100,7 @@ Public Class ArmLayer2Subsystem
 
     ''' <summary> Gets the delay command format. </summary>
     ''' <value> The delay command format. </value>
-    Protected Overrides ReadOnly Property DelayCommandFormat As String = ":ARM:LAY{0}:DEL {{0:s\.fff})"
+    Protected Overrides ReadOnly Property DelayCommandFormat As String = ":ARM:LAY2:DEL {0:s\.fff}"
 
     ''' <summary> Gets the Delay format for converting the query to time span. </summary>
     ''' <value> The Delay query command. </value>
@@ -108,7 +108,7 @@ Public Class ArmLayer2Subsystem
 
     ''' <summary> Gets the delay query command. </summary>
     ''' <value> The delay query command. </value>
-    Protected Overrides ReadOnly Property DelayQueryCommand As String = ":ARM:LAY{0}:DEL?"
+    Protected Overrides ReadOnly Property DelayQueryCommand As String = ":ARM:LAY2:DEL?"
 
 #End Region
 
@@ -116,11 +116,11 @@ Public Class ArmLayer2Subsystem
 
     ''' <summary> Gets the Input Line Number command format. </summary>
     ''' <value> The Input Line Number command format. </value>
-    Protected Overrides ReadOnly Property InputLineNumberCommandFormat As String = ":ARM:LAY{0}:TCON:ASYN:ILIN {{0}}"
+    Protected Overrides ReadOnly Property InputLineNumberCommandFormat As String = ":ARM:LAY2:TCON:ASYN:ILIN {0}"
 
     ''' <summary> Gets the Input Line Number query command. </summary>
     ''' <value> The Input Line Number query command. </value>
-    Protected Overrides ReadOnly Property InputLineNumberQueryCommand As String = ":ARM:LAY{0}:TCON:ASYN:ILIN?"
+    Protected Overrides ReadOnly Property InputLineNumberQueryCommand As String = ":ARM:LAY2:TCON:ASYN:ILIN?"
 
 #End Region
 
@@ -128,11 +128,11 @@ Public Class ArmLayer2Subsystem
 
     ''' <summary> Gets the Output Line Number command format. </summary>
     ''' <value> The Output Line Number command format. </value>
-    Protected Overrides ReadOnly Property OutputLineNumberCommandFormat As String = ":ARM:LAY{0}:TCON:ASYN:OLIN {{0}}"
+    Protected Overrides ReadOnly Property OutputLineNumberCommandFormat As String = ":ARM:LAY2:TCON:ASYN:OLIN {0}"
 
     ''' <summary> Gets the Output Line Number query command. </summary>
     ''' <value> The Output Line Number query command. </value>
-    Protected Overrides ReadOnly Property OutputLineNumberQueryCommand As String = ":ARM:LAY{0}:TCON:ASYN:OLIN?"
+    Protected Overrides ReadOnly Property OutputLineNumberQueryCommand As String = ":ARM:LAY2:TCON:ASYN:OLIN?"
 
 #End Region
 
@@ -140,7 +140,7 @@ Public Class ArmLayer2Subsystem
 
     ''' <summary> Gets the Timer Interval command format. </summary>
     ''' <value> The query command format. </value>
-    Protected Overrides ReadOnly Property TimerIntervalCommandFormat As String = ":ARM:LAY{0}:TIM {0:s\.FFFFFFF}"
+    Protected Overrides ReadOnly Property TimerIntervalCommandFormat As String = ":ARM:LAY2:TIM {0:s\.FFFFFFF}"
 
     ''' <summary> Gets the Timer Interval format for converting the query to time span. </summary>
     ''' <value> The Timer Interval query command. </value>
@@ -148,7 +148,7 @@ Public Class ArmLayer2Subsystem
 
     ''' <summary> Gets the Timer Interval query command. </summary>
     ''' <value> The Timer Interval query command. </value>
-    Protected Overrides ReadOnly Property TimerIntervalQueryCommand As String = ":ARM:LAY{0}:TIM?"
+    Protected Overrides ReadOnly Property TimerIntervalQueryCommand As String = ":ARM:LAY2:TIM?"
 
 #End Region
 

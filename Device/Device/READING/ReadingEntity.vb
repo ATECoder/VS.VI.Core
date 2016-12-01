@@ -42,7 +42,7 @@ Public Class ReadingEntity
     ''' <summary>
     ''' Remove unit characters from SCPI data. Some instruments append units to the end of the
     ''' fetched values. This methods removes alpha characters as well as the number sign which the
-    ''' 2700 appends to the reading number.
+    ''' instruments append to the reading number.
     ''' </summary>
     ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="value"> A delimited string of values. </param>
@@ -53,7 +53,7 @@ Public Class ReadingEntity
 
     ''' <summary> Remove unit characters from SCPI data. Some instruments append units to the end of
     ''' the fetched values. This methods removes alpha characters as well as the number sign which
-    ''' the 2700 appends to the reading number. </summary>
+    ''' instruments append to the reading number. </summary>
     ''' <param name="value"> A delimited string of values. </param>
     ''' <param name="delimiter"> The delimiter. </param>
     Public Shared Function TrimUnits(ByVal value As String, ByVal delimiter As String) As String

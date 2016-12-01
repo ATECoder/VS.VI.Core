@@ -116,6 +116,7 @@ Public Class BinningInfo
     End Property
 
 #End Region
+
 #Region " ARM DIRECTION "
 
     ''' <summary> The ARM Direction. </summary>

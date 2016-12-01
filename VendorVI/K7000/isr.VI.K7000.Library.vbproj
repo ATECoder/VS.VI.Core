@@ -96,7 +96,7 @@
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
     <Compile Include="SUBSYSTEMS\ArmLayer2Subsystem.vb" />
-    <Compile Include="SUBSYSTEMS\ArmLayerSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\ArmLayer1Subsystem.vb" />
     <Compile Include="SUBSYSTEMS\ContantsEnums.vb" />
     <Compile Include="SUBSYSTEMS\Device.vb" />
     <Compile Include="SUBSYSTEMS\RouteSubsystem.vb" />

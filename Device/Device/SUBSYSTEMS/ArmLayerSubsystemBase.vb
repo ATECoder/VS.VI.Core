@@ -57,13 +57,13 @@ Public MustInherit Class ArmLayerSubsystemBase
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me._Count = 1
-        Me._Delay = TimeSpan.Zero
-        Me._Direction = VI.Direction.Acceptor
-        Me._InputLineNumber = 1
-        Me._OutputLineNumber = 2
-        Me._ArmSource = VI.ArmSources.Immediate
-        Me._TimerInterval = TimeSpan.FromSeconds(0.001)
+        Me.ArmCount = 1
+        Me.Delay = TimeSpan.Zero
+        Me.Direction = VI.Direction.Acceptor
+        Me.InputLineNumber = 1
+        Me.OutputLineNumber = 2
+        Me.ArmSource = VI.ArmSources.Immediate
+        Me.TimerInterval = TimeSpan.FromSeconds(0.001)
     End Sub
 
 #End Region
@@ -74,21 +74,13 @@ Public MustInherit Class ArmLayerSubsystemBase
     ''' <value> The arm layer number. </value>
     Protected ReadOnly Property LayerNumber As Integer
 
-    ''' <summary> Builds a command. </summary>
-    ''' <remarks> David, 3/10/2016. </remarks>
-    ''' <param name="baseCommand"> The base command. </param>
-    ''' <returns> A String. </returns>
-    Protected Function BuildCommand(ByVal baseCommand As String) As String
-        Return String.Format(Globalization.CultureInfo.InvariantCulture, baseCommand, Me.LayerNumber)
-    End Function
-
 #End Region
 
 #Region " COMMANDS "
 
     ''' <summary> Gets the Immediate command. </summary>
     ''' <value> The Immediate command. </value>
-    ''' <remarks> SCPI: ":ARM:LAY{0}:IMM". </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:IMM". </remarks>
     Protected Overridable ReadOnly Property ImmediateCommand As String
 
     ''' <summary> Immediately move tot he next layer. </summary>
@@ -100,18 +92,18 @@ Public MustInherit Class ArmLayerSubsystemBase
 
 #Region " ARM COUNT "
 
-    Private _Count As Integer?
+    Private _ArmCount As Integer?
     ''' <summary> Gets or sets the cached Arm ArmCount. </summary>
     ''' <remarks> Specifies how many times an operation is performed in the specified layer of the
     ''' Arm model. </remarks>
     ''' <value> The Arm ArmCount or none if not set or unknown. </value>
     Public Overloads Property ArmCount As Integer?
         Get
-            Return Me._Count
+            Return Me._ArmCount
         End Get
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.ArmCount, value) Then
-                Me._Count = value
+                Me._ArmCount = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmCount))
             End If
         End Set
@@ -134,7 +126,7 @@ Public MustInherit Class ArmLayerSubsystemBase
     ''' <returns> The PointsArmCount or none if unknown. </returns>
     Public Function QueryArmCount() As Integer?
         If Not String.IsNullOrWhiteSpace(Me.ArmCountQueryCommand) Then
-            Me.ArmCount = Me.Session.Query(0I, Me.BuildCommand(Me.ArmCountQueryCommand))
+            Me.ArmCount = Me.Session.Query(0I, Me.ArmCountQueryCommand)
         End If
         Return Me.ArmCount
     End Function
@@ -149,7 +141,7 @@ Public MustInherit Class ArmLayerSubsystemBase
     ''' <returns> The PointsArmCount or none if unknown. </returns>
     Public Function WriteArmCount(ByVal value As Integer) As Integer?
         If Not String.IsNullOrWhiteSpace(Me.ArmCountCommandFormat) Then
-            Me.Session.WriteLine(Me.BuildCommand(Me.ArmCountCommandFormat), value)
+            Me.Session.WriteLine(Me.ArmCountCommandFormat, value)
         End If
         Me.ArmCount = value
         Return Me.ArmCount
@@ -185,7 +177,7 @@ Public MustInherit Class ArmLayerSubsystemBase
 
     ''' <summary> Gets the ARM Direction query command. </summary>
     ''' <value> The ARM Direction query command. </value>
-    ''' <remarks> SCPI: ":ARM:DIR" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:DIR?" </remarks>
     Protected Overridable ReadOnly Property DirectionQueryCommand As String
 
     ''' <summary> Queries the ARM Direction. </summary>
@@ -197,7 +189,7 @@ Public MustInherit Class ArmLayerSubsystemBase
 
     ''' <summary> Gets the ARM Direction command format. </summary>
     ''' <value> The ARM Direction command format. </value>
-    ''' <remarks> SCPI: ":ARM:DIR {0}" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:DIR {0}" </remarks>
     Protected Overridable ReadOnly Property DirectionCommandFormat As String
 
     ''' <summary> Writes the ARM Direction without reading back the value from the device. </summary>
@@ -255,7 +247,7 @@ Public MustInherit Class ArmLayerSubsystemBase
 
     ''' <summary> Gets the Arm source query command. </summary>
     ''' <value> The Arm source query command. </value>
-    ''' <remarks> SCPI: ":ARM:SOUR?" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:SOUR?" </remarks>
     Protected Overridable ReadOnly Property ArmSourceQueryCommand As String
 
     ''' <summary> Queries the Arm Source. </summary>
@@ -264,7 +256,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Dim currentValue As String = Me.ArmSource.ToString
         If String.IsNullOrEmpty(Me.Session.EmulatedReply) Then Me.Session.EmulatedReply = currentValue
         If Not String.IsNullOrWhiteSpace(Me.ArmSourceQueryCommand) Then
-            currentValue = Me.Session.QueryTrimEnd(Me.BuildCommand(Me.ArmSourceQueryCommand))
+            currentValue = Me.Session.QueryTrimEnd(Me.ArmSourceQueryCommand)
         End If
         If String.IsNullOrWhiteSpace(currentValue) Then
             Me.ArmSource = New ArmSources?
@@ -277,7 +269,7 @@ Public MustInherit Class ArmLayerSubsystemBase
 
     ''' <summary> Gets the Arm source command format. </summary>
     ''' <value> The write Arm source command format. </value>
-    ''' <remarks> SCPI: ":ARM:SOUR {0}". </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:SOUR {0}". </remarks>
     Protected Overridable ReadOnly Property ArmSourceCommandFormat As String
 
     ''' <summary> Writes the Arm Source without reading back the value from the device. </summary>
@@ -285,7 +277,7 @@ Public MustInherit Class ArmLayerSubsystemBase
     ''' <returns> The <see cref="ArmSource">Arm Source</see> or none if unknown. </returns>
     Public Function WriteArmSource(ByVal value As ArmSources) As ArmSources?
         If Not String.IsNullOrWhiteSpace(Me.ArmSourceCommandFormat) Then
-            Me.Session.WriteLine(Me.BuildCommand(Me.ArmSourceCommandFormat), value.ExtractBetween())
+            Me.Session.WriteLine(Me.ArmSourceCommandFormat, value.ExtractBetween())
         End If
         Me.ArmSource = value
         Return Me.ArmSource
@@ -323,7 +315,7 @@ Public MustInherit Class ArmLayerSubsystemBase
 
     ''' <summary> Gets the delay query command. </summary>
     ''' <value> The delay query command. </value>
-    ''' <remarks> SCPI: ":ARM:DEL?" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:DEL?" </remarks>
     Protected Overridable ReadOnly Property DelayQueryCommand As String
 
     ''' <summary> Gets the Delay format for converting the query to time span. </summary>
@@ -334,20 +326,20 @@ Public MustInherit Class ArmLayerSubsystemBase
     ''' <summary> Queries the Delay. </summary>
     ''' <returns> The Delay or none if unknown. </returns>
     Public Function QueryDelay() As TimeSpan?
-        Me.Delay = Me.Query(Me.Delay, Me.DelayFormat, Me.BuildCommand(Me.DelayQueryCommand))
+        Me.Delay = Me.Query(Me.Delay, Me.DelayFormat, Me.DelayQueryCommand)
         Return Me.Delay
     End Function
 
     ''' <summary> Gets the delay command format. </summary>
     ''' <value> The delay command format. </value>
-    ''' <remarks> SCPI: ":ARM:DEL {0:s\.FFFFFFF}" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:DEL {0:s\.FFFFFFF}" </remarks>
     Protected Overridable ReadOnly Property DelayCommandFormat As String
 
     ''' <summary> Writes the Arm Delay without reading back the value from the device. </summary>
     ''' <param name="value"> The current Delay. </param>
     ''' <returns> The Arm Delay or none if unknown. </returns>
     Public Function WriteDelay(ByVal value As TimeSpan) As TimeSpan?
-        Me.Delay = Me.Write(value, Me.BuildCommand(Me.DelayCommandFormat))
+        Me.Delay = Me.Write(value, Me.DelayCommandFormat)
         Return Me.Delay
     End Function
 
@@ -382,26 +374,26 @@ Public MustInherit Class ArmLayerSubsystemBase
 
     ''' <summary> Gets the Input Line Number query command. </summary>
     ''' <value> The Input Line Number query command. </value>
-    ''' <remarks> SCPI: ":ARM:ILIN?" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:ILIN?" </remarks>
     Protected Overridable ReadOnly Property InputLineNumberQueryCommand As String
 
     ''' <summary> Queries the InputLineNumber. </summary>
     ''' <returns> The Input Line Number or none if unknown. </returns>
     Public Function QueryInputLineNumber() As Integer?
-        Me.InputLineNumber = Me.Query(Me.InputLineNumber, Me.BuildCommand(Me.InputLineNumberQueryCommand))
+        Me.InputLineNumber = Me.Query(Me.InputLineNumber, Me.InputLineNumberQueryCommand)
         Return Me.InputLineNumber
     End Function
 
     ''' <summary> Gets the Input Line Number command format. </summary>
     ''' <value> The Input Line Number command format. </value>
-    ''' <remarks> SCPI: ":ARM:ILIN {0}" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:ILIN {1}" </remarks>
     Protected Overridable ReadOnly Property InputLineNumberCommandFormat As String
 
     ''' <summary> Writes the Arm Input Line Number without reading back the value from the device. </summary>
     ''' <param name="value"> The current InputLineNumber. </param>
     ''' <returns> The Arm Input Line Number or none if unknown. </returns>
     Public Function WriteInputLineNumber(ByVal value As Integer) As Integer?
-        Me.InputLineNumber = Me.Write(value, Me.BuildCommand(Me.InputLineNumberCommandFormat))
+        Me.InputLineNumber = Me.Write(value, Me.InputLineNumberCommandFormat)
         Return Me.InputLineNumber
     End Function
 
@@ -436,26 +428,26 @@ Public MustInherit Class ArmLayerSubsystemBase
 
     ''' <summary> Gets the Output Line Number query command. </summary>
     ''' <value> The Output Line Number query command. </value>
-    ''' <remarks> SCPI: ":ARM:OLIN?" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:OLIN?" </remarks>
     Protected Overridable ReadOnly Property OutputLineNumberQueryCommand As String
 
     ''' <summary> Queries the OutputLineNumber. </summary>
     ''' <returns> The Output Line Number or none if unknown. </returns>
     Public Function QueryOutputLineNumber() As Integer?
-        Me.OutputLineNumber = Me.Query(Me.OutputLineNumber, Me.BuildCommand(Me.OutputLineNumberQueryCommand))
+        Me.OutputLineNumber = Me.Query(Me.OutputLineNumber, Me.OutputLineNumberQueryCommand)
         Return Me.OutputLineNumber
     End Function
 
     ''' <summary> Gets the Output Line Number command format. </summary>
     ''' <value> The Output Line Number command format. </value>
-    ''' <remarks> SCPI: ":ARM:OLIN {0}" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:OLIN {0}" </remarks>
     Protected Overridable ReadOnly Property OutputLineNumberCommandFormat As String
 
     ''' <summary> Writes the Arm Output Line Number without reading back the value from the device. </summary>
     ''' <param name="value"> The current OutputLineNumber. </param>
     ''' <returns> The Arm Output Line Number or none if unknown. </returns>
     Public Function WriteOutputLineNumber(ByVal value As Integer) As Integer?
-        Me.OutputLineNumber = Me.Write(value, Me.BuildCommand(Me.OutputLineNumberCommandFormat))
+        Me.OutputLineNumber = Me.Write(value, Me.OutputLineNumberCommandFormat)
         Return Me.OutputLineNumber
     End Function
 
@@ -491,7 +483,7 @@ Public MustInherit Class ArmLayerSubsystemBase
 
     ''' <summary> Gets the Timer Interval query command. </summary>
     ''' <value> The Timer Interval query command. </value>
-    ''' <remarks> SCPI: ":ARM:TIM?" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:TIM?" </remarks>
     Protected Overridable ReadOnly Property TimerIntervalQueryCommand As String
 
     ''' <summary> Gets the Timer Interval format for converting the query to time span. </summary>
@@ -502,22 +494,35 @@ Public MustInherit Class ArmLayerSubsystemBase
     ''' <summary> Queries the Timer Interval. </summary>
     ''' <returns> The Timer Interval or none if unknown. </returns>
     Public Function QueryTimerTimeSpan() As TimeSpan?
-        Me.TimerInterval = Me.Query(Me.TimerInterval, Me.TimerIntervalFormat, Me.BuildCommand(Me.TimerIntervalQueryCommand))
+        Me.TimerInterval = Me.Query(Me.TimerInterval, Me.TimerIntervalFormat, Me.TimerIntervalQueryCommand)
         Return Me.TimerInterval
     End Function
 
     ''' <summary> Gets the Timer Interval command format. </summary>
     ''' <value> The query command format. </value>
-    ''' <remarks> SCPI: ":ARM:TIM {0:s\.FFFFFFF}" </remarks>
+    ''' <remarks> SCPI: ":ARM:LAYx:TIM {0:s\.FFFFFFF}" </remarks>
     Protected Overridable ReadOnly Property TimerIntervalCommandFormat As String
 
     ''' <summary> Writes the Arm Timer Interval without reading back the value from the device. </summary>
     ''' <param name="value"> The current TimerTimeSpan. </param>
     ''' <returns> The Arm Timer Interval or none if unknown. </returns>
     Public Function WriteTimerTimeSpan(ByVal value As TimeSpan) As TimeSpan?
-        Me.TimerInterval = Me.Write(value, Me.BuildCommand(Me.TimerIntervalQueryCommand))
+        Me.TimerInterval = Me.Write(value, Me.TimerIntervalQueryCommand)
+        Return Me.TimerInterval
     End Function
 
 #End Region
 
 End Class
+
+#Region " UNUSED "
+#If False Then
+    ''' <summary> Builds a command. </summary>
+    ''' <remarks> David, 3/10/2016. </remarks>
+    ''' <param name="baseCommand"> The base command. </param>
+    ''' <returns> A String. </returns>
+    Protected Function BuildCommand(ByVal baseCommand As String) As String
+        Return String.Format(Globalization.CultureInfo.InvariantCulture, baseCommand, Me.LayerNumber)
+    End Function
+#End If
+#End Region

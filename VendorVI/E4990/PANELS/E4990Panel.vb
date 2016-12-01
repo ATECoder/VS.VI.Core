@@ -46,6 +46,14 @@ Public Class E4990Panel
         Me.InitializeComponent()
         Me._InitializingComponents = False
         Me._AssignDevice(device)
+        ' note that the caption is not set if this is run inside the On Load function.
+        With Me.TraceMessagesBox
+            ' set defaults for the messages box.
+            .ResetCount = 500
+            .PresetCount = 250
+            .SupportsOpenLogFolderRequest = False
+            .ContainerPanel = Me._MessagesTabPage
+        End With
     End Sub
 
     ''' <summary>
@@ -70,21 +78,6 @@ Public Class E4990Panel
             End If
         Finally
             MyBase.Dispose(disposing)
-        End Try
-    End Sub
-
-#End Region
-
-#Region " FORM EVENTS "
-
-    ''' <summary> Handles the <see cref="E:System.Windows.Forms.UserControl.Load" /> event. </summary>
-    ''' <remarks> David, 1/4/2016. </remarks>
-    ''' <param name="e"> An <see cref="T:System.EventArgs" /> that contains the event data. </param>
-    Protected Overrides Sub OnLoad(e As EventArgs)
-        Try
-            Me.TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-        Finally
-            MyBase.OnLoad(e)
         End Try
     End Sub
 

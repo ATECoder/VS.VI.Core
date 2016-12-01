@@ -27,6 +27,10 @@ Public Class TriggerSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
+        Me.SupportedTriggerSources = TriggerSources.Bus Or TriggerSources.External Or
+                                     TriggerSources.Hold Or TriggerSources.Immediate Or
+                                     TriggerSources.Manual Or TriggerSources.Timer Or
+                                     TriggerSources.TriggerLink
     End Sub
 
 #End Region
@@ -114,11 +118,11 @@ Public Class TriggerSubsystem
 
     ''' <summary> Gets the Trigger Direction query command. </summary>
     ''' <value> The Trigger Direction query command. </value>
-    Protected Overrides ReadOnly Property DirectionQueryCommand As String = ":TRIG:DIR?"
+    Protected Overrides ReadOnly Property DirectionQueryCommand As String = ":TRIG:TCON:DIR?"
 
     ''' <summary> Gets the Trigger Direction command format. </summary>
     ''' <value> The Trigger Direction command format. </value>
-    Protected Overrides ReadOnly Property DirectionCommandFormat As String = ":TRIG:DIR {0}"
+    Protected Overrides ReadOnly Property DirectionCommandFormat As String = ":TRIG:TCON:DIR {0}"
 
 #End Region
 
@@ -143,6 +147,18 @@ Public Class TriggerSubsystem
     ''' <summary> Gets the Output Line Number query command. </summary>
     ''' <value> The Output Line Number query command. </value>
     Protected Overrides ReadOnly Property OutputLineNumberQueryCommand As String = ":TRIG:OLIN?"
+
+#End Region
+
+#Region " SOURCE "
+
+    ''' <summary> Gets the Trigger Source query command. </summary>
+    ''' <value> The Trigger Source query command. </value>
+    Protected Overrides ReadOnly Property TriggerSourceQueryCommand As String = ":TRIG:SOUR?"
+
+    ''' <summary> Gets the Trigger Source command format. </summary>
+    ''' <value> The Trigger Source command format. </value>
+    Protected Overrides ReadOnly Property TriggerSourceCommandFormat As String = ":TRIG:SOUR {0}"
 
 #End Region
 

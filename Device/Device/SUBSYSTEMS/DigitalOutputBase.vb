@@ -46,13 +46,13 @@ Public MustInherit Class DigitalOutputBase
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me._OutputMode = VI.OutputMode.EndTest
-        Me._OutputSignalPolarity = VI.OutputSignalPolarity.Low
-        Me._BitSize = 4
-        Me._Level = 15
-        Me._AutoClearEnabled = False
+        Me.OutputMode = VI.OutputMode.EndTest
+        Me.OutputSignalPolarity = VI.OutputSignalPolarity.Low
+        Me.BitSize = 4
+        Me.Level = 15
+        Me.AutoClearEnabled = False
         Me._DelayRange = New Range(Of TimeSpan)(TimeSpan.Zero, TimeSpan.FromSeconds(60))
-        Me._Delay = TimeSpan.FromSeconds(0.0001)
+        Me.Delay = TimeSpan.FromSeconds(0.0001)
     End Sub
 
 #End Region

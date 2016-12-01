@@ -441,7 +441,7 @@ Public MustInherit Class DeviceBase
     ''' <value> <c>True</c> if the device has an open session; otherwise, <c>False</c>. </value>
     Public ReadOnly Property IsDeviceOpen As Boolean
         Get
-            Return Me.Session.IsDeviceOpen
+            Return Me.Session IsNot Nothing AndAlso Me.Session.IsDeviceOpen
         End Get
     End Property
 

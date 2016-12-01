@@ -31,7 +31,7 @@ Public Class Device
     ''' <param name="disposing"> <c>True</c> to release both managed and unmanaged resources;
     '''                          <c>False</c> to release only unmanaged resources when called from the
     '''                          runtime finalize. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_ArmLayerSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_ArmLayer1Subsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_ArmLayer2Subsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_TriggerSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SystemSubsystem", Justification:="Disposed @Subsystems")>
@@ -130,8 +130,8 @@ Public Class Device
         Me._TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.TriggerSubsystem)
 
-        Me._ArmLayerSubsystem = New ArmLayerSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.ArmLayerSubsystem)
+        Me._ArmLayer1Subsystem = New ArmLayer1Subsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.ArmLayer1Subsystem)
 
         Me._ArmLayer2Subsystem = New ArmLayer2Subsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.ArmLayer2Subsystem)
@@ -144,7 +144,7 @@ Public Class Device
 
     ''' <summary> Gets or sets the Arm Subsystem. </summary>
     ''' <value> The Arm Subsystem. </value>
-    Public Property ArmLayerSubsystem As ArmLayerSubsystem
+    Public Property ArmLayer1Subsystem As ArmLayer1Subsystem
 
     ''' <summary> Gets or sets the Arm Layer 2 Subsystem. </summary>
     ''' <value> The Arm Layer 2 Subsystem. </value>

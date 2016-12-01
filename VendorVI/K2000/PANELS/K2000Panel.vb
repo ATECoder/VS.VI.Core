@@ -46,6 +46,14 @@ Public Class K2000Panel
         Me.InitializeComponent()
         Me._InitializingComponents = False
         Me._AssignDevice(device)
+        ' note that the caption is not set if this is run inside the On Load function.
+        With Me.TraceMessagesBox
+            ' set defaults for the messages box.
+            .ResetCount = 500
+            .PresetCount = 250
+            .SupportsOpenLogFolderRequest = False
+            .ContainerPanel = Me._MessagesTabPage
+        End With
     End Sub
 
     ''' <summary>
@@ -70,21 +78,6 @@ Public Class K2000Panel
             End If
         Finally
             MyBase.Dispose(disposing)
-        End Try
-    End Sub
-
-#End Region
-
-#Region " FORM EVENTS "
-
-    ''' <summary> Handles the <see cref="E:System.Windows.Forms.UserControl.Load" /> event. </summary>
-    ''' <remarks> David, 1/4/2016. </remarks>
-    ''' <param name="e"> An <see cref="T:System.EventArgs" /> that contains the event data. </param>
-    Protected Overrides Sub OnLoad(e As EventArgs)
-        Try
-            Me.TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-        Finally
-            MyBase.OnLoad(e)
         End Try
     End Sub
 
@@ -724,6 +717,7 @@ Public Class K2000Panel
     End Sub
 
 #End Region
+
 #End Region
 
 #Region " DISPLAY SETTINGS: READING "
@@ -1253,14 +1247,17 @@ Public Class K2000Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             Me.Device.ClearExecutionState()
+            ' enable service requests
+            Me.EnableServiceRequestEventHandler()
+            Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
             Me.Device.TriggerSubsystem.ApplyContinuousEnabled(False)
             Me.Device.TriggerSubsystem.Abort()
             Me.Device.SystemSubsystem.ApplyAutoZeroEnabled(True)
             Me.Device.FormatSubsystem.ApplyElements(ReadingTypes.Reading)
             Me.Device.SenseSubsystem.ApplyFunctionMode(Scpi.SenseFunctionModes.FourWireResistance)
             Me.Device.SenseFourWireResistanceSubsystem.ApplyAverageEnabled(False)
-            Me.Device.ArmLayerSubsystem.ApplyArmSource(ArmSources.Immediate)
-            Me.Device.ArmLayerSubsystem.ApplyArmCount(1)
+            Me.Device.ArmLayer1Subsystem.ApplyArmSource(ArmSources.Immediate)
+            Me.Device.ArmLayer1Subsystem.ApplyArmCount(1)
             Me.Device.ArmLayer2Subsystem.ApplyArmSource(ArmSources.Bus)
             Me.Device.ArmLayer2Subsystem.ApplyArmCount(1)
             Me.Device.ArmLayer2Subsystem.ApplyDelay(TimeSpan.Zero)
@@ -1273,6 +1270,7 @@ Public Class K2000Panel
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
+            Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
 

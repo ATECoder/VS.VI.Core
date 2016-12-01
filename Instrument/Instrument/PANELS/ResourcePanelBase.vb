@@ -374,6 +374,14 @@ Public Class ResourcePanelBase
         Me._AssignDevice(value)
     End Sub
 
+    ''' <summary> Gets the is device assigned. </summary>
+    ''' <value> The is device assigned. </value>
+    Public Overridable ReadOnly Property IsDeviceAssigned As Boolean
+        Get
+            Return Me.Device IsNot Nothing AndAlso Not Me.Device.IsDisposed
+        End Get
+    End Property
+
     ''' <summary> Gets or sets reference to the VISA <see cref="VI.DeviceBase">device</see>
     ''' interfaces. </summary>
     ''' <value> The connectable resource. </value>

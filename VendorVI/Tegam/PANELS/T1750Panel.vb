@@ -40,6 +40,34 @@ Public Class T1750Panel
         Me.InitializeComponent()
         Me._InitializingComponents = False
         Me._AssignDevice(device)
+        ' note that the caption is not set if this is run inside the On Load function.
+        With Me.TraceMessagesBox
+            ' set defaults for the messages box.
+            .ResetCount = 500
+            .PresetCount = 250
+            .SupportsOpenLogFolderRequest = False
+            .ContainerPanel = Me._MessagesTabPage
+        End With
+		
+        ' populate the supported commands. 
+        With Me._RangeComboBox
+            .DataSource = Nothing
+            .Items.Clear()
+			.DataSource = GetType(RangeMode).ValueDescriptionPairs
+			.SelectedIndex = 0
+			.ValueMember = "Key"
+			.DisplayMember = "Value"
+		End With
+
+		' populate the emulated reply combo.
+		With Me._TriggerCombo
+			.DataSource = Nothing
+			.Items.Clear()
+			.DataSource = GetType(TriggerMode).ValueDescriptionPairs
+			.SelectedIndex = 0
+			.ValueMember = "Key"
+			.DisplayMember = "Value"
+		End With
     End Sub
 
     ''' <summary>
@@ -80,40 +108,6 @@ Public Class T1750Panel
                 Next
             End If
         End If
-    End Sub
-
-#End Region
-
-#Region " FORM EVENTS "
-
-    ''' <summary> Handles the <see cref="E:System.Windows.Forms.UserControl.Load" /> event. </summary>
-    ''' <remarks> David, 1/4/2016. </remarks>
-    ''' <param name="e"> An <see cref="T:System.EventArgs" /> that contains the event data. </param>
-    Protected Overrides Sub OnLoad(e As EventArgs)
-        Try
-            Me.TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-            ' populate the supported commands. 
-            With Me._RangeComboBox
-                .DataSource = Nothing
-                .Items.Clear()
-                .DataSource = GetType(RangeMode).ValueDescriptionPairs
-                .SelectedIndex = 0
-                .ValueMember = "Key"
-                .DisplayMember = "Value"
-            End With
-
-            ' populate the emulated reply combo.
-            With Me._TriggerCombo
-                .DataSource = Nothing
-                .Items.Clear()
-                .DataSource = GetType(TriggerMode).ValueDescriptionPairs
-                .SelectedIndex = 0
-                .ValueMember = "Key"
-                .DisplayMember = "Value"
-            End With
-        Finally
-            MyBase.OnLoad(e)
-        End Try
     End Sub
 
 #End Region

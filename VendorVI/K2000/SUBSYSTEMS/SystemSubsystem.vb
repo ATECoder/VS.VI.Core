@@ -92,21 +92,28 @@ Public Class SystemSubsystem
         Return Me.QueryAutoZeroEnabled()
     End Function
 
+    ''' <summary> Gets or sets the automatic zero enabled query command. </summary>
+    ''' <value> The automatic zero enabled query command. </value>
+    Protected ReadOnly Property AutoZeroEnabledQueryCommand As String = ":SYST:AZER:STAT?"
+
     ''' <summary> Queries the auto zero enabled state. </summary>
     ''' <returns> <c>True</c> if auto zero is enabled; <c>False</c> if not or none if not set or
     ''' unknown. </returns>
     Public Function QueryAutoZeroEnabled() As Boolean?
-        Me.AutoZeroEnabled = Me.Session.Query(Me.AutoZeroEnabled.GetValueOrDefault(True), ":SYST:AZER?")
+        Me.AutoZeroEnabled = Me.Query(Me.AutoZeroEnabled, Me.AutoZeroEnabledQueryCommand)
         Return Me.AutoZeroEnabled
     End Function
+
+    ''' <summary> Gets or sets the automatic zero enabled command format. </summary>
+    ''' <value> The automatic zero enabled command format. </value>
+    Protected ReadOnly Property AutoZeroEnabledCommandFormat As String = ":SYST:AZER:STAT {0:'ON';'ON';'OFF'}"
 
     ''' <summary> Writes the auto zero enabled state without reading back the actual value. </summary>
     ''' <param name="value"> if set to <c>True</c> [value]. </param>
     ''' <returns> <c>True</c> if auto zero is enabled; <c>False</c> if not or none if not set or
     ''' unknown. </returns>
     Public Function WriteAutoZeroEnabled(ByVal value As Boolean) As Boolean?
-        Me.Session.WriteLine(":SYST:AZER {0:'ON';'ON';'OFF'}", CType(value, Integer))
-        Me.AutoZeroEnabled = value
+        Me.AutoZeroEnabled = Me.Write(value, Me.AutoZeroEnabledCommandFormat)
         Return Me.AutoZeroEnabled
     End Function
 

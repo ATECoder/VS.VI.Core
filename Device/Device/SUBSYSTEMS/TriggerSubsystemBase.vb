@@ -29,16 +29,16 @@ Public MustInherit Class TriggerSubsystemBase
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me._AutoDelayEnabled = False
-        Me._Count = 1
-        Me._Delay = TimeSpan.Zero
-        Me._Direction = VI.Direction.Acceptor
-        Me._InputLineNumber = 1
-        Me._OutputLineNumber = 2
-        Me._TriggerSource = VI.TriggerSources.Immediate
-        Me._TimerInterval = TimeSpan.FromSeconds(0.1)
-        Me._SupportedTriggerSources = TriggerSources.Bus Or TriggerSources.External Or TriggerSources.Immediate
-        Me._ContinuousEnabled = False
+        Me.AutoDelayEnabled = False
+        Me.TriggerCount = 1
+        Me.Delay = TimeSpan.Zero
+        Me.Direction = VI.Direction.Acceptor
+        Me.InputLineNumber = 1
+        Me.OutputLineNumber = 2
+        Me.TriggerSource = VI.TriggerSources.Immediate
+        Me.TimerInterval = TimeSpan.FromSeconds(0.1)
+        Me.SupportedTriggerSources = TriggerSources.Bus Or TriggerSources.External Or TriggerSources.Immediate
+        Me.ContinuousEnabled = False
     End Sub
 
 #End Region
@@ -316,18 +316,18 @@ Public MustInherit Class TriggerSubsystemBase
 
 #Region " TRIGGER COUNT "
 
-    Private _Count As Integer?
+    Private _TriggerCount As Integer?
     ''' <summary> Gets or sets the cached Trigger TriggerCount. </summary>
     ''' <remarks> Specifies how many times an operation is performed in the specified layer of the
     ''' trigger model. </remarks>
     ''' <value> The Trigger TriggerCount or none if not set or unknown. </value>
     Public Overloads Property TriggerCount As Integer?
         Get
-            Return Me._Count
+            Return Me._TriggerCount
         End Get
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.TriggerCount, value) Then
-                Me._Count = value
+                Me._TriggerCount = value
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerCount))
             End If
         End Set
@@ -728,6 +728,7 @@ End Class
 ''' <summary> Enumerates the trigger or arm layer bypass mode. </summary>
 Public Enum Direction
     <ComponentModel.Description("Not Defined ()")> None
+    ''' <summary> An enum constant representing the acceptor (bypass) option. </summary>
     <ComponentModel.Description("Acceptor (ACC")> Acceptor
     <ComponentModel.Description("Source (SOUR)")> Source
 End Enum
@@ -750,4 +751,6 @@ Public Enum TriggerSources
     <ComponentModel.Description("Trigger Link (TLIN)")> TriggerLink = Immediate << 1
     <ComponentModel.Description("Internal (INT)")> Internal = TriggerLink << 1
     <ComponentModel.Description("Manual (MAN)")> Manual = Internal << 1
+    <ComponentModel.Description("Hold (HOLD)")> Hold = Manual << 1
+    <ComponentModel.Description("Timer (TIM)")> Timer = Hold << 1
 End Enum

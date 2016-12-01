@@ -39,6 +39,19 @@ Public Class K7000Panel
         Me.InitializeComponent()
         Me._InitializingComponents = False
         Me._AssignDevice(device)
+        ' note that the caption is not set if this is run inside the On Load function.
+        With Me.TraceMessagesBox
+            ' set defaults for the messages box.
+            .ResetCount = 500
+            .PresetCount = 250
+            .SupportsOpenLogFolderRequest = False
+            .ContainerPanel = Me._MessagesTabPage
+        End With
+        With Me._ServiceRequestFlagsComboBox
+            .DataSource = Nothing
+            .Items.Clear()
+            .DataSource = [Enum].GetNames(GetType(isr.VI.ServiceRequests))
+        End With
     End Sub
 
     ''' <summary>
@@ -80,12 +93,6 @@ Public Class K7000Panel
     ''' <param name="e"> An <see cref="T:System.EventArgs" /> that contains the event data. </param>
     Protected Overrides Sub OnLoad(e As EventArgs)
         Try
-            Me.TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-            With Me._ServiceRequestFlagsComboBox
-                .DataSource = Nothing
-                .Items.Clear()
-                .DataSource = [Enum].GetNames(GetType(isr.VI.ServiceRequests))
-            End With
         Finally
             MyBase.OnLoad(e)
         End Try
@@ -123,7 +130,15 @@ Public Class K7000Panel
         End If
     End Sub
 
-    ''' <summary> Gets a reference to the Keithley 2700 Device. </summary>
+    ''' <summary> Gets the is device assigned. </summary>
+    ''' <value> The is device assigned. </value>
+    Public Overrides ReadOnly Property IsDeviceAssigned As Boolean
+        Get
+            Return MyBase.IsDeviceAssigned AndAlso Me.Device IsNot Nothing AndAlso Not Me.Device.IsDisposed
+        End Get
+    End Property
+
+    ''' <summary> Gets a reference to the Device. </summary>
     ''' <value> The device. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Public Overloads ReadOnly Property Device() As Device
@@ -965,10 +980,21 @@ Public Class K7000Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             Me.Device.ClearExecutionState()
+            ' enable service requests
+            'Me.EnableServiceRequestEventHandler()
+            'Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+
             Me.Device.TriggerSubsystem.ApplyContinuousEnabled(False)
             Me.Device.TriggerSubsystem.Abort()
-            Me.Device.ArmLayerSubsystem.ApplyArmSource(ArmSources.Immediate)
-            Me.Device.ArmLayerSubsystem.ApplyArmCount(1)
+            Me.Device.StatusSubsystem.EnableWaitComplete()
+            Me.Device.RouteSubsystem.WriteOpenAll(TimeSpan.FromSeconds(1))
+            Me.ReadServiceRequestStatus()
+
+            Me.Device.RouteSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(1))
+            Me.Device.RouteSubsystem.QueryClosedChannels()
+            Me.Device.RouteSubsystem.ApplyScanList("(@1!1:1!10)")
+            Me.Device.ArmLayer1Subsystem.ApplyArmSource(ArmSources.Immediate)
+            Me.Device.ArmLayer1Subsystem.ApplyArmCount(1)
             Me.Device.ArmLayer2Subsystem.ApplyArmSource(ArmSources.Immediate)
             Me.Device.ArmLayer2Subsystem.ApplyArmCount(1)
             Me.Device.ArmLayer2Subsystem.ApplyDelay(TimeSpan.Zero)
@@ -981,11 +1007,11 @@ Public Class K7000Panel
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
+            Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
 
     End Sub
-
 
 
 #End Region
