@@ -63,9 +63,31 @@ Partial Class K7000Panel
         Me._ServiceRequestByteTextBoxLabel = New System.Windows.Forms.Label()
         Me._ServiceRequestMaskTextBox = New System.Windows.Forms.TextBox()
         Me._TriggerTabPage = New System.Windows.Forms.TabPage()
+        Me._TriggerToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ApplyTriggerPlanButton = New System.Windows.Forms.ToolStripButton()
+        Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
+        Me._ConfigureExternalScan = New System.Windows.Forms.ToolStripButton()
+        Me._TriggerLayerToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._TriggerLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ContinuousTriggerEnabledCheckBox = New isr.Core.Controls.ToolStripCheckBox()
+        Me._ScanLayerToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ScanLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ScanLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ScanLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ScanLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ScanLayerTriggerLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ArmLayerToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ArmLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ArmLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ArmLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ArmLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ArmLayerTriggerLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ChannelLayerToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ChannelLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ChannelLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ChannelLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ChannelLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ChannelLayerTriggerSourceLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
         Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
@@ -78,24 +100,8 @@ Partial Class K7000Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._ArmLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._ScanLayerToolStrip = New System.Windows.Forms.ToolStrip()
-        Me._ScanLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ScanLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ScanLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._ChannelLayerToolStrip = New System.Windows.Forms.ToolStrip()
-        Me._ChannelLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ChannelLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ChannelLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._ChannelLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ChannelLayerTriggerSourceLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ArmLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ArmLayerTriggerLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ScanLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._TriggerToolStrip = New System.Windows.Forms.ToolStrip()
-        Me._ApplyTriggerPlanButton = New System.Windows.Forms.ToolStripButton()
-        Me._ScanLayerTriggerLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
+        Me._TriggerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._TriggerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._SlotTabPage.SuspendLayout()
@@ -106,15 +112,16 @@ Partial Class K7000Panel
         Me._ServiceRequestTabPage.SuspendLayout()
         Me._ServiceRequestRegisterGroupBox.SuspendLayout()
         Me._TriggerTabPage.SuspendLayout()
+        Me._TriggerToolStrip.SuspendLayout()
+        Me._TriggerLayerToolStrip.SuspendLayout()
+        Me._ScanLayerToolStrip.SuspendLayout()
         Me._ArmLayerToolStrip.SuspendLayout()
+        Me._ChannelLayerToolStrip.SuspendLayout()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
-        Me._ScanLayerToolStrip.SuspendLayout()
-        Me._ChannelLayerToolStrip.SuspendLayout()
-        Me._TriggerToolStrip.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -680,6 +687,7 @@ Partial Class K7000Panel
         '_TriggerTabPage
         '
         Me._TriggerTabPage.Controls.Add(Me._TriggerToolStrip)
+        Me._TriggerTabPage.Controls.Add(Me._TriggerLayerToolStrip)
         Me._TriggerTabPage.Controls.Add(Me._ScanLayerToolStrip)
         Me._TriggerTabPage.Controls.Add(Me._ArmLayerToolStrip)
         Me._TriggerTabPage.Controls.Add(Me._ChannelLayerToolStrip)
@@ -690,10 +698,112 @@ Partial Class K7000Panel
         Me._TriggerTabPage.Text = "Trigger"
         Me._TriggerTabPage.UseVisualStyleBackColor = True
         '
+        '_TriggerToolStrip
+        '
+        Me._TriggerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ApplyTriggerPlanButton, Me._InitiateButton, Me._ConfigureExternalScan})
+        Me._TriggerToolStrip.Location = New System.Drawing.Point(0, 112)
+        Me._TriggerToolStrip.Name = "_TriggerToolStrip"
+        Me._TriggerToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._TriggerToolStrip.TabIndex = 3
+        Me._TriggerToolStrip.Text = "Trigger"
+        '
+        '_ApplyTriggerPlanButton
+        '
+        Me._ApplyTriggerPlanButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ApplyTriggerPlanButton.Image = CType(resources.GetObject("_ApplyTriggerPlanButton.Image"), System.Drawing.Image)
+        Me._ApplyTriggerPlanButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ApplyTriggerPlanButton.Name = "_ApplyTriggerPlanButton"
+        Me._ApplyTriggerPlanButton.Size = New System.Drawing.Size(42, 22)
+        Me._ApplyTriggerPlanButton.Text = "Apply"
+        '
+        '_InitiateButton
+        '
+        Me._InitiateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._InitiateButton.Image = CType(resources.GetObject("_InitiateButton.Image"), System.Drawing.Image)
+        Me._InitiateButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._InitiateButton.Name = "_InitiateButton"
+        Me._InitiateButton.Size = New System.Drawing.Size(47, 22)
+        Me._InitiateButton.Text = "Initiate"
+        Me._InitiateButton.ToolTipText = "Starts the trigger plan"
+        '
+        '_ConfigureExternalScan
+        '
+        Me._ConfigureExternalScan.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ConfigureExternalScan.Image = CType(resources.GetObject("_ConfigureExternalScan.Image"), System.Drawing.Image)
+        Me._ConfigureExternalScan.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ConfigureExternalScan.Name = "_ConfigureExternalScan"
+        Me._ConfigureExternalScan.Size = New System.Drawing.Size(136, 22)
+        Me._ConfigureExternalScan.Text = "Configure External Scan"
+        '
+        '_TriggerLayerToolStrip
+        '
+        Me._TriggerLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerLayerToolStripLabel, Me._ContinuousTriggerEnabledCheckBox, Me._TriggerCountNumericLabel, Me._TriggerCountNumeric})
+        Me._TriggerLayerToolStrip.Location = New System.Drawing.Point(0, 84)
+        Me._TriggerLayerToolStrip.Name = "_TriggerLayerToolStrip"
+        Me._TriggerLayerToolStrip.Size = New System.Drawing.Size(356, 28)
+        Me._TriggerLayerToolStrip.TabIndex = 4
+        Me._TriggerLayerToolStrip.Text = "ToolStrip1"
+        '
+        '_TriggerLayerToolStripLabel
+        '
+        Me._TriggerLayerToolStripLabel.Name = "_TriggerLayerToolStripLabel"
+        Me._TriggerLayerToolStripLabel.Size = New System.Drawing.Size(35, 25)
+        Me._TriggerLayerToolStripLabel.Text = "TRIG:"
+        '
+        '_ContinuousTriggerEnabledCheckBox
+        '
+        Me._ContinuousTriggerEnabledCheckBox.Checked = False
+        Me._ContinuousTriggerEnabledCheckBox.Name = "_ContinuousTriggerEnabledCheckBox"
+        Me._ContinuousTriggerEnabledCheckBox.Size = New System.Drawing.Size(88, 25)
+        Me._ContinuousTriggerEnabledCheckBox.Text = "Continuous"
+        Me._ContinuousTriggerEnabledCheckBox.ToolTipText = "Continuous On/Off"
+        '
+        '_ScanLayerToolStrip
+        '
+        Me._ScanLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ScanLayerToolStripLabel, Me._ScanLayerCountNumericLabel, Me._ScanLayerCountNumeric, Me._ScanLayerSpacingLabel, Me._ScanLayerTriggerLabel})
+        Me._ScanLayerToolStrip.Location = New System.Drawing.Point(0, 56)
+        Me._ScanLayerToolStrip.Name = "_ScanLayerToolStrip"
+        Me._ScanLayerToolStrip.Size = New System.Drawing.Size(356, 28)
+        Me._ScanLayerToolStrip.TabIndex = 1
+        Me._ScanLayerToolStrip.Text = "Scan"
+        '
+        '_ScanLayerToolStripLabel
+        '
+        Me._ScanLayerToolStripLabel.Name = "_ScanLayerToolStripLabel"
+        Me._ScanLayerToolStripLabel.Size = New System.Drawing.Size(41, 25)
+        Me._ScanLayerToolStripLabel.Text = "SCAN:"
+        Me._ScanLayerToolStripLabel.ToolTipText = "Scan layer settings"
+        '
+        '_ScanLayerCountNumericLabel
+        '
+        Me._ScanLayerCountNumericLabel.Name = "_ScanLayerCountNumericLabel"
+        Me._ScanLayerCountNumericLabel.Size = New System.Drawing.Size(43, 25)
+        Me._ScanLayerCountNumericLabel.Text = "Count:"
+        '
+        '_ScanLayerCountNumeric
+        '
+        Me._ScanLayerCountNumeric.Name = "_ScanLayerCountNumeric"
+        Me._ScanLayerCountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ScanLayerCountNumeric.Text = "0"
+        Me._ScanLayerCountNumeric.ToolTipText = "Scan layer count"
+        Me._ScanLayerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        '_ScanLayerSpacingLabel
+        '
+        Me._ScanLayerSpacingLabel.Name = "_ScanLayerSpacingLabel"
+        Me._ScanLayerSpacingLabel.Size = New System.Drawing.Size(112, 25)
+        Me._ScanLayerSpacingLabel.Text = "Spacing: Immediate"
+        '
+        '_ScanLayerTriggerLabel
+        '
+        Me._ScanLayerTriggerLabel.Name = "_ScanLayerTriggerLabel"
+        Me._ScanLayerTriggerLabel.Size = New System.Drawing.Size(98, 25)
+        Me._ScanLayerTriggerLabel.Text = "Trigger: Acceptor"
+        '
         '_ArmLayerToolStrip
         '
         Me._ArmLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ArmLayerToolStripLabel, Me._ArmLayerCountNumericLabel, Me._ArmLayerCountNumeric, Me._ArmLayerSpacingLabel, Me._ArmLayerTriggerLabel})
-        Me._ArmLayerToolStrip.Location = New System.Drawing.Point(0, 26)
+        Me._ArmLayerToolStrip.Location = New System.Drawing.Point(0, 28)
         Me._ArmLayerToolStrip.Name = "_ArmLayerToolStrip"
         Me._ArmLayerToolStrip.Size = New System.Drawing.Size(356, 28)
         Me._ArmLayerToolStrip.TabIndex = 0
@@ -711,6 +821,69 @@ Partial Class K7000Panel
         Me._ArmLayerCountNumericLabel.Name = "_ArmLayerCountNumericLabel"
         Me._ArmLayerCountNumericLabel.Size = New System.Drawing.Size(43, 25)
         Me._ArmLayerCountNumericLabel.Text = "Count:"
+        '
+        '_ArmLayerCountNumeric
+        '
+        Me._ArmLayerCountNumeric.Name = "_ArmLayerCountNumeric"
+        Me._ArmLayerCountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ArmLayerCountNumeric.Text = "0"
+        Me._ArmLayerCountNumeric.ToolTipText = "Arm layer count"
+        Me._ArmLayerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        '_ArmLayerSpacingLabel
+        '
+        Me._ArmLayerSpacingLabel.Name = "_ArmLayerSpacingLabel"
+        Me._ArmLayerSpacingLabel.Size = New System.Drawing.Size(112, 25)
+        Me._ArmLayerSpacingLabel.Text = "Spacing: Immediate"
+        '
+        '_ArmLayerTriggerLabel
+        '
+        Me._ArmLayerTriggerLabel.Name = "_ArmLayerTriggerLabel"
+        Me._ArmLayerTriggerLabel.Size = New System.Drawing.Size(98, 25)
+        Me._ArmLayerTriggerLabel.Text = "Trigger: Acceptor"
+        '
+        '_ChannelLayerToolStrip
+        '
+        Me._ChannelLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ChannelLayerToolStripLabel, Me._ChannelLayerCountNumericLabel, Me._ChannelLayerCountNumeric, Me._ChannelLayerSpacingLabel, Me._ChannelLayerTriggerSourceLabel})
+        Me._ChannelLayerToolStrip.Location = New System.Drawing.Point(0, 0)
+        Me._ChannelLayerToolStrip.Name = "_ChannelLayerToolStrip"
+        Me._ChannelLayerToolStrip.Size = New System.Drawing.Size(356, 28)
+        Me._ChannelLayerToolStrip.TabIndex = 2
+        Me._ChannelLayerToolStrip.Text = "Channel"
+        Me.TipsTooltip.SetToolTip(Me._ChannelLayerToolStrip, "Channel layer settings")
+        '
+        '_ChannelLayerToolStripLabel
+        '
+        Me._ChannelLayerToolStripLabel.Name = "_ChannelLayerToolStripLabel"
+        Me._ChannelLayerToolStripLabel.Size = New System.Drawing.Size(65, 25)
+        Me._ChannelLayerToolStripLabel.Text = "CHANNEL:"
+        Me._ChannelLayerToolStripLabel.ToolTipText = "Channel layer settings"
+        '
+        '_ChannelLayerCountNumericLabel
+        '
+        Me._ChannelLayerCountNumericLabel.Name = "_ChannelLayerCountNumericLabel"
+        Me._ChannelLayerCountNumericLabel.Size = New System.Drawing.Size(43, 25)
+        Me._ChannelLayerCountNumericLabel.Text = "Count:"
+        '
+        '_ChannelLayerCountNumeric
+        '
+        Me._ChannelLayerCountNumeric.Name = "_ChannelLayerCountNumeric"
+        Me._ChannelLayerCountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ChannelLayerCountNumeric.Text = "0"
+        Me._ChannelLayerCountNumeric.ToolTipText = "Channel Layer count"
+        Me._ChannelLayerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        '_ChannelLayerSpacingLabel
+        '
+        Me._ChannelLayerSpacingLabel.Name = "_ChannelLayerSpacingLabel"
+        Me._ChannelLayerSpacingLabel.Size = New System.Drawing.Size(96, 25)
+        Me._ChannelLayerSpacingLabel.Text = "Spacing: External"
+        '
+        '_ChannelLayerTriggerSourceLabel
+        '
+        Me._ChannelLayerTriggerSourceLabel.Name = "_ChannelLayerTriggerSourceLabel"
+        Me._ChannelLayerTriggerSourceLabel.Size = New System.Drawing.Size(86, 25)
+        Me._ChannelLayerTriggerSourceLabel.Text = "Trigger: Source"
         '
         '_ReadWriteTabPage
         '
@@ -862,138 +1035,19 @@ Partial Class K7000Panel
         Me._TitleLabel.Text = "K7000"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_ArmLayerCountNumeric
+        '_TriggerCountNumericLabel
         '
-        Me._ArmLayerCountNumeric.Name = "_ArmLayerCountNumeric"
-        Me._ArmLayerCountNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._ArmLayerCountNumeric.Text = "0"
-        Me._ArmLayerCountNumeric.ToolTipText = "Arm layer count"
-        Me._ArmLayerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        Me._TriggerCountNumericLabel.Name = "_TriggerCountNumericLabel"
+        Me._TriggerCountNumericLabel.Size = New System.Drawing.Size(43, 25)
+        Me._TriggerCountNumericLabel.Text = "Count:"
         '
-        '_ScanLayerToolStrip
+        '_TriggerCountNumeric
         '
-        Me._ScanLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ScanLayerToolStripLabel, Me._ScanLayerCountNumericLabel, Me._ScanLayerCountNumeric, Me._ScanLayerSpacingLabel, Me._ScanLayerTriggerLabel})
-        Me._ScanLayerToolStrip.Location = New System.Drawing.Point(0, 54)
-        Me._ScanLayerToolStrip.Name = "_ScanLayerToolStrip"
-        Me._ScanLayerToolStrip.Size = New System.Drawing.Size(356, 26)
-        Me._ScanLayerToolStrip.TabIndex = 1
-        Me._ScanLayerToolStrip.Text = "Scan"
-        '
-        '_ScanLayerToolStripLabel
-        '
-        Me._ScanLayerToolStripLabel.Name = "_ScanLayerToolStripLabel"
-        Me._ScanLayerToolStripLabel.Size = New System.Drawing.Size(41, 23)
-        Me._ScanLayerToolStripLabel.Text = "SCAN:"
-        Me._ScanLayerToolStripLabel.ToolTipText = "Scan layer settings"
-        '
-        '_ScanLayerCountNumericLabel
-        '
-        Me._ScanLayerCountNumericLabel.Name = "_ScanLayerCountNumericLabel"
-        Me._ScanLayerCountNumericLabel.Size = New System.Drawing.Size(43, 23)
-        Me._ScanLayerCountNumericLabel.Text = "Count:"
-        '
-        '_ScanLayerCountNumeric
-        '
-        Me._ScanLayerCountNumeric.Name = "_ScanLayerCountNumeric"
-        Me._ScanLayerCountNumeric.Size = New System.Drawing.Size(41, 23)
-        Me._ScanLayerCountNumeric.Text = "0"
-        Me._ScanLayerCountNumeric.ToolTipText = "Scan layer count"
-        Me._ScanLayerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
-        '
-        '_ChannelLayerToolStrip
-        '
-        Me._ChannelLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ChannelLayerToolStripLabel, Me._ChannelLayerCountNumericLabel, Me._ChannelLayerCountNumeric, Me._ChannelLayerSpacingLabel, Me._ChannelLayerTriggerSourceLabel})
-        Me._ChannelLayerToolStrip.Location = New System.Drawing.Point(0, 0)
-        Me._ChannelLayerToolStrip.Name = "_ChannelLayerToolStrip"
-        Me._ChannelLayerToolStrip.Size = New System.Drawing.Size(356, 26)
-        Me._ChannelLayerToolStrip.TabIndex = 2
-        Me._ChannelLayerToolStrip.Text = "Channel"
-        Me.TipsTooltip.SetToolTip(Me._ChannelLayerToolStrip, "Channel layer settings")
-        '
-        '_ChannelLayerToolStripLabel
-        '
-        Me._ChannelLayerToolStripLabel.Name = "_ChannelLayerToolStripLabel"
-        Me._ChannelLayerToolStripLabel.Size = New System.Drawing.Size(65, 23)
-        Me._ChannelLayerToolStripLabel.Text = "CHANNEL:"
-        Me._ChannelLayerToolStripLabel.ToolTipText = "Channel layer settings"
-        '
-        '_ChannelLayerCountNumericLabel
-        '
-        Me._ChannelLayerCountNumericLabel.Name = "_ChannelLayerCountNumericLabel"
-        Me._ChannelLayerCountNumericLabel.Size = New System.Drawing.Size(43, 23)
-        Me._ChannelLayerCountNumericLabel.Text = "Count:"
-        '
-        '_ChannelLayerCountNumeric
-        '
-        Me._ChannelLayerCountNumeric.Name = "_ChannelLayerCountNumeric"
-        Me._ChannelLayerCountNumeric.Size = New System.Drawing.Size(41, 23)
-        Me._ChannelLayerCountNumeric.Text = "0"
-        Me._ChannelLayerCountNumeric.ToolTipText = "Channel Layer count"
-        Me._ChannelLayerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
-        '
-        '_ChannelLayerSpacingLabel
-        '
-        Me._ChannelLayerSpacingLabel.Name = "_ChannelLayerSpacingLabel"
-        Me._ChannelLayerSpacingLabel.Size = New System.Drawing.Size(96, 23)
-        Me._ChannelLayerSpacingLabel.Text = "Spacing: External"
-        '
-        '_ChannelLayerTriggerSourceLabel
-        '
-        Me._ChannelLayerTriggerSourceLabel.Name = "_ChannelLayerTriggerSourceLabel"
-        Me._ChannelLayerTriggerSourceLabel.Size = New System.Drawing.Size(86, 23)
-        Me._ChannelLayerTriggerSourceLabel.Text = "Trigger: Source"
-        '
-        '_ArmLayerSpacingLabel
-        '
-        Me._ArmLayerSpacingLabel.Name = "_ArmLayerSpacingLabel"
-        Me._ArmLayerSpacingLabel.Size = New System.Drawing.Size(112, 25)
-        Me._ArmLayerSpacingLabel.Text = "Spacing: Immediate"
-        '
-        '_ArmLayerTriggerLabel
-        '
-        Me._ArmLayerTriggerLabel.Name = "_ArmLayerTriggerLabel"
-        Me._ArmLayerTriggerLabel.Size = New System.Drawing.Size(98, 25)
-        Me._ArmLayerTriggerLabel.Text = "Trigger: Acceptor"
-        '
-        '_ScanLayerSpacingLabel
-        '
-        Me._ScanLayerSpacingLabel.Name = "_ScanLayerSpacingLabel"
-        Me._ScanLayerSpacingLabel.Size = New System.Drawing.Size(112, 23)
-        Me._ScanLayerSpacingLabel.Text = "Spacing: Immediate"
-        '
-        '_TriggerToolStrip
-        '
-        Me._TriggerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ApplyTriggerPlanButton, Me._InitiateButton})
-        Me._TriggerToolStrip.Location = New System.Drawing.Point(0, 80)
-        Me._TriggerToolStrip.Name = "_TriggerToolStrip"
-        Me._TriggerToolStrip.Size = New System.Drawing.Size(356, 25)
-        Me._TriggerToolStrip.TabIndex = 3
-        Me._TriggerToolStrip.Text = "Trigger"
-        '
-        '_ApplyTriggerPlanButton
-        '
-        Me._ApplyTriggerPlanButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ApplyTriggerPlanButton.Image = CType(resources.GetObject("_ApplyTriggerPlanButton.Image"), System.Drawing.Image)
-        Me._ApplyTriggerPlanButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._ApplyTriggerPlanButton.Name = "_ApplyTriggerPlanButton"
-        Me._ApplyTriggerPlanButton.Size = New System.Drawing.Size(42, 22)
-        Me._ApplyTriggerPlanButton.Text = "Apply"
-        '
-        '_ScanLayerTriggerLabel
-        '
-        Me._ScanLayerTriggerLabel.Name = "_ScanLayerTriggerLabel"
-        Me._ScanLayerTriggerLabel.Size = New System.Drawing.Size(98, 23)
-        Me._ScanLayerTriggerLabel.Text = "Trigger: Acceptor"
-        '
-        '_InitiateButton
-        '
-        Me._InitiateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._InitiateButton.Image = CType(resources.GetObject("_InitiateButton.Image"), System.Drawing.Image)
-        Me._InitiateButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._InitiateButton.Name = "_InitiateButton"
-        Me._InitiateButton.Size = New System.Drawing.Size(47, 22)
-        Me._InitiateButton.Text = "Initiate"
-        Me._InitiateButton.ToolTipText = "Starts the trigger plan"
+        Me._TriggerCountNumeric.Name = "_TriggerCountNumeric"
+        Me._TriggerCountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._TriggerCountNumeric.Text = "0"
+        Me._TriggerCountNumeric.ToolTipText = "Trigger count"
+        Me._TriggerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         'K7000Panel
         '
@@ -1020,8 +1074,16 @@ Partial Class K7000Panel
         Me._ServiceRequestRegisterGroupBox.PerformLayout()
         Me._TriggerTabPage.ResumeLayout(False)
         Me._TriggerTabPage.PerformLayout()
+        Me._TriggerToolStrip.ResumeLayout(False)
+        Me._TriggerToolStrip.PerformLayout()
+        Me._TriggerLayerToolStrip.ResumeLayout(False)
+        Me._TriggerLayerToolStrip.PerformLayout()
+        Me._ScanLayerToolStrip.ResumeLayout(False)
+        Me._ScanLayerToolStrip.PerformLayout()
         Me._ArmLayerToolStrip.ResumeLayout(False)
         Me._ArmLayerToolStrip.PerformLayout()
+        Me._ChannelLayerToolStrip.ResumeLayout(False)
+        Me._ChannelLayerToolStrip.PerformLayout()
         Me._ReadWriteTabPage.ResumeLayout(False)
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
@@ -1030,12 +1092,6 @@ Partial Class K7000Panel
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
-        Me._ScanLayerToolStrip.ResumeLayout(False)
-        Me._ScanLayerToolStrip.PerformLayout()
-        Me._ChannelLayerToolStrip.ResumeLayout(False)
-        Me._ChannelLayerToolStrip.PerformLayout()
-        Me._TriggerToolStrip.ResumeLayout(False)
-        Me._TriggerToolStrip.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1126,4 +1182,10 @@ Partial Class K7000Panel
     Private WithEvents _ChannelLayerSpacingLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ChannelLayerTriggerSourceLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _InitiateButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ConfigureExternalScan As Windows.Forms.ToolStripButton
+    Friend WithEvents _TriggerLayerToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _TriggerLayerToolStripLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ContinuousTriggerEnabledCheckBox As Core.Controls.ToolStripCheckBox
+    Private WithEvents _TriggerCountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _TriggerCountNumeric As Core.Controls.ToolStripNumericUpDown
 End Class

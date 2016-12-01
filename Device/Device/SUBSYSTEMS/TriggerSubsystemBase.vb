@@ -38,6 +38,7 @@ Public MustInherit Class TriggerSubsystemBase
         Me._TriggerSource = VI.TriggerSources.Immediate
         Me._TimerInterval = TimeSpan.FromSeconds(0.1)
         Me._SupportedTriggerSources = TriggerSources.Bus Or TriggerSources.External Or TriggerSources.Immediate
+        Me._ContinuousEnabled = False
     End Sub
 
 #End Region
@@ -202,6 +203,60 @@ Public MustInherit Class TriggerSubsystemBase
     Public Function WriteAveragingEnabled(ByVal value As Boolean) As Boolean?
         Me.AveragingEnabled = Me.Write(value, Me.AveragingEnabledCommandFormat)
         Return Me.AveragingEnabled
+    End Function
+
+#End Region
+
+#Region " CONTINUOUS ENABLED "
+
+    Private _ContinuousEnabled As Boolean?
+    ''' <summary> Gets or sets the cached Continuous Enabled sentinel. </summary>
+    ''' <value> <c>null</c> if Continuous Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property ContinuousEnabled As Boolean?
+        Get
+            Return Me._ContinuousEnabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.ContinuousEnabled, value) Then
+                Me._ContinuousEnabled = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.ContinuousEnabled))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Continuous Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyContinuousEnabled(ByVal value As Boolean) As Boolean?
+        Me.WriteContinuousEnabled(value)
+        Return Me.QueryContinuousEnabled()
+    End Function
+
+    ''' <summary> Gets the Continuous enabled query command. </summary>
+    ''' <value> The Continuous enabled query command. </value>
+    ''' <remarks> SCPI: ":INIT:CONT?" </remarks>
+    Protected Overridable ReadOnly Property ContinuousEnabledQueryCommand As String
+
+    ''' <summary> Queries the Continuous Enabled sentinel. Also sets the
+    ''' <see cref="ContinuousEnabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryContinuousEnabled() As Boolean?
+        Me.ContinuousEnabled = Me.Query(Me.ContinuousEnabled, Me.ContinuousEnabledQueryCommand)
+        Return Me.ContinuousEnabled
+    End Function
+
+    ''' <summary> Gets the Continuous enabled command Format. </summary>
+    ''' <value> The Continuous enabled query command. </value>
+    ''' <remarks> SCPI: ":INIT:CONT {0:'ON';'ON';'OFF'}" </remarks>
+    Protected Overridable ReadOnly Property ContinuousEnabledCommandFormat As String
+
+    ''' <summary> Writes the Continuous Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteContinuousEnabled(ByVal value As Boolean) As Boolean?
+        Me.ContinuousEnabled = Me.Write(value, Me.ContinuousEnabledCommandFormat)
+        Return Me.ContinuousEnabled
     End Function
 
 #End Region

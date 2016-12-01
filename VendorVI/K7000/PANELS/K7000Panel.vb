@@ -165,7 +165,7 @@ Public Class K7000Panel
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Protected Overrides Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
-        'AddHandler Me.Device.TriggerSubsystem.PropertyChanged, AddressOf Me.TriggerSubsystemPropertyChanged
+        AddHandler Me.Device.TriggerSubsystem.PropertyChanged, AddressOf Me.TriggerSubsystemPropertyChanged
         AddHandler Me.Device.RouteSubsystem.PropertyChanged, AddressOf Me.RouteSubsystemPropertyChanged
         AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
         AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
@@ -189,7 +189,7 @@ Public Class K7000Panel
         MyBase.DeviceClosing(sender, e)
         If e?.Cancel Then Return
         If Me.IsDeviceOpen Then
-            'RemoveHandler Me.Device.TriggerSubsystem.PropertyChanged, AddressOf Me.TriggerSubsystemPropertyChanged
+            RemoveHandler Me.Device.TriggerSubsystem.PropertyChanged, AddressOf Me.TriggerSubsystemPropertyChanged
             RemoveHandler Me.Device.RouteSubsystem.PropertyChanged, AddressOf Me.RouteSubsystemPropertyChanged
             RemoveHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
             RemoveHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
@@ -313,6 +313,39 @@ Public Class K7000Panel
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+        End Try
+    End Sub
+
+#End Region
+
+#Region " TRIGGER "
+
+    ''' <summary> Handle the Trigger subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As TriggerSubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.ContinuousEnabled)
+                If subsystem.ContinuousEnabled.HasValue Then
+                    Me._ContinuousTriggerEnabledCheckBox.Checked = subsystem.ContinuousEnabled.Value
+                End If
+        End Select
+    End Sub
+
+    ''' <summary> Trigger subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub TriggerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            If sender IsNot Nothing AndAlso e IsNot Nothing Then
+                Me.OnSubsystemPropertyChanged(TryCast(sender, TriggerSubsystem), e.PropertyName)
+            End If
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling Trigger Subsystem property changed Event;. Failed property {0}. Details: {1}",
+                               e.PropertyName, ex)
         End Try
     End Sub
 
@@ -888,6 +921,7 @@ Public Class K7000Panel
 
 #Region " TRIGGER "
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ApplyTriggerPlanButton_Click(sender As Object, e As EventArgs) Handles _ApplyTriggerPlanButton.Click
         If Me._InitializingComponents Then Return
         Try
@@ -906,12 +940,14 @@ Public Class K7000Panel
         End Try
     End Sub
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InitiateButton_Click(sender As Object, e As EventArgs) Handles _InitiateButton.Click
         If Me._InitializingComponents Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             Me.Device.ClearExecutionState()
+            ' when handshaking, initialize the scanner first.
             Me.Device.TriggerSubsystem.Initiate()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -921,6 +957,35 @@ Public Class K7000Panel
         End Try
 
     End Sub
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ConfigureExternalScan_Click(sender As Object, e As EventArgs) Handles _ConfigureExternalScan.Click
+        If Me._InitializingComponents Then Return
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.ClearExecutionState()
+            Me.Device.TriggerSubsystem.ApplyContinuousEnabled(False)
+            Me.Device.TriggerSubsystem.Abort()
+            Me.Device.ArmLayerSubsystem.ApplyArmSource(ArmSources.Immediate)
+            Me.Device.ArmLayerSubsystem.ApplyArmCount(1)
+            Me.Device.ArmLayer2Subsystem.ApplyArmSource(ArmSources.Immediate)
+            Me.Device.ArmLayer2Subsystem.ApplyArmCount(1)
+            Me.Device.ArmLayer2Subsystem.ApplyDelay(TimeSpan.Zero)
+            Me.Device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.External)
+            Me.Device.TriggerSubsystem.ApplyTriggerCount(9999) ' in place of infinite
+            Me.Device.TriggerSubsystem.ApplyDelay(TimeSpan.Zero)
+            Me.Device.TriggerSubsystem.ApplyDirection(Direction.Source)
+            Me.StatusLabel.Text = "Ready: Initiate 7001 and then meter"
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+
+    End Sub
+
 
 
 #End Region

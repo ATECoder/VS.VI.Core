@@ -37,6 +37,18 @@ Public Class SenseFourWireResistanceSubsystem
 
 #Region " COMMAND SYNTAX "
 
+#Region " AVERAGE ENABLED "
+
+    ''' <summary> Gets the Average enabled command Format. </summary>
+    ''' <value> The Average enabled query command. </value>
+    Protected Overrides ReadOnly Property AverageEnabledCommandFormat As String = ":SENS:FRES:AVER:STAT {0:'ON';'ON';'OFF'}"
+
+    ''' <summary> Gets the Average enabled query command. </summary>
+    ''' <value> The Average enabled query command. </value>
+    Protected Overrides ReadOnly Property AverageEnabledQueryCommand As String = ":SENS:FRES:AVER:STAT?"
+
+#End Region
+
 #Region " AUTO RANGE "
 
     ''' <summary> Gets the automatic Range enabled command Format. </summary>

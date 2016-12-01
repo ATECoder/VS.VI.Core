@@ -43,7 +43,7 @@ Public Class BufferReading
     Private Sub _Clear()
         Me._Reading = ""
         Me._TimestampReading = ""
-        Me._TimeStamp = DateTime.MinValue
+        Me._Timestamp = DateTime.MinValue
         Me._FractionalSecond = 0
         Me._FractionalTimestamp = TimeSpan.Zero
         Me.RelativeTimespan = TimeSpan.Zero
@@ -95,17 +95,17 @@ Public Class BufferReading
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="timestamp"> The time stamp rounded down to the second. </param>
     Private Sub ParseTimestamp(ByVal timestamp As String)
-        If String.IsNullOrWhiteSpace(timestamp) Then Throw New ArgumentNullException
+        If String.IsNullOrWhiteSpace(timestamp) Then Throw New ArgumentNullException(NameOf(timestamp))
         Dim q As New Queue(Of String)(timestamp.Split("."c))
-        Me._TimeStamp = DateTime.Parse(q.Dequeue)
+        Me._Timestamp = DateTime.Parse(q.Dequeue)
         Me._FractionalSecond = Double.Parse($".{q.Dequeue}")
         Me._FractionalTimestamp = TimeSpan.FromTicks(CLng(TimeSpan.TicksPerSecond * Me._FractionalSecond))
     End Sub
 
     ''' <summary> Gets the time stamp. </summary>
     ''' <value> The time stamp rounded down to the second. </value>
-    ''' <remakrs> The actual time is the sum of <see cref="TimeStamp"/> and <see cref="FractionalTimestamp"/>  </remakrs>
-    Public ReadOnly Property TimeStamp As DateTime
+    ''' <remakrs> The actual time is the sum of <see cref="Timestamp"/> and <see cref="FractionalTimestamp"/>  </remakrs>
+    Public ReadOnly Property Timestamp As DateTime
 
     ''' <summary> Gets or sets the fractional second. </summary>
     ''' <value> The fractional second. </value>
@@ -136,7 +136,7 @@ Public Class BufferReading
         If firstReading Is Nothing Then
             Me.RelativeTimespan = TimeSpan.Zero
         Else
-            Me.RelativeTimespan = Me.TimeStamp.Subtract(firstReading.TimeStamp).Add(Me.FractionalTimestamp).Subtract(firstReading.FractionalTimestamp)
+            Me.RelativeTimespan = Me.Timestamp.Subtract(firstReading.Timestamp).Add(Me.FractionalTimestamp).Subtract(firstReading.FractionalTimestamp)
         End If
     End Sub
 

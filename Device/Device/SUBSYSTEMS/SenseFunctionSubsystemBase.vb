@@ -33,6 +33,61 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #End Region
 
+#Region " Average ENABLED "
+
+    ''' <summary> Average enabled. </summary>
+    Private _AverageEnabled As Boolean?
+
+    ''' <summary> Gets or sets the cached Average Enabled sentinel. </summary>
+    ''' <value> <c>null</c> if Average Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property AverageEnabled As Boolean?
+        Get
+            Return Me._AverageEnabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.AverageEnabled, value) Then
+                Me._AverageEnabled = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.AverageEnabled))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Average Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyAverageEnabled(ByVal value As Boolean) As Boolean?
+        Me.WriteAverageEnabled(value)
+        Return Me.QueryAverageEnabled()
+    End Function
+
+    ''' <summary> Gets or sets the Average enabled query command. </summary>
+    ''' <value> The Average enabled query command. </value>
+    ''' <remarks> SCPI: "CURR:AVER:STAT?" </remarks>
+    Protected Overridable ReadOnly Property AverageEnabledQueryCommand As String
+
+    ''' <summary> Queries the Average Enabled sentinel. Also sets the
+    ''' <see cref="AverageEnabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryAverageEnabled() As Boolean?
+        Me.AverageEnabled = Me.Query(Me.AverageEnabled, Me.AverageEnabledQueryCommand)
+        Return Me.AverageEnabled
+    End Function
+
+    ''' <summary> Gets or sets the Average enabled command Format. </summary>
+    ''' <value> The Average enabled query command. </value>
+    ''' <remarks> SCPI: "CURR:AVER:STAT {0:'ON';'ON';'OFF'}" </remarks>
+    Protected Overridable ReadOnly Property AverageEnabledCommandFormat As String
+
+    ''' <summary> Writes the Average Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteAverageEnabled(ByVal value As Boolean) As Boolean?
+        Me.AverageEnabled = Me.Write(value, Me.AverageEnabledCommandFormat)
+        Return Me.AverageEnabled
+    End Function
+
+#End Region
 #Region " AUTO RANGE ENABLED "
 
     ''' <summary> Auto Range enabled. </summary>

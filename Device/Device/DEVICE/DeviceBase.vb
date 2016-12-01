@@ -561,6 +561,7 @@ Public MustInherit Class DeviceBase
     ''' <returns> <c>True</c> if success; <c>False</c> otherwise. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overridable Function TryOpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal e As CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Try
             Me.OpenSession(resourceName, resourceTitle)
         Catch ex As OperationFailedException
@@ -575,8 +576,8 @@ Public MustInherit Class DeviceBase
     ''' <remarks> This override should occur as the first call of the overriding method. </remarks>
     Protected Overridable Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        If Not e?.Cancel Then Me.SyncNotifyClosing(e)
-        If Not e?.Cancel Then
+        If Not e.Cancel Then Me.SyncNotifyClosing(e)
+        If Not e.Cancel Then
             Me.IsInitialized = False
             Me.SuspendPublishing()
         End If

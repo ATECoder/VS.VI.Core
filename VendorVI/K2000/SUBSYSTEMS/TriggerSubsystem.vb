@@ -70,6 +70,18 @@ Public Class TriggerSubsystem
 
 #End Region
 
+#Region " CONTINUOUS "
+
+    ''' <summary> Gets the Continuous enabled command Format. </summary>
+    ''' <value> The Continuous enabled query command. </value>
+    Protected Overrides ReadOnly Property ContinuousEnabledCommandFormat As String = ":INIT:CONT {0:'ON';'ON';'OFF'}"
+
+    ''' <summary> Gets the Continuous enabled query command. </summary>
+    ''' <value> The Continuous enabled query command. </value>
+    Protected Overrides ReadOnly Property ContinuousEnabledQueryCommand As String = ":INIT:CONT?"
+
+#End Region
+
 #Region " TRIGGER COUNT "
 
     ''' <summary> Gets trigger count query command. </summary>
