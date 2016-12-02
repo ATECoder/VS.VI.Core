@@ -963,11 +963,13 @@ Public Class K7000Panel
             Me.ErrorProvider.Clear()
             Me.Device.ClearExecutionState()
             ' when handshaking, initialize the scanner first.
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Initiating scanner;. ")
             Me.Device.TriggerSubsystem.Initiate()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
+            Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
 

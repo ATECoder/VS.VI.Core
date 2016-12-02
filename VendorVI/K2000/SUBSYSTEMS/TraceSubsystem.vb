@@ -61,6 +61,10 @@ Public Class TraceSubsystem
     ''' <value> The points count command format. </value>
     Protected Overrides ReadOnly Property PointsCountCommandFormat As String = ":TRAC:POIN {0}"
 
+    ''' <summary> Gets or sets the data query command. </summary>
+    ''' <value> The data query command. </value>
+    Protected Overrides ReadOnly Property DataQueryCommand As String = ":TRAC:Data?"
+
     ''' <summary> Gets the feed Control query command. </summary>
     ''' <value> The write feed Control query command. </value>
     Protected Overrides ReadOnly Property FeedControlQueryCommand As String = ":TRAC:FEED:CONTROL?"
@@ -76,6 +80,17 @@ Public Class TraceSubsystem
     ''' <summary> Gets the feed source command format. </summary>
     ''' <value> The write feed source command format. </value>
     Protected Overrides ReadOnly Property FeedSourceCommandFormat As String = ":TRAC:FEED {0}"
+
+#End Region
+
+#Region " TRACE READINGS "
+
+    ''' <summary> Queries the current Data. </summary>
+    ''' <returns> The Data or empty if none. </returns>
+    Public Overloads Function QueryReadings(ByVal baseReading As Readings) As IEnumerable(Of Readings)
+        Dim values As String = MyBase.QueryData()
+        Return Readings.ParseMulti(baseReading, values)
+    End Function
 
 #End Region
 

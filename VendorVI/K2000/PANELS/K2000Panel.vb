@@ -9,6 +9,7 @@ Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.Core.Controls.DataGridViewExtensions
 ''' <summary> Provides a user interface for a Keithley 200X Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -855,41 +856,6 @@ Public Class K2000Panel
         End Try
     End Sub
 
-    ''' <summary> Event handler. Called by _terminalsToggle for click events. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    Private Sub _TerminalsToggle_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-        If Me._InitializingComponents Then Return
-        Dim checkBox As Windows.Forms.CheckBox = TryCast(sender, Windows.Forms.CheckBox)
-        If checkBox IsNot Nothing Then
-            If checkBox.CheckState = Windows.Forms.CheckState.Indeterminate Then
-                checkBox.Text = "R/F?"
-            Else
-                checkBox.Text = CStr(IIf(checkBox.Checked, "Rear", "Front"))
-            End If
-        End If
-    End Sub
-
-    ''' <summary> Event handler. Called by _HandleServiceRequestsCheckBox for check state changed
-    ''' events. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    Private Sub _HandleServiceRequestsCheckBox_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-        If Me._InitializingComponents Then Return
-        Dim checkBox As CheckBox = TryCast(sender, CheckBox)
-        If checkBox IsNot Nothing AndAlso
-                    Not checkBox.Checked = Me.Device.Session.IsServiceRequestEventEnabled Then
-            If checkBox IsNot Nothing AndAlso checkBox.Checked Then
-                Me.EnableServiceRequestEventHandler()
-                Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
-            Else
-                Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
-                Me.DisableServiceRequestEventHandler()
-            End If
-            Me.Device.StatusSubsystem.ReadRegisters()
-        End If
-    End Sub
-
 #End Region
 
 #Region " CONTROL EVENT HANDLERS: SENSE "
@@ -1150,6 +1116,23 @@ Public Class K2000Panel
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred toggling service request handling mode;. Details: {0}", ex)
         Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _TerminalStateLabel_Click(sender As Object, e As EventArgs) Handles _TerminalStateLabel.Click
+        If Me._InitializingComponents Then Return
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.Device.SystemSubsystem.QueryFrontSwitched()
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred checking Front terminals state;. Details: {0}", ex)
+        Finally
+            Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
     End Sub
@@ -1218,23 +1201,30 @@ Public Class K2000Panel
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _InitiateButton_Click(sender As Object, e As EventArgs) Handles _InitiateButton.Click
+    Private Sub _InitiateWaitReadButton_Click(sender As Object, e As EventArgs) Handles _InitiateWaitReadButton.Click
         If Me._InitializingComponents Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
+#If False Then
             Me.Device.ClearExecutionState()
-
             ' set the service request
             Me.Device.StatusSubsystem.ApplyMeasurementEventEnableBitmask(MeasurementEvents.All)
             Me.Device.StatusSubsystem.EnableServiceRequest(VI.ServiceRequests.All And Not VI.ServiceRequests.MessageAvailable)
-
-            ' trigger the initiation of the measurement letting the service request do the rest.
+            Me.Device.Session.Write("*SRE 1") ' Set MSB bit of SRE register
+            Me.Device.Session.Write("stat:meas:ptr 32767; ntr 0; enab 512") ' Set all PTR bits and clear all NTR bits for measurement events Set Buffer Full bit of Measurement
+            Me.Device.Session.Write(":trac:feed calc") ' Select Calculate as reading source
+            Me.Device.Session.Write(":trac:poin 10")   ' Set buffer size to 10 points 
+            Me.Device.Session.Write(":trac:egr full") ' Select Full element group
+#End If
+            ' trigger the initiation of the measurement letting the triggering or service request do the rest.
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Initiating meter;. ")
             Me.Device.TriggerSubsystem.Initiate()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
+            Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
 
@@ -1246,6 +1236,7 @@ Public Class K2000Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
+            Me.Device.ResetKnownState()
             Me.Device.ClearExecutionState()
             ' enable service requests
             Me.EnableServiceRequestEventHandler()
@@ -1258,13 +1249,16 @@ Public Class K2000Panel
             Me.Device.SenseFourWireResistanceSubsystem.ApplyAverageEnabled(False)
             Me.Device.ArmLayer1Subsystem.ApplyArmSource(ArmSources.Immediate)
             Me.Device.ArmLayer1Subsystem.ApplyArmCount(1)
-            Me.Device.ArmLayer2Subsystem.ApplyArmSource(ArmSources.Bus)
+            Me.Device.ArmLayer2Subsystem.ApplyArmSource(ArmSources.Immediate)
             Me.Device.ArmLayer2Subsystem.ApplyArmCount(1)
             Me.Device.ArmLayer2Subsystem.ApplyDelay(TimeSpan.Zero)
             Me.Device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.External)
             Me.Device.TriggerSubsystem.ApplyTriggerCount(10)
             Me.Device.TriggerSubsystem.ApplyDelay(TimeSpan.Zero)
             Me.Device.TriggerSubsystem.ApplyDirection(Direction.Source)
+            Me.Device.TraceSubsystem.WriteFeedSource(Scpi.FeedSource.Sense)
+            Me.Device.TraceSubsystem.ApplyPointsCount(10)
+            Me.Device.TraceSubsystem.WriteFeedControl(Scpi.FeedControl.Next)
             Me.StatusLabel.Text = "Ready: Initiate scanner and then meter"
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -1276,103 +1270,93 @@ Public Class K2000Panel
 
     End Sub
 
-    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub WaitAndRead()
-#If False Then
-        cmd$ = ":INIT"
-        GOSUB send7001
 
-        cmd$ = ":INIT"
-        GOSUB send2001
-        '
-        ' Arm buffer.
-        '
-        cmd$ = "*SRE 1"
-        GOSUB send2001
+    ''' <summary>
+    ''' Handles the DataError event of the _dataGridView control.
+    ''' </summary>
+    ''' <param name="sender">The source of the event.</param>
+    ''' <param name="e">The <see cref="DataGridViewDataErrorEventArgs"/> instance containing the event data.</param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ReadingsDataGridView_DataError(sender As Object, e As DataGridViewDataErrorEventArgs) Handles _ReadingsDataGridView.DataError
+        Try
+            ' prevent error reporting when adding a new row or editing a cell
+            Dim grid As DataGridView = TryCast(sender, DataGridView)
+            If grid IsNot Nothing Then
+                If grid.CurrentRow IsNot Nothing AndAlso grid.CurrentRow.IsNewRow Then Return
+                If grid.IsCurrentCellInEditMode Then Return
+                If grid.IsCurrentRowDirty Then Return
+                Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                                   $"Exception occurred editing row {e.RowIndex} column {e.ColumnIndex};. Details: {e.Exception}")
+                Me.ErrorProvider.Annunciate(grid, "Exception occurred editing table")
+            End If
+        Catch
+        End Try
+    End Sub
 
-        cmd$ = "STAT:MEAS:PTR 32767;NTR 0;ENAB 512"
-        GOSUB send2001
+    ''' <summary> Displays the readings described by values. </summary>
+    ''' <remarks> David, 12/1/2016. </remarks>
+    ''' <param name="values"> The values. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Private Sub DisplayReadings(ByVal values As IEnumerable(Of Readings))
+        If Me.IsDeviceOpen Then
+            With Me._ReadingsDataGridView
+                .DataSource = Nothing
+                .Columns.Clear()
+                .AutoGenerateColumns = False
+                .AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.LightGreen
+                .AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader
+                .BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+                .ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                .AllowUserToResizeColumns = True
+                .EnableHeadersVisualStyles = True
+                .MultiSelect = False
+                .RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Raised
+                .DataSource = values
+                Dim displayIndex As Integer = 0
+                Dim column As New DataGridViewTextBoxColumn()
+                With column
+                    .DataPropertyName = NameOf(Readings.RawReading)
+                    .Name = NameOf(Readings.RawReading)
+                    .Visible = True
+                    .DisplayIndex = displayIndex
+                    .HeaderText = "Reading"
+                End With
+                .Columns.Add(column)
+                displayIndex += 1
+                For Each c As DataGridViewColumn In .Columns
+                    c.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader
+                Next
+                .ParseHeaderText()
+                .ScrollBars = ScrollBars.Both
+            End With
+        End If
+    End Sub
 
-        cmd$ = ":TRAC:FEED CALC"
-        GOSUB send2001
-
-        cmd$ = ":TRAC:POIN 10"
-        GOSUB send2001
-
-        cmd$ = ":TRAC:EGR COMP"
-        GOSUB send2001
-
-        cmd$ = ":FORM:DATA SREAL"
-        GOSUB send2001
-
-        cmd$ = ":TRAC:FEED:CONT NEXT;*OPC"
-        GOSUB send2001
-
-        CALL Delay(1)
-        '
-        ' Start filling....
-        '
-        t1 = TIMER
-        CALL transmit("UNL LISTEN 16 GET", status%)
-        '
-        ' Wait for buffer to fill...
-        '
-        DO
-           DO
-           LOOP UNTIL srq%
-           CALL spoll(DmmAddr%, poll%, status%)
-        LOOP UNTIL (poll% AND 64)
-
-        cmd$ = ":STAT:MEAS:EVENT?"
-        GOSUB send2001
-
-        CALL enter(Sme$, length%, 16, status%)
-        '
-        ' Go get buffer contents.
-        '
-        cmd$ = "TRACe:DATA?"
-        GOSUB send2001
-
-        DIM Readings!(1 TO 10), dummy!(1 TO 1)
-
-        '   Setup CEC for LISTEN & 2001 for TALK
-        CALL transmit("UNT UNL MLA TALK 16", status%)
-
-        '   Read 2 bytes (#0)
-        r$ = SPACE$(2)
-
-        CALL receive(r$, l%, status%)
-
-        NumDataPoints% = 10
-
-        '   Get Data in 4 blocks since CEC can only handle up to 64kB
-        '   per data transfer.
-
-        NumBytes% = NumDataPoints% * 4
-        CALL rarray(Readings!(1), NumBytes%, l%, status%)
-
-        '   get Terminator Character(s)
-        CALL settimeout(100)
-
-        CALL rarray(dummy!(1), 1, l%, status%)
-        CALL settimeout(10000)
-
-        CALL transmit("UNT UNL", status%)      ' UNTalk and UNListen all devices
-
-        t2 = TIMER
-        t3 = t2 - t1
-
-        FOR i = 1 TO 10
-            PRINT "Rdg("; i; ") = "; Readings!(i)
-        NEXT i
-
-        PRINT
-        PRINT "Total time = "; t3
-        PRINT
-
-        t4 = t3 / 10
-        PRINT "Seconds per channel = "; t4
-#End If
+    ''' <summary> Reads buffer button click. </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/>
+    '''                       instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ReadReadingsButton_Click(sender As Object, e As EventArgs) Handles _ReadReadingsButton.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "reading readings"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                               "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+            Dim values As IEnumerable(Of Readings) = Me.Device.TraceSubsystem.QueryReadings(Me.Device.MeasureSubsystem.Readings)
+            Me._ReadingsCountLabel.Text = values?.Count.ToString
+            Me.DisplayReadings(values)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred {0};. Details: {1}", activity, ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
     End Sub
 
 #End Region

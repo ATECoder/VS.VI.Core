@@ -236,7 +236,7 @@ Public MustInherit Class TraceSubsystemBase
         End Set
     End Property
 
-    ''' <summary> Gets or sets the points count query command. </summary>
+    ''' <summary> Gets or sets the data query command. </summary>
     ''' <value> The points count query command. </value>
     ''' <remarks> SCPI: ":TRAC:DATA?" </remarks>
     Protected Overridable ReadOnly Property DataQueryCommand As String

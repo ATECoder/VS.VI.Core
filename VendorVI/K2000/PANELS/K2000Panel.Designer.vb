@@ -44,6 +44,8 @@ Partial Class K2000Panel
         Me._TriggerLayerToolStrip = New System.Windows.Forms.ToolStrip()
         Me._TriggerLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ContinuousTriggerEnabledCheckBox = New isr.Core.Controls.ToolStripCheckBox()
+        Me._TriggerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._TriggerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
         Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
@@ -56,8 +58,11 @@ Partial Class K2000Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._TriggerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._TriggerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ReadingsDataGridView = New System.Windows.Forms.DataGridView()
+        Me._BufferToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ReadReadingsButton = New System.Windows.Forms.ToolStripButton()
+        Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ReadingsCountLabelLabel = New System.Windows.Forms.ToolStripLabel()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -74,6 +79,8 @@ Partial Class K2000Panel
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
+        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._BufferToolStrip.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -353,6 +360,8 @@ Partial Class K2000Panel
         '
         '_ScanTabPage
         '
+        Me._ScanTabPage.Controls.Add(Me._ReadingsDataGridView)
+        Me._ScanTabPage.Controls.Add(Me._BufferToolStrip)
         Me._ScanTabPage.Controls.Add(Me._TriggerToolStrip)
         Me._ScanTabPage.Controls.Add(Me._TriggerLayerToolStrip)
         Me._ScanTabPage.Location = New System.Drawing.Point(4, 26)
@@ -421,6 +430,20 @@ Partial Class K2000Panel
         Me._ContinuousTriggerEnabledCheckBox.Size = New System.Drawing.Size(88, 25)
         Me._ContinuousTriggerEnabledCheckBox.Text = "Continuous"
         Me._ContinuousTriggerEnabledCheckBox.ToolTipText = "Continuous On/Off"
+        '
+        '_TriggerCountNumericLabel
+        '
+        Me._TriggerCountNumericLabel.Name = "_TriggerCountNumericLabel"
+        Me._TriggerCountNumericLabel.Size = New System.Drawing.Size(43, 25)
+        Me._TriggerCountNumericLabel.Text = "Count:"
+        '
+        '_TriggerCountNumeric
+        '
+        Me._TriggerCountNumeric.Name = "_TriggerCountNumeric"
+        Me._TriggerCountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._TriggerCountNumeric.Text = "0"
+        Me._TriggerCountNumeric.ToolTipText = "Trigger Count"
+        Me._TriggerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         '_ReadWriteTabPage
         '
@@ -573,19 +596,49 @@ Partial Class K2000Panel
         Me._TitleLabel.Text = "K2000"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_TriggerCountNumericLabel
+        '_ReadingsDataGridView
         '
-        Me._TriggerCountNumericLabel.Name = "_TriggerCountNumericLabel"
-        Me._TriggerCountNumericLabel.Size = New System.Drawing.Size(43, 25)
-        Me._TriggerCountNumericLabel.Text = "Count:"
+        Me._ReadingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me._ReadingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 78)
+        Me._ReadingsDataGridView.Name = "_ReadingsDataGridView"
+        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 192)
+        Me._ReadingsDataGridView.TabIndex = 8
+        Me.TipsTooltip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
         '
-        '_TriggerCountNumeric
+        '_BufferToolStrip
         '
-        Me._TriggerCountNumeric.Name = "_TriggerCountNumeric"
-        Me._TriggerCountNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._TriggerCountNumeric.Text = "0"
-        Me._TriggerCountNumeric.ToolTipText = "Trigger Count"
-        Me._TriggerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        Me._BufferToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadReadingsButton, Me._ReadingsCountLabel, Me._ReadingsCountLabelLabel})
+        Me._BufferToolStrip.Location = New System.Drawing.Point(0, 53)
+        Me._BufferToolStrip.Name = "_BufferToolStrip"
+        Me._BufferToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._BufferToolStrip.TabIndex = 7
+        Me._BufferToolStrip.Text = "Buffer"
+        '
+        '_ReadReadingsButton
+        '
+        Me._ReadReadingsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ReadReadingsButton.Image = CType(resources.GetObject("_ReadReadingsButton.Image"), System.Drawing.Image)
+        Me._ReadReadingsButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ReadReadingsButton.Name = "_ReadReadingsButton"
+        Me._ReadReadingsButton.Size = New System.Drawing.Size(37, 22)
+        Me._ReadReadingsButton.Text = "Read"
+        Me._ReadReadingsButton.ToolTipText = "Reads collected values"
+        '
+        '_ReadingsCountLabel
+        '
+        Me._ReadingsCountLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._ReadingsCountLabel.Name = "_ReadingsCountLabel"
+        Me._ReadingsCountLabel.Size = New System.Drawing.Size(13, 22)
+        Me._ReadingsCountLabel.Text = "0"
+        Me._ReadingsCountLabel.ToolTipText = "Readings count"
+        '
+        '_ReadingsCountLabelLabel
+        '
+        Me._ReadingsCountLabelLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._ReadingsCountLabelLabel.Name = "_ReadingsCountLabelLabel"
+        Me._ReadingsCountLabelLabel.Size = New System.Drawing.Size(43, 22)
+        Me._ReadingsCountLabelLabel.Text = "Count:"
         '
         'K2000Panel
         '
@@ -619,6 +672,9 @@ Partial Class K2000Panel
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
+        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._BufferToolStrip.ResumeLayout(False)
+        Me._BufferToolStrip.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -671,4 +727,9 @@ Partial Class K2000Panel
     Private WithEvents _ContinuousTriggerEnabledCheckBox As Core.Controls.ToolStripCheckBox
     Friend WithEvents _TriggerCountNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _TriggerCountNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ReadingsDataGridView As Windows.Forms.DataGridView
+    Private WithEvents _BufferToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ReadReadingsButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ReadingsCountLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ReadingsCountLabelLabel As Windows.Forms.ToolStripLabel
 End Class

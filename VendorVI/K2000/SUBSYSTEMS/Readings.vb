@@ -112,7 +112,7 @@ Public Class Readings
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope",
             Justification:="Object is returned")>
     <CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId:="Multi")>
-    Public Shared Function ParseMulti(ByVal baseReading As Readings, ByVal readingRecords As String) As Readings()
+    Public Shared Function ParseMulti(ByVal baseReading As Readings, ByVal readingRecords As String) As IEnumerable(Of Readings)
         Dim readingsArray As New List(Of Readings)
         If readingRecords Is Nothing Then
             Throw New ArgumentNullException(NameOf(readingRecords))

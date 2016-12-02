@@ -1219,7 +1219,6 @@ Public Class K7500Panel
         Finally
             Me.Cursor = Cursors.Default
         End Try
-
     End Sub
 
 #End Region
