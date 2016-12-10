@@ -143,7 +143,7 @@
 </value>
   </data>
   <metadata name="_TriggerToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1164, 17</value>
+    <value>1170, 17</value>
   </metadata>
   <data name="_ApplyTriggerPlanButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -194,13 +194,13 @@
     <value>17, 56</value>
   </metadata>
   <metadata name="_ScanLayerToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>825, 17</value>
+    <value>831, 17</value>
   </metadata>
-  <metadata name="_ArmLayerToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="_ArmLayer1ToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>667, 17</value>
   </metadata>
   <metadata name="_ChannelLayerToolStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>985, 17</value>
+    <value>991, 17</value>
   </metadata>
   <metadata name="_ReadingStatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>362, 17</value>

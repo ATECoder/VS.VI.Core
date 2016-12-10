@@ -171,6 +171,17 @@ Public Class K2000Panel
         MyBase.DeviceOpened(sender, e)
     End Sub
 
+    Protected Overrides Sub DeviceInitialized(ByVal sender As Object, ByVal e As System.EventArgs)
+        ' must be done after the device base opens where the subsystem gets initialized.
+        With Me._ArmLayer1SourceComboBox.ComboBox
+            .DataSource = Nothing
+            .Items.Clear()
+            .DataSource = GetType(ArmSources).ValueNamePairs(Me.Device.ArmLayer1Subsystem.SupportedArmSources)
+            .DisplayMember = "Value"
+            .ValueMember = "Key"
+        End With
+    End Sub
+
     ''' <summary> Executes the title changed action. </summary>
     ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
@@ -218,7 +229,7 @@ Public Class K2000Panel
             Case NameOf(subsystem.Elements)
                 If Me.Device IsNot Nothing AndAlso subsystem.Elements <> ReadingTypes.None Then
                     Dim selectedIndex As Integer = Me._ReadingComboBox.SelectedIndex
-                    With Me._ReadingComboBox
+                    With Me._ReadingComboBox.ComboBox
                         .DataSource = Nothing
                         .Items.Clear()
                         .DataSource = GetType(VI.ReadingTypes).ValueDescriptionPairs(subsystem.Elements And Not ReadingTypes.Units)
@@ -728,7 +739,7 @@ Public Class K2000Panel
     Friend Function SelectReading(ByVal value As VI.ReadingTypes) As VI.ReadingTypes
         If Me.IsDeviceOpen AndAlso
                 (value <> VI.ReadingTypes.None) AndAlso (value <> Me.SelectedReadingType) Then
-            Me._ReadingComboBox.SafeSelectItem(value.ValueDescriptionPair)
+            Me._ReadingComboBox.ComboBox.SafeSelectItem(value.ValueDescriptionPair)
         End If
         Return Me.SelectedReadingType
     End Function
@@ -790,7 +801,7 @@ Public Class K2000Panel
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub InitButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _InitiateButton.Click
+    Private Sub _InitiateButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _InitiateButton.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
@@ -821,7 +832,7 @@ Public Class K2000Panel
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ReadingComboBox_SelectedValueChanged(sender As Object, e As EventArgs) Handles _ReadingComboBox.SelectedValueChanged
+    Private Sub _ReadingComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles _ReadingComboBox.SelectedIndexChanged
         If Me._InitializingComponents Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -855,6 +866,96 @@ Public Class K2000Panel
             Me.Cursor = Cursors.Default
         End Try
     End Sub
+
+    ''' <summary>
+    ''' Handles the DataError event of the _dataGridView control.
+    ''' </summary>
+    ''' <param name="sender">The source of the event.</param>
+    ''' <param name="e">The <see cref="DataGridViewDataErrorEventArgs"/> instance containing the event data.</param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ReadingsDataGridView_DataError(sender As Object, e As DataGridViewDataErrorEventArgs) Handles _ReadingsDataGridView.DataError
+        Try
+            ' prevent error reporting when adding a new row or editing a cell
+            Dim grid As DataGridView = TryCast(sender, DataGridView)
+            If grid IsNot Nothing Then
+                If grid.CurrentRow IsNot Nothing AndAlso grid.CurrentRow.IsNewRow Then Return
+                If grid.IsCurrentCellInEditMode Then Return
+                If grid.IsCurrentRowDirty Then Return
+                Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                                   $"Exception occurred editing row {e.RowIndex} column {e.ColumnIndex};. Details: {e.Exception}")
+                Me.ErrorProvider.Annunciate(grid, "Exception occurred editing table")
+            End If
+        Catch
+        End Try
+    End Sub
+
+    ''' <summary> Displays the readings described by values. </summary>
+    ''' <remarks> David, 12/1/2016. </remarks>
+    ''' <param name="values"> The values. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Private Sub DisplayReadings(ByVal values As IEnumerable(Of Readings))
+        If Me.IsDeviceOpen Then
+            With Me._ReadingsDataGridView
+                .DataSource = Nothing
+                .Columns.Clear()
+                .AutoGenerateColumns = False
+                .AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.LightGreen
+                .AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader
+                .BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+                .ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                .AllowUserToResizeColumns = True
+                .EnableHeadersVisualStyles = True
+                .MultiSelect = False
+                .RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Raised
+                .DataSource = values
+                Dim displayIndex As Integer = 0
+                Dim column As New DataGridViewTextBoxColumn()
+                With column
+                    .DataPropertyName = NameOf(Readings.RawReading)
+                    .Name = NameOf(Readings.RawReading)
+                    .Visible = True
+                    .DisplayIndex = displayIndex
+                    .HeaderText = "Reading"
+                End With
+                .Columns.Add(column)
+                displayIndex += 1
+                For Each c As DataGridViewColumn In .Columns
+                    c.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader
+                Next
+                .ParseHeaderText()
+                .ScrollBars = ScrollBars.Both
+            End With
+        End If
+    End Sub
+
+    ''' <summary> Reads buffer button click. </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/>
+    '''                       instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _TraceButton_Click(sender As Object, e As EventArgs) Handles _TraceButton.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "reading readings"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                               "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+            Dim values As IEnumerable(Of Readings) = Me.Device.TraceSubsystem.QueryReadings(Me.Device.MeasureSubsystem.Readings)
+            Me._ReadingsCountLabel.Text = values?.Count.ToString
+            Me.DisplayReadings(values)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred {0};. Details: {1}", activity, ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+
 
 #End Region
 
@@ -1139,7 +1240,7 @@ Public Class K2000Panel
 
 #End Region
 
-#Region " READ AND WRITE "
+#Region " CONTROL EVENT HANDLERS: READ AND WRITE "
 
     ''' <summary> Executes the property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
@@ -1179,7 +1280,7 @@ Public Class K2000Panel
 
 #End Region
 
-#Region " TRIGGER "
+#Region " CONTROL EVENT HANDLERS: SCAN "
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ApplyTriggerPlanButton_Click(sender As Object, e As EventArgs) Handles _ApplyTriggerPlanButton.Click
@@ -1247,7 +1348,8 @@ Public Class K2000Panel
             Me.Device.FormatSubsystem.ApplyElements(ReadingTypes.Reading)
             Me.Device.SenseSubsystem.ApplyFunctionMode(Scpi.SenseFunctionModes.FourWireResistance)
             Me.Device.SenseFourWireResistanceSubsystem.ApplyAverageEnabled(False)
-            Me.Device.ArmLayer1Subsystem.ApplyArmSource(ArmSources.Immediate)
+            ' use external if the meter waits for the scanner or immediate if the scanner waits for the meter.
+            Me.Device.ArmLayer1Subsystem.ApplyArmSource(CType(Me._ArmLayer1SourceComboBox.ComboBox.SelectedValue, ArmSources))
             Me.Device.ArmLayer1Subsystem.ApplyArmCount(1)
             Me.Device.ArmLayer2Subsystem.ApplyArmSource(ArmSources.Immediate)
             Me.Device.ArmLayer2Subsystem.ApplyArmCount(1)
@@ -1268,95 +1370,6 @@ Public Class K2000Panel
             Me.Cursor = Cursors.Default
         End Try
 
-    End Sub
-
-
-    ''' <summary>
-    ''' Handles the DataError event of the _dataGridView control.
-    ''' </summary>
-    ''' <param name="sender">The source of the event.</param>
-    ''' <param name="e">The <see cref="DataGridViewDataErrorEventArgs"/> instance containing the event data.</param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ReadingsDataGridView_DataError(sender As Object, e As DataGridViewDataErrorEventArgs) Handles _ReadingsDataGridView.DataError
-        Try
-            ' prevent error reporting when adding a new row or editing a cell
-            Dim grid As DataGridView = TryCast(sender, DataGridView)
-            If grid IsNot Nothing Then
-                If grid.CurrentRow IsNot Nothing AndAlso grid.CurrentRow.IsNewRow Then Return
-                If grid.IsCurrentCellInEditMode Then Return
-                If grid.IsCurrentRowDirty Then Return
-                Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   $"Exception occurred editing row {e.RowIndex} column {e.ColumnIndex};. Details: {e.Exception}")
-                Me.ErrorProvider.Annunciate(grid, "Exception occurred editing table")
-            End If
-        Catch
-        End Try
-    End Sub
-
-    ''' <summary> Displays the readings described by values. </summary>
-    ''' <remarks> David, 12/1/2016. </remarks>
-    ''' <param name="values"> The values. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
-    Private Sub DisplayReadings(ByVal values As IEnumerable(Of Readings))
-        If Me.IsDeviceOpen Then
-            With Me._ReadingsDataGridView
-                .DataSource = Nothing
-                .Columns.Clear()
-                .AutoGenerateColumns = False
-                .AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.LightGreen
-                .AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader
-                .BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-                .ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-                .AllowUserToResizeColumns = True
-                .EnableHeadersVisualStyles = True
-                .MultiSelect = False
-                .RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Raised
-                .DataSource = values
-                Dim displayIndex As Integer = 0
-                Dim column As New DataGridViewTextBoxColumn()
-                With column
-                    .DataPropertyName = NameOf(Readings.RawReading)
-                    .Name = NameOf(Readings.RawReading)
-                    .Visible = True
-                    .DisplayIndex = displayIndex
-                    .HeaderText = "Reading"
-                End With
-                .Columns.Add(column)
-                displayIndex += 1
-                For Each c As DataGridViewColumn In .Columns
-                    c.AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader
-                Next
-                .ParseHeaderText()
-                .ScrollBars = ScrollBars.Both
-            End With
-        End If
-    End Sub
-
-    ''' <summary> Reads buffer button click. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
-    ''' <param name="sender"> <see cref="System.Object"/>
-    '''                       instance of this
-    '''                       <see cref="System.Windows.Forms.Control"/> </param>
-    ''' <param name="e">      Event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ReadReadingsButton_Click(sender As Object, e As EventArgs) Handles _ReadReadingsButton.Click
-        If Me._InitializingComponents Then Return
-        Dim activity As String = "reading readings"
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
-            Dim values As IEnumerable(Of Readings) = Me.Device.TraceSubsystem.QueryReadings(Me.Device.MeasureSubsystem.Readings)
-            Me._ReadingsCountLabel.Text = values?.Count.ToString
-            Me.DisplayReadings(values)
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred {0};. Details: {1}", activity, ex)
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
     End Sub
 
 #End Region

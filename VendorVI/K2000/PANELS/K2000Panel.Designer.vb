@@ -12,6 +12,13 @@ Partial Class K2000Panel
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(K2000Panel))
         Me._Tabs = New System.Windows.Forms.TabControl()
         Me._ReadingTabPage = New System.Windows.Forms.TabPage()
+        Me._ReadingsDataGridView = New System.Windows.Forms.DataGridView()
+        Me._ReadingToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ReadButton = New System.Windows.Forms.ToolStripButton()
+        Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
+        Me._TraceButton = New System.Windows.Forms.ToolStripButton()
+        Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -21,10 +28,6 @@ Partial Class K2000Panel
         Me._TraceInstrumentMessagesMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._HandleServiceRequestsMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._TerminalStateLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ReadingComboBoxLabel = New System.Windows.Forms.Label()
-        Me._ReadingComboBox = New System.Windows.Forms.ComboBox()
-        Me._ReadButton = New System.Windows.Forms.Button()
-        Me._InitiateButton = New System.Windows.Forms.Button()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
         Me._TriggerDelayNumeric = New System.Windows.Forms.NumericUpDown()
         Me._SenseRangeNumeric = New System.Windows.Forms.NumericUpDown()
@@ -41,6 +44,11 @@ Partial Class K2000Panel
         Me._ApplyTriggerPlanButton = New System.Windows.Forms.ToolStripButton()
         Me._InitiateWaitReadButton = New System.Windows.Forms.ToolStripButton()
         Me._ConfigureExternalScan = New System.Windows.Forms.ToolStripButton()
+        Me._ArmLayer1ToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ArmLayer1ToolStripLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ArmLayer1CountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ArmLayer1CountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ArmLayer1SourceComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._TriggerLayerToolStrip = New System.Windows.Forms.ToolStrip()
         Me._TriggerLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ContinuousTriggerEnabledCheckBox = New isr.Core.Controls.ToolStripCheckBox()
@@ -58,14 +66,11 @@ Partial Class K2000Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._ReadingsDataGridView = New System.Windows.Forms.DataGridView()
-        Me._BufferToolStrip = New System.Windows.Forms.ToolStrip()
-        Me._ReadReadingsButton = New System.Windows.Forms.ToolStripButton()
-        Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ReadingsCountLabelLabel = New System.Windows.Forms.ToolStripLabel()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
+        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._ReadingToolStrip.SuspendLayout()
         Me._SystemToolStrip.SuspendLayout()
         Me._SenseTabPage.SuspendLayout()
         CType(Me._TriggerDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -73,14 +78,13 @@ Partial Class K2000Panel
         CType(Me._IntegrationPeriodNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._ScanTabPage.SuspendLayout()
         Me._TriggerToolStrip.SuspendLayout()
+        Me._ArmLayer1ToolStrip.SuspendLayout()
         Me._TriggerLayerToolStrip.SuspendLayout()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
-        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me._BufferToolStrip.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -114,17 +118,75 @@ Partial Class K2000Panel
         '
         '_ReadingTabPage
         '
+        Me._ReadingTabPage.Controls.Add(Me._ReadingsDataGridView)
+        Me._ReadingTabPage.Controls.Add(Me._ReadingToolStrip)
         Me._ReadingTabPage.Controls.Add(Me._SystemToolStrip)
-        Me._ReadingTabPage.Controls.Add(Me._ReadingComboBoxLabel)
-        Me._ReadingTabPage.Controls.Add(Me._ReadingComboBox)
-        Me._ReadingTabPage.Controls.Add(Me._ReadButton)
-        Me._ReadingTabPage.Controls.Add(Me._InitiateButton)
         Me._ReadingTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ReadingTabPage.Name = "_ReadingTabPage"
         Me._ReadingTabPage.Size = New System.Drawing.Size(356, 270)
         Me._ReadingTabPage.TabIndex = 0
         Me._ReadingTabPage.Text = "Reading"
         Me._ReadingTabPage.UseVisualStyleBackColor = True
+        '
+        '_ReadingsDataGridView
+        '
+        Me._ReadingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me._ReadingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 25)
+        Me._ReadingsDataGridView.Name = "_ReadingsDataGridView"
+        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 220)
+        Me._ReadingsDataGridView.TabIndex = 19
+        Me.TipsTooltip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
+        '
+        '_ReadingToolStrip
+        '
+        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._TraceButton, Me._ReadingsCountLabel, Me._ReadingComboBox})
+        Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
+        Me._ReadingToolStrip.Name = "_ReadingToolStrip"
+        Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._ReadingToolStrip.TabIndex = 18
+        Me._ReadingToolStrip.Text = "ToolStrip1"
+        '
+        '_ReadButton
+        '
+        Me._ReadButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ReadButton.Image = CType(resources.GetObject("_ReadButton.Image"), System.Drawing.Image)
+        Me._ReadButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ReadButton.Name = "_ReadButton"
+        Me._ReadButton.Size = New System.Drawing.Size(37, 22)
+        Me._ReadButton.Text = "Read"
+        Me._ReadButton.ToolTipText = "Read single reading"
+        '
+        '_InitiateButton
+        '
+        Me._InitiateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._InitiateButton.Image = CType(resources.GetObject("_InitiateButton.Image"), System.Drawing.Image)
+        Me._InitiateButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._InitiateButton.Name = "_InitiateButton"
+        Me._InitiateButton.Size = New System.Drawing.Size(47, 22)
+        Me._InitiateButton.Text = "Initiate"
+        '
+        '_TraceButton
+        '
+        Me._TraceButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._TraceButton.Image = CType(resources.GetObject("_TraceButton.Image"), System.Drawing.Image)
+        Me._TraceButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._TraceButton.Name = "_TraceButton"
+        Me._TraceButton.Size = New System.Drawing.Size(39, 22)
+        Me._TraceButton.Text = "Trace"
+        Me._TraceButton.ToolTipText = "Read buffer"
+        '
+        '_ReadingsCountLabel
+        '
+        Me._ReadingsCountLabel.Name = "_ReadingsCountLabel"
+        Me._ReadingsCountLabel.Size = New System.Drawing.Size(13, 22)
+        Me._ReadingsCountLabel.Text = "0"
+        '
+        '_ReadingComboBox
+        '
+        Me._ReadingComboBox.Name = "_ReadingComboBox"
+        Me._ReadingComboBox.Size = New System.Drawing.Size(121, 25)
+        Me._ReadingComboBox.ToolTipText = "Select reading type"
         '
         '_SystemToolStrip
         '
@@ -190,48 +252,6 @@ Partial Class K2000Panel
         Me._TerminalStateLabel.Name = "_TerminalStateLabel"
         Me._TerminalStateLabel.Size = New System.Drawing.Size(35, 22)
         Me._TerminalStateLabel.Text = "Front"
-        '
-        '_ReadingComboBoxLabel
-        '
-        Me._ReadingComboBoxLabel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ReadingComboBoxLabel.AutoSize = True
-        Me._ReadingComboBoxLabel.Location = New System.Drawing.Point(110, 13)
-        Me._ReadingComboBoxLabel.Name = "_ReadingComboBoxLabel"
-        Me._ReadingComboBoxLabel.Size = New System.Drawing.Size(59, 17)
-        Me._ReadingComboBoxLabel.TabIndex = 2
-        Me._ReadingComboBoxLabel.Text = "Reading:"
-        Me._ReadingComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        '_ReadingComboBox
-        '
-        Me._ReadingComboBox.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ReadingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me._ReadingComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ReadingComboBox.Location = New System.Drawing.Point(171, 9)
-        Me._ReadingComboBox.Name = "_ReadingComboBox"
-        Me._ReadingComboBox.Size = New System.Drawing.Size(175, 25)
-        Me._ReadingComboBox.TabIndex = 3
-        Me.TipsTooltip.SetToolTip(Me._ReadingComboBox, "Select he reading to display")
-        '
-        '_ReadButton
-        '
-        Me._ReadButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ReadButton.Location = New System.Drawing.Point(12, 15)
-        Me._ReadButton.Name = "_ReadButton"
-        Me._ReadButton.Size = New System.Drawing.Size(72, 30)
-        Me._ReadButton.TabIndex = 0
-        Me._ReadButton.Text = "&Read"
-        Me._ReadButton.UseVisualStyleBackColor = True
-        '
-        '_InitiateButton
-        '
-        Me._InitiateButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InitiateButton.Location = New System.Drawing.Point(12, 53)
-        Me._InitiateButton.Name = "_InitiateButton"
-        Me._InitiateButton.Size = New System.Drawing.Size(72, 30)
-        Me._InitiateButton.TabIndex = 1
-        Me._InitiateButton.Text = "&Initiate"
-        Me._InitiateButton.UseVisualStyleBackColor = True
         '
         '_SenseTabPage
         '
@@ -360,9 +380,8 @@ Partial Class K2000Panel
         '
         '_ScanTabPage
         '
-        Me._ScanTabPage.Controls.Add(Me._ReadingsDataGridView)
-        Me._ScanTabPage.Controls.Add(Me._BufferToolStrip)
         Me._ScanTabPage.Controls.Add(Me._TriggerToolStrip)
+        Me._ScanTabPage.Controls.Add(Me._ArmLayer1ToolStrip)
         Me._ScanTabPage.Controls.Add(Me._TriggerLayerToolStrip)
         Me._ScanTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ScanTabPage.Name = "_ScanTabPage"
@@ -374,7 +393,7 @@ Partial Class K2000Panel
         '_TriggerToolStrip
         '
         Me._TriggerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ApplyTriggerPlanButton, Me._InitiateWaitReadButton, Me._ConfigureExternalScan})
-        Me._TriggerToolStrip.Location = New System.Drawing.Point(0, 28)
+        Me._TriggerToolStrip.Location = New System.Drawing.Point(0, 56)
         Me._TriggerToolStrip.Name = "_TriggerToolStrip"
         Me._TriggerToolStrip.Size = New System.Drawing.Size(356, 25)
         Me._TriggerToolStrip.TabIndex = 5
@@ -407,6 +426,43 @@ Partial Class K2000Panel
         Me._ConfigureExternalScan.Name = "_ConfigureExternalScan"
         Me._ConfigureExternalScan.Size = New System.Drawing.Size(136, 22)
         Me._ConfigureExternalScan.Text = "Configure External Scan"
+        '
+        '_ArmLayer1ToolStrip
+        '
+        Me._ArmLayer1ToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ArmLayer1ToolStripLabel, Me._ArmLayer1CountNumericLabel, Me._ArmLayer1CountNumeric, Me._ArmLayer1SourceComboBox})
+        Me._ArmLayer1ToolStrip.Location = New System.Drawing.Point(0, 28)
+        Me._ArmLayer1ToolStrip.Name = "_ArmLayer1ToolStrip"
+        Me._ArmLayer1ToolStrip.Size = New System.Drawing.Size(356, 28)
+        Me._ArmLayer1ToolStrip.TabIndex = 9
+        Me._ArmLayer1ToolStrip.Text = "Arm1"
+        '
+        '_ArmLayer1ToolStripLabel
+        '
+        Me._ArmLayer1ToolStripLabel.Name = "_ArmLayer1ToolStripLabel"
+        Me._ArmLayer1ToolStripLabel.Size = New System.Drawing.Size(42, 25)
+        Me._ArmLayer1ToolStripLabel.Text = "ARM1:"
+        Me._ArmLayer1ToolStripLabel.ToolTipText = "Arm layer settings"
+        '
+        '_ArmLayer1CountNumericLabel
+        '
+        Me._ArmLayer1CountNumericLabel.Name = "_ArmLayer1CountNumericLabel"
+        Me._ArmLayer1CountNumericLabel.Size = New System.Drawing.Size(43, 25)
+        Me._ArmLayer1CountNumericLabel.Text = "Count:"
+        '
+        '_ArmLayer1CountNumeric
+        '
+        Me._ArmLayer1CountNumeric.Name = "_ArmLayer1CountNumeric"
+        Me._ArmLayer1CountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ArmLayer1CountNumeric.Text = "0"
+        Me._ArmLayer1CountNumeric.ToolTipText = "Arm layer count"
+        Me._ArmLayer1CountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        '_ArmLayer1SourceComboBox
+        '
+        Me._ArmLayer1SourceComboBox.Name = "_ArmLayer1SourceComboBox"
+        Me._ArmLayer1SourceComboBox.Size = New System.Drawing.Size(90, 28)
+        Me._ArmLayer1SourceComboBox.Text = "Immediate"
+        Me._ArmLayer1SourceComboBox.ToolTipText = "Arm spacing"
         '
         '_TriggerLayerToolStrip
         '
@@ -596,50 +652,6 @@ Partial Class K2000Panel
         Me._TitleLabel.Text = "K2000"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_ReadingsDataGridView
-        '
-        Me._ReadingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me._ReadingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 78)
-        Me._ReadingsDataGridView.Name = "_ReadingsDataGridView"
-        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 192)
-        Me._ReadingsDataGridView.TabIndex = 8
-        Me.TipsTooltip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
-        '
-        '_BufferToolStrip
-        '
-        Me._BufferToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadReadingsButton, Me._ReadingsCountLabel, Me._ReadingsCountLabelLabel})
-        Me._BufferToolStrip.Location = New System.Drawing.Point(0, 53)
-        Me._BufferToolStrip.Name = "_BufferToolStrip"
-        Me._BufferToolStrip.Size = New System.Drawing.Size(356, 25)
-        Me._BufferToolStrip.TabIndex = 7
-        Me._BufferToolStrip.Text = "Buffer"
-        '
-        '_ReadReadingsButton
-        '
-        Me._ReadReadingsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ReadReadingsButton.Image = CType(resources.GetObject("_ReadReadingsButton.Image"), System.Drawing.Image)
-        Me._ReadReadingsButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._ReadReadingsButton.Name = "_ReadReadingsButton"
-        Me._ReadReadingsButton.Size = New System.Drawing.Size(37, 22)
-        Me._ReadReadingsButton.Text = "Read"
-        Me._ReadReadingsButton.ToolTipText = "Reads collected values"
-        '
-        '_ReadingsCountLabel
-        '
-        Me._ReadingsCountLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
-        Me._ReadingsCountLabel.Name = "_ReadingsCountLabel"
-        Me._ReadingsCountLabel.Size = New System.Drawing.Size(13, 22)
-        Me._ReadingsCountLabel.Text = "0"
-        Me._ReadingsCountLabel.ToolTipText = "Readings count"
-        '
-        '_ReadingsCountLabelLabel
-        '
-        Me._ReadingsCountLabelLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
-        Me._ReadingsCountLabelLabel.Name = "_ReadingsCountLabelLabel"
-        Me._ReadingsCountLabelLabel.Size = New System.Drawing.Size(43, 22)
-        Me._ReadingsCountLabelLabel.Text = "Count:"
-        '
         'K2000Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -651,6 +663,9 @@ Partial Class K2000Panel
         Me._Tabs.ResumeLayout(False)
         Me._ReadingTabPage.ResumeLayout(False)
         Me._ReadingTabPage.PerformLayout()
+        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._ReadingToolStrip.ResumeLayout(False)
+        Me._ReadingToolStrip.PerformLayout()
         Me._SystemToolStrip.ResumeLayout(False)
         Me._SystemToolStrip.PerformLayout()
         Me._SenseTabPage.ResumeLayout(False)
@@ -662,6 +677,8 @@ Partial Class K2000Panel
         Me._ScanTabPage.PerformLayout()
         Me._TriggerToolStrip.ResumeLayout(False)
         Me._TriggerToolStrip.PerformLayout()
+        Me._ArmLayer1ToolStrip.ResumeLayout(False)
+        Me._ArmLayer1ToolStrip.PerformLayout()
         Me._TriggerLayerToolStrip.ResumeLayout(False)
         Me._TriggerLayerToolStrip.PerformLayout()
         Me._ReadWriteTabPage.ResumeLayout(False)
@@ -672,17 +689,11 @@ Partial Class K2000Panel
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
-        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
-        Me._BufferToolStrip.ResumeLayout(False)
-        Me._BufferToolStrip.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
     Private WithEvents _ReadingTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _ReadingComboBox As System.Windows.Forms.ComboBox
-    Private WithEvents _ReadButton As System.Windows.Forms.Button
-    Private WithEvents _InitiateButton As System.Windows.Forms.Button
     Private WithEvents _ScanTabPage As System.Windows.Forms.TabPage
     Private WithEvents _SenseTabPage As System.Windows.Forms.TabPage
     Private WithEvents _ApplySenseSettingsButton As System.Windows.Forms.Button
@@ -693,7 +704,6 @@ Partial Class K2000Panel
     Private WithEvents _IntegrationPeriodNumericLabel As System.Windows.Forms.Label
     Private WithEvents _SenseRangeNumericLabel As System.Windows.Forms.Label
     Private WithEvents _TriggerDelayNumericLabel As System.Windows.Forms.Label
-    Private WithEvents _ReadingComboBoxLabel As System.Windows.Forms.Label
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
@@ -728,8 +738,15 @@ Partial Class K2000Panel
     Friend WithEvents _TriggerCountNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _TriggerCountNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _ReadingsDataGridView As Windows.Forms.DataGridView
-    Private WithEvents _BufferToolStrip As Windows.Forms.ToolStrip
-    Private WithEvents _ReadReadingsButton As Windows.Forms.ToolStripButton
+    Friend WithEvents _ReadingToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ReadButton As Windows.Forms.ToolStripButton
+    Private WithEvents _InitiateButton As Windows.Forms.ToolStripButton
+    Private WithEvents _TraceButton As Windows.Forms.ToolStripButton
     Private WithEvents _ReadingsCountLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _ReadingsCountLabelLabel As Windows.Forms.ToolStripLabel
+    Friend WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
+    Private WithEvents _ArmLayer1ToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ArmLayer1ToolStripLabel As Windows.Forms.ToolStripLabel
+    Friend WithEvents _ArmLayer1CountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ArmLayer1CountNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ArmLayer1SourceComboBox As Windows.Forms.ToolStripComboBox
 End Class

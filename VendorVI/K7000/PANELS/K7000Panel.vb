@@ -2,6 +2,7 @@ Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.Core.Pith.EnumExtensions
 ''' <summary> Provides a user interface for the Keithley 7000 Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -186,6 +187,18 @@ Public Class K7000Panel
         AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
         MyBase.DeviceOpened(sender, e)
     End Sub
+
+    Protected Overrides Sub DeviceInitialized(ByVal sender As Object, ByVal e As System.EventArgs)
+        ' must be done after the device base opens where the subsystem gets initialized.
+        With Me._ArmLayer1SourceComboBox.ComboBox
+            .DataSource = Nothing
+            .Items.Clear()
+            .DataSource = GetType(ArmSources).ValueNamePairs(Me.Device.ArmLayer1Subsystem.SupportedArmSources)
+            .DisplayMember = "Value"
+            .ValueMember = "Key"
+        End With
+    End Sub
+
 
     ''' <summary> Executes the title changed action. </summary>
     ''' <remarks> David, 1/14/2016. </remarks>
@@ -934,7 +947,7 @@ Public Class K7000Panel
 
 #End Region
 
-#Region " TRIGGER "
+#Region " CONTROL EVENT HANDLERS: TRIGGER "
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ApplyTriggerPlanButton_Click(sender As Object, e As EventArgs) Handles _ApplyTriggerPlanButton.Click
@@ -1014,7 +1027,6 @@ Public Class K7000Panel
         End Try
 
     End Sub
-
 
 #End Region
 

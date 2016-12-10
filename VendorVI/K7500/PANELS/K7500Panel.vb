@@ -56,20 +56,22 @@ Public Class K7500Panel
         End With
 
         With Me._PassBitPatternNumeric.NumericUpDownControl
-            .Minimum = 0
-            .Maximum = 63
+            .Value = 2
+            .Minimum = 1
+            .Maximum = 15
         End With
         With Me._FailLimit1BitPatternNumeric.NumericUpDownControl
-            .Minimum = 0
-            .Maximum = 63
+            .Value = 1
+            .Minimum = 1
+            .Maximum = 15
         End With
-        With Me._LowLimit1Numeric.NumericUpDownControl
+        With Me._LowerLimit1Numeric.NumericUpDownControl
             .Minimum = 0
             .Maximum = 5000000D
             .DecimalPlaces = 3
             .Value = 0
         End With
-        With Me._HighLimit1Numeric.NumericUpDownControl
+        With Me._UpperLimit1Numeric.NumericUpDownControl
             .Minimum = 0
             .Maximum = 5000000D
             .DecimalPlaces = 3
@@ -82,7 +84,7 @@ Public Class K7500Panel
             .Value = 100
         End With
         With Me._SimpleLoopCountNumeric.NumericUpDownControl
-            .Minimum = 0
+            .Minimum = 1
             .Maximum = 1000D
             .DecimalPlaces = 0
             .Value = 10
@@ -168,6 +170,9 @@ Public Class K7500Panel
             If t IsNot Me._MessagesTabPage Then
                 For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, isOpen) : Next
             End If
+            ' this is clearly a .Net bug -- these controls are not found. 
+            Me._HexLimit1CheckBox.Enabled = isOpen
+            Me._HexBitPatternCheckBox.Enabled = isOpen
         Next
     End Sub
 
@@ -250,15 +255,13 @@ Public Class K7500Panel
             Case NameOf(subsystem.Elements)
                 If Me.Device IsNot Nothing AndAlso subsystem.Elements <> ReadingTypes.None Then
                     Dim selectedIndex As Integer = Me._ReadingComboBox.SelectedIndex
-                    With Me._ReadingComboBox
+                    With Me._ReadingComboBox.ComboBox
                         .DataSource = Nothing
                         .Items.Clear()
                         .DataSource = GetType(VI.ReadingTypes).ValueDescriptionPairs(subsystem.Elements And Not ReadingTypes.Units)
                         .DisplayMember = "Value"
                         .ValueMember = "Key"
-                        If .Items.Count > 0 Then
-                            .SelectedIndex = Math.Max(selectedIndex, 0)
-                        End If
+                        If .Items.Count > 0 Then .SelectedIndex = Math.Max(selectedIndex, 0)
                     End With
                 End If
         End Select
@@ -804,7 +807,6 @@ Public Class K7500Panel
 
 #End Region
 
-
 #End Region
 
 #Region " DISPLAY SETTINGS: READING "
@@ -814,7 +816,7 @@ Public Class K7500Panel
     Friend Function SelectReading(ByVal value As VI.ReadingTypes) As VI.ReadingTypes
         If Me.IsDeviceOpen AndAlso
                 (value <> VI.ReadingTypes.None) AndAlso (value <> Me.SelectedReadingType) Then
-            Me._ReadingComboBox.SafeSelectItem(value.ValueDescriptionPair)
+            Me._ReadingComboBox.ComboBox.SafeSelectItem(value.ValueDescriptionPair)
         End If
         Return Me.SelectedReadingType
     End Function
@@ -1025,12 +1027,12 @@ Public Class K7500Panel
 
 #Region " CONTROL EVENT HANDLERS: READING "
 
-    ''' <summary> Event handler. Called by InitButton for click events. Initiates a reading for
+    ''' <summary> Event handler. Called by the Initiate Button for click events. Initiates a reading for
     ''' retrieval by way of the service request event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub InitButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _InitiateButton.Click
+    Private Sub _InitiateButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _InitiateButton.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
@@ -1062,7 +1064,7 @@ Public Class K7500Panel
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ReadingComboBox_SelectedValueChanged(sender As Object, e As EventArgs) Handles _ReadingComboBox.SelectedValueChanged
+    Private Sub _ReadingComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles _ReadingComboBox.SelectedIndexChanged
         If Me._InitializingComponents Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -1093,6 +1095,77 @@ Public Class K7500Panel
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    Private Sub DisplayBuffer(ByVal values As IEnumerable(Of BufferReading))
+        With Me._BufferDataGridView
+            .DataSource = Nothing
+            .Columns.Clear()
+            .Invalidate()
+            .DataSource = values
+            For Each col As DataGridViewColumn In .Columns
+                If String.Equals(col.Name, NameOf(BufferReading.ElementCount)) Then
+                    col.Visible = False
+                Else
+                    col.HeaderText = isr.Core.Pith.SplitExtensions.SplitWords(col.Name)
+                End If
+            Next
+            .ScrollBars = ScrollBars.Both
+        End With
+    End Sub
+
+    ''' <summary> Reads buffer button click. </summary>
+    ''' <remarks> David, 7/23/2016. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/>
+    '''                       instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ReadBufferButton_Click(sender As Object, e As EventArgs) Handles _ReadBufferButton.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "reading buffer"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+            If Me.IsDeviceOpen Then
+                Me.DisplayBuffer(Me.Device.TraceSubsystem.QueryBufferReadings())
+            Else
+                Me.DisplayBuffer(New List(Of BufferReading))
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred {0};. Details: {1}", activity, ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary> Clears the buffer display button click. </summary>
+    ''' <remarks> David, 12/10/2016. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/>
+    '''                       instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ClearBufferDisplayButton_Click(sender As Object, e As EventArgs) Handles _ClearBufferDisplayButton.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "clearing buffer display"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+            Me.DisplayBuffer(New List(Of BufferReading))
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred {0};. Details: {1}", activity, ex)
+        Finally
             Me.Cursor = Cursors.Default
         End Try
     End Sub
@@ -1175,76 +1248,34 @@ Public Class K7500Panel
 
 #End Region
 
-#Region " CONTROL EVENT HANDLERS: BUFFER "
+#Region " CONTROL EVENT HANDLERS: TRIGGER "
 
-    Private Sub ReadBuffer()
-        If Me.IsDeviceOpen Then
-            With Me._BufferDataGridView
-                .DataSource = Nothing
-                .Columns.Clear()
-                .Invalidate()
-                .DataSource = Me.Device.TraceSubsystem.QueryBufferReadings()
-                For Each col As DataGridViewColumn In .Columns
-                    If String.Equals(col.Name, NameOf(BufferReading.ElementCount)) Then
-                        col.Visible = False
-                    Else
-                        col.HeaderText = isr.Core.Pith.SplitExtensions.SplitWords(col.Name)
-                    End If
-                Next
-                .ScrollBars = ScrollBars.Both
-            End With
-        End If
+    Private Sub _BitPatternFormatCheckBox_Click(sender As Object, e As EventArgs) Handles _HexBitPatternCheckBox.Click
+        If Me._InitializingComponents Then Return
+        Me._PassBitPatternNumeric.NumericUpDownControl.Hexadecimal = _HexBitPatternCheckBox.Checked
     End Sub
 
-    ''' <summary> Reads buffer button click. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
+    Private Sub _HexLimit1CheckBox_Click(sender As Object, e As EventArgs) Handles _HexLimit1CheckBox.Click
+        If Me._InitializingComponents Then Return
+        Me._FailLimit1BitPatternNumeric.NumericUpDownControl.Hexadecimal = _HexBitPatternCheckBox.Checked
+    End Sub
+
+    Private Sub _Limit1DecimalsNumeric_ValueChanged(sender As Object, e As EventArgs) Handles _Limit1DecimalsNumeric.ValueChanged
+        If Me._InitializingComponents Then Return
+        Me._LowerLimit1Numeric.NumericUpDownControl.DecimalPlaces = CInt(Me._Limit1DecimalsNumeric.Value)
+        Me._UpperLimit1Numeric.NumericUpDownControl.DecimalPlaces = CInt(Me._Limit1DecimalsNumeric.Value)
+    End Sub
+
+    ''' <summary> Loads grade bin trigger model button click. </summary>
+    ''' <remarks> David, 12/10/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ReadBufferButton_Click(sender As Object, e As EventArgs) Handles _ReadBufferButton.Click
+    Private Sub _LoadGradeBinTriggerModelButton_Click(sender As Object, e As EventArgs) Handles _LoadGradeBinTriggerModelButton.Click
         If Me._InitializingComponents Then Return
-        Dim activity As String = "reading buffer"
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
-            Me.ReadBuffer()
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred {0};. Details: {1}", activity, ex)
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
-    End Sub
-
-#End Region
-
-#Region " CONTROL EVENT HANDLERS: TRIGGER "
-
-    Private Sub _BitPatternFormatCheckBox_Click(sender As Object, e As EventArgs) Handles _BitPatternFormatCheckBox.Click
-        If Me._InitializingComponents Then Return
-        Me._PassBitPatternNumeric.NumericUpDownControl.Hexadecimal = _BitPatternFormatCheckBox.Checked
-    End Sub
-
-    Private Sub _HexLimit1CheckBox_Click(sender As Object, e As EventArgs) Handles _HexLimit1CheckBox.Click
-        If Me._InitializingComponents Then Return
-        Me._FailLimit1BitPatternNumeric.NumericUpDownControl.Hexadecimal = _BitPatternFormatCheckBox.Checked
-    End Sub
-
-    Private Sub _Limit1DecimalsNumeric_ValueChanged(sender As Object, e As EventArgs) Handles _Limit1DecimalsNumeric.ValueChanged
-        If Me._InitializingComponents Then Return
-        Me._LowLimit1Numeric.NumericUpDownControl.DecimalPlaces = CInt(Me._Limit1DecimalsNumeric.Value)
-        Me._HighLimit1Numeric.NumericUpDownControl.DecimalPlaces = CInt(Me._Limit1DecimalsNumeric.Value)
-    End Sub
-
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ApplyGradeBinTriggerModelButton_Click(sender As Object, e As EventArgs) Handles _ApplyGradeBinTriggerModelButton.Click
-        If Me._InitializingComponents Then Return
-        Dim activity As String = "applying grade binning trigger model"
+        Dim activity As String = "loading grade binning trigger model"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
@@ -1255,8 +1286,8 @@ Public Class K7500Panel
                 Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
                 Dim endDelay As TimeSpan = TimeSpan.FromSeconds(Me._EndTriggerDelayNumeric.Value)
                 Me.Device.TriggerSubsystem.LoadGradeBinning(count, startDelay, endDelay,
-                                                            Me._HighLimit1Numeric.Value, Me._LowLimit1Numeric.Value,
-                                                           CInt(Me._FailLimit1BitPatternNumeric.Value), CInt(Me._PassBitPatternNumeric.Value))
+                                                            Me._UpperLimit1Numeric.Value, Me._LowerLimit1Numeric.Value,
+                                                            CInt(Me._FailLimit1BitPatternNumeric.Value), CInt(Me._PassBitPatternNumeric.Value))
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -1267,19 +1298,33 @@ Public Class K7500Panel
         End Try
     End Sub
 
-    Private Sub LoadSimpleModel()
-        If Me.IsDeviceOpen Then
-            Dim count As Integer = CInt(Me._SimpleLoopCountNumeric.Value)
-            Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
-            Me.Device.TriggerSubsystem.LoadSimpleLoop(count, startDelay)
-        End If
-    End Sub
-
-    Private Sub RunSimpleModel()
-        Me.Device.TraceSubsystem.ClearBuffer()
-        Me.Device.TriggerSubsystem.Initiate()
-        Me.Device.StatusSubsystem.Wait()
-        Me.ReadBuffer()
+    ''' <summary> Initiate grade binning model button click. </summary>
+    ''' <remarks> David, 12/10/2016. </remarks>
+    ''' <param name="sender"> <see cref="Object"/>
+    '''                       instance of this
+    '''                       <see cref="Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _InitiateGradeBinningModelButton_Click(sender As Object, e As EventArgs) Handles _InitiateGradeBinningModelButton.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "initiating grade binning trigger model"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            If Me.IsDeviceOpen Then
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+                Me.DisplayBuffer(New List(Of BufferReading))
+                Me.Device.TraceSubsystem.ClearBuffer()
+                Me.Device.TriggerSubsystem.Initiate()
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred {0};. Details: {1}", activity, ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
     End Sub
 
     ''' <summary> Simple loop load run button click. </summary>
@@ -1289,19 +1334,19 @@ Public Class K7500Panel
     '''                       <see cref="Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _SimpleLoopLoadRunButton_Click(sender As Object, e As EventArgs) Handles _SimpleLoopLoadRunButton.Click
+    Private Sub _LoadSimpleLoopModelButton_Click(sender As Object, e As EventArgs) Handles _LoadSimpleLoopModelButton.Click
         If Me._InitializingComponents Then Return
-        Dim activity As String = "applying simple loop trigger model"
+        Dim activity As String = "loading simple loop trigger model"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
-            Me.LoadSimpleModel()
-            activity = "running simple loop trigger model"
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
-            Me.RunSimpleModel()
+            If Me.IsDeviceOpen Then
+                Dim count As Integer = CInt(Me._SimpleLoopCountNumeric.Value)
+                Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
+                Me.Device.TriggerSubsystem.LoadSimpleLoop(count, startDelay)
+            End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
@@ -1310,6 +1355,30 @@ Public Class K7500Panel
             Me.Cursor = Cursors.Default
         End Try
     End Sub
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _RunSimpleLoopTriggerModelButton_Click(sender As Object, e As EventArgs) Handles _RunSimpleLoopTriggerModelButton.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "Initiating simple loop trigger model"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+            Me.DisplayBuffer(New List(Of BufferReading))
+            Me.Device.TraceSubsystem.ClearBuffer()
+            Me.Device.TriggerSubsystem.Initiate()
+            Me.Device.StatusSubsystem.Wait()
+            Me.DisplayBuffer(Me.Device.TraceSubsystem.QueryBufferReadings())
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred {0};. Details: {1}", activity, ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
 
 #End Region
 

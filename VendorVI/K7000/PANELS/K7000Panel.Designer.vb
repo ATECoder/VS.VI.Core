@@ -70,18 +70,19 @@ Partial Class K7000Panel
         Me._TriggerLayerToolStrip = New System.Windows.Forms.ToolStrip()
         Me._TriggerLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ContinuousTriggerEnabledCheckBox = New isr.Core.Controls.ToolStripCheckBox()
+        Me._TriggerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._TriggerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._ScanLayerToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ScanLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ScanLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ScanLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._ScanLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ScanLayerTriggerLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ArmLayerToolStrip = New System.Windows.Forms.ToolStrip()
-        Me._ArmLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ArmLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ArmLayerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._ArmLayerSpacingLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ArmLayerTriggerLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ArmLayer1ToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ArmLayer1ToolStripLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ArmLayer1CountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ArmLayer1CountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ArmLayer1SourceComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._ChannelLayerToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ChannelLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ChannelLayerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
@@ -100,8 +101,6 @@ Partial Class K7000Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._TriggerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._TriggerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._SlotTabPage.SuspendLayout()
@@ -115,7 +114,7 @@ Partial Class K7000Panel
         Me._TriggerToolStrip.SuspendLayout()
         Me._TriggerLayerToolStrip.SuspendLayout()
         Me._ScanLayerToolStrip.SuspendLayout()
-        Me._ArmLayerToolStrip.SuspendLayout()
+        Me._ArmLayer1ToolStrip.SuspendLayout()
         Me._ChannelLayerToolStrip.SuspendLayout()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
@@ -689,7 +688,7 @@ Partial Class K7000Panel
         Me._TriggerTabPage.Controls.Add(Me._TriggerToolStrip)
         Me._TriggerTabPage.Controls.Add(Me._TriggerLayerToolStrip)
         Me._TriggerTabPage.Controls.Add(Me._ScanLayerToolStrip)
-        Me._TriggerTabPage.Controls.Add(Me._ArmLayerToolStrip)
+        Me._TriggerTabPage.Controls.Add(Me._ArmLayer1ToolStrip)
         Me._TriggerTabPage.Controls.Add(Me._ChannelLayerToolStrip)
         Me._TriggerTabPage.Location = New System.Drawing.Point(4, 26)
         Me._TriggerTabPage.Name = "_TriggerTabPage"
@@ -758,6 +757,20 @@ Partial Class K7000Panel
         Me._ContinuousTriggerEnabledCheckBox.Text = "Continuous"
         Me._ContinuousTriggerEnabledCheckBox.ToolTipText = "Continuous On/Off"
         '
+        '_TriggerCountNumericLabel
+        '
+        Me._TriggerCountNumericLabel.Name = "_TriggerCountNumericLabel"
+        Me._TriggerCountNumericLabel.Size = New System.Drawing.Size(43, 25)
+        Me._TriggerCountNumericLabel.Text = "Count:"
+        '
+        '_TriggerCountNumeric
+        '
+        Me._TriggerCountNumeric.Name = "_TriggerCountNumeric"
+        Me._TriggerCountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._TriggerCountNumeric.Text = "0"
+        Me._TriggerCountNumeric.ToolTipText = "Trigger count"
+        Me._TriggerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
         '_ScanLayerToolStrip
         '
         Me._ScanLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ScanLayerToolStripLabel, Me._ScanLayerCountNumericLabel, Me._ScanLayerCountNumeric, Me._ScanLayerSpacingLabel, Me._ScanLayerTriggerLabel})
@@ -800,47 +813,42 @@ Partial Class K7000Panel
         Me._ScanLayerTriggerLabel.Size = New System.Drawing.Size(98, 25)
         Me._ScanLayerTriggerLabel.Text = "Trigger: Acceptor"
         '
-        '_ArmLayerToolStrip
+        '_ArmLayer1ToolStrip
         '
-        Me._ArmLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ArmLayerToolStripLabel, Me._ArmLayerCountNumericLabel, Me._ArmLayerCountNumeric, Me._ArmLayerSpacingLabel, Me._ArmLayerTriggerLabel})
-        Me._ArmLayerToolStrip.Location = New System.Drawing.Point(0, 28)
-        Me._ArmLayerToolStrip.Name = "_ArmLayerToolStrip"
-        Me._ArmLayerToolStrip.Size = New System.Drawing.Size(356, 28)
-        Me._ArmLayerToolStrip.TabIndex = 0
-        Me._ArmLayerToolStrip.Text = "Arm"
+        Me._ArmLayer1ToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ArmLayer1ToolStripLabel, Me._ArmLayer1CountNumericLabel, Me._ArmLayer1CountNumeric, Me._ArmLayer1SourceComboBox})
+        Me._ArmLayer1ToolStrip.Location = New System.Drawing.Point(0, 28)
+        Me._ArmLayer1ToolStrip.Name = "_ArmLayer1ToolStrip"
+        Me._ArmLayer1ToolStrip.Size = New System.Drawing.Size(356, 28)
+        Me._ArmLayer1ToolStrip.TabIndex = 0
+        Me._ArmLayer1ToolStrip.Text = "Arm1"
         '
-        '_ArmLayerToolStripLabel
+        '_ArmLayer1ToolStripLabel
         '
-        Me._ArmLayerToolStripLabel.Name = "_ArmLayerToolStripLabel"
-        Me._ArmLayerToolStripLabel.Size = New System.Drawing.Size(36, 25)
-        Me._ArmLayerToolStripLabel.Text = "ARM:"
-        Me._ArmLayerToolStripLabel.ToolTipText = "Arm layer settings"
+        Me._ArmLayer1ToolStripLabel.Name = "_ArmLayer1ToolStripLabel"
+        Me._ArmLayer1ToolStripLabel.Size = New System.Drawing.Size(42, 25)
+        Me._ArmLayer1ToolStripLabel.Text = "ARM1:"
+        Me._ArmLayer1ToolStripLabel.ToolTipText = "Arm layer settings"
         '
-        '_ArmLayerCountNumericLabel
+        '_ArmLayer1CountNumericLabel
         '
-        Me._ArmLayerCountNumericLabel.Name = "_ArmLayerCountNumericLabel"
-        Me._ArmLayerCountNumericLabel.Size = New System.Drawing.Size(43, 25)
-        Me._ArmLayerCountNumericLabel.Text = "Count:"
+        Me._ArmLayer1CountNumericLabel.Name = "_ArmLayer1CountNumericLabel"
+        Me._ArmLayer1CountNumericLabel.Size = New System.Drawing.Size(43, 25)
+        Me._ArmLayer1CountNumericLabel.Text = "Count:"
         '
-        '_ArmLayerCountNumeric
+        '_ArmLayer1CountNumeric
         '
-        Me._ArmLayerCountNumeric.Name = "_ArmLayerCountNumeric"
-        Me._ArmLayerCountNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._ArmLayerCountNumeric.Text = "0"
-        Me._ArmLayerCountNumeric.ToolTipText = "Arm layer count"
-        Me._ArmLayerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        Me._ArmLayer1CountNumeric.Name = "_ArmLayer1CountNumeric"
+        Me._ArmLayer1CountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ArmLayer1CountNumeric.Text = "0"
+        Me._ArmLayer1CountNumeric.ToolTipText = "Arm layer count"
+        Me._ArmLayer1CountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
-        '_ArmLayerSpacingLabel
+        '_ArmLayer1SourceComboBox
         '
-        Me._ArmLayerSpacingLabel.Name = "_ArmLayerSpacingLabel"
-        Me._ArmLayerSpacingLabel.Size = New System.Drawing.Size(112, 25)
-        Me._ArmLayerSpacingLabel.Text = "Spacing: Immediate"
-        '
-        '_ArmLayerTriggerLabel
-        '
-        Me._ArmLayerTriggerLabel.Name = "_ArmLayerTriggerLabel"
-        Me._ArmLayerTriggerLabel.Size = New System.Drawing.Size(98, 25)
-        Me._ArmLayerTriggerLabel.Text = "Trigger: Acceptor"
+        Me._ArmLayer1SourceComboBox.Name = "_ArmLayer1SourceComboBox"
+        Me._ArmLayer1SourceComboBox.Size = New System.Drawing.Size(90, 28)
+        Me._ArmLayer1SourceComboBox.Text = "Immediate"
+        Me._ArmLayer1SourceComboBox.ToolTipText = "Arm spacing"
         '
         '_ChannelLayerToolStrip
         '
@@ -1035,20 +1043,6 @@ Partial Class K7000Panel
         Me._TitleLabel.Text = "K7000"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_TriggerCountNumericLabel
-        '
-        Me._TriggerCountNumericLabel.Name = "_TriggerCountNumericLabel"
-        Me._TriggerCountNumericLabel.Size = New System.Drawing.Size(43, 25)
-        Me._TriggerCountNumericLabel.Text = "Count:"
-        '
-        '_TriggerCountNumeric
-        '
-        Me._TriggerCountNumeric.Name = "_TriggerCountNumeric"
-        Me._TriggerCountNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._TriggerCountNumeric.Text = "0"
-        Me._TriggerCountNumeric.ToolTipText = "Trigger count"
-        Me._TriggerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
-        '
         'K7000Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -1080,8 +1074,8 @@ Partial Class K7000Panel
         Me._TriggerLayerToolStrip.PerformLayout()
         Me._ScanLayerToolStrip.ResumeLayout(False)
         Me._ScanLayerToolStrip.PerformLayout()
-        Me._ArmLayerToolStrip.ResumeLayout(False)
-        Me._ArmLayerToolStrip.PerformLayout()
+        Me._ArmLayer1ToolStrip.ResumeLayout(False)
+        Me._ArmLayer1ToolStrip.PerformLayout()
         Me._ChannelLayerToolStrip.ResumeLayout(False)
         Me._ChannelLayerToolStrip.PerformLayout()
         Me._ReadWriteTabPage.ResumeLayout(False)
@@ -1161,9 +1155,9 @@ Partial Class K7000Panel
     Private WithEvents _TraceInstrumentMessagesMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _HandleServiceRequestsMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _TerminalStateLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _ArmLayerToolStrip As Windows.Forms.ToolStrip
-    Private WithEvents _ArmLayerToolStripLabel As Windows.Forms.ToolStripLabel
-    Friend WithEvents _ArmLayerCountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ArmLayer1ToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ArmLayer1ToolStripLabel As Windows.Forms.ToolStripLabel
+    Friend WithEvents _ArmLayer1CountNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _TriggerToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ApplyTriggerPlanButton As Windows.Forms.ToolStripButton
     Private WithEvents _ScanLayerToolStrip As Windows.Forms.ToolStrip
@@ -1172,9 +1166,7 @@ Partial Class K7000Panel
     Private WithEvents _ScanLayerCountNumeric As Core.Controls.ToolStripNumericUpDown
     Friend WithEvents _ScanLayerSpacingLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ScanLayerTriggerLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _ArmLayerCountNumeric As Core.Controls.ToolStripNumericUpDown
-    Private WithEvents _ArmLayerSpacingLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _ArmLayerTriggerLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ArmLayer1CountNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _ChannelLayerToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ChannelLayerToolStripLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ChannelLayerCountNumericLabel As Windows.Forms.ToolStripLabel
@@ -1188,4 +1180,5 @@ Partial Class K7000Panel
     Private WithEvents _ContinuousTriggerEnabledCheckBox As Core.Controls.ToolStripCheckBox
     Private WithEvents _TriggerCountNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _TriggerCountNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ArmLayer1SourceComboBox As Windows.Forms.ToolStripComboBox
 End Class

@@ -62,17 +62,38 @@ Public Class TriggerSubsystem
 
 #Region " SIMPLE LOOP "
 
+    Private Const SimpleLoopModel As String = "SimpleLoop"
+
     ''' <summary> Loads simple loop. </summary>
     ''' <remarks> David, 7/23/2016. </remarks>
     ''' <param name="count"> Number of. </param>
     ''' <param name="delay"> The delay. </param>
     Public Sub LoadSimpleLoop(ByVal count As Integer, ByVal delay As TimeSpan)
-        Me.Write(":TRIG:LOAD 'SimpleLoop',{0},{1}", count, delay.TotalSeconds)
+        Me.Write(":TRIG:LOAD '{0}',{1},{2}", SimpleLoopModel, count, delay.TotalSeconds)
     End Sub
 
 #End Region
 
 #Region " GRAD BINNING "
+
+    Private Const GradeBinningModel As String = "GradeBinning"
+
+    ''' <summary> Loads grade binning. </summary>
+    ''' <param name="count">            Number of. </param>
+    ''' <param name="triggerOption">    The trigger option (use 7 for external line). </param>
+    ''' <param name="startDelay">       The start delay. </param>
+    ''' <param name="endDelay">         The end delay. </param>
+    ''' <param name="highLimit">        The high limit. </param>
+    ''' <param name="lowLimit">         The low limit. </param>
+    ''' <param name="failedBitPattern"> A pattern specifying the failed bit. </param>
+    ''' <param name="passBitPattern">   A pattern specifying the pass bit. </param>
+    Public Sub LoadGradeBinning(ByVal count As Integer, ByVal triggerOption As Integer,
+                                ByVal startDelay As TimeSpan, ByVal endDelay As TimeSpan,
+                                ByVal highLimit As Double, ByVal lowLimit As Double,
+                                ByVal failedBitPattern As Integer, ByVal passBitPattern As Integer)
+        Me.Write(":TRIG:LOAD '{0}',{1},{2},{3},{4},{5},{6},{7},{8}",
+                 GradeBinningModel, count, triggerOption, startDelay.TotalSeconds, endDelay.TotalSeconds, highLimit, lowLimit, failedBitPattern, passBitPattern)
+    End Sub
 
     ''' <summary> Loads grade binning. </summary>
     ''' <remarks> Uses external trigger (start line = 7). </remarks>
@@ -86,8 +107,7 @@ Public Class TriggerSubsystem
     Public Sub LoadGradeBinning(ByVal count As Integer, ByVal startDelay As TimeSpan, ByVal endDelay As TimeSpan,
                                 ByVal highLimit As Double, ByVal lowLimit As Double,
                                 ByVal failedBitPattern As Integer, ByVal passBitPattern As Integer)
-        Me.Write(":TRIG:LOAD 'GradeBinning',{0},7,{1},{2},{3},{4},{5},{6}",
-                 count, startDelay.TotalSeconds, endDelay.TotalSeconds, highLimit, lowLimit, failedBitPattern, passBitPattern)
+        Me.LoadGradeBinning(count, 7, startDelay, endDelay, highLimit, lowLimit, failedBitPattern, passBitPattern)
     End Sub
 
     ''' <summary> Loads grade binning. </summary>
@@ -101,8 +121,7 @@ Public Class TriggerSubsystem
     Public Sub LoadGradeBinning(ByVal startDelay As TimeSpan, ByVal endDelay As TimeSpan,
                                 ByVal highLimit As Double, ByVal lowLimit As Double,
                                 ByVal failedBitPattern As Integer, ByVal passBitPattern As Integer)
-        Me.Write(":TRIG:LOAD 'GradeBinning',{0},7,268000000, {1},{2},{3},{4},{5},{6}",
-                 startDelay.TotalSeconds, endDelay.TotalSeconds, highLimit, lowLimit, failedBitPattern, passBitPattern)
+        Me.LoadGradeBinning(268000000, 7, startDelay, endDelay, highLimit, lowLimit, failedBitPattern, passBitPattern)
     End Sub
 
 #End Region
