@@ -1221,6 +1221,29 @@ Public MustInherit Class DeviceBase
         Me.Subsystems.ClearListeners()
     End Sub
 
+    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
+    ''' <remarks> David, 12/14/2016. </remarks>
+    ''' <param name="talker"> The talker. </param>
+    Public Sub AddListeners(talker As ITraceMessageTalker) Implements ITalker.AddListeners
+        Me.Talker.AddListeners(talker)
+    End Sub
+
+    ''' <summary> Updates the trace log level described by traceLevel. </summary>
+    ''' <remarks> David, 12/14/2016. </remarks>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
+        Me.Talker.UpdateTraceLogLevel(traceLevel)
+        Me.Subsystems.UpdateTraceLogLevel(traceLevel)
+    End Sub
+
+    ''' <summary> Updates the trace show level described by traceLevel. </summary>
+    ''' <remarks> David, 12/14/2016. </remarks>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
+        Me.Talker.UpdateTraceShowLevel(traceLevel)
+        Me.Subsystems.UpdateTraceShowLevel(traceLevel)
+    End Sub
+
     ''' <summary> Adds subsystem listeners. </summary>
     ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub AddSubsystemListeners()

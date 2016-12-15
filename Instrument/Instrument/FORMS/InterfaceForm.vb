@@ -137,19 +137,40 @@ Public Class InterfaceForm
 #Region " TALKER "
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     Protected Overloads Sub AddListeners()
-        Me.Talker.Listeners.Add(Me._TraceMessagesBox)
-        Me._InterfacePanel.AddListeners(Me.Talker.Listeners)
+        MyBase.AddListener(Me._TraceMessagesBox)
+        Me._InterfacePanel?.AddListeners(Me.Talker.Listeners)
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
-    Public Overrides Sub AddListeners(ByVal log As MyLog)
-        If log Is Nothing Then Throw New ArgumentNullException(NameOf(log))
-        MyBase.AddListeners(log)
-        Me._InterfacePanel.Talker.Listeners.Add(log)
+    Public Overrides Sub AddListener(ByVal item As ITraceMessageListener)
+        MyBase.AddListener(item)
+        Me._InterfacePanel?.AddListener(item)
+        If TypeOf (item) Is MyLog Then My.MyLibrary.Identify(Me.Talker)
     End Sub
+
+    ''' <summary> Clears the listeners. </summary>
+    Public Overrides Sub ClearListeners()
+        MyBase.ClearListeners()
+        Me._InterfacePanel?.ClearListeners()
+    End Sub
+
+    ''' <summary> Updates the trace log level described by traceLevel. </summary>
+    ''' <remarks> David, 12/14/2016. </remarks>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overrides Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType)
+        MyBase.UpdateTraceLogLevel(traceLevel)
+        Me._InterfacePanel?.UpdateTraceLogLevel(traceLevel)
+    End Sub
+
+    ''' <summary> Updates the trace show level described by traceLevel. </summary>
+    ''' <remarks> David, 12/14/2016. </remarks>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overrides Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType)
+        MyBase.UpdateTraceShowLevel(traceLevel)
+        Me._InterfacePanel?.UpdateTraceShowLevel(traceLevel)
+    End Sub
+
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <remarks> David, 9/5/2016. </remarks>
