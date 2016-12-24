@@ -218,38 +218,81 @@ Public Class MovingWindowMeter
         End Get
     End Property
 
-    Private _MeasurementCompleted As Boolean
+#Region " TASK COMPLETE "
 
-    ''' <summary> Gets or sets the measurement Completed. </summary>
+    ''' <summary> Clears the task complete semaphore. </summary>
+    ''' <remarks> David, 12/22/2016. </remarks>
+    Private Sub ClearTaskComplete()
+        Me._TaskComplete = NotificationSemaphore.None
+        Me.SafePostPropertyChanged(NameOf(Me.TaskComplete))
+    End Sub
+
+    ''' <summary> Set the task complete semaphore. </summary>
+    ''' <remarks> David, 12/22/2016. </remarks>
+    Private Sub NotifyTaskComplete()
+        Me._TaskComplete = NotificationSemaphore.Sent
+        Me.SafePostPropertyChanged(NameOf(Me.TaskComplete))
+    End Sub
+
+    Private Function NotifyTaskComplete(timeout As TimeSpan) As Boolean
+        Dim endTime As DateTime = DateTime.Now.Add(timeout)
+        Me.NotifyTaskComplete()
+        Do
+            System.Windows.Forms.Application.DoEvents()
+        Loop Until ((Me.TaskComplete And NotificationSemaphore.Acknowledged) <> 0) OrElse DateTime.Now > endTime
+        Return (Me.TaskComplete And NotificationSemaphore.Acknowledged) <> 0
+    End Function
+
+    ''' <summary> Acknowledge task complete semaphore. </summary>
+    ''' <remarks> David, 12/22/2016. </remarks>
+    Public Sub AcknowledgeTaskComplete()
+        Me._TaskComplete = Me.TaskComplete Or NotificationSemaphore.Acknowledged
+    End Sub
+
+    ''' <summary> Gets or sets the task complete semaphore. </summary>
     ''' <value> The measurement Completed. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property MeasurementCompleted As Boolean
-        Get
-            Return Me._MeasurementCompleted
-        End Get
-        Protected Set(value As Boolean)
-            Me._MeasurementCompleted = value
-            ' this needs to be issued synchronously to make sure the state transition takes place. 
-            Me.SafeSendPropertyChanged()
-        End Set
-    End Property
+    Public ReadOnly Property TaskComplete As NotificationSemaphore
 
-    Private _MeasurementStarted As Boolean
+#End Region
 
-    ''' <summary> Gets or sets the measurement Started. </summary>
+#Region " TASK Start "
+
+    ''' <summary> Clears the task Start semaphore. </summary>
+    ''' <remarks> David, 12/22/2016. </remarks>
+    Private Sub ClearTaskStart()
+        Me._TaskStart = NotificationSemaphore.None
+        Me.SafePostPropertyChanged(NameOf(Me.TaskStart))
+    End Sub
+
+    ''' <summary> Set the task Start semaphore. </summary>
+    ''' <remarks> David, 12/22/2016. </remarks>
+    Private Sub NotifyTaskStart()
+        Me._TaskStart = NotificationSemaphore.Sent
+        Me.SafePostPropertyChanged(NameOf(Me.TaskStart))
+    End Sub
+
+    Private Function NotifyTaskStart(timeout As TimeSpan) As Boolean
+        Dim endTime As DateTime = DateTime.Now.Add(timeout)
+        Me.NotifyTaskStart()
+        Do
+            System.Windows.Forms.Application.DoEvents()
+        Loop Until ((Me.TaskStart And NotificationSemaphore.Acknowledged) <> 0) OrElse DateTime.Now > endTime
+        Return (Me.TaskStart And NotificationSemaphore.Acknowledged) <> 0
+    End Function
+
+    ''' <summary> Acknowledge task Start semaphore. </summary>
+    ''' <remarks> David, 12/22/2016. </remarks>
+    Public Sub AcknowledgeTaskStart()
+        Me._TaskStart = Me.TaskStart Or NotificationSemaphore.Acknowledged
+    End Sub
+
+    ''' <summary> Gets or sets the task Start semaphore. </summary>
     ''' <value> The measurement Started. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property MeasurementStarted As Boolean
-        Get
-            Return Me._MeasurementStarted
-        End Get
-        Protected Set(value As Boolean)
-            Me._MeasurementStarted = value
-            ' this needs to be issued synchronously to make sure the state transition takes place. 
-            Me.SafeSendPropertyChanged()
-        End Set
-    End Property
+    Public ReadOnly Property TaskStart As NotificationSemaphore
 
+#End Region
     Private _MeasurementFormatString As String
 
     ''' <summary> Gets or sets the measurement Format String. </summary>
@@ -282,7 +325,6 @@ Public Class MovingWindowMeter
             If Me.Count <> value Then
                 Me._Count = value
                 Me._CountLabel.Text = value.ToString
-                ' Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -300,7 +342,6 @@ Public Class MovingWindowMeter
             If Me.ReadingsCount <> value Then
                 Me._ReadingsCount = value
                 Me._ReadingsCountLabel.Text = value.ToString
-                ' Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -318,7 +359,6 @@ Public Class MovingWindowMeter
             If Me.PercentProgress <> value Then
                 Me._PercentProgress = value
                 Me._AverageProgressBar.ValueSetter(value)
-                ' Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -336,7 +376,6 @@ Public Class MovingWindowMeter
             If Me.ElapsedTime <> value Then
                 Me._ElapsedTime = value
                 Me._ElapsedTimeLabel.Text = value.ToString("mm\:ss\.ff", Globalization.CultureInfo.CurrentCulture)
-                ' Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -354,7 +393,6 @@ Public Class MovingWindowMeter
             If Me.MaximumReading <> value Then
                 Me._MaximumReading = value
                 Me._MaximumLabel.Text = value.ToString(Me.MeasurementFormatString)
-                ' Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -372,7 +410,6 @@ Public Class MovingWindowMeter
             If Me.MinimumReading <> value Then
                 Me._MinimumReading = value
                 Me._MinimumLabel.Text = value.ToString(Me.MeasurementFormatString)
-                ' Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -390,7 +427,6 @@ Public Class MovingWindowMeter
             If value <> Me.Reading Then
                 Me._Reading = value
                 Me._AverageLabel.Text = value.ToString(Me.MeasurementFormatString)
-                ' Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -408,7 +444,6 @@ Public Class MovingWindowMeter
             If Not Nullable.Equals(value, Me.LastReading) Then
                 Me._LastReading = value
                 If value.HasValue Then Me._ReadingLabel.Text = value.Value.ToString(Me.MeasurementFormatString)
-                ' Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -426,7 +461,6 @@ Public Class MovingWindowMeter
             If Me.ReadingStatus <> value Then
                 Me._ReadingStatus = value
                 Me._StatusLabel.Text = Core.Engineering.MovingWindow.StatusAnnunciationCaption(value)
-                ' Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -479,11 +513,17 @@ Public Class MovingWindowMeter
     Private Sub ProcessCompletion(ByVal result As TaskResult)
         If result Is Nothing Then
             Me._MovingAverageTaskResult = New TaskResult
-            Me._MovingAverageTaskResult.RegisterFailure("Unexpected null task result when completing the task;. Contact the developer")
+            Me.MovingAverageTaskResult.RegisterFailure("Unexpected null task result when completing the task;. Contact the developer")
         Else
             Me._MovingAverageTaskResult = result
         End If
-        Me.MeasurementCompleted = True
+        If Not Me.NotifyTaskComplete(TimeSpan.FromSeconds(1)) Then
+            If Me.MovingAverageTaskResult.Failed Then
+                Me.MovingAverageTaskResult.RegisterFailure($"{Me.MovingAverageTaskResult.Details}; also, timeout receiving completion acknowledgment")
+            Else
+                Me.MovingAverageTaskResult.RegisterFailure("Timeout receiving completion acknowledgment")
+            End If
+        End If
     End Sub
 
 #End Region
@@ -503,15 +543,18 @@ Public Class MovingWindowMeter
             If Me.CapturedSyncContext Is Nothing Then Throw New InvalidOperationException("Sync context not set")
             SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
             Me.MovingWindow.ClearKnownState()
-            Me.MeasurementStarted = True
-            Do
-                ' measure and time
-                If Me.MovingWindow.ReadValue(Function() Me.Device.MultimeterSubsystem.Measure()) Then
-                    progress.Report(New isr.Core.Engineering.MovingWindow(Me.MovingWindow))
-                Else
-                    Me.MovingAverageTaskResult.RegisterFailure("device returned a null value")
-                End If
-            Loop Until Me.IsCancellationRequested OrElse Me.MovingAverageTaskResult.Failed OrElse Me.MovingWindow.IsCompleted OrElse Me.MovingWindow.IsTimeout
+            If Me.NotifyTaskStart(TimeSpan.FromSeconds(1)) Then
+                Do
+                    ' measure and time
+                    If Me.MovingWindow.ReadValue(Function() Me.Device.MultimeterSubsystem.Measure()) Then
+                        progress.Report(New isr.Core.Engineering.MovingWindow(Me.MovingWindow))
+                    Else
+                        Me.MovingAverageTaskResult.RegisterFailure("device returned a null value")
+                    End If
+                Loop Until Me.IsCancellationRequested OrElse Me.MovingAverageTaskResult.Failed OrElse Me.MovingWindow.IsCompleted OrElse Me.MovingWindow.IsTimeout
+            Else
+                Me.MovingAverageTaskResult.RegisterFailure("Timeout receiving start acknowledgment")
+            End If
         Catch ex As Exception
             Me.MovingAverageTaskResult.RegisterFailure(ex)
         Finally
@@ -573,23 +616,23 @@ Public Class MovingWindowMeter
     ''' <remarks> David, 9/26/2016. </remarks>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c>
     ''' </returns>
-    Public Function StopAsyncTaskIf() As Boolean
-        Return Me.StopAsyncTaskIf(Me.ExpectedStopTimeout)
+    Public Function StopAsyncTask() As Boolean
+        Return Me.StopAsyncTask(Me.ExpectedStopTimeout)
     End Function
 
     ''' <summary> Stops measure asynchronous if. </summary>
     ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Function StopAsyncTaskIf(ByVal timeout As TimeSpan) As Boolean
-        If Not Me.IsStopped Then
+    Private Function StopAsyncTask(ByVal timeout As TimeSpan) As Boolean
+        If Not Me.IsStopped AndAlso Not Me.IsCancellationRequested Then
             ' wait for previous operation to complete.
             Dim endTime As DateTime = DateTime.Now.Add(timeout)
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for previous task to complete")
             Do Until Me.IsStopped OrElse DateTime.Now > endTime
                 Windows.Forms.Application.DoEvents()
             Loop
-            If Not Me.IsStopped Then
+            If Not Me.IsStopped AndAlso Not Me.IsCancellationRequested Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Requesting cancellation of previous tasks")
                 Me.RequestCancellation()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for previous task to stop")
@@ -619,13 +662,44 @@ Public Class MovingWindowMeter
 
     ''' <summary> Activates the machine asynchronous task. </summary>
     ''' <remarks> David, 9/1/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="runSynchronously"> True to run synchronously. </param>
+    ''' <param name="syncContext">      Context for the synchronization. </param>
     Public Sub StartMeasureTask(ByVal runSynchronously As Boolean, ByVal syncContext As SynchronizationContext)
         If syncContext Is Nothing Then Throw New ArgumentNullException(NameOf(syncContext),
              "This call must pass a valid synchronization context from the UI thread in order to capture the synchronization context for the machine thread")
         Me._CapturedSyncContext = syncContext
         SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
-        If Me.StopAsyncTaskIf(TimeSpan.FromSeconds(1)) Then
-            Me._MeasurementStarted = False
+        Me.StopAsyncTask(TimeSpan.FromSeconds(1))
+        ' proceed even if not stopped
+        Me._TaskStart = NotificationSemaphore.None
+        Me.CancellationTokenSource = New CancellationTokenSource
+        Me.CancellationToken = CancellationTokenSource.Token
+        Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
+        Me._task = New Task(Sub() Me.MeasureMovingAverage(progress))
+        If runSynchronously Then
+            Me.Task.RunSynchronously(TaskScheduler.FromCurrentSynchronizationContext)
+        Else
+            Me.Task.Start()
+        End If
+    End Sub
+
+    ''' <summary> Starts measure asynchronous. </summary>
+    ''' <remarks> David, 12/23/2016. </remarks>
+    ''' <param name="syncContext"> Context for the synchronization. </param>
+    Public Sub StartMeasureAsync(ByVal syncContext As SynchronizationContext)
+        Me.StartMeasureTask(False, syncContext)
+    End Sub
+
+    ''' <summary> Activates the machine asynchronous task. </summary>
+    ''' <remarks> This was suspected to cause issues. </remarks>
+    Public Sub StartMeasureTaskStopRequired(ByVal runSynchronously As Boolean, ByVal syncContext As SynchronizationContext)
+        If syncContext Is Nothing Then Throw New ArgumentNullException(NameOf(syncContext),
+             "This call must pass a valid synchronization context from the UI thread in order to capture the synchronization context for the machine thread")
+        Me._CapturedSyncContext = syncContext
+        SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
+        If Me.StopAsyncTask(TimeSpan.FromSeconds(1)) Then
+            Me._TaskStart = NotificationSemaphore.None
             Me.CancellationTokenSource = New CancellationTokenSource
             Me.CancellationToken = CancellationTokenSource.Token
             Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
@@ -636,12 +710,13 @@ Public Class MovingWindowMeter
                 Me.Task.Start()
             End If
         Else
-            Me.MeasurementStarted = False
+            Me._TaskStart = NotificationSemaphore.None
+            'Me.MeasurementStarted = False
         End If
     End Sub
 
-    Public Sub StartMeasureAsync(ByVal syncContext As SynchronizationContext)
-        Me.StartMeasureTask(False, syncContext)
+    Public Sub StartMeasureTaskStopRequiredAsync(ByVal syncContext As SynchronizationContext)
+        Me.StartMeasureTaskStopRequired(False, syncContext)
     End Sub
 
     Public Async Function AsyncTask() As Task
@@ -673,7 +748,7 @@ Public Class MovingWindowMeter
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed starting the moving window task")
                 End If
             Else
-                Me.StopAsyncTaskIf(TimeSpan.FromSeconds(1))
+                Me.StopAsyncTask(TimeSpan.FromSeconds(1))
                 If Not Me.IsStopped Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed stopping the moving window task")
                 End If
@@ -742,5 +817,53 @@ Public Class MovingWindowMeter
 
 End Class
 
+''' <summary> Values that represent notification semaphores. </summary>
+''' <remarks> David, 12/22/2016. </remarks>
+<Flags> Public Enum NotificationSemaphore
+    <Description("Not set")> None = 0
+    <Description("Notification Sent")> Sent = 1
+    <Description("Notification Acknowledged")> Acknowledged = 2
+End Enum
 
+#Region " UNUSED "
+#If False Then
+    ''' <summary> Gets or sets the measurement Completed. </summary>
+    ''' <value> The measurement Completed. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property MeasurementCompleted As Boolean
+        Get
+            Return Me._MeasurementCompleted
+        End Get
+        Protected Set(value As Boolean)
+            Me._MeasurementCompleted = value
+            ' 6199: this needs to be issued synchronously to make sure the state transition takes place. 
+            ' 6200: this must not be issued synchronously to let the task finish. 
+            Me.SafePostPropertyChanged()
+        End Set
+    End Property
 
+    Private Sub NotifyTaskStarted()
+
+    End Sub
+
+    Public Sub AcknowledgeTaskStarted()
+
+    End Sub
+
+    Private _MeasurementStarted As Boolean
+
+    ''' <summary> Gets or sets the measurement Started. </summary>
+    ''' <value> The measurement Started. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property MeasurementStarted As Boolean
+        Get
+            Return Me._MeasurementStarted
+        End Get
+        Protected Set(value As Boolean)
+            Me._MeasurementStarted = value
+            ' this needs to be issued synchronously to make sure the state transition takes place. 
+            Me.SafeSendPropertyChanged()
+        End Set
+    End Property
+#End If
+#End Region

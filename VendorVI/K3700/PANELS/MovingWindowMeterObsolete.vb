@@ -220,11 +220,13 @@ Partial Public Class MovingWindowMeter
 
         If Not (Me.IsDisposed OrElse Me.worker.IsBusy) Then
             Me.worker.RunWorkerAsync(payload)
-            Me.MeasurementStarted = True
+            Me.NotifyTaskStart()
+            ' Me.MeasurementStarted = True
         Else
-            Me.MeasurementStarted = False
+            Me.ClearTaskStart()
+            ' Me.MeasurementStarted = False
         End If
-        Return Me.MeasurementStarted
+        Return Me.TaskStart <> NotificationSemaphore.None '  Me.MeasurementStarted
     End Function
 
     ''' <summary> Starts a measure. </summary>
