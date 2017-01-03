@@ -33,7 +33,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #End Region
 
-#Region " Average ENABLED "
+#Region " AVERAGE ENABLED "
 
     ''' <summary> Average enabled. </summary>
     Private _AverageEnabled As Boolean?
@@ -88,6 +88,170 @@ Public MustInherit Class SenseFunctionSubsystemBase
     End Function
 
 #End Region
+
+#Region " AVERAGE COUNT "
+
+    ''' <summary> The average count. </summary>
+    Private _AverageCount As Integer?
+
+    ''' <summary> Gets or sets the cached average count. Set to
+    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <value> <c>null</c> if value is not known. </value>
+    Public Overloads Property AverageCount As Integer?
+        Get
+            Return Me._AverageCount
+        End Get
+        Protected Set(ByVal value As Integer?)
+            If Not Nullable.Equals(Me.AverageCount, value) Then
+                Me._AverageCount = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.AverageCount))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the average count. </summary>
+    ''' <param name="value"> The average count. </param>
+    ''' <returns> The average count. </returns>
+    Public Function ApplyAverageCount(ByVal value As Integer) As Integer?
+        Me.WriteAverageCount(value)
+        Return Me.QueryAverageCount
+    End Function
+
+    ''' <summary> Gets or sets The average count query command. </summary>
+    ''' <value> The average count query command. </value>
+    Protected Overridable ReadOnly Property AverageCountQueryCommand As String
+
+    ''' <summary> Queries The average count. </summary>
+    ''' <returns> The average count or none if unknown. </returns>
+    Public Function QueryAverageCount() As Integer?
+        Me.AverageCount = Me.Query(Me.AverageCount, Me.AverageCountQueryCommand)
+        Return Me.AverageCount
+    End Function
+
+    ''' <summary> Gets or sets The average count command format. </summary>
+    ''' <value> The average count command format. </value>
+    Protected Overridable ReadOnly Property AverageCountCommandFormat As String
+
+    ''' <summary> Writes The average count without reading back the value from the device. </summary>
+    ''' <remarks> This command sets The average count. </remarks>
+    ''' <param name="value"> The average count. </param>
+    ''' <returns> The average count. </returns>
+    Public Function WriteAverageCount(ByVal value As Integer) As Integer?
+        Me.AverageCount = Me.Write(value, Me.AverageCountCommandFormat)
+        Return Me.AverageCount
+    End Function
+
+#End Region
+
+#Region " AVERAGE FILTER TYPE "
+
+    Private _AverageFilterType As AverageFilterType?
+    ''' <summary> Gets or sets the cached Average Filter Type. </summary>
+    ''' <value> The <see cref="AverageFilterType">Average Filter Type</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property AverageFilterType As AverageFilterType?
+        Get
+            Return Me._AverageFilterType
+        End Get
+        Protected Set(ByVal value As AverageFilterType?)
+            If Not Me.AverageFilterType.Equals(value) Then
+                Me._AverageFilterType = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.AverageFilterType))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Average Filter Type. </summary>
+    ''' <param name="value"> The  Average Filter Type. </param>
+    ''' <returns> The <see cref="AverageFilterType">Average Filter Type</see> or none if unknown. </returns>
+    Public Function ApplyAverageFilterType(ByVal value As AverageFilterType) As AverageFilterType?
+        Me.WriteAverageFilterType(value)
+        Return Me.QueryAverageFilterType()
+    End Function
+
+    ''' <summary> Gets the Trigger AverageFilterType query command. </summary>
+    ''' <value> The Trigger AverageFilterType query command. </value>
+    ''' <remarks> SCPI: ":TRIG:DIR" </remarks>
+    Protected Overridable ReadOnly Property AverageFilterTypeQueryCommand As String
+
+    ''' <summary> Queries the Trigger AverageFilterType. </summary>
+    ''' <returns> The <see cref="AverageFilterType">Trigger AverageFilterType</see> or none if unknown. </returns>
+    Public Function QueryAverageFilterType() As AverageFilterType?
+        Me.AverageFilterType = Me.Query(Of AverageFilterType)(Me.AverageFilterTypeQueryCommand, Me.AverageFilterType)
+        Return Me.AverageFilterType
+    End Function
+
+    ''' <summary> Gets the Trigger AverageFilterType command format. </summary>
+    ''' <value> The Trigger AverageFilterType command format. </value>
+    ''' <remarks> SCPI: ":TRIG:DIR {0}" </remarks>
+    Protected Overridable ReadOnly Property AverageFilterTypeCommandFormat As String
+
+    ''' <summary> Writes the Trigger AverageFilterType without reading back the value from the device. </summary>
+    ''' <param name="value"> The Trigger AverageFilterType. </param>
+    ''' <returns> The <see cref="AverageFilterType">Trigger AverageFilterType</see> or none if unknown. </returns>
+    Public Function WriteAverageFilterType(ByVal value As AverageFilterType) As AverageFilterType?
+        Me.AverageFilterType = Me.Write(Of AverageFilterType)(Me.AverageFilterTypeCommandFormat, value)
+        Return Me.AverageFilterType
+    End Function
+
+#End Region
+
+#Region " AVERAGE PERCENT WINDOW "
+
+    ''' <summary> The Average Percent Window. </summary>
+    Private _AveragePercentWindow As Double?
+
+    ''' <summary> Gets or sets the cached Average Percent Window. Set to
+    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <value> <c>null</c> if value is not known. </value>
+    Public Overloads Property AveragePercentWindow As Double?
+        Get
+            Return Me._AveragePercentWindow
+        End Get
+        Protected Set(ByVal value As Double?)
+            If Not Nullable.Equals(Me.AveragePercentWindow, value) Then
+                Me._AveragePercentWindow = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.AveragePercentWindow))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Average Percent Window. </summary>
+    ''' <param name="value"> The Average Percent Window. </param>
+    ''' <returns> The Average Percent Window. </returns>
+    Public Function ApplyAveragePercentWindow(ByVal value As Double) As Double?
+        Me.WriteAveragePercentWindow(value)
+        Return Me.QueryAveragePercentWindow
+    End Function
+
+    ''' <summary> Gets or sets The Average Percent Window query command. </summary>
+    ''' <value> The Average Percent Window query command. </value>
+    Protected Overridable ReadOnly Property AveragePercentWindowQueryCommand As String
+
+    ''' <summary> Queries The Average Percent Window. </summary>
+    ''' <returns> The Average Percent Window or none if unknown. </returns>
+    Public Function QueryAveragePercentWindow() As Double?
+        Me.AveragePercentWindow = Me.Query(Me.AveragePercentWindow, Me.AveragePercentWindowQueryCommand)
+        Return Me.AveragePercentWindow
+    End Function
+
+    ''' <summary> Gets or sets The Average Percent Window command format. </summary>
+    ''' <value> The Average Percent Window command format. </value>
+    Protected Overridable ReadOnly Property AveragePercentWindowCommandFormat As String
+
+    ''' <summary> Writes The Average Percent Window without reading back the value from the device. </summary>
+    ''' <remarks> This command sets The Average Percent Window. </remarks>
+    ''' <param name="value"> The Average Percent Window. </param>
+    ''' <returns> The Average Percent Window. </returns>
+    Public Function WriteAveragePercentWindow(ByVal value As Double) As Double?
+        Me.AveragePercentWindow = Me.Write(value, Me.AveragePercentWindowCommandFormat)
+        Return Me.AveragePercentWindow
+    End Function
+
+#End Region
+
 #Region " AUTO RANGE ENABLED "
 
     ''' <summary> Auto Range enabled. </summary>
@@ -329,3 +493,10 @@ Public MustInherit Class SenseFunctionSubsystemBase
 #End Region
 
 End Class
+
+''' <summary> Values that represent average filter types. </summary>
+''' <remarks> David, 12/30/2016. </remarks>
+Public Enum AverageFilterType
+    <ComponentModel.Description("Repeat (REP)")> Repeat
+    <ComponentModel.Description("Moving (MOV)")> Moving
+End Enum

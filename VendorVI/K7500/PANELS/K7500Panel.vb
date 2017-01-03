@@ -56,36 +56,36 @@ Public Class K7500Panel
         End With
 
         With Me._PassBitPatternNumeric.NumericUpDownControl
-            .Value = 2
             .Minimum = 1
-            .Maximum = 15
+            .Maximum = 63
+            .Value = 32
         End With
         With Me._FailLimit1BitPatternNumeric.NumericUpDownControl
-            .Value = 1
             .Minimum = 1
-            .Maximum = 15
+            .Maximum = 63
+            .Value = 48
         End With
         With Me._LowerLimit1Numeric.NumericUpDownControl
             .Minimum = 0
             .Maximum = 5000000D
             .DecimalPlaces = 3
-            .Value = 0
+            .Value = 9
         End With
         With Me._UpperLimit1Numeric.NumericUpDownControl
             .Minimum = 0
             .Maximum = 5000000D
             .DecimalPlaces = 3
-            .Value = 0
+            .Value = 11
         End With
         With Me._BinningTriggerCountNumeric.NumericUpDownControl
             .Minimum = 0
-            .Maximum = 5000000D
+            .Maximum = 268000000D
             .DecimalPlaces = 0
-            .Value = 100
+            .Value = 10
         End With
         With Me._SimpleLoopCountNumeric.NumericUpDownControl
             .Minimum = 1
-            .Maximum = 1000D
+            .Maximum = 268000000D
             .DecimalPlaces = 0
             .Value = 10
         End With
@@ -1033,10 +1033,17 @@ Public Class K7500Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InitiateButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _InitiateButton.Click
+
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "initiating measurements(s)"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
+            If Me.IsDeviceOpen Then
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
 
+#If False Then
             ' clear execution state before enabling events
             Me.Device.ClearExecutionState()
 
@@ -1047,15 +1054,40 @@ Public Class K7500Panel
             ' trigger the initiation of the measurement letting the service request do the rest.
             Me.Device.ClearExecutionState()
             Me.Device.TriggerSubsystem.Initiate()
-
+#End If
+                Me.DisplayBuffer(New List(Of BufferReading))
+                Me.Device.TraceSubsystem.ClearBuffer()
+                Me.Device.TriggerSubsystem.Initiate()
+            End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+                               "Exception occurred {0};. Details: {1}", activity, ex)
         Finally
             Me.Cursor = Cursors.Default
         End Try
+    End Sub
 
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _AbortButton_Click(sender As Object, e As EventArgs) Handles _AbortButton.Click
+
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "aborting measurements(s)"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            If Me.IsDeviceOpen Then
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+                Me.Device.TriggerSubsystem.Abort()
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception occurred {0};. Details: {1}", activity, ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
     End Sub
 
     ''' <summary> Reading combo box selected value changed. </summary>
@@ -1266,6 +1298,29 @@ Public Class K7500Panel
         Me._UpperLimit1Numeric.NumericUpDownControl.DecimalPlaces = CInt(Me._Limit1DecimalsNumeric.Value)
     End Sub
 
+    Private Sub ApplyGradeBinningModel()
+        If Me._LowerLimit1Numeric.Value <= 100 Then
+            With Device.SenseFourWireResistanceSubsystem
+                .ApplyAverageEnabled(True)
+                .ApplyAverageCount(10)
+                .ApplyAverageFilterType(AverageFilterType.Repeat)
+                .ApplyAveragePercentWindow(0.1)
+            End With
+        Else
+            With Device.SenseFourWireResistanceSubsystem
+                .ApplyAverageEnabled(False)
+            End With
+        End If
+        With Device.Calculate2FourWireResistanceSubsystem
+            .ApplyLimit1Enabled(True)
+            .ApplyLimit1LowerLevel(Me._LowerLimit1Numeric.Value)
+            .ApplyLimit1UpperLevel(Me._UpperLimit1Numeric.Value)
+        End With
+        Dim count As Integer = CInt(Me._BinningTriggerCountNumeric.Value)
+        Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
+        Me.Device.TriggerSubsystem.ApplyGradeBinning(count, startDelay, CInt(Me._FailLimit1BitPatternNumeric.Value), CInt(Me._PassBitPatternNumeric.Value))
+    End Sub
+
     ''' <summary> Loads grade bin trigger model button click. </summary>
     ''' <remarks> David, 12/10/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
@@ -1282,41 +1337,15 @@ Public Class K7500Panel
             If Me.IsDeviceOpen Then
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
+                Me.ApplyGradeBinningModel()
+#If False Then
                 Dim count As Integer = CInt(Me._BinningTriggerCountNumeric.Value)
                 Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
                 Dim endDelay As TimeSpan = TimeSpan.FromSeconds(Me._EndTriggerDelayNumeric.Value)
                 Me.Device.TriggerSubsystem.LoadGradeBinning(count, startDelay, endDelay,
                                                             Me._UpperLimit1Numeric.Value, Me._LowerLimit1Numeric.Value,
                                                             CInt(Me._FailLimit1BitPatternNumeric.Value), CInt(Me._PassBitPatternNumeric.Value))
-            End If
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred {0};. Details: {1}", activity, ex)
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
-    End Sub
-
-    ''' <summary> Initiate grade binning model button click. </summary>
-    ''' <remarks> David, 12/10/2016. </remarks>
-    ''' <param name="sender"> <see cref="Object"/>
-    '''                       instance of this
-    '''                       <see cref="Control"/> </param>
-    ''' <param name="e">      Event information. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _InitiateGradeBinningModelButton_Click(sender As Object, e As EventArgs) Handles _InitiateGradeBinningModelButton.Click
-        If Me._InitializingComponents Then Return
-        Dim activity As String = "initiating grade binning trigger model"
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            If Me.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "{0} {1};. {2}", Me.ResourceTitle, activity, Me.ResourceName)
-                Me.DisplayBuffer(New List(Of BufferReading))
-                Me.Device.TraceSubsystem.ClearBuffer()
-                Me.Device.TriggerSubsystem.Initiate()
+#End If
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)

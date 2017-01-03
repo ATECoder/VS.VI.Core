@@ -53,6 +53,54 @@ Public Class SenseFourWireResistanceSubsystem
 
 #Region " COMMAND SYNTAX "
 
+#Region " AVERAGE "
+
+    ''' <summary> Gets the average enabled command Format. </summary>
+    ''' <value> The average enabled query command. </value>
+    Protected Overrides ReadOnly Property AverageEnabledCommandFormat As String = ":SENS:FRES:AVER {0:'ON';'ON';'OFF'}"
+
+    ''' <summary> Gets the average enabled query command. </summary>
+    ''' <value> The average enabled query command. </value>
+    Protected Overrides ReadOnly Property AverageEnabledQueryCommand As String = ":SENS:FRES:AVER?"
+
+#End Region
+
+#Region " AVERAGE COUNT "
+
+    ''' <summary> Gets the Average Count command format. </summary>
+    ''' <value> The AverageCount command format. </value>
+    Protected Overrides ReadOnly Property AverageCountCommandFormat As String = ":SENS:FRES:AVER:COUNT {0}"
+
+    ''' <summary> Gets the Average Count query command. </summary>
+    ''' <value> The AverageCount query command. </value>
+    Protected Overrides ReadOnly Property AverageCountQueryCommand As String = ":SENS:FRES:AVER:COUNT?"
+
+#End Region
+
+#Region " AVERAGE FILTER TYPE "
+
+    ''' <summary> Gets the Average FilterType command format. </summary>
+    ''' <value> The AverageFilterType command format. </value>
+    Protected Overrides ReadOnly Property AverageFilterTypeCommandFormat As String = ":SENS:FRES:AVER:TCON {0}"
+
+    ''' <summary> Gets the Average FilterType query command. </summary>
+    ''' <value> The AverageFilterType query command. </value>
+    Protected Overrides ReadOnly Property AverageFilterTypeQueryCommand As String = ":SENS:FRES:AVER:TCON?"
+
+#End Region
+
+#Region " AVERAGE PERCENT WINDOW "
+
+    ''' <summary> Gets the Average Percent Window command format. </summary>
+    ''' <value> The AveragePercentWindow command format. </value>
+    Protected Overrides ReadOnly Property AveragePercentWindowCommandFormat As String = ":SENS:FRES:AVER:WIND {0}"
+
+    ''' <summary> Gets the Average Percent Window query command. </summary>
+    ''' <value> The AveragePercentWindow query command. </value>
+    Protected Overrides ReadOnly Property AveragePercentWindowQueryCommand As String = ":SENS:FRES:AVER:WIND?"
+
+#End Region
+
 #Region " AUTO ZERO "
 
     ''' <summary> Gets the automatic Zero enabled command Format. </summary>
@@ -64,7 +112,6 @@ Public Class SenseFourWireResistanceSubsystem
     Protected Overrides ReadOnly Property AutoZeroEnabledQueryCommand As String = ":SENS:FRES:AZER?"
 
 #End Region
-
 
 #Region " AUTO RANGE "
 

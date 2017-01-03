@@ -25,6 +25,7 @@ Partial Class K7500Panel
         Me._ReadButton = New System.Windows.Forms.ToolStripButton()
         Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
         Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
+        Me._AbortButton = New System.Windows.Forms.ToolStripButton()
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -68,7 +69,6 @@ Partial Class K7500Panel
         Me._PassBitPatternNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._PassBitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._HexBitPatternCheckBox = New isr.Core.Controls.ToolStripCheckBox()
-        Me._InitiateGradeBinningModelButton = New System.Windows.Forms.ToolStripButton()
         Me._LoadGradeBinTriggerModelButton = New System.Windows.Forms.ToolStripButton()
         Me._SimpleLoopToolStrip = New System.Windows.Forms.ToolStrip()
         Me._SimpleLoopLabel = New System.Windows.Forms.ToolStripLabel()
@@ -225,7 +225,7 @@ Partial Class K7500Panel
         '
         '_ReadingToolStrip
         '
-        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._ReadingComboBox})
+        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._ReadingComboBox, Me._AbortButton})
         Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingToolStrip.Name = "_ReadingToolStrip"
         Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
@@ -257,6 +257,17 @@ Partial Class K7500Panel
         Me._ReadingComboBox.Name = "_ReadingComboBox"
         Me._ReadingComboBox.Size = New System.Drawing.Size(121, 25)
         Me._ReadingComboBox.ToolTipText = "Select reading type to display"
+        '
+        '_AbortButton
+        '
+        Me._AbortButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._AbortButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._AbortButton.Image = CType(resources.GetObject("_AbortButton.Image"), System.Drawing.Image)
+        Me._AbortButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._AbortButton.Name = "_AbortButton"
+        Me._AbortButton.Size = New System.Drawing.Size(41, 22)
+        Me._AbortButton.Text = "Abort"
+        Me._AbortButton.ToolTipText = "Aborts triggering"
         '
         '_SystemToolStrip
         '
@@ -497,7 +508,7 @@ Partial Class K7500Panel
         Me._TriggerDelayToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerDelaysToolStripLabel, Me._StartTriggerDelayNumeric, Me._EndTriggerDelayNumeric})
         Me._TriggerDelayToolStrip.Location = New System.Drawing.Point(3, 0)
         Me._TriggerDelayToolStrip.Name = "_TriggerDelayToolStrip"
-        Me._TriggerDelayToolStrip.Size = New System.Drawing.Size(202, 28)
+        Me._TriggerDelayToolStrip.Size = New System.Drawing.Size(233, 28)
         Me._TriggerDelayToolStrip.TabIndex = 1
         '
         '_TriggerDelaysToolStripLabel
@@ -519,7 +530,7 @@ Partial Class K7500Panel
         '
         Me._EndTriggerDelayNumeric.AutoSize = False
         Me._EndTriggerDelayNumeric.Name = "_EndTriggerDelayNumeric"
-        Me._EndTriggerDelayNumeric.Size = New System.Drawing.Size(62, 25)
+        Me._EndTriggerDelayNumeric.Size = New System.Drawing.Size(62, 23)
         Me._EndTriggerDelayNumeric.Text = "0"
         Me._EndTriggerDelayNumeric.ToolTipText = "End delay in seconds"
         Me._EndTriggerDelayNumeric.Value = New Decimal(New Integer() {1, 0, 0, 196608})
@@ -588,10 +599,10 @@ Partial Class K7500Panel
         '_GradeBinningToolStrip
         '
         Me._GradeBinningToolStrip.Dock = System.Windows.Forms.DockStyle.None
-        Me._GradeBinningToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._BinningToolStripLabel, Me._TriggerCountTextBoxLabel, Me._BinningTriggerCountNumeric, Me._PassBitPatternNumericLabel, Me._PassBitPatternNumeric, Me._HexBitPatternCheckBox, Me._InitiateGradeBinningModelButton, Me._LoadGradeBinTriggerModelButton})
+        Me._GradeBinningToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._BinningToolStripLabel, Me._TriggerCountTextBoxLabel, Me._BinningTriggerCountNumeric, Me._PassBitPatternNumericLabel, Me._PassBitPatternNumeric, Me._HexBitPatternCheckBox, Me._LoadGradeBinTriggerModelButton})
         Me._GradeBinningToolStrip.Location = New System.Drawing.Point(3, 56)
         Me._GradeBinningToolStrip.Name = "_GradeBinningToolStrip"
-        Me._GradeBinningToolStrip.Size = New System.Drawing.Size(338, 28)
+        Me._GradeBinningToolStrip.Size = New System.Drawing.Size(279, 28)
         Me._GradeBinningToolStrip.TabIndex = 0
         '
         '_BinningToolStripLabel
@@ -636,17 +647,6 @@ Partial Class K7500Panel
         Me._HexBitPatternCheckBox.Size = New System.Drawing.Size(46, 25)
         Me._HexBitPatternCheckBox.Text = "Hex"
         Me._HexBitPatternCheckBox.ToolTipText = "Check for using HEX values for setting the pass bit."
-        '
-        '_InitiateGradeBinningModelButton
-        '
-        Me._InitiateGradeBinningModelButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
-        Me._InitiateGradeBinningModelButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._InitiateGradeBinningModelButton.Image = CType(resources.GetObject("_InitiateGradeBinningModelButton.Image"), System.Drawing.Image)
-        Me._InitiateGradeBinningModelButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._InitiateGradeBinningModelButton.Name = "_InitiateGradeBinningModelButton"
-        Me._InitiateGradeBinningModelButton.Size = New System.Drawing.Size(28, 25)
-        Me._InitiateGradeBinningModelButton.Text = "Init"
-        Me._InitiateGradeBinningModelButton.ToolTipText = "Initiates the grade binning trigger loop waiting for external trigger"
         '
         '_LoadGradeBinTriggerModelButton
         '
@@ -982,6 +982,6 @@ Partial Class K7500Panel
     Private WithEvents _InitiateButton As Windows.Forms.ToolStripButton
     Private WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
     Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
-    Private WithEvents _InitiateGradeBinningModelButton As Windows.Forms.ToolStripButton
     Private WithEvents _RunSimpleLoopTriggerModelButton As Windows.Forms.ToolStripButton
+    Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
 End Class

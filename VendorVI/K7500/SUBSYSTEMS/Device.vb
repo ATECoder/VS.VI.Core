@@ -46,6 +46,7 @@ Public Class Device
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_MeasureSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_FormatSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_DisplaySubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_Calculate2Subsystem", Justification:="Disposed @Subsystems")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(disposing As Boolean)
@@ -134,6 +135,9 @@ Public Class Device
         Me.AddSubsystem(Me.FormatSubsystem)
         AddHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
 
+        Me._Calculate2FourWireResistanceSubsystem = New Calculate2FourWireResistanceSubsystem(Me.StatusSubsystem)
+        Me.AddSubsystem(Me.Calculate2FourWireResistanceSubsystem)
+
         Me._DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.DisplaySubsystem)
 
@@ -166,6 +170,10 @@ Public Class Device
 #End Region
 
 #Region " SUBSYSTEMS "
+
+    ''' <summary> Gets or sets the Calculate2 Four Wire Resistance Subsystem. </summary>
+    ''' <value> The Calculate2 Four Wire Resistance Subsystem. </value>
+    Public Property Calculate2FourWireResistanceSubsystem As Calculate2FourWireResistanceSubsystem
 
     ''' <summary> Gets or sets the Display Subsystem. </summary>
     ''' <value> The Display Subsystem. </value>
@@ -235,7 +243,7 @@ Public Class Device
             Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Display subsystem {1} property change;. Details: {2}.",
+                               "{0} exception handling format subsystem {1} property change;. Details: {2}.",
                                Me.ResourceName, e.PropertyName, ex)
         End Try
     End Sub

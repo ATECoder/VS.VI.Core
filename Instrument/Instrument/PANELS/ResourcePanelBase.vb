@@ -364,6 +364,7 @@ Public Class ResourcePanelBase
             If Me.Device.ResourcesFilter IsNot Nothing Then
                 Me.Connector.ResourcesFilter = Me.Device.ResourcesFilter
             End If
+            Me.ResourceName = Me.Device.ResourceName
         End If
     End Sub
 

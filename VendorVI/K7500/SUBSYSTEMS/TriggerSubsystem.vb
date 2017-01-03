@@ -126,4 +126,94 @@ Public Class TriggerSubsystem
 
 #End Region
 
+#Region " CUSTOM BINNING "
+
+    ''' <summary> Applies the grade binning. </summary>
+    ''' <remarks> David, 12/30/2016. </remarks>
+    ''' <param name="count">            Number of. </param>
+    ''' <param name="startDelay">       The start delay. </param>
+    ''' <param name="failedBitPattern"> A pattern specifying the failed bit. </param>
+    ''' <param name="passBitPattern">   A pattern specifying the pass bit. </param>
+    Public Sub ApplyGradeBinning(ByVal count As Integer, ByVal startDelay As TimeSpan,
+                                 ByVal failedBitPattern As Integer, ByVal passBitPattern As Integer)
+
+        Dim block As Integer = 0
+        Dim cmd As String = ""
+
+        ' use the mask to assign digital outputs.
+        Dim mask As Integer = failedBitPattern Or passBitPattern
+        Dim bitPattern As Integer = 1
+        For i As Integer = 1 To 6
+            If (mask And bitPattern) <> 0 Then
+                cmd = $"DIG:LINE{i}:MODE DIG,OUT"
+                Me.Write(cmd)
+            End If
+            bitPattern <<= 1
+        Next
+
+        ' clear the trigger model
+        cmd = ":TRIG:LOAD 'EMPTY'" : Me.Write(cmd)
+
+        ' clear any pending trigger
+        cmd = ":TRIG:EXT:IN:CLE" : Me.Write(cmd)
+
+        ' clear the default buffer
+        cmd = ":TRAC:CLE" : Me.Write(cmd)
+
+        Dim autonomous As Boolean = False
+
+        ' Block 1: 
+        ' -- if autonomous mode, clear the buffer
+        ' -- if program control, clear the buffer
+        block += 1 : cmd = If(autonomous, $":TRIG:BLOC:BUFF:CLE {block}", $":TRIG:BLOC:NOP {block}")
+        Me.Write(cmd)
+
+        ' Block 2: Wait for external trigger; this is the repeat block.
+        Dim repeatBlock As Integer = block + 1
+        block += 1 : cmd = $":TRIG:BLOC:WAIT {block}, EXT"
+        Me.Write(cmd)
+
+        ' Block 3: Pre-Measure Delay
+        block += 1 : cmd = $":TRIG:BLOC:DEL:CONS {block}, {0.001 * startDelay.TotalMilliseconds}"
+        Me.Write(cmd)
+
+        ' Block 4: Measure
+        block += 1 : cmd = $":TRIG:BLOC:MEAS {block}"
+        Me.Write(cmd)
+
+        ' Block 5: Limit test and branch; the pass block is 3 blocks ahead (8)
+        Dim passBlock As Integer = block + 4
+        block += 1 : cmd = $":TRIG:BLOC:BRAN:LIM:DYN {block},IN,1,{passBlock}"
+        Me.Write(cmd)
+
+        ' Block 6: Output failure bit pattern
+        block += 1 : cmd = $":TRIG:BLOC:DIG:IO {block},{failedBitPattern},{mask}"
+        Me.Write(cmd)
+
+        ' Block 7: Skip the pass binning block
+        block += 1 : cmd = $":TRIG:BLOCk:BRAN:ALW {block}, {block + 2}"
+        Me.Write(cmd)
+
+        ' Block 8: Output pass bit pattern
+        block += 1 : cmd = $":TRIG:BLOC:DIG:IO {block},{passBitPattern},{mask}"
+        Me.Write(cmd)
+
+        Dim notificationId As Integer = 1
+
+        ' Block 9: Notify measurement completed
+        block += 1 : cmd = $":TRIG:BLOC:NOT {block},{notificationId}"
+        Me.Write(cmd)
+
+        ' set external output setting
+        cmd = $":TRIG:EXT:OUT:STIM NOT{notificationId}"
+        Me.Write(cmd)
+
+        ' Block 10: Repeat Count times.
+        block += 1 : cmd = If(count <= 0, $":TRIG:BLOCk:BRAN:ALW {block},{repeatBlock}", $":TRIG:BLOC:BRAN:COUN {block},{count},{repeatBlock}")
+        Me.Write(cmd)
+
+    End Sub
+
+#End Region
+
 End Class
