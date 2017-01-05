@@ -37,7 +37,9 @@ Public Class Calculate2FourWireResistanceSubsystem
 
 #Region " COMMAND SYNTAX "
 
-#Region " LIMIT1 "
+#Region " LIMIT 1 "
+
+#Region " LIMIT1 ENABLED "
 
     ''' <summary> Gets the Limit1 enabled command Format. </summary>
     ''' <value> The Limit1 enabled query command. </value>
@@ -61,7 +63,7 @@ Public Class Calculate2FourWireResistanceSubsystem
 
 #End Region
 
-#Region " LIMIT1 UPPER LEVEL "
+#Region " Limit1 UPPER LEVEL "
 
     ''' <summary> Gets the Limit1 Upper Level command format. </summary>
     ''' <value> The Limit1UpperLevel command format. </value>
@@ -72,7 +74,46 @@ Public Class Calculate2FourWireResistanceSubsystem
     Protected Overrides ReadOnly Property Limit1UpperLevelQueryCommand As String = ":CALC2:FRES:LIM1:UPP?"
 
 #End Region
+#End Region
 
+#Region " LIMIT 2 "
+
+#Region " LIMIT2 ENABLED "
+
+    ''' <summary> Gets the Limit2 enabled command Format. </summary>
+    ''' <value> The Limit2 enabled query command. </value>
+    Protected Overrides ReadOnly Property Limit2EnabledCommandFormat As String = ":CALC2:FRES:LIM2:STAT {0:'ON';'ON';'OFF'}"
+
+    ''' <summary> Gets the Limit2 enabled query command. </summary>
+    ''' <value> The Limit2 enabled query command. </value>
+    Protected Overrides ReadOnly Property Limit2EnabledQueryCommand As String = ":CALC2:FRES:LIM2:STAT?"
+
+#End Region
+
+#Region " LIMIT2 LOWER LEVEL "
+
+    ''' <summary> Gets the Limit2 Lower Level command format. </summary>
+    ''' <value> The Limit2LowerLevel command format. </value>
+    Protected Overrides ReadOnly Property Limit2LowerLevelCommandFormat As String = ":CALC2:FRES:LIM2:LOW {0}"
+
+    ''' <summary> Gets the Limit2 Lower Level query command. </summary>
+    ''' <value> The Limit2LowerLevel query command. </value>
+    Protected Overrides ReadOnly Property Limit2LowerLevelQueryCommand As String = ":CALC2:FRES:LIM2:LOW?"
+
+#End Region
+
+#Region " LIMIT2 UPPER LEVEL "
+
+    ''' <summary> Gets the Limit2 Upper Level command format. </summary>
+    ''' <value> The Limit2UpperLevel command format. </value>
+    Protected Overrides ReadOnly Property Limit2UpperLevelCommandFormat As String = ":CALC2:FRES:LIM2:UPP {0}"
+
+    ''' <summary> Gets the Limit2 Upper Level query command. </summary>
+    ''' <value> The Limit2UpperLevel query command. </value>
+    Protected Overrides ReadOnly Property Limit2UpperLevelQueryCommand As String = ":CALC2:FRES:LIM2:UPP?"
+
+#End Region
+#End Region
 #End Region
 
 End Class

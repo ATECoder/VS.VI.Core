@@ -364,6 +364,122 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #End Region
 
+#Region " DELAY "
+
+    Private _Delay As TimeSpan?
+    ''' <summary> Gets or sets the cached Trigger Delay. </summary>
+    ''' <remarks> The delay is used to delay operation in the trigger layer. After the programmed
+    ''' trigger event occurs, the instrument waits until the delay period expires before performing
+    ''' the Device Action. </remarks>
+    ''' <value> The Trigger Delay or none if not set or unknown. </value>
+    Public Overloads Property Delay As TimeSpan?
+        Get
+            Return Me._Delay
+        End Get
+        Protected Set(ByVal value As TimeSpan?)
+            If Not Nullable.Equals(Me.Delay, value) Then
+                Me._Delay = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.Delay))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Trigger Delay. </summary>
+    ''' <param name="value"> The current Delay. </param>
+    ''' <returns> The Trigger Delay or none if unknown. </returns>
+    Public Function ApplyDelay(ByVal value As TimeSpan) As TimeSpan?
+        Me.WriteDelay(value)
+        Return Me.QueryDelay()
+    End Function
+
+    ''' <summary> Gets the delay query command. </summary>
+    ''' <value> The delay query command. </value>
+    ''' <remarks> SCPI: ":SENS:FRES:DEL?" </remarks>
+    Protected Overridable ReadOnly Property DelayQueryCommand As String
+
+    ''' <summary> Gets the Delay format for converting the query to time span. </summary>
+    ''' <value> The Delay query command. </value>
+    ''' <remarks> For example: "s\.FFFFFFF" will convert the result from seconds. </remarks>
+    Protected Overridable ReadOnly Property DelayFormat As String
+
+    ''' <summary> Queries the Delay. </summary>
+    ''' <returns> The Delay or none if unknown. </returns>
+    Public Function QueryDelay() As TimeSpan?
+        Me.Delay = Me.Query(Me.Delay, Me.DelayFormat, Me.DelayQueryCommand)
+        Return Me.Delay
+    End Function
+
+    ''' <summary> Gets the delay command format. </summary>
+    ''' <value> The delay command format. </value>
+    ''' <remarks> SCPI: ":SENS:FRES:DEL {0:s\.FFFFFFF}" </remarks>
+    Protected Overridable ReadOnly Property DelayCommandFormat As String
+
+    ''' <summary> Writes the Trigger Delay without reading back the value from the device. </summary>
+    ''' <param name="value"> The current Delay. </param>
+    ''' <returns> The Trigger Delay or none if unknown. </returns>
+    Public Function WriteDelay(ByVal value As TimeSpan) As TimeSpan?
+        Me.Delay = Me.Write(value, Me.DelayCommandFormat)
+        Return Me.Delay
+    End Function
+
+#End Region
+
+#Region " OPEN LEAD DETECTOR ENABLED "
+
+    ''' <summary> Open Lead Detector enabled. </summary>
+    Private _OpenLeadDetectorEnabled As Boolean?
+
+    ''' <summary> Gets or sets the cached Open Lead Detector Enabled sentinel. </summary>
+    ''' <value> <c>null</c> if Open Lead Detector Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property OpenLeadDetectorEnabled As Boolean?
+        Get
+            Return Me._OpenLeadDetectorEnabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.OpenLeadDetectorEnabled, value) Then
+                Me._OpenLeadDetectorEnabled = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.OpenLeadDetectorEnabled))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Open Lead Detector Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyOpenLeadDetectorEnabled(ByVal value As Boolean) As Boolean?
+        Me.WriteOpenLeadDetectorEnabled(value)
+        Return Me.QueryOpenLeadDetectorEnabled()
+    End Function
+
+    ''' <summary> Gets or sets the Open Lead Detector enabled query command. </summary>
+    ''' <value> The Open Lead Detector enabled query command. </value>
+    ''' <remarks> SCPI: ":FRES:ODET?" </remarks>
+    Protected Overridable ReadOnly Property OpenLeadDetectorEnabledQueryCommand As String
+
+    ''' <summary> Queries the Open Lead Detector Enabled sentinel. Also sets the
+    ''' <see cref="OpenLeadDetectorEnabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryOpenLeadDetectorEnabled() As Boolean?
+        Me.OpenLeadDetectorEnabled = Me.Query(Me.OpenLeadDetectorEnabled, Me.OpenLeadDetectorEnabledQueryCommand)
+        Return Me.OpenLeadDetectorEnabled
+    End Function
+
+    ''' <summary> Gets or sets the Open Lead Detector enabled command Format. </summary>
+    ''' <value> The Open Lead Detector enabled query command. </value>
+    ''' <remarks> SCPI: ":FRES:ODET {0:'ON';'ON';'OFF'}" </remarks>
+    Protected Overridable ReadOnly Property OpenLeadDetectorEnabledCommandFormat As String
+
+    ''' <summary> Writes the Open Lead Detector Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteOpenLeadDetectorEnabled(ByVal value As Boolean) As Boolean?
+        Me.OpenLeadDetectorEnabled = Me.Write(value, Me.OpenLeadDetectorEnabledCommandFormat)
+        Return Me.OpenLeadDetectorEnabled
+    End Function
+
+#End Region
+
 #Region " POWER LINE CYCLES (NPLC) "
 
     ''' <summary> The Range of the power line cycles. </summary>

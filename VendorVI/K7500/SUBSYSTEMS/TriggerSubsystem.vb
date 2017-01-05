@@ -214,6 +214,101 @@ Public Class TriggerSubsystem
 
     End Sub
 
+    Public Sub ApplyGradeBinning(ByVal count As Integer, ByVal startDelay As TimeSpan,
+                                 ByVal failedBitPattern As Integer, ByVal passBitPattern As Integer,
+                                 ByVal openContactBitPattern As Integer)
+
+        Dim block As Integer = 0
+        Dim cmd As String = ""
+
+        ' use the mask to assign digital outputs.
+        Dim mask As Integer = failedBitPattern Or passBitPattern Or openContactBitPattern
+        Dim bitPattern As Integer = 1
+        For i As Integer = 1 To 6
+            If (mask And bitPattern) <> 0 Then
+                cmd = $"DIG:LINE{i}:MODE DIG,OUT"
+                Me.Write(cmd)
+            End If
+            bitPattern <<= 1
+        Next
+
+        ' clear the trigger model
+        cmd = ":TRIG:LOAD 'EMPTY'" : Me.Write(cmd)
+
+        ' clear any pending trigger
+        cmd = ":TRIG:EXT:IN:CLE" : Me.Write(cmd)
+
+        ' clear the default buffer
+        cmd = ":TRAC:CLE" : Me.Write(cmd)
+
+        Dim autonomous As Boolean = False
+
+        ' Block 1: 
+        ' -- if autonomous mode, clear the buffer
+        ' -- if program control, clear the buffer
+        block += 1 : cmd = If(autonomous, $":TRIG:BLOC:BUFF:CLE {block}", $":TRIG:BLOC:NOP {block}")
+        Me.Write(cmd)
+
+        ' Block 2: Wait for external trigger; this is the repeat block.
+        Dim repeatBlock As Integer = block + 1
+        block += 1 : cmd = $":TRIG:BLOC:WAIT {block}, EXT"
+        Me.Write(cmd)
+
+        ' Block 3: Pre-Measure Delay
+        block += 1 : cmd = $":TRIG:BLOC:DEL:CONS {block}, {0.001 * startDelay.TotalMilliseconds}"
+        Me.Write(cmd)
+
+        ' Block 4: Measure
+        block += 1 : cmd = $":TRIG:BLOC:MEAS {block}"
+        Me.Write(cmd)
+
+        ' Block 5: Limit 2 (open contact) test and branch if INside to the limit block; the limit 1 block is 3 blocks ahead (8)
+        Dim limitBlock As Integer = block + 4
+        block += 1 : cmd = $":TRIG:BLOC:BRAN:LIM:DYN {block},IN,2,{limitBlock}"
+        Me.Write(cmd)
+
+        ' Block 6: Output open bit pattern
+        block += 1 : cmd = $":TRIG:BLOC:DIG:IO {block},{openContactBitPattern},{mask}"
+        Me.Write(cmd)
+
+        ' Block 7: Jump to the notification block number
+        Dim notificationBlock As Integer = block + 6 ' = 12
+        block += 1 : cmd = $":TRIG:BLOCk:BRAN:ALW {block}, {notificationBlock}"
+        Me.Write(cmd)
+
+        ' Block 8: Limit 1 test and branch if INside to the pass block; the pass block is 3 blocks ahead
+        Dim passBlock As Integer = block + 4 ' = 11
+        block += 1 : cmd = $":TRIG:BLOC:BRAN:LIM:DYN {block},IN,1,{passBlock}"
+        Me.Write(cmd)
+
+        ' Block 9: Output failure bit pattern
+        block += 1 : cmd = $":TRIG:BLOC:DIG:IO {block},{failedBitPattern},{mask}"
+        Me.Write(cmd)
+
+        ' Block 10: Jump to the notification block
+        block += 1 : cmd = $":TRIG:BLOCk:BRAN:ALW {block}, {notificationBlock}"
+        Me.Write(cmd)
+
+        ' Block 11: Output pass bit pattern
+        block += 1 : cmd = $":TRIG:BLOC:DIG:IO {block},{passBitPattern},{mask}"
+        Me.Write(cmd)
+
+        Dim notificationId As Integer = 1
+
+        ' Block 12: Notify measurement completed
+        block += 1 : cmd = $":TRIG:BLOC:NOT {block},{notificationId}"
+        Me.Write(cmd)
+
+        ' set external output setting
+        cmd = $":TRIG:EXT:OUT:STIM NOT{notificationId}"
+        Me.Write(cmd)
+
+        ' Block 13: Repeat Count times.
+        block += 1 : cmd = If(count <= 0, $":TRIG:BLOCk:BRAN:ALW {block},{repeatBlock}", $":TRIG:BLOC:BRAN:COUN {block},{count},{repeatBlock}")
+        Me.Write(cmd)
+
+    End Sub
+
 #End Region
 
 End Class

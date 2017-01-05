@@ -55,6 +55,11 @@ Public Class K7500Panel
             .ContainerPanel = Me._MessagesTabPage
         End With
 
+        With Me._OpenLeadsBitPatternNumeric.NumericUpDownControl
+            .Minimum = 1
+            .Maximum = 63
+            .Value = 16
+        End With
         With Me._PassBitPatternNumeric.NumericUpDownControl
             .Minimum = 1
             .Maximum = 63
@@ -407,7 +412,6 @@ Public Class K7500Panel
             End With
         End If
     End Sub
-
     Private Sub onFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
         With Me._SenseRangeNumeric
             .Minimum = CDec(value.ValueRange1.Min)
@@ -467,6 +471,7 @@ Public Class K7500Panel
                                        "Failed parsing function mode '{0}' to a standard unit.", subsystem.FunctionMode.Value)
                     Me.Device.MeasureSubsystem.Readings.Reading.Unit = Arebis.StandardUnits.ElectricUnits.Volt
                 End If
+                Me._OpenLeadsDetectionCheckBox.Enabled = (value = Scpi.SenseFunctionModes.FourWireResistance) OrElse (value = Scpi.SenseFunctionModes.Temperature)
                 subsystem.Readings.Reading.Unit = Me.Device.MeasureSubsystem.Readings.Reading.Unit
                 Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.Readings.Reading.Unit.Symbol}]:"
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
@@ -619,6 +624,11 @@ Public Class K7500Panel
             Case NameOf(subsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
+                End If
+
+            Case NameOf(subsystem.OpenLeadDetectorEnabled)
+                If Me.Device IsNot Nothing AndAlso subsystem.OpenLeadDetectorEnabled.HasValue Then
+                    Me._OpenLeadsDetectionCheckBox.SafeCheckedSetter(subsystem.OpenLeadDetectorEnabled.Value)
                 End If
         End Select
     End Sub
@@ -1241,6 +1251,10 @@ Public Class K7500Panel
 
         With Me.SelectedSenseSubsystem
 
+            If Me._OpenLeadsDetectionCheckBox.Enabled AndAlso Not Nullable.Equals(.OpenLeadDetectorEnabled, Me._OpenLeadsDetectionCheckBox.Checked) Then
+                .ApplyOpenLeadDetectorEnabled(Me._OpenLeadsDetectionCheckBox.Checked)
+            End If
+
             If Not Nullable.Equals(.PowerLineCycles, Me._PowerLineCyclesNumeric.Value) Then
                 .ApplyPowerLineCycles(Me._PowerLineCyclesNumeric.Value)
             End If
@@ -1299,6 +1313,7 @@ Public Class K7500Panel
     End Sub
 
     Private Sub ApplyGradeBinningModel()
+
         If Me._LowerLimit1Numeric.Value <= 100 Then
             With Device.SenseFourWireResistanceSubsystem
                 .ApplyAverageEnabled(True)
@@ -1311,11 +1326,25 @@ Public Class K7500Panel
                 .ApplyAverageEnabled(False)
             End With
         End If
+
         With Device.Calculate2FourWireResistanceSubsystem
             .ApplyLimit1Enabled(True)
             .ApplyLimit1LowerLevel(Me._LowerLimit1Numeric.Value)
             .ApplyLimit1UpperLevel(Me._UpperLimit1Numeric.Value)
         End With
+
+        ' set limits for open circuit to 10 times the range limit
+        With Device.Calculate2FourWireResistanceSubsystem
+            .ApplyLimit2Enabled(True)
+            .ApplyLimit2LowerLevel(-10 * Me._UpperLimit1Numeric.Value)
+            .ApplyLimit2UpperLevel(10 * Me._UpperLimit1Numeric.Value)
+        End With
+
+        ' enable open detection
+        With Device.SenseFourWireResistanceSubsystem
+            .ApplyOpenLeadDetectorEnabled(True)
+        End With
+
         Dim count As Integer = CInt(Me._BinningTriggerCountNumeric.Value)
         Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
         Me.Device.TriggerSubsystem.ApplyGradeBinning(count, startDelay, CInt(Me._FailLimit1BitPatternNumeric.Value), CInt(Me._PassBitPatternNumeric.Value))

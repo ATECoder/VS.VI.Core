@@ -125,6 +125,18 @@ Public Class SenseFourWireResistanceSubsystem
 
 #End Region
 
+#Region " OPEN LEAD DETECTOR "
+
+    ''' <summary> Gets the Open Lead Detector enabled command Format. </summary>
+    ''' <value> The Open Lead Detector enabled query command. </value>
+    Protected Overrides ReadOnly Property OpenLeadDetectorEnabledCommandFormat As String = ":SENS:FRES:ODET {0:'ON';'ON';'OFF'}"
+
+    ''' <summary> Gets the Open Lead Detector enabled query command. </summary>
+    ''' <value> The Open Lead Detector enabled query command. </value>
+    Protected Overrides ReadOnly Property OpenLeadDetectorEnabledQueryCommand As String = ":SENS:FRES:ODET?"
+
+#End Region
+
 #Region " POWER LINE CYCLES "
 
     ''' <summary> Gets The Power Line Cycles command format. </summary>

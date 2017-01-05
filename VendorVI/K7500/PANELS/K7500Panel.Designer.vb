@@ -37,8 +37,9 @@ Partial Class K7500Panel
         Me._ReadTerminalsStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._TerminalStateLabel = New System.Windows.Forms.ToolStripLabel()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
+        Me._OpenLeadsDetectionCheckBox = New System.Windows.Forms.CheckBox()
         Me._ApplyFunctionModeButton = New System.Windows.Forms.Button()
-        Me._TriggerDelayNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._SenseMeasureDelayNumeric = New System.Windows.Forms.NumericUpDown()
         Me._SenseRangeNumeric = New System.Windows.Forms.NumericUpDown()
         Me._PowerLineCyclesNumeric = New System.Windows.Forms.NumericUpDown()
         Me._TriggerDelayNumericLabel = New System.Windows.Forms.Label()
@@ -88,6 +89,10 @@ Partial Class K7500Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._OpenLeadsBitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._OpenLeadsBitPatternNumericUpDownLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._StartTriggerDelayNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._EndTriggerDelayNumericLabel = New System.Windows.Forms.ToolStripLabel()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -96,7 +101,7 @@ Partial Class K7500Panel
         Me._ReadingToolStrip.SuspendLayout()
         Me._SystemToolStrip.SuspendLayout()
         Me._SenseTabPage.SuspendLayout()
-        CType(Me._TriggerDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me._SenseMeasureDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._SenseRangeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._PowerLineCyclesNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._TriggerTabPage.SuspendLayout()
@@ -342,8 +347,9 @@ Partial Class K7500Panel
         '
         '_SenseTabPage
         '
+        Me._SenseTabPage.Controls.Add(Me._OpenLeadsDetectionCheckBox)
         Me._SenseTabPage.Controls.Add(Me._ApplyFunctionModeButton)
-        Me._SenseTabPage.Controls.Add(Me._TriggerDelayNumeric)
+        Me._SenseTabPage.Controls.Add(Me._SenseMeasureDelayNumeric)
         Me._SenseTabPage.Controls.Add(Me._SenseRangeNumeric)
         Me._SenseTabPage.Controls.Add(Me._PowerLineCyclesNumeric)
         Me._SenseTabPage.Controls.Add(Me._TriggerDelayNumericLabel)
@@ -360,6 +366,17 @@ Partial Class K7500Panel
         Me._SenseTabPage.Text = "Sense"
         Me._SenseTabPage.UseVisualStyleBackColor = True
         '
+        '_OpenLeadsDetectionCheckBox
+        '
+        Me._OpenLeadsDetectionCheckBox.AutoSize = True
+        Me._OpenLeadsDetectionCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._OpenLeadsDetectionCheckBox.Location = New System.Drawing.Point(11, 115)
+        Me._OpenLeadsDetectionCheckBox.Name = "_OpenLeadsDetectionCheckBox"
+        Me._OpenLeadsDetectionCheckBox.Size = New System.Drawing.Size(109, 21)
+        Me._OpenLeadsDetectionCheckBox.TabIndex = 11
+        Me._OpenLeadsDetectionCheckBox.Text = "Detect Opens:"
+        Me._OpenLeadsDetectionCheckBox.UseVisualStyleBackColor = True
+        '
         '_ApplyFunctionModeButton
         '
         Me._ApplyFunctionModeButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
@@ -371,14 +388,16 @@ Partial Class K7500Panel
         Me.TipsTooltip.SetToolTip(Me._ApplyFunctionModeButton, "Selects this function mode")
         Me._ApplyFunctionModeButton.UseVisualStyleBackColor = True
         '
-        '_TriggerDelayNumeric
+        '_SenseMeasureDelayNumeric
         '
-        Me._TriggerDelayNumeric.DecimalPlaces = 3
-        Me._TriggerDelayNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._TriggerDelayNumeric.Location = New System.Drawing.Point(106, 114)
-        Me._TriggerDelayNumeric.Name = "_TriggerDelayNumeric"
-        Me._TriggerDelayNumeric.Size = New System.Drawing.Size(76, 25)
-        Me._TriggerDelayNumeric.TabIndex = 8
+        Me._SenseMeasureDelayNumeric.DecimalPlaces = 3
+        Me._SenseMeasureDelayNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._SenseMeasureDelayNumeric.Location = New System.Drawing.Point(106, 141)
+        Me._SenseMeasureDelayNumeric.Name = "_SenseMeasureDelayNumeric"
+        Me._SenseMeasureDelayNumeric.Size = New System.Drawing.Size(76, 25)
+        Me._SenseMeasureDelayNumeric.TabIndex = 8
+        Me.TipsTooltip.SetToolTip(Me._SenseMeasureDelayNumeric, "Sense measure delay")
+        Me._SenseMeasureDelayNumeric.Visible = False
         '
         '_SenseRangeNumeric
         '
@@ -409,12 +428,13 @@ Partial Class K7500Panel
         '_TriggerDelayNumericLabel
         '
         Me._TriggerDelayNumericLabel.AutoSize = True
-        Me._TriggerDelayNumericLabel.Location = New System.Drawing.Point(43, 118)
+        Me._TriggerDelayNumericLabel.Location = New System.Drawing.Point(43, 145)
         Me._TriggerDelayNumericLabel.Name = "_TriggerDelayNumericLabel"
         Me._TriggerDelayNumericLabel.Size = New System.Drawing.Size(61, 17)
         Me._TriggerDelayNumericLabel.TabIndex = 7
         Me._TriggerDelayNumericLabel.Text = "Delay [s]:"
         Me._TriggerDelayNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._TriggerDelayNumericLabel.Visible = False
         '
         '_SenseRangeNumericLabel
         '
@@ -505,17 +525,18 @@ Partial Class K7500Panel
         '_TriggerDelayToolStrip
         '
         Me._TriggerDelayToolStrip.Dock = System.Windows.Forms.DockStyle.None
-        Me._TriggerDelayToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerDelaysToolStripLabel, Me._StartTriggerDelayNumeric, Me._EndTriggerDelayNumeric})
+        Me._TriggerDelayToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerDelaysToolStripLabel, Me._StartTriggerDelayNumericLabel, Me._StartTriggerDelayNumeric, Me._EndTriggerDelayNumericLabel, Me._EndTriggerDelayNumeric})
         Me._TriggerDelayToolStrip.Location = New System.Drawing.Point(3, 0)
         Me._TriggerDelayToolStrip.Name = "_TriggerDelayToolStrip"
-        Me._TriggerDelayToolStrip.Size = New System.Drawing.Size(233, 28)
+        Me._TriggerDelayToolStrip.Size = New System.Drawing.Size(239, 28)
         Me._TriggerDelayToolStrip.TabIndex = 1
         '
         '_TriggerDelaysToolStripLabel
         '
+        Me._TriggerDelaysToolStripLabel.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._TriggerDelaysToolStripLabel.Name = "_TriggerDelaysToolStripLabel"
-        Me._TriggerDelaysToolStripLabel.Size = New System.Drawing.Size(66, 25)
-        Me._TriggerDelaysToolStripLabel.Text = "DELAYS [s]:"
+        Me._TriggerDelaysToolStripLabel.Size = New System.Drawing.Size(43, 25)
+        Me._TriggerDelaysToolStripLabel.Text = "DELAY"
         '
         '_StartTriggerDelayNumeric
         '
@@ -541,13 +562,14 @@ Partial Class K7500Panel
         Me._Limit1ToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._Limits1Label, Me._Limit1DecimalsNumeric, Me._LowerLimit1Numeric, Me._UpperLimit1Numeric, Me._FailBitToolStripLabel, Me._FailLimit1BitPatternNumeric, Me._HexLimit1CheckBox})
         Me._Limit1ToolStrip.Location = New System.Drawing.Point(3, 28)
         Me._Limit1ToolStrip.Name = "_Limit1ToolStrip"
-        Me._Limit1ToolStrip.Size = New System.Drawing.Size(296, 28)
+        Me._Limit1ToolStrip.Size = New System.Drawing.Size(294, 28)
         Me._Limit1ToolStrip.TabIndex = 2
         '
         '_Limits1Label
         '
+        Me._Limits1Label.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._Limits1Label.Name = "_Limits1Label"
-        Me._Limits1Label.Size = New System.Drawing.Size(46, 25)
+        Me._Limits1Label.Size = New System.Drawing.Size(44, 25)
         Me._Limits1Label.Text = "LIMIT1:"
         '
         '_Limit1DecimalsNumeric
@@ -599,17 +621,18 @@ Partial Class K7500Panel
         '_GradeBinningToolStrip
         '
         Me._GradeBinningToolStrip.Dock = System.Windows.Forms.DockStyle.None
-        Me._GradeBinningToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._BinningToolStripLabel, Me._TriggerCountTextBoxLabel, Me._BinningTriggerCountNumeric, Me._PassBitPatternNumericLabel, Me._PassBitPatternNumeric, Me._HexBitPatternCheckBox, Me._LoadGradeBinTriggerModelButton})
+        Me._GradeBinningToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._BinningToolStripLabel, Me._TriggerCountTextBoxLabel, Me._BinningTriggerCountNumeric, Me._PassBitPatternNumericLabel, Me._PassBitPatternNumeric, Me._OpenLeadsBitPatternNumericUpDownLabel, Me._OpenLeadsBitPatternNumeric, Me._HexBitPatternCheckBox, Me._LoadGradeBinTriggerModelButton})
         Me._GradeBinningToolStrip.Location = New System.Drawing.Point(3, 56)
         Me._GradeBinningToolStrip.Name = "_GradeBinningToolStrip"
-        Me._GradeBinningToolStrip.Size = New System.Drawing.Size(279, 28)
+        Me._GradeBinningToolStrip.Size = New System.Drawing.Size(315, 28)
         Me._GradeBinningToolStrip.TabIndex = 0
         '
         '_BinningToolStripLabel
         '
+        Me._BinningToolStripLabel.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._BinningToolStripLabel.Name = "_BinningToolStripLabel"
-        Me._BinningToolStripLabel.Size = New System.Drawing.Size(55, 25)
-        Me._BinningToolStripLabel.Text = "BINNING"
+        Me._BinningToolStripLabel.Size = New System.Drawing.Size(26, 25)
+        Me._BinningToolStripLabel.Text = "BIN"
         '
         '_TriggerCountTextBoxLabel
         '
@@ -644,8 +667,8 @@ Partial Class K7500Panel
         '
         Me._HexBitPatternCheckBox.Checked = False
         Me._HexBitPatternCheckBox.Name = "_HexBitPatternCheckBox"
-        Me._HexBitPatternCheckBox.Size = New System.Drawing.Size(46, 25)
-        Me._HexBitPatternCheckBox.Text = "Hex"
+        Me._HexBitPatternCheckBox.Size = New System.Drawing.Size(31, 25)
+        Me._HexBitPatternCheckBox.Text = "x"
         Me._HexBitPatternCheckBox.ToolTipText = "Check for using HEX values for setting the pass bit."
         '
         '_LoadGradeBinTriggerModelButton
@@ -665,14 +688,15 @@ Partial Class K7500Panel
         Me._SimpleLoopToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SimpleLoopLabel, Me._SimpleLoopCountNumericLabel, Me._SimpleLoopCountNumeric, Me._LoadSimpleLoopModelButton, Me._RunSimpleLoopTriggerModelButton})
         Me._SimpleLoopToolStrip.Location = New System.Drawing.Point(3, 84)
         Me._SimpleLoopToolStrip.Name = "_SimpleLoopToolStrip"
-        Me._SimpleLoopToolStrip.Size = New System.Drawing.Size(187, 28)
+        Me._SimpleLoopToolStrip.Size = New System.Drawing.Size(186, 28)
         Me._SimpleLoopToolStrip.TabIndex = 3
         Me.TipsTooltip.SetToolTip(Me._SimpleLoopToolStrip, "Simple trigger loop")
         '
         '_SimpleLoopLabel
         '
+        Me._SimpleLoopLabel.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._SimpleLoopLabel.Name = "_SimpleLoopLabel"
-        Me._SimpleLoopLabel.Size = New System.Drawing.Size(46, 25)
+        Me._SimpleLoopLabel.Size = New System.Drawing.Size(45, 25)
         Me._SimpleLoopLabel.Text = "SIMPLE"
         '
         '_SimpleLoopCountNumericLabel
@@ -860,6 +884,32 @@ Partial Class K7500Panel
         Me._TitleLabel.Text = "K7500"
         Me._TitleLabel.UseMnemonic = False
         '
+        '_OpenLeadsBitPatternNumericUpDown
+        '
+        Me._OpenLeadsBitPatternNumeric.Name = "_OpenLeadsBitPatternNumericUpDown"
+        Me._OpenLeadsBitPatternNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._OpenLeadsBitPatternNumeric.Text = "0"
+        Me._OpenLeadsBitPatternNumeric.ToolTipText = "Open leads bit pattern"
+        Me._OpenLeadsBitPatternNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        '_OpenLeadsBitPatternNumericUpDownLabel
+        '
+        Me._OpenLeadsBitPatternNumericUpDownLabel.Name = "_OpenLeadsBitPatternNumericUpDownLabel"
+        Me._OpenLeadsBitPatternNumericUpDownLabel.Size = New System.Drawing.Size(39, 25)
+        Me._OpenLeadsBitPatternNumericUpDownLabel.Text = "Open:"
+        '
+        '_StartTriggerDelayNumericLabel
+        '
+        Me._StartTriggerDelayNumericLabel.Name = "_StartTriggerDelayNumericLabel"
+        Me._StartTriggerDelayNumericLabel.Size = New System.Drawing.Size(27, 25)
+        Me._StartTriggerDelayNumericLabel.Text = "Pre:"
+        '
+        '_EndTriggerDelayNumericLabel
+        '
+        Me._EndTriggerDelayNumericLabel.Name = "_EndTriggerDelayNumericLabel"
+        Me._EndTriggerDelayNumericLabel.Size = New System.Drawing.Size(33, 25)
+        Me._EndTriggerDelayNumericLabel.Text = "Post:"
+        '
         'K7500Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -880,7 +930,7 @@ Partial Class K7500Panel
         Me._SystemToolStrip.PerformLayout()
         Me._SenseTabPage.ResumeLayout(False)
         Me._SenseTabPage.PerformLayout()
-        CType(Me._TriggerDelayNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me._SenseMeasureDelayNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._SenseRangeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._PowerLineCyclesNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         Me._TriggerTabPage.ResumeLayout(False)
@@ -924,7 +974,7 @@ Partial Class K7500Panel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _TbdToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _LastReadingTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _TriggerDelayNumeric As System.Windows.Forms.NumericUpDown
+    Private WithEvents _SenseMeasureDelayNumeric As System.Windows.Forms.NumericUpDown
     Private WithEvents _SenseRangeNumeric As System.Windows.Forms.NumericUpDown
     Private WithEvents _PowerLineCyclesNumeric As System.Windows.Forms.NumericUpDown
     Private WithEvents _Panel As System.Windows.Forms.Panel
@@ -984,4 +1034,9 @@ Partial Class K7500Panel
     Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
     Private WithEvents _RunSimpleLoopTriggerModelButton As Windows.Forms.ToolStripButton
     Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
+    Friend WithEvents _OpenLeadsDetectionCheckBox As Windows.Forms.CheckBox
+    Private WithEvents _StartTriggerDelayNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _EndTriggerDelayNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _OpenLeadsBitPatternNumericUpDownLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _OpenLeadsBitPatternNumeric As Core.Controls.ToolStripNumericUpDown
 End Class
