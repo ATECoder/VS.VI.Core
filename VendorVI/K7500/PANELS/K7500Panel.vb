@@ -1347,7 +1347,8 @@ Public Class K7500Panel
 
         Dim count As Integer = CInt(Me._BinningTriggerCountNumeric.Value)
         Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
-        Me.Device.TriggerSubsystem.ApplyGradeBinning(count, startDelay, CInt(Me._FailLimit1BitPatternNumeric.Value), CInt(Me._PassBitPatternNumeric.Value))
+        Me.Device.TriggerSubsystem.ApplyGradeBinning(count, startDelay, CInt(Me._FailLimit1BitPatternNumeric.Value),
+                                                     CInt(Me._PassBitPatternNumeric.Value), CInt(Me._OpenLeadsBitPatternNumeric.Value))
     End Sub
 
     ''' <summary> Loads grade bin trigger model button click. </summary>
