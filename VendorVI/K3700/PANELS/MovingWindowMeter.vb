@@ -36,6 +36,13 @@ Public Class MovingWindowMeter
 
         Me._ExpectedStopTimeout = TimeSpan.FromMilliseconds(100)
 
+        ' set very long in case operator starts browsing the application
+        Me._TaskCompleteNotificationTimeout = TimeSpan.FromSeconds(10)
+
+        ' set very long in case operator starts browsing the application
+        Me._TaskStartNotificationTimeout = TimeSpan.FromSeconds(10)
+
+        Me._TaskStopTimeout = TimeSpan.FromSeconds(1)
     End Sub
 
     ''' <summary>
@@ -220,17 +227,24 @@ Public Class MovingWindowMeter
 
 #Region " TASK COMPLETE "
 
+    ''' <summary> Gets or sets the task complete notification timeout. </summary>
+    ''' <value> The task complete notification timeout. </value>
+    ''' <remarks> Defaults to 10 seconds to allow for user interface browsing while collecting data. </remarks>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property TaskCompleteNotificationTimeout As TimeSpan
+
+
     ''' <summary> Clears the task complete semaphore. </summary>
     ''' <remarks> David, 12/22/2016. </remarks>
     Private Sub ClearTaskComplete()
-        Me._TaskComplete = NotificationSemaphore.None
+        Me._TaskComplete = NotificationSemaphores.None
         Me.SafePostPropertyChanged(NameOf(Me.TaskComplete))
     End Sub
 
     ''' <summary> Set the task complete semaphore. </summary>
     ''' <remarks> David, 12/22/2016. </remarks>
     Private Sub NotifyTaskComplete()
-        Me._TaskComplete = NotificationSemaphore.Sent
+        Me._TaskComplete = NotificationSemaphores.Sent
         Me.SafePostPropertyChanged(NameOf(Me.TaskComplete))
     End Sub
 
@@ -239,36 +253,42 @@ Public Class MovingWindowMeter
         Me.NotifyTaskComplete()
         Do
             System.Windows.Forms.Application.DoEvents()
-        Loop Until ((Me.TaskComplete And NotificationSemaphore.Acknowledged) <> 0) OrElse DateTime.Now > endTime
-        Return (Me.TaskComplete And NotificationSemaphore.Acknowledged) <> 0
+        Loop Until ((Me.TaskComplete And NotificationSemaphores.Acknowledged) <> 0) OrElse DateTime.Now > endTime
+        Return (Me.TaskComplete And NotificationSemaphores.Acknowledged) <> 0
     End Function
 
     ''' <summary> Acknowledge task complete semaphore. </summary>
     ''' <remarks> David, 12/22/2016. </remarks>
     Public Sub AcknowledgeTaskComplete()
-        Me._TaskComplete = Me.TaskComplete Or NotificationSemaphore.Acknowledged
+        Me._TaskComplete = Me.TaskComplete Or NotificationSemaphores.Acknowledged
     End Sub
 
     ''' <summary> Gets or sets the task complete semaphore. </summary>
     ''' <value> The measurement Completed. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public ReadOnly Property TaskComplete As NotificationSemaphore
+    Public ReadOnly Property TaskComplete As NotificationSemaphores
 
 #End Region
 
 #Region " TASK Start "
 
+    ''' <summary> Gets or sets the task start notification timeout. </summary>
+    ''' <value> The task start notification timeout. </value>
+    ''' <remarks> Defaults to 10 seconds to allow for user interface browsing while collecting data. </remarks>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property TaskStartNotificationTimeout As TimeSpan
+
     ''' <summary> Clears the task Start semaphore. </summary>
     ''' <remarks> David, 12/22/2016. </remarks>
     Private Sub ClearTaskStart()
-        Me._TaskStart = NotificationSemaphore.None
+        Me._TaskStart = NotificationSemaphores.None
         Me.SafePostPropertyChanged(NameOf(Me.TaskStart))
     End Sub
 
     ''' <summary> Set the task Start semaphore. </summary>
     ''' <remarks> David, 12/22/2016. </remarks>
     Private Sub NotifyTaskStart()
-        Me._TaskStart = NotificationSemaphore.Sent
+        Me._TaskStart = NotificationSemaphores.Sent
         Me.SafePostPropertyChanged(NameOf(Me.TaskStart))
     End Sub
 
@@ -277,22 +297,23 @@ Public Class MovingWindowMeter
         Me.NotifyTaskStart()
         Do
             System.Windows.Forms.Application.DoEvents()
-        Loop Until ((Me.TaskStart And NotificationSemaphore.Acknowledged) <> 0) OrElse DateTime.Now > endTime
-        Return (Me.TaskStart And NotificationSemaphore.Acknowledged) <> 0
+        Loop Until ((Me.TaskStart And NotificationSemaphores.Acknowledged) <> 0) OrElse DateTime.Now > endTime
+        Return (Me.TaskStart And NotificationSemaphores.Acknowledged) <> 0
     End Function
 
     ''' <summary> Acknowledge task Start semaphore. </summary>
     ''' <remarks> David, 12/22/2016. </remarks>
     Public Sub AcknowledgeTaskStart()
-        Me._TaskStart = Me.TaskStart Or NotificationSemaphore.Acknowledged
+        Me._TaskStart = Me.TaskStart Or NotificationSemaphores.Acknowledged
     End Sub
 
     ''' <summary> Gets or sets the task Start semaphore. </summary>
     ''' <value> The measurement Started. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public ReadOnly Property TaskStart As NotificationSemaphore
+    Public ReadOnly Property TaskStart As NotificationSemaphores
 
 #End Region
+
     Private _MeasurementFormatString As String
 
     ''' <summary> Gets or sets the measurement Format String. </summary>
@@ -517,7 +538,7 @@ Public Class MovingWindowMeter
         Else
             Me._MovingAverageTaskResult = result
         End If
-        If Not Me.NotifyTaskComplete(TimeSpan.FromSeconds(1)) Then
+        If Not Me.NotifyTaskComplete(Me.TaskCompleteNotificationTimeout) Then
             If Me.MovingAverageTaskResult.Failed Then
                 Me.MovingAverageTaskResult.RegisterFailure($"{Me.MovingAverageTaskResult.Details}; also, timeout receiving completion acknowledgment")
             Else
@@ -543,7 +564,7 @@ Public Class MovingWindowMeter
             If Me.CapturedSyncContext Is Nothing Then Throw New InvalidOperationException("Sync context not set")
             SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
             Me.MovingWindow.ClearKnownState()
-            If Me.NotifyTaskStart(TimeSpan.FromSeconds(1)) Then
+            If Me.NotifyTaskStart(Me.TaskStartNotificationTimeout) Then
                 Do
                     ' measure and time
                     If Me.MovingWindow.ReadValue(Function() Me.Device.MultimeterSubsystem.Measure()) Then
@@ -657,6 +678,11 @@ Public Class MovingWindowMeter
         End Get
     End Property
 
+    ''' <summary> Gets or sets the task stopping timeout. </summary>
+    ''' <value> The task stopping timeout. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property TaskStopTimeout As TimeSpan
+
     ''' <summary> The synchronization context that is captured from the UI thread. </summary>
     Public ReadOnly Property CapturedSyncContext As SynchronizationContext
 
@@ -670,9 +696,9 @@ Public Class MovingWindowMeter
              "This call must pass a valid synchronization context from the UI thread in order to capture the synchronization context for the machine thread")
         Me._CapturedSyncContext = syncContext
         SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
-        Me.StopAsyncTask(TimeSpan.FromSeconds(1))
+        Me.StopAsyncTask(Me.TaskStopTimeout)
         ' proceed even if not stopped
-        Me._TaskStart = NotificationSemaphore.None
+        Me._TaskStart = NotificationSemaphores.None
         Me.CancellationTokenSource = New CancellationTokenSource
         Me.CancellationToken = CancellationTokenSource.Token
         Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
@@ -698,8 +724,8 @@ Public Class MovingWindowMeter
              "This call must pass a valid synchronization context from the UI thread in order to capture the synchronization context for the machine thread")
         Me._CapturedSyncContext = syncContext
         SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
-        If Me.StopAsyncTask(TimeSpan.FromSeconds(1)) Then
-            Me._TaskStart = NotificationSemaphore.None
+        If Me.StopAsyncTask(Me.TaskStopTimeout) Then
+            Me._TaskStart = NotificationSemaphores.None
             Me.CancellationTokenSource = New CancellationTokenSource
             Me.CancellationToken = CancellationTokenSource.Token
             Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
@@ -710,7 +736,7 @@ Public Class MovingWindowMeter
                 Me.Task.Start()
             End If
         Else
-            Me._TaskStart = NotificationSemaphore.None
+            Me._TaskStart = NotificationSemaphores.None
             'Me.MeasurementStarted = False
         End If
     End Sub
@@ -748,7 +774,7 @@ Public Class MovingWindowMeter
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed starting the moving window task")
                 End If
             Else
-                Me.StopAsyncTask(TimeSpan.FromSeconds(1))
+                Me.StopAsyncTask(Me.TaskStopTimeout)
                 If Not Me.IsStopped Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed stopping the moving window task")
                 End If
@@ -819,7 +845,7 @@ End Class
 
 ''' <summary> Values that represent notification semaphores. </summary>
 ''' <remarks> David, 12/22/2016. </remarks>
-<Flags> Public Enum NotificationSemaphore
+<Flags> Public Enum NotificationSemaphores
     <Description("Not set")> None = 0
     <Description("Notification Sent")> Sent = 1
     <Description("Notification Acknowledged")> Acknowledged = 2

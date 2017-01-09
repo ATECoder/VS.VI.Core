@@ -226,7 +226,7 @@ Partial Public Class MovingWindowMeter
             Me.ClearTaskStart()
             ' Me.MeasurementStarted = False
         End If
-        Return Me.TaskStart <> NotificationSemaphore.None '  Me.MeasurementStarted
+        Return Me.TaskStart <> NotificationSemaphores.None '  Me.MeasurementStarted
     End Function
 
     ''' <summary> Starts a measure. </summary>
