@@ -14,7 +14,7 @@
 
         Public Const AssemblyTitle As String = "VI Thermostream Library"
         Public Const AssemblyDescription As String = "Thermostream Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.Thermostream.2016"
+        Public Const AssemblyProduct As String = "VI.Thermostream.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

@@ -14,7 +14,7 @@
 
         Public Const AssemblyTitle As String = "VI Multimeter Library"
         Public Const AssemblyDescription As String = "Multimeter Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.Multimeter.2016"
+        Public Const AssemblyProduct As String = "VI.Multimeter.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

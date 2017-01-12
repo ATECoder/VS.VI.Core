@@ -26,12 +26,14 @@ Partial Class K7500Panel
         Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
         Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._AbortButton = New System.Windows.Forms.ToolStripButton()
+        Me._RetriggerCheckBox = New isr.Core.Controls.ToolStripCheckBox()
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._TraceInstrumentMessagesMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._HandleServiceRequestsMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadTerminalsStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -53,7 +55,9 @@ Partial Class K7500Panel
         Me._TriggerToolStripPanel = New System.Windows.Forms.ToolStripPanel()
         Me._TriggerDelayToolStrip = New System.Windows.Forms.ToolStrip()
         Me._TriggerDelaysToolStripLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._StartTriggerDelayNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._StartTriggerDelayNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._EndTriggerDelayNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._EndTriggerDelayNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._Limit1ToolStrip = New System.Windows.Forms.ToolStrip()
         Me._Limits1Label = New System.Windows.Forms.ToolStripLabel()
@@ -69,6 +73,8 @@ Partial Class K7500Panel
         Me._BinningTriggerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._PassBitPatternNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._PassBitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._OpenLeadsBitPatternNumericUpDownLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._OpenLeadsBitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._HexBitPatternCheckBox = New isr.Core.Controls.ToolStripCheckBox()
         Me._LoadGradeBinTriggerModelButton = New System.Windows.Forms.ToolStripButton()
         Me._SimpleLoopToolStrip = New System.Windows.Forms.ToolStrip()
@@ -89,10 +95,6 @@ Partial Class K7500Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._OpenLeadsBitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._OpenLeadsBitPatternNumericUpDownLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._StartTriggerDelayNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._EndTriggerDelayNumericLabel = New System.Windows.Forms.ToolStripLabel()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -230,7 +232,7 @@ Partial Class K7500Panel
         '
         '_ReadingToolStrip
         '
-        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._ReadingComboBox, Me._AbortButton})
+        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._ReadingComboBox, Me._RetriggerCheckBox, Me._AbortButton})
         Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingToolStrip.Name = "_ReadingToolStrip"
         Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
@@ -270,9 +272,16 @@ Partial Class K7500Panel
         Me._AbortButton.Image = CType(resources.GetObject("_AbortButton.Image"), System.Drawing.Image)
         Me._AbortButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._AbortButton.Name = "_AbortButton"
-        Me._AbortButton.Size = New System.Drawing.Size(41, 22)
+        Me._AbortButton.Size = New System.Drawing.Size(41, 19)
         Me._AbortButton.Text = "Abort"
         Me._AbortButton.ToolTipText = "Aborts triggering"
+        '
+        '_RetriggerCheckBox
+        '
+        Me._RetriggerCheckBox.Checked = False
+        Me._RetriggerCheckBox.Name = "_RetriggerCheckBox"
+        Me._RetriggerCheckBox.Size = New System.Drawing.Size(81, 19)
+        Me._RetriggerCheckBox.Text = "Retrigger"
         '
         '_SystemToolStrip
         '
@@ -288,7 +297,7 @@ Partial Class K7500Panel
         '_ResetSplitButton
         '
         Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._TraceInstrumentMessagesMenuItem, Me._HandleServiceRequestsMenuItem, Me._ReadTerminalsStateMenuItem})
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._TraceInstrumentMessagesMenuItem, Me._HandleServiceRequestsMenuItem, Me._ReadTerminalsStateMenuItem})
         Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
         Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetSplitButton.Name = "_ResetSplitButton"
@@ -320,14 +329,23 @@ Partial Class K7500Panel
         Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._InitKnownStateMenuItem.Text = "Init to Known State"
         '
+        '_ClearExecutionStateMenuItem
+        '
+        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
+        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
+        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
+        '
         '_TraceInstrumentMessagesMenuItem
         '
+        Me._TraceInstrumentMessagesMenuItem.CheckOnClick = True
         Me._TraceInstrumentMessagesMenuItem.Name = "_TraceInstrumentMessagesMenuItem"
         Me._TraceInstrumentMessagesMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._TraceInstrumentMessagesMenuItem.Text = "Trace Instrument Messages"
         '
         '_HandleServiceRequestsMenuItem
         '
+        Me._HandleServiceRequestsMenuItem.CheckOnClick = True
         Me._HandleServiceRequestsMenuItem.Name = "_HandleServiceRequestsMenuItem"
         Me._HandleServiceRequestsMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._HandleServiceRequestsMenuItem.Text = "Handle Service Requests"
@@ -538,6 +556,12 @@ Partial Class K7500Panel
         Me._TriggerDelaysToolStripLabel.Size = New System.Drawing.Size(43, 25)
         Me._TriggerDelaysToolStripLabel.Text = "DELAY"
         '
+        '_StartTriggerDelayNumericLabel
+        '
+        Me._StartTriggerDelayNumericLabel.Name = "_StartTriggerDelayNumericLabel"
+        Me._StartTriggerDelayNumericLabel.Size = New System.Drawing.Size(27, 25)
+        Me._StartTriggerDelayNumericLabel.Text = "Pre:"
+        '
         '_StartTriggerDelayNumeric
         '
         Me._StartTriggerDelayNumeric.AutoSize = False
@@ -547,11 +571,17 @@ Partial Class K7500Panel
         Me._StartTriggerDelayNumeric.ToolTipText = "Start delay in seconds"
         Me._StartTriggerDelayNumeric.Value = New Decimal(New Integer() {20, 0, 0, 196608})
         '
+        '_EndTriggerDelayNumericLabel
+        '
+        Me._EndTriggerDelayNumericLabel.Name = "_EndTriggerDelayNumericLabel"
+        Me._EndTriggerDelayNumericLabel.Size = New System.Drawing.Size(33, 25)
+        Me._EndTriggerDelayNumericLabel.Text = "Post:"
+        '
         '_EndTriggerDelayNumeric
         '
         Me._EndTriggerDelayNumeric.AutoSize = False
         Me._EndTriggerDelayNumeric.Name = "_EndTriggerDelayNumeric"
-        Me._EndTriggerDelayNumeric.Size = New System.Drawing.Size(62, 23)
+        Me._EndTriggerDelayNumeric.Size = New System.Drawing.Size(62, 25)
         Me._EndTriggerDelayNumeric.Text = "0"
         Me._EndTriggerDelayNumeric.ToolTipText = "End delay in seconds"
         Me._EndTriggerDelayNumeric.Value = New Decimal(New Integer() {1, 0, 0, 196608})
@@ -662,6 +692,20 @@ Partial Class K7500Panel
         Me._PassBitPatternNumeric.Text = "2"
         Me._PassBitPatternNumeric.ToolTipText = "Pass bit pattern"
         Me._PassBitPatternNumeric.Value = New Decimal(New Integer() {2, 0, 0, 0})
+        '
+        '_OpenLeadsBitPatternNumericUpDownLabel
+        '
+        Me._OpenLeadsBitPatternNumericUpDownLabel.Name = "_OpenLeadsBitPatternNumericUpDownLabel"
+        Me._OpenLeadsBitPatternNumericUpDownLabel.Size = New System.Drawing.Size(39, 25)
+        Me._OpenLeadsBitPatternNumericUpDownLabel.Text = "Open:"
+        '
+        '_OpenLeadsBitPatternNumeric
+        '
+        Me._OpenLeadsBitPatternNumeric.Name = "_OpenLeadsBitPatternNumeric"
+        Me._OpenLeadsBitPatternNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._OpenLeadsBitPatternNumeric.Text = "0"
+        Me._OpenLeadsBitPatternNumeric.ToolTipText = "Open leads bit pattern"
+        Me._OpenLeadsBitPatternNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         '_HexBitPatternCheckBox
         '
@@ -884,32 +928,6 @@ Partial Class K7500Panel
         Me._TitleLabel.Text = "K7500"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_OpenLeadsBitPatternNumericUpDown
-        '
-        Me._OpenLeadsBitPatternNumeric.Name = "_OpenLeadsBitPatternNumericUpDown"
-        Me._OpenLeadsBitPatternNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._OpenLeadsBitPatternNumeric.Text = "0"
-        Me._OpenLeadsBitPatternNumeric.ToolTipText = "Open leads bit pattern"
-        Me._OpenLeadsBitPatternNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
-        '
-        '_OpenLeadsBitPatternNumericUpDownLabel
-        '
-        Me._OpenLeadsBitPatternNumericUpDownLabel.Name = "_OpenLeadsBitPatternNumericUpDownLabel"
-        Me._OpenLeadsBitPatternNumericUpDownLabel.Size = New System.Drawing.Size(39, 25)
-        Me._OpenLeadsBitPatternNumericUpDownLabel.Text = "Open:"
-        '
-        '_StartTriggerDelayNumericLabel
-        '
-        Me._StartTriggerDelayNumericLabel.Name = "_StartTriggerDelayNumericLabel"
-        Me._StartTriggerDelayNumericLabel.Size = New System.Drawing.Size(27, 25)
-        Me._StartTriggerDelayNumericLabel.Text = "Pre:"
-        '
-        '_EndTriggerDelayNumericLabel
-        '
-        Me._EndTriggerDelayNumericLabel.Name = "_EndTriggerDelayNumericLabel"
-        Me._EndTriggerDelayNumericLabel.Size = New System.Drawing.Size(33, 25)
-        Me._EndTriggerDelayNumericLabel.Text = "Post:"
-        '
         'K7500Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -1039,4 +1057,6 @@ Partial Class K7500Panel
     Private WithEvents _EndTriggerDelayNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _OpenLeadsBitPatternNumericUpDownLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _OpenLeadsBitPatternNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents _RetriggerCheckBox As Core.Controls.ToolStripCheckBox
 End Class

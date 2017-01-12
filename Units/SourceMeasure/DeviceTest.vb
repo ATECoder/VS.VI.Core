@@ -71,8 +71,9 @@ Public Class DeviceTest
         Dim expectedShort As Short = 0
         Dim usingInterfaceType As HardwareInterfaceType = HardwareInterfaceType.Gpib
         Using target As SourceMeasure.Device = New SourceMeasure.Device()
-            actualBoolean = target.TryOpenSession(SelectResourceName(usingInterfaceType), "Source Measure")
-            Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session;")
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(usingInterfaceType), "Source Measure", e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             expectedShort = 0
             target.Session.Clear()
             target.CloseSession()
@@ -87,8 +88,9 @@ Public Class DeviceTest
         Dim actualBoolean As Boolean
         Dim actualString As String = ""
         Using target As SourceMeasure.Device = New SourceMeasure.Device()
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Source Measure")
-            Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session;")
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Source Measure", e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             ' do a device clear and reset.
             target.ResetClearInit()
             actualBoolean = True
@@ -132,8 +134,9 @@ Public Class DeviceTest
         Dim expectedDouble As Double = 0
         Dim actualDouble As Double = 0
         Using target As SourceMeasure.Device = New SourceMeasure.Device()
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Source Measure")
-            Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session;")
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Source Measure", e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             ' do a device clear
             target.Session.Clear()
 

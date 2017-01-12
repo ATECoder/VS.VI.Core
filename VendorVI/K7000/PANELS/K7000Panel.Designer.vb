@@ -67,6 +67,7 @@ Partial Class K7000Panel
         Me._ApplyTriggerPlanButton = New System.Windows.Forms.ToolStripButton()
         Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
         Me._ConfigureExternalScan = New System.Windows.Forms.ToolStripButton()
+        Me._AbortButton = New System.Windows.Forms.ToolStripButton()
         Me._TriggerLayerToolStrip = New System.Windows.Forms.ToolStrip()
         Me._TriggerLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ContinuousTriggerEnabledCheckBox = New isr.Core.Controls.ToolStripCheckBox()
@@ -101,6 +102,7 @@ Partial Class K7000Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._SlotTabPage.SuspendLayout()
@@ -188,7 +190,7 @@ Partial Class K7000Panel
         '_ResetSplitButton
         '
         Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._TraceInstrumentMessagesMenuItem, Me._HandleServiceRequestsMenuItem})
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._TraceInstrumentMessagesMenuItem, Me._HandleServiceRequestsMenuItem})
         Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
         Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetSplitButton.Name = "_ResetSplitButton"
@@ -222,12 +224,14 @@ Partial Class K7000Panel
         '
         '_TraceInstrumentMessagesMenuItem
         '
+        Me._TraceInstrumentMessagesMenuItem.CheckOnClick = True
         Me._TraceInstrumentMessagesMenuItem.Name = "_TraceInstrumentMessagesMenuItem"
         Me._TraceInstrumentMessagesMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._TraceInstrumentMessagesMenuItem.Text = "Trace Instrument Messages"
         '
         '_HandleServiceRequestsMenuItem
         '
+        Me._HandleServiceRequestsMenuItem.CheckOnClick = True
         Me._HandleServiceRequestsMenuItem.Name = "_HandleServiceRequestsMenuItem"
         Me._HandleServiceRequestsMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._HandleServiceRequestsMenuItem.Text = "Handle Service Requests"
@@ -699,7 +703,7 @@ Partial Class K7000Panel
         '
         '_TriggerToolStrip
         '
-        Me._TriggerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ApplyTriggerPlanButton, Me._InitiateButton, Me._ConfigureExternalScan})
+        Me._TriggerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ApplyTriggerPlanButton, Me._InitiateButton, Me._ConfigureExternalScan, Me._AbortButton})
         Me._TriggerToolStrip.Location = New System.Drawing.Point(0, 112)
         Me._TriggerToolStrip.Name = "_TriggerToolStrip"
         Me._TriggerToolStrip.Size = New System.Drawing.Size(356, 25)
@@ -733,6 +737,16 @@ Partial Class K7000Panel
         Me._ConfigureExternalScan.Name = "_ConfigureExternalScan"
         Me._ConfigureExternalScan.Size = New System.Drawing.Size(136, 22)
         Me._ConfigureExternalScan.Text = "Configure External Scan"
+        '
+        '_AbortButton
+        '
+        Me._AbortButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._AbortButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._AbortButton.Image = CType(resources.GetObject("_AbortButton.Image"), System.Drawing.Image)
+        Me._AbortButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._AbortButton.Name = "_AbortButton"
+        Me._AbortButton.Size = New System.Drawing.Size(41, 22)
+        Me._AbortButton.Text = "Abort"
         '
         '_TriggerLayerToolStrip
         '
@@ -1043,6 +1057,13 @@ Partial Class K7000Panel
         Me._TitleLabel.Text = "K7000"
         Me._TitleLabel.UseMnemonic = False
         '
+        '_ClearExecutionStateMenuItem
+        '
+        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
+        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
+        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
+        '
         'K7000Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -1181,4 +1202,6 @@ Partial Class K7000Panel
     Private WithEvents _TriggerCountNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _TriggerCountNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _ArmLayer1SourceComboBox As Windows.Forms.ToolStripComboBox
+    Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
 End Class

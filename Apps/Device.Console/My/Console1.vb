@@ -21,7 +21,7 @@
         Me.AddInstrumentPanel("Scanner", New VI.K7000.K7000Panel)
         enabled = True
 #ElseIf K7500 Then
-        Me.AddInstrumentPanel("Meter", New VI.K7500.K7500Panel)
+        Me.AddInstrumentPanel("Meter", New VI.K7500.K7500Panel, True)
         enabled = True
 #ElseIf K34980 Then
         Me.AddInstrumentPanel("Scanner", New VI.K34980.K34980Panel)
@@ -30,7 +30,7 @@
         enabled = true
 #End If
         If enabled Then
-            Me.AddListeners(My.Application.MyLog)
+            Me.AddListener(My.Application.MyLog)
             MyBase.OnLoad(e)
         End If
     End Sub

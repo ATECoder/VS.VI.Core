@@ -236,12 +236,14 @@ Partial Class K2000Panel
         '
         '_TraceInstrumentMessagesMenuItem
         '
+        Me._TraceInstrumentMessagesMenuItem.CheckOnClick = True
         Me._TraceInstrumentMessagesMenuItem.Name = "_TraceInstrumentMessagesMenuItem"
         Me._TraceInstrumentMessagesMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._TraceInstrumentMessagesMenuItem.Text = "Trace Instrument Messages"
         '
         '_HandleServiceRequestsMenuItem
         '
+        Me._HandleServiceRequestsMenuItem.CheckOnClick = True
         Me._HandleServiceRequestsMenuItem.Name = "_HandleServiceRequestsMenuItem"
         Me._HandleServiceRequestsMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._HandleServiceRequestsMenuItem.Text = "Handle Service Requests"

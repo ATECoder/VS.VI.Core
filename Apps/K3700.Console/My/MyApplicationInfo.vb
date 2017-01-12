@@ -7,7 +7,7 @@
 
         Public Const AssemblyTitle As String = "K3700 Driver Console"
         Public Const AssemblyDescription As String = "K3700 Switching Mainframe Virtual Instrument Console"
-        Public Const AssemblyProduct As String = "VI.K3700.Console.2016"
+        Public Const AssemblyProduct As String = "VI.K3700.Console.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

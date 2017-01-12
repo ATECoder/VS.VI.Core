@@ -14,7 +14,7 @@
 
         Public Const AssemblyTitle As String = "VI K7000 Scanner Library"
         Public Const AssemblyDescription As String = "K7000 Scanner Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.K7000.Scanner.2016"
+        Public Const AssemblyProduct As String = "VI.K7000.Scanner.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

@@ -14,7 +14,7 @@
 
         Public Const AssemblyTitle As String = "VI Tegam Meter Library"
         Public Const AssemblyDescription As String = "Tegam Meter Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.Tegam.Meter.2016"
+        Public Const AssemblyProduct As String = "VI.Tegam.Meter.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

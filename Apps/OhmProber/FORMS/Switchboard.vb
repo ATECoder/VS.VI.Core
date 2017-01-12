@@ -173,13 +173,13 @@ Public Class Switchboard
             Case ActionOption.ServiceRequester
                 Me._OpenForms.ShowNew(New Instrument.ServiceRequesterForm, My.Application.MyLog)
             Case ActionOption.Keithley2002
-                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K2000.K2000Panel, My.Application.MyLog)
+                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K2000.K2000Panel, My.Application.MyLog, True)
             Case ActionOption.Keithley7510
-                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K7500.K7500Panel, My.Application.MyLog)
+                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K7500.K7500Panel, My.Application.MyLog, True)
             Case ActionOption.Electroglass2000
-                Me._OpenForms.ShowNew("Prober", New Instrument.InstrumentPanelForm, New EG2000.EG2000Panel, My.Application.MyLog)
+                Me._OpenForms.ShowNew("Prober", New Instrument.InstrumentPanelForm, New EG2000.EG2000Panel, My.Application.MyLog, True)
             Case ActionOption.Tegam1750
-                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New Tegam.T1750Panel, My.Application.MyLog)
+                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New Tegam.T1750Panel, My.Application.MyLog, True)
         End Select
         Me.Cursor = System.Windows.Forms.Cursors.Default
     End Sub

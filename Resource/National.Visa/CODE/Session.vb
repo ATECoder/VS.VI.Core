@@ -68,13 +68,27 @@ Public Class Session
         End Get
         Set(value As NationalInstruments.Visa.MessageBasedSession)
             Me._VisaSession = value
-            If Me._VisaSession.HardwareInterfaceType = Ivi.Visa.HardwareInterfaceType.Tcp Then
-                Me._TcpIpSession = TryCast(Me.VisaSession, NationalInstruments.Visa.TcpipSession)
-            End If
+            Me._TcpIpSession = TryCast(Me.VisaSession, NationalInstruments.Visa.TcpipSession)
         End Set
     End Property
 
-    Private _TcpIpSession As NationalInstruments.Visa.TcpipSession
+    ''' <summary> Gets the type of the hardware interface. </summary>
+    ''' <value> The type of the hardware interface. </value>
+    <CLSCompliant(False)>
+    Public ReadOnly Property HardwareInterfaceType As Ivi.Visa.HardwareInterfaceType
+        Get
+            If Me.VisaSession Is Nothing Then
+                Return Ivi.Visa.HardwareInterfaceType.Custom
+            Else
+                Return Me.VisaSession.HardwareInterfaceType
+            End If
+        End Get
+    End Property
+
+    ''' <summary> Gets the TCP IP session. </summary>
+    ''' <value> The TCP IP session. </value>
+    <CLSCompliant(False)>
+    Public ReadOnly Property TcpIpSession As NationalInstruments.Visa.TcpipSession
 
     ''' <summary>
     ''' Gets the session open sentinel. When open, the session is capable of addressing the hardware.
@@ -509,11 +523,15 @@ Public Class Session
     ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub EnableServiceRequest()
         Try
-            If Not IsServiceRequestEventEnabled Then
+            If Not Me.IsServiceRequestEventEnabled Then
                 Me._LastNativeError = NativeError.Success
                 If Me.IsSessionOpen Then
                     ' must define the handler before enabling the events.
-                    AddHandler Me.VisaSession.ServiceRequest, AddressOf OnServiceRequested
+                    If Me.HardwareInterfaceType = Ivi.Visa.HardwareInterfaceType.Tcp Then
+                        AddHandler Me.TcpIpSession.ServiceRequest, AddressOf Me.OnServiceRequested
+                    Else
+                        AddHandler Me.VisaSession.ServiceRequest, AddressOf Me.OnServiceRequested
+                    End If
                     ' Enabling the VISA session events causes an exception of unsupported mechanism.
                     ' Apparently, the events are already enabled. 
                     ' Me._VisaSession.EnableEvent(Ivi.Visa.EventType.ServiceRequest)

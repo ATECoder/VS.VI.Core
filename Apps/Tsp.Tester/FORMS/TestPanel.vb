@@ -1570,6 +1570,7 @@ Public Class TestPanel
 
 #End Region
 
+
 #Region " TALKER "
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
@@ -1577,15 +1578,6 @@ Public Class TestPanel
     Protected Overloads Sub AddListeners()
         Me.Talker.Listeners.Add(Me._TraceMessagesBox)
         'Me._InstrumentPanel.AddListeners(Me.Talker.Listeners)
-    End Sub
-
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
-    Public Overrides Sub AddListeners(ByVal log As MyLog)
-        If log Is Nothing Then Throw New ArgumentNullException(NameOf(log))
-        MyBase.AddListeners(log)
-        'Me._InstrumentPanel.AddListeners(New ITraceMessageListener() {log})
-        My.MyApplication.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
@@ -1623,5 +1615,7 @@ Public Class TestPanel
     End Sub
 
 #End Region
+
+
 
 End Class

@@ -14,7 +14,7 @@
 
         Public Const AssemblyTitle As String = "VI TTM Library"
         Public Const AssemblyDescription As String = "Thermal Transient Meter Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.TTM.2016"
+        Public Const AssemblyProduct As String = "VI.TTM.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

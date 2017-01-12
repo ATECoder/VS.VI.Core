@@ -11,12 +11,13 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyTitle("isr.VI.Units")> 
 <Assembly: AssemblyDescription("")> 
 <Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("VI. Library.Units.2014")> 
+<Assembly: AssemblyProduct("VI. Library.Units.2017")> 
 <Assembly: AssemblyCopyright("Copyright ©  2012")> 
 <Assembly: AssemblyTrademark("")> 
 
 
 <Assembly: CLSCompliant(True)> 
+
 
 
 <Assembly: ComVisible(False)>

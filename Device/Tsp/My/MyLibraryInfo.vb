@@ -14,7 +14,7 @@
 
         Public Const AssemblyTitle As String = "VI Device Tsp Library"
         Public Const AssemblyDescription As String = "Virtual Device Test Script Processor Library"
-        Public Const AssemblyProduct As String = "VI.Device.Tsp.2016"
+        Public Const AssemblyProduct As String = "VI.Device.Tsp.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

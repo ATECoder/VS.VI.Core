@@ -11,6 +11,12 @@ Namespace My
             Return isr.Core.Pith.ApplicationInfo.BuildDefaultCaption(suffix.ToString)
         End Function
 
+        ''' <summary> Applies the default trace level. </summary>
+        ''' <remarks> David, 10/28/2016. </remarks>
+        Friend Sub ApplyTraceLevel()
+            MyLog.ApplyTraceLevel(My.MySettings.Default.TraceLevel)
+        End Sub
+
         ''' <summary> Instantiates the application to its known state. </summary>
         ''' <returns> <c>True</c> if success or <c>False</c> if failed. </returns>
         <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>

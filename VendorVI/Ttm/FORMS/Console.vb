@@ -1367,12 +1367,14 @@ Public Class Console
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
     ''' <remarks> David, 12/29/2015. </remarks>
-    Public Overrides Sub AddListeners(ByVal log As MyLog)
-        If log Is Nothing Then Throw New ArgumentNullException(NameOf(log))
-        MyBase.AddListeners(log)
-        Me._PartsPanel.AddListeners(Me.Talker.Listeners)
-        Me._TTMConfigurationPanel.AddListeners(Me.Talker.Listeners)
-        My.MyLibrary.Identify(Me.Talker)
+    Public Overrides Sub AddListener(ByVal item As ITraceMessageListener)
+        If item Is Nothing Then Throw New ArgumentNullException(NameOf(item))
+        MyBase.AddListener(item)
+        If TypeOf (item) Is MyLog Then
+            Me._PartsPanel.AddListeners(Me.Talker.Listeners)
+            Me._TTMConfigurationPanel.AddListeners(Me.Talker.Listeners)
+            My.MyLibrary.Identify(Me.Talker)
+        End If
     End Sub
 
     ''' <summary> Executes the trace messages box property changed action. </summary>

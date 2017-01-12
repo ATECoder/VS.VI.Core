@@ -74,8 +74,9 @@ Public Class ScpiPowerSupplyTest
         Dim expectedShort As Short = 0
         Dim usingInterfaceType As HardwareInterfaceType = HardwareInterfaceType.Usb
         Using target As PowerSupply.Device = New PowerSupply.Device()
-            actualBoolean = target.TryOpenSession(SelectResourceName(usingInterfaceType), "Power Supply")
-            Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session; ")
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(usingInterfaceType), "Power Supply", e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             target.Session.Clear()
             target.CloseSession()
         End Using
@@ -91,8 +92,9 @@ Public Class ScpiPowerSupplyTest
         Dim actualBoolean As Boolean
         Dim actualString As String = ""
         Using target As PowerSupply.Device = New PowerSupply.Device()
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply")
-            Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session;")
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply", e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             actualBoolean = target.OutputSubsystem.ApplyOutputOnState(False).GetValueOrDefault(True)
             Assert.AreEqual(expectedBoolean, actualBoolean, "Output Off;")
             expectedBoolean = False
@@ -118,8 +120,9 @@ Public Class ScpiPowerSupplyTest
         Dim expectedDouble As Double = 0
         Dim actualDouble As Double = 0
         Using target As PowerSupply.Device = New PowerSupply.Device()
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply")
-            Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session;")
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply", e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             target.ResetClearInit()
             actualBoolean = True
             Assert.AreEqual(expectedBoolean, actualBoolean, "Reset;")
@@ -159,8 +162,9 @@ Public Class ScpiPowerSupplyTest
         Dim expectedDouble As Double = 0
         Dim actualDouble As Double = 0
         Using target As PowerSupply.Device = New PowerSupply.Device()
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply")
-            Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session;")
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply", e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             target.ResetClearInit()
             actualBoolean = True
             Assert.AreEqual(expectedBoolean, actualBoolean, "Reset;")
@@ -201,8 +205,9 @@ Public Class ScpiPowerSupplyTest
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
         Using target As PowerSupply.Device = New PowerSupply.Device()
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply")
-            Assert.AreEqual(expectedBoolean, actualBoolean, "Open Session;")
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply", e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             actualDouble = target.MeasureCurrentSubsystem.Measure.GetValueOrDefault(0)
             Assert.AreEqual(expectedDouble, actualDouble)
         End Using

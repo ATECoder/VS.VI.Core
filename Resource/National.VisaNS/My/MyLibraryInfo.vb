@@ -11,7 +11,7 @@
 
         Public Const AssemblyTitle As String = "VI National Visa NS Library"
         Public Const AssemblyDescription As String = "National Virtual Instrument VisaNS Library"
-        Public Const AssemblyProduct As String = "VI.National.VisaNS.2016"
+        Public Const AssemblyProduct As String = "VI.National.VisaNS.2017"
 
     End Class
 

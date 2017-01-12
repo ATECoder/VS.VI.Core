@@ -1042,7 +1042,6 @@ Partial Class TestPanel
         Me._TraceMessagesBox.Font = New System.Drawing.Font("Consolas", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._TraceMessagesBox.Location = New System.Drawing.Point(0, 0)
         Me._TraceMessagesBox.Multiline = True
-        Me._TraceMessagesBox.MultipleSyncContextsExpected = False
         Me._TraceMessagesBox.Name = "_TraceMessagesBox"
         Me._TraceMessagesBox.PresetCount = 50
         Me._TraceMessagesBox.ReadOnly = True

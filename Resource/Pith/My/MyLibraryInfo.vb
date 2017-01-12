@@ -11,7 +11,7 @@
 
         Public Const AssemblyTitle As String = "Visa Pith Library"
         Public Const AssemblyDescription As String = "Virtual Instrument Pith Library"
-        Public Const AssemblyProduct As String = "VI.Pith.2016"
+        Public Const AssemblyProduct As String = "VI.Pith.2017"
 
     End Class
 

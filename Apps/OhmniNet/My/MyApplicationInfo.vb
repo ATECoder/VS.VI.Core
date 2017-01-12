@@ -7,7 +7,7 @@
 
         Public Const AssemblyTitle As String = "VI Ohmni Net Tester"
         Public Const AssemblyDescription As String = "Ohmni Net Virtual Instruments Tester"
-        Public Const AssemblyProduct As String = "VI.OhmniNet.Tester.2016"
+        Public Const AssemblyProduct As String = "VI.OhmniNet.Tester.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

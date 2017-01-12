@@ -1148,25 +1148,6 @@ Public Class Meter
 
 #Region " TALKER "
 
-    ''' <summary> Gets the trace message talker. </summary>
-    ''' <value> The trace message talker. </value>
-    Public ReadOnly Property Talker As ITraceMessageTalker
-
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
-        Me.Talker.Listeners.Add(listeners)
-    End Sub
-
-    ''' <summary> Clears the listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
-    Public Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker.Listeners?.Clear()
-        Me.ShuntResistance.ClearListeners()
-        Me.MasterDevice.ClearListeners()
-    End Sub
-
     ''' <summary> Adds subsystem listeners. </summary>
     ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub AddSubsystemListeners()
@@ -1178,6 +1159,65 @@ Public Class Meter
     ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub ClearSubsystemListeners()
         Me.MasterDevice.ClearListeners()
+    End Sub
+
+#End Region
+
+#Region " I TALKER IMPLEMENTATION "
+
+    ''' <summary> Dispose talker. </summary>
+    ''' <remarks> David, 12/15/2016. </remarks>
+    Private Sub DisposeTalker()
+        Me.Talker?.Listeners.Clear()
+        Me._Talker = Nothing
+    End Sub
+
+
+    ''' <summary> Gets the trace message talker. </summary>
+    ''' <value> The trace message talker. </value>
+    Public ReadOnly Property Talker As ITraceMessageTalker
+
+    ''' <summary> Adds a listener. </summary>
+    ''' <remarks> David, 12/14/2016. </remarks>
+    ''' <param name="item"> The item. </param>
+    Public Overridable Sub AddListener(ByVal item As ITraceMessageListener)
+        Me._Talker.AddListener(item)
+    End Sub
+
+    ''' <summary> Adds the listeners. </summary>
+    ''' <remarks> David, 12/14/2016. </remarks>
+    ''' <param name="listeners"> The listeners. </param>
+    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
+        Me._Talker.AddListeners(listeners)
+    End Sub
+
+    ''' <summary> Adds the listeners. </summary>
+    ''' <remarks> David, 12/14/2016. </remarks>
+    ''' <param name="talker"> The talker. </param>
+    Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
+        Me._Talker.AddListeners(talker)
+    End Sub
+
+    ''' <summary> Clears the listeners. </summary>
+    ''' <remarks> David, 12/30/2015. </remarks>
+    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
+        Me.Talker.Listeners.Clear()
+        Me.ShuntResistance.ClearListeners()
+        Me.MasterDevice.ClearListeners()
+    End Sub
+
+    ''' <summary> Updates the trace log level described by traceLevel. </summary>
+    ''' <remarks> David, 12/14/2016. </remarks>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
+        Me.Talker.UpdateTraceLogLevel(traceLevel)
+    End Sub
+
+    ''' <summary> Updates the trace show level described by traceLevel. </summary>
+    ''' <remarks> David, 12/14/2016. </remarks>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
+        Me.Talker.UpdateTraceShowLevel(traceLevel)
     End Sub
 
 #End Region

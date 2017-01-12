@@ -14,7 +14,7 @@
 
         Public Const AssemblyTitle As String = "VI K2400 Source Measure Library"
         Public Const AssemblyDescription As String = "K2400 Source Measure Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.K2400.SourceMeasure.2016"
+        Public Const AssemblyProduct As String = "VI.K2400.SourceMeasure.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

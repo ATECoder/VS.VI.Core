@@ -14,7 +14,7 @@
 
         Public Const AssemblyTitle As String = "VI Instrument R2D2 Library"
         Public Const AssemblyDescription As String = "Instrument Virtual Instrument R2D2 Library"
-        Public Const AssemblyProduct As String = "VI.Instrument.R2D2.2016"
+        Public Const AssemblyProduct As String = "VI.Instrument.R2D2.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

@@ -13,12 +13,13 @@
 
         Public Const AssemblyTitle As String = "VI E4990 Impedance Analyzer Library"
         Public Const AssemblyDescription As String = "E4990 Impedance Analyzer Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.E4990.Analywer.2016"
+        Public Const AssemblyProduct As String = "VI.E4990.Analyzer.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <param name="talker"> The talker. </param>
         Public Shared Sub Identify(ByVal talker As isr.Core.Pith.ITraceMessageTalker)
             talker?.Publish(TraceEventType.Information, MyLibrary.TraceEventId, $"{MyLibrary.AssemblyProduct} ID = {MyLibrary.TraceEventId:X}")
+
             isr.VI.Scpi.My.MyLibrary.Identify(talker)
             isr.VI.Instrument.My.MyLibrary.Identify(talker)
         End Sub

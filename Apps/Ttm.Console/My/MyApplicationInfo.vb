@@ -7,7 +7,7 @@
 
         Public Const AssemblyTitle As String = "TTM Driver Console"
         Public Const AssemblyDescription As String = "Thermal Transient Meter Driver Console"
-        Public Const AssemblyProduct As String = "TTM.Driver.Console.2016"
+        Public Const AssemblyProduct As String = "TTM.Driver.Console.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

@@ -7,7 +7,7 @@
 
         Public Const AssemblyTitle As String = "Solomon Gauge Console"
         Public Const AssemblyDescription As String = "Solomon Gauge Virtual Instrument Console"
-        Public Const AssemblyProduct As String = "VI.Solomon.Gauge.2016"
+        Public Const AssemblyProduct As String = "VI.Solomon.Gauge.2017"
 
         ''' <summary> Identifies this talker. </summary>
         ''' <remarks> David, 1/21/2016. </remarks>

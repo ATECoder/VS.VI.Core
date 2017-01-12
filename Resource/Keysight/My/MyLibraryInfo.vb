@@ -11,7 +11,7 @@
 
         Public Const AssemblyTitle As String = "VI Keysight Library"
         Public Const AssemblyDescription As String = "Keysight Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.Keysight.2016"
+        Public Const AssemblyProduct As String = "VI.Keysight.2017"
 
     End Class
 

@@ -170,13 +170,13 @@ Public Class Switchboard
             Case ActionOption.SimpleReadAndWrite
                 Me._OpenForms.ShowNew(New Instrument.SimpleReadWriteForm, My.Application.MyLog)
             Case ActionOption.Keithley2002
-                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K2000.K2000Panel, My.Application.MyLog)
+                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K2000.K2000Panel, My.Application.MyLog, True)
             Case ActionOption.Tegam1750
-                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New Tegam.T1750Panel, My.Application.MyLog)
+                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New Tegam.T1750Panel, My.Application.MyLog, True)
             Case ActionOption.Keithley2700
-                Me._OpenForms.ShowNew("Switch/Meter", New Instrument.InstrumentPanelForm, New K2700.K2700Panel, My.Application.MyLog)
+                Me._OpenForms.ShowNew("Switch/Meter", New Instrument.InstrumentPanelForm, New K2700.K2700Panel, My.Application.MyLog, True)
             Case ActionOption.Keithley2400
-                Me._OpenForms.ShowNew("Source Meter", New Instrument.InstrumentPanelForm, New K2400.K2400Panel, My.Application.MyLog)
+                Me._OpenForms.ShowNew("Source Meter", New Instrument.InstrumentPanelForm, New K2400.K2400Panel, My.Application.MyLog, True)
         End Select
         Me.Cursor = System.Windows.Forms.Cursors.Default
     End Sub
