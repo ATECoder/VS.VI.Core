@@ -20,7 +20,10 @@ Public Class SimpleReadWriteControl
 
 #Region " CONSTRUCTORS "
 
-    ''' <summary> Constructor that prevents a default instance of this class from being created. </summary>
+    ''' <summary>
+    ''' Constructor that prevents a default instance of this class from being created.
+    ''' </summary>
+    ''' <remarks> David, 1/18/2017. </remarks>
     Public Sub New()
 
         ' This call is required by the designer.
@@ -44,6 +47,8 @@ Public Class SimpleReadWriteControl
             .SelectedIndex = 1
         End With
 
+        Me._StopWatch = New Stopwatch
+
     End Sub
 
 
@@ -64,7 +69,9 @@ Public Class SimpleReadWriteControl
 
 #Region " SESSION "
 
-    Private _Session As SessionBase
+    ''' <summary> Gets the session. </summary>
+    ''' <value> The session. </value>
+    Protected ReadOnly Property Session As SessionBase
 
     ''' <summary> Connects the given session. </summary>
     ''' <remarks> David, 12/29/2015. </remarks>
@@ -123,7 +130,7 @@ Public Class SimpleReadWriteControl
         End Get
         Protected Set(value As Integer)
             Me._ServiceRequestValue = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ServiceRequestValue))
+            Me.SafePostPropertyChanged(NameOf(Me.ServiceRequestValue))
         End Set
     End Property
 
@@ -138,7 +145,7 @@ Public Class SimpleReadWriteControl
         End Get
         Protected Set(value As String)
             Me._SentMessage = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.SentMessage))
+            Me.SafePostPropertyChanged(NameOf(Me.SentMessage))
         End Set
     End Property
 
@@ -153,7 +160,7 @@ Public Class SimpleReadWriteControl
         End Get
         Protected Set(value As String)
             Me._ReceivedMessage = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ReceivedMessage))
+            Me.SafePostPropertyChanged(NameOf(Me.ReceivedMessage))
         End Set
     End Property
 
@@ -168,7 +175,7 @@ Public Class SimpleReadWriteControl
         End Get
         Protected Set(value As String)
             Me._StatusMessage = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.StatusMessage))
+            Me.SafePostPropertyChanged(NameOf(Me.StatusMessage))
         End Set
     End Property
 
@@ -188,7 +195,7 @@ Public Class SimpleReadWriteControl
                 Me._ReadButton.Enabled = value
                 Me._QueryButton.Enabled = value
                 Me._ClearSessionButton.Enabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ReadEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.ReadEnabled))
             End If
         End Set
     End Property
@@ -205,7 +212,7 @@ Public Class SimpleReadWriteControl
         Protected Set(value As TimeSpan)
             Me._ElapsedTime = value
             Me._TimingTextBox.Text = value.TotalMilliseconds.ToString("0.0", Globalization.CultureInfo.CurrentCulture)
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ReadEnabled))
+            Me.SafePostPropertyChanged(NameOf(Me.ReadEnabled))
         End Set
     End Property
 
@@ -242,6 +249,8 @@ Public Class SimpleReadWriteControl
         Return message.ToString
     End Function
 
+    Private ReadOnly Property StopWatch As Stopwatch
+
     ''' <summary> Queries. </summary>
     ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="textToWrite"> The text to write. </param>
@@ -250,16 +259,15 @@ Public Class SimpleReadWriteControl
         Cursor.Current = Cursors.WaitCursor
         Try
             Me.StatusMessage = "Querying."
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Querying: '{0}'", textToWrite)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Querying: '{0}'", textToWrite)
             Me._Session.LastAction = $"Querying: '{textToWrite}'".ToString(Globalization.CultureInfo.InvariantCulture)
             textToWrite = textToWrite.ReplaceCommonEscapeSequences
             Me.SentMessage = textToWrite
-            Dim timer As New Diagnostics.Stopwatch()
-            timer.Start()
+            Me.StopWatch.Restart()
             Dim responseString As String = Me._Session.Query(textToWrite)
-            Me.ElapsedTime = timer.Elapsed
+            Me.ElapsedTime = Me.StopWatch.Elapsed
             Dim message As String = responseString.InsertCommonEscapeSequences
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Received: '{0}'", message)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Received: '{0}'", message)
             Me.updateReadMessage(message)
             Me.StatusMessage = "Done Querying."
         Catch ex As Exception
@@ -272,6 +280,10 @@ Public Class SimpleReadWriteControl
         End Try
     End Sub
 
+    ''' <summary> Gets or sets the service request registered. </summary>
+    ''' <value> The service request registered sentinel. </value>
+    Private Property ServiceRequestRegistered As Boolean
+
     ''' <summary> Writes. </summary>
     ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="textToWrite"> The text to write. </param>
@@ -279,14 +291,25 @@ Public Class SimpleReadWriteControl
     Public Sub Write(ByVal textToWrite As String)
         Windows.Forms.Cursor.Current = Cursors.WaitCursor
         Try
+            If Me._Session.IsServiceRequestEnabled(ServiceRequests.MessageAvailable) And Not Me.ServiceRequestRegistered Then
+                Me.StatusMessage = "Establishing service request handling."
+                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Establishing service request handling")
+                ' checks if service requests are enabled for the MAV bit is enabled on the service request register.
+                Me.ServiceRequestRegistered = True
+                AddHandler Me._Session.ServiceRequested, AddressOf Me.OnServiceRequested
+                ' this request some delay, otherwise, 
+                ' the message is send before the event handler has been registered and therefor, no event takes place.
+                Windows.Forms.Application.DoEvents()
+                ' clear the status byte before reading
+                Me.Session.ReadStatusByte()
+            End If
             Me.StatusMessage = "Writing."
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Writing: '{0}'", textToWrite)
             textToWrite = textToWrite.ReplaceCommonEscapeSequences
             Me.SentMessage = textToWrite
-            Dim timer As New Diagnostics.Stopwatch()
-            timer.Start()
+            Me.StopWatch.Restart()
             Me._Session.WriteLine(textToWrite)
-            Me.ElapsedTime = timer.Elapsed
+            Me.ElapsedTime = StopWatch.Elapsed
             Me.StatusMessage = "Done Writing."
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Writing completed;. ")
         Catch ex As Exception
@@ -294,7 +317,7 @@ Public Class SimpleReadWriteControl
             Me._ReadTextBox.Text = ex.ToString
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception writing;. Details: {0}", ex)
         Finally
-            Me.ReadServiceRequestStatus()
+            If Not Me.ServiceRequestRegistered Then Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default
         End Try
     End Sub
@@ -306,10 +329,9 @@ Public Class SimpleReadWriteControl
         Try
             Me.StatusMessage = "Reading"
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading;. ")
-            Dim timer As New Diagnostics.Stopwatch()
-            timer.Start()
+            If Not Me.StopWatch.IsRunning Then Me.StopWatch.Restart()
             Dim responseString As String = Me._Session.ReadLine()
-            Me.ElapsedTime = timer.Elapsed
+            Me.ElapsedTime = StopWatch.Elapsed
             Dim message As String = responseString.InsertCommonEscapeSequences
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading completed;. ")
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Received: '{0}'", message)
@@ -320,6 +342,10 @@ Public Class SimpleReadWriteControl
             Me._ReadTextBox.Text = ex.ToString
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading;. Details: {0}", ex)
         Finally
+            If Me._Session.ServiceRequestEventEnabled AndAlso Me.ServiceRequestRegistered Then
+                Me.ServiceRequestRegistered = False
+                RemoveHandler Me._Session.ServiceRequested, AddressOf Me.OnServiceRequested
+            End If
             Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default
         End Try
@@ -350,6 +376,40 @@ Public Class SimpleReadWriteControl
         Finally
             Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default
+        End Try
+    End Sub
+
+#End Region
+
+#Region " SERVICE REQUESTS "
+
+    ''' <summary> Raises the service requested event. </summary>
+    ''' <remarks> David, 11/27/2015. </remarks>
+    ''' <param name="sender"> Source of the event. </param>
+    Private Sub HandleMessageService(ByVal sender As SessionBase, value As ServiceRequests)
+        If sender Is Nothing Then Throw New ArgumentNullException(NameOf(sender))
+        If (value And CInt(ServiceRequests.MessageAvailable)) <> 0 Then
+            Me.Read()
+        Else
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Nothing to read; SRQ=0x{CInt(value):X2};. ")
+        End If
+    End Sub
+
+    ''' <summary> Raises the service requested event. </summary>
+    ''' <remarks> David, 11/27/2015. </remarks>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub OnServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
+        Dim requester As SessionBase = TryCast(sender, SessionBase)
+        If requester Is Nothing Then Return
+        Try
+            Dim sb As ServiceRequests = requester.ReadStatusByte()
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Servicing events: 0x{CInt(sb):X2}")
+            Me.HandleMessageService(requester, sb)
+            sb = requester.ReadStatusByte()
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling session service request;. Details: {ex}")
         End Try
     End Sub
 

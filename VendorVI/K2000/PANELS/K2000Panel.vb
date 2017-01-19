@@ -1201,21 +1201,23 @@ Public Class K2000Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
-            If menuItem IsNot Nothing AndAlso
-                    Not menuItem.Checked = Me.Device.Session.IsServiceRequestEventEnabled Then
-                If menuItem IsNot Nothing AndAlso menuItem.Checked Then
+            If menuItem IsNot Nothing AndAlso (menuItem.Checked <> Me.Device.Session.ServiceRequestEventEnabled) Then
+                If menuItem.Checked Then
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Enabling service request handling mode;. ")
                     Me.EnableServiceRequestEventHandler()
                     Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
                 Else
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Disabling service request handling mode;. ")
                     Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
                     Me.DisableServiceRequestEventHandler()
                 End If
+                ' clear any pending requests.
                 Me.Device.StatusSubsystem.ReadRegisters()
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred toggling service request handling mode;. Details: {0}", ex)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                              "Exception occurred toggling service request handling mode;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default

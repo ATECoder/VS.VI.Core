@@ -35,6 +35,7 @@ Public Class ServiceRequesterPanel
         Me._OpenSessionButton.Enabled = True
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
         Me.AddListeners()
+        Me.StopWatch = New Stopwatch
     End Sub
 
     ''' <summary>
@@ -134,7 +135,7 @@ Public Class ServiceRequesterPanel
     End Sub
 
     Private Sub OnOpenChanged()
-        Me.__OpenSessionButton.Text = CStr(IIf(Me.IsSessionOpen, "CLOSE", "OPEN"))
+        Me._OpenSessionButton.Text = CStr(IIf(Me.IsSessionOpen, "CLOSE", "OPEN"))
         If Me.IsSessionOpen Then
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opened;. session to {0}", Me._Session.ResourceName)
             Me._SyncCallBacksCheckBox.Checked = Me._Session.SynchronizeCallbacks
@@ -142,10 +143,10 @@ Public Class ServiceRequesterPanel
             Me.ApplySelectedTimeout()
             Me._Session.StoreTimeout(Me._Session.Timeout)
             With Me._EnableServiceRequestButton
-                .Text = CType(IIf(Me._Session.IsServiceRequestEventEnabled, "DISABLE SRQ", "ENABLE SRQ"), String)
+                .Text = CType(IIf(Me._Session.ServiceRequestEventEnabled, "DISABLE SRQ", "ENABLE SRQ"), String)
                 .Enabled = True
             End With
-            Me._WriteButton.Enabled = Me._Session.IsServiceRequestEventEnabled
+            Me._WriteButton.Enabled = Me._Session.ServiceRequestEventEnabled
         Else
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closed;. session to {0}", Me._ResourceNamesComboBox.Text)
             Me._EnableServiceRequestButton.Enabled = False
@@ -160,15 +161,17 @@ Public Class ServiceRequesterPanel
     Private Sub _EnableServiceRequestButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _EnableServiceRequestButton.Click
         Try
             If Me.IsSessionOpen Then
-                If Me._Session.IsServiceRequestEventEnabled Then
+                If Me._Session.ServiceRequestEventEnabled Then
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Disabling service request handling")
                     Me._Session.DisableServiceRequest()
                     RemoveHandler _Session.ServiceRequested, AddressOf Me.OnServiceRequested
                 Else
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Enabling service request handling")
                     ' you have to register the handler before you enable event  
                     AddHandler _Session.ServiceRequested, AddressOf Me.OnServiceRequested
                     Me._Session.EnableServiceRequest()
-                    If Not String.IsNullOrWhiteSpace(_CommandTextBox.Text.Trim) Then
-                        Me.WriteToSession(_CommandTextBox.Text)
+                    If Not String.IsNullOrWhiteSpace(Me._CommandTextBox.Text.Trim) Then
+                        Me.WriteToSession(Me._CommandTextBox.Text)
                     End If
                 End If
             End If
@@ -219,16 +222,17 @@ Public Class ServiceRequesterPanel
         End If
     End Function
 
-    Private timer As Diagnostics.Stopwatch
+    Private StopWatch As Diagnostics.Stopwatch
+
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     <CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")>
     Private Sub WriteToSession(ByVal value As String)
         Try
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Writing...;. {0}", value)
             value = ReplaceCommonEscapeSequences(value)
-            timer = Diagnostics.Stopwatch.StartNew
+            StopWatch.Restart()
             Me._Session.WriteLine(value)
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Done writing;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Done writing;. ")
         Catch exp As Exception
             MessageBox.Show(exp.Message, "Exception Occurred", MessageBoxButtons.OK,
                             MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly)
@@ -239,33 +243,15 @@ Public Class ServiceRequesterPanel
     ''' <remarks> David, 11/27/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub OnServiceRequested(ByVal sender As SessionBase)
-        If sender IsNot Nothing Then
-            Try
-                Dim sb As ServiceRequests = sender.ReadStatusByte()
-                Me._ServiceRequestStatusLabel.Text = $"0x{CInt(sb):X2}"
-                Me._ServiceRequestStatusLabel.BackColor = System.Drawing.Color.Aqua
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Service requested...;. {0}", Me._ServiceRequestStatusLabel.Text)
-                If (sb And CInt(Me._MessageStatusBitValueNumeric.Value)) <> 0 Then
-                    Dim textRead As String = sender.ReadFiniteLine()
-                    If timer IsNot Nothing Then
-                        Me._ElapsedTimeTextBox.Text = timer.Elapsed.TotalMilliseconds.ToString("0.0", Globalization.CultureInfo.CurrentCulture)
-                    End If
-                    Me._ReadTextBox.Text = InsertCommonEscapeSequences(textRead)
-                Else
-                    ' the 3706A gets two consecutive service requests on each write.
-                    Me._ReadTextBox.Text = "MAV in status register is not set, which means that message is not available. Is the command to enable SRQ is correct? Is the instrument is 488.2 compatible?"
-                End If
-                sb = sender.ReadStatusByte()
-                Me._ServiceRequestStatusLabel.Text = $"0x{CInt(sb):X2}"
-                Me._ServiceRequestStatusLabel.BackColor = System.Drawing.Color.LightGreen
-            Catch exp As Exception
-                MessageBox.Show(exp.Message, "Exception Occurred", MessageBoxButtons.OK,
-                                MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly)
-            End Try
+    Private Sub HandleMessageService(ByVal sender As SessionBase, value As ServiceRequests)
+        If sender Is Nothing Then Throw New ArgumentNullException(NameOf(sender))
+        If (value And CInt(Me._MessageStatusBitValueNumeric.Value)) <> 0 Then
+            Dim textRead As String = sender.ReadFiniteLine()
+            Me._ElapsedTimeTextBox.Text = Me.StopWatch.Elapsed.TotalMilliseconds.ToString("0.0", Globalization.CultureInfo.CurrentCulture)
+            Me._ReadTextBox.Text = InsertCommonEscapeSequences(textRead)
         Else
-            MessageBox.Show("Sender is not a valid session", "Sender is not a valid session", MessageBoxButtons.OK,
-                            MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly)
+            ' the 3706A gets two consecutive service requests on each write.
+            Me._ReadTextBox.Text = "MAV in status register is not set, which means that message is not available. Is the command to enable SRQ is correct? Is the instrument is 488.2 compatible?"
         End If
     End Sub
 
@@ -273,8 +259,22 @@ Public Class ServiceRequesterPanel
     ''' <remarks> David, 11/27/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub OnServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
-        Me.OnServiceRequested(TryCast(sender, SessionBase))
+        Dim requester As SessionBase = TryCast(sender, SessionBase)
+        If requester Is Nothing Then Return
+        Try
+            Dim sb As ServiceRequests = requester.ReadStatusByte()
+            Me._ServiceRequestStatusLabel.Text = $"0x{CInt(sb):X2}"
+            Me._ServiceRequestStatusLabel.BackColor = System.Drawing.Color.Aqua
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Servicing events: {0}", Me._ServiceRequestStatusLabel.Text)
+            Me.HandleMessageService(requester, sb)
+            sb = requester.ReadStatusByte()
+            Me._ServiceRequestStatusLabel.Text = $"0x{CInt(sb):X2}"
+            Me._ServiceRequestStatusLabel.BackColor = System.Drawing.Color.LightGreen
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling session service request;. Details: {ex}")
+        End Try
     End Sub
 
 #End Region

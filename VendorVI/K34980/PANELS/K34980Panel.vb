@@ -1087,7 +1087,7 @@ Public Class K34980Panel
         If Me._InitializingComponents Then Return
         Dim checkBox As CheckBox = TryCast(sender, CheckBox)
         If checkBox IsNot Nothing AndAlso
-                    Not checkBox.Checked = Me.Device.Session.IsServiceRequestEventEnabled Then
+                    Not checkBox.Checked = Me.Device.Session.ServiceRequestEventEnabled Then
             If checkBox IsNot Nothing AndAlso checkBox.Checked Then
                 Me.EnableServiceRequestEventHandler()
                 Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)

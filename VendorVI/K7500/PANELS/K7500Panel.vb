@@ -1035,7 +1035,7 @@ Public Class K7500Panel
             Me.ErrorProvider.Clear()
             Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
             If menuItem IsNot Nothing AndAlso
-                    Not menuItem.Checked = Me.Device.Session.IsServiceRequestEventEnabled Then
+                    Not menuItem.Checked = Me.Device.Session.ServiceRequestEventEnabled Then
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
                     Me.EnableServiceRequestEventHandler()

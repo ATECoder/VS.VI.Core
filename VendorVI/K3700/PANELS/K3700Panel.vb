@@ -1007,7 +1007,7 @@ Public Class K3700Panel
             Me.ErrorProvider.Clear()
             Me.ErrorProvider.Annunciate(sender, "Not implemented yet")
             Dim checkBox As CheckBox = TryCast(sender, CheckBox)
-            If checkBox IsNot Nothing AndAlso Not checkBox.Checked = Me.Device.Session.IsServiceRequestEventEnabled Then
+            If checkBox IsNot Nothing AndAlso Not checkBox.Checked = Me.Device.Session.ServiceRequestEventEnabled Then
                 If checkBox IsNot Nothing AndAlso checkBox.Checked Then
                     Me.EnableServiceRequestEventHandler()
                     Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)

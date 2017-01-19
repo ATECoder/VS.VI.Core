@@ -984,7 +984,7 @@ Public MustInherit Class StatusSubsystemBase
     Public Sub EnableServiceRequest(ByVal serviceRequestEnableBitmask As ServiceRequests)
         Me.ServiceRequestEnableBitmask = serviceRequestEnableBitmask
         If Not String.IsNullOrWhiteSpace(Me.ServiceRequestEnableCommandFormat) Then
-            Me.Session.WriteLine(Me.ServiceRequestEnableCommandFormat, CInt(serviceRequestEnableBitmask))
+            Me.Session.ApplyServiceRequestEnableBitmask(Me.ServiceRequestEnableCommandFormat, Me.ServiceRequestEnableBitmask.GetValueOrDefault(0))
         End If
     End Sub
 

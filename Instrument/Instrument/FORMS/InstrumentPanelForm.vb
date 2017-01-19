@@ -41,6 +41,20 @@ Public Class InstrumentPanelForm
                     End If
                     Me._InstrumentPanel = Nothing
                 End If
+                If Me._PropertyNotifyControl IsNot Nothing Then
+                    Me._InstrumentLayout.Controls.Remove(Me._PropertyNotifyControl)
+                End If
+                If Me._PropertyNotifyControlDisposeEnabled Then
+                    Me._PropertyNotifyControl.Dispose()
+                End If
+                Me._TalkerControl = Nothing
+                If Me._TalkerControl IsNot Nothing Then
+                    Me._InstrumentLayout.Controls.Remove(Me._TalkerControl)
+                End If
+                If Me._TalkerControlDisposeEnabled Then
+                    Me._TalkerControl.Dispose()
+                End If
+                Me._TalkerControl = Nothing
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
         Finally
@@ -230,14 +244,14 @@ Public Class InstrumentPanelForm
         Me.AddListeners()
         Me._PropertyNotifyControlDisposeEnabled = disposeEnabled
         With Me._PropertyNotifyControl
-            Me._PropertyNotifyControl.Dock = Windows.Forms.DockStyle.Fill
-            Me._PropertyNotifyControl.TabIndex = 0
-            Me._PropertyNotifyControl.BackColor = System.Drawing.Color.Transparent
-            Me._PropertyNotifyControl.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Regular)
-            Me._PropertyNotifyControl.Name = "_PropertyNotifyControl"
-            Me._InstrumentTabPage.Text = title
-            Me._InstrumentTabPage.ToolTipText = title
+            .Dock = Windows.Forms.DockStyle.Fill
+            .TabIndex = 0
+            .BackColor = System.Drawing.Color.Transparent
+            .Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Regular)
+            .Name = "_PropertyNotifyControl"
         End With
+        Me._InstrumentTabPage.Text = title
+        Me._InstrumentTabPage.ToolTipText = title
         Me._InstrumentLayout.Controls.Add(Me._PropertyNotifyControl, 1, 1)
     End Sub
 
@@ -245,6 +259,7 @@ Public Class InstrumentPanelForm
     ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="sender">       The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     Private Sub OnPropertyChange(sender As PropertyNotifyControlBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
     End Sub
@@ -302,14 +317,14 @@ Public Class InstrumentPanelForm
         Me.AddListeners()
         Me._TalkerControlDisposeEnabled = disposeEnabled
         With Me._TalkerControl
-            Me._TalkerControl.Dock = Windows.Forms.DockStyle.Fill
-            Me._TalkerControl.TabIndex = 0
-            Me._TalkerControl.BackColor = System.Drawing.Color.Transparent
-            Me._TalkerControl.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Regular)
-            Me._TalkerControl.Name = "_TalkerControl"
-            Me._InstrumentTabPage.Text = title
-            Me._InstrumentTabPage.ToolTipText = title
+            .Dock = Windows.Forms.DockStyle.Fill
+            .TabIndex = 0
+            .BackColor = System.Drawing.Color.Transparent
+            .Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Regular)
+            .Name = "_TalkerControl"
         End With
+        Me._InstrumentTabPage.Text = title
+        Me._InstrumentTabPage.ToolTipText = title
         Me._InstrumentLayout.Controls.Add(Me._TalkerControl, 1, 1)
     End Sub
 
@@ -317,6 +332,7 @@ Public Class InstrumentPanelForm
     ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="sender">       The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     Private Sub OnPropertyChange(sender As TalkerControlBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
     End Sub

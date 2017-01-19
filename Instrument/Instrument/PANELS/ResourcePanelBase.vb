@@ -407,8 +407,13 @@ Public Class ResourcePanelBase
     Protected Overridable Sub DeviceServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
     End Sub
 
-    Private _IsServiceRequestEventEnabled As Boolean
-    Private _IsDeviceServiceRequestEnabled As Boolean
+    ''' <summary> Gets or sets the service request event enabled. </summary>
+    ''' <value> The service request event enabled. </value>
+    Protected Property ServiceRequestEventEnabled As Boolean
+
+    ''' <summary> Gets or sets the device service request enabled. </summary>
+    ''' <value> The device service request enabled. </value>
+    Protected Property DeviceServiceRequestEnabled As Boolean
 
     ''' <summary> Enables service request event. </summary>
     ''' <remarks>
@@ -416,24 +421,25 @@ Public Class ResourcePanelBase
     ''' enabled on the device, in which case, the panel could also disable the service request.
     ''' </remarks>
     Public Overridable Sub EnableServiceRequestEventHandler()
-        If Not Me._IsServiceRequestEventEnabled Then
+        If Not Me.ServiceRequestEventEnabled Then
             AddHandler Me.Device.ServiceRequested, AddressOf Me.DeviceServiceRequested
             If Me.IsDeviceOwner Then
                 Me.Device.EnableServiceRequestEventHandler()
-            ElseIf Not Me.Device.Session.IsServiceRequestEventEnabled Then
+            ElseIf Not Me.Device.Session.ServiceRequestEventEnabled Then
                 Me.Device.EnableServiceRequestEventHandler()
-                Me._IsDeviceServiceRequestEnabled = True
+                Me.DeviceServiceRequestEnabled = True
             End If
+            Me.ServiceRequestEventEnabled = True
         End If
     End Sub
 
     ''' <summary> Disables service request event. </summary>
     Public Overridable Sub DisableServiceRequestEventHandler()
-        If Me._IsServiceRequestEventEnabled Then
+        If Me.ServiceRequestEventEnabled Then
             RemoveHandler Me.Device.ServiceRequested, AddressOf Me.DeviceServiceRequested
-            If Me.IsDeviceOwner OrElse Me._IsDeviceServiceRequestEnabled Then Me.Device.DisableServiceRequestEventHandler()
-            Me._IsServiceRequestEventEnabled = False
-            Me._IsDeviceServiceRequestEnabled = False
+            If Me.IsDeviceOwner OrElse Me.DeviceServiceRequestEnabled Then Me.Device.DisableServiceRequestEventHandler()
+            Me.ServiceRequestEventEnabled = False
+            Me.DeviceServiceRequestEnabled = False
         End If
     End Sub
 

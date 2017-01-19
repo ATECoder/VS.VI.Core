@@ -234,7 +234,7 @@ Public Class Session
 
     ''' <summary> Gets the sentinel indication if a service request event was enabled. </summary>
     ''' <value> <c>True</c> if service request event is enabled; otherwise, <c>False</c>. </value>
-    Public Overrides ReadOnly Property IsServiceRequestEventEnabled As Boolean
+    Public Overrides ReadOnly Property ServiceRequestEventEnabled As Boolean
         Get
             Return Me.EnabledEventType
         End Get
@@ -243,7 +243,7 @@ Public Class Session
     ''' <summary> Enables the service request. </summary>
     ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub EnableServiceRequest()
-        If Not IsServiceRequestEventEnabled Then
+        If Not ServiceRequestEventEnabled Then
             Me._LastNativeError = NativeError.Success
             Me.EnabledEventType = True
         End If
@@ -252,7 +252,7 @@ Public Class Session
     ''' <summary> Disables the service request. </summary>
     ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub DisableServiceRequest()
-        If IsServiceRequestEventEnabled Then
+        If ServiceRequestEventEnabled Then
             Me._LastNativeError = NativeError.Success
             Me.EnabledEventType = False
         End If

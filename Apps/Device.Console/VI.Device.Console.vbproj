@@ -25,7 +25,7 @@
     <DocumentationFile>VI.Device.Console.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\FromAllRules2015.ruleset</CodeAnalysisRuleSet>
-    <DefineConstants>E4990z,K2400x,K3700x,K7000x,K7500,K34980x,TTMx</DefineConstants>
+    <DefineConstants>E4990z,K2000x,K2400x,K3700x,K7000x,K7500,K34980x,TTMx</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -158,6 +158,10 @@
     <ProjectReference Include="..\..\VendorVI\E4990\isr.VI.E4990.Library.vbproj">
       <Project>{04dc1394-a7bf-4d31-8ec3-fcf42598ff9f}</Project>
       <Name>isr.VI.E4990.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\K2000\isr.VI.K2000.Library.vbproj">
+      <Project>{9f4428b3-4e89-4154-be81-6e079c5d93b4}</Project>
+      <Name>isr.VI.K2000.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\VendorVI\K2400\isr.VI.K2400.Library.vbproj">
       <Project>{966f71bc-1172-4058-82f4-1bdfabefbaca}</Project>

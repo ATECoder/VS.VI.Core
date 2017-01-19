@@ -11,20 +11,23 @@
 #ElseIf E4990 Then
         Me.AddInstrumentPanel("SourceMeter", New VI.E4990.E4990Panel)
         enabled = true
+#ElseIf K2000 Then
+        Me.AddInstrumentPanel("Meter", New VI.K2000.K2000Panel, True)
+        enabled = true
 #ElseIf K2400 Then
-        Me.AddInstrumentPanel("SourceMeter", New VI.K2400.K2400Panel)
+        Me.AddInstrumentPanel("SourceMeter", New VI.K2400.K2400Panel, True)
         enabled = true
 #ElseIf K3700 Then
-        Me.AddInstrumentPanel("DMM/Scanner", New VI.Tsp.K3700.K3700Panel)
+        Me.AddInstrumentPanel("DMM/Scanner", New VI.Tsp.K3700.K3700Panel, True)
         enabled = True
 #ElseIf K7000 Then
-        Me.AddInstrumentPanel("Scanner", New VI.K7000.K7000Panel)
+        Me.AddInstrumentPanel("Scanner", New VI.K7000.K7000Panel, True)
         enabled = True
 #ElseIf K7500 Then
         Me.AddInstrumentPanel("Meter", New VI.K7500.K7500Panel, True)
         enabled = True
 #ElseIf K34980 Then
-        Me.AddInstrumentPanel("Scanner", New VI.K34980.K34980Panel)
+        Me.AddInstrumentPanel("Scanner", New VI.K34980.K34980Panel, True)
         enabled = True
 #ElseIf TTM Then
         enabled = true

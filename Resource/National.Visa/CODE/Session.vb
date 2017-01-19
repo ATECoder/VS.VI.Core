@@ -507,13 +507,13 @@ Public Class Session
         End Get
         Set(value As Ivi.Visa.EventType)
             Me._EnabledEventType = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.IsServiceRequestEventEnabled))
+            Me.AsyncNotifyPropertyChanged(NameOf(Me.ServiceRequestEventEnabled))
         End Set
     End Property
 
     ''' <summary> Gets the sentinel indication if a service request event was enabled. </summary>
     ''' <value> <c>True</c> if service request event is enabled; otherwise, <c>False</c>. </value>
-    Public Overrides ReadOnly Property IsServiceRequestEventEnabled As Boolean
+    Public Overrides ReadOnly Property ServiceRequestEventEnabled As Boolean
         Get
             Return Ivi.Visa.EventType.ServiceRequest = Me.EnabledEventType
         End Get
@@ -523,7 +523,7 @@ Public Class Session
     ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub EnableServiceRequest()
         Try
-            If Not Me.IsServiceRequestEventEnabled Then
+            If Not Me.ServiceRequestEventEnabled Then
                 Me._LastNativeError = NativeError.Success
                 If Me.IsSessionOpen Then
                     ' must define the handler before enabling the events.
@@ -552,7 +552,7 @@ Public Class Session
     ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub DisableServiceRequest()
         Try
-            If Me.IsServiceRequestEventEnabled Then
+            If Me.ServiceRequestEventEnabled Then
                 Me._LastNativeError = NativeError.Success
                 If Me.IsSessionOpen Then
                     Me.VisaSession.DiscardEvents(Ivi.Visa.EventType.ServiceRequest)

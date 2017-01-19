@@ -569,6 +569,29 @@ Public MustInherit Class SessionBase
         End If
     End Sub
 
+    ''' <summary> Queries if a service request is enabled. </summary>
+    ''' <remarks> David, 1/18/2017. </remarks>
+    ''' <param name="bitMask"> The bit mask. </param>
+    ''' <returns> <c>true</c> if a service request is enabled; otherwise <c>false</c> </returns>
+    Public Function IsServiceRequestEnabled(ByVal bitMask As ServiceRequests) As Boolean
+        Return Me.ServiceRequestEventEnabled AndAlso (Me.ServiceRequestEnableBitmask And bitMask) <> 0
+    End Function
+
+    ''' <summary> Gets or sets the service request enable bitmask. </summary>
+    ''' <value> The service request enable bitmask. </value>
+    Public ReadOnly Property ServiceRequestEnableBitmask As ServiceRequests
+
+    ''' <summary>
+    ''' Applies the service request bitmask. Disables service request if bitmask is 0.
+    ''' </summary>
+    ''' <remarks> David, 1/18/2017. </remarks>
+    ''' <param name="commandFormat"> The service request enable command format. </param>
+    ''' <param name="bitmask">       The bitmask. </param>
+    Public Sub ApplyServiceRequestEnableBitmask(ByVal commandFormat As String, ByVal bitmask As ServiceRequests)
+        Me._ServiceRequestEnableBitmask = bitmask
+        Me.WriteLine(commandFormat, CInt(bitmask))
+    End Sub
+
     ''' <summary> Event queue for all listeners interested in ServiceRequested events. </summary>
     Public Event ServiceRequested As EventHandler(Of EventArgs)
 
@@ -591,7 +614,7 @@ Public MustInherit Class SessionBase
     ''' <param name="statusByte"> The status byte. </param>
     Public Sub EmulateServiceRequest(ByVal statusByte As ServiceRequests)
         Me.EmulatedStatusByte = statusByte
-        If Me.IsServiceRequestEventEnabled Then Me.OnServiceRequested()
+        If Me.ServiceRequestEventEnabled Then Me.OnServiceRequested()
     End Sub
 
     ''' <summary> Executes the service requested action. </summary>
@@ -603,7 +626,7 @@ Public MustInherit Class SessionBase
 
     ''' <summary> Gets the sentinel indication if a service request event was enabled. </summary>
     ''' <value> <c>True</c> if service request event is enabled; otherwise, <c>False</c>. </value>
-    Public MustOverride ReadOnly Property IsServiceRequestEventEnabled As Boolean
+    Public MustOverride ReadOnly Property ServiceRequestEventEnabled As Boolean
 
     ''' <summary> Enables the service request. </summary>
     ''' <remarks> David, 11/20/2015. </remarks>

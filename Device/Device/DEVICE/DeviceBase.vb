@@ -648,7 +648,7 @@ Public MustInherit Class DeviceBase
     Private Sub SessionPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.IsServiceRequestEventEnabled)
+                Case NameOf(sender.ServiceRequestEventEnabled)
                     Me.AsyncNotifyPropertyChanged(NameOf(Me.IsServiceRequestEventEnabled))
                 Case NameOf(sender.LastMessageReceived)
                     Dim value As String = sender.LastMessageReceived
@@ -713,13 +713,14 @@ Public MustInherit Class DeviceBase
     ''' <value> The is service request event enabled. </value>
     Public ReadOnly Property IsServiceRequestEventEnabled As Boolean
         Get
-            Return Me.IsDeviceOpen AndAlso Me.Session.IsServiceRequestEventEnabled
+            Return Me.IsDeviceOpen AndAlso Me.Session.ServiceRequestEventEnabled
         End Get
     End Property
 
     ''' <summary> Enable service request event handler. </summary>
     Public Sub EnableServiceRequestEventHandler()
-        If Not Me.Session.IsServiceRequestEventEnabled Then
+        If Not Me.Session.ServiceRequestEventEnabled Then
+            ' register the handler before enabling the event  
             AddHandler Me.Session.ServiceRequested, AddressOf Me.OnSessionBaseServiceRequested
             Me.Session.EnableServiceRequest()
         End If
@@ -727,7 +728,7 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Disable service request event handler. </summary>
     Public Sub DisableServiceRequestEventHandler()
-        If Me.Session.IsServiceRequestEventEnabled Then
+        If Me.Session.ServiceRequestEventEnabled Then
             RemoveHandler Me.Session.ServiceRequested, AddressOf Me.OnSessionBaseServiceRequested
             Me.Session.DisableServiceRequest()
         End If
