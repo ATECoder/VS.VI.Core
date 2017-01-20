@@ -18,8 +18,9 @@ Partial Class K7000Panel
         Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._TraceInstrumentMessagesMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._HandleServiceRequestsMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._TerminalStateLabel = New System.Windows.Forms.ToolStripLabel()
         Me._UpdateSlotConfigurationButton = New System.Windows.Forms.Button()
         Me._ReadSlotConfigurationButton = New System.Windows.Forms.Button()
@@ -190,7 +191,7 @@ Partial Class K7000Panel
         '_ResetSplitButton
         '
         Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._TraceInstrumentMessagesMenuItem, Me._HandleServiceRequestsMenuItem})
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
         Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
         Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetSplitButton.Name = "_ResetSplitButton"
@@ -224,17 +225,26 @@ Partial Class K7000Panel
         '
         '_TraceInstrumentMessagesMenuItem
         '
-        Me._TraceInstrumentMessagesMenuItem.CheckOnClick = True
-        Me._TraceInstrumentMessagesMenuItem.Name = "_TraceInstrumentMessagesMenuItem"
-        Me._TraceInstrumentMessagesMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._TraceInstrumentMessagesMenuItem.Text = "Trace Instrument Messages"
+        Me._SessionTraceEnabledMenuItem.CheckOnClick = True
+        Me._SessionTraceEnabledMenuItem.Name = "_TraceInstrumentMessagesMenuItem"
+        Me._SessionTraceEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._SessionTraceEnabledMenuItem.Text = "Trace Instrument Messages"
         '
-        '_HandleServiceRequestsMenuItem
+        '_SessionServiceRequestHandlerEnabledMenuItem
         '
-        Me._HandleServiceRequestsMenuItem.CheckOnClick = True
-        Me._HandleServiceRequestsMenuItem.Name = "_HandleServiceRequestsMenuItem"
-        Me._HandleServiceRequestsMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._HandleServiceRequestsMenuItem.Text = "Handle Service Requests"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Session service requests"
+        '
+        '_DeviceServiceRequestHandlerEnabledMenuItem
+        '
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
         '
         '_TerminalStateLabel
         '
@@ -1173,19 +1183,20 @@ Partial Class K7000Panel
     Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ResetKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _InitKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _TraceInstrumentMessagesMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _HandleServiceRequestsMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionTraceEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _TerminalStateLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ArmLayer1ToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ArmLayer1ToolStripLabel As Windows.Forms.ToolStripLabel
-    Friend WithEvents _ArmLayer1CountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ArmLayer1CountNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _TriggerToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ApplyTriggerPlanButton As Windows.Forms.ToolStripButton
     Private WithEvents _ScanLayerToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ScanLayerToolStripLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ScanLayerCountNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ScanLayerCountNumeric As Core.Controls.ToolStripNumericUpDown
-    Friend WithEvents _ScanLayerSpacingLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ScanLayerSpacingLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ScanLayerTriggerLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ArmLayer1CountNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _ChannelLayerToolStrip As Windows.Forms.ToolStrip
@@ -1196,7 +1207,7 @@ Partial Class K7000Panel
     Private WithEvents _ChannelLayerTriggerSourceLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _InitiateButton As Windows.Forms.ToolStripButton
     Private WithEvents _ConfigureExternalScan As Windows.Forms.ToolStripButton
-    Friend WithEvents _TriggerLayerToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _TriggerLayerToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _TriggerLayerToolStripLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ContinuousTriggerEnabledCheckBox As Core.Controls.ToolStripCheckBox
     Private WithEvents _TriggerCountNumericLabel As Windows.Forms.ToolStripLabel

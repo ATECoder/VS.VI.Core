@@ -20,13 +20,15 @@ Partial Class E4990Panel
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitializeKnowStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionOptionsDownButton = New System.Windows.Forms.ToolStripDropDownButton()
-        Me._ServiceRequestsHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ScaleSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._AutoScaleMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._TriggerActivationSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._TriggerSourceComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._ContinuousEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ApplyTriggerOptionsMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadingComboBoxLabel = New System.Windows.Forms.Label()
         Me._ReadingComboBox = New System.Windows.Forms.ComboBox()
         Me._ReadButton = New System.Windows.Forms.Button()
@@ -103,7 +105,7 @@ Partial Class E4990Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._ApplyTriggerOptionsMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -203,13 +205,13 @@ Partial Class E4990Panel
         Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetsDropDownButton, Me._SessionOptionsDownButton, Me._ScaleSplitButton, Me._TriggerActivationSplitButton})
         Me._SystemToolStrip.Location = New System.Drawing.Point(3, 0)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
-        Me._SystemToolStrip.Size = New System.Drawing.Size(245, 25)
+        Me._SystemToolStrip.Size = New System.Drawing.Size(276, 25)
         Me._SystemToolStrip.TabIndex = 0
         '
         '_ResetsDropDownButton
         '
         Me._ResetsDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetsDropDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitializeKnowStateMenuItem})
+        Me._ResetsDropDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._InitializeKnowStateMenuItem})
         Me._ResetsDropDownButton.Image = CType(resources.GetObject("_ResetsDropDownButton.Image"), System.Drawing.Image)
         Me._ResetsDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetsDropDownButton.Name = "_ResetsDropDownButton"
@@ -221,7 +223,7 @@ Partial Class E4990Panel
         '
         Me._ClearInterfaceMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
-        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(224, 22)
         Me._ClearInterfaceMenuItem.Text = "Clear Interface"
         Me._ClearInterfaceMenuItem.ToolTipText = "Clear interface"
         '
@@ -229,7 +231,7 @@ Partial Class E4990Panel
         '
         Me._ClearDeviceMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
-        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(224, 22)
         Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
         Me._ClearDeviceMenuItem.ToolTipText = "Issues Selective Device Clear"
         '
@@ -237,7 +239,7 @@ Partial Class E4990Panel
         '
         Me._ResetKnownStateMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
-        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(224, 22)
         Me._ResetKnownStateMenuItem.Text = "Reset Known State (RST)"
         Me._ResetKnownStateMenuItem.ToolTipText = "Issues *RST"
         '
@@ -245,14 +247,14 @@ Partial Class E4990Panel
         '
         Me._InitializeKnowStateMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._InitializeKnowStateMenuItem.Name = "_InitializeKnowStateMenuItem"
-        Me._InitializeKnowStateMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me._InitializeKnowStateMenuItem.Size = New System.Drawing.Size(224, 22)
         Me._InitializeKnowStateMenuItem.Text = "Initialize Known State"
         Me._InitializeKnowStateMenuItem.ToolTipText = "Issues *RST, CLear and initialize to custom known state"
         '
         '_SessionOptionsDownButton
         '
         Me._SessionOptionsDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._SessionOptionsDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ServiceRequestsHandlerEnabledMenuItem, Me._SessionTraceEnabledMenuItem})
+        Me._SessionOptionsDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SessionServiceRequestHandlerEnabledMenuItem, Me._SessionTraceEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
         Me._SessionOptionsDownButton.Image = CType(resources.GetObject("_SessionOptionsDownButton.Image"), System.Drawing.Image)
         Me._SessionOptionsDownButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._SessionOptionsDownButton.Name = "_SessionOptionsDownButton"
@@ -260,23 +262,32 @@ Partial Class E4990Panel
         Me._SessionOptionsDownButton.Text = "Session"
         Me._SessionOptionsDownButton.ToolTipText = "Select Session Options"
         '
-        '_ServiceRequestsHandlerEnabledMenuItem
+        '_SessionServiceRequestHandlerEnabledMenuItem
         '
-        Me._ServiceRequestsHandlerEnabledMenuItem.CheckOnClick = True
-        Me._ServiceRequestsHandlerEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ServiceRequestsHandlerEnabledMenuItem.Name = "_ServiceRequestsHandlerEnabledMenuItem"
-        Me._ServiceRequestsHandlerEnabledMenuItem.Size = New System.Drawing.Size(212, 22)
-        Me._ServiceRequestsHandlerEnabledMenuItem.Text = "Handle Service Requests"
-        Me._ServiceRequestsHandlerEnabledMenuItem.ToolTipText = "Check to handle service requests"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(194, 22)
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Session service requests"
         '
         '_SessionTraceEnabledMenuItem
         '
         Me._SessionTraceEnabledMenuItem.CheckOnClick = True
         Me._SessionTraceEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._SessionTraceEnabledMenuItem.Name = "_SessionTraceEnabledMenuItem"
-        Me._SessionTraceEnabledMenuItem.Size = New System.Drawing.Size(212, 22)
+        Me._SessionTraceEnabledMenuItem.Size = New System.Drawing.Size(194, 22)
         Me._SessionTraceEnabledMenuItem.Text = "Session Trace Enabled"
         Me._SessionTraceEnabledMenuItem.ToolTipText = "Check to trace all instrument messages "
+        '
+        '_DeviceServiceRequestHandlerEnabledMenuItem
+        '
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(194, 22)
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
         '
         '_ScaleSplitButton
         '
@@ -292,7 +303,7 @@ Partial Class E4990Panel
         '_AutoScaleMenuItem
         '
         Me._AutoScaleMenuItem.Name = "_AutoScaleMenuItem"
-        Me._AutoScaleMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me._AutoScaleMenuItem.Size = New System.Drawing.Size(101, 22)
         Me._AutoScaleMenuItem.Text = "Auto"
         Me._AutoScaleMenuItem.ToolTipText = "Auto scale all traces"
         '
@@ -319,6 +330,13 @@ Partial Class E4990Panel
         Me._ContinuousEnabledMenuItem.Size = New System.Drawing.Size(181, 22)
         Me._ContinuousEnabledMenuItem.Text = "Continuous"
         Me._ContinuousEnabledMenuItem.ToolTipText = "Checked when continuous initiation is enabled."
+        '
+        '_ApplyTriggerOptionsMenuItem
+        '
+        Me._ApplyTriggerOptionsMenuItem.Name = "_ApplyTriggerOptionsMenuItem"
+        Me._ApplyTriggerOptionsMenuItem.Size = New System.Drawing.Size(181, 22)
+        Me._ApplyTriggerOptionsMenuItem.Text = "Apply"
+        Me._ApplyTriggerOptionsMenuItem.ToolTipText = "Applies the trigger options"
         '
         '_ReadingComboBoxLabel
         '
@@ -1189,12 +1207,12 @@ Partial Class E4990Panel
         Me._TitleLabel.Text = "KE4990"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_ApplyTriggerOptionsMenuItem
+        '_ClearExecutionStateMenuItem
         '
-        Me._ApplyTriggerOptionsMenuItem.Name = "_ApplyTriggerOptionsMenuItem"
-        Me._ApplyTriggerOptionsMenuItem.Size = New System.Drawing.Size(181, 22)
-        Me._ApplyTriggerOptionsMenuItem.Text = "Apply"
-        Me._ApplyTriggerOptionsMenuItem.ToolTipText = "Applies the trigger options"
+        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
+        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(224, 22)
+        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
+        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears execution state (CLS)"
         '
         'E4990Panel
         '
@@ -1283,7 +1301,8 @@ Partial Class E4990Panel
     Private WithEvents _ResetKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _InitializeKnowStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _SessionTraceEnabledMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _ServiceRequestsHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _SessionOptionsDownButton As Windows.Forms.ToolStripDropDownButton
     Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ResetsDropDownButton As Windows.Forms.ToolStripDropDownButton
@@ -1348,4 +1367,5 @@ Partial Class E4990Panel
     Friend WithEvents _TriggerSourceComboBox As Windows.Forms.ToolStripComboBox
     Friend WithEvents _ContinuousEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ApplyTriggerOptionsMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
 End Class

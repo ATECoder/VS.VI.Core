@@ -11,7 +11,8 @@ Partial Class K34980Panel
     Private Sub InitializeComponent()
         Me._Tabs = New System.Windows.Forms.TabControl()
         Me._ReadingTabPage = New System.Windows.Forms.TabPage()
-        Me._HandleServiceRequestsCheckBox = New System.Windows.Forms.CheckBox()
+        Me._SessionServiceRequestHandlerEnabledCheckBox = New System.Windows.Forms.CheckBox()
+        Me._DeviceServiceRequestHandlerEnabledCheckBox = New System.Windows.Forms.CheckBox()
         Me._ReadingComboBoxLabel = New System.Windows.Forms.Label()
         Me._ReadingComboBox = New System.Windows.Forms.ComboBox()
         Me._ReadButton = New System.Windows.Forms.Button()
@@ -106,7 +107,8 @@ Partial Class K34980Panel
         '
         '_ReadingTabPage
         '
-        Me._ReadingTabPage.Controls.Add(Me._HandleServiceRequestsCheckBox)
+        Me._ReadingTabPage.Controls.Add(Me._SessionServiceRequestHandlerEnabledCheckBox)
+        Me._ReadingTabPage.Controls.Add(Me._DeviceServiceRequestHandlerEnabledCheckBox)
         Me._ReadingTabPage.Controls.Add(Me._ReadingComboBoxLabel)
         Me._ReadingTabPage.Controls.Add(Me._ReadingComboBox)
         Me._ReadingTabPage.Controls.Add(Me._ReadButton)
@@ -118,17 +120,29 @@ Partial Class K34980Panel
         Me._ReadingTabPage.Text = "Reading"
         Me._ReadingTabPage.UseVisualStyleBackColor = True
         '
-        '_HandleServiceRequestsCheckBox
+        '_SessionServiceRequestHandlerEnabledCheckBox
         '
-        Me._HandleServiceRequestsCheckBox.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me._HandleServiceRequestsCheckBox.AutoSize = True
-        Me._HandleServiceRequestsCheckBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._HandleServiceRequestsCheckBox.Location = New System.Drawing.Point(12, 238)
-        Me._HandleServiceRequestsCheckBox.Name = "_HandleServiceRequestsCheckBox"
-        Me._HandleServiceRequestsCheckBox.Size = New System.Drawing.Size(178, 21)
-        Me._HandleServiceRequestsCheckBox.TabIndex = 4
-        Me._HandleServiceRequestsCheckBox.Text = "Handle Service Requests"
-        Me._HandleServiceRequestsCheckBox.UseVisualStyleBackColor = True
+        Me._SessionServiceRequestHandlerEnabledCheckBox.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me._SessionServiceRequestHandlerEnabledCheckBox.AutoSize = True
+        Me._SessionServiceRequestHandlerEnabledCheckBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._SessionServiceRequestHandlerEnabledCheckBox.Location = New System.Drawing.Point(12, 238)
+        Me._SessionServiceRequestHandlerEnabledCheckBox.Name = "_SessionServiceRequestHandlerEnabledCheckBox"
+        Me._SessionServiceRequestHandlerEnabledCheckBox.Size = New System.Drawing.Size(178, 21)
+        Me._SessionServiceRequestHandlerEnabledCheckBox.TabIndex = 4
+        Me._SessionServiceRequestHandlerEnabledCheckBox.Text = "Session SRQ Enabled"
+        Me._SessionServiceRequestHandlerEnabledCheckBox.UseVisualStyleBackColor = True
+        '
+        '_DeviceServiceRequestHandlerEnabledCheckBox
+        '
+        Me._DeviceServiceRequestHandlerEnabledCheckBox.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me._DeviceServiceRequestHandlerEnabledCheckBox.AutoSize = True
+        Me._DeviceServiceRequestHandlerEnabledCheckBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._DeviceServiceRequestHandlerEnabledCheckBox.Location = New System.Drawing.Point(12, 259)
+        Me._DeviceServiceRequestHandlerEnabledCheckBox.Name = "_DeviceServiceRequestHandlerEnabledCheckBox"
+        Me._DeviceServiceRequestHandlerEnabledCheckBox.Size = New System.Drawing.Size(178, 21)
+        Me._DeviceServiceRequestHandlerEnabledCheckBox.TabIndex = 5
+        Me._DeviceServiceRequestHandlerEnabledCheckBox.Text = "Device SRQ Enabled"
+        Me._DeviceServiceRequestHandlerEnabledCheckBox.UseVisualStyleBackColor = True
         '
         '_ReadingComboBoxLabel
         '
@@ -727,7 +741,8 @@ Partial Class K34980Panel
     Private WithEvents _FailureCodeToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _TbdToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
-    Private WithEvents _HandleServiceRequestsCheckBox As System.Windows.Forms.CheckBox
+    Private WithEvents _SessionServiceRequestHandlerEnabledCheckBox As System.Windows.Forms.CheckBox
+    Private WithEvents _DeviceServiceRequestHandlerEnabledCheckBox As System.Windows.Forms.CheckBox
     Private WithEvents _LastReadingTextBox As System.Windows.Forms.TextBox
     Private WithEvents _TriggerDelayNumeric As System.Windows.Forms.NumericUpDown
     Private WithEvents _SenseRangeNumeric As System.Windows.Forms.NumericUpDown

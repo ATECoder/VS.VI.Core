@@ -20,7 +20,8 @@ Partial Class K2400Panel
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitializeKnowStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionOptionsDownButton = New System.Windows.Forms.ToolStripDropDownButton()
-        Me._ServiceRequestsHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._OutputDropDownButton = New System.Windows.Forms.ToolStripDropDownButton()
         Me._ContactCheckEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -258,7 +259,7 @@ Partial Class K2400Panel
         '_SessionOptionsDownButton
         '
         Me._SessionOptionsDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._SessionOptionsDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ServiceRequestsHandlerEnabledMenuItem, Me._SessionTraceEnabledMenuItem})
+        Me._SessionOptionsDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SessionServiceRequestHandlerEnabledMenuItem, Me._SessionTraceEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
         Me._SessionOptionsDownButton.Image = CType(resources.GetObject("_SessionOptionsDownButton.Image"), System.Drawing.Image)
         Me._SessionOptionsDownButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._SessionOptionsDownButton.Name = "_SessionOptionsDownButton"
@@ -266,14 +267,23 @@ Partial Class K2400Panel
         Me._SessionOptionsDownButton.Text = "Session"
         Me._SessionOptionsDownButton.ToolTipText = "Select Session Options"
         '
-        '_ServiceRequestsHandlerEnabledMenuItem
+        '_SessionServiceRequestHandlerEnabledMenuItem
         '
-        Me._ServiceRequestsHandlerEnabledMenuItem.CheckOnClick = True
-        Me._ServiceRequestsHandlerEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ServiceRequestsHandlerEnabledMenuItem.Name = "_ServiceRequestsHandlerEnabledMenuItem"
-        Me._ServiceRequestsHandlerEnabledMenuItem.Size = New System.Drawing.Size(212, 22)
-        Me._ServiceRequestsHandlerEnabledMenuItem.Text = "Handle Service Requests"
-        Me._ServiceRequestsHandlerEnabledMenuItem.ToolTipText = "Check to handle service requests"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(212, 22)
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Session service requests"
+        '
+        '_DeviceServiceRequestHandlerEnabledMenuItem
+        '
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(212, 22)
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
         '
         '_SessionTraceEnabledMenuItem
         '
@@ -1363,7 +1373,8 @@ Partial Class K2400Panel
     Private WithEvents _ResetKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _InitializeKnowStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _SessionTraceEnabledMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _ServiceRequestsHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _SessionOptionsDownButton As Windows.Forms.ToolStripDropDownButton
     Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ResetsDropDownButton As Windows.Forms.ToolStripDropDownButton

@@ -70,17 +70,29 @@ Public Class Device
     ''' <remarks> David, 1/15/2016. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
+
         ' now request the subsystem to issue an Asynchronous call to get the Prober to reveal its identity.
         Me.StatusSubsystem.QueryIdentity()
+
+        ' enable the service request if not enabled.
+        Me.Session.EnableServiceRequest()
+
         ' enable service request only after everything is initialized.
         Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
-        ' enable service requests
-        Me.EnableServiceRequestEventHandler()
+
+        ' Adds the device service request handler
+        Me.AddServiceRequestEventHandler()
+
     End Sub
 
     Public Overrides Sub ResetKnownState()
-        ' disable service request
-        Me.DisableServiceRequestEventHandler()
+
+        ' remove the device service request handler
+        Me.RemoveServiceRequestEventHandler()
+
+        ' disable the session service request 
+        Me.Session.DisableServiceRequest()
+
         MyBase.ResetKnownState()
     End Sub
 

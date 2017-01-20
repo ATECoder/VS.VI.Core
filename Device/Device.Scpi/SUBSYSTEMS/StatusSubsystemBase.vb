@@ -210,17 +210,17 @@ Public MustInherit Class StatusSubsystemBase
 
 #Region " MEASUREMENT REGISTER "
 
-#Region " BITMASK"
+#Region " ENABLE BITMASK "
 
-    ''' <summary> The measurement event enable bitmask. </summary>
+    ''' <summary> The Measurement event enable bitmask. </summary>
     Private _MeasurementEventEnableBitmask As Integer?
 
-    ''' <summary> Gets or sets the cached value of the measurement register event enable bit mask. </summary>
-    ''' <remarks> The returned value could be cast to the measurement events type that is specific to
-    ''' the instrument The enable register gates the corresponding events for registration by the
-    ''' Status Byte register. When an event bit is set and the corresponding enable bit is set, the
-    ''' output (summary) of the register will set to 1, which in turn sets the summary bit of the
-    ''' Status Byte Register. </remarks>
+    ''' <summary> Gets or sets the cached value of the Measurement register event enable bit mask. </summary>
+    ''' <remarks> The returned value could be cast to the Measurement events type that is specific to the
+    ''' instrument The enable register gates the corresponding events for registration by the Status
+    ''' Byte register. When an event bit is set and the corresponding enable bit is set, the output
+    ''' (summary) of the register will set to 1, which in turn sets the summary bit of the Status
+    ''' Byte Register. </remarks>
     ''' <value> The mask to use for enabling the events. </value>
     Public Property MeasurementEventEnableBitmask() As Integer?
         Get
@@ -234,7 +234,7 @@ Public MustInherit Class StatusSubsystemBase
         End Set
     End Property
 
-    ''' <summary> Programs and reads back the measurement register events enable bit mask. </summary>
+    ''' <summary> Programs and reads back the Measurement register events enable bit mask. </summary>
     ''' <param name="value"> The value. </param>
     ''' <returns> The bit mask or nothing if not known. </returns>
     Public Function ApplyMeasurementEventEnableBitmask(ByVal value As Integer) As Integer?
@@ -242,24 +242,40 @@ Public MustInherit Class StatusSubsystemBase
         Return Me.QueryMeasurementEventEnableBitmask()
     End Function
 
-    ''' <summary> Reads back the measurement register event enable bit mask. </summary>
-    ''' <remarks> The returned value could be cast to the measurement events type that is specific to
-    ''' the instrument The enable register gates the corresponding events for registration by the
-    ''' Status Byte register. When an event bit is set and the corresponding enable bit is set, the
-    ''' output (summary) of the register will set to 1, which in turn sets the summary bit of the
-    ''' Status Byte Register. </remarks>
-    ''' <returns>  The mask used for enabling the events. </returns>
+    ''' <summary> Gets the Measurement event enable query command. </summary>
+    ''' <remarks> SCPI: ":STAT:OPER:ENAB?". </remarks>
+    ''' <value> The Measurement event enable command format. </value>
+    Protected Overridable ReadOnly Property MeasurementEventEnableQueryCommand As String = VI.Scpi.Syntax.MeasurementEventEnableQueryCommand
+
+    ''' <summary> Queries the Measurement register event enable bit mask. </summary>
+    ''' <remarks> The returned value could be cast to the Measurement events type that is specific to the
+    ''' instrument The enable register gates the corresponding events for registration by the Status
+    ''' Byte register. When an event bit is set and the corresponding enable bit is set, the output
+    ''' (summary) of the register will set to 1, which in turn sets the summary bit of the Status
+    ''' Byte Register. </remarks>
+    ''' <returns> The mask to use for enabling the events; nothing if unknown </returns>
     Public Function QueryMeasurementEventEnableBitmask() As Integer?
-        Me.MeasurementEventEnableBitmask = Me.Session.Query(Me.MeasurementEventEnableBitmask.GetValueOrDefault(0), ":STAT:MEAS:ENAB?")
+        If Not String.IsNullOrWhiteSpace(Me.MeasurementEventEnableQueryCommand) Then
+            Me.MeasurementEventEnableBitmask = Me.Session.Query(0I, Me.MeasurementEventEnableQueryCommand)
+        End If
         Return Me.MeasurementEventEnableBitmask
     End Function
 
-    ''' <summary> Programs the measurement register events enable bit mask without updating the value from
-    ''' the device. </summary>
-    ''' <param name="value"> The value. </param>
-    ''' <returns> The bit mask or nothing if not known. </returns>
-    Public Function WriteMeasurementEventEnableBitmask(ByVal value As Integer) As Integer?
-        Me.Session.WriteLine(":STAT:MEAS:ENAB {0:D}", value)
+    ''' <summary> Gets or sets the Measurement event enable command format. </summary>
+    ''' <remarks> SCPI: ":STAT:OPER:ENAB {0:D}".
+    ''' <see cref="Scpi.Syntax.MeasurementEventEnableCommandFormat"> </see> </remarks>
+    ''' <value> The Measurement event enable command format. </value>
+    Protected Overridable ReadOnly Property MeasurementEventEnableCommandFormat As String = VI.Scpi.Syntax.MeasurementEventEnableCommandFormat
+
+    ''' <summary> Programs the Measurement register event enable bit mask. </summary>
+    ''' <remarks> When an event bit is set and the corresponding enable bit is set, the output
+    ''' (summary) of the register will set to 1, which in turn sets the summary bit of the Status
+    ''' Byte Register. </remarks>
+    ''' <returns> The mask to use for enabling the events; nothing if unknown </returns>
+    Public Overridable Function WriteMeasurementEventEnableBitmask(ByVal value As Integer) As Integer?
+        If Not String.IsNullOrWhiteSpace(Me.MeasurementEventEnableCommandFormat) Then
+            Me.Session.WriteLine(Me.MeasurementEventEnableCommandFormat, value)
+        End If
         Me.MeasurementEventEnableBitmask = value
         Return Me.MeasurementEventEnableBitmask
     End Function

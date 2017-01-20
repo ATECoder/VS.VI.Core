@@ -90,6 +90,7 @@ Public Class EG2000Panel
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
+        Me._Device.CapturedSyncContext = Threading.SynchronizationContext.Current
         Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub
@@ -135,6 +136,22 @@ Public Class EG2000Panel
                 For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, isOpen) : Next
             End If
         Next
+    End Sub
+
+    ''' <summary> Handles the device property changed event. </summary>
+    ''' <param name="device">    The device. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Protected Overrides Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
+        If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        MyBase.OnDevicePropertyChanged(device, propertyName)
+        Select Case propertyName
+            Case NameOf(device.SessionServiceRequestHandlerAdded)
+                'Me._SessionServiceRequestHandlerEnabledCheckBox.Checked = device.SessionServiceRequestHandlerAdded
+            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+                'Me._DeviceServiceRequestHandlerEnabledCheckBox.Checked = device.DeviceServiceRequestHandlerAdded
+            Case NameOf(device.SessionMessagesTraceEnabled)
+                Me._SessionTraceEnableCheckBox.Checked = device.SessionMessagesTraceEnabled
+        End Select
     End Sub
 
     ''' <summary> Event handler. Called when device opened. </summary>
@@ -464,15 +481,27 @@ Public Class EG2000Panel
 
 #Region " CONTROL EVENTS: READ and WRITE "
 
-    ''' <summary> Event handler. Called by _SessionTraceEnableCheckBox for checked changed events. </summary>
+    ''' <summary> Toggles session message tracing. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub _SessionTraceEnableCheckBox_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles _SessionTraceEnableCheckBox.CheckedChanged
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _SessionTraceEnableCheckBox_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _SessionTraceEnableCheckBox.CheckedChanged
         If Me._InitializingComponents Then Return
-        If Not Me.DesignMode AndAlso sender IsNot Nothing Then
-            Dim checkBox As Windows.Forms.CheckBox = CType(sender, Windows.Forms.CheckBox)
-            Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
-        End If
+        Dim checkBox As CheckBox = CType(sender, CheckBox)
+        Dim activity As String = "toggling instrument message tracing"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            If checkBox IsNot Nothing Then
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
     End Sub
 
     ''' <summary> Event handler. Called by _EmulateButton for click events. </summary>

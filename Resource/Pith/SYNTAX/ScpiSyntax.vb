@@ -72,6 +72,12 @@ Namespace Scpi
             ''' <summary> Gets the measurement event condition command. </summary>
             Public Const MeasurementEventConditionQueryCommand As String = ":STAT:MEAS:COND?"
 
+            ''' <summary> Gets the Measurement event enable Query command. </summary>
+            Public Const MeasurementEventEnableQueryCommand As String = ":STAT:MEAS:ENAB?"
+
+            ''' <summary> Gets the Measurement event enable command format. </summary>
+            Public Const MeasurementEventEnableCommandFormat As String = ":STAT:MEAS:ENAB {0:D}"
+
             ''' <summary> Gets the operation register event status query command. </summary>
             Public Const OperationEventQueryCommand As String = ":STAT:OPER:EVEN?"
 

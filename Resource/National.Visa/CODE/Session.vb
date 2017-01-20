@@ -68,7 +68,7 @@ Public Class Session
         End Get
         Set(value As NationalInstruments.Visa.MessageBasedSession)
             Me._VisaSession = value
-            Me._TcpIpSession = TryCast(Me.VisaSession, NationalInstruments.Visa.TcpipSession)
+            Me._TcpipSession = TryCast(Me.VisaSession, NationalInstruments.Visa.TcpipSession)
         End Set
     End Property
 
@@ -88,7 +88,7 @@ Public Class Session
     ''' <summary> Gets the TCP IP session. </summary>
     ''' <value> The TCP IP session. </value>
     <CLSCompliant(False)>
-    Public ReadOnly Property TcpIpSession As NationalInstruments.Visa.TcpipSession
+    Public ReadOnly Property TcpipSession As NationalInstruments.Visa.TcpipSession
 
     ''' <summary>
     ''' Gets the session open sentinel. When open, the session is capable of addressing the hardware.
@@ -507,7 +507,7 @@ Public Class Session
         End Get
         Set(value As Ivi.Visa.EventType)
             Me._EnabledEventType = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ServiceRequestEventEnabled))
+            Me.SafePostPropertyChanged(NameOf(Me.ServiceRequestEventEnabled))
         End Set
     End Property
 
@@ -536,6 +536,7 @@ Public Class Session
                     ' Apparently, the events are already enabled. 
                     ' Me._VisaSession.EnableEvent(Ivi.Visa.EventType.ServiceRequest)
                 End If
+                ' this toggles the enabled sentinel
                 Me.EnabledEventType = Ivi.Visa.EventType.ServiceRequest
             End If
         Catch ex As Ivi.Visa.NativeVisaException
@@ -562,7 +563,9 @@ Public Class Session
                     ' Me._VisaSession.DisableEvent(Ivi.Visa.EventType.ServiceRequest)
                     RemoveHandler Me.VisaSession.ServiceRequest, AddressOf OnServiceRequested
                 End If
+                'this toggles the enabled sentinel
                 Me.EnabledEventType = Ivi.Visa.EventType.Custom
+                Me.SafePostPropertyChanged(NameOf(Me.ServiceRequestEventEnabled))
             End If
         Catch ex As Ivi.Visa.NativeVisaException
             If Me.LastNodeNumber.HasValue Then

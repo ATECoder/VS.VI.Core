@@ -74,6 +74,8 @@ Partial Class ThermostreamPanel
         Me._ResetButton = New System.Windows.Forms.Button()
         Me._SelectiveDeviceClearButton = New System.Windows.Forms.Button()
         Me._SessionTraceEnableCheckBox = New System.Windows.Forms.CheckBox()
+        Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
+        Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
         Me._LastErrorTextBox = New System.Windows.Forms.TextBox()
         Me._ReadingStatusStrip = New System.Windows.Forms.StatusStrip()
@@ -84,8 +86,6 @@ Partial Class ThermostreamPanel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
-        Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -99,11 +99,11 @@ Partial Class ThermostreamPanel
         Me._SensorTabPage.SuspendLayout()
         Me._ResetTabPage.SuspendLayout()
         Me._ResetLayout.SuspendLayout()
+        Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
-        Me._ReadWriteTabPage.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -118,7 +118,7 @@ Partial Class ThermostreamPanel
         Me.TraceMessagesBox.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TraceMessagesBox.PresetCount = 50
         Me.TraceMessagesBox.ResetCount = 100
-        Me.TraceMessagesBox.Size = New System.Drawing.Size(356, 272)
+        Me.TraceMessagesBox.Size = New System.Drawing.Size(356, 270)
         '
         '_Tabs
         '
@@ -151,9 +151,9 @@ Partial Class ThermostreamPanel
         Me._ReadingTabPage.Controls.Add(Me._ReadLastErrorButton)
         Me._ReadingTabPage.Controls.Add(Me._ReadButton)
         Me._ReadingTabPage.Controls.Add(Me._InitializeButton)
-        Me._ReadingTabPage.Location = New System.Drawing.Point(4, 24)
+        Me._ReadingTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ReadingTabPage.Name = "_ReadingTabPage"
-        Me._ReadingTabPage.Size = New System.Drawing.Size(356, 272)
+        Me._ReadingTabPage.Size = New System.Drawing.Size(356, 270)
         Me._ReadingTabPage.TabIndex = 0
         Me._ReadingTabPage.Text = "Reading"
         Me._ReadingTabPage.UseVisualStyleBackColor = True
@@ -227,7 +227,7 @@ Partial Class ThermostreamPanel
         '_ServiceRequestsLabel
         '
         Me._ServiceRequestsLabel.Font = New System.Drawing.Font("Consolas", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ServiceRequestsLabel.Location = New System.Drawing.Point(155, 8)
+        Me._ServiceRequestsLabel.Location = New System.Drawing.Point(154, 3)
         Me._ServiceRequestsLabel.Name = "_ServiceRequestsLabel"
         Me._ServiceRequestsLabel.Size = New System.Drawing.Size(192, 110)
         Me._ServiceRequestsLabel.TabIndex = 5
@@ -320,9 +320,9 @@ Partial Class ThermostreamPanel
         Me._FunctionTabPage.Controls.Add(Me._RampRateNumericLabel)
         Me._FunctionTabPage.Controls.Add(Me._SoakTimeNumericLabel)
         Me._FunctionTabPage.Controls.Add(Me._SetpointNumericLabel)
-        Me._FunctionTabPage.Location = New System.Drawing.Point(4, 24)
+        Me._FunctionTabPage.Location = New System.Drawing.Point(4, 26)
         Me._FunctionTabPage.Name = "_FunctionTabPage"
-        Me._FunctionTabPage.Size = New System.Drawing.Size(356, 272)
+        Me._FunctionTabPage.Size = New System.Drawing.Size(356, 270)
         Me._FunctionTabPage.TabIndex = 4
         Me._FunctionTabPage.Text = "Function"
         Me._FunctionTabPage.UseVisualStyleBackColor = True
@@ -771,9 +771,9 @@ Partial Class ThermostreamPanel
         Me._SensorTabPage.Controls.Add(Me._DeviceThermalConstantSelectorLabel)
         Me._SensorTabPage.Controls.Add(Me._DeviceSensorTypeSelector)
         Me._SensorTabPage.Controls.Add(Me._DeviceThermalConstantSelector)
-        Me._SensorTabPage.Location = New System.Drawing.Point(4, 24)
+        Me._SensorTabPage.Location = New System.Drawing.Point(4, 26)
         Me._SensorTabPage.Name = "_SensorTabPage"
-        Me._SensorTabPage.Size = New System.Drawing.Size(356, 272)
+        Me._SensorTabPage.Size = New System.Drawing.Size(356, 270)
         Me._SensorTabPage.TabIndex = 5
         Me._SensorTabPage.Text = "Sensor"
         Me._SensorTabPage.UseVisualStyleBackColor = True
@@ -830,9 +830,9 @@ Partial Class ThermostreamPanel
         '_ResetTabPage
         '
         Me._ResetTabPage.Controls.Add(Me._ResetLayout)
-        Me._ResetTabPage.Location = New System.Drawing.Point(4, 24)
+        Me._ResetTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ResetTabPage.Name = "_ResetTabPage"
-        Me._ResetTabPage.Size = New System.Drawing.Size(356, 272)
+        Me._ResetTabPage.Size = New System.Drawing.Size(356, 270)
         Me._ResetTabPage.TabIndex = 2
         Me._ResetTabPage.Text = "Reset"
         Me._ResetTabPage.UseVisualStyleBackColor = True
@@ -863,7 +863,7 @@ Partial Class ThermostreamPanel
         Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
         Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.Size = New System.Drawing.Size(356, 272)
+        Me._ResetLayout.Size = New System.Drawing.Size(356, 270)
         Me._ResetLayout.TabIndex = 5
         '
         '_InitializeKnownStateButton
@@ -923,12 +923,32 @@ Partial Class ThermostreamPanel
         Me.TipsTooltip.SetToolTip(Me._SessionTraceEnableCheckBox, "Check to trace all instrument messages ")
         Me._SessionTraceEnableCheckBox.UseVisualStyleBackColor = True
         '
+        '_ReadWriteTabPage
+        '
+        Me._ReadWriteTabPage.Controls.Add(Me._SimpleReadWriteControl)
+        Me._ReadWriteTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._ReadWriteTabPage.Name = "_ReadWriteTabPage"
+        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._ReadWriteTabPage.TabIndex = 6
+        Me._ReadWriteTabPage.Text = "R/W"
+        Me._ReadWriteTabPage.UseVisualStyleBackColor = True
+        '
+        '_SimpleReadWriteControl
+        '
+        Me._SimpleReadWriteControl.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._SimpleReadWriteControl.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._SimpleReadWriteControl.Location = New System.Drawing.Point(0, 0)
+        Me._SimpleReadWriteControl.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me._SimpleReadWriteControl.Name = "_SimpleReadWriteControl"
+        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 270)
+        Me._SimpleReadWriteControl.TabIndex = 0
+        '
         '_MessagesTabPage
         '
         Me._MessagesTabPage.Controls.Add(Me.TraceMessagesBox)
-        Me._MessagesTabPage.Location = New System.Drawing.Point(4, 24)
+        Me._MessagesTabPage.Location = New System.Drawing.Point(4, 26)
         Me._MessagesTabPage.Name = "_MessagesTabPage"
-        Me._MessagesTabPage.Size = New System.Drawing.Size(356, 272)
+        Me._MessagesTabPage.Size = New System.Drawing.Size(356, 270)
         Me._MessagesTabPage.TabIndex = 3
         Me._MessagesTabPage.Text = "Log"
         Me._MessagesTabPage.UseVisualStyleBackColor = True
@@ -1038,7 +1058,6 @@ Partial Class ThermostreamPanel
         '
         '_TitleLabel
         '
-        Me._TitleLabel.AutoSize = False
         Me._TitleLabel.BackColor = System.Drawing.Color.Black
         Me._TitleLabel.CausesValidation = False
         Me._TitleLabel.Dock = System.Windows.Forms.DockStyle.Top
@@ -1051,28 +1070,6 @@ Partial Class ThermostreamPanel
         Me._TitleLabel.TabIndex = 17
         Me._TitleLabel.Text = "Thermostream"
         Me._TitleLabel.UseMnemonic = False
-        '
-        '_ReadWriteTabPage
-        '
-        Me._ReadWriteTabPage.Controls.Add(Me._SimpleReadWriteControl)
-        Me._ReadWriteTabPage.Location = New System.Drawing.Point(4, 24)
-        Me._ReadWriteTabPage.Name = "_ReadWriteTabPage"
-        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 272)
-        Me._ReadWriteTabPage.TabIndex = 6
-        Me._ReadWriteTabPage.Text = "R/W"
-        Me._ReadWriteTabPage.UseVisualStyleBackColor = True
-        '
-        '_SimpleReadWriteControl
-        '
-        Me._SimpleReadWriteControl.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._SimpleReadWriteControl.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SimpleReadWriteControl.Location = New System.Drawing.Point(0, 0)
-        Me._SimpleReadWriteControl.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me._SimpleReadWriteControl.MultipleSyncContextsExpected = False
-        Me._SimpleReadWriteControl.Name = "_SimpleReadWriteControl"
-        Me._SimpleReadWriteControl.ReadEnabled = True
-        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 272)
-        Me._SimpleReadWriteControl.TabIndex = 0
         '
         'ThermostreamPanel
         '
@@ -1101,6 +1098,7 @@ Partial Class ThermostreamPanel
         Me._ResetTabPage.ResumeLayout(False)
         Me._ResetLayout.ResumeLayout(False)
         Me._ResetLayout.PerformLayout()
+        Me._ReadWriteTabPage.ResumeLayout(False)
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
         Me._ReadingStatusStrip.ResumeLayout(False)
@@ -1108,8 +1106,6 @@ Partial Class ThermostreamPanel
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
-        Me._Layout.PerformLayout()
-        Me._ReadWriteTabPage.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

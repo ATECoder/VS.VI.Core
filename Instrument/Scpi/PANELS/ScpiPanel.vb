@@ -88,6 +88,7 @@ Public Class ScpiPanel
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
+        Me._Device.CapturedSyncContext = Threading.SynchronizationContext.Current
         Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub
@@ -136,15 +137,19 @@ Public Class ScpiPanel
         Next
     End Sub
 
-    ''' <summary> Handle the device property changed event. </summary>
+    ''' <summary> Handles the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Protected Overrides Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.IsServiceRequestEventEnabled)
-                ' Me._HandleServiceRequestsCheckBox.Checked = device.IsServiceRequestEventEnabled
+            Case NameOf(device.SessionServiceRequestHandlerAdded)
+                'Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestHandlerAdded
+            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+                'Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
+            Case NameOf(device.SessionMessagesTraceEnabled)
+                'Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
         End Select
     End Sub
 
@@ -157,7 +162,6 @@ Public Class ScpiPanel
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Protected Overrides Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
-        Me.EnableServiceRequestEventHandler()
         AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
         AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
         MyBase.DeviceOpened(sender, e)

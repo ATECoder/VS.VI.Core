@@ -571,10 +571,10 @@ Public MustInherit Class SessionBase
 
     ''' <summary> Queries if a service request is enabled. </summary>
     ''' <remarks> David, 1/18/2017. </remarks>
-    ''' <param name="bitMask"> The bit mask. </param>
+    ''' <param name="bitmask"> The bit mask. </param>
     ''' <returns> <c>true</c> if a service request is enabled; otherwise <c>false</c> </returns>
-    Public Function IsServiceRequestEnabled(ByVal bitMask As ServiceRequests) As Boolean
-        Return Me.ServiceRequestEventEnabled AndAlso (Me.ServiceRequestEnableBitmask And bitMask) <> 0
+    Public Function IsServiceRequestEnabled(ByVal bitmask As ServiceRequests) As Boolean
+        Return Me.ServiceRequestEventEnabled AndAlso (Me.ServiceRequestEnableBitmask And bitmask) <> 0
     End Function
 
     ''' <summary> Gets or sets the service request enable bitmask. </summary>
@@ -590,6 +590,7 @@ Public MustInherit Class SessionBase
     Public Sub ApplyServiceRequestEnableBitmask(ByVal commandFormat As String, ByVal bitmask As ServiceRequests)
         Me._ServiceRequestEnableBitmask = bitmask
         Me.WriteLine(commandFormat, CInt(bitmask))
+        Me.SafePostPropertyChanged(NameOf(ServiceRequestEnableBitmask))
     End Sub
 
     ''' <summary> Event queue for all listeners interested in ServiceRequested events. </summary>
@@ -624,8 +625,8 @@ Public MustInherit Class SessionBase
         evt?.Invoke(Me, System.EventArgs.Empty)
     End Sub
 
-    ''' <summary> Gets the sentinel indication if a service request event was enabled. </summary>
-    ''' <value> <c>True</c> if service request event is enabled; otherwise, <c>False</c>. </value>
+    ''' <summary> Gets the sentinel indication if a service request event was enabled and registered. </summary>
+    ''' <value> <c>True</c> if service request event is enabled and registered; otherwise, <c>False</c>. </value>
     Public MustOverride ReadOnly Property ServiceRequestEventEnabled As Boolean
 
     ''' <summary> Enables the service request. </summary>

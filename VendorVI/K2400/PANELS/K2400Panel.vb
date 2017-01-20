@@ -97,6 +97,7 @@ Public Class K2400Panel
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
+        Me._Device.CapturedSyncContext = Threading.SynchronizationContext.Current
         Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub
@@ -155,17 +156,19 @@ Public Class K2400Panel
         Next
     End Sub
 
-    ''' <summary> Handle the device property changed event. </summary>
+    ''' <summary> Handles the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Protected Overrides Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.IsServiceRequestEventEnabled)
-                Me._ServiceRequestsHandlerEnabledMenuItem.SafeCheckedSetter(device.IsServiceRequestEventEnabled)
+            Case NameOf(device.SessionServiceRequestHandlerAdded)
+                Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestHandlerAdded
+            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+                Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
             Case NameOf(device.SessionMessagesTraceEnabled)
-                Me._SessionTraceEnabledMenuItem.SafeCheckedSetter(device.SessionMessagesTraceEnabled)
+                Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
         End Select
     End Sub
 
@@ -242,34 +245,6 @@ Public Class K2400Panel
             RemoveHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
             RemoveHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
         End If
-    End Sub
-
-    ''' <summary> Event handler. Called by _HandleServiceRequestsCheckBox for check state changed
-    ''' events. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ServiceRequestsHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ServiceRequestsHandlerEnabledMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
-        Dim checkBox As CheckBox = TryCast(sender, CheckBox)
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            If checkBox IsNot Nothing AndAlso Not checkBox.Checked = Me.Device.IsServiceRequestEventEnabled Then
-                If checkBox IsNot Nothing AndAlso checkBox.Checked Then
-                    Me.EnableServiceRequestEventHandler()
-                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
-                Else
-                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
-                    Me.DisableServiceRequestEventHandler()
-                End If
-                Me.Device.StatusSubsystem.ReadRegisters()
-            End If
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, "Failed toggling service request")
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred toggling service request;. Details: {0}", ex)
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
     End Sub
 
 #End Region
@@ -2213,22 +2188,21 @@ Public Class K2400Panel
 
 #Region " CONTROL EVENT HANDLERS: RESET "
 
-    ''' <summary> Event handler. Called by _SessionTraceEnableCheckBox for checked changed events. </summary>
+    ''' <summary> Toggles session message tracing. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SessionTraceEnabledMenuItem_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _SessionTraceEnabledMenuItem.CheckedChanged
         If Me._InitializingComponents Then Return
-        Dim checkBox As Windows.Forms.CheckBox = CType(sender, Windows.Forms.CheckBox)
+        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
-            If checkBox.Enabled Then
-                Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
+            If menuItem IsNot Nothing Then
+                Me.Device.SessionMessagesTraceEnabled = menuItem.Checked
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred toggling session message tracing;. Details: {ex}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -2314,6 +2288,58 @@ Public Class K2400Panel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initializing known state;. Details: {0}", ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary> Toggles the session service request handler . </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _SessionServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.CheckStateChanged
+        If Me._InitializingComponents Then Return
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.SessionServiceRequestHandlerAdded Then
+                If menuItem IsNot Nothing AndAlso menuItem.Checked Then
+                    Me.Device.Session.EnableServiceRequest()
+                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+                Else
+                    Me.Device.Session.DisableServiceRequest()
+                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
+                End If
+                Me.Device.StatusSubsystem.ReadRegisters()
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, "Failed toggling session service request")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred toggling session service request;. Details: {0}", ex)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary> Toggles the Device service request handler . </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _DeviceServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _DeviceServiceRequestHandlerEnabledMenuItem.CheckStateChanged
+        If Me._InitializingComponents Then Return
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.DeviceServiceRequestHandlerAdded Then
+                If menuItem IsNot Nothing AndAlso menuItem.Checked Then
+                    Me.AddServiceRequestEventHandler()
+                Else
+                    Me.RemoveServiceRequestEventHandler()
+                End If
+                Me.Device.StatusSubsystem.ReadRegisters()
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, "Failed toggling device service request")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred toggling service request;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
         End Try

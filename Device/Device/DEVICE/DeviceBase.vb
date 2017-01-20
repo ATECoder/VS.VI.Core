@@ -48,6 +48,7 @@ Public MustInherit Class DeviceBase
         Me._ClearRefractoryPeriod = TimeSpan.FromMilliseconds(100)
         Me._ResourceTitle = DeviceBase.DefaultResourceTitle
         Me._ResourceName = DeviceBase.ResourceNameClosed
+        Me._CapturedSyncContext = SynchronizationContext.Current
     End Sub
 
 #Region " I Disposable Support "
@@ -66,7 +67,8 @@ Public MustInherit Class DeviceBase
                 Me.Talker?.Listeners.Clear()
                 Me._Talker = Nothing
                 Me.SessionMessagesTraceEnabled = False
-                Me.DisableServiceRequestEventHandler()
+                Me.Session?.DisableServiceRequest()
+                Me.RemoveServiceRequestEventHandler()
                 Me.RemoveEventHandler(Me.ServiceRequestedEvent)
                 Me.RemoveOpeningEventHandler(Me.OpeningEvent)
                 Me.RemoveOpenedEventHandler(Me.OpenedEvent)
@@ -601,7 +603,8 @@ Public MustInherit Class DeviceBase
             Dim e As New ComponentModel.CancelEventArgs
             Me.OnClosing(e)
             If e.Cancel Then Return
-            Me.DisableServiceRequestEventHandler()
+            Me.RemoveServiceRequestEventHandler()
+            Me.Session.DisableServiceRequest()
             Me.Session.CloseSession()
             Me.OnClosed()
         Catch ex As NativeException
@@ -636,7 +639,7 @@ Public MustInherit Class DeviceBase
         Set(value As Boolean)
             If Not value.Equals(Me.SessionMessagesTraceEnabled) Then
                 Me.Session.SessionMessagesTraceEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SessionMessagesTraceEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -649,7 +652,7 @@ Public MustInherit Class DeviceBase
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
                 Case NameOf(sender.ServiceRequestEventEnabled)
-                    Me.AsyncNotifyPropertyChanged(NameOf(Me.IsServiceRequestEventEnabled))
+                    Me.SafePostPropertyChanged(NameOf(Me.SessionServiceRequestHandlerAdded))
                 Case NameOf(sender.LastMessageReceived)
                     Dim value As String = sender.LastMessageReceived
                     If Not String.IsNullOrWhiteSpace(value) Then
@@ -709,28 +712,45 @@ Public MustInherit Class DeviceBase
         End Set
     End Property
 
-    ''' <summary> Gets the is service request event enabled. </summary>
-    ''' <value> The is service request event enabled. </value>
-    Public ReadOnly Property IsServiceRequestEventEnabled As Boolean
+    ''' <summary> Gets the session service request handler added. </summary>
+    ''' <value> The session service request handler added. </value>
+    Public ReadOnly Property SessionServiceRequestHandlerAdded As Boolean
         Get
             Return Me.IsDeviceOpen AndAlso Me.Session.ServiceRequestEventEnabled
         End Get
     End Property
 
-    ''' <summary> Enable service request event handler. </summary>
-    Public Sub EnableServiceRequestEventHandler()
-        If Not Me.Session.ServiceRequestEventEnabled Then
-            ' register the handler before enabling the event  
+
+    Dim _DeviceServiceRequestHandlerAdded As Boolean
+    ''' <summary> Gets the device service request handler Added. </summary>
+    ''' <value> The device service request handler registered. </value>
+    Public Property DeviceServiceRequestHandlerAdded As Boolean
+        Get
+            Return Me._DeviceServiceRequestHandlerAdded
+        End Get
+        Protected Set(value As Boolean)
+            Me._DeviceServiceRequestHandlerAdded = value
+            Me.SafePostPropertyChanged()
+        End Set
+    End Property
+
+    ''' <summary> Registers the device service request handler. </summary>
+    ''' <remarks>
+    ''' The Session service request handler must be registered and enabled before registering the
+    ''' device event handler.
+    ''' </remarks>
+    Public Sub AddServiceRequestEventHandler()
+        If Not Me.DeviceServiceRequestHandlerAdded Then
             AddHandler Me.Session.ServiceRequested, AddressOf Me.OnSessionBaseServiceRequested
-            Me.Session.EnableServiceRequest()
+            Me.DeviceServiceRequestHandlerAdded = True
         End If
     End Sub
 
-    ''' <summary> Disable service request event handler. </summary>
-    Public Sub DisableServiceRequestEventHandler()
-        If Me.Session.ServiceRequestEventEnabled Then
+    ''' <summary> Removes the device service request event handler. </summary>
+    Public Sub RemoveServiceRequestEventHandler()
+        If Me.DeviceServiceRequestHandlerAdded Then
             RemoveHandler Me.Session.ServiceRequested, AddressOf Me.OnSessionBaseServiceRequested
-            Me.Session.DisableServiceRequest()
+            Me.DeviceServiceRequestHandlerAdded = False
         End If
     End Sub
 
@@ -802,14 +822,15 @@ Public MustInherit Class DeviceBase
     ''' <summary> Reads the event registers after receiving a service request. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Protected Function TryProcessServiceRequest() As Boolean
+        Dim result As Boolean = True
         Try
             Me.ProcessServiceRequest()
-            Return True
         Catch ex As Exception
             Me.ServiceRequestFailureMessage = Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                                                  $"Exception occurred processing service request;. Details: {ex}")
-            Return False
+            result = False
         End Try
+        Return result
     End Function
 
     ''' <summary> Occurs when service is requested. </summary>
@@ -850,11 +871,19 @@ Public MustInherit Class DeviceBase
 
 #Region " EVENT HANDLERS "
 
+    ''' <summary> Gets or sets a context for the captured synchronization. </summary>
+    ''' <value> The captured synchronization context. </value>
+    Public Property CapturedSyncContext As Threading.SynchronizationContext
+
     ''' <summary> Synchronously handles the Service Request event of the <see cref="Session">session</see> control. </summary>
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      The <see cref="EventArgs" /> instance
     ''' containing the event data. </param>
     Private Sub OnSessionBaseServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
+        If SynchronizationContext.Current Is Nothing Then
+            ' captured sync context may not be required if not raising events to the sync context.
+            Threading.SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
+        End If
         Me.TryProcessServiceRequest()
         If Me.UsingSyncServiceRequestHandler Then
             If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then

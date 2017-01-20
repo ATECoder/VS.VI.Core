@@ -130,6 +130,7 @@ Public Class K7500Panel
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
+        Me._Device.CapturedSyncContext = Threading.SynchronizationContext.Current
         Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub
@@ -181,15 +182,19 @@ Public Class K7500Panel
         Next
     End Sub
 
-    ''' <summary> Handle the device property changed event. </summary>
+    ''' <summary> Handles the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Protected Overrides Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.IsServiceRequestEventEnabled)
-                Me._HandleServiceRequestsMenuItem.Checked = device.IsServiceRequestEventEnabled
+            Case NameOf(device.SessionServiceRequestHandlerAdded)
+                Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestHandlerAdded
+            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+                Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
+            Case NameOf(device.SessionMessagesTraceEnabled)
+                Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
         End Select
     End Sub
 
@@ -371,9 +376,9 @@ Public Class K7500Panel
         Select Case propertyName
             Case NameOf(subsystem.TerminalsMode)
                 If subsystem.TerminalsMode.HasValue Then
-                    Me._TerminalStateLabel.SafeTextSetter(subsystem.TerminalsMode.Value.Description)
+                    Me._ReadTerminalStateButton.SafeTextSetter(subsystem.TerminalsMode.Value.Description)
                 Else
-                    Me._TerminalStateLabel.SafeTextSetter("Rear/Front?")
+                    Me._ReadTerminalStateButton.SafeTextSetter("Rear/Front?")
                 End If
                 Windows.Forms.Application.DoEvents()
         End Select
@@ -869,17 +874,19 @@ Public Class K7500Panel
 
 #Region " CONTROL EVENT HANDLERS: RESET "
 
+    ''' <summary> Clears interface. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _TraceInstrumentMessagesMenuItem_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _TraceInstrumentMessagesMenuItem.CheckedChanged
-        If Me._InitializingComponents Then Return
-        Dim activity As String = "toggling instrument message tracing"
+    Private Sub _ClearInterfaceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearInterfaceMenuItem.Click
+        Dim activity As String = "clearing interface"
+        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            If Not Me.DesignMode AndAlso sender IsNot Nothing Then
+            If menuItem IsNot Nothing Then
+                Me.Cursor = Cursors.WaitCursor
+                Me.ErrorProvider.Clear()
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Dim checkBox As Windows.Forms.CheckBox = CType(sender, Windows.Forms.CheckBox)
-                Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
+                Me.Device.SystemSubsystem.ClearInterface()
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -890,38 +897,21 @@ Public Class K7500Panel
         End Try
     End Sub
 
-    ''' <summary> Event handler. Called by _ClearInterfaceMenuItem for click events. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ClearInterfaceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearInterfaceMenuItem.Click
-        Dim activity As String = "clearing interface"
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Me.Device.SystemSubsystem.ClearInterface()
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
-        Finally
-            Me.ReadServiceRequestStatus()
-            Me.Cursor = Cursors.Default
-        End Try
-    End Sub
-
-    ''' <summary> Event handler. Called by _ClearDeviceMenuItem for click events. </summary>
+    ''' <summary> Clears device (SDC). </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ClearDeviceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearDeviceMenuItem.Click
         Dim activity As String = "clearing selective device"
+        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Me.Device.SystemSubsystem.ClearDevice()
+            If menuItem IsNot Nothing Then
+                Me.Cursor = Cursors.WaitCursor
+                Me.ErrorProvider.Clear()
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Device.SystemSubsystem.ClearDevice()
+            End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
@@ -931,14 +921,23 @@ Public Class K7500Panel
         End Try
     End Sub
 
+    ''' <summary> Clears (CLS) the execution state menu item click. </summary>
+    ''' <remarks> David, 1/19/2017. </remarks>
+    ''' <param name="sender"> <see cref="System.Object"/>
+    '''                       instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ClearExecutionStateMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearExecutionStateMenuItem.Click
         Dim activity As String = "clearing the execution state"
+        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Me.Device.SystemSubsystem.ClearExecutionState()
+            If menuItem IsNot Nothing Then
+                Me.Cursor = Cursors.WaitCursor
+                Me.ErrorProvider.Clear()
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Device.SystemSubsystem.ClearExecutionState()
+            End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
@@ -948,19 +947,22 @@ Public Class K7500Panel
         End Try
     End Sub
 
-
-    ''' <summary> Issues RST. </summary>
+    ''' <summary> Resets (RST) the known state menu item click. </summary>
+    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ResetKnownStateMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResetKnownStateMenuItem.Click
         Dim activity As String = "resetting known state"
+        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            If Me.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.Device.ResetKnownState()
+            If menuItem IsNot Nothing Then
+                If Me.IsDeviceOpen Then
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Device.ResetKnownState()
+                End If
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -971,22 +973,26 @@ Public Class K7500Panel
         End Try
     End Sub
 
-    ''' <summary> Event handler. Called by _InitKnownStateMenuItem for click events. </summary>
+    ''' <summary> Initializes to known state menu item click. </summary>
+    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
-    ''' <see cref="System.Windows.Forms.Control"/> </param>
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InitKnownStateMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InitKnownStateMenuItem.Click
         Dim activity As String = "resetting known state"
+        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            If Me.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.Device.ResetKnownState()
-                activity = "initializing known state"
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.Device.InitKnownState()
+            If menuItem IsNot Nothing Then
+                If Me.IsDeviceOpen Then
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Device.ResetKnownState()
+                    activity = "initializing known state"
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Device.InitKnownState()
+                End If
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -996,6 +1002,95 @@ Public Class K7500Panel
             Me.Cursor = Cursors.Default
         End Try
     End Sub
+
+#End Region
+
+#Region " CONTROL EVENT HANDLERS: SESSION "
+
+    ''' <summary> Toggles session message tracing. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _SessionTraceEnabledMenuItem_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _SessionTraceEnabledMenuItem.CheckedChanged
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "toggling instrument message tracing"
+        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
+        If menuItem IsNot Nothing Then
+        End If
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            If menuItem IsNot Nothing Then
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Device.SessionMessagesTraceEnabled = menuItem.Checked
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary> Toggles the session service request handler . </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _SessionServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.CheckStateChanged
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "Toggle session service request handling"
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.Session.ServiceRequestEventEnabled Then
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                If menuItem IsNot Nothing AndAlso menuItem.Checked Then
+                    Me.Device.Session.EnableServiceRequest()
+                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+                Else
+                    Me.Device.Session.DisableServiceRequest()
+                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
+                End If
+                Me.Device.StatusSubsystem.ReadRegisters()
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary> Toggles the Device service request handler . </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _DeviceServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _DeviceServiceRequestHandlerEnabledMenuItem.CheckStateChanged
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "Toggle device service request handling"
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.SessionServiceRequestHandlerAdded Then
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                If menuItem IsNot Nothing AndAlso menuItem.Checked Then
+                    Me.AddServiceRequestEventHandler()
+                Else
+                    Me.RemoveServiceRequestEventHandler()
+                End If
+                Me.Device.StatusSubsystem.ReadRegisters()
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+#End Region
+
+#Region " CONTROL EVENT HANDLERS: TERMINALS "
 
     ''' <summary> Reads terminals state menu item click. </summary>
     ''' <remarks> David, 7/23/2016. </remarks>
@@ -1004,47 +1099,16 @@ Public Class K7500Panel
     '''                       <see cref="Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ReadTerminalsStateMenuItem_Click(sender As Object, e As EventArgs) Handles _ReadTerminalsStateMenuItem.Click
+    Private Sub _TerminalStateButton_Click(sender As Object, e As EventArgs) Handles _ReadTerminalStateButton.Click
         If Me._InitializingComponents Then Return
         Dim activity As String = "reading terminals state"
+        Dim button As ToolStripButton = CType(sender, ToolStripButton)
         Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Me.Device.RouteSubsystem.QueryTerminalsMode()
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
-        Finally
-            Me.ReadServiceRequestStatus()
-            Me.Cursor = Cursors.Default
-        End Try
-
-    End Sub
-
-    ''' <summary> Event handler. Called by _HandleServiceRequestsMenuItem for check state changed
-    ''' events. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _HandleServiceRequestsMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _HandleServiceRequestsMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
-        Dim activity As String = "toggling service request handling mode"
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
-            If menuItem IsNot Nothing AndAlso
-                    Not menuItem.Checked = Me.Device.Session.ServiceRequestEventEnabled Then
+            If button IsNot Nothing Then
+                Me.Cursor = Cursors.WaitCursor
+                Me.ErrorProvider.Clear()
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                If menuItem IsNot Nothing AndAlso menuItem.Checked Then
-                    Me.EnableServiceRequestEventHandler()
-                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
-                Else
-                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
-                    Me.DisableServiceRequestEventHandler()
-                End If
-                Me.Device.StatusSubsystem.ReadRegisters()
+                Me.Device.RouteSubsystem.QueryTerminalsMode()
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -1053,8 +1117,8 @@ Public Class K7500Panel
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
-    End Sub
 
+    End Sub
 
 #End Region
 
@@ -1127,8 +1191,7 @@ Public Class K7500Panel
     Private Property RetriggerEnabled As Boolean
 
     Private Sub HandleRetriggerRequest(sender As Object, e As EventArgs)
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                           $"{Me.ResourceTitle} SRQ: {Me.Device.StatusSubsystem.ServiceRequestStatus:X};. ")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} SRQ: {Me.Device.StatusSubsystem.ServiceRequestStatus:X};. ")
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -1158,27 +1221,31 @@ Public Class K7500Panel
 
                 ' remove service request handling
                 activity = "Disabling device service request"
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.DisableServiceRequestEventHandler()
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.RemoveServiceRequestEventHandler()
 
                 activity = "Disabling status service request"
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
 
             ElseIf Not Me.RetriggerEnabled AndAlso Me._RetriggerCheckBox.Checked Then
 
-                AddHandler Me.Device.ServiceRequested, AddressOf HandleRetriggerRequest
+                AddHandler Me.Device.ServiceRequested, AddressOf Me.HandleRetriggerRequest
 
                 Me.RetriggerEnabled = True
 
                 ' set the service request
                 activity = "Enabling device service request"
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.EnableServiceRequestEventHandler()
+                Me.AddServiceRequestEventHandler()
 
                 activity = "Enabling status service request"
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+
+                activity = "Enabling session service request if not enabled"
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Device.Session.EnableServiceRequest()
 
             End If
 
@@ -1191,8 +1258,6 @@ Public Class K7500Panel
         End Try
 
     End Sub
-
-
 
     ''' <summary> Reading combo box selected value changed. </summary>
     ''' <remarks> David, 3/18/2016. </remarks>

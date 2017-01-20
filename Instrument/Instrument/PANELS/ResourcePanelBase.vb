@@ -352,6 +352,7 @@ Public Class ResourcePanelBase
     Private Sub _AssignDevice(ByVal value As VI.DeviceBase)
         Me._ReleaseDevice()
         Me._Device = value
+        Me._Device.CapturedSyncContext = Threading.SynchronizationContext.Current
         If value IsNot Nothing Then
             'Me._Device.AddListeners(Me.talker.listeners)
             AddHandler Me.Device.PropertyChanged, AddressOf Me.DevicePropertyChanged
@@ -407,39 +408,40 @@ Public Class ResourcePanelBase
     Protected Overridable Sub DeviceServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
     End Sub
 
-    ''' <summary> Gets or sets the service request event enabled. </summary>
-    ''' <value> The service request event enabled. </value>
-    Protected Property ServiceRequestEventEnabled As Boolean
+    ''' <summary> Gets the sentinel indicating if service requests handler was added for this panel. </summary>
+    ''' <value> The service request event handler add sentinel. </value>
+    Protected ReadOnly Property PanelServiceRequestHandlerAdded As Boolean
 
     ''' <summary> Gets or sets the device service request enabled. </summary>
     ''' <value> The device service request enabled. </value>
-    Protected Property DeviceServiceRequestEnabled As Boolean
+    Protected ReadOnly Property PanelDeviceServiceRequestHandlerAdded As Boolean
 
-    ''' <summary> Enables service request event. </summary>
+    ''' <summary> Adds a panel service request handler. </summary>
     ''' <remarks>
-    ''' The panel can enable the service request if owner or if not owner but service request was not
-    ''' enabled on the device, in which case, the panel could also disable the service request.
+    ''' The service request for the session must be enabled for handling service requests on the device. 
+    ''' The panel can add the service request handler if: (1) is owner or; (2) if not owner but service request handler was not
+    ''' added on the device. In case 2, the panel could also remove the device handler.
     ''' </remarks>
-    Public Overridable Sub EnableServiceRequestEventHandler()
-        If Not Me.ServiceRequestEventEnabled Then
+    Public Overridable Sub AddServiceRequestEventHandler()
+        If Not Me.PanelServiceRequestHandlerAdded Then
             AddHandler Me.Device.ServiceRequested, AddressOf Me.DeviceServiceRequested
             If Me.IsDeviceOwner Then
-                Me.Device.EnableServiceRequestEventHandler()
-            ElseIf Not Me.Device.Session.ServiceRequestEventEnabled Then
-                Me.Device.EnableServiceRequestEventHandler()
-                Me.DeviceServiceRequestEnabled = True
+                Me.Device.AddServiceRequestEventHandler()
+            ElseIf Not Me.Device.DeviceServiceRequestHandlerAdded Then
+                Me.Device.AddServiceRequestEventHandler()
+                Me._PanelDeviceServiceRequestHandlerAdded = True
             End If
-            Me.ServiceRequestEventEnabled = True
+            Me._PanelServiceRequestHandlerAdded = True
         End If
     End Sub
 
-    ''' <summary> Disables service request event. </summary>
-    Public Overridable Sub DisableServiceRequestEventHandler()
-        If Me.ServiceRequestEventEnabled Then
+    ''' <summary> Removes the service request event. </summary>
+    Public Overridable Sub RemoveServiceRequestEventHandler()
+        If Me.PanelServiceRequestHandlerAdded Then
             RemoveHandler Me.Device.ServiceRequested, AddressOf Me.DeviceServiceRequested
-            If Me.IsDeviceOwner OrElse Me.DeviceServiceRequestEnabled Then Me.Device.DisableServiceRequestEventHandler()
-            Me.ServiceRequestEventEnabled = False
-            Me.DeviceServiceRequestEnabled = False
+            If Me.IsDeviceOwner OrElse Me._PanelDeviceServiceRequestHandlerAdded Then Me.Device.RemoveServiceRequestEventHandler()
+            Me._PanelServiceRequestHandlerAdded = False
+            Me._PanelDeviceServiceRequestHandlerAdded = False
         End If
     End Sub
 
@@ -640,7 +642,12 @@ Public Class ResourcePanelBase
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Protected Overridable Sub DeviceClosing(ByVal sender As Object, ByVal e As ComponentModel.CancelEventArgs)
-        Me.DisableServiceRequestEventHandler()
+        If Me.Device IsNot Nothing Then
+            Me.RemoveServiceRequestEventHandler()
+            If Me.Device.Session IsNot Nothing Then
+                Me.Device.Session.DisableServiceRequest()
+            End If
+        End If
     End Sub
 
     ''' <summary> Event handler. Called when device is closed. </summary>
@@ -654,7 +661,6 @@ Public Class ResourcePanelBase
         Me.StandardRegisterVisibleSetter(False)
         Me.StatusRegisterVisibleSetter(False)
         If Me.Device IsNot Nothing Then
-            Me.DisableServiceRequestEventHandler()
             If Me.Device.Session.IsSessionOpen Then
                 Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Device closed but session still open;. ")
             ElseIf Me.Device.Session.IsDeviceOpen Then

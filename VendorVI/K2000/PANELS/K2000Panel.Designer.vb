@@ -13,21 +13,23 @@ Partial Class K2000Panel
         Me._Tabs = New System.Windows.Forms.TabControl()
         Me._ReadingTabPage = New System.Windows.Forms.TabPage()
         Me._ReadingsDataGridView = New System.Windows.Forms.DataGridView()
-        Me._ReadingToolStrip = New System.Windows.Forms.ToolStrip()
-        Me._ReadButton = New System.Windows.Forms.ToolStripButton()
-        Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
-        Me._TraceButton = New System.Windows.Forms.ToolStripButton()
-        Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._TraceInstrumentMessagesMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._HandleServiceRequestsMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._TerminalStateLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
+        Me._ReadingToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ReadButton = New System.Windows.Forms.ToolStripButton()
+        Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
+        Me._TraceButton = New System.Windows.Forms.ToolStripButton()
+        Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
         Me._TriggerDelayNumeric = New System.Windows.Forms.NumericUpDown()
         Me._SenseRangeNumeric = New System.Windows.Forms.NumericUpDown()
@@ -70,8 +72,8 @@ Partial Class K2000Panel
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
         CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me._ReadingToolStrip.SuspendLayout()
         Me._SystemToolStrip.SuspendLayout()
+        Me._ReadingToolStrip.SuspendLayout()
         Me._SenseTabPage.SuspendLayout()
         CType(Me._TriggerDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._SenseRangeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -119,8 +121,8 @@ Partial Class K2000Panel
         '_ReadingTabPage
         '
         Me._ReadingTabPage.Controls.Add(Me._ReadingsDataGridView)
-        Me._ReadingTabPage.Controls.Add(Me._ReadingToolStrip)
         Me._ReadingTabPage.Controls.Add(Me._SystemToolStrip)
+        Me._ReadingTabPage.Controls.Add(Me._ReadingToolStrip)
         Me._ReadingTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ReadingTabPage.Name = "_ReadingTabPage"
         Me._ReadingTabPage.Size = New System.Drawing.Size(356, 270)
@@ -137,6 +139,92 @@ Partial Class K2000Panel
         Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 220)
         Me._ReadingsDataGridView.TabIndex = 19
         Me.TipsTooltip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
+        '
+        '_SystemToolStrip
+        '
+        Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton})
+        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 245)
+        Me._SystemToolStrip.Name = "_SystemToolStrip"
+        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._SystemToolStrip.TabIndex = 20
+        Me._SystemToolStrip.Text = "System Tools"
+        Me.TipsTooltip.SetToolTip(Me._SystemToolStrip, "System operations")
+        '
+        '_ResetSplitButton
+        '
+        Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
+        Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
+        Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ResetSplitButton.Name = "_ResetSplitButton"
+        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 22)
+        Me._ResetSplitButton.Text = "Reset"
+        Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
+        '
+        '_ClearInterfaceMenuItem
+        '
+        Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
+        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearInterfaceMenuItem.Text = "Clear Interface"
+        '
+        '_ClearDeviceMenuItem
+        '
+        Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
+        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
+        '
+        '_ResetKnownStateMenuItem
+        '
+        Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
+        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ResetKnownStateMenuItem.Text = "Reset to Known State (RST)"
+        '
+        '_InitKnownStateMenuItem
+        '
+        Me._InitKnownStateMenuItem.Name = "_InitKnownStateMenuItem"
+        Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._InitKnownStateMenuItem.Text = "Init to Known State"
+        '
+        '_ClearExecutionStateMenuItem
+        '
+        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
+        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
+        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
+        '
+        '_SessionTraceEnabledMenuItem
+        '
+        Me._SessionTraceEnabledMenuItem.CheckOnClick = True
+        Me._SessionTraceEnabledMenuItem.Name = "_SessionTraceEnabledMenuItem"
+        Me._SessionTraceEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._SessionTraceEnabledMenuItem.Text = "Trace Instrument Messages"
+        '
+        '_SessionServiceRequestHandlerEnabledMenuItem
+        '
+        Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
+        '
+        '_DeviceServiceRequestHandlerEnabledMenuItem
+        '
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
+        '
+        '_ReadTerminalStateButton
+        '
+        Me._ReadTerminalStateButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._ReadTerminalStateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ReadTerminalStateButton.Image = CType(resources.GetObject("_ReadTerminalStateButton.Image"), System.Drawing.Image)
+        Me._ReadTerminalStateButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ReadTerminalStateButton.Name = "_ReadTerminalStateButton"
+        Me._ReadTerminalStateButton.Size = New System.Drawing.Size(39, 22)
+        Me._ReadTerminalStateButton.Text = "Front"
+        Me._ReadTerminalStateButton.ToolTipText = "Reads terminal state"
         '
         '_ReadingToolStrip
         '
@@ -187,73 +275,6 @@ Partial Class K2000Panel
         Me._ReadingComboBox.Name = "_ReadingComboBox"
         Me._ReadingComboBox.Size = New System.Drawing.Size(121, 25)
         Me._ReadingComboBox.ToolTipText = "Select reading type"
-        '
-        '_SystemToolStrip
-        '
-        Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._TerminalStateLabel})
-        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 245)
-        Me._SystemToolStrip.Name = "_SystemToolStrip"
-        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 25)
-        Me._SystemToolStrip.TabIndex = 17
-        Me._SystemToolStrip.Text = "System Tools"
-        Me.TipsTooltip.SetToolTip(Me._SystemToolStrip, "System operations")
-        '
-        '_ResetSplitButton
-        '
-        Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._TraceInstrumentMessagesMenuItem, Me._HandleServiceRequestsMenuItem})
-        Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
-        Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._ResetSplitButton.Name = "_ResetSplitButton"
-        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 22)
-        Me._ResetSplitButton.Text = "Reset"
-        Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
-        '
-        '_ClearInterfaceMenuItem
-        '
-        Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
-        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._ClearInterfaceMenuItem.Text = "Clear Interface"
-        '
-        '_ClearDeviceMenuItem
-        '
-        Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
-        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
-        '
-        '_ResetKnownStateMenuItem
-        '
-        Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
-        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._ResetKnownStateMenuItem.Text = "Reset to Known State (RST)"
-        '
-        '_InitKnownStateMenuItem
-        '
-        Me._InitKnownStateMenuItem.Name = "_InitKnownStateMenuItem"
-        Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._InitKnownStateMenuItem.Text = "Init to Known State"
-        '
-        '_TraceInstrumentMessagesMenuItem
-        '
-        Me._TraceInstrumentMessagesMenuItem.CheckOnClick = True
-        Me._TraceInstrumentMessagesMenuItem.Name = "_TraceInstrumentMessagesMenuItem"
-        Me._TraceInstrumentMessagesMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._TraceInstrumentMessagesMenuItem.Text = "Trace Instrument Messages"
-        '
-        '_HandleServiceRequestsMenuItem
-        '
-        Me._HandleServiceRequestsMenuItem.CheckOnClick = True
-        Me._HandleServiceRequestsMenuItem.Name = "_HandleServiceRequestsMenuItem"
-        Me._HandleServiceRequestsMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._HandleServiceRequestsMenuItem.Text = "Handle Service Requests"
-        '
-        '_TerminalStateLabel
-        '
-        Me._TerminalStateLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
-        Me._TerminalStateLabel.Name = "_TerminalStateLabel"
-        Me._TerminalStateLabel.Size = New System.Drawing.Size(35, 22)
-        Me._TerminalStateLabel.Text = "Front"
         '
         '_SenseTabPage
         '
@@ -666,10 +687,10 @@ Partial Class K2000Panel
         Me._ReadingTabPage.ResumeLayout(False)
         Me._ReadingTabPage.PerformLayout()
         CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
-        Me._ReadingToolStrip.ResumeLayout(False)
-        Me._ReadingToolStrip.PerformLayout()
         Me._SystemToolStrip.ResumeLayout(False)
         Me._SystemToolStrip.PerformLayout()
+        Me._ReadingToolStrip.ResumeLayout(False)
+        Me._ReadingToolStrip.PerformLayout()
         Me._SenseTabPage.ResumeLayout(False)
         Me._SenseTabPage.PerformLayout()
         CType(Me._TriggerDelayNumeric, System.ComponentModel.ISupportInitialize).EndInit()
@@ -719,36 +740,38 @@ Partial Class K2000Panel
     Private WithEvents _Panel As System.Windows.Forms.Panel
     Private WithEvents _Layout As System.Windows.Forms.TableLayoutPanel
     Private WithEvents _TitleLabel As System.Windows.Forms.Label
-    Friend WithEvents _ReadWriteTabPage As Windows.Forms.TabPage
+    Private WithEvents _ReadWriteTabPage As Windows.Forms.TabPage
     Private WithEvents _SimpleReadWriteControl As Instrument.SimpleReadWriteControl
+    Private WithEvents _TriggerToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ApplyTriggerPlanButton As Windows.Forms.ToolStripButton
+    Private WithEvents _InitiateWaitReadButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ConfigureExternalScan As Windows.Forms.ToolStripButton
+    Private WithEvents _TriggerLayerToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _TriggerLayerToolStripLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ContinuousTriggerEnabledCheckBox As Core.Controls.ToolStripCheckBox
+    Private WithEvents _TriggerCountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _TriggerCountNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ReadingsDataGridView As Windows.Forms.DataGridView
+    Private WithEvents _ReadingToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ReadButton As Windows.Forms.ToolStripButton
+    Private WithEvents _InitiateButton As Windows.Forms.ToolStripButton
+    Private WithEvents _TraceButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ReadingsCountLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
+    Private WithEvents _ArmLayer1ToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ArmLayer1ToolStripLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ArmLayer1CountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ArmLayer1CountNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ArmLayer1SourceComboBox As Windows.Forms.ToolStripComboBox
     Private WithEvents _SystemToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ResetSplitButton As Windows.Forms.ToolStripSplitButton
     Private WithEvents _ClearInterfaceMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ResetKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _InitKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _TraceInstrumentMessagesMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _HandleServiceRequestsMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _TerminalStateLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _TriggerToolStrip As Windows.Forms.ToolStrip
-    Private WithEvents _ApplyTriggerPlanButton As Windows.Forms.ToolStripButton
-    Private WithEvents _InitiateWaitReadButton As Windows.Forms.ToolStripButton
-    Private WithEvents _ConfigureExternalScan As Windows.Forms.ToolStripButton
-    Friend WithEvents _TriggerLayerToolStrip As Windows.Forms.ToolStrip
-    Private WithEvents _TriggerLayerToolStripLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _ContinuousTriggerEnabledCheckBox As Core.Controls.ToolStripCheckBox
-    Friend WithEvents _TriggerCountNumericLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _TriggerCountNumeric As Core.Controls.ToolStripNumericUpDown
-    Private WithEvents _ReadingsDataGridView As Windows.Forms.DataGridView
-    Friend WithEvents _ReadingToolStrip As Windows.Forms.ToolStrip
-    Private WithEvents _ReadButton As Windows.Forms.ToolStripButton
-    Private WithEvents _InitiateButton As Windows.Forms.ToolStripButton
-    Private WithEvents _TraceButton As Windows.Forms.ToolStripButton
-    Private WithEvents _ReadingsCountLabel As Windows.Forms.ToolStripLabel
-    Friend WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
-    Private WithEvents _ArmLayer1ToolStrip As Windows.Forms.ToolStrip
-    Private WithEvents _ArmLayer1ToolStripLabel As Windows.Forms.ToolStripLabel
-    Friend WithEvents _ArmLayer1CountNumericLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _ArmLayer1CountNumeric As Core.Controls.ToolStripNumericUpDown
-    Private WithEvents _ArmLayer1SourceComboBox As Windows.Forms.ToolStripComboBox
+    Private WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionTraceEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ReadTerminalStateButton As Windows.Forms.ToolStripButton
 End Class

@@ -374,7 +374,7 @@ Partial Class T1750Panel
         Me._SessionTraceEnableCheckBox.Size = New System.Drawing.Size(186, 21)
         Me._SessionTraceEnableCheckBox.TabIndex = 4
         Me._SessionTraceEnableCheckBox.Text = "Trace Instrument Messages"
-        Me.TipsTooltip.SetToolTip(Me._SessionTraceEnableCheckBox, "Check to trace all instrument messages ")
+        Me.TipsTooltip.SetToolTip(Me._SessionTraceEnableCheckBox, "Check to trace all instrument messages")
         Me._SessionTraceEnableCheckBox.UseVisualStyleBackColor = True
         '
         '_MessagesTabPage
