@@ -352,9 +352,8 @@ Public Class ResourcePanelBase
     Private Sub _AssignDevice(ByVal value As VI.DeviceBase)
         Me._ReleaseDevice()
         Me._Device = value
-        Me._Device.CapturedSyncContext = Threading.SynchronizationContext.Current
         If value IsNot Nothing Then
-            'Me._Device.AddListeners(Me.talker.listeners)
+            Me.Device.CapturedSyncContext = Threading.SynchronizationContext.Current
             AddHandler Me.Device.PropertyChanged, AddressOf Me.DevicePropertyChanged
             AddHandler Me.Device.Opening, AddressOf Me.DeviceOpening
             AddHandler Me.Device.Opened, AddressOf Me.DeviceOpened

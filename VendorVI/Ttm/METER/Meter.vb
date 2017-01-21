@@ -38,6 +38,8 @@ Public Class Meter
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 Try
+                    Me.DisposeTalker()
+
                     If Me._MasterDevice Is Nothing Then
                         Me.OnClosing()
                     Else
@@ -1171,7 +1173,6 @@ Public Class Meter
         Me.Talker?.Listeners.Clear()
         Me._Talker = Nothing
     End Sub
-
 
     ''' <summary> Gets the trace message talker. </summary>
     ''' <value> The trace message talker. </value>

@@ -16,7 +16,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-
     <DefineConstants>Debug;NI_VISA=1</DefineConstants>
     <SuppressValidation>False</SuppressValidation>
     <SuppressIces>ICE30;ICE61</SuppressIces>

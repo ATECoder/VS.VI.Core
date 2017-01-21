@@ -1,3 +1,4 @@
+Imports isr.Core.Controls.DataGridViewExtensions
 ''' <summary> Defines a Trace Subsystem for a Keithley 2000 instrument. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -91,6 +92,44 @@ Public Class TraceSubsystem
         Dim values As String = MyBase.QueryData()
         Return Readings.ParseMulti(baseReading, values)
     End Function
+
+    ''' <summary> Displays the readings described by values. </summary>
+    ''' <remarks> David, 12/1/2016. </remarks>
+    ''' <param name="values"> The values. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Public Shared Sub DisplayReadings(ByVal grid As Windows.Forms.DataGridView, ByVal values As IEnumerable(Of Readings))
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
+        With grid
+            .DataSource = Nothing
+            .Columns.Clear()
+            .AutoGenerateColumns = False
+            .AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.LightGreen
+            .AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader
+            .BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+            .ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+            .AllowUserToResizeColumns = True
+            .EnableHeadersVisualStyles = True
+            .MultiSelect = False
+            .RowHeadersBorderStyle = Windows.Forms.DataGridViewHeaderBorderStyle.Raised
+            .DataSource = values
+            Dim displayIndex As Integer = 0
+            Dim column As New Windows.Forms.DataGridViewTextBoxColumn()
+            With column
+                .DataPropertyName = NameOf(Readings.RawReading)
+                .Name = NameOf(Readings.RawReading)
+                .Visible = True
+                .DisplayIndex = displayIndex
+                .HeaderText = "Reading"
+            End With
+            .Columns.Add(column)
+            displayIndex += 1
+            For Each c As Windows.Forms.DataGridViewColumn In .Columns
+                c.AutoSizeMode = Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader
+            Next
+            .ParseHeaderText()
+            .ScrollBars = Windows.Forms.ScrollBars.Both
+        End With
+    End Sub
 
 #End Region
 

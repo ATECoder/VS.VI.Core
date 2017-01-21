@@ -4,15 +4,15 @@
 	<Fragment>
 
         <!-- Assembly Assemblies -->
-    <ComponentGroup Id ='cg.MyAssemblyPrograms' Directory='EXEDIR' Source='$(var.isr.VI.OhmniNet.Tester.TargetDir)' >
+    <ComponentGroup Id ='cg.MyAssemblyPrograms' Directory='EXEDIR' Source='$(var.VI.OhmniNet.Tester.TargetDir)' >
             <!-- MyAssembly is the primary assembly for this product. -->
       <Component Id='cid.MyAssembly' Guid='*' >
                 <!-- Workaround version binding bug - create a short file id. -->
-        <File Id='fid.MyAssembly' Name='$(var.isr.VI.OhmniNet.Tester.TargetFileName)'
-                      Source='$(var.isr.VI.OhmniNet.Tester.TargetPath)' KeyPath='yes' DiskId='1'
+        <File Id='fid.MyAssembly' Name='$(var.VI.OhmniNet.Tester.TargetFileName)'
+                      Source='$(var.VI.OhmniNet.Tester.TargetPath)' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyApplication='fid.MyAssembly' AssemblyManifest='fid.MyAssembly' >
                     <Shortcut Id='scid.MyAssembly' Directory='ProductMenuDir' 
-                              Name='$(var.isr.VI.OhmniNet.Tester.TargetName)'
+                              Name='$(var.VI.OhmniNet.Tester.TargetName)'
                               Icon='Product.ico' Advertise='yes' Arguments='nop' />
                 </File>
       </Component>
@@ -70,12 +70,12 @@
       </Component>
     </ComponentGroup>
 
-    <ComponentGroup Id ='cg.MyAssemblyDocs' Directory='DocsDir' Source='$(var.isr.VI.OhmniNet.Tester.ProjectDir)My\' >
+    <ComponentGroup Id ='cg.MyAssemblyDocs' Directory='DocsDir' Source='$(var.VI.OhmniNet.Tester.ProjectDir)My\' >
       <Component Id='cid.MyAssembly.Readme' Guid='*' >
-                <File Name='$(var.isr.VI.OhmniNet.Tester.TargetName)Readme.rtf'
-                      Source='$(var.isr.VI.OhmniNet.Tester.ProjectDir)My\readme.rtf' KeyPath='yes' DiskId='1'>
+                <File Name='$(var.VI.OhmniNet.Tester.TargetName)Readme.rtf'
+                      Source='$(var.VI.OhmniNet.Tester.ProjectDir)My\readme.rtf' KeyPath='yes' DiskId='1'>
                     <Shortcut Id='scid.MyAssembly.Readme' Directory='ProductMenuDir'
-                              Name='$(var.isr.VI.OhmniNet.Tester.TargetName) Info' Advertise='yes' />
+                              Name='$(var.VI.OhmniNet.Tester.TargetName) Info' Advertise='yes' />
                 </File>
       </Component>
       <Component Id='cid.MyAssembly.LicenseNotice' Guid='*'>
@@ -84,7 +84,7 @@
       </Component>
             <!--
             
-                <File Name='$(var.isr.VI.OhmniNet.Tester.TargetName)Readme.rtf'
+                <File Name='$(var.VI.OhmniNet.Tester.TargetName)Readme.rtf'
             
       <Component Id='cid.MyAssembly.RevisionHistory' Guid='*'>
                 <File Name='isr.VI.OhmniNet.Tester.History.rtf' KeyPath='yes' DiskId='1' >
@@ -93,8 +93,8 @@
                 </File>
       </Component>
       <Component Id='cid.MyLibrary.RevisionHistory' Guid='*'>
-                <File Name='isr.VI.Core.Library.History.rtf' KeyPath='yes' DiskId='1' 
-                      Source='$(var.isr.VI.Library.ProjectDir)Docs\isr.VI.Library.History.rtf' />
+                <File Name='isr.isr.VI.Core.Library.History.rtf' KeyPath='yes' DiskId='1' 
+                      Source='$(var.VI.Library.ProjectDir)Docs\isr.VI.Library.History.rtf' />
       </Component>
       <Component Id='cid.MyAssembly.Guide' Guid='*'>
         <File Id='fid.MyAssembly.Guide' Name='Visa Core Tester Guide.html' KeyPath='yes' DiskId='1' >
@@ -110,7 +110,7 @@
     </ComponentGroup>
 
         <!-- VISA Assemblies -->
-    <ComponentGroup Id ='cg.VisaAssemblies' Directory='EXEDIR' Source='$(var.isr.VI.OhmniNet.Tester.TargetDir)' >
+    <ComponentGroup Id ='cg.VisaAssemblies' Directory='EXEDIR' Source='$(var.VI.OhmniNet.Tester.TargetDir)' >
       <Component Id='cid.Ivi.Visa.dll' Guid='*'>
                 <File Name='Ivi.Visa.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='Ivi.Visa.dll' AssemblyApplication='Ivi.Visa.dll' />
@@ -138,7 +138,7 @@
     </ComponentGroup>
 
         <!-- Exception Message Assembly -->
-    <ComponentGroup Id ='cg.ExceptionMessage' Directory='EXEDIR' Source='$(var.isr.VI.OhmniNet.Tester.TargetDir)' >
+    <ComponentGroup Id ='cg.ExceptionMessage' Directory='EXEDIR' Source='$(var.VI.OhmniNet.Tester.TargetDir)' >
       <Component Id='cid.Microsoft.ExceptionMessageBox.dll' Guid='*'>
                 <File Name='Microsoft.ExceptionMessageBox.dll' KeyPath='yes' DiskId='1'
                       Assembly='.net' AssemblyManifest='Microsoft.ExceptionMessageBox.dll' AssemblyApplication='Microsoft.ExceptionMessageBox.dll' />

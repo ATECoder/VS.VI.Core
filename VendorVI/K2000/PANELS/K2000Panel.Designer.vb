@@ -24,12 +24,15 @@ Partial Class K2000Panel
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
+        Me._ServiceRequestEnableBitmaskNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._ReadingToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ReadButton = New System.Windows.Forms.ToolStripButton()
         Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
         Me._TraceButton = New System.Windows.Forms.ToolStripButton()
         Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
+        Me._AbortButton = New System.Windows.Forms.ToolStripButton()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
         Me._TriggerDelayNumeric = New System.Windows.Forms.NumericUpDown()
         Me._SenseRangeNumeric = New System.Windows.Forms.NumericUpDown()
@@ -68,6 +71,7 @@ Partial Class K2000Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -136,17 +140,17 @@ Partial Class K2000Panel
         Me._ReadingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
         Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 25)
         Me._ReadingsDataGridView.Name = "_ReadingsDataGridView"
-        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 220)
+        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 217)
         Me._ReadingsDataGridView.TabIndex = 19
         Me.TipsTooltip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
         '
         '_SystemToolStrip
         '
         Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton})
-        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 245)
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableBitmaskNumericLabel, Me._ServiceRequestEnableBitmaskNumeric})
+        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 242)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
-        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 28)
         Me._SystemToolStrip.TabIndex = 20
         Me._SystemToolStrip.Text = "System Tools"
         Me.TipsTooltip.SetToolTip(Me._SystemToolStrip, "System operations")
@@ -158,7 +162,7 @@ Partial Class K2000Panel
         Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
         Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetSplitButton.Name = "_ResetSplitButton"
-        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 22)
+        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 25)
         Me._ResetSplitButton.Text = "Reset"
         Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
         '
@@ -222,13 +226,27 @@ Partial Class K2000Panel
         Me._ReadTerminalStateButton.Image = CType(resources.GetObject("_ReadTerminalStateButton.Image"), System.Drawing.Image)
         Me._ReadTerminalStateButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ReadTerminalStateButton.Name = "_ReadTerminalStateButton"
-        Me._ReadTerminalStateButton.Size = New System.Drawing.Size(39, 22)
+        Me._ReadTerminalStateButton.Size = New System.Drawing.Size(39, 25)
         Me._ReadTerminalStateButton.Text = "Front"
         Me._ReadTerminalStateButton.ToolTipText = "Reads terminal state"
         '
+        '_ServiceRequestEnableBitmaskNumericLabel
+        '
+        Me._ServiceRequestEnableBitmaskNumericLabel.Name = "_ServiceRequestEnableBitmaskNumericLabel"
+        Me._ServiceRequestEnableBitmaskNumericLabel.Size = New System.Drawing.Size(29, 25)
+        Me._ServiceRequestEnableBitmaskNumericLabel.Text = "SRE:"
+        '
+        '_ServiceRequestEnableBitmaskNumeric
+        '
+        Me._ServiceRequestEnableBitmaskNumeric.Name = "_ServiceRequestEnableBitmaskNumeric"
+        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ServiceRequestEnableBitmaskNumeric.Text = "99"
+        Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enabled value"
+        Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {99, 0, 0, 0})
+        '
         '_ReadingToolStrip
         '
-        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._TraceButton, Me._ReadingsCountLabel, Me._ReadingComboBox})
+        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._TraceButton, Me._ReadingsCountLabel, Me._ReadingComboBox, Me._AbortButton, Me._ClearBufferDisplayButton})
         Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingToolStrip.Name = "_ReadingToolStrip"
         Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
@@ -262,19 +280,30 @@ Partial Class K2000Panel
         Me._TraceButton.Name = "_TraceButton"
         Me._TraceButton.Size = New System.Drawing.Size(39, 22)
         Me._TraceButton.Text = "Trace"
-        Me._TraceButton.ToolTipText = "Read buffer"
+        Me._TraceButton.ToolTipText = "Reads the buffer"
         '
         '_ReadingsCountLabel
         '
         Me._ReadingsCountLabel.Name = "_ReadingsCountLabel"
         Me._ReadingsCountLabel.Size = New System.Drawing.Size(13, 22)
         Me._ReadingsCountLabel.Text = "0"
+        Me._ReadingsCountLabel.ToolTipText = "Buffer count"
         '
         '_ReadingComboBox
         '
         Me._ReadingComboBox.Name = "_ReadingComboBox"
         Me._ReadingComboBox.Size = New System.Drawing.Size(121, 25)
         Me._ReadingComboBox.ToolTipText = "Select reading type"
+        '
+        '_AbortButton
+        '
+        Me._AbortButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._AbortButton.Image = CType(resources.GetObject("_AbortButton.Image"), System.Drawing.Image)
+        Me._AbortButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._AbortButton.Name = "_AbortButton"
+        Me._AbortButton.Size = New System.Drawing.Size(41, 22)
+        Me._AbortButton.Text = "Abort"
+        Me._AbortButton.ToolTipText = "Aborts active trigger"
         '
         '_SenseTabPage
         '
@@ -675,6 +704,17 @@ Partial Class K2000Panel
         Me._TitleLabel.Text = "K2000"
         Me._TitleLabel.UseMnemonic = False
         '
+        '_ClearBufferDisplayButton
+        '
+        Me._ClearBufferDisplayButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ClearBufferDisplayButton.Font = New System.Drawing.Font("Wingdings", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(2, Byte))
+        Me._ClearBufferDisplayButton.Image = CType(resources.GetObject("_ClearBufferDisplayButton.Image"), System.Drawing.Image)
+        Me._ClearBufferDisplayButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ClearBufferDisplayButton.Name = "_ClearBufferDisplayButton"
+        Me._ClearBufferDisplayButton.Size = New System.Drawing.Size(25, 22)
+        Me._ClearBufferDisplayButton.Text = """"
+        Me._ClearBufferDisplayButton.ToolTipText = "Clears the grid"
+        '
         'K2000Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -774,4 +814,8 @@ Partial Class K2000Panel
     Private WithEvents _SessionServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ReadTerminalStateButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ServiceRequestEnableBitmaskNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ServiceRequestEnableBitmaskNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
 End Class

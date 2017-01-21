@@ -95,6 +95,28 @@ Public Class TraceSubsystem
         Return bd.ToArray
     End Function
 
+    ''' <summary> Displays a buffer readings. </summary>
+    ''' <remarks> David, 1/20/2017. </remarks>
+    ''' <param name="grid">   The grid. </param>
+    ''' <param name="values"> The values. </param>
+    Public Shared Sub DisplayBufferReadings(ByVal grid As Windows.Forms.DataGridView, ByVal values As IEnumerable(Of BufferReading))
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
+        With grid
+            .DataSource = Nothing
+            .Columns.Clear()
+            .Invalidate()
+            .DataSource = values
+            For Each col As Windows.Forms.DataGridViewColumn In .Columns
+                If String.Equals(col.Name, NameOf(BufferReading.ElementCount)) Then
+                    col.Visible = False
+                Else
+                    col.HeaderText = isr.Core.Pith.SplitExtensions.SplitWords(col.Name)
+                End If
+            Next
+            .ScrollBars = Windows.Forms.ScrollBars.Both
+        End With
+    End Sub
+
 #End Region
 
 End Class

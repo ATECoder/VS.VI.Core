@@ -144,6 +144,26 @@ Public MustInherit Class FormatSubsystemBase
         Return Me.Elements
     End Function
 
+    ''' <summary> List elements. </summary>
+    ''' <remarks> David, 7/8/2016. </remarks>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    ''' <param name="excluded">    The excluded. </param>
+    Public Sub ListElements(ByVal listControl As Windows.Forms.ComboBox, ByVal excluded As ReadingTypes)
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        Dim selectedIndex As Integer = listControl.SelectedIndex
+        With listControl
+            .DataSource = Nothing
+            .Items.Clear()
+            .DataSource = GetType(ReadingTypes).ValueDescriptionPairs(Me.Elements And Not excluded)
+            .DisplayMember = "Value"
+            .ValueMember = "Key"
+            If .Items.Count > 0 Then
+                .SelectedIndex = Math.Max(selectedIndex, 0)
+            End If
+        End With
+    End Sub
+
 #End Region
 
 End Class

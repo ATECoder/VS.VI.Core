@@ -10,6 +10,7 @@ Partial Class T1750Panel
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(T1750Panel))
         Me._Tabs = New System.Windows.Forms.TabControl()
         Me._ReadingTabPage = New System.Windows.Forms.TabPage()
         Me._measureSettingsLabel = New System.Windows.Forms.Label()
@@ -28,13 +29,8 @@ Partial Class T1750Panel
         Me._TriggerComboBoxLabel = New System.Windows.Forms.Label()
         Me._ConfigureButton = New System.Windows.Forms.Button()
         Me._RangeComboBoxLabel = New System.Windows.Forms.Label()
-        Me._ResetTabPage = New System.Windows.Forms.TabPage()
-        Me._ResetLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._InitializeKnownStateButton = New System.Windows.Forms.Button()
-        Me._InterfaceClearButton = New System.Windows.Forms.Button()
-        Me._ResetButton = New System.Windows.Forms.Button()
-        Me._SelectiveDeviceClearButton = New System.Windows.Forms.Button()
-        Me._SessionTraceEnableCheckBox = New System.Windows.Forms.CheckBox()
+        Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
+        Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
         Me._LastErrorTextBox = New System.Windows.Forms.TextBox()
         Me._ReadingStatusStrip = New System.Windows.Forms.StatusStrip()
@@ -44,21 +40,31 @@ Partial Class T1750Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
-        Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
+        Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
+        Me._ServiceRequestEnableNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ServiceRequestEnableNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
         CType(Me._PostReadingDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._ConfigureTabPage.SuspendLayout()
         Me._ConfigureGroupBox.SuspendLayout()
-        Me._ResetTabPage.SuspendLayout()
-        Me._ResetLayout.SuspendLayout()
+        Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
-        Me._ReadWriteTabPage.SuspendLayout()
+        Me._SystemToolStrip.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -78,7 +84,6 @@ Partial Class T1750Panel
         '
         Me._Tabs.Controls.Add(Me._ReadingTabPage)
         Me._Tabs.Controls.Add(Me._ConfigureTabPage)
-        Me._Tabs.Controls.Add(Me._ResetTabPage)
         Me._Tabs.Controls.Add(Me._ReadWriteTabPage)
         Me._Tabs.Controls.Add(Me._MessagesTabPage)
         Me._Tabs.Dock = System.Windows.Forms.DockStyle.Fill
@@ -92,6 +97,7 @@ Partial Class T1750Panel
         '
         '_ReadingTabPage
         '
+        Me._ReadingTabPage.Controls.Add(Me._SystemToolStrip)
         Me._ReadingTabPage.Controls.Add(Me._measureSettingsLabel)
         Me._ReadingTabPage.Controls.Add(Me._MeasureButton)
         Me._ReadingTabPage.Controls.Add(Me._PostReadingDelayNumericLabel)
@@ -281,101 +287,26 @@ Partial Class T1750Panel
         Me._RangeComboBoxLabel.Text = "Range: "
         Me._RangeComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
-        '_ResetTabPage
+        '_ReadWriteTabPage
         '
-        Me._ResetTabPage.Controls.Add(Me._ResetLayout)
-        Me._ResetTabPage.Location = New System.Drawing.Point(4, 26)
-        Me._ResetTabPage.Name = "_ResetTabPage"
-        Me._ResetTabPage.Size = New System.Drawing.Size(356, 286)
-        Me._ResetTabPage.TabIndex = 2
-        Me._ResetTabPage.Text = " Reset"
-        Me._ResetTabPage.UseVisualStyleBackColor = True
+        Me._ReadWriteTabPage.Controls.Add(Me._SimpleReadWriteControl)
+        Me._ReadWriteTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._ReadWriteTabPage.Name = "_ReadWriteTabPage"
+        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 286)
+        Me._ReadWriteTabPage.TabIndex = 5
+        Me._ReadWriteTabPage.Text = "R/W"
+        Me._ReadWriteTabPage.UseVisualStyleBackColor = True
         '
-        '_ResetLayout
+        '_SimpleReadWriteControl
         '
-        Me._ResetLayout.ColumnCount = 3
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._ResetLayout.Controls.Add(Me._InitializeKnownStateButton, 1, 7)
-        Me._ResetLayout.Controls.Add(Me._InterfaceClearButton, 1, 1)
-        Me._ResetLayout.Controls.Add(Me._ResetButton, 1, 5)
-        Me._ResetLayout.Controls.Add(Me._SelectiveDeviceClearButton, 1, 3)
-        Me._ResetLayout.Controls.Add(Me._SessionTraceEnableCheckBox, 1, 9)
-        Me._ResetLayout.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._ResetLayout.Location = New System.Drawing.Point(0, 0)
-        Me._ResetLayout.Name = "_ResetLayout"
-        Me._ResetLayout.RowCount = 11
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.Size = New System.Drawing.Size(356, 286)
-        Me._ResetLayout.TabIndex = 4
-        '
-        '_InitializeKnownStateButton
-        '
-        Me._InitializeKnownStateButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InitializeKnownStateButton.Location = New System.Drawing.Point(84, 187)
-        Me._InitializeKnownStateButton.Name = "_InitializeKnownStateButton"
-        Me._InitializeKnownStateButton.Size = New System.Drawing.Size(182, 30)
-        Me._InitializeKnownStateButton.TabIndex = 3
-        Me._InitializeKnownStateButton.Text = "Initialize to Known State"
-        Me.TipsTooltip.SetToolTip(Me._InitializeKnownStateButton, "Reset and Initialize Response Modes")
-        Me._InitializeKnownStateButton.UseVisualStyleBackColor = True
-        '
-        '_InterfaceClearButton
-        '
-        Me._InterfaceClearButton.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._InterfaceClearButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InterfaceClearButton.Location = New System.Drawing.Point(84, 22)
-        Me._InterfaceClearButton.Name = "_InterfaceClearButton"
-        Me._InterfaceClearButton.Size = New System.Drawing.Size(187, 30)
-        Me._InterfaceClearButton.TabIndex = 0
-        Me._InterfaceClearButton.Text = "&Clear Interface"
-        Me._InterfaceClearButton.UseVisualStyleBackColor = True
-        '
-        '_ResetButton
-        '
-        Me._ResetButton.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ResetButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ResetButton.Location = New System.Drawing.Point(84, 132)
-        Me._ResetButton.Name = "_ResetButton"
-        Me._ResetButton.Size = New System.Drawing.Size(187, 30)
-        Me._ResetButton.TabIndex = 2
-        Me._ResetButton.Text = "&Reset to Known State"
-        Me._ResetButton.UseVisualStyleBackColor = True
-        '
-        '_SelectiveDeviceClearButton
-        '
-        Me._SelectiveDeviceClearButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._SelectiveDeviceClearButton.Location = New System.Drawing.Point(84, 77)
-        Me._SelectiveDeviceClearButton.Name = "_SelectiveDeviceClearButton"
-        Me._SelectiveDeviceClearButton.Size = New System.Drawing.Size(182, 30)
-        Me._SelectiveDeviceClearButton.TabIndex = 1
-        Me._SelectiveDeviceClearButton.Text = "Clear Device (SDC)"
-        Me.TipsTooltip.SetToolTip(Me._SelectiveDeviceClearButton, "Issues Selective Device Clear.")
-        Me._SelectiveDeviceClearButton.UseVisualStyleBackColor = True
-        '
-        '_SessionTraceEnableCheckBox
-        '
-        Me._SessionTraceEnableCheckBox.AutoSize = True
-        Me._SessionTraceEnableCheckBox.Location = New System.Drawing.Point(84, 242)
-        Me._SessionTraceEnableCheckBox.Name = "_SessionTraceEnableCheckBox"
-        Me._SessionTraceEnableCheckBox.Size = New System.Drawing.Size(186, 21)
-        Me._SessionTraceEnableCheckBox.TabIndex = 4
-        Me._SessionTraceEnableCheckBox.Text = "Trace Instrument Messages"
-        Me.TipsTooltip.SetToolTip(Me._SessionTraceEnableCheckBox, "Check to trace all instrument messages")
-        Me._SessionTraceEnableCheckBox.UseVisualStyleBackColor = True
+        Me._SimpleReadWriteControl.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._SimpleReadWriteControl.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._SimpleReadWriteControl.Location = New System.Drawing.Point(0, 0)
+        Me._SimpleReadWriteControl.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me._SimpleReadWriteControl.Name = "_SimpleReadWriteControl"
+        Me._SimpleReadWriteControl.ReadEnabled = False
+        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 286)
+        Me._SimpleReadWriteControl.TabIndex = 0
         '
         '_MessagesTabPage
         '
@@ -474,7 +405,6 @@ Partial Class T1750Panel
         '
         '_TitleLabel
         '
-        Me._TitleLabel.AutoSize = False
         Me._TitleLabel.BackColor = System.Drawing.Color.Black
         Me._TitleLabel.CausesValidation = False
         Me._TitleLabel.Dock = System.Windows.Forms.DockStyle.Top
@@ -488,26 +418,106 @@ Partial Class T1750Panel
         Me._TitleLabel.Text = "T1750"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_ReadWriteTabPage
+        '_SystemToolStrip
         '
-        Me._ReadWriteTabPage.Controls.Add(Me._SimpleReadWriteControl)
-        Me._ReadWriteTabPage.Location = New System.Drawing.Point(4, 26)
-        Me._ReadWriteTabPage.Name = "_ReadWriteTabPage"
-        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 286)
-        Me._ReadWriteTabPage.TabIndex = 5
-        Me._ReadWriteTabPage.Text = "R/W"
-        Me._ReadWriteTabPage.UseVisualStyleBackColor = True
+        Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableNumericLabel, Me._ServiceRequestEnableNumeric})
+        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 258)
+        Me._SystemToolStrip.Name = "_SystemToolStrip"
+        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 28)
+        Me._SystemToolStrip.TabIndex = 21
+        Me._SystemToolStrip.Text = "System Tools"
+        Me.TipsTooltip.SetToolTip(Me._SystemToolStrip, "System operations")
         '
-        '_SimpleReadWriteControl
+        '_ResetSplitButton
         '
-        Me._SimpleReadWriteControl.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._SimpleReadWriteControl.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SimpleReadWriteControl.Location = New System.Drawing.Point(0, 0)
-        Me._SimpleReadWriteControl.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me._SimpleReadWriteControl.MultipleSyncContextsExpected = False
-        Me._SimpleReadWriteControl.Name = "_SimpleReadWriteControl"
-        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 286)
-        Me._SimpleReadWriteControl.TabIndex = 0
+        Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
+        Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
+        Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ResetSplitButton.Name = "_ResetSplitButton"
+        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 25)
+        Me._ResetSplitButton.Text = "Reset"
+        Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
+        '
+        '_ClearInterfaceMenuItem
+        '
+        Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
+        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearInterfaceMenuItem.Text = "Clear Interface"
+        '
+        '_ClearDeviceMenuItem
+        '
+        Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
+        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
+        '
+        '_ResetKnownStateMenuItem
+        '
+        Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
+        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ResetKnownStateMenuItem.Text = "Reset to Known State (RST)"
+        '
+        '_InitKnownStateMenuItem
+        '
+        Me._InitKnownStateMenuItem.Name = "_InitKnownStateMenuItem"
+        Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._InitKnownStateMenuItem.Text = "Init to Known State"
+        '
+        '_ClearExecutionStateMenuItem
+        '
+        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
+        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
+        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
+        '
+        '_SessionTraceEnabledMenuItem
+        '
+        Me._SessionTraceEnabledMenuItem.CheckOnClick = True
+        Me._SessionTraceEnabledMenuItem.Name = "_SessionTraceEnabledMenuItem"
+        Me._SessionTraceEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._SessionTraceEnabledMenuItem.Text = "Trace Instrument Messages"
+        '
+        '_SessionServiceRequestHandlerEnabledMenuItem
+        '
+        Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
+        '
+        '_DeviceServiceRequestHandlerEnabledMenuItem
+        '
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
+        '
+        '_ReadTerminalStateButton
+        '
+        Me._ReadTerminalStateButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._ReadTerminalStateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ReadTerminalStateButton.Image = CType(resources.GetObject("_ReadTerminalStateButton.Image"), System.Drawing.Image)
+        Me._ReadTerminalStateButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ReadTerminalStateButton.Name = "_ReadTerminalStateButton"
+        Me._ReadTerminalStateButton.Size = New System.Drawing.Size(39, 23)
+        Me._ReadTerminalStateButton.Text = "Front"
+        Me._ReadTerminalStateButton.ToolTipText = "Reads terminal state"
+        Me._ReadTerminalStateButton.Visible = False
+        '
+        '_ServiceRequestEnableNumericLabel
+        '
+        Me._ServiceRequestEnableNumericLabel.Name = "_ServiceRequestEnableNumericLabel"
+        Me._ServiceRequestEnableNumericLabel.Size = New System.Drawing.Size(29, 25)
+        Me._ServiceRequestEnableNumericLabel.Text = "SRE:"
+        '
+        '_ServiceRequestEnableNumeric
+        '
+        Me._ServiceRequestEnableNumeric.Name = "_ServiceRequestEnableNumeric"
+        Me._ServiceRequestEnableNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ServiceRequestEnableNumeric.Text = "99"
+        Me._ServiceRequestEnableNumeric.ToolTipText = "Service request enabled value"
+        Me._ServiceRequestEnableNumeric.Value = New Decimal(New Integer() {99, 0, 0, 0})
         '
         'T1750Panel
         '
@@ -524,9 +534,7 @@ Partial Class T1750Panel
         Me._ConfigureTabPage.ResumeLayout(False)
         Me._ConfigureGroupBox.ResumeLayout(False)
         Me._ConfigureGroupBox.PerformLayout()
-        Me._ResetTabPage.ResumeLayout(False)
-        Me._ResetLayout.ResumeLayout(False)
-        Me._ResetLayout.PerformLayout()
+        Me._ReadWriteTabPage.ResumeLayout(False)
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
         Me._ReadingStatusStrip.ResumeLayout(False)
@@ -534,8 +542,8 @@ Partial Class T1750Panel
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
-        Me._Layout.PerformLayout()
-        Me._ReadWriteTabPage.ResumeLayout(False)
+        Me._SystemToolStrip.ResumeLayout(False)
+        Me._SystemToolStrip.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -543,18 +551,11 @@ Partial Class T1750Panel
     Private WithEvents _ReadingTabPage As System.Windows.Forms.TabPage
     Private WithEvents _ReadButton As System.Windows.Forms.Button
     Private WithEvents _ReadSRQButton As System.Windows.Forms.Button
-    Private WithEvents _ResetTabPage As System.Windows.Forms.TabPage
     Private WithEvents _MessagesTabPage As System.Windows.Forms.TabPage
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _CommandComboBox As System.Windows.Forms.ComboBox
     Private WithEvents _WriteButton As System.Windows.Forms.Button
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _ResetLayout As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _InitializeKnownStateButton As System.Windows.Forms.Button
-    Private WithEvents _InterfaceClearButton As System.Windows.Forms.Button
-    Private WithEvents _ResetButton As System.Windows.Forms.Button
-    Private WithEvents _SelectiveDeviceClearButton As System.Windows.Forms.Button
-    Private WithEvents _SessionTraceEnableCheckBox As System.Windows.Forms.CheckBox
     Private WithEvents _PostReadingDelayNumericLabel As System.Windows.Forms.Label
     Private WithEvents _PostReadingDelayNumeric As System.Windows.Forms.NumericUpDown
     Private WithEvents _ReadContinuouslyCheckBox As System.Windows.Forms.CheckBox
@@ -576,4 +577,17 @@ Partial Class T1750Panel
     Private WithEvents _TitleLabel As System.Windows.Forms.Label
     Private WithEvents _ReadWriteTabPage As Windows.Forms.TabPage
     Private WithEvents _SimpleReadWriteControl As Instrument.SimpleReadWriteControl
+    Private WithEvents _SystemToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ResetSplitButton As Windows.Forms.ToolStripSplitButton
+    Private WithEvents _ClearInterfaceMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ResetKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _InitKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionTraceEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ReadTerminalStateButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ServiceRequestEnableNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ServiceRequestEnableNumeric As Core.Controls.ToolStripNumericUpDown
 End Class

@@ -18,7 +18,6 @@ Partial Class ThermostreamPanel
         Me._ReceiveTextBox = New System.Windows.Forms.TextBox()
         Me._ReceiveButton = New System.Windows.Forms.Button()
         Me._SendButton = New System.Windows.Forms.Button()
-        Me._ServiceRequestsLabel = New System.Windows.Forms.Label()
         Me._StatusByteLabel = New System.Windows.Forms.Label()
         Me._ReadStatusByteButton = New System.Windows.Forms.Button()
         Me._ClearErrorQueueButton = New System.Windows.Forms.Button()
@@ -67,13 +66,6 @@ Partial Class ThermostreamPanel
         Me._DeviceThermalConstantSelectorLabel = New System.Windows.Forms.Label()
         Me._DeviceSensorTypeSelector = New isr.Core.Controls.SelectorComboBox()
         Me._DeviceThermalConstantSelector = New isr.Core.Controls.SelectorNumeric()
-        Me._ResetTabPage = New System.Windows.Forms.TabPage()
-        Me._ResetLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._InitializeKnownStateButton = New System.Windows.Forms.Button()
-        Me._InterfaceClearButton = New System.Windows.Forms.Button()
-        Me._ResetButton = New System.Windows.Forms.Button()
-        Me._SelectiveDeviceClearButton = New System.Windows.Forms.Button()
-        Me._SessionTraceEnableCheckBox = New System.Windows.Forms.CheckBox()
         Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
         Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
@@ -86,6 +78,20 @@ Partial Class ThermostreamPanel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._ServiceRequestValuesTextBox = New System.Windows.Forms.TextBox()
+        Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
+        Me._ServiceRequestEnableNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ServiceRequestEnableNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -97,13 +103,12 @@ Partial Class ThermostreamPanel
         Me._OperatorTabPage.SuspendLayout()
         CType(Me._ResetQueryDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._SensorTabPage.SuspendLayout()
-        Me._ResetTabPage.SuspendLayout()
-        Me._ResetLayout.SuspendLayout()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
+        Me._SystemToolStrip.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -125,7 +130,6 @@ Partial Class ThermostreamPanel
         Me._Tabs.Controls.Add(Me._ReadingTabPage)
         Me._Tabs.Controls.Add(Me._FunctionTabPage)
         Me._Tabs.Controls.Add(Me._SensorTabPage)
-        Me._Tabs.Controls.Add(Me._ResetTabPage)
         Me._Tabs.Controls.Add(Me._ReadWriteTabPage)
         Me._Tabs.Controls.Add(Me._MessagesTabPage)
         Me._Tabs.Dock = System.Windows.Forms.DockStyle.Fill
@@ -138,13 +142,14 @@ Partial Class ThermostreamPanel
         '
         '_ReadingTabPage
         '
+        Me._ReadingTabPage.Controls.Add(Me._SystemToolStrip)
+        Me._ReadingTabPage.Controls.Add(Me._ServiceRequestValuesTextBox)
         Me._ReadingTabPage.Controls.Add(Me._SrqRefratoryTimeNumericLabel)
         Me._ReadingTabPage.Controls.Add(Me._SrqRefratoryTimeNumeric)
         Me._ReadingTabPage.Controls.Add(Me._SendComboBox)
         Me._ReadingTabPage.Controls.Add(Me._ReceiveTextBox)
         Me._ReadingTabPage.Controls.Add(Me._ReceiveButton)
         Me._ReadingTabPage.Controls.Add(Me._SendButton)
-        Me._ReadingTabPage.Controls.Add(Me._ServiceRequestsLabel)
         Me._ReadingTabPage.Controls.Add(Me._StatusByteLabel)
         Me._ReadingTabPage.Controls.Add(Me._ReadStatusByteButton)
         Me._ReadingTabPage.Controls.Add(Me._ClearErrorQueueButton)
@@ -161,7 +166,7 @@ Partial Class ThermostreamPanel
         '_SrqRefratoryTimeNumericLabel
         '
         Me._SrqRefratoryTimeNumericLabel.AutoSize = True
-        Me._SrqRefratoryTimeNumericLabel.Location = New System.Drawing.Point(227, 118)
+        Me._SrqRefratoryTimeNumericLabel.Location = New System.Drawing.Point(227, 82)
         Me._SrqRefratoryTimeNumericLabel.Name = "_SrqRefratoryTimeNumericLabel"
         Me._SrqRefratoryTimeNumericLabel.Size = New System.Drawing.Size(72, 17)
         Me._SrqRefratoryTimeNumericLabel.TabIndex = 12
@@ -170,7 +175,7 @@ Partial Class ThermostreamPanel
         '_SrqRefratoryTimeNumeric
         '
         Me._SrqRefratoryTimeNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SrqRefratoryTimeNumeric.Location = New System.Drawing.Point(302, 114)
+        Me._SrqRefratoryTimeNumeric.Location = New System.Drawing.Point(302, 78)
         Me._SrqRefratoryTimeNumeric.Name = "_SrqRefratoryTimeNumeric"
         Me._SrqRefratoryTimeNumeric.NullValue = New Decimal(New Integer() {5, 0, 0, 0})
         Me._SrqRefratoryTimeNumeric.ReadOnlyBackColor = System.Drawing.SystemColors.Control
@@ -186,7 +191,7 @@ Partial Class ThermostreamPanel
         '
         Me._SendComboBox.FormattingEnabled = True
         Me._SendComboBox.Items.AddRange(New Object() {"*CLS ", "*ESE 255", "*ESE?", "*ESR?", "*IDN? ", "*RST ", "*SRE 255", "*SRE?", "EROR?", "FLWR?", "FLRL?", "HEAD?", "LLIM?", "NEXT", "RAMP?", "SETD?", "TEMP?"})
-        Me._SendComboBox.Location = New System.Drawing.Point(74, 183)
+        Me._SendComboBox.Location = New System.Drawing.Point(74, 147)
         Me._SendComboBox.Name = "_SendComboBox"
         Me._SendComboBox.Size = New System.Drawing.Size(273, 25)
         Me._SendComboBox.TabIndex = 10
@@ -194,7 +199,7 @@ Partial Class ThermostreamPanel
         '
         '_ReceiveTextBox
         '
-        Me._ReceiveTextBox.Location = New System.Drawing.Point(74, 216)
+        Me._ReceiveTextBox.Location = New System.Drawing.Point(74, 180)
         Me._ReceiveTextBox.Multiline = True
         Me._ReceiveTextBox.Name = "_ReceiveTextBox"
         Me._ReceiveTextBox.ReadOnly = True
@@ -205,7 +210,7 @@ Partial Class ThermostreamPanel
         '_ReceiveButton
         '
         Me._ReceiveButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ReceiveButton.Location = New System.Drawing.Point(12, 215)
+        Me._ReceiveButton.Location = New System.Drawing.Point(12, 179)
         Me._ReceiveButton.Name = "_ReceiveButton"
         Me._ReceiveButton.Size = New System.Drawing.Size(56, 30)
         Me._ReceiveButton.TabIndex = 7
@@ -216,7 +221,7 @@ Partial Class ThermostreamPanel
         '_SendButton
         '
         Me._SendButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SendButton.Location = New System.Drawing.Point(12, 180)
+        Me._SendButton.Location = New System.Drawing.Point(12, 144)
         Me._SendButton.Name = "_SendButton"
         Me._SendButton.Size = New System.Drawing.Size(56, 30)
         Me._SendButton.TabIndex = 6
@@ -224,21 +229,11 @@ Partial Class ThermostreamPanel
         Me.TipsTooltip.SetToolTip(Me._SendButton, "Click to send")
         Me._SendButton.UseVisualStyleBackColor = True
         '
-        '_ServiceRequestsLabel
-        '
-        Me._ServiceRequestsLabel.Font = New System.Drawing.Font("Consolas", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ServiceRequestsLabel.Location = New System.Drawing.Point(154, 3)
-        Me._ServiceRequestsLabel.Name = "_ServiceRequestsLabel"
-        Me._ServiceRequestsLabel.Size = New System.Drawing.Size(192, 110)
-        Me._ServiceRequestsLabel.TabIndex = 5
-        Me._ServiceRequestsLabel.Text = "bit  Value" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  2  Device Specific Error" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  3  Temperature Event" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  4  Message Avai" &
-    "lable" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  5  Standard Event Status" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  6  Master Summery Status" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  7  Ready"
-        '
         '_StatusByteLabel
         '
         Me._StatusByteLabel.AutoSize = True
         Me._StatusByteLabel.Font = New System.Drawing.Font("Consolas", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._StatusByteLabel.Location = New System.Drawing.Point(150, 119)
+        Me._StatusByteLabel.Location = New System.Drawing.Point(150, 83)
         Me._StatusByteLabel.Name = "_StatusByteLabel"
         Me._StatusByteLabel.Size = New System.Drawing.Size(63, 15)
         Me._StatusByteLabel.TabIndex = 4
@@ -247,7 +242,7 @@ Partial Class ThermostreamPanel
         '_ReadStatusByteButton
         '
         Me._ReadStatusByteButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ReadStatusByteButton.Location = New System.Drawing.Point(12, 111)
+        Me._ReadStatusByteButton.Location = New System.Drawing.Point(12, 75)
         Me._ReadStatusByteButton.Name = "_ReadStatusByteButton"
         Me._ReadStatusByteButton.Size = New System.Drawing.Size(135, 30)
         Me._ReadStatusByteButton.TabIndex = 3
@@ -258,7 +253,7 @@ Partial Class ThermostreamPanel
         '_ClearErrorQueueButton
         '
         Me._ClearErrorQueueButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ClearErrorQueueButton.Location = New System.Drawing.Point(180, 146)
+        Me._ClearErrorQueueButton.Location = New System.Drawing.Point(180, 110)
         Me._ClearErrorQueueButton.Name = "_ClearErrorQueueButton"
         Me._ClearErrorQueueButton.Size = New System.Drawing.Size(147, 30)
         Me._ClearErrorQueueButton.TabIndex = 2
@@ -268,7 +263,7 @@ Partial Class ThermostreamPanel
         '_ReadLastErrorButton
         '
         Me._ReadLastErrorButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ReadLastErrorButton.Location = New System.Drawing.Point(12, 146)
+        Me._ReadLastErrorButton.Location = New System.Drawing.Point(12, 110)
         Me._ReadLastErrorButton.Name = "_ReadLastErrorButton"
         Me._ReadLastErrorButton.Size = New System.Drawing.Size(162, 30)
         Me._ReadLastErrorButton.TabIndex = 2
@@ -278,7 +273,7 @@ Partial Class ThermostreamPanel
         '_ReadButton
         '
         Me._ReadButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ReadButton.Location = New System.Drawing.Point(12, 15)
+        Me._ReadButton.Location = New System.Drawing.Point(12, 6)
         Me._ReadButton.Name = "_ReadButton"
         Me._ReadButton.Size = New System.Drawing.Size(104, 30)
         Me._ReadButton.TabIndex = 0
@@ -288,7 +283,7 @@ Partial Class ThermostreamPanel
         '_InitializeButton
         '
         Me._InitializeButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InitializeButton.Location = New System.Drawing.Point(12, 53)
+        Me._InitializeButton.Location = New System.Drawing.Point(12, 40)
         Me._InitializeButton.Name = "_InitializeButton"
         Me._InitializeButton.Size = New System.Drawing.Size(104, 30)
         Me._InitializeButton.TabIndex = 1
@@ -827,102 +822,6 @@ Partial Class ThermostreamPanel
         Me._DeviceThermalConstantSelector.Value = New Decimal(New Integer() {20, 0, 0, 0})
         Me._DeviceThermalConstantSelector.Watermark = Nothing
         '
-        '_ResetTabPage
-        '
-        Me._ResetTabPage.Controls.Add(Me._ResetLayout)
-        Me._ResetTabPage.Location = New System.Drawing.Point(4, 26)
-        Me._ResetTabPage.Name = "_ResetTabPage"
-        Me._ResetTabPage.Size = New System.Drawing.Size(356, 270)
-        Me._ResetTabPage.TabIndex = 2
-        Me._ResetTabPage.Text = "Reset"
-        Me._ResetTabPage.UseVisualStyleBackColor = True
-        '
-        '_ResetLayout
-        '
-        Me._ResetLayout.ColumnCount = 3
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me._ResetLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._ResetLayout.Controls.Add(Me._InitializeKnownStateButton, 1, 7)
-        Me._ResetLayout.Controls.Add(Me._InterfaceClearButton, 1, 1)
-        Me._ResetLayout.Controls.Add(Me._ResetButton, 1, 5)
-        Me._ResetLayout.Controls.Add(Me._SelectiveDeviceClearButton, 1, 3)
-        Me._ResetLayout.Controls.Add(Me._SessionTraceEnableCheckBox, 1, 9)
-        Me._ResetLayout.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._ResetLayout.Location = New System.Drawing.Point(0, 0)
-        Me._ResetLayout.Name = "_ResetLayout"
-        Me._ResetLayout.RowCount = 11
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._ResetLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667!))
-        Me._ResetLayout.Size = New System.Drawing.Size(356, 270)
-        Me._ResetLayout.TabIndex = 5
-        '
-        '_InitializeKnownStateButton
-        '
-        Me._InitializeKnownStateButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InitializeKnownStateButton.Location = New System.Drawing.Point(84, 175)
-        Me._InitializeKnownStateButton.Name = "_InitializeKnownStateButton"
-        Me._InitializeKnownStateButton.Size = New System.Drawing.Size(182, 30)
-        Me._InitializeKnownStateButton.TabIndex = 3
-        Me._InitializeKnownStateButton.Text = "Initialize to Known State"
-        Me.TipsTooltip.SetToolTip(Me._InitializeKnownStateButton, "Reset and Initialize Response Modes")
-        Me._InitializeKnownStateButton.UseVisualStyleBackColor = True
-        '
-        '_InterfaceClearButton
-        '
-        Me._InterfaceClearButton.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._InterfaceClearButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InterfaceClearButton.Location = New System.Drawing.Point(84, 19)
-        Me._InterfaceClearButton.Name = "_InterfaceClearButton"
-        Me._InterfaceClearButton.Size = New System.Drawing.Size(187, 30)
-        Me._InterfaceClearButton.TabIndex = 0
-        Me._InterfaceClearButton.Text = "&Clear Interface"
-        Me._InterfaceClearButton.UseVisualStyleBackColor = True
-        '
-        '_ResetButton
-        '
-        Me._ResetButton.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ResetButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ResetButton.Location = New System.Drawing.Point(84, 123)
-        Me._ResetButton.Name = "_ResetButton"
-        Me._ResetButton.Size = New System.Drawing.Size(187, 30)
-        Me._ResetButton.TabIndex = 2
-        Me._ResetButton.Text = "&Reset to Known State"
-        Me._ResetButton.UseVisualStyleBackColor = True
-        '
-        '_SelectiveDeviceClearButton
-        '
-        Me._SelectiveDeviceClearButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._SelectiveDeviceClearButton.Location = New System.Drawing.Point(84, 71)
-        Me._SelectiveDeviceClearButton.Name = "_SelectiveDeviceClearButton"
-        Me._SelectiveDeviceClearButton.Size = New System.Drawing.Size(182, 30)
-        Me._SelectiveDeviceClearButton.TabIndex = 1
-        Me._SelectiveDeviceClearButton.Text = "Clear Device (SDC)"
-        Me.TipsTooltip.SetToolTip(Me._SelectiveDeviceClearButton, "Issues Selective Device Clear.")
-        Me._SelectiveDeviceClearButton.UseVisualStyleBackColor = True
-        '
-        '_SessionTraceEnableCheckBox
-        '
-        Me._SessionTraceEnableCheckBox.AutoSize = True
-        Me._SessionTraceEnableCheckBox.Location = New System.Drawing.Point(84, 227)
-        Me._SessionTraceEnableCheckBox.Name = "_SessionTraceEnableCheckBox"
-        Me._SessionTraceEnableCheckBox.Size = New System.Drawing.Size(186, 21)
-        Me._SessionTraceEnableCheckBox.TabIndex = 4
-        Me._SessionTraceEnableCheckBox.Text = "Trace Instrument Messages"
-        Me.TipsTooltip.SetToolTip(Me._SessionTraceEnableCheckBox, "Check to trace all instrument messages ")
-        Me._SessionTraceEnableCheckBox.UseVisualStyleBackColor = True
-        '
         '_ReadWriteTabPage
         '
         Me._ReadWriteTabPage.Controls.Add(Me._SimpleReadWriteControl)
@@ -940,6 +839,7 @@ Partial Class ThermostreamPanel
         Me._SimpleReadWriteControl.Location = New System.Drawing.Point(0, 0)
         Me._SimpleReadWriteControl.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._SimpleReadWriteControl.Name = "_SimpleReadWriteControl"
+        Me._SimpleReadWriteControl.ReadEnabled = False
         Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 270)
         Me._SimpleReadWriteControl.TabIndex = 0
         '
@@ -1071,6 +971,118 @@ Partial Class ThermostreamPanel
         Me._TitleLabel.Text = "Thermostream"
         Me._TitleLabel.UseMnemonic = False
         '
+        '_ServiceRequestValuesTextBox
+        '
+        Me._ServiceRequestValuesTextBox.Location = New System.Drawing.Point(131, 6)
+        Me._ServiceRequestValuesTextBox.Multiline = True
+        Me._ServiceRequestValuesTextBox.Name = "_ServiceRequestValuesTextBox"
+        Me._ServiceRequestValuesTextBox.ReadOnly = True
+        Me._ServiceRequestValuesTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me._ServiceRequestValuesTextBox.Size = New System.Drawing.Size(216, 62)
+        Me._ServiceRequestValuesTextBox.TabIndex = 13
+        Me._ServiceRequestValuesTextBox.Text = "bit  Value" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  2  Device Specific Error" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  3  Temperature Event" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  4  Message Avai" &
+    "lable" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  5  Standard Event Status" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  6  Master Summery Status" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "  7  Ready"
+        '
+        '_SystemToolStrip
+        '
+        Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableNumericLabel, Me._ServiceRequestEnableNumeric})
+        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 242)
+        Me._SystemToolStrip.Name = "_SystemToolStrip"
+        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 28)
+        Me._SystemToolStrip.TabIndex = 21
+        Me._SystemToolStrip.Text = "System Tools"
+        Me.TipsTooltip.SetToolTip(Me._SystemToolStrip, "System operations")
+        '
+        '_ResetSplitButton
+        '
+        Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
+        Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
+        Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ResetSplitButton.Name = "_ResetSplitButton"
+        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 25)
+        Me._ResetSplitButton.Text = "Reset"
+        Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
+        '
+        '_ClearInterfaceMenuItem
+        '
+        Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
+        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearInterfaceMenuItem.Text = "Clear Interface"
+        '
+        '_ClearDeviceMenuItem
+        '
+        Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
+        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
+        '
+        '_ResetKnownStateMenuItem
+        '
+        Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
+        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ResetKnownStateMenuItem.Text = "Reset to Known State (RST)"
+        '
+        '_InitKnownStateMenuItem
+        '
+        Me._InitKnownStateMenuItem.Name = "_InitKnownStateMenuItem"
+        Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._InitKnownStateMenuItem.Text = "Init to Known State"
+        '
+        '_ClearExecutionStateMenuItem
+        '
+        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
+        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
+        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
+        '
+        '_SessionTraceEnabledMenuItem
+        '
+        Me._SessionTraceEnabledMenuItem.CheckOnClick = True
+        Me._SessionTraceEnabledMenuItem.Name = "_SessionTraceEnabledMenuItem"
+        Me._SessionTraceEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._SessionTraceEnabledMenuItem.Text = "Trace Instrument Messages"
+        '
+        '_SessionServiceRequestHandlerEnabledMenuItem
+        '
+        Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
+        '
+        '_DeviceServiceRequestHandlerEnabledMenuItem
+        '
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
+        '
+        '_ReadTerminalStateButton
+        '
+        Me._ReadTerminalStateButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._ReadTerminalStateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ReadTerminalStateButton.Image = CType(resources.GetObject("_ReadTerminalStateButton.Image"), System.Drawing.Image)
+        Me._ReadTerminalStateButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ReadTerminalStateButton.Name = "_ReadTerminalStateButton"
+        Me._ReadTerminalStateButton.Size = New System.Drawing.Size(39, 25)
+        Me._ReadTerminalStateButton.Text = "Front"
+        Me._ReadTerminalStateButton.ToolTipText = "Reads terminal state"
+        '
+        '_ServiceRequestEnableNumericLabel
+        '
+        Me._ServiceRequestEnableNumericLabel.Name = "_ServiceRequestEnableNumericLabel"
+        Me._ServiceRequestEnableNumericLabel.Size = New System.Drawing.Size(29, 25)
+        Me._ServiceRequestEnableNumericLabel.Text = "SRE:"
+        '
+        '_ServiceRequestEnableNumeric
+        '
+        Me._ServiceRequestEnableNumeric.Name = "_ServiceRequestEnableNumeric"
+        Me._ServiceRequestEnableNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ServiceRequestEnableNumeric.Text = "99"
+        Me._ServiceRequestEnableNumeric.ToolTipText = "Service request enabled value"
+        Me._ServiceRequestEnableNumeric.Value = New Decimal(New Integer() {99, 0, 0, 0})
+        '
         'ThermostreamPanel
         '
         Me.Controls.Add(Me._Layout)
@@ -1095,9 +1107,6 @@ Partial Class ThermostreamPanel
         CType(Me._ResetQueryDelayNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         Me._SensorTabPage.ResumeLayout(False)
         Me._SensorTabPage.PerformLayout()
-        Me._ResetTabPage.ResumeLayout(False)
-        Me._ResetLayout.ResumeLayout(False)
-        Me._ResetLayout.PerformLayout()
         Me._ReadWriteTabPage.ResumeLayout(False)
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
@@ -1106,6 +1115,8 @@ Partial Class ThermostreamPanel
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
+        Me._SystemToolStrip.ResumeLayout(False)
+        Me._SystemToolStrip.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1113,19 +1124,12 @@ Partial Class ThermostreamPanel
     Private WithEvents _ReadingTabPage As System.Windows.Forms.TabPage
     Private WithEvents _ReadButton As System.Windows.Forms.Button
     Private WithEvents _InitializeButton As System.Windows.Forms.Button
-    Private WithEvents _ResetTabPage As System.Windows.Forms.TabPage
     Private WithEvents _FunctionTabPage As System.Windows.Forms.TabPage
     Private WithEvents _MessagesTabPage As System.Windows.Forms.TabPage
     Private WithEvents _SetpointNumericLabel As System.Windows.Forms.Label
     Private WithEvents _SoakTimeNumericLabel As System.Windows.Forms.Label
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _ResetLayout As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _InitializeKnownStateButton As System.Windows.Forms.Button
-    Private WithEvents _InterfaceClearButton As System.Windows.Forms.Button
-    Private WithEvents _ResetButton As System.Windows.Forms.Button
-    Private WithEvents _SelectiveDeviceClearButton As System.Windows.Forms.Button
-    Private WithEvents _SessionTraceEnableCheckBox As System.Windows.Forms.CheckBox
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
     Private WithEvents _ComplianceToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
@@ -1149,7 +1153,6 @@ Partial Class ThermostreamPanel
     Private WithEvents _StatusByteLabel As System.Windows.Forms.Label
     Private WithEvents _ReadStatusByteButton As System.Windows.Forms.Button
     Private WithEvents _SendButton As System.Windows.Forms.Button
-    Private WithEvents _ServiceRequestsLabel As System.Windows.Forms.Label
     Private WithEvents _ReceiveButton As System.Windows.Forms.Button
     Private WithEvents _SendComboBox As System.Windows.Forms.ComboBox
     Private WithEvents _ReceiveTextBox As System.Windows.Forms.TextBox
@@ -1186,4 +1189,18 @@ Partial Class ThermostreamPanel
     Private WithEvents _DeviceSensorTypeSelectorLabel As System.Windows.Forms.Label
     Private WithEvents _ReadWriteTabPage As Windows.Forms.TabPage
     Private WithEvents _SimpleReadWriteControl As Instrument.SimpleReadWriteControl
+    Private WithEvents _ServiceRequestValuesTextBox As Windows.Forms.TextBox
+    Private WithEvents _SystemToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ResetSplitButton As Windows.Forms.ToolStripSplitButton
+    Private WithEvents _ClearInterfaceMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ResetKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _InitKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionTraceEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ReadTerminalStateButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ServiceRequestEnableNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ServiceRequestEnableNumeric As Core.Controls.ToolStripNumericUpDown
 End Class

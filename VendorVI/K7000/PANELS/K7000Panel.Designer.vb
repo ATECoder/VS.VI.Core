@@ -18,6 +18,7 @@ Partial Class K7000Panel
         Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -103,7 +104,8 @@ Partial Class K7000Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ServiceRequestEnableBitmaskNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._SlotTabPage.SuspendLayout()
@@ -180,10 +182,10 @@ Partial Class K7000Panel
         '_SystemToolStrip
         '
         Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._TerminalStateLabel})
-        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 245)
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._TerminalStateLabel, Me._ServiceRequestEnableBitmaskNumericLabel, Me._ServiceRequestEnableBitmaskNumeric})
+        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 242)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
-        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 28)
         Me._SystemToolStrip.TabIndex = 16
         Me._SystemToolStrip.Text = "System Tools"
         Me.TipsTooltip.SetToolTip(Me._SystemToolStrip, "System operations")
@@ -195,7 +197,7 @@ Partial Class K7000Panel
         Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
         Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetSplitButton.Name = "_ResetSplitButton"
-        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 22)
+        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 25)
         Me._ResetSplitButton.Text = "Reset"
         Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
         '
@@ -223,10 +225,17 @@ Partial Class K7000Panel
         Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._InitKnownStateMenuItem.Text = "Init to Known State"
         '
-        '_TraceInstrumentMessagesMenuItem
+        '_ClearExecutionStateMenuItem
+        '
+        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
+        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
+        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
+        '
+        '_SessionTraceEnabledMenuItem
         '
         Me._SessionTraceEnabledMenuItem.CheckOnClick = True
-        Me._SessionTraceEnabledMenuItem.Name = "_TraceInstrumentMessagesMenuItem"
+        Me._SessionTraceEnabledMenuItem.Name = "_SessionTraceEnabledMenuItem"
         Me._SessionTraceEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._SessionTraceEnabledMenuItem.Text = "Trace Instrument Messages"
         '
@@ -250,7 +259,7 @@ Partial Class K7000Panel
         '
         Me._TerminalStateLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._TerminalStateLabel.Name = "_TerminalStateLabel"
-        Me._TerminalStateLabel.Size = New System.Drawing.Size(35, 22)
+        Me._TerminalStateLabel.Size = New System.Drawing.Size(35, 25)
         Me._TerminalStateLabel.Text = "Front"
         Me._TerminalStateLabel.Visible = False
         '
@@ -1067,12 +1076,19 @@ Partial Class K7000Panel
         Me._TitleLabel.Text = "K7000"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_ClearExecutionStateMenuItem
+        '_ServiceRequestEnableBitmaskNumericLabel
         '
-        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
-        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
-        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
+        Me._ServiceRequestEnableBitmaskNumericLabel.Name = "_ServiceRequestEnableBitmaskNumericLabel"
+        Me._ServiceRequestEnableBitmaskNumericLabel.Size = New System.Drawing.Size(29, 25)
+        Me._ServiceRequestEnableBitmaskNumericLabel.Text = "SRE:"
+        '
+        '_ServiceRequestEnableBitmaskNumeric
+        '
+        Me._ServiceRequestEnableBitmaskNumeric.Name = "_ServiceRequestEnableBitmaskNumeric"
+        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ServiceRequestEnableBitmaskNumeric.Text = "0"
+        Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enable bitmask"
+        Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         'K7000Panel
         '
@@ -1215,4 +1231,6 @@ Partial Class K7000Panel
     Private WithEvents _ArmLayer1SourceComboBox As Windows.Forms.ToolStripComboBox
     Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
     Private WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ServiceRequestEnableBitmaskNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ServiceRequestEnableBitmaskNumeric As Core.Controls.ToolStripNumericUpDown
 End Class

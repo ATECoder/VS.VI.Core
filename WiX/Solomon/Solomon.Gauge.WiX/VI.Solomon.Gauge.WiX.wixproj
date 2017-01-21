@@ -16,7 +16,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-
     <DefineConstants>Debug;NI_VISA=1</DefineConstants>
     <SuppressValidation>False</SuppressValidation>
     <SuppressIces>ICE30;ICE61</SuppressIces>
@@ -94,7 +93,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Apps\Solomon\VI.Solomon.Gauge.vbproj">
       <Name>VI.Solomon.Gauge</Name>
-      <Project>{E98BCF33-0131-46CB-8E35-F535F35CC94E}</Project>
+      <Project>{e98bcf33-0131-46cb-8e35-f535f35cc94e}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>

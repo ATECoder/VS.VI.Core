@@ -75,6 +75,30 @@ Public MustInherit Class ResistanceMeasureBase
         End If
     End Sub
 
+#Region " I Disposable Support "
+
+    ''' <summary> Cleans up unmanaged or managed and unmanaged resources. </summary>
+    ''' <param name="disposing"> True if this method releases both managed and unmanaged resources;
+    ''' False if this method releases only unmanaged resources. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Protected Overrides Sub Dispose(disposing As Boolean)
+        Try
+            If Not Me.IsDisposed AndAlso disposing Then
+                Try
+                    Me.DisposeTalker()
+                Catch ex As Exception
+                    Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                End Try
+            End If
+        Catch ex As Exception
+            Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+        Finally
+            MyBase.Dispose(disposing)
+        End Try
+    End Sub
+
+#End Region
+
 #End Region
 
 #Region " PRESET "
@@ -608,7 +632,6 @@ Public MustInherit Class ResistanceMeasureBase
         Me._Talker = Nothing
     End Sub
 
-
     ''' <summary> Gets the trace message talker. </summary>
     ''' <value> The trace message talker. </value>
     Public ReadOnly Property Talker As ITraceMessageTalker
@@ -757,14 +780,6 @@ Public Class ResistanceMeasureCollection
 #End Region
 
 #Region " I TALKER IMPLEMENTATION "
-
-    ''' <summary> Dispose talker. </summary>
-    ''' <remarks> David, 12/15/2016. </remarks>
-    Private Sub DisposeTalker()
-        Me.Talker?.Listeners.Clear()
-        Me._Talker = Nothing
-    End Sub
-
 
     ''' <summary> Gets the trace message talker. </summary>
     ''' <value> The trace message talker. </value>

@@ -12,25 +12,32 @@ Partial Class K2400Panel
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(K2400Panel))
         Me._Tabs = New System.Windows.Forms.TabControl()
         Me._ReadingTabPage = New System.Windows.Forms.TabPage()
+        Me._ReadingsDataGridView = New System.Windows.Forms.DataGridView()
+        Me._ReadingToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ReadButton = New System.Windows.Forms.ToolStripButton()
+        Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
+        Me._TraceButton = New System.Windows.Forms.ToolStripButton()
+        Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
+        Me._AbortButton = New System.Windows.Forms.ToolStripButton()
         Me._ToolStripPanel = New System.Windows.Forms.ToolStripPanel()
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetsDropDownButton = New System.Windows.Forms.ToolStripDropDownButton()
         Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._InitializeKnowStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._InitKnowStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionOptionsDownButton = New System.Windows.Forms.ToolStripDropDownButton()
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._OutputDropDownButton = New System.Windows.Forms.ToolStripDropDownButton()
         Me._ContactCheckEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SourceAutoClearEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._OutputTerminalMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._ReadingComboBoxLabel = New System.Windows.Forms.Label()
-        Me._ReadingComboBox = New System.Windows.Forms.ComboBox()
-        Me._ReadButton = New System.Windows.Forms.Button()
-        Me._InitiateButton = New System.Windows.Forms.Button()
+        Me._ServiceRequestEnableBitmaskNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._SourceTabPage = New System.Windows.Forms.TabPage()
         Me._TriggerDelayNumeric = New System.Windows.Forms.NumericUpDown()
         Me._TriggerDelayNumericLabel = New System.Windows.Forms.Label()
@@ -109,9 +116,12 @@ Partial Class K2400Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
+        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._ReadingToolStrip.SuspendLayout()
         Me._ToolStripPanel.SuspendLayout()
         Me._SystemToolStrip.SuspendLayout()
         Me._SourceTabPage.SuspendLayout()
@@ -181,11 +191,9 @@ Partial Class K2400Panel
         '
         '_ReadingTabPage
         '
+        Me._ReadingTabPage.Controls.Add(Me._ReadingsDataGridView)
+        Me._ReadingTabPage.Controls.Add(Me._ReadingToolStrip)
         Me._ReadingTabPage.Controls.Add(Me._ToolStripPanel)
-        Me._ReadingTabPage.Controls.Add(Me._ReadingComboBoxLabel)
-        Me._ReadingTabPage.Controls.Add(Me._ReadingComboBox)
-        Me._ReadingTabPage.Controls.Add(Me._ReadButton)
-        Me._ReadingTabPage.Controls.Add(Me._InitiateButton)
         Me._ReadingTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ReadingTabPage.Name = "_ReadingTabPage"
         Me._ReadingTabPage.Size = New System.Drawing.Size(356, 270)
@@ -193,34 +201,105 @@ Partial Class K2400Panel
         Me._ReadingTabPage.Text = "Read"
         Me._ReadingTabPage.UseVisualStyleBackColor = True
         '
+        '_ReadingsDataGridView
+        '
+        Me._ReadingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me._ReadingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 25)
+        Me._ReadingsDataGridView.Name = "_ReadingsDataGridView"
+        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 219)
+        Me._ReadingsDataGridView.TabIndex = 21
+        Me.TipsTooltip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
+        '
+        '_ReadingToolStrip
+        '
+        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._TraceButton, Me._ReadingsCountLabel, Me._ReadingComboBox, Me._AbortButton, Me._ClearBufferDisplayButton})
+        Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
+        Me._ReadingToolStrip.Name = "_ReadingToolStrip"
+        Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._ReadingToolStrip.TabIndex = 20
+        Me._ReadingToolStrip.Text = "ToolStrip1"
+        '
+        '_ReadButton
+        '
+        Me._ReadButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ReadButton.Image = CType(resources.GetObject("_ReadButton.Image"), System.Drawing.Image)
+        Me._ReadButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ReadButton.Name = "_ReadButton"
+        Me._ReadButton.Size = New System.Drawing.Size(37, 22)
+        Me._ReadButton.Text = "Read"
+        Me._ReadButton.ToolTipText = "Read single reading"
+        '
+        '_InitiateButton
+        '
+        Me._InitiateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._InitiateButton.Image = CType(resources.GetObject("_InitiateButton.Image"), System.Drawing.Image)
+        Me._InitiateButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._InitiateButton.Name = "_InitiateButton"
+        Me._InitiateButton.Size = New System.Drawing.Size(47, 22)
+        Me._InitiateButton.Text = "Initiate"
+        '
+        '_TraceButton
+        '
+        Me._TraceButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._TraceButton.Image = CType(resources.GetObject("_TraceButton.Image"), System.Drawing.Image)
+        Me._TraceButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._TraceButton.Name = "_TraceButton"
+        Me._TraceButton.Size = New System.Drawing.Size(39, 22)
+        Me._TraceButton.Text = "Trace"
+        Me._TraceButton.ToolTipText = "Reads the buffer"
+        '
+        '_ReadingsCountLabel
+        '
+        Me._ReadingsCountLabel.Name = "_ReadingsCountLabel"
+        Me._ReadingsCountLabel.Size = New System.Drawing.Size(13, 22)
+        Me._ReadingsCountLabel.Text = "0"
+        Me._ReadingsCountLabel.ToolTipText = "Buffer count"
+        '
+        '_ReadingComboBox
+        '
+        Me._ReadingComboBox.Name = "_ReadingComboBox"
+        Me._ReadingComboBox.Size = New System.Drawing.Size(121, 25)
+        Me._ReadingComboBox.ToolTipText = "Select reading type"
+        '
+        '_AbortButton
+        '
+        Me._AbortButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._AbortButton.Image = CType(resources.GetObject("_AbortButton.Image"), System.Drawing.Image)
+        Me._AbortButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._AbortButton.Name = "_AbortButton"
+        Me._AbortButton.Size = New System.Drawing.Size(41, 22)
+        Me._AbortButton.Text = "Abort"
+        Me._AbortButton.ToolTipText = "Aborts active trigger"
+        '
         '_ToolStripPanel
         '
         Me._ToolStripPanel.Controls.Add(Me._SystemToolStrip)
         Me._ToolStripPanel.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._ToolStripPanel.Location = New System.Drawing.Point(0, 245)
+        Me._ToolStripPanel.Location = New System.Drawing.Point(0, 244)
         Me._ToolStripPanel.Name = "_ToolStripPanel"
         Me._ToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal
         Me._ToolStripPanel.RowMargin = New System.Windows.Forms.Padding(3, 0, 0, 0)
-        Me._ToolStripPanel.Size = New System.Drawing.Size(356, 25)
+        Me._ToolStripPanel.Size = New System.Drawing.Size(356, 26)
         '
         '_SystemToolStrip
         '
         Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.None
         Me._SystemToolStrip.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetsDropDownButton, Me._SessionOptionsDownButton, Me._OutputDropDownButton})
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetsDropDownButton, Me._SessionOptionsDownButton, Me._OutputDropDownButton, Me._ServiceRequestEnableBitmaskNumericLabel, Me._ServiceRequestEnableBitmaskNumeric})
         Me._SystemToolStrip.Location = New System.Drawing.Point(3, 0)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
-        Me._SystemToolStrip.Size = New System.Drawing.Size(190, 25)
+        Me._SystemToolStrip.Size = New System.Drawing.Size(265, 26)
         Me._SystemToolStrip.TabIndex = 0
         '
         '_ResetsDropDownButton
         '
         Me._ResetsDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetsDropDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitializeKnowStateMenuItem})
+        Me._ResetsDropDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ClearExecutionStateMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnowStateMenuItem})
         Me._ResetsDropDownButton.Image = CType(resources.GetObject("_ResetsDropDownButton.Image"), System.Drawing.Image)
         Me._ResetsDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetsDropDownButton.Name = "_ResetsDropDownButton"
-        Me._ResetsDropDownButton.Size = New System.Drawing.Size(57, 22)
+        Me._ResetsDropDownButton.Size = New System.Drawing.Size(57, 23)
         Me._ResetsDropDownButton.Text = "Resets"
         Me._ResetsDropDownButton.ToolTipText = "Resets"
         '
@@ -228,7 +307,7 @@ Partial Class K2400Panel
         '
         Me._ClearInterfaceMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
-        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(224, 22)
         Me._ClearInterfaceMenuItem.Text = "Clear Interface"
         Me._ClearInterfaceMenuItem.ToolTipText = "Clear interface"
         '
@@ -236,25 +315,32 @@ Partial Class K2400Panel
         '
         Me._ClearDeviceMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
-        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(224, 22)
         Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
         Me._ClearDeviceMenuItem.ToolTipText = "Issues Selective Device Clear"
+        '
+        '_ClearExecutionStateMenuItem
+        '
+        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
+        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(224, 22)
+        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
+        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears execution state (CLS)"
         '
         '_ResetKnownStateMenuItem
         '
         Me._ResetKnownStateMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
-        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(214, 22)
+        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(224, 22)
         Me._ResetKnownStateMenuItem.Text = "Reset Known State (RST)"
         Me._ResetKnownStateMenuItem.ToolTipText = "Issues *RST"
         '
-        '_InitializeKnowStateMenuItem
+        '_InitKnowStateMenuItem
         '
-        Me._InitializeKnowStateMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._InitializeKnowStateMenuItem.Name = "_InitializeKnowStateMenuItem"
-        Me._InitializeKnowStateMenuItem.Size = New System.Drawing.Size(214, 22)
-        Me._InitializeKnowStateMenuItem.Text = "Initialize Known State"
-        Me._InitializeKnowStateMenuItem.ToolTipText = "Issues *RST, CLear and initialize to custom known state"
+        Me._InitKnowStateMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._InitKnowStateMenuItem.Name = "_InitKnowStateMenuItem"
+        Me._InitKnowStateMenuItem.Size = New System.Drawing.Size(224, 22)
+        Me._InitKnowStateMenuItem.Text = "Initialize Known State"
+        Me._InitKnowStateMenuItem.ToolTipText = "Issues *RST, CLear and initialize to custom known state"
         '
         '_SessionOptionsDownButton
         '
@@ -263,7 +349,7 @@ Partial Class K2400Panel
         Me._SessionOptionsDownButton.Image = CType(resources.GetObject("_SessionOptionsDownButton.Image"), System.Drawing.Image)
         Me._SessionOptionsDownButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._SessionOptionsDownButton.Name = "_SessionOptionsDownButton"
-        Me._SessionOptionsDownButton.Size = New System.Drawing.Size(61, 22)
+        Me._SessionOptionsDownButton.Size = New System.Drawing.Size(61, 23)
         Me._SessionOptionsDownButton.Text = "Session"
         Me._SessionOptionsDownButton.ToolTipText = "Select Session Options"
         '
@@ -272,27 +358,27 @@ Partial Class K2400Panel
         Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
         Me._SessionServiceRequestHandlerEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
-        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(212, 22)
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(194, 22)
         Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
         Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Session service requests"
-        '
-        '_DeviceServiceRequestHandlerEnabledMenuItem
-        '
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(212, 22)
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
         '
         '_SessionTraceEnabledMenuItem
         '
         Me._SessionTraceEnabledMenuItem.CheckOnClick = True
         Me._SessionTraceEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._SessionTraceEnabledMenuItem.Name = "_SessionTraceEnabledMenuItem"
-        Me._SessionTraceEnabledMenuItem.Size = New System.Drawing.Size(212, 22)
+        Me._SessionTraceEnabledMenuItem.Size = New System.Drawing.Size(194, 22)
         Me._SessionTraceEnabledMenuItem.Text = "Session Trace Enabled"
         Me._SessionTraceEnabledMenuItem.ToolTipText = "Check to trace all instrument messages "
+        '
+        '_DeviceServiceRequestHandlerEnabledMenuItem
+        '
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(194, 22)
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
         '
         '_OutputDropDownButton
         '
@@ -301,7 +387,7 @@ Partial Class K2400Panel
         Me._OutputDropDownButton.Image = CType(resources.GetObject("_OutputDropDownButton.Image"), System.Drawing.Image)
         Me._OutputDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._OutputDropDownButton.Name = "_OutputDropDownButton"
-        Me._OutputDropDownButton.Size = New System.Drawing.Size(60, 22)
+        Me._OutputDropDownButton.Size = New System.Drawing.Size(60, 23)
         Me._OutputDropDownButton.Text = "Output"
         Me._OutputDropDownButton.ToolTipText = "Output control options"
         '
@@ -332,47 +418,19 @@ Partial Class K2400Panel
         Me._OutputTerminalMenuItem.Text = "Front"
         Me._OutputTerminalMenuItem.ToolTipText = "Check to toggle using rear or front terminals"
         '
-        '_ReadingComboBoxLabel
+        '_ServiceRequestEnableBitmaskNumericLabel
         '
-        Me._ReadingComboBoxLabel.AutoSize = True
-        Me._ReadingComboBoxLabel.Location = New System.Drawing.Point(103, 13)
-        Me._ReadingComboBoxLabel.Name = "_ReadingComboBoxLabel"
-        Me._ReadingComboBoxLabel.Size = New System.Drawing.Size(53, 17)
-        Me._ReadingComboBoxLabel.TabIndex = 2
-        Me._ReadingComboBoxLabel.Text = "Display:"
-        Me._ReadingComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._ServiceRequestEnableBitmaskNumericLabel.Name = "_ServiceRequestEnableBitmaskNumericLabel"
+        Me._ServiceRequestEnableBitmaskNumericLabel.Size = New System.Drawing.Size(31, 23)
+        Me._ServiceRequestEnableBitmaskNumericLabel.Text = "SRE:"
         '
-        '_ReadingComboBox
+        '_ServiceRequestEnableBitmaskNumeric
         '
-        Me._ReadingComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ReadingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me._ReadingComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ReadingComboBox.Location = New System.Drawing.Point(159, 9)
-        Me._ReadingComboBox.Name = "_ReadingComboBox"
-        Me._ReadingComboBox.Size = New System.Drawing.Size(175, 25)
-        Me._ReadingComboBox.TabIndex = 3
-        Me.TipsTooltip.SetToolTip(Me._ReadingComboBox, "Select he reading to display")
-        '
-        '_ReadButton
-        '
-        Me._ReadButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ReadButton.Location = New System.Drawing.Point(12, 15)
-        Me._ReadButton.Name = "_ReadButton"
-        Me._ReadButton.Size = New System.Drawing.Size(72, 30)
-        Me._ReadButton.TabIndex = 0
-        Me._ReadButton.Text = "&Read"
-        Me._ReadButton.UseVisualStyleBackColor = True
-        '
-        '_InitiateButton
-        '
-        Me._InitiateButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._InitiateButton.Location = New System.Drawing.Point(12, 53)
-        Me._InitiateButton.Name = "_InitiateButton"
-        Me._InitiateButton.Size = New System.Drawing.Size(72, 30)
-        Me._InitiateButton.TabIndex = 1
-        Me._InitiateButton.Text = "&Initiate"
-        Me._InitiateButton.UseVisualStyleBackColor = True
+        Me._ServiceRequestEnableBitmaskNumeric.Name = "_ServiceRequestEnableBitmaskNumeric"
+        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(44, 23)
+        Me._ServiceRequestEnableBitmaskNumeric.Text = "0"
+        Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enable bitmask"
+        Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         '_SourceTabPage
         '
@@ -1180,13 +1238,13 @@ Partial Class K2400Panel
         Me._ReadingStatusStrip.SizingGrip = False
         Me._ReadingStatusStrip.TabIndex = 1
         '
-        '_ComplianceToolStripStatusLabel
+        '_FailureCodeToolStripStatusLabel
         '
         Me._FailureCodeToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
         Me._FailureCodeToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._FailureCodeToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
         Me._FailureCodeToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
-        Me._FailureCodeToolStripStatusLabel.Name = "_ComplianceToolStripStatusLabel"
+        Me._FailureCodeToolStripStatusLabel.Name = "_FailureCodeToolStripStatusLabel"
         Me._FailureCodeToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
         Me._FailureCodeToolStripStatusLabel.Text = "C"
         Me._FailureCodeToolStripStatusLabel.ToolTipText = "Compliance"
@@ -1273,6 +1331,17 @@ Partial Class K2400Panel
         Me._TitleLabel.Text = "K2400"
         Me._TitleLabel.UseMnemonic = False
         '
+        '_ClearBufferDisplayButton
+        '
+        Me._ClearBufferDisplayButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ClearBufferDisplayButton.Font = New System.Drawing.Font("Wingdings", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(2, Byte))
+        Me._ClearBufferDisplayButton.Image = CType(resources.GetObject("_ClearBufferDisplayButton.Image"), System.Drawing.Image)
+        Me._ClearBufferDisplayButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ClearBufferDisplayButton.Name = "_ClearBufferDisplayButton"
+        Me._ClearBufferDisplayButton.Size = New System.Drawing.Size(25, 22)
+        Me._ClearBufferDisplayButton.Text = """"
+        Me._ClearBufferDisplayButton.ToolTipText = "Clears the buffer display"
+        '
         'K2400Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -1284,6 +1353,9 @@ Partial Class K2400Panel
         Me._Tabs.ResumeLayout(False)
         Me._ReadingTabPage.ResumeLayout(False)
         Me._ReadingTabPage.PerformLayout()
+        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._ReadingToolStrip.ResumeLayout(False)
+        Me._ReadingToolStrip.PerformLayout()
         Me._ToolStripPanel.ResumeLayout(False)
         Me._ToolStripPanel.PerformLayout()
         Me._SystemToolStrip.ResumeLayout(False)
@@ -1333,9 +1405,6 @@ Partial Class K2400Panel
 
     End Sub
     Private WithEvents _ReadingTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _ReadingComboBox As System.Windows.Forms.ComboBox
-    Private WithEvents _ReadButton As System.Windows.Forms.Button
-    Private WithEvents _InitiateButton As System.Windows.Forms.Button
     Private WithEvents _SotTabPage As System.Windows.Forms.TabPage
     Private WithEvents _SourceTabPage As System.Windows.Forms.TabPage
     Private WithEvents _SenseTabPage As System.Windows.Forms.TabPage
@@ -1346,7 +1415,6 @@ Partial Class K2400Panel
     Private WithEvents _SenseFunctionComboBoxLabel As System.Windows.Forms.Label
     Private WithEvents _NplcNumericLabel As System.Windows.Forms.Label
     Private WithEvents _SenseRangeNumericLabel As System.Windows.Forms.Label
-    Private WithEvents _ReadingComboBoxLabel As System.Windows.Forms.Label
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
@@ -1371,7 +1439,7 @@ Partial Class K2400Panel
     Private WithEvents _SystemToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ClearInterfaceMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ResetKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _InitializeKnowStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _InitKnowStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _SessionTraceEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _SessionServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
@@ -1431,4 +1499,16 @@ Partial Class K2400Panel
     Private WithEvents _EnabledSenseFunctionsListBox As Windows.Forms.CheckedListBox
     Private WithEvents _TriggerDelayNumericLabel As Windows.Forms.Label
     Private WithEvents _TriggerDelayNumeric As Windows.Forms.NumericUpDown
+    Friend WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ServiceRequestEnableBitmaskNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ServiceRequestEnableBitmaskNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ReadingsDataGridView As Windows.Forms.DataGridView
+    Private WithEvents _ReadingToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _ReadButton As Windows.Forms.ToolStripButton
+    Private WithEvents _InitiateButton As Windows.Forms.ToolStripButton
+    Private WithEvents _TraceButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ReadingsCountLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
+    Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
 End Class

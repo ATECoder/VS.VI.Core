@@ -8,10 +8,10 @@
         <?define ProductVendor       = 'Integrated.Scientific.Resources' ?>
         <?define ProductCopyright    = '(c) 2016 by Integrated Scientific Resources, Inc. All rights reserved.' ?>
         <!-- Workaround version binding bug - use a short file id. 
-        <?define ProductVersion      = '!(bind.assemblyVersion.$(var.isr.VI.OhmniNet.Tester.TargetFileName))' ?>
+        <?define ProductVersion      = '!(bind.assemblyVersion.$(var.VI.OhmniNet.Tester.TargetFileName))' ?>
         -->
         <?define ProductVersion      = '!(bind.assemblyVersion.fid.MyAssembly)' ?>
-        <?define ProductPlatform     = $(var.isr.VI.OhmniNet.Tester.Platform) ?>
+        <?define ProductPlatform     = $(var.VI.OhmniNet.Tester.Platform) ?>
         <?define ProgramFolderName   = 'Programs' ?>
         <?define DocsFolderName      = 'Docs' ?>
         <?define ProductIcon         = '$(env.My)\RESOURCES\Art\Logo\isr New.ico' ?>

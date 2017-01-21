@@ -16,7 +16,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-
     <DefineConstants>Debug;NI_VISA=1</DefineConstants>
     <SuppressValidation>False</SuppressValidation>
     <SuppressIces>ICE30;ICE61</SuppressIces>
@@ -94,7 +93,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Apps\OhmniNet\VI.OhmniNet.Tester.vbproj">
       <Name>VI.OhmniNet.Tester</Name>
-      <Project>{B449651B-8ED5-4E57-B04F-D45585C8B36B}</Project>
+      <Project>{b449651b-8ed5-4e57-b04f-d45585c8b36b}</Project>
       <Private>True</Private>
       <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>

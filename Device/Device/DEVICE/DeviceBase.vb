@@ -653,6 +653,8 @@ Public MustInherit Class DeviceBase
             Select Case propertyName
                 Case NameOf(sender.ServiceRequestEventEnabled)
                     Me.SafePostPropertyChanged(NameOf(Me.SessionServiceRequestHandlerAdded))
+                Case NameOf(sender.ServiceRequestEnableBitmask)
+                    Me.SafePostPropertyChanged(NameOf(Me.ServiceRequestEnableBitmask))
                 Case NameOf(sender.LastMessageReceived)
                     Dim value As String = sender.LastMessageReceived
                     If Not String.IsNullOrWhiteSpace(value) Then
@@ -712,6 +714,15 @@ Public MustInherit Class DeviceBase
         End Set
     End Property
 
+    ''' <summary> Gets the service request enable bitmask. </summary>
+    ''' <value> The service request enable bitmask. </value>
+    Public ReadOnly Property ServiceRequestEnableBitmask As ServiceRequests
+        Get
+            Return Me.Session.ServiceRequestEnableBitmask
+        End Get
+    End Property
+
+
     ''' <summary> Gets the session service request handler added. </summary>
     ''' <value> The session service request handler added. </value>
     Public ReadOnly Property SessionServiceRequestHandlerAdded As Boolean
@@ -719,7 +730,6 @@ Public MustInherit Class DeviceBase
             Return Me.IsDeviceOpen AndAlso Me.Session.ServiceRequestEventEnabled
         End Get
     End Property
-
 
     Dim _DeviceServiceRequestHandlerAdded As Boolean
     ''' <summary> Gets the device service request handler Added. </summary>

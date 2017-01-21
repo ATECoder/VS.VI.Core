@@ -128,6 +128,10 @@
     <Content Include="My\isr.VI.Instrument.Scpi.History.rtf" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
+      <Project>{f9d9ed3d-4cbd-49e2-b162-7c15e051f636}</Project>
+      <Name>isr.Core.Controls.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
