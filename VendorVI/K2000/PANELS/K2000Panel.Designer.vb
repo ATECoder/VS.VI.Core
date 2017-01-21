@@ -29,8 +29,6 @@ Partial Class K2000Panel
         Me._ReadingToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ReadButton = New System.Windows.Forms.ToolStripButton()
         Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
-        Me._TraceButton = New System.Windows.Forms.ToolStripButton()
-        Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._AbortButton = New System.Windows.Forms.ToolStripButton()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
@@ -71,7 +69,11 @@ Partial Class K2000Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._BufferToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._TraceButton = New System.Windows.Forms.ToolStripButton()
+        Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
+        Me._RetriggerToggleButton = New System.Windows.Forms.ToolStripButton()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -91,6 +93,7 @@ Partial Class K2000Panel
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
+        Me._BufferToolStrip.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -125,6 +128,7 @@ Partial Class K2000Panel
         '_ReadingTabPage
         '
         Me._ReadingTabPage.Controls.Add(Me._ReadingsDataGridView)
+        Me._ReadingTabPage.Controls.Add(Me._BufferToolStrip)
         Me._ReadingTabPage.Controls.Add(Me._SystemToolStrip)
         Me._ReadingTabPage.Controls.Add(Me._ReadingToolStrip)
         Me._ReadingTabPage.Location = New System.Drawing.Point(4, 26)
@@ -138,9 +142,9 @@ Partial Class K2000Panel
         '
         Me._ReadingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me._ReadingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 25)
+        Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 51)
         Me._ReadingsDataGridView.Name = "_ReadingsDataGridView"
-        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 217)
+        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 191)
         Me._ReadingsDataGridView.TabIndex = 19
         Me.TipsTooltip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
         '
@@ -246,10 +250,10 @@ Partial Class K2000Panel
         '
         '_ReadingToolStrip
         '
-        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._TraceButton, Me._ReadingsCountLabel, Me._ReadingComboBox, Me._AbortButton, Me._ClearBufferDisplayButton})
+        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._ReadingComboBox, Me._AbortButton, Me._InitiateButton, Me._RetriggerToggleButton})
         Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingToolStrip.Name = "_ReadingToolStrip"
-        Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 26)
         Me._ReadingToolStrip.TabIndex = 18
         Me._ReadingToolStrip.Text = "ToolStrip1"
         '
@@ -259,49 +263,34 @@ Partial Class K2000Panel
         Me._ReadButton.Image = CType(resources.GetObject("_ReadButton.Image"), System.Drawing.Image)
         Me._ReadButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ReadButton.Name = "_ReadButton"
-        Me._ReadButton.Size = New System.Drawing.Size(37, 22)
+        Me._ReadButton.Size = New System.Drawing.Size(37, 23)
         Me._ReadButton.Text = "Read"
         Me._ReadButton.ToolTipText = "Read single reading"
         '
         '_InitiateButton
         '
+        Me._InitiateButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._InitiateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
         Me._InitiateButton.Image = CType(resources.GetObject("_InitiateButton.Image"), System.Drawing.Image)
         Me._InitiateButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._InitiateButton.Name = "_InitiateButton"
-        Me._InitiateButton.Size = New System.Drawing.Size(47, 22)
+        Me._InitiateButton.Size = New System.Drawing.Size(47, 23)
         Me._InitiateButton.Text = "Initiate"
-        '
-        '_TraceButton
-        '
-        Me._TraceButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._TraceButton.Image = CType(resources.GetObject("_TraceButton.Image"), System.Drawing.Image)
-        Me._TraceButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._TraceButton.Name = "_TraceButton"
-        Me._TraceButton.Size = New System.Drawing.Size(39, 22)
-        Me._TraceButton.Text = "Trace"
-        Me._TraceButton.ToolTipText = "Reads the buffer"
-        '
-        '_ReadingsCountLabel
-        '
-        Me._ReadingsCountLabel.Name = "_ReadingsCountLabel"
-        Me._ReadingsCountLabel.Size = New System.Drawing.Size(13, 22)
-        Me._ReadingsCountLabel.Text = "0"
-        Me._ReadingsCountLabel.ToolTipText = "Buffer count"
         '
         '_ReadingComboBox
         '
         Me._ReadingComboBox.Name = "_ReadingComboBox"
-        Me._ReadingComboBox.Size = New System.Drawing.Size(121, 25)
+        Me._ReadingComboBox.Size = New System.Drawing.Size(121, 26)
         Me._ReadingComboBox.ToolTipText = "Select reading type"
         '
         '_AbortButton
         '
+        Me._AbortButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._AbortButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
         Me._AbortButton.Image = CType(resources.GetObject("_AbortButton.Image"), System.Drawing.Image)
         Me._AbortButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._AbortButton.Name = "_AbortButton"
-        Me._AbortButton.Size = New System.Drawing.Size(41, 22)
+        Me._AbortButton.Size = New System.Drawing.Size(41, 23)
         Me._AbortButton.Text = "Abort"
         Me._AbortButton.ToolTipText = "Aborts active trigger"
         '
@@ -704,6 +693,32 @@ Partial Class K2000Panel
         Me._TitleLabel.Text = "K2000"
         Me._TitleLabel.UseMnemonic = False
         '
+        '_BufferToolStrip
+        '
+        Me._BufferToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TraceButton, Me._ReadingsCountLabel, Me._ClearBufferDisplayButton})
+        Me._BufferToolStrip.Location = New System.Drawing.Point(0, 26)
+        Me._BufferToolStrip.Name = "_BufferToolStrip"
+        Me._BufferToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._BufferToolStrip.TabIndex = 21
+        Me._BufferToolStrip.Text = "ToolStrip1"
+        '
+        '_TraceButton
+        '
+        Me._TraceButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._TraceButton.Image = CType(resources.GetObject("_TraceButton.Image"), System.Drawing.Image)
+        Me._TraceButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._TraceButton.Name = "_TraceButton"
+        Me._TraceButton.Size = New System.Drawing.Size(39, 22)
+        Me._TraceButton.Text = "Trace"
+        Me._TraceButton.ToolTipText = "Reads the buffer"
+        '
+        '_ReadingsCountLabel
+        '
+        Me._ReadingsCountLabel.Name = "_ReadingsCountLabel"
+        Me._ReadingsCountLabel.Size = New System.Drawing.Size(13, 22)
+        Me._ReadingsCountLabel.Text = "0"
+        Me._ReadingsCountLabel.ToolTipText = "Buffer count"
+        '
         '_ClearBufferDisplayButton
         '
         Me._ClearBufferDisplayButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
@@ -714,6 +729,19 @@ Partial Class K2000Panel
         Me._ClearBufferDisplayButton.Size = New System.Drawing.Size(25, 22)
         Me._ClearBufferDisplayButton.Text = """"
         Me._ClearBufferDisplayButton.ToolTipText = "Clears the grid"
+        '
+        '_RetriggerToggleButton
+        '
+        Me._RetriggerToggleButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._RetriggerToggleButton.CheckOnClick = True
+        Me._RetriggerToggleButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._RetriggerToggleButton.Font = New System.Drawing.Font("Webdings", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(2, Byte))
+        Me._RetriggerToggleButton.Image = CType(resources.GetObject("_RetriggerToggleButton.Image"), System.Drawing.Image)
+        Me._RetriggerToggleButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._RetriggerToggleButton.Name = "_RetriggerToggleButton"
+        Me._RetriggerToggleButton.Size = New System.Drawing.Size(25, 23)
+        Me._RetriggerToggleButton.Text = "4"
+        Me._RetriggerToggleButton.ToolTipText = "Single > or Repeat >> Trigger mode"
         '
         'K2000Panel
         '
@@ -752,6 +780,8 @@ Partial Class K2000Panel
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
+        Me._BufferToolStrip.ResumeLayout(False)
+        Me._BufferToolStrip.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -795,8 +825,6 @@ Partial Class K2000Panel
     Private WithEvents _ReadingToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ReadButton As Windows.Forms.ToolStripButton
     Private WithEvents _InitiateButton As Windows.Forms.ToolStripButton
-    Private WithEvents _TraceButton As Windows.Forms.ToolStripButton
-    Private WithEvents _ReadingsCountLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
     Private WithEvents _ArmLayer1ToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ArmLayer1ToolStripLabel As Windows.Forms.ToolStripLabel
@@ -817,5 +845,9 @@ Partial Class K2000Panel
     Private WithEvents _ServiceRequestEnableBitmaskNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ServiceRequestEnableBitmaskNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
+    Private WithEvents _BufferToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _TraceButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ReadingsCountLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
+    Private WithEvents _RetriggerToggleButton As Windows.Forms.ToolStripButton
 End Class

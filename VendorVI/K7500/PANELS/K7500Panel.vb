@@ -1109,6 +1109,8 @@ Public Class K7500Panel
 
 #Region " CONTROL EVENT HANDLERS: READING "
 
+#Region " READ "
+
     ''' <summary> Selects a new reading to display.
     ''' </summary>
     Friend Function SelectReading(ByVal value As VI.ReadingTypes) As VI.ReadingTypes
@@ -1126,141 +1128,6 @@ Public Class K7500Panel
             Return CType(CType(Me._ReadingComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, VI.ReadingTypes)
         End Get
     End Property
-
-    ''' <summary> Event handler. Called by the Initiate Button for click events. Initiates a reading for
-    ''' retrieval by way of the service request event. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _InitiateButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _InitiateButton.Click
-
-        If Me._InitializingComponents Then Return
-        Dim activity As String = "initiating measurements(s)"
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            If Me.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-
-#If False Then
-            ' clear execution state before enabling events
-            Me.Device.ClearExecutionState()
-
-            ' set the service request
-            Me.Device.StatusSubsystem.ApplyMeasurementEventEnableBitmask(MeasurementEvents.All)
-            Me.Device.StatusSubsystem.EnableServiceRequest(VI.ServiceRequests.All And Not VI.ServiceRequests.MessageAvailable)
-
-            ' trigger the initiation of the measurement letting the service request do the rest.
-            Me.Device.ClearExecutionState()
-            Me.Device.TriggerSubsystem.Initiate()
-#End If
-                TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, New List(Of BufferReading))
-                Me.Device.TraceSubsystem.ClearBuffer()
-                Me.Device.TriggerSubsystem.Initiate()
-            End If
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
-        Finally
-            Me.ReadServiceRequestStatus()
-            Me.Cursor = Cursors.Default
-        End Try
-    End Sub
-
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _AbortButton_Click(sender As Object, e As EventArgs) Handles _AbortButton.Click
-
-        If Me._InitializingComponents Then Return
-        Dim activity As String = "aborting measurements(s)"
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            If Me.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.Device.TriggerSubsystem.Abort()
-            End If
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
-        Finally
-            Me.ReadServiceRequestStatus()
-            Me.Cursor = Cursors.Default
-        End Try
-    End Sub
-
-    ''' <summary> Gets the re-trigger enabled. </summary>
-    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <value> The re-trigger enabled. </value>
-    Private Property RetriggerEnabled As Boolean
-
-    Private Sub HandleRetriggerRequest(sender As Object, e As EventArgs)
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} SRQ: {Me.Device.StatusSubsystem.ServiceRequestStatus:X};. ")
-    End Sub
-
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _RetriggerCheckBox_Click(sender As Object, e As EventArgs) Handles _RetriggerCheckBox.Click
-        If Me._InitializingComponents Then Return
-
-        ' set the service request
-        Me.Device.StatusSubsystem.EnableServiceRequest(VI.ServiceRequests.All And Not VI.ServiceRequests.MessageAvailable)
-        Dim activity As String = "setting up re-triggering"
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            activity = "Aborting trigger plan"
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Me.Device.TriggerSubsystem.Abort()
-
-            ' clear execution state before enabling events
-            activity = "Clearing execution state"
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Me.Device.ClearExecutionState()
-
-            If Me.RetriggerEnabled AndAlso Not Me._RetriggerCheckBox.Checked Then
-
-                RemoveHandler Me.Device.ServiceRequested, AddressOf HandleRetriggerRequest
-
-                Me.RetriggerEnabled = False
-
-                ' remove service request handling
-                activity = "Disabling device service request"
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.RemoveServiceRequestEventHandler()
-
-                activity = "Disabling status service request"
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
-
-            ElseIf Not Me.RetriggerEnabled AndAlso Me._RetriggerCheckBox.Checked Then
-
-                AddHandler Me.Device.ServiceRequested, AddressOf Me.HandleRetriggerRequest
-
-                Me.RetriggerEnabled = True
-
-                ' set the service request
-                activity = "Enabling device service request"
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.AddServiceRequestEventHandler()
-
-                activity = "Enabling status service request"
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
-
-                activity = "Enabling session service request if not enabled"
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.Device.Session.EnableServiceRequest()
-
-            End If
-
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. Details: {0}", ex)
-        Finally
-            Me.ReadServiceRequestStatus()
-            Me.Cursor = Cursors.Default
-        End Try
-
-    End Sub
 
     ''' <summary> Reading combo box selected value changed. </summary>
     ''' <remarks> David, 3/18/2016. </remarks>
@@ -1308,6 +1175,268 @@ Public Class K7500Panel
         End Try
     End Sub
 
+#End Region
+
+#Region " TRIGGER "
+
+    ''' <summary> Toggles re-trigger. </summary>
+    ''' <remarks> David, 1/21/2017. </remarks>
+    ''' <param name="sender"> <see cref="Object"/>
+    '''                       instance of this
+    '''                       <see cref="Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _RetriggerToggleButton_Click(sender As Object, e As EventArgs) Handles _RetriggerToggleButton.Click
+
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "toggling re-trigger mode"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me._RetriggerToggleButton.Text = If(Me._RetriggerToggleButton.Checked, "8", "4")
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary> Gets or sets the trace readings. </summary>
+    ''' <value> The trace readings. </value>
+    Private ReadOnly Property TraceReadings As List(Of BufferReading)
+
+
+
+    ''' <summary> Handles the measurement completed request. </summary>
+    ''' <remarks> David, 1/21/2017. </remarks>
+    ''' <param name="sender"> <see cref="Object"/>
+    '''                       instance of this
+    '''                       <see cref="Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub HandleMeasurementCompletedRequest(sender As Object, e As EventArgs)
+        Dim activity As String = "reading buffer"
+        Try
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} SRQ: {Me.Device.StatusSubsystem.ServiceRequestStatus:X};. ")
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            If Me.Device.StatusSubsystem.MeasurementAvailable Then
+
+                activity = "fetching values"
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Dim values As IEnumerable(Of BufferReading) = Me.Device.TraceSubsystem.QueryBufferReadings()
+                If Me.TraceReadings Is Nothing Then Me._TraceReadings = New List(Of BufferReading)
+                Me.TraceReadings.AddRange(values)
+
+                activity = "updating the display"
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                If Me.TraceReadings.Count = values.Count Then
+                    TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, values)
+                Else
+                    Me._BufferDataGridView.Invalidate()
+                End If
+                If Me._RetriggerToggleButton.Checked Then
+                    activity = "initiating next measurement(s)"
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Device.TriggerSubsystem.Initiate()
+                End If
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(Me._ReadBufferButton, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary> Gets the measurement complete handler added. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <value> The measurement complete handler added. </value>
+    Private Property MeasurementCompleteHandlerAdded As Boolean
+
+    ''' <summary> Adds measurement complete event handler. </summary>
+    ''' <remarks> David, 1/21/2017. </remarks>
+    Private Sub AddMeasurementCompleteEventHandler()
+
+        Dim activity As String = ""
+        If Not Me.MeasurementCompleteHandlerAdded Then
+
+            activity = "Enabling session service request handler"
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Device.Session.EnableServiceRequest()
+
+            activity = "Adding device service request handler"
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.AddServiceRequestEventHandler()
+
+            activity = "Turning on measurement events"
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Device.StatusSubsystem.ApplyMeasurementEventEnableBitmask(MeasurementEvents.All)
+
+            activity = "Turning on status service request"
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            ' Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.MeasurementEvent)
+            Me.Device.StatusSubsystem.EnableServiceRequest(VI.ServiceRequests.All And Not VI.ServiceRequests.MessageAvailable)
+
+            activity = "Adding re-triggering event handler"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            AddHandler Me.Device.ServiceRequested, AddressOf HandleMeasurementCompletedRequest
+            Me.MeasurementCompleteHandlerAdded = True
+        End If
+    End Sub
+
+    ''' <summary> Removes the measurement complete event handler. </summary>
+    ''' <remarks> David, 1/21/2017. </remarks>
+    Private Sub RemoveMeasurementCompleteEventHandler()
+
+        Dim activity As String = ""
+        If Me.MeasurementCompleteHandlerAdded Then
+
+            activity = "Disabling session service request handler"
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Device.Session.DisableServiceRequest()
+
+            activity = "Removing device service request handler"
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.RemoveServiceRequestEventHandler()
+
+            activity = "Turning off measurement events"
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Device.StatusSubsystem.ApplyMeasurementEventEnableBitmask(MeasurementEvents.None)
+
+            activity = "Turning off status service request"
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
+
+            activity = "Removing re-triggering event handler"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            RemoveHandler Me.Device.ServiceRequested, AddressOf HandleMeasurementCompletedRequest
+
+            Me.MeasurementCompleteHandlerAdded = False
+
+        End If
+    End Sub
+
+    ''' <summary> Abort trigger plan. </summary>
+    ''' <remarks> David, 1/21/2017. </remarks>
+    ''' <param name="sender"> <see cref="Object"/>
+    '''                       instance of this
+    '''                       <see cref="Control"/> </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub AbortTriggerPlan(ByVal sender As System.Object)
+
+        Dim activity As String = ""
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+
+            activity = "Aborting trigger plan"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Device.TriggerSubsystem.Abort()
+
+            ' clear execution state before enabling events
+            activity = "Clearing execution state"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Device.ClearExecutionState()
+
+            activity = "Removing measurement completion handler"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.RemoveMeasurementCompleteEventHandler()
+
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+
+
+    End Sub
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub StartTriggerPlan(ByVal sender As System.Object)
+
+        Dim activity As String = ""
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+
+            activity = "Adding measurement completion handler"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.AddMeasurementCompleteEventHandler()
+
+            activity = "clearing buffer and display"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me._TraceReadings = New List(Of BufferReading)
+            TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me._TraceReadings)
+            Me.Device.TraceSubsystem.ClearBuffer()
+
+            activity = "initiating single trigger measurements(s)"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Device.TriggerSubsystem.Initiate()
+
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+
+    End Sub
+
+    ''' <summary> Event handler. Called by the Initiate Button for click events. Initiates a reading for
+    ''' retrieval by way of the service request event. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _InitiateButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _InitiateButton.Click
+
+        If Me._InitializingComponents Then Return
+        Dim activity As String = ""
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            activity = "Aborting trigger plan"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.AbortTriggerPlan(sender)
+
+            activity = "Starting trigger plan"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.StartTriggerPlan(sender)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _AbortButton_Click(sender As Object, e As EventArgs) Handles _AbortButton.Click
+
+        If Me._InitializingComponents Then Return
+        Dim activity As String = ""
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            activity = "Aborting trigger plan"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.AbortTriggerPlan(sender)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+#End Region
+
+#Region " BUFFER "
+
     ''' <summary>
     ''' Handles the DataError event of the _dataGridView control.
     ''' </summary>
@@ -1343,11 +1472,7 @@ Public Class K7500Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, New List(Of BufferReading))
-            If Me.IsDeviceOpen Then
-                TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.Device.TraceSubsystem.QueryBufferReadings())
-            End If
+            TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.Device.TraceSubsystem.QueryBufferReadings())
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
@@ -1380,6 +1505,8 @@ Public Class K7500Panel
             Me.Cursor = Cursors.Default
         End Try
     End Sub
+
+#End Region
 
 #End Region
 
