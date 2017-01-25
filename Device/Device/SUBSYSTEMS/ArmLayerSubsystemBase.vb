@@ -58,12 +58,12 @@ Public MustInherit Class ArmLayerSubsystemBase
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.ArmCount = 1
+        Me.ArmSource = VI.ArmSources.Immediate
         Me.Delay = TimeSpan.Zero
         Me.Direction = VI.Direction.Acceptor
-        Me.InputLineNumber = 1
-        Me.OutputLineNumber = 2
-        Me.ArmSource = VI.ArmSources.Immediate
-        Me.TimerInterval = TimeSpan.FromSeconds(0.001)
+        Me.InputLineNumber = 2
+        Me.OutputLineNumber = 1
+        Me.TimerInterval = TimeSpan.FromSeconds(1)
     End Sub
 
 #End Region
@@ -104,7 +104,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.ArmCount, value) Then
                 Me._ArmCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmCount))
+                Me.SafePostPropertyChanged(NameOf(Me.ArmCount))
             End If
         End Set
     End Property
@@ -162,7 +162,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As Direction?)
             If Not Me.Direction.Equals(value) Then
                 Me._Direction = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Direction))
+                Me.SafePostPropertyChanged(NameOf(Me.Direction))
             End If
         End Set
     End Property
@@ -216,10 +216,24 @@ Public MustInherit Class ArmLayerSubsystemBase
         Set(ByVal value As ArmSources)
             If Not Me.SupportedArmSources.Equals(value) Then
                 Me._SupportedArmSources = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedArmSources))
+                Me.SafePostPropertyChanged(NameOf(Me.SupportedArmSources))
             End If
         End Set
     End Property
+
+    ''' <summary> List supported Arm sources. </summary>
+    ''' <remarks> David, 1/23/2017. </remarks>
+    ''' <param name="comboBox"> The combo box. </param>
+    Public Sub ListSupportedArmSources(ByVal comboBox As System.Windows.Forms.ComboBox)
+        If comboBox Is Nothing Then Throw New ArgumentNullException(NameOf(comboBox))
+        With comboBox
+            .DataSource = Nothing
+            .Items.Clear()
+            .DataSource = GetType(ArmSources).ValueNamePairs(Me.SupportedArmSources)
+            .DisplayMember = "Value"
+            .ValueMember = "Key"
+        End With
+    End Sub
 
     Private _ArmSource As ArmSources?
     ''' <summary> Gets or sets the cached source ArmSource. </summary>
@@ -232,7 +246,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As ArmSources?)
             If Not Me.ArmSource.Equals(value) Then
                 Me._ArmSource = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmSource))
+                Me.SafePostPropertyChanged(NameOf(Me.ArmSource))
             End If
         End Set
     End Property
@@ -283,6 +297,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Return Me.ArmSource
     End Function
 
+
 #End Region
 
 #Region " DELAY "
@@ -300,7 +315,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Nullable.Equals(Me.Delay, value) Then
                 Me._Delay = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Delay))
+                Me.SafePostPropertyChanged(NameOf(Me.Delay))
             End If
         End Set
     End Property
@@ -359,7 +374,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.InputLineNumber, value) Then
                 Me._InputLineNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.InputLineNumber))
+                Me.SafePostPropertyChanged(NameOf(Me.InputLineNumber))
             End If
         End Set
     End Property
@@ -413,7 +428,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.OutputLineNumber, value) Then
                 Me._OutputLineNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OutputLineNumber))
+                Me.SafePostPropertyChanged(NameOf(Me.OutputLineNumber))
             End If
         End Set
     End Property
@@ -468,7 +483,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Me.TimerInterval.Equals(value) Then
                 Me._TimerInterval = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TimerInterval))
+                Me.SafePostPropertyChanged(NameOf(Me.TimerInterval))
             End If
         End Set
     End Property

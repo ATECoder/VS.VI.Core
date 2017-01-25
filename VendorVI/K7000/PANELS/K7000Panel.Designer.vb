@@ -23,6 +23,8 @@ Partial Class K7000Panel
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._TerminalStateLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ServiceRequestEnableBitmaskNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._UpdateSlotConfigurationButton = New System.Windows.Forms.Button()
         Me._ReadSlotConfigurationButton = New System.Windows.Forms.Button()
         Me._CardTypeTextBox = New System.Windows.Forms.TextBox()
@@ -104,8 +106,6 @@ Partial Class K7000Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._ServiceRequestEnableBitmaskNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._SlotTabPage.SuspendLayout()
@@ -262,6 +262,20 @@ Partial Class K7000Panel
         Me._TerminalStateLabel.Size = New System.Drawing.Size(35, 25)
         Me._TerminalStateLabel.Text = "Front"
         Me._TerminalStateLabel.Visible = False
+        '
+        '_ServiceRequestEnableBitmaskNumericLabel
+        '
+        Me._ServiceRequestEnableBitmaskNumericLabel.Name = "_ServiceRequestEnableBitmaskNumericLabel"
+        Me._ServiceRequestEnableBitmaskNumericLabel.Size = New System.Drawing.Size(29, 25)
+        Me._ServiceRequestEnableBitmaskNumericLabel.Text = "SRE:"
+        '
+        '_ServiceRequestEnableBitmaskNumeric
+        '
+        Me._ServiceRequestEnableBitmaskNumeric.Name = "_ServiceRequestEnableBitmaskNumeric"
+        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ServiceRequestEnableBitmaskNumeric.Text = "0"
+        Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enable bitmask"
+        Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         '_UpdateSlotConfigurationButton
         '
@@ -510,12 +524,13 @@ Partial Class K7000Panel
         '
         Me._ChannelListComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me._ChannelListComboBox.Items.AddRange(New Object() {"(@1!1:1!10)", "(@ 4!1,5!1)", "(@1!1)"})
         Me._ChannelListComboBox.Location = New System.Drawing.Point(7, 178)
         Me._ChannelListComboBox.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._ChannelListComboBox.Name = "_ChannelListComboBox"
         Me._ChannelListComboBox.Size = New System.Drawing.Size(341, 25)
         Me._ChannelListComboBox.TabIndex = 10
-        Me._ChannelListComboBox.Text = "(@ 4!1,5!1)"
+        Me._ChannelListComboBox.Text = "(@1!1)"
         '
         '_ChannelListComboBoxLabel
         '
@@ -1075,20 +1090,6 @@ Partial Class K7000Panel
         Me._TitleLabel.TabIndex = 17
         Me._TitleLabel.Text = "K7000"
         Me._TitleLabel.UseMnemonic = False
-        '
-        '_ServiceRequestEnableBitmaskNumericLabel
-        '
-        Me._ServiceRequestEnableBitmaskNumericLabel.Name = "_ServiceRequestEnableBitmaskNumericLabel"
-        Me._ServiceRequestEnableBitmaskNumericLabel.Size = New System.Drawing.Size(29, 25)
-        Me._ServiceRequestEnableBitmaskNumericLabel.Text = "SRE:"
-        '
-        '_ServiceRequestEnableBitmaskNumeric
-        '
-        Me._ServiceRequestEnableBitmaskNumeric.Name = "_ServiceRequestEnableBitmaskNumeric"
-        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._ServiceRequestEnableBitmaskNumeric.Text = "0"
-        Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enable bitmask"
-        Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         'K7000Panel
         '

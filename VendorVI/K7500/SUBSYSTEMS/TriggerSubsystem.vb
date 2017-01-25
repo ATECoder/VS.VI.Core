@@ -27,6 +27,10 @@ Public Class TriggerSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
+        Me.SupportedTriggerSources = TriggerSources.Bus Or TriggerSources.External Or
+                                     TriggerSources.Hold Or TriggerSources.Immediate Or
+                                     TriggerSources.Manual Or TriggerSources.Timer Or
+                                     TriggerSources.TriggerLink
     End Sub
 
 #End Region
@@ -55,6 +59,55 @@ Public Class TriggerSubsystem
     ''' <summary> Gets the initiate command. </summary>
     ''' <value> The initiate command. </value>
     Protected Overrides ReadOnly Property InitiateCommand As String = ":INIT"
+
+    ''' <summary> Gets or sets the clear command. </summary>
+    ''' <value> The clear command. </value>
+    Protected Overrides ReadOnly Property ClearCommand As String = ":TRIG:EXT:IN:CLE"
+
+    ''' <summary> Gets or sets the clear  trigger model command. </summary>
+    ''' <remarks> SCPI: ":TRIG:LOAD 'EMPTY'". </remarks>
+    ''' <value> The clear command. </value>
+    Protected Overrides ReadOnly Property ClearTriggerModelCommand As String = ":TRIG:LOAD 'EMPTY'"
+
+#End Region
+
+#Region " TRIGGER COUNT "
+
+    ''' <summary> Gets trigger count query command. </summary>
+    ''' <value> The trigger count query command. </value>
+    Protected Overrides ReadOnly Property TriggerCountQueryCommand As String = ":TRIG:COUN?"
+
+    ''' <summary> Gets trigger count command format. </summary>
+    ''' <value> The trigger count command format. </value>
+    Protected Overrides ReadOnly Property TriggerCountCommandFormat As String = ":TRIG:COUN {0}"
+
+#End Region
+
+#Region " DELAY "
+
+    ''' <summary> Gets the delay command format. </summary>
+    ''' <value> The delay command format. </value>
+    Protected Overrides ReadOnly Property DelayCommandFormat As String = ":TRIG:DEL {0:s\.FFFFFFF}"
+
+    ''' <summary> Gets the Delay format for converting the query to time span. </summary>
+    ''' <value> The Delay query command. </value>
+    Protected Overrides ReadOnly Property DelayFormat As String = "s\.FFFFFFF"
+
+    ''' <summary> Gets the delay query command. </summary>
+    ''' <value> The delay query command. </value>
+    Protected Overrides ReadOnly Property DelayQueryCommand As String = ":TRIG:DEL?"
+
+#End Region
+
+#Region " SOURCE "
+
+    ''' <summary> Gets the Trigger Source query command. </summary>
+    ''' <value> The Trigger Source query command. </value>
+    Protected Overrides ReadOnly Property TriggerSourceQueryCommand As String = ":TRIG:SOUR?"
+
+    ''' <summary> Gets the Trigger Source command format. </summary>
+    ''' <value> The Trigger Source command format. </value>
+    Protected Overrides ReadOnly Property TriggerSourceCommandFormat As String = ":TRIG:SOUR {0}"
 
 #End Region
 
@@ -160,7 +213,7 @@ Public Class TriggerSubsystem
         ' clear the default buffer
         cmd = ":TRAC:CLE" : Me.Write(cmd)
 
-        Dim autonomous As Boolean = False
+        Dim autonomous As Boolean = count = 1
 
         ' Block 1: 
         ' -- if autonomous mode, clear the buffer
@@ -177,7 +230,7 @@ Public Class TriggerSubsystem
         block += 1 : cmd = $":TRIG:BLOC:DEL:CONS {block}, {0.001 * startDelay.TotalMilliseconds}"
         Me.Write(cmd)
 
-        ' Block 4: Measure
+        ' Block 4: Measure and save to the default buffer.
         block += 1 : cmd = $":TRIG:BLOC:MEAS {block}"
         Me.Write(cmd)
 
@@ -233,15 +286,12 @@ Public Class TriggerSubsystem
         Next
 
         ' clear the trigger model
-        cmd = ":TRIG:LOAD 'EMPTY'" : Me.Write(cmd)
+        Me.ClearTriggerModel()
 
         ' clear any pending trigger
-        cmd = ":TRIG:EXT:IN:CLE" : Me.Write(cmd)
+        Me.ClearTriggers()
 
-        ' clear the default buffer
-        cmd = ":TRAC:CLE" : Me.Write(cmd)
-
-        Dim autonomous As Boolean = False
+        Dim autonomous As Boolean = count = 1
 
         ' Block 1: 
         ' -- if autonomous mode, clear the buffer
@@ -258,7 +308,7 @@ Public Class TriggerSubsystem
         block += 1 : cmd = $":TRIG:BLOC:DEL:CONS {block}, {0.001 * startDelay.TotalMilliseconds}"
         Me.Write(cmd)
 
-        ' Block 4: Measure
+        ' Block 4: Measure and save to the default buffer.
         block += 1 : cmd = $":TRIG:BLOC:MEAS {block}"
         Me.Write(cmd)
 

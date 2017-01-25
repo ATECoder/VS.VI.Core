@@ -511,7 +511,7 @@ Public MustInherit Class DeviceBase
         Try
             If Me.Enabled Then Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Opening session to {resourceName};. ")
             Me.Session.ResourceTitle = resourceTitle
-            Me.Session.OpenSession(resourceName, resourceTitle)
+            Me.Session.OpenSession(resourceName, resourceTitle, Me.CapturedSyncContext)
             If Me.Session.IsSessionOpen Then
                 Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Session open to {resourceName};. ")
             ElseIf Me.Session.Enabled Then
@@ -634,14 +634,22 @@ Public MustInherit Class DeviceBase
     ''' <value> The session messages trace enabled. </value>
     Public Property SessionMessagesTraceEnabled As Boolean
         Get
-            Return Me.Session.SessionMessagesTraceEnabled
+            Return Me.IsDeviceOpen AndAlso Me.Session.SessionMessagesTraceEnabled
         End Get
         Set(value As Boolean)
-            If Not value.Equals(Me.SessionMessagesTraceEnabled) Then
+            If Me.IsDeviceOpen AndAlso value <> Me.SessionMessagesTraceEnabled Then
                 Me.Session.SessionMessagesTraceEnabled = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
+    End Property
+
+    ''' <summary> Gets the session service request event enabled. </summary>
+    ''' <value> The session service request event enabled. </value>
+    Public ReadOnly Property SessionServiceRequestEventEnabled As Boolean
+        Get
+            Return Me.IsDeviceOpen AndAlso Me.Session.ServiceRequestEventEnabled
+        End Get
     End Property
 
     ''' <summary> Session property changed. </summary>
@@ -651,8 +659,10 @@ Public MustInherit Class DeviceBase
     Private Sub SessionPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
+                Case NameOf(sender.SessionMessagesTraceEnabled)
+                    Me.SafePostPropertyChanged(NameOf(Me.SessionMessagesTraceEnabled))
                 Case NameOf(sender.ServiceRequestEventEnabled)
-                    Me.SafePostPropertyChanged(NameOf(Me.SessionServiceRequestHandlerAdded))
+                    Me.SafePostPropertyChanged(NameOf(Me.SessionMessagesTraceEnabled))
                 Case NameOf(sender.ServiceRequestEnableBitmask)
                     Me.SafePostPropertyChanged(NameOf(Me.ServiceRequestEnableBitmask))
                 Case NameOf(sender.LastMessageReceived)
@@ -722,14 +732,6 @@ Public MustInherit Class DeviceBase
         End Get
     End Property
 
-
-    ''' <summary> Gets the session service request handler added. </summary>
-    ''' <value> The session service request handler added. </value>
-    Public ReadOnly Property SessionServiceRequestHandlerAdded As Boolean
-        Get
-            Return Me.IsDeviceOpen AndAlso Me.Session.ServiceRequestEventEnabled
-        End Get
-    End Property
 
     Dim _DeviceServiceRequestHandlerAdded As Boolean
     ''' <summary> Gets the device service request handler Added. </summary>

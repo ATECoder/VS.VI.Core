@@ -28,8 +28,8 @@ Public Class TraceSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.PointsCount = 100
-        Me.FeedSource = VI.Scpi.FeedSource.Calculate1
+        Me.PointsCount = 10
+        Me.FeedSource = VI.Scpi.FeedSource.None
         Me.FeedControl = VI.Scpi.FeedControl.Never
     End Sub
 

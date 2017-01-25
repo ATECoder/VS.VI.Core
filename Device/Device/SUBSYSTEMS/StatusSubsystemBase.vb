@@ -246,8 +246,8 @@ Public MustInherit Class StatusSubsystemBase
     Public Overridable Sub ClearErrorCache()
         Me.DeviceErrorQueue.Clear()
         Me.DeviceErrorBuilder = New System.Text.StringBuilder
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.DeviceErrors))
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.LastDeviceError))
+        Me.SafePostPropertyChanged(NameOf(Me.DeviceErrors))
+        Me.SafePostPropertyChanged(NameOf(Me.LastDeviceError))
     End Sub
 
     ''' <summary> Gets the last message that was sent before the error. </summary>
@@ -269,7 +269,7 @@ Public MustInherit Class StatusSubsystemBase
             If Me.DeviceErrorBuilder.Length > 0 Then Me.DeviceErrorBuilder.AppendLine()
             Me.DeviceErrorBuilder.Append(value)
         End If
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.DeviceErrors))
+        Me.SafePostPropertyChanged(NameOf(Me.DeviceErrors))
     End Sub
 
     ''' <summary> Gets or sets a report of the error stored in the cached error queue. </summary>
@@ -325,7 +325,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(value As Boolean)
             If value <> Me.ReadingDeviceErrors Then
                 Me._ReadingDeviceErrors = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ReadingDeviceErrors))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -350,20 +350,23 @@ Public MustInherit Class StatusSubsystemBase
             Me.ClearErrorCache()
             If Not String.IsNullOrWhiteSpace(Me.ErrorQueueQueryCommand) AndAlso Me.IsErrorBitSet() Then
                 Dim builder As New System.Text.StringBuilder
+                Dim de As DeviceError = DeviceError.NoError
                 Do
-                    Dim de As DeviceError = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.ErrorQueueQueryCommand))
+                    de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.ErrorQueueQueryCommand))
                     If de.IsError Then
                         notifyLastError = True
                         If builder.Length > 0 Then builder.AppendLine()
                         builder.Append(de.CompoundErrorMessage)
                     End If
-                Loop While Me.IsErrorBitSet
+                Loop While Me.IsErrorBitSet AndAlso de.IsError
+                ' this is a kludge because the 7510 does not clear the error queue.
+                If Not de.IsError AndAlso Me.IsErrorBitSet Then Me.ClearErrorQueue()
                 If builder.Length > 0 Then
                     Me.QueryStandardEventStatus()
                     Me.AppendDeviceErrorMessage(builder.ToString)
                 End If
             End If
-            If notifyLastError Then Me.AsyncNotifyPropertyChanged(NameOf(Me.LastDeviceError))
+            If notifyLastError Then Me.SafePostPropertyChanged(NameOf(Me.LastDeviceError))
             Return Me.DeviceErrors
         Catch
             Throw
@@ -408,20 +411,25 @@ Public MustInherit Class StatusSubsystemBase
             Me.ClearErrorCache()
             If Not String.IsNullOrWhiteSpace(Me.LastErrorQueryCommand) AndAlso Me.IsErrorBitSet() Then
                 Dim builder As New System.Text.StringBuilder
+                Dim de As DeviceError = DeviceError.NoError
                 Do
-                    Dim de As DeviceError = Me.QueryNextError
+                    de = Me.QueryNextError
                     If de.IsError Then
                         notifyLastError = True
                         If builder.Length > 0 Then builder.AppendLine()
                         builder.Append(de.CompoundErrorMessage)
                     End If
-                Loop While Me.IsErrorBitSet
+                Loop While Me.IsErrorBitSet AndAlso de.IsError
+
+                ' this is a kludge because the 7510 does not clear the error queue.
+                If Not de.IsError AndAlso Me.IsErrorBitSet Then Me.ClearErrorQueue()
+
                 If builder.Length > 0 Then
                     Me.QueryStandardEventStatus()
                     Me.AppendDeviceErrorMessage(builder.ToString)
                 End If
             End If
-            If notifyLastError Then Me.AsyncNotifyPropertyChanged(NameOf(Me.LastDeviceError))
+            If notifyLastError Then Me.SafePostPropertyChanged(NameOf(Me.LastDeviceError))
             Return Me.DeviceErrors
         Catch
             Throw
@@ -450,7 +458,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="value"> The value. </param>
     Public Sub AppendLastDeviceErrorMessage(ByVal value As String)
         Me.DeviceErrorBuilder.AppendLine(value)
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.LastDeviceError))
+        Me.SafePostPropertyChanged(NameOf(Me.LastDeviceError))
     End Sub
 
     ''' <summary> Enqueue last error. </summary>
@@ -518,7 +526,7 @@ Public MustInherit Class StatusSubsystemBase
                 value = value.Trim
                 Me._Identity = value
                 Me.ParseVersionInfo(value)
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Identity))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -575,7 +583,7 @@ Public MustInherit Class StatusSubsystemBase
             If String.IsNullOrEmpty(value) Then value = ""
             If Not String.Equals(value, Me.SerialNumberReading) Then
                 Me._serialNumberReading = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SerialNumberReading))
+                Me.SafePostPropertyChanged()
                 If String.IsNullOrWhiteSpace(value) Then
                     Me.SerialNumber = New Long?
                 Else
@@ -620,7 +628,7 @@ Public MustInherit Class StatusSubsystemBase
         Set(ByVal value As Long?)
             If Not Nullable.Equals(Me.SerialNumber, value) Then
                 Me._serialNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SerialNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -836,7 +844,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the bits that would be set for detecting if an Measurement is available. </summary>
     ''' <value> The Measurement available bits. </value>
-    Public Overridable ReadOnly Property MeasurementAvailableBits() As ServiceRequests
+    Public Overridable ReadOnly Property MeasurementAvailableBits() As ServiceRequests = ServiceRequests.MeasurementEvent
 
     ''' <summary> Gets a value indicating whether [Measurement available]. </summary>
     ''' <value> <c>True</c> if [Measurement available]; otherwise, <c>False</c>. </value>
@@ -847,6 +855,23 @@ Public MustInherit Class StatusSubsystemBase
     End Property
 
 #End Region
+
+#Region " STATUS REGISTER EVENTS: OPERATION "
+
+    ''' <summary> Gets the bits that would be set for detecting if an Operation is available. </summary>
+    ''' <value> The Operation available bits. </value>
+    Public Overridable ReadOnly Property OperationAvailableBits() As ServiceRequests = ServiceRequests.OperationEvent
+
+    ''' <summary> Gets a value indicating whether [Operation available]. </summary>
+    ''' <value> <c>True</c> if [Operation available]; otherwise, <c>False</c>. </value>
+    Public ReadOnly Property OperationAvailable As Boolean
+        Get
+            Return Me.Session.OperationAvailable
+        End Get
+    End Property
+
+#End Region
+
 
 #Region " STATUS REGISTER EVENTS: STANDARD EVENT "
 
@@ -966,7 +991,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(ByVal value As ServiceRequests?)
             If Not Me.ServiceRequestEnableBitmask.Equals(value) Then
                 Me._ServiceRequestEnableBitmask = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ServiceRequestEnableBitmask))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -1065,7 +1090,7 @@ Public MustInherit Class StatusSubsystemBase
             Else
                 Me.StandardDeviceErrorAvailable = False
             End If
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.StandardEventStatus))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -1098,7 +1123,7 @@ Public MustInherit Class StatusSubsystemBase
         Set(ByVal value As StandardEvents?)
             If Not Me.StandardEventEnableBitmask.Equals(value) Then
                 Me._StandardEventEnableBitmask = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.StandardEventEnableBitmask))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -1379,7 +1404,7 @@ Public MustInherit Class StatusSubsystemBase
             If Not Nullable.Equals(Me.LineFrequency, value) Then
                 StatusSubsystemBase.StationLineFrequency = value
                 Me._lineFrequency = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LineFrequency))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

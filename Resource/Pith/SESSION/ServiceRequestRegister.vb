@@ -8,6 +8,8 @@ Partial Public Class SessionBase
         Me._MessageAvailableBits = ServiceRequests.MessageAvailable
         Me._ErrorAvailableBits = ServiceRequests.ErrorAvailable
         Me._MeasurementAvailableBits = ServiceRequests.MeasurementEvent
+        Me._OperationAvailableBits = ServiceRequests.OperationEvent
+        Me._QuestionableAvailableBits = ServiceRequests.QuestionableEvent
         Me._StandardEventAvailableBits = ServiceRequests.StandardEvent
     End Sub
 
@@ -23,7 +25,7 @@ Partial Public Class SessionBase
         Set(ByVal value As ServiceRequests)
             If Not value.Equals(Me.ErrorAvailableBits) Then
                 Me._ErrorAvailableBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(ErrorAvailableBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -38,7 +40,7 @@ Partial Public Class SessionBase
         Protected Set(ByVal value As Boolean)
             If value OrElse Not value.Equals(Me.ErrorAvailable) Then
                 Me._ErrorAvailable = value
-                Me.SyncNotifyPropertyChanged(NameOf(Me.ErrorAvailable))
+                Me.SafeSendPropertyChanged()
             End If
         End Set
     End Property
@@ -91,7 +93,7 @@ Partial Public Class SessionBase
         Set(ByVal value As ServiceRequests)
             If Not value.Equals(Me.MessageAvailableBits) Then
                 Me._MessageAvailableBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(MessageAvailableBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -106,7 +108,7 @@ Partial Public Class SessionBase
         Protected Set(ByVal value As Boolean)
             If value OrElse Not value.Equals(Me.MessageAvailable) Then
                 Me._MessageAvailable = value
-                Me.SyncNotifyPropertyChanged(NameOf(MessageAvailable))
+                Me.SafeSendPropertyChanged()
             End If
         End Set
     End Property
@@ -153,7 +155,7 @@ Partial Public Class SessionBase
         Set(ByVal value As ServiceRequests)
             If Not value.Equals(Me.MeasurementAvailableBits) Then
                 Me._MeasurementAvailableBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(MeasurementAvailableBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -168,7 +170,75 @@ Partial Public Class SessionBase
         Protected Set(ByVal value As Boolean)
             If value OrElse Not value.Equals(Me.MeasurementAvailable) Then
                 Me._MeasurementAvailable = value
-                Me.SyncNotifyPropertyChanged(NameOf(MeasurementAvailable))
+                Me.SafeSendPropertyChanged()
+            End If
+        End Set
+    End Property
+
+#End Region
+
+#Region " SERVICE REQUEST REGISTER EVENTS: OPERATION "
+
+    Private _OperationAvailableBits As ServiceRequests
+    ''' <summary> Gets or sets bits that would be set for detecting if an Operation is available. </summary>
+    ''' <value> The Operation available bits. </value>
+    Public Property OperationAvailableBits() As ServiceRequests
+        Get
+            Return Me._OperationAvailableBits
+        End Get
+        Set(ByVal value As ServiceRequests)
+            If Not value.Equals(Me.OperationAvailableBits) Then
+                Me._OperationAvailableBits = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _OperationAvailable As Boolean
+    ''' <summary> Gets or sets a value indicating whether [Operation available]. </summary>
+    ''' <value> <c>True</c> if [Operation available]; otherwise, <c>False</c>. </value>
+    Public Property OperationAvailable As Boolean
+        Get
+            Return Me._OperationAvailable
+        End Get
+        Protected Set(ByVal value As Boolean)
+            If value OrElse Not value.Equals(Me.OperationAvailable) Then
+                Me._OperationAvailable = value
+                Me.SafeSendPropertyChanged()
+            End If
+        End Set
+    End Property
+
+#End Region
+
+#Region " SERVICE REQUEST REGISTER EVENTS: QUESTIONABLE "
+
+    Private _QuestionableAvailableBits As ServiceRequests
+    ''' <summary> Gets or sets bits that would be set for detecting if an Questionable is available. </summary>
+    ''' <value> The Questionable available bits. </value>
+    Public Property QuestionableAvailableBits() As ServiceRequests
+        Get
+            Return Me._QuestionableAvailableBits
+        End Get
+        Set(ByVal value As ServiceRequests)
+            If Not value.Equals(Me.QuestionableAvailableBits) Then
+                Me._QuestionableAvailableBits = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _QuestionableAvailable As Boolean
+    ''' <summary> Gets or sets a value indicating whether [Questionable available]. </summary>
+    ''' <value> <c>True</c> if [Questionable available]; otherwise, <c>False</c>. </value>
+    Public Property QuestionableAvailable As Boolean
+        Get
+            Return Me._QuestionableAvailable
+        End Get
+        Protected Set(ByVal value As Boolean)
+            If value OrElse Not value.Equals(Me.QuestionableAvailable) Then
+                Me._QuestionableAvailable = value
+                Me.SafeSendPropertyChanged()
             End If
         End Set
     End Property
@@ -187,7 +257,7 @@ Partial Public Class SessionBase
         Set(ByVal value As ServiceRequests)
             If Not value.Equals(Me.StandardEventAvailableBits) Then
                 Me._StandardEventAvailableBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(StandardEventAvailableBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -202,7 +272,7 @@ Partial Public Class SessionBase
         Protected Set(ByVal value As Boolean)
             If value OrElse Not value.Equals(Me.StandardEventAvailable) Then
                 Me._StandardEventAvailable = value
-                Me.SyncNotifyPropertyChanged(NameOf(StandardEventAvailable))
+                Me.SafeSendPropertyChanged()
             End If
         End Set
     End Property
@@ -256,6 +326,8 @@ Partial Public Class SessionBase
             Me.ErrorAvailable = (value And Me.ErrorAvailableBits) <> 0
             Me.MessageAvailable = (value And Me.MessageAvailableBits) <> 0
             Me.MeasurementAvailable = (value And Me.MeasurementAvailableBits) <> 0
+            Me.OperationAvailable = (value And Me.OperationAvailableBits) <> 0
+            Me.QuestionableAvailable = (value And Me.QuestionableAvailableBits) <> 0
             Me.StandardEventAvailable = (value And Me.StandardEventAvailableBits) <> 0
             If isNewValue Then Me.SyncNotifyPropertyChanged(NameOf(Me.ServiceRequestStatus))
         End Set

@@ -111,7 +111,7 @@ Public Class ServiceRequesterPanel
                 Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opening session;. to {0}", resource)
                 '  gpibSession = CType(ResourceManager.GetLocalManager().Open(resourceNameTextBox.Text), gpibSession)
                 Me._Session = isr.VI.SessionFactory.Get.Factory.CreateSession()
-                Me._Session.OpenSession(Me._ResourceNamesComboBox.Text, TimeSpan.FromMilliseconds(Me._TimeoutSelector.Value))
+                Me._Session.OpenSession(Me._ResourceNamesComboBox.Text, TimeSpan.FromMilliseconds(Me._TimeoutSelector.Value), Threading.SynchronizationContext.Current)
             End If
         Catch ex As InvalidCastException
             MessageBox.Show("Resource selected must be a GPIB session")

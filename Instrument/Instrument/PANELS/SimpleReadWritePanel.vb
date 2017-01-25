@@ -92,7 +92,7 @@ Public Class SimpleReadWritePanel
                     Windows.Forms.Cursor.Current = Cursors.WaitCursor
                     Me._session = isr.VI.SessionFactory.Get.Factory.CreateSession()
                     If Me._session IsNot Nothing Then
-                        Me._session.OpenSession(selector.ResourceName)
+                        Me._session.OpenSession(selector.ResourceName, Threading.SynchronizationContext.Current)
                         If Me.IsSessionOpen Then
                             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Session open;. to {0}", Me._session.ResourceName)
                             Me._SessionInfoTextBox.Text = Me._session.ResourceName

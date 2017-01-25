@@ -60,6 +60,10 @@ Public Class TriggerSubsystem
     ''' <value> The initiate command. </value>
     Protected Overrides ReadOnly Property InitiateCommand As String = ":INIT"
 
+    ''' <summary> Gets or sets the clear command. </summary>
+    ''' <value> The clear command. </value>
+    Protected Overrides ReadOnly Property ClearCommand As String = "" ' ":TRIG:CLE"
+
 #End Region
 
 #Region " AUTO DELAY "

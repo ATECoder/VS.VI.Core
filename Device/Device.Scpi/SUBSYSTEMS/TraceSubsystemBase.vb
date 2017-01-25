@@ -22,6 +22,17 @@ Public MustInherit Class TraceSubsystemBase
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.FeedSource = Scpi.FeedSource.None
+        Me.FeedControl = Scpi.FeedControl.Never
+    End Sub
+
+#End Region
+
 #Region " FEED SOURCE "
 
     ''' <summary> The Feed Source. </summary>

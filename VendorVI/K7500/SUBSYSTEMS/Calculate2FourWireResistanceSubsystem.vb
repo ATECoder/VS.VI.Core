@@ -39,6 +39,18 @@ Public Class Calculate2FourWireResistanceSubsystem
 
 #Region " LIMIT 1 "
 
+#Region " LIMIT1 AUTO CLEAR "
+
+    ''' <summary> Gets the Limit1 Auto Clear command Format. </summary>
+    ''' <value> The Limit1 AutoClear query command. </value>
+    Protected Overrides ReadOnly Property Limit1AutoClearCommandFormat As String = ":CALC2:FRES:LIM1:CLE:AUTO {0:'ON';'ON';'OFF'}"
+
+    ''' <summary> Gets the Limit1 Auto Clear query command. </summary>
+    ''' <value> The Limit1 AutoClear query command. </value>
+    Protected Overrides ReadOnly Property Limit1AutoClearQueryCommand As String = ":CALC2:FRES:LIM1:CLE:AUTO?"
+
+#End Region
+
 #Region " LIMIT1 ENABLED "
 
     ''' <summary> Gets the Limit1 enabled command Format. </summary>
@@ -77,6 +89,18 @@ Public Class Calculate2FourWireResistanceSubsystem
 #End Region
 
 #Region " LIMIT 2 "
+
+#Region " LIMIT2 AUTO CLEAR "
+
+    ''' <summary> Gets the Limit2 Auto Clear command Format. </summary>
+    ''' <value> The Limit2 AutoClear query command. </value>
+    Protected Overrides ReadOnly Property Limit2AutoClearCommandFormat As String = ":CALC2:FRES:LIM2:CLE:AUTO {0:'ON';'ON';'OFF'}"
+
+    ''' <summary> Gets the Limit2 Auto Clear query command. </summary>
+    ''' <value> The Limit2 AutoClear query command. </value>
+    Protected Overrides ReadOnly Property Limit2AutoClearQueryCommand As String = ":CALC2:FRES:LIM2:CLE:AUTO?"
+
+#End Region
 
 #Region " LIMIT2 ENABLED "
 

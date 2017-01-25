@@ -116,7 +116,7 @@ Public Class InstrumentInterfaceForm
             lastAction = $"Opening a VISA Session to {resourceName}"
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.Session = isr.VI.SessionFactory.Get.Factory.CreateSession()
-            Me.Session.OpenSession(resourceName)
+            Me.Session.OpenSession(resourceName, Threading.SynchronizationContext.Current)
 
             If Me.IsOpen Then
                 lastAction = "Clearing the device"

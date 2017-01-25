@@ -72,6 +72,10 @@ Public MustInherit Class SessionBase
 
 #Region " SESSION "
 
+    ''' <summary> Gets or sets a context for the captured synchronization. </summary>
+    ''' <value> The captured synchronization context. </value>
+    Public Property CapturedSyncContext As Threading.SynchronizationContext
+
     ''' <summary>
     ''' Gets or sets the Enabled sentinel. When enabled, the session is allowed to engage actual
     ''' hardware; otherwise, opening the session does not attempt to link to the hardware.
@@ -123,10 +127,10 @@ Public MustInherit Class SessionBase
             Me._KeepAliveTimer.Enabled = True
         End If
         Me._IsDeviceOpen = True
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDeviceOpen))
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.IsSessionOpen))
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourceName))
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourceTitle))
+        Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
+        Me.SafePostPropertyChanged(NameOf(Me.IsSessionOpen))
+        Me.SafePostPropertyChanged(NameOf(Me.ResourceName))
+        Me.SafePostPropertyChanged(NameOf(Me.ResourceTitle))
         Me._Timeouts.Push(Me.Timeout)
     End Sub
 
@@ -138,8 +142,10 @@ Public MustInherit Class SessionBase
 
     ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
     ''' <remarks> Call this first. </remarks>
-    Public Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal timeout As TimeSpan)
+    Public Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal timeout As TimeSpan, ByVal syncContext As Threading.SynchronizationContext)
         Try
+            Me.CapturedSyncContext = syncContext
+            Threading.SynchronizationContext.SetSynchronizationContext(syncContext)
             Me.OnOpeningSession(resourceName, resourceTitle)
             Me.CreateSession(resourceName, timeout)
             Me.OnSessionOpen()
@@ -152,22 +158,22 @@ Public MustInherit Class SessionBase
     ''' <remarks> Call this first. </remarks>
     ''' <param name="resourceName">  The name of the resource. </param>
     ''' <param name="resourceTitle"> The short title of the device. </param>
-    Public Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
-        Me.OpenSession(resourceName, resourceTitle, Me.DefaultOpenTimeout)
+    Public Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal syncContext As Threading.SynchronizationContext)
+        Me.OpenSession(resourceName, resourceTitle, Me.DefaultOpenTimeout, syncContext)
     End Sub
 
     ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
     ''' <remarks> David, 11/29/2015. </remarks>
     ''' <param name="resourceName"> The name of the resource. </param>
-    Public Sub OpenSession(ByVal resourceName As String)
-        Me.OpenSession(resourceName, resourceName, Me.DefaultOpenTimeout)
+    Public Sub OpenSession(ByVal resourceName As String, ByVal syncContext As Threading.SynchronizationContext)
+        Me.OpenSession(resourceName, resourceName, Me.DefaultOpenTimeout, syncContext)
     End Sub
 
     ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
     ''' <remarks> David, 11/29/2015. </remarks>
     ''' <param name="timeout"> The timeout. </param>
-    Public Sub OpenSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
-        Me.OpenSession(resourceName, resourceName, timeout)
+    Public Sub OpenSession(ByVal resourceName As String, ByVal timeout As TimeSpan, ByVal syncContext As Threading.SynchronizationContext)
+        Me.OpenSession(resourceName, resourceName, timeout, syncContext)
     End Sub
 
     ''' <summary> Discards the session. </summary>
@@ -186,8 +192,8 @@ Public MustInherit Class SessionBase
         If Me.IsDeviceOpen Then
             Me.DiscardSession()
             Me._IsDeviceOpen = False
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDeviceOpen))
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.IsSessionOpen))
+            Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
+            Me.SafePostPropertyChanged(NameOf(Me.IsSessionOpen))
         End If
     End Sub
 
@@ -207,7 +213,7 @@ Public MustInherit Class SessionBase
         Protected Set(value As Boolean)
             If Me.ResourceFound <> value Then
                 Me._ResourceFound = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -234,7 +240,7 @@ Public MustInherit Class SessionBase
         Set(value As String)
             If Not String.Equals(Me.ResourceTitle, value) Then
                 Me._ResourceTitle = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -272,7 +278,7 @@ Public MustInherit Class SessionBase
         Set(value As Boolean)
             If value <> Me.SyncNotifyLastMessageReceivedEnabled Then
                 Me._SyncNotifyLastMessageReceivedEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SyncNotifyLastMessageReceivedEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.SyncNotifyLastMessageReceivedEnabled))
             End If
         End Set
     End Property
@@ -288,7 +294,7 @@ Public MustInherit Class SessionBase
         Set(value As Boolean)
             If Not value.Equals(Me.SessionMessagesTraceEnabled) Then
                 Me._SessionMessagesTraceEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SessionMessagesTraceEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.SessionMessagesTraceEnabled))
             End If
         End Set
     End Property
@@ -308,7 +314,7 @@ Public MustInherit Class SessionBase
                 If Me.SyncNotifyLastMessageReceivedEnabled Then
                     Me.SyncNotifyPropertyChanged(NameOf(Me.LastMessageReceived))
                 Else
-                    Me.AsyncNotifyPropertyChanged(NameOf(Me.LastMessageReceived))
+                    Me.SafePostPropertyChanged(NameOf(Me.LastMessageReceived))
                 End If
             End If
         End Set
@@ -325,7 +331,7 @@ Public MustInherit Class SessionBase
         Protected Set(ByVal value As String)
             Me._LastMessageSent = value
             If Me.SessionMessagesTraceEnabled Then
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LastMessageSent))
+                Me.SafePostPropertyChanged(NameOf(Me.LastMessageSent))
             End If
         End Set
     End Property
@@ -686,7 +692,7 @@ Public MustInherit Class SessionBase
             If value IsNot Nothing AndAlso value.Any Then
                 Me.__TerminationCharacters = New Char(value.Count - 1) {}
                 Array.Copy(value.ToArray, Me.__TerminationCharacters, value.Count)
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Termination))
+                Me.SafePostPropertyChanged(NameOf(Me.Termination))
             End If
         End Set
     End Property
@@ -922,6 +928,13 @@ Public MustInherit Class SessionBase
     ''' characters</see>. </returns>
     Public Overloads Function ReadLineTrimEnd() As String
         Return Me.ReadLine().TrimEnd(Me.Termination.ToArray)
+    End Function
+
+    ''' <summary> Reads free line trim end. </summary>
+    ''' <remarks> David, 1/21/2017. </remarks>
+    ''' <returns> The free line trim end. </returns>
+    Public Overloads Function ReadFreeLineTrimEnd() As String
+        Return Me.ReadFreeLine().TrimEnd(Me.Termination.ToArray)
     End Function
 
     ''' <summary> Synchronously reads ASCII-encoded string data. Reads up to the

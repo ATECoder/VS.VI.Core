@@ -79,7 +79,7 @@
     </Compile>
     <Compile Include="SUBSYSTEMS\ConstantsEnums.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystem.vb" />
-    <Compile Include="SUBSYSTEMS\Calculate2Subsystem.vb" />
+    <Compile Include="SUBSYSTEMS\Calculate2FourWireResistanceSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SenseResistanceSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\Device.vb" />
     <Compile Include="SUBSYSTEMS\FormatSubsystem.vb" />

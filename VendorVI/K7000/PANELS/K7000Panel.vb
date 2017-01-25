@@ -179,8 +179,8 @@ Public Class K7000Panel
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionServiceRequestHandlerAdded)
-                Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestHandlerAdded
+            Case NameOf(device.SessionServiceRequestEventEnabled)
+                Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
             Case NameOf(device.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
             Case NameOf(device.SessionMessagesTraceEnabled)
@@ -1022,7 +1022,7 @@ Public Class K7000Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.SessionServiceRequestHandlerAdded Then
+            If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.DeviceServiceRequestHandlerAdded Then
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
                     Me.AddServiceRequestEventHandler()
@@ -1124,7 +1124,7 @@ Public Class K7000Panel
 
             Me.Device.RouteSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(1))
             Me.Device.RouteSubsystem.QueryClosedChannels()
-            Me.Device.RouteSubsystem.ApplyScanList("(@1!1:1!10)")
+            Me.Device.RouteSubsystem.ApplyScanList(Me._ChannelListComboBox.Text) ' "(@1!1:1!10)"
             Me.Device.ArmLayer1Subsystem.ApplyArmSource(ArmSources.Immediate)
             Me.Device.ArmLayer1Subsystem.ApplyArmCount(1)
             Me.Device.ArmLayer2Subsystem.ApplyArmSource(ArmSources.Immediate)

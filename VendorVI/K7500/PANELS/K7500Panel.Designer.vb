@@ -26,7 +26,7 @@ Partial Class K7500Panel
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
         Me._ServiceRequestEnableNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ServiceRequestEnableNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._BufferToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ReadBufferButton = New System.Windows.Forms.ToolStripButton()
         Me._BufferCountLabel = New System.Windows.Forms.ToolStripLabel()
@@ -36,9 +36,13 @@ Partial Class K7500Panel
         Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
         Me._ReadingToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ReadButton = New System.Windows.Forms.ToolStripButton()
-        Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
         Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._AbortButton = New System.Windows.Forms.ToolStripButton()
+        Me._InitiateTriggerButton = New System.Windows.Forms.ToolStripButton()
+        Me._EventsMenuButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._HandleMeasurementEventMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._HandleBufferFullEventMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._AutoInitiateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
         Me._OpenLeadsDetectionCheckBox = New System.Windows.Forms.CheckBox()
         Me._ApplyFunctionModeButton = New System.Windows.Forms.Button()
@@ -63,27 +67,32 @@ Partial Class K7500Panel
         Me._Limit1ToolStrip = New System.Windows.Forms.ToolStrip()
         Me._Limits1Label = New System.Windows.Forms.ToolStripLabel()
         Me._Limit1DecimalsNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._LowerLimit1NumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._LowerLimit1Numeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._UpperLimit1NumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._UpperLimit1Numeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._FailBitToolStripLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._FailLimit1BitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._HexLimit1CheckBox = New isr.Core.Controls.ToolStripCheckBox()
         Me._GradeBinningToolStrip = New System.Windows.Forms.ToolStrip()
         Me._BinningToolStripLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._TriggerCountTextBoxLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._BinningTriggerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._PassBitPatternNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._PassBitPatternNumericButton = New System.Windows.Forms.ToolStripButton()
         Me._PassBitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._OpenLeadsBitPatternNumericUpDownLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._OpenLeadsBitPatternNumericButton = New System.Windows.Forms.ToolStripButton()
         Me._OpenLeadsBitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._HexBitPatternCheckBox = New isr.Core.Controls.ToolStripCheckBox()
-        Me._LoadGradeBinTriggerModelButton = New System.Windows.Forms.ToolStripButton()
-        Me._SimpleLoopToolStrip = New System.Windows.Forms.ToolStrip()
-        Me._SimpleLoopLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._SimpleLoopCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._SimpleLoopCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
-        Me._LoadSimpleLoopModelButton = New System.Windows.Forms.ToolStripButton()
-        Me._RunSimpleLoopTriggerModelButton = New System.Windows.Forms.ToolStripButton()
+        Me._FailBitPatternNumericButton = New System.Windows.Forms.ToolStripButton()
+        Me._FailLimit1BitPatternNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._TriggerLayerToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._TriggerLayerToolStripLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._TriggerCountNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._TriggerCountNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._TriggerSourceComboBox = New System.Windows.Forms.ToolStripComboBox()
+        Me._TriggerSplitButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._ContinuousTriggerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._TriggerModelsToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._TriggerModelLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ApplyTriggerModelSplitButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._LoadGradeBinTriggerModelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._LoadSimpleLoopMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._RunSimpleLoopMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearTriggerModelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
         Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
@@ -96,7 +105,6 @@ Partial Class K7500Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._RetriggerToggleButton = New System.Windows.Forms.ToolStripButton()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -113,7 +121,8 @@ Partial Class K7500Panel
         Me._TriggerDelayToolStrip.SuspendLayout()
         Me._Limit1ToolStrip.SuspendLayout()
         Me._GradeBinningToolStrip.SuspendLayout()
-        Me._SimpleLoopToolStrip.SuspendLayout()
+        Me._TriggerLayerToolStrip.SuspendLayout()
+        Me._TriggerModelsToolStrip.SuspendLayout()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
         Me._ReadingStatusStrip.SuspendLayout()
@@ -167,16 +176,16 @@ Partial Class K7500Panel
         '
         Me._BufferDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me._BufferDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._BufferDataGridView.Location = New System.Drawing.Point(0, 51)
+        Me._BufferDataGridView.Location = New System.Drawing.Point(0, 50)
         Me._BufferDataGridView.Name = "_BufferDataGridView"
-        Me._BufferDataGridView.Size = New System.Drawing.Size(356, 191)
+        Me._BufferDataGridView.Size = New System.Drawing.Size(356, 192)
         Me._BufferDataGridView.TabIndex = 9
         Me.TipsTooltip.SetToolTip(Me._BufferDataGridView, "Buffer data")
         '
         '_SystemToolStrip
         '
         Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableNumericLabel, Me._ServiceRequestEnableNumeric})
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableNumericLabel, Me._ServiceRequestEnableBitmaskNumeric})
         Me._SystemToolStrip.Location = New System.Drawing.Point(0, 242)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
         Me._SystemToolStrip.Size = New System.Drawing.Size(356, 28)
@@ -265,18 +274,18 @@ Partial Class K7500Panel
         Me._ServiceRequestEnableNumericLabel.Size = New System.Drawing.Size(29, 25)
         Me._ServiceRequestEnableNumericLabel.Text = "SRE:"
         '
-        '_ServiceRequestEnableNumeric
+        '_ServiceRequestEnableBitmaskNumeric
         '
-        Me._ServiceRequestEnableNumeric.Name = "_ServiceRequestEnableNumeric"
-        Me._ServiceRequestEnableNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._ServiceRequestEnableNumeric.Text = "99"
-        Me._ServiceRequestEnableNumeric.ToolTipText = "Service request enabled value"
-        Me._ServiceRequestEnableNumeric.Value = New Decimal(New Integer() {99, 0, 0, 0})
+        Me._ServiceRequestEnableBitmaskNumeric.Name = "_ServiceRequestEnableBitmaskNumeric"
+        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ServiceRequestEnableBitmaskNumeric.Text = "99"
+        Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enabled value"
+        Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {99, 0, 0, 0})
         '
         '_BufferToolStrip
         '
         Me._BufferToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadBufferButton, Me._BufferCountLabel, Me._LastPointNumberLabel, Me._FirstPointNumberLabel, Me._BufferNameLabel, Me._ClearBufferDisplayButton})
-        Me._BufferToolStrip.Location = New System.Drawing.Point(0, 26)
+        Me._BufferToolStrip.Location = New System.Drawing.Point(0, 25)
         Me._BufferToolStrip.Name = "_BufferToolStrip"
         Me._BufferToolStrip.Size = New System.Drawing.Size(356, 25)
         Me._BufferToolStrip.TabIndex = 8
@@ -334,10 +343,10 @@ Partial Class K7500Panel
         '
         '_ReadingToolStrip
         '
-        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._ReadingComboBox, Me._AbortButton, Me._InitiateButton, Me._RetriggerToggleButton})
+        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._ReadingComboBox, Me._AbortButton, Me._InitiateTriggerButton, Me._EventsMenuButton})
         Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingToolStrip.Name = "_ReadingToolStrip"
-        Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 26)
+        Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
         Me._ReadingToolStrip.TabIndex = 7
         Me._ReadingToolStrip.Text = "Reading Tool Strip"
         Me.TipsTooltip.SetToolTip(Me._ReadingToolStrip, "Readings management")
@@ -350,17 +359,6 @@ Partial Class K7500Panel
         Me._ReadButton.Name = "_ReadButton"
         Me._ReadButton.Size = New System.Drawing.Size(37, 22)
         Me._ReadButton.Text = "Read"
-        '
-        '_InitiateButton
-        '
-        Me._InitiateButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
-        Me._InitiateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._InitiateButton.Image = CType(resources.GetObject("_InitiateButton.Image"), System.Drawing.Image)
-        Me._InitiateButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._InitiateButton.Name = "_InitiateButton"
-        Me._InitiateButton.Size = New System.Drawing.Size(47, 23)
-        Me._InitiateButton.Text = "Initiate"
-        Me._InitiateButton.ToolTipText = "Initiates a triggered reading"
         '
         '_ReadingComboBox
         '
@@ -378,6 +376,53 @@ Partial Class K7500Panel
         Me._AbortButton.Size = New System.Drawing.Size(41, 22)
         Me._AbortButton.Text = "Abort"
         Me._AbortButton.ToolTipText = "Aborts triggering"
+        '
+        '_InitiateTriggerButton
+        '
+        Me._InitiateTriggerButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._InitiateTriggerButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._InitiateTriggerButton.Image = CType(resources.GetObject("_InitiateTriggerButton.Image"), System.Drawing.Image)
+        Me._InitiateTriggerButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._InitiateTriggerButton.Name = "_InitiateTriggerButton"
+        Me._InitiateTriggerButton.Size = New System.Drawing.Size(47, 22)
+        Me._InitiateTriggerButton.Text = "Initiate"
+        Me._InitiateTriggerButton.ToolTipText = "Initiates a triggered reading"
+        '
+        '_EventsMenuButton
+        '
+        Me._EventsMenuButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._EventsMenuButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._EventsMenuButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._HandleMeasurementEventMenuItem, Me._HandleBufferFullEventMenuItem, Me._AutoInitiateMenuItem})
+        Me._EventsMenuButton.Image = CType(resources.GetObject("_EventsMenuButton.Image"), System.Drawing.Image)
+        Me._EventsMenuButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._EventsMenuButton.Name = "_EventsMenuButton"
+        Me._EventsMenuButton.Size = New System.Drawing.Size(57, 22)
+        Me._EventsMenuButton.Text = "Events"
+        Me._EventsMenuButton.ToolTipText = "Enable Event Handling"
+        '
+        '_HandleMeasurementEventMenuItem
+        '
+        Me._HandleMeasurementEventMenuItem.CheckOnClick = True
+        Me._HandleMeasurementEventMenuItem.Name = "_HandleMeasurementEventMenuItem"
+        Me._HandleMeasurementEventMenuItem.Size = New System.Drawing.Size(147, 22)
+        Me._HandleMeasurementEventMenuItem.Text = "Measurement"
+        Me._HandleMeasurementEventMenuItem.ToolTipText = "Check to handle measurement events"
+        '
+        '_HandleBufferFullEventMenuItem
+        '
+        Me._HandleBufferFullEventMenuItem.CheckOnClick = True
+        Me._HandleBufferFullEventMenuItem.Name = "_HandleBufferFullEventMenuItem"
+        Me._HandleBufferFullEventMenuItem.Size = New System.Drawing.Size(147, 22)
+        Me._HandleBufferFullEventMenuItem.Text = "Buffer Full"
+        Me._HandleBufferFullEventMenuItem.ToolTipText = "Enables event handling upon the buffer full event"
+        '
+        '_AutoInitiateMenuItem
+        '
+        Me._AutoInitiateMenuItem.CheckOnClick = True
+        Me._AutoInitiateMenuItem.Name = "_AutoInitiateMenuItem"
+        Me._AutoInitiateMenuItem.Size = New System.Drawing.Size(147, 22)
+        Me._AutoInitiateMenuItem.Text = "Auto Initiate"
+        Me._AutoInitiateMenuItem.ToolTipText = "Check to automatically initiates a new trigger upon handling the event"
         '
         '_SenseTabPage
         '
@@ -548,13 +593,13 @@ Partial Class K7500Panel
         Me._TriggerToolStripPanel.Controls.Add(Me._TriggerDelayToolStrip)
         Me._TriggerToolStripPanel.Controls.Add(Me._Limit1ToolStrip)
         Me._TriggerToolStripPanel.Controls.Add(Me._GradeBinningToolStrip)
-        Me._TriggerToolStripPanel.Controls.Add(Me._SimpleLoopToolStrip)
-        Me._TriggerToolStripPanel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._TriggerToolStripPanel.Location = New System.Drawing.Point(0, 0)
+        Me._TriggerToolStripPanel.Controls.Add(Me._TriggerLayerToolStrip)
+        Me._TriggerToolStripPanel.Controls.Add(Me._TriggerModelsToolStrip)
+        Me._TriggerToolStripPanel.Location = New System.Drawing.Point(1, 0)
         Me._TriggerToolStripPanel.Name = "_TriggerToolStripPanel"
         Me._TriggerToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal
         Me._TriggerToolStripPanel.RowMargin = New System.Windows.Forms.Padding(3, 0, 0, 0)
-        Me._TriggerToolStripPanel.Size = New System.Drawing.Size(356, 270)
+        Me._TriggerToolStripPanel.Size = New System.Drawing.Size(356, 198)
         '
         '_TriggerDelayToolStrip
         '
@@ -605,10 +650,10 @@ Partial Class K7500Panel
         '_Limit1ToolStrip
         '
         Me._Limit1ToolStrip.Dock = System.Windows.Forms.DockStyle.None
-        Me._Limit1ToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._Limits1Label, Me._Limit1DecimalsNumeric, Me._LowerLimit1Numeric, Me._UpperLimit1Numeric, Me._FailBitToolStripLabel, Me._FailLimit1BitPatternNumeric, Me._HexLimit1CheckBox})
+        Me._Limit1ToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._Limits1Label, Me._Limit1DecimalsNumeric, Me._LowerLimit1NumericLabel, Me._LowerLimit1Numeric, Me._UpperLimit1NumericLabel, Me._UpperLimit1Numeric})
         Me._Limit1ToolStrip.Location = New System.Drawing.Point(3, 28)
         Me._Limit1ToolStrip.Name = "_Limit1ToolStrip"
-        Me._Limit1ToolStrip.Size = New System.Drawing.Size(294, 28)
+        Me._Limit1ToolStrip.Size = New System.Drawing.Size(260, 28)
         Me._Limit1ToolStrip.TabIndex = 2
         '
         '_Limits1Label
@@ -626,6 +671,12 @@ Partial Class K7500Panel
         Me._Limit1DecimalsNumeric.ToolTipText = "Number of decimal places for setting the limits"
         Me._Limit1DecimalsNumeric.Value = New Decimal(New Integer() {3, 0, 0, 0})
         '
+        '_LowerLimit1NumericLabel
+        '
+        Me._LowerLimit1NumericLabel.Name = "_LowerLimit1NumericLabel"
+        Me._LowerLimit1NumericLabel.Size = New System.Drawing.Size(42, 25)
+        Me._LowerLimit1NumericLabel.Text = "Lower:"
+        '
         '_LowerLimit1Numeric
         '
         Me._LowerLimit1Numeric.Name = "_LowerLimit1Numeric"
@@ -633,6 +684,12 @@ Partial Class K7500Panel
         Me._LowerLimit1Numeric.Text = "0"
         Me._LowerLimit1Numeric.ToolTipText = "Lower limit"
         Me._LowerLimit1Numeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
+        '
+        '_UpperLimit1NumericLabel
+        '
+        Me._UpperLimit1NumericLabel.Name = "_UpperLimit1NumericLabel"
+        Me._UpperLimit1NumericLabel.Size = New System.Drawing.Size(39, 25)
+        Me._UpperLimit1NumericLabel.Text = "Upper"
         '
         '_UpperLimit1Numeric
         '
@@ -642,35 +699,13 @@ Partial Class K7500Panel
         Me._UpperLimit1Numeric.ToolTipText = "Upper limit"
         Me._UpperLimit1Numeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
-        '_FailBitToolStripLabel
-        '
-        Me._FailBitToolStripLabel.Name = "_FailBitToolStripLabel"
-        Me._FailBitToolStripLabel.Size = New System.Drawing.Size(28, 25)
-        Me._FailBitToolStripLabel.Text = "Fail:"
-        '
-        '_FailLimit1BitPatternNumeric
-        '
-        Me._FailLimit1BitPatternNumeric.Name = "_FailLimit1BitPatternNumeric"
-        Me._FailLimit1BitPatternNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._FailLimit1BitPatternNumeric.Text = "1"
-        Me._FailLimit1BitPatternNumeric.ToolTipText = "Failed bit pattern"
-        Me._FailLimit1BitPatternNumeric.Value = New Decimal(New Integer() {1, 0, 0, 0})
-        '
-        '_HexLimit1CheckBox
-        '
-        Me._HexLimit1CheckBox.Checked = False
-        Me._HexLimit1CheckBox.Name = "_HexLimit1CheckBox"
-        Me._HexLimit1CheckBox.Size = New System.Drawing.Size(46, 25)
-        Me._HexLimit1CheckBox.Text = "Hex"
-        Me._HexLimit1CheckBox.ToolTipText = "Check to use HEX values for setting the Fail bit."
-        '
         '_GradeBinningToolStrip
         '
         Me._GradeBinningToolStrip.Dock = System.Windows.Forms.DockStyle.None
-        Me._GradeBinningToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._BinningToolStripLabel, Me._TriggerCountTextBoxLabel, Me._BinningTriggerCountNumeric, Me._PassBitPatternNumericLabel, Me._PassBitPatternNumeric, Me._OpenLeadsBitPatternNumericUpDownLabel, Me._OpenLeadsBitPatternNumeric, Me._HexBitPatternCheckBox, Me._LoadGradeBinTriggerModelButton})
+        Me._GradeBinningToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._BinningToolStripLabel, Me._PassBitPatternNumericButton, Me._PassBitPatternNumeric, Me._OpenLeadsBitPatternNumericButton, Me._OpenLeadsBitPatternNumeric, Me._FailBitPatternNumericButton, Me._FailLimit1BitPatternNumeric})
         Me._GradeBinningToolStrip.Location = New System.Drawing.Point(3, 56)
         Me._GradeBinningToolStrip.Name = "_GradeBinningToolStrip"
-        Me._GradeBinningToolStrip.Size = New System.Drawing.Size(315, 28)
+        Me._GradeBinningToolStrip.Size = New System.Drawing.Size(337, 28)
         Me._GradeBinningToolStrip.TabIndex = 0
         '
         '_BinningToolStripLabel
@@ -680,40 +715,33 @@ Partial Class K7500Panel
         Me._BinningToolStripLabel.Size = New System.Drawing.Size(26, 25)
         Me._BinningToolStripLabel.Text = "BIN"
         '
-        '_TriggerCountTextBoxLabel
+        '_PassBitPatternNumericButton
         '
-        Me._TriggerCountTextBoxLabel.Name = "_TriggerCountTextBoxLabel"
-        Me._TriggerCountTextBoxLabel.Size = New System.Drawing.Size(19, 25)
-        Me._TriggerCountTextBoxLabel.Text = "N:"
-        '
-        '_BinningTriggerCountNumeric
-        '
-        Me._BinningTriggerCountNumeric.Name = "_BinningTriggerCountNumeric"
-        Me._BinningTriggerCountNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._BinningTriggerCountNumeric.Text = "100"
-        Me._BinningTriggerCountNumeric.ToolTipText = "Model stops after receiving this number of triggers"
-        Me._BinningTriggerCountNumeric.Value = New Decimal(New Integer() {100, 0, 0, 0})
-        '
-        '_PassBitPatternNumericLabel
-        '
-        Me._PassBitPatternNumericLabel.Name = "_PassBitPatternNumericLabel"
-        Me._PassBitPatternNumericLabel.Size = New System.Drawing.Size(33, 25)
-        Me._PassBitPatternNumericLabel.Text = "Pass:"
+        Me._PassBitPatternNumericButton.CheckOnClick = True
+        Me._PassBitPatternNumericButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._PassBitPatternNumericButton.Image = CType(resources.GetObject("_PassBitPatternNumericButton.Image"), System.Drawing.Image)
+        Me._PassBitPatternNumericButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._PassBitPatternNumericButton.Name = "_PassBitPatternNumericButton"
+        Me._PassBitPatternNumericButton.Size = New System.Drawing.Size(48, 25)
+        Me._PassBitPatternNumericButton.Text = "Pass 0x"
         '
         '_PassBitPatternNumeric
         '
-        Me._PassBitPatternNumeric.AutoSize = False
         Me._PassBitPatternNumeric.Name = "_PassBitPatternNumeric"
-        Me._PassBitPatternNumeric.Size = New System.Drawing.Size(36, 25)
+        Me._PassBitPatternNumeric.Size = New System.Drawing.Size(41, 25)
         Me._PassBitPatternNumeric.Text = "2"
         Me._PassBitPatternNumeric.ToolTipText = "Pass bit pattern"
         Me._PassBitPatternNumeric.Value = New Decimal(New Integer() {2, 0, 0, 0})
         '
-        '_OpenLeadsBitPatternNumericUpDownLabel
+        '_OpenLeadsBitPatternNumericButton
         '
-        Me._OpenLeadsBitPatternNumericUpDownLabel.Name = "_OpenLeadsBitPatternNumericUpDownLabel"
-        Me._OpenLeadsBitPatternNumericUpDownLabel.Size = New System.Drawing.Size(39, 25)
-        Me._OpenLeadsBitPatternNumericUpDownLabel.Text = "Open:"
+        Me._OpenLeadsBitPatternNumericButton.CheckOnClick = True
+        Me._OpenLeadsBitPatternNumericButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._OpenLeadsBitPatternNumericButton.Image = CType(resources.GetObject("_OpenLeadsBitPatternNumericButton.Image"), System.Drawing.Image)
+        Me._OpenLeadsBitPatternNumericButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._OpenLeadsBitPatternNumericButton.Name = "_OpenLeadsBitPatternNumericButton"
+        Me._OpenLeadsBitPatternNumericButton.Size = New System.Drawing.Size(54, 25)
+        Me._OpenLeadsBitPatternNumericButton.Text = "Open 0x"
         '
         '_OpenLeadsBitPatternNumeric
         '
@@ -723,75 +751,133 @@ Partial Class K7500Panel
         Me._OpenLeadsBitPatternNumeric.ToolTipText = "Open leads bit pattern"
         Me._OpenLeadsBitPatternNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
-        '_HexBitPatternCheckBox
+        '_FailBitPatternNumericButton
         '
-        Me._HexBitPatternCheckBox.Checked = False
-        Me._HexBitPatternCheckBox.Name = "_HexBitPatternCheckBox"
-        Me._HexBitPatternCheckBox.Size = New System.Drawing.Size(31, 25)
-        Me._HexBitPatternCheckBox.Text = "x"
-        Me._HexBitPatternCheckBox.ToolTipText = "Check for using HEX values for setting the pass bit."
+        Me._FailBitPatternNumericButton.CheckOnClick = True
+        Me._FailBitPatternNumericButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._FailBitPatternNumericButton.Image = CType(resources.GetObject("_FailBitPatternNumericButton.Image"), System.Drawing.Image)
+        Me._FailBitPatternNumericButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._FailBitPatternNumericButton.Name = "_FailBitPatternNumericButton"
+        Me._FailBitPatternNumericButton.Size = New System.Drawing.Size(43, 25)
+        Me._FailBitPatternNumericButton.Text = "Fail 0x"
         '
-        '_LoadGradeBinTriggerModelButton
+        '_FailLimit1BitPatternNumeric
         '
-        Me._LoadGradeBinTriggerModelButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
-        Me._LoadGradeBinTriggerModelButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._LoadGradeBinTriggerModelButton.Image = CType(resources.GetObject("_LoadGradeBinTriggerModelButton.Image"), System.Drawing.Image)
-        Me._LoadGradeBinTriggerModelButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._LoadGradeBinTriggerModelButton.Name = "_LoadGradeBinTriggerModelButton"
-        Me._LoadGradeBinTriggerModelButton.Size = New System.Drawing.Size(37, 25)
-        Me._LoadGradeBinTriggerModelButton.Text = "Load"
-        Me._LoadGradeBinTriggerModelButton.ToolTipText = "Loads Grade Binning Trigger Model"
+        Me._FailLimit1BitPatternNumeric.Name = "_FailLimit1BitPatternNumeric"
+        Me._FailLimit1BitPatternNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._FailLimit1BitPatternNumeric.Text = "1"
+        Me._FailLimit1BitPatternNumeric.ToolTipText = "Failed bit pattern"
+        Me._FailLimit1BitPatternNumeric.Value = New Decimal(New Integer() {1, 0, 0, 0})
         '
-        '_SimpleLoopToolStrip
+        '_TriggerLayerToolStrip
         '
-        Me._SimpleLoopToolStrip.Dock = System.Windows.Forms.DockStyle.None
-        Me._SimpleLoopToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SimpleLoopLabel, Me._SimpleLoopCountNumericLabel, Me._SimpleLoopCountNumeric, Me._LoadSimpleLoopModelButton, Me._RunSimpleLoopTriggerModelButton})
-        Me._SimpleLoopToolStrip.Location = New System.Drawing.Point(3, 84)
-        Me._SimpleLoopToolStrip.Name = "_SimpleLoopToolStrip"
-        Me._SimpleLoopToolStrip.Size = New System.Drawing.Size(186, 28)
-        Me._SimpleLoopToolStrip.TabIndex = 3
-        Me.TipsTooltip.SetToolTip(Me._SimpleLoopToolStrip, "Simple trigger loop")
+        Me._TriggerLayerToolStrip.Dock = System.Windows.Forms.DockStyle.None
+        Me._TriggerLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerLayerToolStripLabel, Me._TriggerCountNumericLabel, Me._TriggerCountNumeric, Me._TriggerSourceComboBox, Me._TriggerSplitButton})
+        Me._TriggerLayerToolStrip.Location = New System.Drawing.Point(3, 84)
+        Me._TriggerLayerToolStrip.Name = "_TriggerLayerToolStrip"
+        Me._TriggerLayerToolStrip.Size = New System.Drawing.Size(289, 28)
+        Me._TriggerLayerToolStrip.TabIndex = 7
+        Me._TriggerLayerToolStrip.Text = "ToolStrip1"
         '
-        '_SimpleLoopLabel
+        '_TriggerLayerToolStripLabel
         '
-        Me._SimpleLoopLabel.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SimpleLoopLabel.Name = "_SimpleLoopLabel"
-        Me._SimpleLoopLabel.Size = New System.Drawing.Size(45, 25)
-        Me._SimpleLoopLabel.Text = "SIMPLE"
+        Me._TriggerLayerToolStripLabel.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._TriggerLayerToolStripLabel.Name = "_TriggerLayerToolStripLabel"
+        Me._TriggerLayerToolStripLabel.Size = New System.Drawing.Size(34, 25)
+        Me._TriggerLayerToolStripLabel.Text = "TRIG:"
         '
-        '_SimpleLoopCountNumericLabel
+        '_TriggerCountNumericLabel
         '
-        Me._SimpleLoopCountNumericLabel.Name = "_SimpleLoopCountNumericLabel"
-        Me._SimpleLoopCountNumericLabel.Size = New System.Drawing.Size(19, 25)
-        Me._SimpleLoopCountNumericLabel.Text = "N:"
+        Me._TriggerCountNumericLabel.Name = "_TriggerCountNumericLabel"
+        Me._TriggerCountNumericLabel.Size = New System.Drawing.Size(19, 25)
+        Me._TriggerCountNumericLabel.Text = "N:"
         '
-        '_SimpleLoopCountNumeric
+        '_TriggerCountNumeric
         '
-        Me._SimpleLoopCountNumeric.Name = "_SimpleLoopCountNumeric"
-        Me._SimpleLoopCountNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._SimpleLoopCountNumeric.Text = "5"
-        Me._SimpleLoopCountNumeric.ToolTipText = "Number of triggers"
-        Me._SimpleLoopCountNumeric.Value = New Decimal(New Integer() {5, 0, 0, 0})
+        Me._TriggerCountNumeric.Name = "_TriggerCountNumeric"
+        Me._TriggerCountNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._TriggerCountNumeric.Text = "0"
+        Me._TriggerCountNumeric.ToolTipText = "Trigger Count"
+        Me._TriggerCountNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
-        '_LoadSimpleLoopModelButton
+        '_TriggerSourceComboBox
         '
-        Me._LoadSimpleLoopModelButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._LoadSimpleLoopModelButton.Image = CType(resources.GetObject("_LoadSimpleLoopModelButton.Image"), System.Drawing.Image)
-        Me._LoadSimpleLoopModelButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._LoadSimpleLoopModelButton.Name = "_LoadSimpleLoopModelButton"
-        Me._LoadSimpleLoopModelButton.Size = New System.Drawing.Size(37, 25)
-        Me._LoadSimpleLoopModelButton.Text = "Load"
-        Me._LoadSimpleLoopModelButton.ToolTipText = "Loads simple loop model"
+        Me._TriggerSourceComboBox.Name = "_TriggerSourceComboBox"
+        Me._TriggerSourceComboBox.Size = New System.Drawing.Size(121, 28)
+        Me._TriggerSourceComboBox.Text = "Immediate"
+        Me._TriggerSourceComboBox.ToolTipText = "Trigger Source"
         '
-        '_RunSimpleLoopTriggerModelButton
+        '_TriggerSplitButton
         '
-        Me._RunSimpleLoopTriggerModelButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._RunSimpleLoopTriggerModelButton.Image = CType(resources.GetObject("_RunSimpleLoopTriggerModelButton.Image"), System.Drawing.Image)
-        Me._RunSimpleLoopTriggerModelButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._RunSimpleLoopTriggerModelButton.Name = "_RunSimpleLoopTriggerModelButton"
-        Me._RunSimpleLoopTriggerModelButton.Size = New System.Drawing.Size(32, 25)
-        Me._RunSimpleLoopTriggerModelButton.Text = "Run"
-        Me._RunSimpleLoopTriggerModelButton.ToolTipText = "Initiate simple loop, wait and read buffer"
+        Me._TriggerSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ContinuousTriggerEnabledMenuItem})
+        Me._TriggerSplitButton.Name = "_TriggerSplitButton"
+        Me._TriggerSplitButton.Size = New System.Drawing.Size(60, 25)
+        Me._TriggerSplitButton.Text = "More..."
+        Me._TriggerSplitButton.ToolTipText = "Continuous On/Off"
+        '
+        '_ContinuousTriggerEnabledMenuItem
+        '
+        Me._ContinuousTriggerEnabledMenuItem.CheckOnClick = True
+        Me._ContinuousTriggerEnabledMenuItem.Name = "_ContinuousTriggerEnabledMenuItem"
+        Me._ContinuousTriggerEnabledMenuItem.Size = New System.Drawing.Size(136, 22)
+        Me._ContinuousTriggerEnabledMenuItem.Text = "Continuous"
+        Me._ContinuousTriggerEnabledMenuItem.ToolTipText = "Check to enable"
+        '
+        '_TriggerModelsToolStrip
+        '
+        Me._TriggerModelsToolStrip.Dock = System.Windows.Forms.DockStyle.None
+        Me._TriggerModelsToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerModelLabel, Me._ApplyTriggerModelSplitButton})
+        Me._TriggerModelsToolStrip.Location = New System.Drawing.Point(5, 112)
+        Me._TriggerModelsToolStrip.Name = "_TriggerModelsToolStrip"
+        Me._TriggerModelsToolStrip.Size = New System.Drawing.Size(120, 25)
+        Me._TriggerModelsToolStrip.TabIndex = 3
+        Me.TipsTooltip.SetToolTip(Me._TriggerModelsToolStrip, "Simple trigger loop")
+        '
+        '_TriggerModelLabel
+        '
+        Me._TriggerModelLabel.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._TriggerModelLabel.Name = "_TriggerModelLabel"
+        Me._TriggerModelLabel.Size = New System.Drawing.Size(45, 22)
+        Me._TriggerModelLabel.Text = "APPLY:"
+        '
+        '_ApplyTriggerModelSplitButton
+        '
+        Me._ApplyTriggerModelSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ApplyTriggerModelSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._LoadGradeBinTriggerModelMenuItem, Me._LoadSimpleLoopMenuItem, Me._RunSimpleLoopMenuItem, Me._ClearTriggerModelMenuItem})
+        Me._ApplyTriggerModelSplitButton.Image = CType(resources.GetObject("_ApplyTriggerModelSplitButton.Image"), System.Drawing.Image)
+        Me._ApplyTriggerModelSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ApplyTriggerModelSplitButton.Name = "_ApplyTriggerModelSplitButton"
+        Me._ApplyTriggerModelSplitButton.Size = New System.Drawing.Size(63, 22)
+        Me._ApplyTriggerModelSplitButton.Text = "Select..."
+        Me._ApplyTriggerModelSplitButton.ToolTipText = "Select option:"
+        '
+        '_LoadGradeBinTriggerModelMenuItem
+        '
+        Me._LoadGradeBinTriggerModelMenuItem.Name = "_LoadGradeBinTriggerModelMenuItem"
+        Me._LoadGradeBinTriggerModelMenuItem.Size = New System.Drawing.Size(232, 22)
+        Me._LoadGradeBinTriggerModelMenuItem.Text = "Grading/Binning Trigger Loop"
+        Me._LoadGradeBinTriggerModelMenuItem.ToolTipText = "Loads the grading binning trigger model"
+        '
+        '_LoadSimpleLoopMenuItem
+        '
+        Me._LoadSimpleLoopMenuItem.Name = "_LoadSimpleLoopMenuItem"
+        Me._LoadSimpleLoopMenuItem.Size = New System.Drawing.Size(232, 22)
+        Me._LoadSimpleLoopMenuItem.Text = "Load Simple Loop"
+        Me._LoadSimpleLoopMenuItem.ToolTipText = "Loads a simple loop trigger model."
+        '
+        '_RunSimpleLoopMenuItem
+        '
+        Me._RunSimpleLoopMenuItem.Name = "_RunSimpleLoopMenuItem"
+        Me._RunSimpleLoopMenuItem.Size = New System.Drawing.Size(232, 22)
+        Me._RunSimpleLoopMenuItem.Text = "Run Simple Loop"
+        Me._RunSimpleLoopMenuItem.ToolTipText = "Initiates a single loop, waits for completion and displays the values"
+        '
+        '_ClearTriggerModelMenuItem
+        '
+        Me._ClearTriggerModelMenuItem.Name = "_ClearTriggerModelMenuItem"
+        Me._ClearTriggerModelMenuItem.Size = New System.Drawing.Size(232, 22)
+        Me._ClearTriggerModelMenuItem.Text = "Clear Trigger Model"
+        Me._ClearTriggerModelMenuItem.ToolTipText = "Clears the instrument trigger model"
         '
         '_ReadWriteTabPage
         '
@@ -944,18 +1030,6 @@ Partial Class K7500Panel
         Me._TitleLabel.Text = "K7500"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_RetriggerToggleButton
-        '
-        Me._RetriggerToggleButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
-        Me._RetriggerToggleButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._RetriggerToggleButton.Font = New System.Drawing.Font("Webdings", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(2, Byte))
-        Me._RetriggerToggleButton.Image = CType(resources.GetObject("_RetriggerToggleButton.Image"), System.Drawing.Image)
-        Me._RetriggerToggleButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._RetriggerToggleButton.Name = "_RetriggerToggleButton"
-        Me._RetriggerToggleButton.Size = New System.Drawing.Size(25, 23)
-        Me._RetriggerToggleButton.Text = "4"
-        Me._RetriggerToggleButton.ToolTipText = "Single > or Repeat >> Trigger mode"
-        '
         'K7500Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -989,8 +1063,10 @@ Partial Class K7500Panel
         Me._Limit1ToolStrip.PerformLayout()
         Me._GradeBinningToolStrip.ResumeLayout(False)
         Me._GradeBinningToolStrip.PerformLayout()
-        Me._SimpleLoopToolStrip.ResumeLayout(False)
-        Me._SimpleLoopToolStrip.PerformLayout()
+        Me._TriggerLayerToolStrip.ResumeLayout(False)
+        Me._TriggerLayerToolStrip.PerformLayout()
+        Me._TriggerModelsToolStrip.ResumeLayout(False)
+        Me._TriggerModelsToolStrip.PerformLayout()
         Me._ReadWriteTabPage.ResumeLayout(False)
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
@@ -1032,30 +1108,19 @@ Partial Class K7500Panel
     Private WithEvents _TriggerToolStripPanel As Windows.Forms.ToolStripPanel
     Private WithEvents _GradeBinningToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _BinningToolStripLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _TriggerCountTextBoxLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _TriggerDelayToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _TriggerDelaysToolStripLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _StartTriggerDelayNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _EndTriggerDelayNumeric As Core.Controls.ToolStripNumericUpDown
-    Private WithEvents _PassBitPatternNumericLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _HexBitPatternCheckBox As Core.Controls.ToolStripCheckBox
     Private WithEvents _PassBitPatternNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _Limit1ToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _Limits1Label As Windows.Forms.ToolStripLabel
-    Private WithEvents _FailBitToolStripLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _HexLimit1CheckBox As Core.Controls.ToolStripCheckBox
-    Private WithEvents _FailLimit1BitPatternNumeric As Core.Controls.ToolStripNumericUpDown
-    Private WithEvents _LoadGradeBinTriggerModelButton As Windows.Forms.ToolStripButton
     Private WithEvents _ApplyFunctionModeButton As Windows.Forms.Button
     Private WithEvents _Limit1DecimalsNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _LowerLimit1Numeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _UpperLimit1Numeric As Core.Controls.ToolStripNumericUpDown
-    Private WithEvents _SimpleLoopToolStrip As Windows.Forms.ToolStrip
-    Private WithEvents _SimpleLoopLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _SimpleLoopCountNumericLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _SimpleLoopCountNumeric As Core.Controls.ToolStripNumericUpDown
-    Private WithEvents _LoadSimpleLoopModelButton As Windows.Forms.ToolStripButton
-    Private WithEvents _BinningTriggerCountNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _TriggerModelsToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _TriggerModelLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _BufferDataGridView As Windows.Forms.DataGridView
     Private WithEvents _BufferToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ReadBufferButton As Windows.Forms.ToolStripButton
@@ -1065,15 +1130,13 @@ Partial Class K7500Panel
     Private WithEvents _BufferNameLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ReadingToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ReadButton As Windows.Forms.ToolStripButton
-    Private WithEvents _InitiateButton As Windows.Forms.ToolStripButton
+    Private WithEvents _InitiateTriggerButton As Windows.Forms.ToolStripButton
     Private WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
     Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
-    Private WithEvents _RunSimpleLoopTriggerModelButton As Windows.Forms.ToolStripButton
     Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
     Private WithEvents _OpenLeadsDetectionCheckBox As Windows.Forms.CheckBox
     Private WithEvents _StartTriggerDelayNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _EndTriggerDelayNumericLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _OpenLeadsBitPatternNumericUpDownLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _OpenLeadsBitPatternNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _SystemToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ResetSplitButton As Windows.Forms.ToolStripSplitButton
@@ -1087,6 +1150,27 @@ Partial Class K7500Panel
     Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ReadTerminalStateButton As Windows.Forms.ToolStripButton
     Private WithEvents _ServiceRequestEnableNumericLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _ServiceRequestEnableNumeric As Core.Controls.ToolStripNumericUpDown
-    Private WithEvents _RetriggerToggleButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ServiceRequestEnableBitmaskNumeric As Core.Controls.ToolStripNumericUpDown
+    Friend WithEvents _HandleMeasurementEventMenuItem As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents _AutoInitiateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _EventsMenuButton As Windows.Forms.ToolStripSplitButton
+    Private WithEvents _OpenLeadsBitPatternNumericButton As Windows.Forms.ToolStripButton
+    Private WithEvents _PassBitPatternNumericButton As Windows.Forms.ToolStripButton
+    Private WithEvents _TriggerLayerToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _TriggerLayerToolStripLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _TriggerCountNumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _TriggerCountNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _TriggerSourceComboBox As Windows.Forms.ToolStripComboBox
+    Private WithEvents _TriggerSplitButton As Windows.Forms.ToolStripSplitButton
+    Private WithEvents _ContinuousTriggerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _LowerLimit1NumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _UpperLimit1NumericLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _FailBitPatternNumericButton As Windows.Forms.ToolStripButton
+    Private WithEvents _FailLimit1BitPatternNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ApplyTriggerModelSplitButton As Windows.Forms.ToolStripSplitButton
+    Private WithEvents _LoadGradeBinTriggerModelMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _LoadSimpleLoopMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _RunSimpleLoopMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ClearTriggerModelMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _HandleBufferFullEventMenuItem As Windows.Forms.ToolStripMenuItem
 End Class

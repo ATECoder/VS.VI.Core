@@ -164,8 +164,8 @@ Public Class K3700Panel
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionServiceRequestHandlerAdded)
-                Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestHandlerAdded
+            Case NameOf(device.SessionServiceRequestEventEnabled)
+                Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
             Case NameOf(device.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
             Case NameOf(device.SessionMessagesTraceEnabled)
@@ -829,7 +829,7 @@ Public Class K3700Panel
         Dim checkBox As CheckBox = TryCast(sender, CheckBox)
         Try
             Me.Cursor = Cursors.WaitCursor
-            If checkBox IsNot Nothing AndAlso checkBox.Checked <> Me.Device.SessionServiceRequestHandlerAdded Then
+            If checkBox IsNot Nothing AndAlso checkBox.Checked <> Me.Device.SessionServiceRequestEventEnabled Then
                 If checkBox IsNot Nothing AndAlso checkBox.Checked Then
                     Me.Device.Session.EnableServiceRequest()
                     If Me._ServiceRequestEnableBitmaskNumeric.Value = 0 Then
@@ -1290,7 +1290,7 @@ Public Class K3700Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.SessionServiceRequestHandlerAdded Then
+            If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.DeviceServiceRequestHandlerAdded Then
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
                     Me.AddServiceRequestEventHandler()

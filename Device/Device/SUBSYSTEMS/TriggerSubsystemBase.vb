@@ -72,6 +72,18 @@ Public MustInherit Class TriggerSubsystemBase
         Me.Write(Me.ClearCommand)
     End Sub
 
+    ''' <summary> Gets the clear  trigger model command. </summary>
+    ''' <remarks> SCPI: ":TRIG:LOAD 'EMPTY'". </remarks>
+    ''' <value> The clear command. </value>
+    Protected Overridable ReadOnly Property ClearTriggerModelCommand As String
+
+    ''' <summary> Clears the trigger model. </summary>
+    ''' <remarks> David, 3/10/2016. </remarks>
+    Public Sub ClearTriggerModel()
+        Me.Write(Me.ClearTriggerModelCommand)
+    End Sub
+
+
     ''' <summary> Gets the initiate command. </summary>
     ''' <value> The initiate command. </value>
     ''' <remarks> SCPI: ":INIT". </remarks>
@@ -112,7 +124,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoDelayEnabled, value) Then
                 Me._AutoDelayEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoDelayEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.AutoDelayEnabled))
             End If
         End Set
     End Property
@@ -166,7 +178,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AveragingEnabled, value) Then
                 Me._AveragingEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AveragingEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.AveragingEnabled))
             End If
         End Set
     End Property
@@ -220,7 +232,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ContinuousEnabled, value) Then
                 Me._ContinuousEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ContinuousEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.ContinuousEnabled))
             End If
         End Set
     End Property
@@ -274,7 +286,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Direction?)
             If Not Me.Direction.Equals(value) Then
                 Me._Direction = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Direction))
+                Me.SafePostPropertyChanged(NameOf(Me.Direction))
             End If
         End Set
     End Property
@@ -328,7 +340,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.TriggerCount, value) Then
                 Me._TriggerCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerCount))
+                Me.SafePostPropertyChanged(NameOf(Me.TriggerCount))
             End If
         End Set
     End Property
@@ -388,7 +400,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Nullable.Equals(Me.Delay, value) Then
                 Me._Delay = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Delay))
+                Me.SafePostPropertyChanged(NameOf(Me.Delay))
             End If
         End Set
     End Property
@@ -447,7 +459,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.InputLineNumber, value) Then
                 Me._InputLineNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.InputLineNumber))
+                Me.SafePostPropertyChanged(NameOf(Me.InputLineNumber))
             End If
         End Set
     End Property
@@ -501,7 +513,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.OutputLineNumber, value) Then
                 Me._OutputLineNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OutputLineNumber))
+                Me.SafePostPropertyChanged(NameOf(Me.OutputLineNumber))
             End If
         End Set
     End Property
@@ -556,7 +568,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Me.TimerInterval.Equals(value) Then
                 Me._TimerInterval = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TimerInterval))
+                Me.SafePostPropertyChanged(NameOf(Me.TimerInterval))
             End If
         End Set
     End Property
@@ -654,10 +666,25 @@ Public MustInherit Class TriggerSubsystemBase
         Set(ByVal value As TriggerSources)
             If Not Me.SupportedTriggerSources.Equals(value) Then
                 Me._SupportedTriggerSources = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedTriggerSources))
+                Me.SafePostPropertyChanged(NameOf(Me.SupportedTriggerSources))
             End If
         End Set
     End Property
+
+    ''' <summary> List supported trigger sources. </summary>
+    ''' <remarks> David, 1/23/2017. </remarks>
+    ''' <param name="comboBox"> The combo box. </param>
+    Public Sub ListSupportedTriggerSources(ByVal comboBox As System.Windows.Forms.ComboBox)
+        If comboBox Is Nothing Then Throw New ArgumentNullException(NameOf(comboBox))
+        With comboBox
+            .DataSource = Nothing
+            .Items.Clear()
+            .DataSource = GetType(TriggerSources).ValueNamePairs(Me.SupportedTriggerSources)
+            .DisplayMember = "Value"
+            .ValueMember = "Key"
+        End With
+    End Sub
+
 
     Private _TriggerSource As TriggerSources?
     ''' <summary> Gets or sets the cached source TriggerSource. </summary>
@@ -670,7 +697,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As TriggerSources?)
             If Not Me.TriggerSource.Equals(value) Then
                 Me._TriggerSource = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerSource))
+                Me.SafePostPropertyChanged(NameOf(Me.TriggerSource))
             End If
         End Set
     End Property

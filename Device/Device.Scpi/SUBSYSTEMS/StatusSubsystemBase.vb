@@ -28,7 +28,7 @@ Public MustInherit Class StatusSubsystemBase
                                                   StandardEvents.ExecutionError Or StandardEvents.QueryError
         ' Me.StandardServiceEnableCommandFormat = Ieee488.Syntax.StandardServiceEnableCommandFormat
         ' Me.StandardServiceEnableCompleteCommandFormat = Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat
-
+        Me._OperationEventMap = New Dictionary(Of Integer, String)
     End Sub
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
@@ -70,6 +70,7 @@ Public MustInherit Class StatusSubsystemBase
         MyBase.PresetKnownState()
         Me.OperationEventEnableBitmask = 0
         Me.QuestionableEventEnableBitmask = 0
+        Me._OperationEventMap.Clear()
     End Sub
 
     ''' <summary> Sets the subsystem to its reset state. </summary>
@@ -353,6 +354,18 @@ Public MustInherit Class StatusSubsystemBase
 
 #End Region
 
+#Region " MAP EVENT NUMBERS "
+
+    ''' <summary> Gets or sets the buffer 0% filled event number. </summary>
+    ''' <value> The buffer empty event number. </value>
+    Public Property BufferEmptyEventNumber As Integer = 4916
+
+    ''' <summary> Gets or sets the buffer 100% full event number. </summary>
+    ''' <value> The buffer full event number. </value>
+    Public Property BufferFullEventNumber As Integer = 4917
+
+#End Region
+
 #Region " OPERATION REGISTER "
 
 #Region " ENABLE BITMASK "
@@ -560,6 +573,12 @@ Public MustInherit Class StatusSubsystemBase
         End Set
     End Property
 
+    ''' <summary> Gets the operation event enable query command. </summary>
+    ''' <remarks> SCPI: ":STAT:OPER:ENAB?". </remarks>
+    ''' <value> The operation event enable command format. </value>
+    Protected Overridable ReadOnly Property OperationEventConditionQueryCommand As String = VI.Scpi.Syntax.OperationEventEnableQueryCommand
+
+
     ''' <summary> Queries the Operation event register condition from the instrument. </summary>
     ''' <remarks> This value reflects the real time condition of the instrument. The returned value
     ''' could be cast to the Operation events type that is specific to the instrument The condition
@@ -567,7 +586,9 @@ Public MustInherit Class StatusSubsystemBase
     ''' operating conditions of the instrument. </remarks>
     ''' <returns> The operation event condition. </returns>
     Public Overridable Function QueryOperationEventCondition() As Integer?
-        Me.OperationEventCondition = Me.Session.Query(Me.OperationEventCondition.GetValueOrDefault(0), ":STAT:OPER:COND?")
+        If Not String.IsNullOrWhiteSpace(Me.OperationEventConditionQueryCommand) Then
+            Me.OperationEventCondition = Me.Session.Query(Me.OperationEventCondition.GetValueOrDefault(0), Me.OperationEventConditionQueryCommand)
+        End If
         Return Me.OperationEventCondition
     End Function
 
@@ -612,6 +633,78 @@ Public MustInherit Class StatusSubsystemBase
         End If
         Return Me.OperationEventStatus
     End Function
+#End Region
+
+#Region " MAP "
+
+    ''' <summary> The operation event Map. </summary>
+    Private _OperationEventMap As Dictionary(Of Integer, String)
+
+    ''' <summary> Gets or sets the cached Map of the Operation Register Map events. </summary>
+    Public Property OperationEventMap(ByVal bitNumber As Integer) As String
+        Get
+            If Me._OperationEventMap.ContainsKey(bitNumber) Then
+                Return Me._OperationEventMap(bitNumber)
+            Else
+                Return ""
+            End If
+        End Get
+        Protected Set(ByVal value As String)
+            If Me._OperationEventMap.ContainsKey(bitNumber) Then
+                Me._OperationEventMap(bitNumber) = value
+            Else
+                Me._OperationEventMap.Add(bitNumber, value)
+            End If
+            Me.SafePostPropertyChanged()
+        End Set
+    End Property
+
+    ''' <summary> Programs and reads back the Operation register events Map. </summary>
+    ''' <returns> The event map or nothing if not known. </returns>
+    Public Function ApplyOperationEventMap(ByVal bitNumber As Integer, ByVal setEventNumber As Integer, ByVal clearEventNumber As Integer) As String
+        Me.WriteOperationEventMap(bitNumber, setEventNumber, clearEventNumber)
+        Return Me.QueryOperationEventMap(bitNumber)
+    End Function
+
+
+    ''' <summary> Gets or sets the operation event Map query command. </summary>
+    ''' <remarks> SCPI: ":STAT:OPER:MAP? {0:D}".
+    ''' <see cref="Scpi.Syntax.OperationEventQueryCommand"> </see> </remarks>
+    ''' <value> The operation event Map query command. </value>
+    Protected Overridable ReadOnly Property OperationEventMapQueryCommand As String = VI.Scpi.Syntax.OperationEventMapQueryCommandFormat
+
+    ''' <summary> Queries the Map of the Operation Register events. </summary>
+    ''' <remarks> This query commands Queries the contents of the Map event register. This value
+    ''' indicates which bits are set. An event register bit is set to 1 when its event occurs. The
+    ''' bit remains latched to 1 until the register is reset. Reading an event register clears the
+    ''' bits of that register. *CLS resets all four event registers. </remarks>
+    ''' <returns> The event map or nothing if not known. </returns>
+    Public Overridable Function QueryOperationEventMap(ByVal bitNumber As Integer) As String
+        If Not String.IsNullOrWhiteSpace(Me.OperationEventMapQueryCommand) Then
+            Me.OperationEventMap(bitNumber) = Me.Session.QueryTrimEnd(String.Format(Me.OperationEventMapQueryCommand, bitNumber))
+        End If
+        Return Me.OperationEventMap(bitNumber)
+    End Function
+
+    ''' <summary> Gets or sets the operation event Map command format. </summary>
+    ''' <remarks> SCPI: ":STAT:OPER:MAP {0:D},{1:D},{2:D}".
+    ''' <see cref="Scpi.Syntax.OperationEventMapCommandFormat"> </see> </remarks>
+    ''' <value> The operation event Map command format. </value>
+    Protected Overridable ReadOnly Property OperationEventMapCommandFormat As String = VI.Scpi.Syntax.OperationEventMapCommandFormat
+
+    ''' <summary> Programs the Operation register event Map bit mask. </summary>
+    ''' <remarks> When an event bit is set and the corresponding Map bit is set, the output
+    ''' (summary) of the register will set to 1, which in turn sets the summary bit of the Status
+    ''' Byte Register. </remarks>
+    ''' <returns> The event map or nothing if not known. </returns>
+    Public Overridable Function WriteOperationEventMap(ByVal bitNumber As Integer, ByVal setEventNumber As Integer, ByVal clearEventNumber As Integer) As String
+        If Not String.IsNullOrWhiteSpace(Me.OperationEventMapCommandFormat) Then
+            Me.Session.WriteLine(Me.OperationEventMapCommandFormat, bitNumber, setEventNumber, clearEventNumber)
+        End If
+        Me.OperationEventMap(bitNumber) = $"{setEventNumber},{clearEventNumber}"
+        Return Me.OperationEventMap(bitNumber)
+    End Function
+
 #End Region
 
 #End Region
@@ -741,6 +834,78 @@ Public MustInherit Class StatusSubsystemBase
             Me.QuestionableEventStatus = Me.Session.Query(0I, Me.QuestionableStatusQueryCommand)
         End If
         Return Me.QuestionableEventStatus
+    End Function
+
+#End Region
+
+#Region " MAP "
+
+    ''' <summary> The Questionable event Map. </summary>
+    Private _QuestionableEventMap As New Dictionary(Of Integer, String)
+
+    ''' <summary> Gets or sets the cached Map of the Questionable Register Map events. </summary>
+    Public Property QuestionableEventMap(ByVal bitNumber As Integer) As String
+        Get
+            If Me._QuestionableEventMap.ContainsKey(bitNumber) Then
+                Return Me._QuestionableEventMap(bitNumber)
+            Else
+                Return ""
+            End If
+        End Get
+        Protected Set(ByVal value As String)
+            If Me._QuestionableEventMap.ContainsKey(bitNumber) Then
+                Me._QuestionableEventMap(bitNumber) = value
+            Else
+                Me._QuestionableEventMap.Add(bitNumber, value)
+            End If
+            Me.SafePostPropertyChanged()
+        End Set
+    End Property
+
+    ''' <summary> Programs and reads back the Questionable register events Map. </summary>
+    ''' <returns> The event map or nothing if not known. </returns>
+    Public Function ApplyQuestionableEventMap(ByVal bitNumber As Integer, ByVal setEventNumber As Integer, ByVal clearEventNumber As Integer) As String
+        Me.WriteQuestionableEventMap(bitNumber, setEventNumber, clearEventNumber)
+        Return Me.QueryQuestionableEventMap(bitNumber)
+    End Function
+
+
+    ''' <summary> Gets or sets the Questionable event Map query command. </summary>
+    ''' <remarks> SCPI: ":STAT:QUES:MAP? {0:D}".
+    ''' <see cref="Scpi.Syntax.QuestionableEventQueryCommand"> </see> </remarks>
+    ''' <value> The Questionable event Map query command. </value>
+    Protected Overridable ReadOnly Property QuestionableEventMapQueryCommand As String = VI.Scpi.Syntax.QuestionableEventMapQueryCommandFormat
+
+    ''' <summary> Queries the Map of the Questionable Register events. </summary>
+    ''' <remarks> This query commands Queries the contents of the Map event register. This value
+    ''' indicates which bits are set. An event register bit is set to 1 when its event occurs. The
+    ''' bit remains latched to 1 until the register is reset. Reading an event register clears the
+    ''' bits of that register. *CLS resets all four event registers. </remarks>
+    ''' <returns> The event map or nothing if not known. </returns>
+    Public Overridable Function QueryQuestionableEventMap(ByVal bitNumber As Integer) As String
+        If Not String.IsNullOrWhiteSpace(Me.QuestionableEventMapQueryCommand) Then
+            Me.QuestionableEventMap(bitNumber) = Me.Session.QueryTrimEnd(String.Format(Me.QuestionableEventMapQueryCommand, bitNumber))
+        End If
+        Return Me.QuestionableEventMap(bitNumber)
+    End Function
+
+    ''' <summary> Gets or sets the Questionable event Map command format. </summary>
+    ''' <remarks> SCPI: ":STAT:QUES:MAP {0:D},{1:D},{2:D}".
+    ''' <see cref="Scpi.Syntax.QuestionableEventMapCommandFormat"> </see> </remarks>
+    ''' <value> The Questionable event Map command format. </value>
+    Protected Overridable ReadOnly Property QuestionableEventMapCommandFormat As String = VI.Scpi.Syntax.QuestionableEventMapCommandFormat
+
+    ''' <summary> Programs the Questionable register event Map bit mask. </summary>
+    ''' <remarks> When an event bit is set and the corresponding Map bit is set, the output
+    ''' (summary) of the register will set to 1, which in turn sets the summary bit of the Status
+    ''' Byte Register. </remarks>
+    ''' <returns> The event map or nothing if not known. </returns>
+    Public Overridable Function WriteQuestionableEventMap(ByVal bitNumber As Integer, ByVal setEventNumber As Integer, ByVal clearEventNumber As Integer) As String
+        If Not String.IsNullOrWhiteSpace(Me.QuestionableEventMapCommandFormat) Then
+            Me.Session.WriteLine(Me.QuestionableEventMapCommandFormat, bitNumber, setEventNumber, clearEventNumber)
+        End If
+        Me.QuestionableEventMap(bitNumber) = $"{setEventNumber},{clearEventNumber}"
+        Return Me.QuestionableEventMap(bitNumber)
     End Function
 
 #End Region

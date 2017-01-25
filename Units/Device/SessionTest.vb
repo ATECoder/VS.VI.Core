@@ -54,7 +54,7 @@ Public Class SessionTest
     Public Sub InitialTerminationTest()
         Dim resourceName As String = "GPIB0::22::INSTR"
         Dim target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
-        target.OpenSession(resourceName)
+        target.OpenSession(resourceName, Threading.SynchronizationContext.Current)
         Assert.AreEqual(CByte(AscW(target.Termination(0))), target.TerminationCharacter)
         Assert.AreEqual(target.Termination(0), Convert.ToChar(target.TerminationCharacter))
     End Sub

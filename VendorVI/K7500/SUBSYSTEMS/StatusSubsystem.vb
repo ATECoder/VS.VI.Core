@@ -42,6 +42,7 @@ Public Class StatusSubsystem
     ''' <value> The preset command. </value>
     Protected Overrides ReadOnly Property PresetCommand As String = VI.Scpi.Syntax.StatusPresetCommand
 
+
 #Region " STANDARD STATUS  "
 
     ''' <summary> Gets the clear execution state command. </summary>

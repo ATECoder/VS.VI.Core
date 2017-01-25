@@ -247,7 +247,7 @@ Public MustInherit Class TraceSubsystemBase
         If Not String.IsNullOrWhiteSpace(Me.DataQueryCommand) Then
             Me.Session.WriteLine(Me.DataQueryCommand)
             ' read the entire data.
-            Me.Data = Me.Session.ReadFreeLine()
+            Me.Data = Me.Session.ReadFreeLineTrimEnd()
         End If
         Return Me.Data
     End Function
@@ -259,7 +259,7 @@ Public MustInherit Class TraceSubsystemBase
             Me.Data = ""
             Me.Session.WriteLine(queryCommand)
             ' read the entire data.
-            Me.Data = Me.Session.ReadFreeLine()
+            Me.Data = Me.Session.ReadFreeLineTrimEnd()
         End If
         Return Me.Data
     End Function

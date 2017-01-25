@@ -232,6 +232,62 @@ Public MustInherit Class Calculate2SubsystemBase
 
 #End Region
 
+#Region " LIMIT1 AUTO CLEAR "
+
+    ''' <summary> Limit1 Auto Clear. </summary>
+    Private _Limit1AutoClear As Boolean?
+
+    ''' <summary> Gets or sets the cached Limit1 Auto Clear sentinel. </summary>
+    ''' <value> <c>null</c> if Limit1 Auto Clear is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property Limit1AutoClear As Boolean?
+        Get
+            Return Me._Limit1AutoClear
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.Limit1AutoClear, value) Then
+                Me._Limit1AutoClear = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.Limit1AutoClear))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Limit1 Auto Clear sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function ApplyLimit1AutoClear(ByVal value As Boolean) As Boolean?
+        Me.WriteLimit1AutoClear(value)
+        Return Me.QueryLimit1AutoClear()
+    End Function
+
+    ''' <summary> Gets or sets the Limit1 Auto Clear query command. </summary>
+    ''' <value> The Limit1 Auto Clear query command. </value>
+    ''' <remarks> SCPI: ":CALC2:FRES:LIM1:STAT?" </remarks>
+    Protected Overridable ReadOnly Property Limit1AutoClearQueryCommand As String
+
+    ''' <summary> Queries the Limit1 Auto Clear sentinel. Also sets the
+    ''' <see cref="Limit1AutoClear">AutoClear</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function QueryLimit1AutoClear() As Boolean?
+        Me.Limit1AutoClear = Me.Query(Me.Limit1AutoClear, Me.Limit1AutoClearQueryCommand)
+        Return Me.Limit1AutoClear
+    End Function
+
+    ''' <summary> Gets or sets the Limit1 Auto Clear command Format. </summary>
+    ''' <value> The Limit1 Auto Clear query command. </value>
+    ''' <remarks> SCPI: ":CALC2:FRES:LIM1:STAT {0:'ON';'ON';'OFF'}" </remarks>
+    Protected Overridable ReadOnly Property Limit1AutoClearCommandFormat As String
+
+    ''' <summary> Writes the Limit1 Auto Clear sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is Auto Clear. </param>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function WriteLimit1AutoClear(ByVal value As Boolean) As Boolean?
+        Me.Limit1AutoClear = Me.Write(value, Me.Limit1AutoClearCommandFormat)
+        Return Me.Limit1AutoClear
+    End Function
+
+#End Region
+
 #End Region
 
 #Region " LIMIT 2 "
@@ -402,6 +458,61 @@ Public MustInherit Class Calculate2SubsystemBase
 
 #End Region
 
+#Region " LIMIT2 AUTO CLEAR "
+
+    ''' <summary> Limit2 Auto Clear. </summary>
+    Private _Limit2AutoClear As Boolean?
+
+    ''' <summary> Gets or sets the cached Limit2 Auto Clear sentinel. </summary>
+    ''' <value> <c>null</c> if Limit2 Auto Clear is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property Limit2AutoClear As Boolean?
+        Get
+            Return Me._Limit2AutoClear
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.Limit2AutoClear, value) Then
+                Me._Limit2AutoClear = value
+                Me.AsyncNotifyPropertyChanged(NameOf(Me.Limit2AutoClear))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Limit2 Auto Clear sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function ApplyLimit2AutoClear(ByVal value As Boolean) As Boolean?
+        Me.WriteLimit2AutoClear(value)
+        Return Me.QueryLimit2AutoClear()
+    End Function
+
+    ''' <summary> Gets or sets the Limit2 Auto Clear query command. </summary>
+    ''' <value> The Limit2 Auto Clear query command. </value>
+    ''' <remarks> SCPI: ":CALC2:FRES:LIM2:STAT?" </remarks>
+    Protected Overridable ReadOnly Property Limit2AutoClearQueryCommand As String
+
+    ''' <summary> Queries the Limit2 Auto Clear sentinel. Also sets the
+    ''' <see cref="Limit2AutoClear">AutoClear</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function QueryLimit2AutoClear() As Boolean?
+        Me.Limit2AutoClear = Me.Query(Me.Limit2AutoClear, Me.Limit2AutoClearQueryCommand)
+        Return Me.Limit2AutoClear
+    End Function
+
+    ''' <summary> Gets or sets the Limit2 Auto Clear command Format. </summary>
+    ''' <value> The Limit2 Auto Clear query command. </value>
+    ''' <remarks> SCPI: ":CALC2:FRES:LIM2:STAT {0:'ON';'ON';'OFF'}" </remarks>
+    Protected Overridable ReadOnly Property Limit2AutoClearCommandFormat As String
+
+    ''' <summary> Writes the Limit2 Auto Clear sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is Auto Clear. </param>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function WriteLimit2AutoClear(ByVal value As Boolean) As Boolean?
+        Me.Limit2AutoClear = Me.Write(value, Me.Limit2AutoClearCommandFormat)
+        Return Me.Limit2AutoClear
+    End Function
+
+#End Region
 
 #End Region
 

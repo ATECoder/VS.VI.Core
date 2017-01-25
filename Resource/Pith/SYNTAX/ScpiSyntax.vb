@@ -54,23 +54,14 @@ Namespace Scpi
             ''' <summary> Gets the error queue clear command. </summary>
             Public Const ClearErrorQueueCommand As String = ":STAT:QUE:CLEAR"
 
-            ''' <summary> Gets the questionable event status query command </summary>
-            Public Const QuestionableEventQueryCommand As String = ":STAT:QUES:EVEN?"
-
             ''' <summary> Gets the preset status command. </summary>
             Public Const StatusPresetCommand As String = ":STAT:PRES"
 
-            ''' <summary> Gets the operation event enable command format. </summary>
-            Public Const OperationEventEnableCommandFormat As String = ":STAT:OPER:ENAB {0:D}"
-
-            ''' <summary> Gets the operation event enable Query command. </summary>
-            Public Const OperationEventEnableQueryCommand As String = ":STAT:OPER:ENAB?"
+            ''' <summary> Gets the measurement event condition command. </summary>
+            Public Const MeasurementEventConditionQueryCommand As String = ":STAT:MEAS:COND?"
 
             ''' <summary> Gets the measurement event status query command. </summary>
             Public Const MeasurementEventQueryCommand As String = ":STAT:MEAS:EVEN?"
-
-            ''' <summary> Gets the measurement event condition command. </summary>
-            Public Const MeasurementEventConditionQueryCommand As String = ":STAT:MEAS:COND?"
 
             ''' <summary> Gets the Measurement event enable Query command. </summary>
             Public Const MeasurementEventEnableQueryCommand As String = ":STAT:MEAS:ENAB?"
@@ -78,8 +69,41 @@ Namespace Scpi
             ''' <summary> Gets the Measurement event enable command format. </summary>
             Public Const MeasurementEventEnableCommandFormat As String = ":STAT:MEAS:ENAB {0:D}"
 
+            ''' <summary> Gets the measurement event condition command. </summary>
+            Public Const OperationEventConditionQueryCommand As String = ":STAT:OPER:COND?"
+
+            ''' <summary> Gets the operation event enable command format. </summary>
+            Public Const OperationEventEnableCommandFormat As String = ":STAT:OPER:ENAB {0:D}"
+
+            ''' <summary> Gets the operation event enable Query command. </summary>
+            Public Const OperationEventEnableQueryCommand As String = ":STAT:OPER:ENAB?"
+
             ''' <summary> Gets the operation register event status query command. </summary>
             Public Const OperationEventQueryCommand As String = ":STAT:OPER:EVEN?"
+
+            ''' <summary> Gets the operation event map command format. </summary>
+            Public Const OperationEventMapCommandFormat As String = ":STAT:OPER:MAP {0:D},{1:D},{2:D}"
+
+            ''' <summary> Gets the operation map query command format. </summary>
+            Public Const OperationEventMapQueryCommandFormat As String = ":STAT:OPER:MAP? {0:D}"
+
+            ''' <summary> Gets the measurement event condition command. </summary>
+            Public Const QuestionableEventConditionQueryCommand As String = ":STAT:QUES:COND?"
+
+            ''' <summary> Gets the Questionable event enable command format. </summary>
+            Public Const QuestionableEventEnableCommandFormat As String = ":STAT:QUES:ENAB {0:D}"
+
+            ''' <summary> Gets the Questionable event enable Query command. </summary>
+            Public Const QuestionableEventEnableQueryCommand As String = ":STAT:QUES:ENAB?"
+
+            ''' <summary> Gets the Questionable register event status query command. </summary>
+            Public Const QuestionableEventQueryCommand As String = ":STAT:QUES:EVEN?"
+
+            ''' <summary> Gets the Questionable event map command format. </summary>
+            Public Const QuestionableEventMapCommandFormat As String = ":STAT:QUES:MAP {0:D},{1:D},{2:D}"
+
+            ''' <summary> Gets the Questionable map query command format. </summary>
+            Public Const QuestionableEventMapQueryCommandFormat As String = ":STAT:QUES:MAP? {0:D}"
 
 
 #End Region

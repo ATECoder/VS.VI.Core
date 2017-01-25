@@ -78,7 +78,7 @@ Public Class MeasureTest
     Public Sub OpenSessionTest()
         Dim resourceName As String = "TCPIP0::192.168.1.134::inst0::INSTR"
         Dim target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
-        target.OpenSession(resourceName)
+        target.OpenSession(resourceName, Threading.SynchronizationContext.Current)
         Assert.AreEqual(TimeSpan.FromSeconds(58), target.KeepAliveInterval)
         Assert.AreEqual(resourceName, target.ResourceName)
         Assert.AreEqual(True, target.IsDeviceOpen)
@@ -86,7 +86,7 @@ Public Class MeasureTest
 
     Public Function OpenSession(ByVal resourceName As String) As SessionBase
         Dim target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
-        target.OpenSession(resourceName)
+        target.OpenSession(resourceName, Threading.SynchronizationContext.Current)
         Assert.AreEqual(TimeSpan.FromSeconds(58), target.KeepAliveInterval)
         Assert.AreEqual(resourceName, target.ResourceName)
         Assert.AreEqual(True, target.IsDeviceOpen)
