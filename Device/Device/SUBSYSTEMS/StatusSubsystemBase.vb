@@ -360,7 +360,7 @@ Public MustInherit Class StatusSubsystemBase
                     End If
                 Loop While Me.IsErrorBitSet AndAlso de.IsError
                 ' this is a kludge because the 7510 does not clear the error queue.
-                If Not de.IsError AndAlso Me.IsErrorBitSet Then Me.ClearErrorQueue()
+                If Not de.IsError AndAlso Me.IsErrorBitSet Then Me.Session.Execute(Me.ClearErrorQueueCommand)
                 If builder.Length > 0 Then
                     Me.QueryStandardEventStatus()
                     Me.AppendDeviceErrorMessage(builder.ToString)
@@ -422,7 +422,7 @@ Public MustInherit Class StatusSubsystemBase
                 Loop While Me.IsErrorBitSet AndAlso de.IsError
 
                 ' this is a kludge because the 7510 does not clear the error queue.
-                If Not de.IsError AndAlso Me.IsErrorBitSet Then Me.ClearErrorQueue()
+                If Not de.IsError AndAlso Me.IsErrorBitSet Then Me.Session.Execute(Me.ClearErrorQueueCommand)
 
                 If builder.Length > 0 Then
                     Me.QueryStandardEventStatus()

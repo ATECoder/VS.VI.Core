@@ -716,7 +716,7 @@ Public Class K7500Panel
             Case NameOf(subsystem.LastDeviceError)
                 onLastError(subsystem.LastDeviceError)
             Case NameOf(subsystem.ErrorAvailable)
-                If Not subsystem.ReadingDeviceErrors Then
+                If subsystem.ErrorAvailable AndAlso Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
                 End If
@@ -1163,7 +1163,6 @@ Public Class K7500Panel
     ''' <value> The interface stop watch. </value>
     Private ReadOnly Property InterfaceStopWatch As Stopwatch
 
-
     ''' <summary> Selects a new reading to display.
     ''' </summary>
     Friend Function SelectReading(ByVal value As VI.ReadingTypes) As VI.ReadingTypes
@@ -1257,7 +1256,7 @@ Public Class K7500Panel
 
     ''' <summary> Gets or sets the trace readings. </summary>
     ''' <value> The trace readings. </value>
-    Private ReadOnly Property TraceReadings As List(Of BufferReading)
+    Private ReadOnly Property TraceReadings As Collections.ObjectModel.ObservableCollection(Of BufferReading)
 
 #Region " MEASUREMENT "
 
@@ -1275,7 +1274,19 @@ Public Class K7500Panel
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} SRQ: {Me.Device.StatusSubsystem.ServiceRequestStatus:X};. ")
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
+            ' Measurement bit does not turn on -- kludging for now.
             If Me.Device.StatusSubsystem.MeasurementAvailable Then
+            End If
+            activity = "kludge: reading buffer count"
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+
+            ' this assume buffer is cleared upon each new cycle
+            Dim newBufferCount As Integer = Me.Device.TraceSubsystem.QueryActualPointCount.GetValueOrDefault(0)
+
+            If newBufferCount > 0 Then
+
+                activity = "kludge: buffer has data..."
+                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
 
                 activity = "handling measurement available"
                 Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
@@ -1288,16 +1299,19 @@ Public Class K7500Panel
                     activity = "fetching buffered readings"
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                     Dim values As IEnumerable(Of BufferReading) = Me.Device.TraceSubsystem.QueryBufferReadings()
-                    If Me.TraceReadings Is Nothing Then Me._TraceReadings = New List(Of BufferReading)
-                    Me.TraceReadings.AddRange(values)
+                    If Me.TraceReadings Is Nothing Then Me._TraceReadings = New Collections.ObjectModel.ObservableCollection(Of BufferReading)
+                    For Each v As BufferReading In values : Me.TraceReadings.Add(v) : Next
 
                     activity = "updating the display"
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                     If Me.TraceReadings.Count = values.Count Then
-                        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, values)
+                        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.TraceReadings)
                     Else
-                        Me._BufferDataGridView.Invalidate()
+                        ' TO_DO: See if observable collection will work.
+                        ' Me._BufferDataGridView.Invalidate()
+                        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.TraceReadings)
                     End If
+                    Me._BufferDataGridView.Invalidate()
                     Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
                     Me.InterfaceStopWatch.Stop()
                 End If
@@ -1434,7 +1448,7 @@ Public Class K7500Panel
 
 #End Region
 
-#Region " BUFFER "
+#Region " BUFFER HANDLER "
 
     ''' <summary> Handles the buffer full request. </summary>
     ''' <remarks> David, 1/24/2017. </remarks>
@@ -1467,8 +1481,8 @@ Public Class K7500Panel
                     activity = "fetching buffered readings"
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                     Dim values As IEnumerable(Of BufferReading) = Me.Device.TraceSubsystem.QueryBufferReadings()
-                    If Me.TraceReadings Is Nothing Then Me._TraceReadings = New List(Of BufferReading)
-                    Me.TraceReadings.AddRange(values)
+                    If Me.TraceReadings Is Nothing Then Me._TraceReadings = New Collections.ObjectModel.ObservableCollection(Of BufferReading)
+                    For Each v As BufferReading In values : Me.TraceReadings.Add(v) : Next
 
                     activity = "updating the display"
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
@@ -1585,7 +1599,7 @@ Public Class K7500Panel
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _HandleBufferEventMenuItem_CheckStateChanged(sender As Object, e As EventArgs) Handles _HandleBufferFullEventMenuItem.CheckStateChanged
+    Private Sub _HandleBufferEventMenuItem_CheckStateChanged(sender As Object, e As EventArgs)
 
         If Me._InitializingComponents Then Return
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
@@ -1664,12 +1678,12 @@ Public Class K7500Panel
 
             activity = "clearing buffer and display"
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Me._TraceReadings = New List(Of BufferReading)
+            Me._TraceReadings = New Collections.ObjectModel.ObservableCollection(Of BufferReading)
             TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me._TraceReadings)
 
             Me.Device.TraceSubsystem.ClearBuffer()
 
-            activity = "initiating single trigger measurements(s)"
+            activity = "initiating trigger plan"
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             Me._InterfaceStopWatch.Restart()
             Me.Device.TriggerSubsystem.Initiate()
@@ -1688,7 +1702,7 @@ Public Class K7500Panel
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _InitiateButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _InitiateTriggerButton.Click
+    Private Sub _AbortStartTriggerPlanMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _AbortStartTriggerPlanMenuItem.Click
 
         If Me._InitializingComponents Then Return
         Dim activity As String = ""
@@ -1702,6 +1716,26 @@ Public Class K7500Panel
             activity = "Starting trigger plan"
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             Me.StartTriggerPlan(sender)
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _InitiateTriggerPlanMenuItem_Click(sender As Object, e As EventArgs) Handles _InitiateTriggerPlanMenuItem.Click
+
+        If Me._InitializingComponents Then Return
+        Dim activity As String = ""
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            activity = "initiating trigger plan"
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me._InterfaceStopWatch.Restart()
+            Me.Device.TriggerSubsystem.Initiate()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
@@ -1949,8 +1983,8 @@ Public Class K7500Panel
         End With
 
         Dim count As Integer = CInt(Me._TriggerCountNumeric.Value)
-        ' set count so that the buffer full event could be triggered.
-        Me.Device.TraceSubsystem.ApplyPointsCount(count)
+        ' the buffer must have at least 10 data points
+        Me.Device.TraceSubsystem.ApplyPointsCount(Math.Max(10, count))
 
         ' clear the buffer 
         Me.Device.TraceSubsystem.ClearBuffer()

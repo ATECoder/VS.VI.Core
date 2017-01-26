@@ -38,10 +38,11 @@ Partial Class K7500Panel
         Me._ReadButton = New System.Windows.Forms.ToolStripButton()
         Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._AbortButton = New System.Windows.Forms.ToolStripButton()
-        Me._InitiateTriggerButton = New System.Windows.Forms.ToolStripButton()
+        Me._GoSplitButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._InitiateTriggerPlanMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._AbortStartTriggerPlanMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._EventsMenuButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._HandleMeasurementEventMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._HandleBufferFullEventMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._AutoInitiateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
         Me._OpenLeadsDetectionCheckBox = New System.Windows.Forms.CheckBox()
@@ -343,7 +344,7 @@ Partial Class K7500Panel
         '
         '_ReadingToolStrip
         '
-        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._ReadingComboBox, Me._AbortButton, Me._InitiateTriggerButton, Me._EventsMenuButton})
+        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._ReadingComboBox, Me._AbortButton, Me._GoSplitButton, Me._EventsMenuButton})
         Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingToolStrip.Name = "_ReadingToolStrip"
         Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
@@ -377,22 +378,37 @@ Partial Class K7500Panel
         Me._AbortButton.Text = "Abort"
         Me._AbortButton.ToolTipText = "Aborts triggering"
         '
-        '_InitiateTriggerButton
+        '_GoSplitButton
         '
-        Me._InitiateTriggerButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
-        Me._InitiateTriggerButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._InitiateTriggerButton.Image = CType(resources.GetObject("_InitiateTriggerButton.Image"), System.Drawing.Image)
-        Me._InitiateTriggerButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._InitiateTriggerButton.Name = "_InitiateTriggerButton"
-        Me._InitiateTriggerButton.Size = New System.Drawing.Size(47, 22)
-        Me._InitiateTriggerButton.Text = "Initiate"
-        Me._InitiateTriggerButton.ToolTipText = "Initiates a triggered reading"
+        Me._GoSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._GoSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._GoSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._InitiateTriggerPlanMenuItem, Me._AbortStartTriggerPlanMenuItem})
+        Me._GoSplitButton.Image = CType(resources.GetObject("_GoSplitButton.Image"), System.Drawing.Image)
+        Me._GoSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._GoSplitButton.Name = "_GoSplitButton"
+        Me._GoSplitButton.Size = New System.Drawing.Size(47, 22)
+        Me._GoSplitButton.Text = "Go..."
+        Me._GoSplitButton.ToolTipText = "Select initiation options"
+        '
+        '_InitiateTriggerPlanMenuItem
+        '
+        Me._InitiateTriggerPlanMenuItem.Name = "_InitiateTriggerPlanMenuItem"
+        Me._InitiateTriggerPlanMenuItem.Size = New System.Drawing.Size(179, 22)
+        Me._InitiateTriggerPlanMenuItem.Text = "Initiate"
+        Me._InitiateTriggerPlanMenuItem.ToolTipText = "Sends the Initiate command to the instrument"
+        '
+        '_AbortStartTriggerPlanMenuItem
+        '
+        Me._AbortStartTriggerPlanMenuItem.Name = "_AbortStartTriggerPlanMenuItem"
+        Me._AbortStartTriggerPlanMenuItem.Size = New System.Drawing.Size(179, 22)
+        Me._AbortStartTriggerPlanMenuItem.Text = "Abort, Clear, Initiate"
+        Me._AbortStartTriggerPlanMenuItem.ToolTipText = "Aborts, clears buffer and starts the trigger plan"
         '
         '_EventsMenuButton
         '
         Me._EventsMenuButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._EventsMenuButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._EventsMenuButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._HandleMeasurementEventMenuItem, Me._HandleBufferFullEventMenuItem, Me._AutoInitiateMenuItem})
+        Me._EventsMenuButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._HandleMeasurementEventMenuItem, Me._AutoInitiateMenuItem})
         Me._EventsMenuButton.Image = CType(resources.GetObject("_EventsMenuButton.Image"), System.Drawing.Image)
         Me._EventsMenuButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._EventsMenuButton.Name = "_EventsMenuButton"
@@ -407,14 +423,6 @@ Partial Class K7500Panel
         Me._HandleMeasurementEventMenuItem.Size = New System.Drawing.Size(147, 22)
         Me._HandleMeasurementEventMenuItem.Text = "Measurement"
         Me._HandleMeasurementEventMenuItem.ToolTipText = "Check to handle measurement events"
-        '
-        '_HandleBufferFullEventMenuItem
-        '
-        Me._HandleBufferFullEventMenuItem.CheckOnClick = True
-        Me._HandleBufferFullEventMenuItem.Name = "_HandleBufferFullEventMenuItem"
-        Me._HandleBufferFullEventMenuItem.Size = New System.Drawing.Size(147, 22)
-        Me._HandleBufferFullEventMenuItem.Text = "Buffer Full"
-        Me._HandleBufferFullEventMenuItem.ToolTipText = "Enables event handling upon the buffer full event"
         '
         '_AutoInitiateMenuItem
         '
@@ -705,7 +713,7 @@ Partial Class K7500Panel
         Me._GradeBinningToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._BinningToolStripLabel, Me._PassBitPatternNumericButton, Me._PassBitPatternNumeric, Me._OpenLeadsBitPatternNumericButton, Me._OpenLeadsBitPatternNumeric, Me._FailBitPatternNumericButton, Me._FailLimit1BitPatternNumeric})
         Me._GradeBinningToolStrip.Location = New System.Drawing.Point(3, 56)
         Me._GradeBinningToolStrip.Name = "_GradeBinningToolStrip"
-        Me._GradeBinningToolStrip.Size = New System.Drawing.Size(337, 28)
+        Me._GradeBinningToolStrip.Size = New System.Drawing.Size(306, 28)
         Me._GradeBinningToolStrip.TabIndex = 0
         '
         '_BinningToolStripLabel
@@ -1130,7 +1138,6 @@ Partial Class K7500Panel
     Private WithEvents _BufferNameLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ReadingToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ReadButton As Windows.Forms.ToolStripButton
-    Private WithEvents _InitiateTriggerButton As Windows.Forms.ToolStripButton
     Private WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
     Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
     Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
@@ -1172,5 +1179,7 @@ Partial Class K7500Panel
     Private WithEvents _LoadSimpleLoopMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _RunSimpleLoopMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ClearTriggerModelMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _HandleBufferFullEventMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _GoSplitButton As Windows.Forms.ToolStripSplitButton
+    Private WithEvents _AbortStartTriggerPlanMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _InitiateTriggerPlanMenuItem As Windows.Forms.ToolStripMenuItem
 End Class
