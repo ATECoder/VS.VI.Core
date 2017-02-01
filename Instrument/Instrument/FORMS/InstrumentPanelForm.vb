@@ -462,6 +462,20 @@ Public Class InstrumentPanelFormCollection
         Me.ShowNew(form, log)
     End Sub
 
+    ''' <summary> Adds and shows the form. </summary>
+    ''' <remarks> David, 1/15/2016. </remarks>
+    ''' <param name="form">  The form. </param>
+    ''' <param name="panel"> The panel. </param>
+    ''' <param name="log">   The log. </param>
+    Public Overloads Sub ShowNew(ByVal form As Instrument.InstrumentPanelForm,
+                                 ByVal panel As isr.Core.Pith.PropertyNotifyControlBase,
+                                 ByVal log As MyLog)
+        If form Is Nothing Then Throw New ArgumentNullException(NameOf(form))
+        form.AddPropertyNotifyControl(panel)
+        Me.ShowNew(form, log)
+    End Sub
+
+
 End Class
 
 #Region " UNUSED "

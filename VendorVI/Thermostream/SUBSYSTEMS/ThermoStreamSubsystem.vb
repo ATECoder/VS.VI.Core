@@ -385,12 +385,19 @@ Public Class ThermostreamSubsystem
 
 #Region " RAMP RATE "
 
-    ''' <summary> The Ramp Rate range in degrees per minute. </summary>
-    Public Overrides ReadOnly Property RampRateRange As isr.Core.Pith.RangeR = New isr.Core.Pith.RangeR(0, 9999)
+    ''' <summary> The Low Ramp Rate range in degrees per minute. </summary>
+    Public Overrides ReadOnly Property LowRampRateRange As isr.Core.Pith.RangeR = New isr.Core.Pith.RangeR(0, 99.99)
 
-    ''' <summary> Gets the Ramp Rate command format. </summary>
-    ''' <value> the Ramp Rate command format. </value>
-    Protected Overrides ReadOnly Property RampRateCommandFormat As String = "RAMP {0}"
+    ''' <summary> The High Ramp Rate range in degrees per minute. </summary>
+    Public Overrides ReadOnly Property HighRampRateRange As isr.Core.Pith.RangeR = New isr.Core.Pith.RangeR(100, 9999)
+
+    ''' <summary> Gets Low the Ramp Rate command format. </summary>
+    ''' <value> the Low Ramp Rate command format. </value>
+    Protected Overrides ReadOnly Property LowRampRateCommandFormat As String = "RAMP {0:0.0}"
+
+    ''' <summary> Gets High the Ramp Rate command format. </summary>
+    ''' <value> the High Ramp Rate command format. </value>
+    Protected Overrides ReadOnly Property HighRampRateCommandFormat As String = "RAMP {0:0}"
 
     ''' <summary> Gets the Ramp Rate query command. </summary>
     ''' <value> the Ramp Rate query command. </value>
@@ -660,7 +667,14 @@ Public Class ThermostreamSubsystem
         builder.Append(delimiter)
         builder.AppendFormat(Me.SetpointCommandFormat, setpoint.Temperature)
         builder.Append(delimiter)
-        builder.AppendFormat(Me.RampRateCommandFormat, Math.Min(Me.RampRateRange.Max, setpoint.RampRate * 60))
+        Dim value As Double = 60 * setpoint.RampRate
+        If Me.LowRampRateRange.Contains(value) Then
+            builder.AppendFormat(Me.LowRampRateCommandFormat, value)
+        ElseIf Me.LowRampRateRange.Contains(value) Then
+            builder.AppendFormat(Me.HighRampRateCommandFormat, value)
+        Else
+            Throw New InvalidOperationException($"Ramp range {value} is outside both the low {Me.LowRampRateRange.ToString} and high {Me.LowRampRateRange.ToString} ranges")
+        End If
         builder.Append(delimiter)
         builder.AppendFormat(Me.SoakTimeCommandFormat, Math.Max(Me.SoakTimeRange.Min, Math.Min(Me.SoakTimeRange.Max, setpoint.SoakSeconds)))
         builder.Append(delimiter)
@@ -716,20 +730,22 @@ Public Class ThermostreamSubsystem
                                         If Math.Abs(Me.SoakTime.Value - setpoint.SoakSeconds) < 1.1F Then
                                             If Math.Abs(Me.SetpointWindow.Value - setpoint.Window) < 0.1F Then
                                             Else
-                                                e.RegisterCancellation("Thermo-Stream failed setting the setpoint window {0} to {1}.",
-                                                                    Me.SetpointWindow.Value, setpoint.Window)
+                                                e.RegisterCancellation("Thermo-Stream failed setting the setpoint window {0} to {1} {2}.",
+                                                                       Me.SetpointWindow.Value, setpoint.Window,
+                                                                       Arebis.StandardUnits.TemperatureUnits.DegreeCelsius.Symbol)
                                             End If
                                         Else
-                                            e.RegisterCancellation("Thermo-Stream failed setting the soak time {0} to {1}.",
-                                                                Me.SoakTime.Value, setpoint.SoakSeconds)
+                                            e.RegisterCancellation("Thermo-Stream failed setting the soak time {0} to {1} s.",
+                                                                   Me.SoakTime.Value, setpoint.SoakSeconds)
                                         End If
                                     Else
-                                        e.RegisterCancellation("Thermo-Stream failed setting the ramp rate {0} to {1}.",
-                                                            Me.RampRate.Value, 60 * setpoint.RampRate)
+                                        e.RegisterCancellation("Thermo-Stream failed setting the ramp rate {0} to {1} {2}.",
+                                                               Me.RampRate.Value, 60 * setpoint.RampRate, Me.RampRateUnit.symbol)
                                     End If
                                 Else
-                                    e.RegisterCancellation("Thermo-Stream failed setting the setpoint {0} to {1}.",
-                                                        Me.Setpoint.Value, setpoint.Temperature)
+                                    e.RegisterCancellation("Thermo-Stream failed setting the setpoint {0} to {1} {2}.",
+                                                           Me.Setpoint.Value, setpoint.Temperature,
+                                                           Arebis.StandardUnits.TemperatureUnits.DegreeCelsius.Symbol)
                                 End If
                             Else
                                 e.RegisterCancellation("Thermo-Stream failed setting the setpoint number {0} to {1}.",

@@ -36,6 +36,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Me.SoakTime = New Double?
         Me.Temperature = New Double?
         Me.TemperatureEventStatus = New Integer?
+        Me.RampRateUnit = Arebis.StandardUnits.TemperatureUnits.DegreesCelciusPerMinute
     End Sub
 
 #End Region
@@ -439,8 +440,9 @@ Public MustInherit Class ThermostreamSubsystemBase
 
 #Region " RAMP RATE "
 
-    ''' <summary> The Ramp Rate range in degrees per minute. </summary>
-    Public MustOverride ReadOnly Property RampRateRange As Core.Pith.RangeR
+    ''' <summary> Gets or sets the ramp rate unit. </summary>
+    ''' <value> The ramp rate unit. </value>
+    Public Property RampRateUnit As Arebis.TypedUnits.Unit = Arebis.StandardUnits.TemperatureUnits.DegreesCelciusPerMinute
 
     ''' <summary> The Ramp Rate. </summary>
     Private _RampRate As Double?
@@ -478,18 +480,42 @@ Public MustInherit Class ThermostreamSubsystemBase
         Return Me.RampRate
     End Function
 
-    ''' <summary> Gets or sets the Ramp Rate command format. </summary>
-    ''' <value> the Ramp Rate command format. </value>
-    Protected Overridable ReadOnly Property RampRateCommandFormat As String
-
     ''' <summary> Writes the Ramp Rate without reading back the value from the device. </summary>
     ''' <remarks> This command sets the Ramp Rate. </remarks>
     ''' <param name="value"> the Ramp Rate. </param>
     ''' <returns> the Ramp Rate. </returns>
     Public Function WriteRampRate(ByVal value As Double) As Double?
-        Me.RampRate = Me.Write(value, Me.RampRateCommandFormat)
+        If Me.LowRampRateRange.Contains(value) Then
+            Me.RampRate = Me.Write(value, Me.LowRampRateCommandFormat)
+        ElseIf Me.HighRampRateRange.Contains(value) Then
+            Me.RampRate = Me.Write(value, Me.HighRampRateCommandFormat)
+        Else
+            Throw New InvalidOperationException($"Ramp range {value} is outside both the low {Me.LowRampRateRange.ToString} and high {Me.LowRampRateRange.ToString} ranges")
+        End If
         Return Me.RampRate
     End Function
+
+#Region " LOW RAMP RATE "
+
+    ''' <summary> The Low Ramp Rate range in degrees per minute. </summary>
+    Public MustOverride ReadOnly Property LowRampRateRange As Core.Pith.RangeR
+
+    ''' <summary> Gets or sets the Low Ramp Rate command format. </summary>
+    ''' <value> the Low Ramp Rate command format. </value>
+    Protected Overridable ReadOnly Property LowRampRateCommandFormat As String
+
+#End Region
+
+#Region " High RAMP RATE "
+
+    ''' <summary> The High Ramp Rate range in degrees per minute. </summary>
+    Public MustOverride ReadOnly Property HighRampRateRange As Core.Pith.RangeR
+
+    ''' <summary> Gets or sets the High Ramp Rate command format. </summary>
+    ''' <value> the High Ramp Rate command format. </value>
+    Protected Overridable ReadOnly Property HighRampRateCommandFormat As String
+
+#End Region
 
 #End Region
 
