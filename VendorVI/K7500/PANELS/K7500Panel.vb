@@ -1274,9 +1274,14 @@ Public Class K7500Panel
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} SRQ: {Me.Device.StatusSubsystem.ServiceRequestStatus:X};. ")
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
+#If False Then
             ' Measurement bit does not turn on -- kludging for now.
             If Me.Device.StatusSubsystem.MeasurementAvailable Then
+            Else
+                activity = "measurement not available"
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             End If
+#End If
             activity = "kludge: reading buffer count"
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
 
@@ -1323,7 +1328,7 @@ Public Class K7500Panel
                     Me.Device.TriggerSubsystem.Initiate()
                 End If
             Else
-                activity = "measurement not available"
+                activity = "trigger plan started; buffer empty"
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             End If
         Catch ex As Exception

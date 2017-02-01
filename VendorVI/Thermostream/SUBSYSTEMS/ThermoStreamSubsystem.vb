@@ -670,10 +670,10 @@ Public Class ThermostreamSubsystem
         Dim value As Double = 60 * setpoint.RampRate
         If Me.LowRampRateRange.Contains(value) Then
             builder.AppendFormat(Me.LowRampRateCommandFormat, value)
-        ElseIf Me.LowRampRateRange.Contains(value) Then
+        ElseIf Me.HighRampRateRange.Contains(value) Then
             builder.AppendFormat(Me.HighRampRateCommandFormat, value)
         Else
-            Throw New InvalidOperationException($"Ramp range {value} is outside both the low {Me.LowRampRateRange.ToString} and high {Me.LowRampRateRange.ToString} ranges")
+            Throw New InvalidOperationException($"Ramp range {value} is outside both the low {Me.LowRampRateRange.ToString} and high {Me.HighRampRateRange.ToString} ranges")
         End If
         builder.Append(delimiter)
         builder.AppendFormat(Me.SoakTimeCommandFormat, Math.Max(Me.SoakTimeRange.Min, Math.Min(Me.SoakTimeRange.Max, setpoint.SoakSeconds)))

@@ -490,7 +490,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         ElseIf Me.HighRampRateRange.Contains(value) Then
             Me.RampRate = Me.Write(value, Me.HighRampRateCommandFormat)
         Else
-            Throw New InvalidOperationException($"Ramp range {value} is outside both the low {Me.LowRampRateRange.ToString} and high {Me.LowRampRateRange.ToString} ranges")
+            Throw New InvalidOperationException($"Ramp range {value} is outside both the low {Me.LowRampRateRange.ToString} and high {Me.HighRampRateRange.ToString} ranges")
         End If
         Return Me.RampRate
     End Function
