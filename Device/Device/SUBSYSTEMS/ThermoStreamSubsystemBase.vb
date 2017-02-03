@@ -475,8 +475,22 @@ Public MustInherit Class ThermostreamSubsystemBase
 
     ''' <summary> Queries the Ramp Rate. </summary>
     ''' <returns> the Ramp Rate or none if unknown. </returns>
+    ''' <remarks> Thermostream ramp rate query of rates lower than 100 gives incorrect values. 
+    ''' ramp rate, Ramp?<para>
+    ''' 700,  700\r\n</para><para>
+    '''   1.1,  0.1\r\n</para><para>  
+    '''  99.9,  9.9\r\n</para><para>
+    '''  53.5,  5.3\r\n</para><para>
+    '''   5.3, 0.5\r\n</para><para>  
+    '''   1.0, 0.1\r\n</para><para>  
+    ''' Sending RAMP 1.1, gives 1.1 ramp on the thermostream, reading using Ramp?\n returns 0.1\r\n</para>
+    '''           </remarks>
     Public Function QueryRampRate() As Double?
-        Me.RampRate = Me.Query(Me.RampRate, Me.RampRateQueryCommand)
+        Dim value As Double? = Me.Query(Me.RampRate, Me.RampRateQueryCommand)
+        If Not value.HasValue OrElse Me.HighRampRateRange.Contains(value.Value) Then
+            ' high ramp rate returns the correct value
+            Me.RampRate = value
+        End If
         Return Me.RampRate
     End Function
 
