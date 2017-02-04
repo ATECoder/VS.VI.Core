@@ -71,6 +71,12 @@ Public Class TriggerSubsystem
 
 #End Region
 
+#Region " TRIGGER STATE "
+
+    Protected Overrides ReadOnly Property TriggerStateQueryCommand As String = ":TRIG:STAT?"
+
+#End Region
+
 #Region " TRIGGER COUNT "
 
     ''' <summary> Gets trigger count query command. </summary>
@@ -269,7 +275,7 @@ Public Class TriggerSubsystem
 
     Public Sub ApplyGradeBinning(ByVal count As Integer, ByVal startDelay As TimeSpan,
                                  ByVal failedBitPattern As Integer, ByVal passBitPattern As Integer,
-                                 ByVal openContactBitPattern As Integer)
+                                 ByVal openContactBitPattern As Integer, ByVal triggerSource As VI.TriggerSources)
 
         Dim block As Integer = 0
         Dim cmd As String = ""
@@ -301,7 +307,19 @@ Public Class TriggerSubsystem
 
         ' Block 2: Wait for external trigger; this is the repeat block.
         Dim repeatBlock As Integer = block + 1
-        block += 1 : cmd = $":TRIG:BLOC:WAIT {block}, EXT"
+        block += 1
+        cmd = $":TRIG:BLOC:WAIT {block}, EXT"
+        If 0 <> (triggerSource And TriggerSources.Bus) Then
+            cmd = $":TRIG:BLOC:WAIT {block}, COMM"
+        ElseIf 0 <> (triggerSource And TriggerSources.Manual) Then
+            cmd = $":TRIG:BLOC:WAIT {block}, DISP"
+        ElseIf 0 <> (triggerSource And TriggerSources.TriggerLink) Then
+            cmd = $":TRIG:BLOC:WAIT {block}, TSPL(1)"
+        ElseIf 0 <> (triggerSource And TriggerSources.Timer) Then
+            cmd = $":TRIG:BLOC:WAIT {block}, TIM(1)"
+        ElseIf 0 <> (triggerSource And TriggerSources.Digital) Then
+            cmd = $":TRIG:BLOC:WAIT {block}, DIG(1)"
+        End If
         Me.Write(cmd)
 
         ' Block 3: Pre-Measure Delay

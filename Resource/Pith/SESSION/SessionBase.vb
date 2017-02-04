@@ -72,10 +72,6 @@ Public MustInherit Class SessionBase
 
 #Region " SESSION "
 
-    ''' <summary> Gets or sets a context for the captured synchronization. </summary>
-    ''' <value> The captured synchronization context. </value>
-    Public Property CapturedSyncContext As Threading.SynchronizationContext
-
     ''' <summary>
     ''' Gets or sets the Enabled sentinel. When enabled, the session is allowed to engage actual
     ''' hardware; otherwise, opening the session does not attempt to link to the hardware.
@@ -144,8 +140,7 @@ Public MustInherit Class SessionBase
     ''' <remarks> Call this first. </remarks>
     Public Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal timeout As TimeSpan, ByVal syncContext As Threading.SynchronizationContext)
         Try
-            Me.CapturedSyncContext = syncContext
-            Threading.SynchronizationContext.SetSynchronizationContext(syncContext)
+            Me.CaptureSyncContext(syncContext)
             Me.OnOpeningSession(resourceName, resourceTitle)
             Me.CreateSession(resourceName, timeout)
             Me.OnSessionOpen()

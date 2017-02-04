@@ -48,7 +48,6 @@ Public MustInherit Class DeviceBase
         Me._ClearRefractoryPeriod = TimeSpan.FromMilliseconds(100)
         Me._ResourceTitle = DeviceBase.DefaultResourceTitle
         Me._ResourceName = DeviceBase.ResourceNameClosed
-        Me._CapturedSyncContext = SynchronizationContext.Current
     End Sub
 
 #Region " I Disposable Support "
@@ -883,19 +882,12 @@ Public MustInherit Class DeviceBase
 
 #Region " EVENT HANDLERS "
 
-    ''' <summary> Gets or sets a context for the captured synchronization. </summary>
-    ''' <value> The captured synchronization context. </value>
-    Public Property CapturedSyncContext As Threading.SynchronizationContext
-
     ''' <summary> Synchronously handles the Service Request event of the <see cref="Session">session</see> control. </summary>
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      The <see cref="EventArgs" /> instance
     ''' containing the event data. </param>
     Private Sub OnSessionBaseServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
-        If SynchronizationContext.Current Is Nothing Then
-            ' captured sync context may not be required if not raising events to the sync context.
-            Threading.SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
-        End If
+        Me.ApplyCapturedSyncContext()
         Me.TryProcessServiceRequest()
         If Me.UsingSyncServiceRequestHandler Then
             If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then

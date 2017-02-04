@@ -24,6 +24,7 @@ Partial Class K7500Panel
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ReadStatusByteMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
         Me._ServiceRequestEnableNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
@@ -41,9 +42,6 @@ Partial Class K7500Panel
         Me._GoSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._InitiateTriggerPlanMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._AbortStartTriggerPlanMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._EventsMenuButton = New System.Windows.Forms.ToolStripSplitButton()
-        Me._HandleMeasurementEventMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._AutoInitiateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
         Me._OpenLeadsDetectionCheckBox = New System.Windows.Forms.CheckBox()
         Me._ApplyFunctionModeButton = New System.Windows.Forms.Button()
@@ -87,6 +85,7 @@ Partial Class K7500Panel
         Me._TriggerSourceComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._TriggerSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._ContinuousTriggerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ReadTriggerStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._TriggerModelsToolStrip = New System.Windows.Forms.ToolStrip()
         Me._TriggerModelLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ApplyTriggerModelSplitButton = New System.Windows.Forms.ToolStripSplitButton()
@@ -102,10 +101,14 @@ Partial Class K7500Panel
         Me._FailureCodeToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._ReadingToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._TbdToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me._TriggerStateLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._LastReadingTextBox = New System.Windows.Forms.TextBox()
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._MonitorActiveTriggerPlanMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._InitMonitorReadRepeatMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._RepeatMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -143,7 +146,7 @@ Partial Class K7500Panel
         Me.TraceMessagesBox.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.TraceMessagesBox.PresetCount = 50
         Me.TraceMessagesBox.ResetCount = 100
-        Me.TraceMessagesBox.Size = New System.Drawing.Size(356, 270)
+        Me.TraceMessagesBox.Size = New System.Drawing.Size(356, 265)
         '
         '_Tabs
         '
@@ -154,10 +157,10 @@ Partial Class K7500Panel
         Me._Tabs.Controls.Add(Me._MessagesTabPage)
         Me._Tabs.Dock = System.Windows.Forms.DockStyle.Fill
         Me._Tabs.ItemSize = New System.Drawing.Size(52, 22)
-        Me._Tabs.Location = New System.Drawing.Point(0, 71)
+        Me._Tabs.Location = New System.Drawing.Point(0, 76)
         Me._Tabs.Name = "_Tabs"
         Me._Tabs.SelectedIndex = 0
-        Me._Tabs.Size = New System.Drawing.Size(364, 300)
+        Me._Tabs.Size = New System.Drawing.Size(364, 295)
         Me._Tabs.TabIndex = 3
         '
         '_ReadingTabPage
@@ -168,7 +171,7 @@ Partial Class K7500Panel
         Me._ReadingTabPage.Controls.Add(Me._ReadingToolStrip)
         Me._ReadingTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ReadingTabPage.Name = "_ReadingTabPage"
-        Me._ReadingTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._ReadingTabPage.Size = New System.Drawing.Size(356, 265)
         Me._ReadingTabPage.TabIndex = 0
         Me._ReadingTabPage.Text = "Reading"
         Me._ReadingTabPage.UseVisualStyleBackColor = True
@@ -179,7 +182,7 @@ Partial Class K7500Panel
         Me._BufferDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
         Me._BufferDataGridView.Location = New System.Drawing.Point(0, 50)
         Me._BufferDataGridView.Name = "_BufferDataGridView"
-        Me._BufferDataGridView.Size = New System.Drawing.Size(356, 192)
+        Me._BufferDataGridView.Size = New System.Drawing.Size(356, 187)
         Me._BufferDataGridView.TabIndex = 9
         Me.TipsTooltip.SetToolTip(Me._BufferDataGridView, "Buffer data")
         '
@@ -187,7 +190,7 @@ Partial Class K7500Panel
         '
         Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
         Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableNumericLabel, Me._ServiceRequestEnableBitmaskNumeric})
-        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 242)
+        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 237)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
         Me._SystemToolStrip.Size = New System.Drawing.Size(356, 28)
         Me._SystemToolStrip.TabIndex = 21
@@ -197,7 +200,7 @@ Partial Class K7500Panel
         '_ResetSplitButton
         '
         Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem, Me._ReadStatusByteMenuItem})
         Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
         Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetSplitButton.Name = "_ResetSplitButton"
@@ -257,6 +260,13 @@ Partial Class K7500Panel
         Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
         Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
+        '
+        '_ReadStatusByteMenuItem
+        '
+        Me._ReadStatusByteMenuItem.Name = "_ReadStatusByteMenuItem"
+        Me._ReadStatusByteMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ReadStatusByteMenuItem.Text = "Read Status Byte"
+        Me._ReadStatusByteMenuItem.ToolTipText = "Reads the status byte"
         '
         '_ReadTerminalStateButton
         '
@@ -344,7 +354,7 @@ Partial Class K7500Panel
         '
         '_ReadingToolStrip
         '
-        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._ReadingComboBox, Me._AbortButton, Me._GoSplitButton, Me._EventsMenuButton})
+        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._ReadingComboBox, Me._AbortButton, Me._GoSplitButton})
         Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingToolStrip.Name = "_ReadingToolStrip"
         Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
@@ -382,7 +392,7 @@ Partial Class K7500Panel
         '
         Me._GoSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._GoSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._GoSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._InitiateTriggerPlanMenuItem, Me._AbortStartTriggerPlanMenuItem})
+        Me._GoSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._InitiateTriggerPlanMenuItem, Me._AbortStartTriggerPlanMenuItem, Me._MonitorActiveTriggerPlanMenuItem, Me._InitMonitorReadRepeatMenuItem, Me._RepeatMenuItem})
         Me._GoSplitButton.Image = CType(resources.GetObject("_GoSplitButton.Image"), System.Drawing.Image)
         Me._GoSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._GoSplitButton.Name = "_GoSplitButton"
@@ -393,44 +403,16 @@ Partial Class K7500Panel
         '_InitiateTriggerPlanMenuItem
         '
         Me._InitiateTriggerPlanMenuItem.Name = "_InitiateTriggerPlanMenuItem"
-        Me._InitiateTriggerPlanMenuItem.Size = New System.Drawing.Size(179, 22)
+        Me._InitiateTriggerPlanMenuItem.Size = New System.Drawing.Size(222, 22)
         Me._InitiateTriggerPlanMenuItem.Text = "Initiate"
         Me._InitiateTriggerPlanMenuItem.ToolTipText = "Sends the Initiate command to the instrument"
         '
         '_AbortStartTriggerPlanMenuItem
         '
         Me._AbortStartTriggerPlanMenuItem.Name = "_AbortStartTriggerPlanMenuItem"
-        Me._AbortStartTriggerPlanMenuItem.Size = New System.Drawing.Size(179, 22)
+        Me._AbortStartTriggerPlanMenuItem.Size = New System.Drawing.Size(222, 22)
         Me._AbortStartTriggerPlanMenuItem.Text = "Abort, Clear, Initiate"
         Me._AbortStartTriggerPlanMenuItem.ToolTipText = "Aborts, clears buffer and starts the trigger plan"
-        '
-        '_EventsMenuButton
-        '
-        Me._EventsMenuButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
-        Me._EventsMenuButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._EventsMenuButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._HandleMeasurementEventMenuItem, Me._AutoInitiateMenuItem})
-        Me._EventsMenuButton.Image = CType(resources.GetObject("_EventsMenuButton.Image"), System.Drawing.Image)
-        Me._EventsMenuButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._EventsMenuButton.Name = "_EventsMenuButton"
-        Me._EventsMenuButton.Size = New System.Drawing.Size(57, 22)
-        Me._EventsMenuButton.Text = "Events"
-        Me._EventsMenuButton.ToolTipText = "Enable Event Handling"
-        '
-        '_HandleMeasurementEventMenuItem
-        '
-        Me._HandleMeasurementEventMenuItem.CheckOnClick = True
-        Me._HandleMeasurementEventMenuItem.Name = "_HandleMeasurementEventMenuItem"
-        Me._HandleMeasurementEventMenuItem.Size = New System.Drawing.Size(147, 22)
-        Me._HandleMeasurementEventMenuItem.Text = "Measurement"
-        Me._HandleMeasurementEventMenuItem.ToolTipText = "Check to handle measurement events"
-        '
-        '_AutoInitiateMenuItem
-        '
-        Me._AutoInitiateMenuItem.CheckOnClick = True
-        Me._AutoInitiateMenuItem.Name = "_AutoInitiateMenuItem"
-        Me._AutoInitiateMenuItem.Size = New System.Drawing.Size(147, 22)
-        Me._AutoInitiateMenuItem.Text = "Auto Initiate"
-        Me._AutoInitiateMenuItem.ToolTipText = "Check to automatically initiates a new trigger upon handling the event"
         '
         '_SenseTabPage
         '
@@ -448,7 +430,7 @@ Partial Class K7500Panel
         Me._SenseTabPage.Controls.Add(Me._ApplySenseSettingsButton)
         Me._SenseTabPage.Location = New System.Drawing.Point(4, 26)
         Me._SenseTabPage.Name = "_SenseTabPage"
-        Me._SenseTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._SenseTabPage.Size = New System.Drawing.Size(356, 265)
         Me._SenseTabPage.TabIndex = 4
         Me._SenseTabPage.Text = "Sense"
         Me._SenseTabPage.UseVisualStyleBackColor = True
@@ -579,7 +561,7 @@ Partial Class K7500Panel
         '
         Me._ApplySenseSettingsButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._ApplySenseSettingsButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ApplySenseSettingsButton.Location = New System.Drawing.Point(283, 225)
+        Me._ApplySenseSettingsButton.Location = New System.Drawing.Point(283, 220)
         Me._ApplySenseSettingsButton.Name = "_ApplySenseSettingsButton"
         Me._ApplySenseSettingsButton.Size = New System.Drawing.Size(58, 30)
         Me._ApplySenseSettingsButton.TabIndex = 9
@@ -591,7 +573,7 @@ Partial Class K7500Panel
         Me._TriggerTabPage.Controls.Add(Me._TriggerToolStripPanel)
         Me._TriggerTabPage.Location = New System.Drawing.Point(4, 26)
         Me._TriggerTabPage.Name = "_TriggerTabPage"
-        Me._TriggerTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._TriggerTabPage.Size = New System.Drawing.Size(356, 265)
         Me._TriggerTabPage.TabIndex = 6
         Me._TriggerTabPage.Text = "Trigger"
         Me._TriggerTabPage.UseVisualStyleBackColor = True
@@ -783,7 +765,7 @@ Partial Class K7500Panel
         Me._TriggerLayerToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerLayerToolStripLabel, Me._TriggerCountNumericLabel, Me._TriggerCountNumeric, Me._TriggerSourceComboBox, Me._TriggerSplitButton})
         Me._TriggerLayerToolStrip.Location = New System.Drawing.Point(3, 84)
         Me._TriggerLayerToolStrip.Name = "_TriggerLayerToolStrip"
-        Me._TriggerLayerToolStrip.Size = New System.Drawing.Size(289, 28)
+        Me._TriggerLayerToolStrip.Size = New System.Drawing.Size(259, 28)
         Me._TriggerLayerToolStrip.TabIndex = 7
         Me._TriggerLayerToolStrip.Text = "ToolStrip1"
         '
@@ -811,13 +793,13 @@ Partial Class K7500Panel
         '_TriggerSourceComboBox
         '
         Me._TriggerSourceComboBox.Name = "_TriggerSourceComboBox"
-        Me._TriggerSourceComboBox.Size = New System.Drawing.Size(121, 28)
+        Me._TriggerSourceComboBox.Size = New System.Drawing.Size(91, 28)
         Me._TriggerSourceComboBox.Text = "Immediate"
         Me._TriggerSourceComboBox.ToolTipText = "Trigger Source"
         '
         '_TriggerSplitButton
         '
-        Me._TriggerSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ContinuousTriggerEnabledMenuItem})
+        Me._TriggerSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ContinuousTriggerEnabledMenuItem, Me._ReadTriggerStateMenuItem})
         Me._TriggerSplitButton.Name = "_TriggerSplitButton"
         Me._TriggerSplitButton.Size = New System.Drawing.Size(60, 25)
         Me._TriggerSplitButton.Text = "More..."
@@ -830,6 +812,13 @@ Partial Class K7500Panel
         Me._ContinuousTriggerEnabledMenuItem.Size = New System.Drawing.Size(136, 22)
         Me._ContinuousTriggerEnabledMenuItem.Text = "Continuous"
         Me._ContinuousTriggerEnabledMenuItem.ToolTipText = "Check to enable"
+        '
+        '_ReadTriggerStateMenuItem
+        '
+        Me._ReadTriggerStateMenuItem.Name = "_ReadTriggerStateMenuItem"
+        Me._ReadTriggerStateMenuItem.Size = New System.Drawing.Size(136, 22)
+        Me._ReadTriggerStateMenuItem.Text = "Read State"
+        Me._ReadTriggerStateMenuItem.ToolTipText = "Reads trigger state"
         '
         '_TriggerModelsToolStrip
         '
@@ -892,7 +881,7 @@ Partial Class K7500Panel
         Me._ReadWriteTabPage.Controls.Add(Me._SimpleReadWriteControl)
         Me._ReadWriteTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ReadWriteTabPage.Name = "_ReadWriteTabPage"
-        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 265)
         Me._ReadWriteTabPage.TabIndex = 5
         Me._ReadWriteTabPage.Text = "R/W"
         Me._ReadWriteTabPage.UseVisualStyleBackColor = True
@@ -905,7 +894,7 @@ Partial Class K7500Panel
         Me._SimpleReadWriteControl.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._SimpleReadWriteControl.Name = "_SimpleReadWriteControl"
         Me._SimpleReadWriteControl.ReadEnabled = False
-        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 270)
+        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 265)
         Me._SimpleReadWriteControl.TabIndex = 0
         '
         '_MessagesTabPage
@@ -913,7 +902,7 @@ Partial Class K7500Panel
         Me._MessagesTabPage.Controls.Add(Me.TraceMessagesBox)
         Me._MessagesTabPage.Location = New System.Drawing.Point(4, 26)
         Me._MessagesTabPage.Name = "_MessagesTabPage"
-        Me._MessagesTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._MessagesTabPage.Size = New System.Drawing.Size(356, 265)
         Me._MessagesTabPage.TabIndex = 3
         Me._MessagesTabPage.Text = "Log"
         Me._MessagesTabPage.UseVisualStyleBackColor = True
@@ -925,7 +914,7 @@ Partial Class K7500Panel
         Me._LastErrorTextBox.Dock = System.Windows.Forms.DockStyle.Top
         Me._LastErrorTextBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._LastErrorTextBox.ForeColor = System.Drawing.Color.OrangeRed
-        Me._LastErrorTextBox.Location = New System.Drawing.Point(0, 53)
+        Me._LastErrorTextBox.Location = New System.Drawing.Point(0, 58)
         Me._LastErrorTextBox.Name = "_LastErrorTextBox"
         Me._LastErrorTextBox.Size = New System.Drawing.Size(364, 18)
         Me._LastErrorTextBox.TabIndex = 2
@@ -937,10 +926,10 @@ Partial Class K7500Panel
         Me._ReadingStatusStrip.Dock = System.Windows.Forms.DockStyle.Top
         Me._ReadingStatusStrip.Font = New System.Drawing.Font("Segoe UI", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ReadingStatusStrip.GripMargin = New System.Windows.Forms.Padding(0)
-        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._FailureCodeToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._TbdToolStripStatusLabel})
+        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._FailureCodeToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._TbdToolStripStatusLabel, Me._TriggerStateLabel})
         Me._ReadingStatusStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingStatusStrip.Name = "_ReadingStatusStrip"
-        Me._ReadingStatusStrip.Size = New System.Drawing.Size(364, 37)
+        Me._ReadingStatusStrip.Size = New System.Drawing.Size(364, 42)
         Me._ReadingStatusStrip.SizingGrip = False
         Me._ReadingStatusStrip.TabIndex = 1
         '
@@ -952,7 +941,7 @@ Partial Class K7500Panel
         Me._FailureCodeToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
         Me._FailureCodeToolStripStatusLabel.Name = "_FailureCodeToolStripStatusLabel"
         Me._FailureCodeToolStripStatusLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
-        Me._FailureCodeToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
+        Me._FailureCodeToolStripStatusLabel.Size = New System.Drawing.Size(16, 42)
         Me._FailureCodeToolStripStatusLabel.Text = "C"
         Me._FailureCodeToolStripStatusLabel.ToolTipText = "Compliance"
         '
@@ -964,7 +953,7 @@ Partial Class K7500Panel
         Me._ReadingToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
         Me._ReadingToolStripStatusLabel.Name = "_ReadingToolStripStatusLabel"
         Me._ReadingToolStripStatusLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
-        Me._ReadingToolStripStatusLabel.Size = New System.Drawing.Size(313, 37)
+        Me._ReadingToolStripStatusLabel.Size = New System.Drawing.Size(283, 42)
         Me._ReadingToolStripStatusLabel.Spring = True
         Me._ReadingToolStripStatusLabel.Text = "0.0000000 mV"
         Me._ReadingToolStripStatusLabel.ToolTipText = "Reading"
@@ -972,14 +961,24 @@ Partial Class K7500Panel
         '_TbdToolStripStatusLabel
         '
         Me._TbdToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._TbdToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._TbdToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._TbdToolStripStatusLabel.ForeColor = System.Drawing.Color.Aquamarine
         Me._TbdToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
         Me._TbdToolStripStatusLabel.Name = "_TbdToolStripStatusLabel"
         Me._TbdToolStripStatusLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
-        Me._TbdToolStripStatusLabel.Size = New System.Drawing.Size(20, 37)
+        Me._TbdToolStripStatusLabel.Size = New System.Drawing.Size(15, 42)
         Me._TbdToolStripStatusLabel.Text = " T"
         Me._TbdToolStripStatusLabel.ToolTipText = "To be defined"
+        '
+        '_TriggerStateLabel
+        '
+        Me._TriggerStateLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._TriggerStateLabel.Font = New System.Drawing.Font("Segoe UI", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._TriggerStateLabel.ForeColor = System.Drawing.SystemColors.Info
+        Me._TriggerStateLabel.Name = "_TriggerStateLabel"
+        Me._TriggerStateLabel.Size = New System.Drawing.Size(35, 37)
+        Me._TriggerStateLabel.Text = "None"
+        Me._TriggerStateLabel.ToolTipText = "Trigger state"
         '
         '_LastReadingTextBox
         '
@@ -988,7 +987,7 @@ Partial Class K7500Panel
         Me._LastReadingTextBox.Dock = System.Windows.Forms.DockStyle.Top
         Me._LastReadingTextBox.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._LastReadingTextBox.ForeColor = System.Drawing.Color.Aquamarine
-        Me._LastReadingTextBox.Location = New System.Drawing.Point(0, 37)
+        Me._LastReadingTextBox.Location = New System.Drawing.Point(0, 42)
         Me._LastReadingTextBox.Name = "_LastReadingTextBox"
         Me._LastReadingTextBox.Size = New System.Drawing.Size(364, 16)
         Me._LastReadingTextBox.TabIndex = 0
@@ -1037,6 +1036,29 @@ Partial Class K7500Panel
         Me._TitleLabel.TabIndex = 17
         Me._TitleLabel.Text = "K7500"
         Me._TitleLabel.UseMnemonic = False
+        '
+        '_MonitorActiveTriggerPlanMenuItem
+        '
+        Me._MonitorActiveTriggerPlanMenuItem.Name = "_MonitorActiveTriggerPlanMenuItem"
+        Me._MonitorActiveTriggerPlanMenuItem.Size = New System.Drawing.Size(222, 22)
+        Me._MonitorActiveTriggerPlanMenuItem.Text = "Monitor Active Trigger State"
+        Me._MonitorActiveTriggerPlanMenuItem.ToolTipText = "Monitors active trigger state. Exits if trigger plan inactive"
+        '
+        '_InitMonitorReadRepeatMenuItem
+        '
+        Me._InitMonitorReadRepeatMenuItem.Name = "_InitMonitorReadRepeatMenuItem"
+        Me._InitMonitorReadRepeatMenuItem.Size = New System.Drawing.Size(222, 22)
+        Me._InitMonitorReadRepeatMenuItem.Text = "Init, Monitor, Read, Repeat"
+        Me._InitMonitorReadRepeatMenuItem.ToolTipText = "Initiates a trigger plan, monitors it, reads and displays buffer and repeats if " &
+    "auto repeat is checked"
+        '
+        '_RepeatMenuItem
+        '
+        Me._RepeatMenuItem.CheckOnClick = True
+        Me._RepeatMenuItem.Name = "_RepeatMenuItem"
+        Me._RepeatMenuItem.Size = New System.Drawing.Size(222, 22)
+        Me._RepeatMenuItem.Text = "Repeat"
+        Me._RepeatMenuItem.ToolTipText = "Repeat initiating the trigger plan"
         '
         'K7500Panel
         '
@@ -1158,9 +1180,6 @@ Partial Class K7500Panel
     Private WithEvents _ReadTerminalStateButton As Windows.Forms.ToolStripButton
     Private WithEvents _ServiceRequestEnableNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ServiceRequestEnableBitmaskNumeric As Core.Controls.ToolStripNumericUpDown
-    Friend WithEvents _HandleMeasurementEventMenuItem As Windows.Forms.ToolStripMenuItem
-    Friend WithEvents _AutoInitiateMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _EventsMenuButton As Windows.Forms.ToolStripSplitButton
     Private WithEvents _OpenLeadsBitPatternNumericButton As Windows.Forms.ToolStripButton
     Private WithEvents _PassBitPatternNumericButton As Windows.Forms.ToolStripButton
     Private WithEvents _TriggerLayerToolStrip As Windows.Forms.ToolStrip
@@ -1182,4 +1201,10 @@ Partial Class K7500Panel
     Private WithEvents _GoSplitButton As Windows.Forms.ToolStripSplitButton
     Private WithEvents _AbortStartTriggerPlanMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _InitiateTriggerPlanMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _TriggerStateLabel As Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _ReadTriggerStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ReadStatusByteMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _MonitorActiveTriggerPlanMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _InitMonitorReadRepeatMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _RepeatMenuItem As Windows.Forms.ToolStripMenuItem
 End Class

@@ -487,9 +487,17 @@ Public MustInherit Class ThermostreamSubsystemBase
     '''           </remarks>
     Public Function QueryRampRate() As Double?
         Dim value As Double? = Me.Query(Me.RampRate, Me.RampRateQueryCommand)
-        If Not value.HasValue OrElse Me.HighRampRateRange.Contains(value.Value) Then
-            ' high ramp rate returns the correct value
+        If Not Me.RampRate.HasValue Then
+            ' if this is the first reading, set value even if low range.
             Me.RampRate = value
+        ElseIf Not value.HasValue Then
+            ' if failed to read, set value to indicated failure to read.
+            Me.RampRate = value
+        ElseIf Me.HighRampRateRange.Contains(value.Value) Then
+            ' if high ramp rate, than value is correct.
+            Me.RampRate = value
+        Else
+            ' if read low ramp rate, value is x10 too low. Leave value as written -- open loop.
         End If
         Return Me.RampRate
     End Function

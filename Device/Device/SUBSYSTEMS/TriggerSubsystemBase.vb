@@ -39,6 +39,7 @@ Public MustInherit Class TriggerSubsystemBase
         Me.TimerInterval = TimeSpan.FromSeconds(0.1)
         Me.SupportedTriggerSources = TriggerSources.Bus Or TriggerSources.External Or TriggerSources.Immediate
         Me.ContinuousEnabled = False
+        Me.TriggerState = VI.TriggerState.None
     End Sub
 
 #End Region
@@ -666,7 +667,7 @@ Public MustInherit Class TriggerSubsystemBase
         Set(ByVal value As TriggerSources)
             If Not Me.SupportedTriggerSources.Equals(value) Then
                 Me._SupportedTriggerSources = value
-                Me.SafePostPropertyChanged(NameOf(Me.SupportedTriggerSources))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -697,7 +698,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As TriggerSources?)
             If Not Me.TriggerSource.Equals(value) Then
                 Me._TriggerSource = value
-                Me.SafePostPropertyChanged(NameOf(Me.TriggerSource))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -750,6 +751,184 @@ Public MustInherit Class TriggerSubsystemBase
 
 #End Region
 
+#Region " TRIGGER STATE "
+
+    ''' <summary> Monitor active trigger state. </summary>
+    ''' <remarks> David, 2/3/2017. </remarks>
+    ''' <param name="pollPeriod"> The poll period. </param>
+    Public Sub MonitorActiveTriggerState(ByVal pollPeriod As TimeSpan)
+        Me.ApplyCapturedSyncContext()
+        Me.QueryTriggerState()
+        Do While Me.IsTriggerStateActive
+            Threading.Thread.Sleep(pollPeriod)
+            Windows.Forms.Application.DoEvents()
+            Me.QueryTriggerState()
+        Loop
+    End Sub
+
+    ''' <summary> Asynchronous monitor trigger state. </summary>
+    ''' <remarks> David, 2/3/2017. </remarks>
+    ''' <param name="syncContext"> Context for the synchronization. </param>
+    ''' <param name="pollPeriod">  The poll period. </param>
+    ''' <returns> A Threading.Tasks.Task. </returns>
+    Public Async Function AsyncMonitorTriggerState(ByVal syncContext As Threading.SynchronizationContext, ByVal pollPeriod As TimeSpan) As Threading.Tasks.Task
+        Me.CapturedSyncContext = syncContext
+        Await Threading.Tasks.Task.Run(Sub() Me.MonitorActiveTriggerState(pollPeriod))
+    End Function
+
+    Private _TriggerState As TriggerState?
+    ''' <summary> Gets or sets the cached State TriggerState. </summary>
+    ''' <value> The <see cref="TriggerState">State Trigger State</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property TriggerState As TriggerState?
+        Get
+            Return Me._TriggerState
+        End Get
+        Protected Set(ByVal value As TriggerState?)
+            If Not Me.TriggerState.Equals(value) Then
+                Me._TriggerState = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _TriggerBlockState As TriggerState?
+    ''' <summary> Gets or sets the cached State TriggerState. </summary>
+    ''' <value> The <see cref="TriggerBlockState">State Trigger State</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property TriggerBlockState As TriggerState?
+        Get
+            Return Me._TriggerBlockState
+        End Get
+        Protected Set(ByVal value As TriggerState?)
+            If Not Me.TriggerBlockState.Equals(value) Then
+                Me._TriggerBlockState = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _TriggerStateBlockNumber As Integer?
+    ''' <summary> Gets or sets the cached trigger state block number. </summary>
+    ''' <value> The block number of the trigger state. </value>
+    Public Overloads Property TriggerStateBlockNumber As Integer?
+        Get
+            Return Me._TriggerStateBlockNumber
+        End Get
+        Protected Set(ByVal value As Integer?)
+            If Not Me.TriggerStateBlockNumber.Equals(value) Then
+                Me._TriggerStateBlockNumber = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Query if this object is trigger state done. </summary>
+    ''' <remarks> David, 2/2/2017. </remarks>
+    ''' <returns> <c>true</c> if trigger state done; otherwise <c>false</c> </returns>
+    Public Function IsTriggerStateDone() As Boolean
+        Dim result As Boolean = False
+        If Me.TriggerState.HasValue Then
+            Dim value As TriggerState = Me.TriggerState.Value
+            result = (value = VI.TriggerState.Aborted) OrElse
+                     (value = VI.TriggerState.Failed) OrElse
+                     (value = VI.TriggerState.Empty) OrElse
+                     (value = VI.TriggerState.Idle) OrElse
+                     (value = VI.TriggerState.None)
+        Else
+            Return False
+        End If
+        Return result
+    End Function
+
+    ''' <summary> Queries if a trigger state is active. </summary>
+    ''' <remarks> David, 2/2/2017. </remarks>
+    ''' <returns> <c>true</c> if a trigger state is active; otherwise <c>false</c> </returns>
+    Public Function IsTriggerStateActive() As Boolean
+        Dim result As Boolean = False
+        If Me.TriggerState.HasValue Then
+            Dim value As TriggerState = Me.TriggerState.Value
+            result = (value = VI.TriggerState.Running) OrElse
+                     (value = VI.TriggerState.Waiting)
+        Else
+            Return False
+        End If
+        Return result
+    End Function
+
+    ''' <summary> Queries if a trigger state is aborting. </summary>
+    ''' <remarks> David, 2/2/2017. </remarks>
+    ''' <returns> <c>true</c> if a trigger state is active; otherwise <c>false</c> </returns>
+    Public Function IsTriggerStateAborting() As Boolean
+        Dim result As Boolean = False
+        If Me.TriggerState.HasValue Then
+            Dim value As TriggerState = Me.TriggerState.Value
+            result = (value = VI.TriggerState.Aborting)
+        Else
+            Return False
+        End If
+        Return result
+    End Function
+
+    ''' <summary> Queries if a trigger state is Failed. </summary>
+    ''' <remarks> David, 2/2/2017. </remarks>
+    ''' <returns> <c>true</c> if a trigger state is active; otherwise <c>false</c> </returns>
+    Public Function IsTriggerStateFailed() As Boolean
+        Dim result As Boolean = False
+        If Me.TriggerState.HasValue Then
+            Dim value As TriggerState = Me.TriggerState.Value
+            result = (value = VI.TriggerState.Failed)
+        Else
+            Return False
+        End If
+        Return result
+    End Function
+
+    ''' <summary> Queries if a trigger state is Idle. </summary>
+    ''' <remarks> David, 2/2/2017. </remarks>
+    ''' <returns> <c>true</c> if a trigger state is active; otherwise <c>false</c> </returns>
+    Public Function IsTriggerStateIdle() As Boolean
+        Dim result As Boolean = False
+        If Me.TriggerState.HasValue Then
+            Dim value As TriggerState = Me.TriggerState.Value
+            result = (value = VI.TriggerState.Idle)
+        Else
+            Return False
+        End If
+        Return result
+    End Function
+
+    ''' <summary> Gets the Trigger State query command. </summary>
+    ''' <value> The Trigger State query command. </value>
+    ''' <remarks> SCPI: ":TRIG:SOUR?" </remarks>
+    Protected Overridable ReadOnly Property TriggerStateQueryCommand As String
+
+    ''' <summary> Queries the Trigger State. </summary>
+    ''' <returns> The <see cref="TriggerState">Trigger State</see> or none if unknown. </returns>
+    Public Function QueryTriggerState() As TriggerState?
+        Dim currentValue As String = Me.TriggerState.ToString
+        If String.IsNullOrEmpty(Me.Session.EmulatedReply) Then Me.Session.EmulatedReply = currentValue
+        If Not String.IsNullOrWhiteSpace(Me.TriggerStateQueryCommand) Then
+            currentValue = Me.Session.QueryTrimEnd(Me.TriggerStateQueryCommand)
+        End If
+        If String.IsNullOrWhiteSpace(currentValue) Then
+            Me.TriggerState = New TriggerState?
+        Else
+            Dim values As New Queue(Of String)(currentValue.Split(";"c))
+            If values.Any Then
+                Me.TriggerState = CType([Enum].Parse(GetType(VI.TriggerState), values.Dequeue, True), VI.TriggerState)
+            End If
+            If values.Any Then
+                Me.TriggerBlockState = CType([Enum].Parse(GetType(VI.TriggerState), values.Dequeue, True), VI.TriggerState)
+            End If
+            If values.Any Then
+                Me.TriggerStateBlockNumber = Integer.Parse(values.Dequeue)
+            End If
+        End If
+        Return Me.TriggerState
+    End Function
+
+#End Region
 End Class
 
 ''' <summary> Enumerates the trigger or arm layer bypass mode. </summary>
@@ -780,4 +959,22 @@ Public Enum TriggerSources
     <ComponentModel.Description("Manual (MAN)")> Manual = Internal << 1
     <ComponentModel.Description("Hold (HOLD)")> Hold = Manual << 1
     <ComponentModel.Description("Timer (TIM)")> Timer = Hold << 1
+    <ComponentModel.Description("LXI (LAN)")> Lan = Timer << 1
+    <ComponentModel.Description("Analog (ATR)")> Analog = Lan << 1
+    <ComponentModel.Description("Blender (BLEND)")> Blender = Analog << 1
+    <ComponentModel.Description("Digital I/O (DIG)")> Digital = Blender << 1
+End Enum
+
+''' <summary> Values that represent trigger state. </summary>
+''' <remarks> David, 2/2/2017. </remarks>
+Public Enum TriggerState
+    <ComponentModel.Description("No Defined")> None
+    <ComponentModel.Description("Building")> Building
+    <ComponentModel.Description("Empty")> Empty
+    <ComponentModel.Description("Idle")> Idle
+    <ComponentModel.Description("Running")> Running
+    <ComponentModel.Description("Waiting")> Waiting
+    <ComponentModel.Description("Failed")> Failed
+    <ComponentModel.Description("Aborting")> Aborting
+    <ComponentModel.Description("Aborted")> Aborted
 End Enum
