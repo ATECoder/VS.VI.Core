@@ -667,6 +667,8 @@ Public Class ThermostreamSubsystem
         builder.Append(delimiter)
         builder.AppendFormat(Me.SetpointCommandFormat, setpoint.Temperature)
         builder.Append(delimiter)
+#If False Then
+        ' moded out -- must be issued separately.
         Dim value As Double = 60 * setpoint.RampRate
         If Me.LowRampRateRange.Contains(value) Then
             builder.AppendFormat(Me.LowRampRateCommandFormat, value)
@@ -676,6 +678,7 @@ Public Class ThermostreamSubsystem
             Throw New InvalidOperationException($"Ramp range {value} is outside both the low {Me.LowRampRateRange.ToString} and high {Me.HighRampRateRange.ToString} ranges")
         End If
         builder.Append(delimiter)
+#End If
         builder.AppendFormat(Me.SoakTimeCommandFormat, Math.Max(Me.SoakTimeRange.Min, Math.Min(Me.SoakTimeRange.Max, setpoint.SoakSeconds)))
         builder.Append(delimiter)
         builder.AppendFormat(Me.SetpointWindowCommandFormat, Math.Max(Me.SetpointWindowRange.Min, Math.Min(Me.SetpointWindowRange.Max, setpoint.Window)))
@@ -685,6 +688,8 @@ Public Class ThermostreamSubsystem
     ''' <summary> Applies the active thermal setpoint described by setpoint. </summary>
     Public Sub ApplyActiveThermalSetpoint()
         Me.Session.Execute(Me.BuildCommand(Me.ActiveThermalSetpoint))
+        ' must issue this separately.
+        Me.ApplyRampRate(60 * Me.ActiveThermalSetpoint.RampRate)
         Application.DoEvents()
     End Sub
 
