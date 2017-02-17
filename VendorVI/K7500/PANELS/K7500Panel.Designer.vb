@@ -42,6 +42,9 @@ Partial Class K7500Panel
         Me._GoSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._InitiateTriggerPlanMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._AbortStartTriggerPlanMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._MonitorActiveTriggerPlanMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._InitMonitorReadRepeatMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._RepeatMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
         Me._OpenLeadsDetectionCheckBox = New System.Windows.Forms.CheckBox()
         Me._ApplyFunctionModeButton = New System.Windows.Forms.Button()
@@ -106,9 +109,7 @@ Partial Class K7500Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._MonitorActiveTriggerPlanMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._InitMonitorReadRepeatMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._RepeatMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._MeterCompleterFirstGradingBinningMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -413,6 +414,29 @@ Partial Class K7500Panel
         Me._AbortStartTriggerPlanMenuItem.Size = New System.Drawing.Size(222, 22)
         Me._AbortStartTriggerPlanMenuItem.Text = "Abort, Clear, Initiate"
         Me._AbortStartTriggerPlanMenuItem.ToolTipText = "Aborts, clears buffer and starts the trigger plan"
+        '
+        '_MonitorActiveTriggerPlanMenuItem
+        '
+        Me._MonitorActiveTriggerPlanMenuItem.Name = "_MonitorActiveTriggerPlanMenuItem"
+        Me._MonitorActiveTriggerPlanMenuItem.Size = New System.Drawing.Size(222, 22)
+        Me._MonitorActiveTriggerPlanMenuItem.Text = "Monitor Active Trigger State"
+        Me._MonitorActiveTriggerPlanMenuItem.ToolTipText = "Monitors active trigger state. Exits if trigger plan inactive"
+        '
+        '_InitMonitorReadRepeatMenuItem
+        '
+        Me._InitMonitorReadRepeatMenuItem.Name = "_InitMonitorReadRepeatMenuItem"
+        Me._InitMonitorReadRepeatMenuItem.Size = New System.Drawing.Size(222, 22)
+        Me._InitMonitorReadRepeatMenuItem.Text = "Init, Monitor, Read, Repeat"
+        Me._InitMonitorReadRepeatMenuItem.ToolTipText = "Initiates a trigger plan, monitors it, reads and displays buffer and repeats if a" &
+    "uto repeat is checked"
+        '
+        '_RepeatMenuItem
+        '
+        Me._RepeatMenuItem.CheckOnClick = True
+        Me._RepeatMenuItem.Name = "_RepeatMenuItem"
+        Me._RepeatMenuItem.Size = New System.Drawing.Size(222, 22)
+        Me._RepeatMenuItem.Text = "Repeat"
+        Me._RepeatMenuItem.ToolTipText = "Repeat initiating the trigger plan"
         '
         '_SenseTabPage
         '
@@ -826,7 +850,7 @@ Partial Class K7500Panel
         Me._TriggerModelsToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerModelLabel, Me._ApplyTriggerModelSplitButton})
         Me._TriggerModelsToolStrip.Location = New System.Drawing.Point(5, 112)
         Me._TriggerModelsToolStrip.Name = "_TriggerModelsToolStrip"
-        Me._TriggerModelsToolStrip.Size = New System.Drawing.Size(120, 25)
+        Me._TriggerModelsToolStrip.Size = New System.Drawing.Size(151, 25)
         Me._TriggerModelsToolStrip.TabIndex = 3
         Me.TipsTooltip.SetToolTip(Me._TriggerModelsToolStrip, "Simple trigger loop")
         '
@@ -840,7 +864,7 @@ Partial Class K7500Panel
         '_ApplyTriggerModelSplitButton
         '
         Me._ApplyTriggerModelSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ApplyTriggerModelSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._LoadGradeBinTriggerModelMenuItem, Me._LoadSimpleLoopMenuItem, Me._RunSimpleLoopMenuItem, Me._ClearTriggerModelMenuItem})
+        Me._ApplyTriggerModelSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._LoadGradeBinTriggerModelMenuItem, Me._LoadSimpleLoopMenuItem, Me._RunSimpleLoopMenuItem, Me._ClearTriggerModelMenuItem, Me._MeterCompleterFirstGradingBinningMenuItem})
         Me._ApplyTriggerModelSplitButton.Image = CType(resources.GetObject("_ApplyTriggerModelSplitButton.Image"), System.Drawing.Image)
         Me._ApplyTriggerModelSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ApplyTriggerModelSplitButton.Name = "_ApplyTriggerModelSplitButton"
@@ -851,28 +875,28 @@ Partial Class K7500Panel
         '_LoadGradeBinTriggerModelMenuItem
         '
         Me._LoadGradeBinTriggerModelMenuItem.Name = "_LoadGradeBinTriggerModelMenuItem"
-        Me._LoadGradeBinTriggerModelMenuItem.Size = New System.Drawing.Size(232, 22)
+        Me._LoadGradeBinTriggerModelMenuItem.Size = New System.Drawing.Size(359, 22)
         Me._LoadGradeBinTriggerModelMenuItem.Text = "Grading/Binning Trigger Loop"
         Me._LoadGradeBinTriggerModelMenuItem.ToolTipText = "Loads the grading binning trigger model"
         '
         '_LoadSimpleLoopMenuItem
         '
         Me._LoadSimpleLoopMenuItem.Name = "_LoadSimpleLoopMenuItem"
-        Me._LoadSimpleLoopMenuItem.Size = New System.Drawing.Size(232, 22)
+        Me._LoadSimpleLoopMenuItem.Size = New System.Drawing.Size(359, 22)
         Me._LoadSimpleLoopMenuItem.Text = "Load Simple Loop"
         Me._LoadSimpleLoopMenuItem.ToolTipText = "Loads a simple loop trigger model."
         '
         '_RunSimpleLoopMenuItem
         '
         Me._RunSimpleLoopMenuItem.Name = "_RunSimpleLoopMenuItem"
-        Me._RunSimpleLoopMenuItem.Size = New System.Drawing.Size(232, 22)
+        Me._RunSimpleLoopMenuItem.Size = New System.Drawing.Size(359, 22)
         Me._RunSimpleLoopMenuItem.Text = "Run Simple Loop"
         Me._RunSimpleLoopMenuItem.ToolTipText = "Initiates a single loop, waits for completion and displays the values"
         '
         '_ClearTriggerModelMenuItem
         '
         Me._ClearTriggerModelMenuItem.Name = "_ClearTriggerModelMenuItem"
-        Me._ClearTriggerModelMenuItem.Size = New System.Drawing.Size(232, 22)
+        Me._ClearTriggerModelMenuItem.Size = New System.Drawing.Size(359, 22)
         Me._ClearTriggerModelMenuItem.Text = "Clear Trigger Model"
         Me._ClearTriggerModelMenuItem.ToolTipText = "Clears the instrument trigger model"
         '
@@ -1037,28 +1061,12 @@ Partial Class K7500Panel
         Me._TitleLabel.Text = "K7500"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_MonitorActiveTriggerPlanMenuItem
+        '_MeterCompleterFirstGradingBinningMenuItem
         '
-        Me._MonitorActiveTriggerPlanMenuItem.Name = "_MonitorActiveTriggerPlanMenuItem"
-        Me._MonitorActiveTriggerPlanMenuItem.Size = New System.Drawing.Size(222, 22)
-        Me._MonitorActiveTriggerPlanMenuItem.Text = "Monitor Active Trigger State"
-        Me._MonitorActiveTriggerPlanMenuItem.ToolTipText = "Monitors active trigger state. Exits if trigger plan inactive"
-        '
-        '_InitMonitorReadRepeatMenuItem
-        '
-        Me._InitMonitorReadRepeatMenuItem.Name = "_InitMonitorReadRepeatMenuItem"
-        Me._InitMonitorReadRepeatMenuItem.Size = New System.Drawing.Size(222, 22)
-        Me._InitMonitorReadRepeatMenuItem.Text = "Init, Monitor, Read, Repeat"
-        Me._InitMonitorReadRepeatMenuItem.ToolTipText = "Initiates a trigger plan, monitors it, reads and displays buffer and repeats if " &
-    "auto repeat is checked"
-        '
-        '_RepeatMenuItem
-        '
-        Me._RepeatMenuItem.CheckOnClick = True
-        Me._RepeatMenuItem.Name = "_RepeatMenuItem"
-        Me._RepeatMenuItem.Size = New System.Drawing.Size(222, 22)
-        Me._RepeatMenuItem.Text = "Repeat"
-        Me._RepeatMenuItem.ToolTipText = "Repeat initiating the trigger plan"
+        Me._MeterCompleterFirstGradingBinningMenuItem.Name = "_MeterCompleterFirstGradingBinningMenuItem"
+        Me._MeterCompleterFirstGradingBinningMenuItem.Size = New System.Drawing.Size(359, 22)
+        Me._MeterCompleterFirstGradingBinningMenuItem.Text = "Meter Complete First Greading/Binning Trigger Model"
+        Me._MeterCompleterFirstGradingBinningMenuItem.ToolTipText = "Applies a trigger model where meter complete is output first."
         '
         'K7500Panel
         '
@@ -1207,4 +1215,5 @@ Partial Class K7500Panel
     Private WithEvents _MonitorActiveTriggerPlanMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _InitMonitorReadRepeatMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _RepeatMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _MeterCompleterFirstGradingBinningMenuItem As Windows.Forms.ToolStripMenuItem
 End Class

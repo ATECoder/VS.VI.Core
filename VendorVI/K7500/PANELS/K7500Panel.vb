@@ -2149,7 +2149,7 @@ Public Class K7500Panel
         End Get
     End Property
 
-    Private Sub ApplyGradeBinningModel()
+    Private Sub PrepareGradeBinningModel()
 
         If Me._LowerLimit1Numeric.Value <= 100 Then
             With Device.SenseFourWireResistanceSubsystem
@@ -2191,10 +2191,6 @@ Public Class K7500Panel
         ' clear the buffer 
         Me.Device.TraceSubsystem.ClearBuffer()
 
-        Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
-        Me.Device.TriggerSubsystem.ApplyGradeBinning(count, startDelay, CInt(Me._FailLimit1BitPatternNumeric.Value),
-                                                     CInt(Me._PassBitPatternNumeric.Value), CInt(Me._OpenLeadsBitPatternNumeric.Value),
-                                                     Me.SelectedTriggerSource)
     End Sub
 
     ''' <summary> Loads grade bin trigger model button click. </summary>
@@ -2212,7 +2208,12 @@ Public Class K7500Panel
             Me.ErrorProvider.Clear()
             If Me.IsDeviceOpen Then
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.ApplyGradeBinningModel()
+                Me.PrepareGradeBinningModel()
+                Me.Device.TriggerSubsystem.ApplyGradeBinning(CInt(Me._TriggerCountNumeric.Value),
+                                                             TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value),
+                                                             CInt(Me._FailLimit1BitPatternNumeric.Value),
+                                                             CInt(Me._PassBitPatternNumeric.Value), CInt(Me._OpenLeadsBitPatternNumeric.Value),
+                                                             Me.SelectedTriggerSource)
                 Me.Device.TriggerSubsystem.QueryTriggerState()
             End If
         Catch ex As Exception
@@ -2312,6 +2313,30 @@ Public Class K7500Panel
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
         Finally
             Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    Private Sub _MeterCompleterFirstGradingBinningMenuItem_Click(sender As Object, e As EventArgs) Handles _MeterCompleterFirstGradingBinningMenuItem.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "loading meter complete first grade binning trigger model"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            If Me.IsDeviceOpen Then
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.PrepareGradeBinningModel()
+                Me.Device.TriggerSubsystem.ApplyMeterCompleteFirstGradeBinning(CInt(Me._TriggerCountNumeric.Value),
+                                                             TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value),
+                                                             CInt(Me._FailLimit1BitPatternNumeric.Value),
+                                                             CInt(Me._PassBitPatternNumeric.Value), CInt(Me._OpenLeadsBitPatternNumeric.Value),
+                                                             Me.SelectedTriggerSource)
+                Me.Device.TriggerSubsystem.QueryTriggerState()
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
             Me.Cursor = Cursors.Default
         End Try
     End Sub
