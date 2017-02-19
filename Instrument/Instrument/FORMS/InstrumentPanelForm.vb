@@ -47,12 +47,11 @@ Public Class InstrumentPanelForm
                 If Me._PropertyNotifyControlDisposeEnabled Then
                     Me._PropertyNotifyControl.Dispose()
                 End If
-                Me._TalkerControl = Nothing
                 If Me._TalkerControl IsNot Nothing Then
                     Me._InstrumentLayout.Controls.Remove(Me._TalkerControl)
-                End If
-                If Me._TalkerControlDisposeEnabled Then
-                    Me._TalkerControl.Dispose()
+                    If Me._TalkerControlDisposeEnabled Then
+                        Me._TalkerControl.Dispose()
+                    End If
                 End If
                 Me._TalkerControl = Nothing
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
