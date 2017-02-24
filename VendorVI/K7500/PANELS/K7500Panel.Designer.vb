@@ -96,6 +96,7 @@ Partial Class K7500Panel
         Me._LoadSimpleLoopMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._RunSimpleLoopMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearTriggerModelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._MeterCompleterFirstGradingBinningMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
         Me._SimpleReadWriteControl = New isr.VI.Instrument.SimpleReadWriteControl()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
@@ -109,7 +110,7 @@ Partial Class K7500Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._MeterCompleterFirstGradingBinningMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._StreamBufferMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -393,7 +394,7 @@ Partial Class K7500Panel
         '
         Me._GoSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._GoSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._GoSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._InitiateTriggerPlanMenuItem, Me._AbortStartTriggerPlanMenuItem, Me._MonitorActiveTriggerPlanMenuItem, Me._InitMonitorReadRepeatMenuItem, Me._RepeatMenuItem})
+        Me._GoSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._InitiateTriggerPlanMenuItem, Me._AbortStartTriggerPlanMenuItem, Me._MonitorActiveTriggerPlanMenuItem, Me._InitMonitorReadRepeatMenuItem, Me._RepeatMenuItem, Me._StreamBufferMenuItem})
         Me._GoSplitButton.Image = CType(resources.GetObject("_GoSplitButton.Image"), System.Drawing.Image)
         Me._GoSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._GoSplitButton.Name = "_GoSplitButton"
@@ -850,7 +851,7 @@ Partial Class K7500Panel
         Me._TriggerModelsToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._TriggerModelLabel, Me._ApplyTriggerModelSplitButton})
         Me._TriggerModelsToolStrip.Location = New System.Drawing.Point(5, 112)
         Me._TriggerModelsToolStrip.Name = "_TriggerModelsToolStrip"
-        Me._TriggerModelsToolStrip.Size = New System.Drawing.Size(151, 25)
+        Me._TriggerModelsToolStrip.Size = New System.Drawing.Size(120, 25)
         Me._TriggerModelsToolStrip.TabIndex = 3
         Me.TipsTooltip.SetToolTip(Me._TriggerModelsToolStrip, "Simple trigger loop")
         '
@@ -899,6 +900,13 @@ Partial Class K7500Panel
         Me._ClearTriggerModelMenuItem.Size = New System.Drawing.Size(359, 22)
         Me._ClearTriggerModelMenuItem.Text = "Clear Trigger Model"
         Me._ClearTriggerModelMenuItem.ToolTipText = "Clears the instrument trigger model"
+        '
+        '_MeterCompleterFirstGradingBinningMenuItem
+        '
+        Me._MeterCompleterFirstGradingBinningMenuItem.Name = "_MeterCompleterFirstGradingBinningMenuItem"
+        Me._MeterCompleterFirstGradingBinningMenuItem.Size = New System.Drawing.Size(359, 22)
+        Me._MeterCompleterFirstGradingBinningMenuItem.Text = "Meter Complete First Grading/Binning Trigger Model"
+        Me._MeterCompleterFirstGradingBinningMenuItem.ToolTipText = "Applies a trigger model where meter complete is output first."
         '
         '_ReadWriteTabPage
         '
@@ -1061,12 +1069,12 @@ Partial Class K7500Panel
         Me._TitleLabel.Text = "K7500"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_MeterCompleterFirstGradingBinningMenuItem
+        '_StreamBufferMenuItem
         '
-        Me._MeterCompleterFirstGradingBinningMenuItem.Name = "_MeterCompleterFirstGradingBinningMenuItem"
-        Me._MeterCompleterFirstGradingBinningMenuItem.Size = New System.Drawing.Size(359, 22)
-        Me._MeterCompleterFirstGradingBinningMenuItem.Text = "Meter Complete First Greading/Binning Trigger Model"
-        Me._MeterCompleterFirstGradingBinningMenuItem.ToolTipText = "Applies a trigger model where meter complete is output first."
+        Me._StreamBufferMenuItem.Name = "_StreamBufferMenuItem"
+        Me._StreamBufferMenuItem.Size = New System.Drawing.Size(222, 22)
+        Me._StreamBufferMenuItem.Text = "Stream Buffer"
+        Me._StreamBufferMenuItem.ToolTipText = "Continuously reads new values while a trigger plan is active"
         '
         'K7500Panel
         '
@@ -1216,4 +1224,5 @@ Partial Class K7500Panel
     Private WithEvents _InitMonitorReadRepeatMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _RepeatMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _MeterCompleterFirstGradingBinningMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _StreamBufferMenuItem As Windows.Forms.ToolStripMenuItem
 End Class

@@ -798,6 +798,13 @@ Public Class K7500Panel
             Case NameOf(subsystem.LastPointNumber)
                 Me._LastPointNumberLabel.Text = CStr(subsystem.LastPointNumber.GetValueOrDefault(0))
                 Me._BufferCountLabel.Invalidate()
+            Case NameOf(subsystem.BufferReadingsCount)
+                If Me.BufferStreamingHandlerEnabled Then
+                    TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, subsystem.BufferReadings)
+                    Windows.Forms.Application.DoEvents()
+                    Me._BufferDataGridView.Invalidate()
+                    Me._ReadingToolStripStatusLabel.SafeTextSetter($"{subsystem.LastBufferReading.Reading} {Me.Device.SenseSubsystem.Readings.Reading.Unit.Symbol}")
+                End If
         End Select
         Windows.Forms.Application.DoEvents()
     End Sub
@@ -808,7 +815,13 @@ Public Class K7500Panel
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031: DoNotCatchGeneralExceptionTypes")>
     Private Sub TraceSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, TraceSubsystem), e?.PropertyName)
+            If sender IsNot Nothing AndAlso e IsNot Nothing Then
+                If Me.InvokeRequired Then
+                    Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.TraceSubsystemPropertyChanged), New Object() {sender, e})
+                Else
+                    Me.OnSubsystemPropertyChanged(TryCast(sender, TraceSubsystem), e.PropertyName)
+                End If
+            End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{Me.Device.ResourceTitle} exception handling TRACE '{e.PropertyName}' change event;. Details: {ex}")
@@ -1310,6 +1323,39 @@ Public Class K7500Panel
     ''' <value> The trace readings. </value>
     Private ReadOnly Property TraceReadings As Collections.ObjectModel.ObservableCollection(Of BufferReading)
 
+#Region " STREAM BUFFER "
+
+    Private Property BufferStreamingHandlerEnabled As Boolean
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _StreamBufferMenuItem_Click(sender As Object, e As EventArgs) Handles _StreamBufferMenuItem.Click
+        If Me._InitializingComponents Then Return
+        Dim activity As String = "start streaming buffer"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.BufferStreamingHandlerEnabled = False
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.InterfaceStopWatch.Restart()
+            Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
+            Me.Device.TriggerSubsystem.CapturedSyncContext = SynchronizationContext.Current
+            Me.Device.TraceSubsystem.CapturedSyncContext = SynchronizationContext.Current
+            Me.Device.TriggerSubsystem.Initiate()
+            Windows.Forms.Application.DoEvents()
+            Me.Device.TraceSubsystem.StreamBufferAsync(Threading.SynchronizationContext.Current, Me.Device.TriggerSubsystem, TimeSpan.FromMilliseconds(5))
+            Me.BufferStreamingHandlerEnabled = True
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+        Finally
+            Me.ReadServiceRequestStatus()
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+
+#End Region
+
 #Region " INITIATE AND WAIT "
 
     Private Enum TriggerPlanState
@@ -1380,6 +1426,16 @@ Public Class K7500Panel
         End Try
     End Sub
 
+    ''' <summary> Displays a buffer. </summary>
+    ''' <remarks> David, 2/23/2017. </remarks>
+    Private Sub DisplayBuffer(ByVal readings As VI.BufferReadingCollection)
+        Dim activity As String = "updating the display"
+        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, readings)
+        Windows.Forms.Application.DoEvents()
+        Me._BufferDataGridView.Invalidate()
+    End Sub
+
     Private Sub DisplayBuffer()
         Dim activity As String = "updating the display"
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
@@ -1388,6 +1444,10 @@ Public Class K7500Panel
         Me._BufferDataGridView.Invalidate()
     End Sub
 
+    ''' <summary> Initiate monitor trigger plan. </summary>
+    ''' <remarks> David, 2/23/2017. </remarks>
+    ''' <param name="stateChangeHandlingEnabled"> True to enable, false to disable the state change
+    '''                                           handling. </param>
     Private Sub InitiateMonitorTriggerPlan(ByVal stateChangeHandlingEnabled As Boolean)
         Dim activity As String = "Initiating trigger plan and monitor"
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
@@ -2151,6 +2211,8 @@ Public Class K7500Panel
 
     Private Sub PrepareGradeBinningModel()
 
+        Me.ApplyFunctionMode(Scpi.SenseFunctionModes.FourWireResistance)
+
         If Me._LowerLimit1Numeric.Value <= 100 Then
             With Device.SenseFourWireResistanceSubsystem
                 .ApplyAverageEnabled(True)
@@ -2317,6 +2379,7 @@ Public Class K7500Panel
         End Try
     End Sub
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _MeterCompleterFirstGradingBinningMenuItem_Click(sender As Object, e As EventArgs) Handles _MeterCompleterFirstGradingBinningMenuItem.Click
         If Me._InitializingComponents Then Return
         Dim activity As String = "loading meter complete first grade binning trigger model"

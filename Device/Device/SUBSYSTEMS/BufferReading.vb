@@ -38,6 +38,19 @@ Public Class BufferReading
         Me._Parse(data, firstReading)
     End Sub
 
+    ''' <summary> Constructor. </summary>
+    ''' <remarks> David, 2/23/2017. </remarks>
+    ''' <param name="reading">      The reading. </param>
+    ''' <param name="firstReading"> The first buffer reading. </param>
+    Public Sub New(ByVal reading As BufferReading, ByVal firstReading As BufferReading)
+        Me.New()
+        If reading IsNot Nothing Then
+            Me._Reading = reading.Reading
+            Me.ParseTimestamp(reading.TimestampReading)
+            Me._adjustRelativeTimespan(firstReading)
+        End If
+    End Sub
+
     ''' <summary> Clears this object to its blank/initial state. </summary>
     ''' <remarks> David, 8/11/2016. </remarks>
     Private Sub _Clear()
@@ -72,8 +85,7 @@ Public Class BufferReading
         Me._Clear()
         If data.Count >= Me.ElementCount Then
             Me._Reading = data.Dequeue
-            Me._TimestampReading = data.Dequeue
-            Me.ParseTimestamp(Me._TimestampReading)
+            Me.ParseTimestamp(data.Dequeue)
         End If
     End Sub
 
@@ -96,6 +108,7 @@ Public Class BufferReading
     ''' <param name="timestamp"> The time stamp rounded down to the second. </param>
     Private Sub ParseTimestamp(ByVal timestamp As String)
         If String.IsNullOrWhiteSpace(timestamp) Then Throw New ArgumentNullException(NameOf(timestamp))
+        Me._TimestampReading = timestamp
         Dim q As New Queue(Of String)(timestamp.Split("."c))
         Me._Timestamp = DateTime.Parse(q.Dequeue)
         Me._FractionalSecond = Double.Parse($".{q.Dequeue}")
@@ -116,7 +129,7 @@ Public Class BufferReading
     ''' <remarks> Converted from the fractional second of the instrument timestamp f</remarks>
     Public ReadOnly Property FractionalTimestamp As TimeSpan
 
-    ''' <summary> Gets or sets the timespan relative tot eh first reading. </summary>
+    ''' <summary> Gets or sets the timespan relative to the first reading. </summary>
     ''' <value> The relative timespan. </value>
     Public Property RelativeTimespan As TimeSpan
 
@@ -164,33 +177,72 @@ End Class
 ''' </license>
 ''' <history date="7/23/2016" by="David" revision=""> Created. </history>
 Public Class BufferReadingCollection
-    Inherits List(Of BufferReading)
+    Inherits ObjectModel.Collection(Of BufferReading)
 
-    ''' <summary> Parses. </summary>
+    Public Sub New()
+        MyBase.New
+        Me._FirstReading = New BufferReading()
+        Me._LastReading = New BufferReading()
+    End Sub
+
+    ''' <summary> Parses the reading and adds values to the collection. </summary>
     ''' <remarks> David, 7/23/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="data"> The data. </param>
-    Public Sub Parse(ByVal data As String)
-        If data Is Nothing Then Throw New ArgumentNullException(NameOf(data))
-        Me.Clear()
+    Public Overloads Sub Add(ByVal data As String)
+        If String.IsNullOrWhiteSpace(data) Then Throw New ArgumentNullException(NameOf(data))
         Dim q As New Queue(Of String)(data.Split(","c))
         Dim r As BufferReading = New BufferReading
-        Dim firstItem As BufferReading = Nothing
         Do While q.Count >= r.ElementCount
-            Me.Add(New BufferReading(q, firstItem))
-            If Me.Count = 1 Then firstItem = Me.Item(0)
+            Me.Add(q)
         Loop
     End Sub
 
-    ''' <summary> Gets or sets the timestamp. </summary>
-    ''' <value> The timestamp of the first sample rounded down to the second. </value>
-    Public ReadOnly Property Timestamp As DateTime
+    ''' <summary> Parses the reading and adds values to the collection. </summary>
+    ''' <remarks> David, 2/23/2017. </remarks>
+    ''' <param name="readingTimestampQueue"> The reading plus timestamp pair of values to add. </param>
+    Public Overloads Sub Add(ByVal readingTimestampQueue As Queue(Of String))
+        If readingTimestampQueue Is Nothing Then Throw New ArgumentNullException(NameOf(readingTimestampQueue))
+        Me.Add(New BufferReading(readingTimestampQueue, Me.FirstReading))
+    End Sub
 
-    ''' <summary> Gets or sets the relative timestamp. </summary>
-    ''' <value>
-    ''' The relative timespan of the first sample to provide accurate fractional seconds form the
-    ''' initial time stamp.
-    ''' </value>
-    Public ReadOnly Property RelativeTimespan As TimeSpan
+    ''' <summary>
+    ''' Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />
+    ''' .
+    ''' </summary>
+    ''' <remarks> David, 2/23/2017. </remarks>
+    ''' <param name="value"> The object to add to the
+    '''                      <see cref="T:System.Collections.Generic.ICollection`1" />
+    '''                      . </param>
+    Public Overloads Sub Add(ByVal value As BufferReading)
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
+        MyBase.Add(value)
+        If Me.Count = 1 Then Me._FirstReading = Me.Item(0)
+        Me._LastReading = value
+    End Sub
+
+    ''' <summary> Parses the reading and adds values to the collection. </summary>
+    ''' <remarks> David, 2/23/2017. </remarks>
+    ''' <param name="values"> The values to add. </param>
+    Public Overloads Sub Add(ByVal values As IEnumerable(Of BufferReading))
+        If values Is Nothing Then Throw New ArgumentNullException(NameOf(values))
+        For Each br As BufferReading In values
+            Me.Add(New BufferReading(br, Me.FirstReading))
+        Next
+    End Sub
+
+    Public Overloads Sub Clear()
+        MyBase.Clear()
+        Me._FirstReading = New BufferReading()
+        Me._LastReading = New BufferReading()
+    End Sub
+
+    ''' <summary> Gets or sets the first reading. </summary>
+    ''' <value> The first reading. </value>
+    Public ReadOnly Property FirstReading As BufferReading
+
+    ''' <summary> Gets or sets the last reading. </summary>
+    ''' <value> The last reading. </value>
+    Public ReadOnly Property LastReading As BufferReading
 
 End Class

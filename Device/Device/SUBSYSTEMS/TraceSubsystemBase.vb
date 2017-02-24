@@ -266,6 +266,118 @@ Public MustInherit Class TraceSubsystemBase
 
 #End Region
 
+#Region " BUFFER STREAM "
+
+    ''' <summary> Queries the current Data. </summary>
+    ''' <returns> The Data or empty if none. </returns>
+    Public Function QueryBufferReadings() As IEnumerable(Of BufferReading)
+        Dim count As Integer = Me.QueryActualPointCount().GetValueOrDefault(0)
+        If count > 0 Then
+            Dim first As Integer = Me.QueryFirstPointNumber().GetValueOrDefault(0)
+            Dim last As Integer = Me.QueryLastPointNumber().GetValueOrDefault(0)
+            Return Me.QueryBufferReadings(first, last)
+        Else
+            Return New List(Of BufferReading)
+        End If
+    End Function
+
+    Public ReadOnly Property DefaultBuffer1ReadCommandFormat As String = ":TRAC:DATA? {0},{1},'defbuffer1',READ,TST"
+
+    ''' <summary> Queries the current Data. </summary>
+    ''' <remarks> David, 2/23/2017. </remarks>
+    ''' <param name="firstIndex"> Zero-based index of the first. </param>
+    ''' <param name="lastIndex">  Zero-based index of the last. </param>
+    ''' <returns> The Data or empty if none. </returns>
+    Public Function QueryBufferReadings(ByVal firstIndex As Integer, ByVal lastIndex As Integer) As IEnumerable(Of BufferReading)
+        Dim bd As New BufferReadingCollection
+        Me.QueryData(String.Format(Me.DefaultBuffer1ReadCommandFormat, firstIndex, lastIndex))
+        bd.Add(Me.Data)
+        Return bd.ToArray
+    End Function
+
+    ''' <summary> Displays a buffer readings. </summary>
+    ''' <remarks> David, 1/20/2017. </remarks>
+    ''' <param name="grid">   The grid. </param>
+    ''' <param name="values"> The values. </param>
+    Public Shared Sub DisplayBufferReadings(ByVal grid As Windows.Forms.DataGridView, ByVal values As IEnumerable(Of BufferReading))
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
+        With grid
+            .DataSource = Nothing
+            .Columns.Clear()
+            .Invalidate()
+            .DataSource = values
+            For Each col As Windows.Forms.DataGridViewColumn In .Columns
+                If String.Equals(col.Name, NameOf(BufferReading.ElementCount)) Then
+                    col.Visible = False
+                Else
+                    col.HeaderText = isr.Core.Pith.SplitExtensions.SplitWords(col.Name)
+                End If
+            Next
+            .ScrollBars = Windows.Forms.ScrollBars.Both
+        End With
+    End Sub
+
+    ''' <summary> Gets or sets the buffer readings. </summary>
+    ''' <value> The buffer readings. </value>
+    Public ReadOnly Property BufferReadings As BufferReadingCollection
+
+    ''' <summary> Gets the number of buffer readings. </summary>
+    ''' <value> The number of buffer readings. </value>
+    Public ReadOnly Property BufferReadingsCount As Integer
+        Get
+            Return If(Me.BufferReadings?.Any, Me.BufferReadings.Count, 0)
+        End Get
+    End Property
+
+    ''' <summary> Gets the last buffer reading. </summary>
+    ''' <value> The last buffer reading. </value>
+    Public ReadOnly Property LastBufferReading As BufferReading
+        Get
+            Return Me.BufferReadings.LastReading
+        End Get
+    End Property
+
+    ''' <summary> Stream buffer. </summary>
+    ''' <remarks> David, 2/23/2017. </remarks>
+    ''' <param name="triggerSubsystem"> The trigger subsystem. </param>
+    ''' <param name="pollPeriod">       The poll period. </param>
+    Public Sub StreamBuffer(ByVal triggerSubsystem As TriggerSubsystemBase, ByVal pollPeriod As TimeSpan)
+        If triggerSubsystem Is Nothing Then Throw New ArgumentNullException(NameOf(triggerSubsystem))
+        Me.ApplyCapturedSyncContext()
+        Dim first As Integer = 0
+        Dim last As Integer = 0
+        Me._BufferReadings = New BufferReadingCollection
+        triggerSubsystem.QueryTriggerState()
+        Do While triggerSubsystem.IsTriggerStateActive
+            If first = 0 Then first = Me.QueryFirstPointNumber().GetValueOrDefault(0)
+            If first > 0 Then
+                last = Me.QueryLastPointNumber().GetValueOrDefault(0)
+                If (last - first + 1) > Me.BufferReadings.Count Then
+                    Me.BufferReadings.Add(Me.QueryBufferReadings(Me.BufferReadings.Count + 1, last))
+                    Me.SafePostPropertyChanged(NameOf(BufferReadingsCount))
+                End If
+            End If
+            Threading.Thread.Sleep(pollPeriod)
+            Windows.Forms.Application.DoEvents()
+            triggerSubsystem.QueryTriggerState()
+        Loop
+    End Sub
+
+    ''' <summary> Asynchronous stream buffer. </summary>
+    ''' <remarks> David, 2/23/2017. </remarks>
+    ''' <param name="syncContext">      Context for the synchronization. </param>
+    ''' <param name="triggerSubsystem"> The trigger subsystem. </param>
+    ''' <param name="pollPeriod">       The poll period. </param>
+    ''' <returns> A Threading.Tasks.Task. </returns>
+    Public Async Function StreamBufferAsync(ByVal syncContext As Threading.SynchronizationContext,
+                                            ByVal triggerSubsystem As TriggerSubsystemBase, ByVal pollPeriod As TimeSpan) As Threading.Tasks.Task
+        If triggerSubsystem Is Nothing Then Throw New ArgumentNullException(NameOf(triggerSubsystem))
+        Me.CapturedSyncContext = syncContext
+        Await Threading.Tasks.Task.Run(Sub() Me.StreamBuffer(triggerSubsystem, pollPeriod))
+    End Function
+
+#End Region
+
 End Class
 
 #Region " UNUSED "

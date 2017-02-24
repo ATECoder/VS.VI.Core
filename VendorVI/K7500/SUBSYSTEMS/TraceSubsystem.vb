@@ -79,44 +79,6 @@ Public Class TraceSubsystem
 
     Protected Overrides ReadOnly Property DataQueryCommand As String = ":TRAC:DATA?"
 
-    Public ReadOnly Property DefaultBuffer1ReadCommandFormat As String = ":TRAC:DATA? {0},{1},'defbuffer1',READ,TST"
-
-    ''' <summary> Queries the current Data. </summary>
-    ''' <returns> The Data or empty if none. </returns>
-    Public Function QueryBufferReadings() As IEnumerable(Of BufferReading)
-        Dim bd As New BufferReadingCollection
-        Dim count As Integer = Me.QueryActualPointCount().GetValueOrDefault(0)
-        Dim first As Integer = Me.QueryFirstPointNumber().GetValueOrDefault(0)
-        Dim last As Integer = Me.QueryLastPointNumber().GetValueOrDefault(0)
-        If count > 0 Then
-            Me.QueryData(String.Format(Me.DefaultBuffer1ReadCommandFormat, first, last))
-            bd.Parse(Me.Data)
-        End If
-        Return bd.ToArray
-    End Function
-
-    ''' <summary> Displays a buffer readings. </summary>
-    ''' <remarks> David, 1/20/2017. </remarks>
-    ''' <param name="grid">   The grid. </param>
-    ''' <param name="values"> The values. </param>
-    Public Shared Sub DisplayBufferReadings(ByVal grid As Windows.Forms.DataGridView, ByVal values As IEnumerable(Of BufferReading))
-        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
-        With grid
-            .DataSource = Nothing
-            .Columns.Clear()
-            .Invalidate()
-            .DataSource = values
-            For Each col As Windows.Forms.DataGridViewColumn In .Columns
-                If String.Equals(col.Name, NameOf(BufferReading.ElementCount)) Then
-                    col.Visible = False
-                Else
-                    col.HeaderText = isr.Core.Pith.SplitExtensions.SplitWords(col.Name)
-                End If
-            Next
-            .ScrollBars = Windows.Forms.ScrollBars.Both
-        End With
-    End Sub
-
 #End Region
 
 End Class
