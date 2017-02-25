@@ -281,7 +281,7 @@ Public MustInherit Class TraceSubsystemBase
         End If
     End Function
 
-    Public ReadOnly Property DefaultBuffer1ReadCommandFormat As String = ":TRAC:DATA? {0},{1},'defbuffer1',READ,TST"
+    Public ReadOnly Property DefaultBuffer1ReadCommandFormat As String = ":TRAC:DATA? {0},{1},'defbuffer1',READ,TST,STAT,UNIT"
 
     ''' <summary> Queries the current Data. </summary>
     ''' <remarks> David, 2/23/2017. </remarks>
@@ -289,33 +289,14 @@ Public MustInherit Class TraceSubsystemBase
     ''' <param name="lastIndex">  Zero-based index of the last. </param>
     ''' <returns> The Data or empty if none. </returns>
     Public Function QueryBufferReadings(ByVal firstIndex As Integer, ByVal lastIndex As Integer) As IEnumerable(Of BufferReading)
-        Dim bd As New BufferReadingCollection
         Me.QueryData(String.Format(Me.DefaultBuffer1ReadCommandFormat, firstIndex, lastIndex))
-        bd.Add(Me.Data)
-        Return bd.ToArray
+        Dim q As New Queue(Of String)(Data.Split(","c))
+        Dim l As New List(Of BufferReading)
+        Do While q.Any
+            l.Add(New BufferReading(q))
+        Loop
+        Return l
     End Function
-
-    ''' <summary> Displays a buffer readings. </summary>
-    ''' <remarks> David, 1/20/2017. </remarks>
-    ''' <param name="grid">   The grid. </param>
-    ''' <param name="values"> The values. </param>
-    Public Shared Sub DisplayBufferReadings(ByVal grid As Windows.Forms.DataGridView, ByVal values As IEnumerable(Of BufferReading))
-        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
-        With grid
-            .DataSource = Nothing
-            .Columns.Clear()
-            .Invalidate()
-            .DataSource = values
-            For Each col As Windows.Forms.DataGridViewColumn In .Columns
-                If String.Equals(col.Name, NameOf(BufferReading.ElementCount)) Then
-                    col.Visible = False
-                Else
-                    col.HeaderText = isr.Core.Pith.SplitExtensions.SplitWords(col.Name)
-                End If
-            Next
-            .ScrollBars = Windows.Forms.ScrollBars.Both
-        End With
-    End Sub
 
     ''' <summary> Gets or sets the buffer readings. </summary>
     ''' <value> The buffer readings. </value>

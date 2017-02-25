@@ -45,6 +45,7 @@ Partial Class K7500Panel
         Me._MonitorActiveTriggerPlanMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitMonitorReadRepeatMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._RepeatMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._StreamBufferMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SenseTabPage = New System.Windows.Forms.TabPage()
         Me._OpenLeadsDetectionCheckBox = New System.Windows.Forms.CheckBox()
         Me._ApplyFunctionModeButton = New System.Windows.Forms.Button()
@@ -110,7 +111,6 @@ Partial Class K7500Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._StreamBufferMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -438,6 +438,14 @@ Partial Class K7500Panel
         Me._RepeatMenuItem.Size = New System.Drawing.Size(222, 22)
         Me._RepeatMenuItem.Text = "Repeat"
         Me._RepeatMenuItem.ToolTipText = "Repeat initiating the trigger plan"
+        '
+        '_StreamBufferMenuItem
+        '
+        Me._StreamBufferMenuItem.CheckOnClick = True
+        Me._StreamBufferMenuItem.Name = "_StreamBufferMenuItem"
+        Me._StreamBufferMenuItem.Size = New System.Drawing.Size(222, 22)
+        Me._StreamBufferMenuItem.Text = "Stream Buffer"
+        Me._StreamBufferMenuItem.ToolTipText = "Continuously reads new values while a trigger plan is active"
         '
         '_SenseTabPage
         '
@@ -876,35 +884,35 @@ Partial Class K7500Panel
         '_LoadGradeBinTriggerModelMenuItem
         '
         Me._LoadGradeBinTriggerModelMenuItem.Name = "_LoadGradeBinTriggerModelMenuItem"
-        Me._LoadGradeBinTriggerModelMenuItem.Size = New System.Drawing.Size(359, 22)
+        Me._LoadGradeBinTriggerModelMenuItem.Size = New System.Drawing.Size(353, 22)
         Me._LoadGradeBinTriggerModelMenuItem.Text = "Grading/Binning Trigger Loop"
         Me._LoadGradeBinTriggerModelMenuItem.ToolTipText = "Loads the grading binning trigger model"
         '
         '_LoadSimpleLoopMenuItem
         '
         Me._LoadSimpleLoopMenuItem.Name = "_LoadSimpleLoopMenuItem"
-        Me._LoadSimpleLoopMenuItem.Size = New System.Drawing.Size(359, 22)
+        Me._LoadSimpleLoopMenuItem.Size = New System.Drawing.Size(353, 22)
         Me._LoadSimpleLoopMenuItem.Text = "Load Simple Loop"
         Me._LoadSimpleLoopMenuItem.ToolTipText = "Loads a simple loop trigger model."
         '
         '_RunSimpleLoopMenuItem
         '
         Me._RunSimpleLoopMenuItem.Name = "_RunSimpleLoopMenuItem"
-        Me._RunSimpleLoopMenuItem.Size = New System.Drawing.Size(359, 22)
+        Me._RunSimpleLoopMenuItem.Size = New System.Drawing.Size(353, 22)
         Me._RunSimpleLoopMenuItem.Text = "Run Simple Loop"
         Me._RunSimpleLoopMenuItem.ToolTipText = "Initiates a single loop, waits for completion and displays the values"
         '
         '_ClearTriggerModelMenuItem
         '
         Me._ClearTriggerModelMenuItem.Name = "_ClearTriggerModelMenuItem"
-        Me._ClearTriggerModelMenuItem.Size = New System.Drawing.Size(359, 22)
+        Me._ClearTriggerModelMenuItem.Size = New System.Drawing.Size(353, 22)
         Me._ClearTriggerModelMenuItem.Text = "Clear Trigger Model"
         Me._ClearTriggerModelMenuItem.ToolTipText = "Clears the instrument trigger model"
         '
         '_MeterCompleterFirstGradingBinningMenuItem
         '
         Me._MeterCompleterFirstGradingBinningMenuItem.Name = "_MeterCompleterFirstGradingBinningMenuItem"
-        Me._MeterCompleterFirstGradingBinningMenuItem.Size = New System.Drawing.Size(359, 22)
+        Me._MeterCompleterFirstGradingBinningMenuItem.Size = New System.Drawing.Size(353, 22)
         Me._MeterCompleterFirstGradingBinningMenuItem.Text = "Meter Complete First Grading/Binning Trigger Model"
         Me._MeterCompleterFirstGradingBinningMenuItem.ToolTipText = "Applies a trigger model where meter complete is output first."
         '
@@ -1068,13 +1076,6 @@ Partial Class K7500Panel
         Me._TitleLabel.TabIndex = 17
         Me._TitleLabel.Text = "K7500"
         Me._TitleLabel.UseMnemonic = False
-        '
-        '_StreamBufferMenuItem
-        '
-        Me._StreamBufferMenuItem.Name = "_StreamBufferMenuItem"
-        Me._StreamBufferMenuItem.Size = New System.Drawing.Size(222, 22)
-        Me._StreamBufferMenuItem.Text = "Stream Buffer"
-        Me._StreamBufferMenuItem.ToolTipText = "Continuously reads new values while a trigger plan is active"
         '
         'K7500Panel
         '

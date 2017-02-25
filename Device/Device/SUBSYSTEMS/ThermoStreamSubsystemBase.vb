@@ -36,7 +36,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Me.SoakTime = New Double?
         Me.Temperature = New Double?
         Me.TemperatureEventStatus = New Integer?
-        Me.RampRateUnit = Arebis.StandardUnits.TemperatureUnits.DegreesCelciusPerMinute
+        Me.RampRateUnit = Arebis.StandardUnits.TemperatureUnits.DegreesCelsiusPerMinute
     End Sub
 
 #End Region
@@ -442,7 +442,7 @@ Public MustInherit Class ThermostreamSubsystemBase
 
     ''' <summary> Gets or sets the ramp rate unit. </summary>
     ''' <value> The ramp rate unit. </value>
-    Public Property RampRateUnit As Arebis.TypedUnits.Unit = Arebis.StandardUnits.TemperatureUnits.DegreesCelciusPerMinute
+    Public Property RampRateUnit As Arebis.TypedUnits.Unit = Arebis.StandardUnits.TemperatureUnits.DegreesCelsiusPerMinute
 
     ''' <summary> The Ramp Rate. </summary>
     Private _RampRate As Double?

@@ -800,9 +800,20 @@ Public Class K7500Panel
                 Me._BufferCountLabel.Invalidate()
             Case NameOf(subsystem.BufferReadingsCount)
                 If Me.BufferStreamingHandlerEnabled Then
-                    TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, subsystem.BufferReadings)
-                    Windows.Forms.Application.DoEvents()
-                    Me._BufferDataGridView.Invalidate()
+                    ' must reconfigure = true to get the grid updated :(
+                    If Me._BufferDataGridView.DataSource Is Nothing Then
+                        subsystem.BufferReadings.DisplayReadings(Me._BufferDataGridView, True)
+                        Windows.Forms.Application.DoEvents()
+                        Me._BufferDataGridView.Invalidate()
+                        Windows.Forms.Application.DoEvents()
+                    Else
+                        subsystem.BufferReadings.DisplayReadings(Me._BufferDataGridView, True)
+                        'Me._BufferDataGridView.DataSource = subsystem.BufferReadings
+                        'Me._BufferDataGridView.InvalidateRow(subsystem.BufferReadings.Count - 1)
+                        Windows.Forms.Application.DoEvents()
+                        Me._BufferDataGridView.Refresh()
+                        Windows.Forms.Application.DoEvents()
+                    End If
                     Me._ReadingToolStripStatusLabel.SafeTextSetter($"{subsystem.LastBufferReading.Reading} {Me.Device.SenseSubsystem.Readings.Reading.Unit.Symbol}")
                 End If
         End Select
@@ -859,6 +870,9 @@ Public Class K7500Panel
                     Me._TriggerStateLabel.Text = subsystem.TriggerState.Value.ToString
                     If Me.TriggerPlanStateChangeHandlerEnabled Then
                         Me.HandleTriggerPlanStateChange(subsystem.TriggerState.Value)
+                    End If
+                    If Me.BufferStreamingHandlerEnabled AndAlso Not subsystem.IsTriggerStateActive AndAlso _StreamBufferMenuItem.Checked Then
+                        Me._StreamBufferMenuItem.Checked = False
                     End If
                 End If
                 ' ?? this causes a cross thread exception. 
@@ -1321,29 +1335,40 @@ Public Class K7500Panel
 
     ''' <summary> Gets or sets the trace readings. </summary>
     ''' <value> The trace readings. </value>
-    Private ReadOnly Property TraceReadings As Collections.ObjectModel.ObservableCollection(Of BufferReading)
+    Private ReadOnly Property TraceReadings As VI.BufferReadingCollection
 
 #Region " STREAM BUFFER "
 
+    ''' <summary> Gets or sets the buffer streaming handler enabled. </summary>
+    ''' <value> The buffer streaming handler enabled. </value>
     Private Property BufferStreamingHandlerEnabled As Boolean
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _StreamBufferMenuItem_Click(sender As Object, e As EventArgs) Handles _StreamBufferMenuItem.Click
+    Private Sub _StreamBufferMenuItem_CheckStateChanged(sender As Object, e As EventArgs) Handles _StreamBufferMenuItem.CheckStateChanged
         If Me._InitializingComponents Then Return
-        Dim activity As String = "start streaming buffer"
+        Dim activity As String = "start buffer streaming"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Me.BufferStreamingHandlerEnabled = False
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Me.InterfaceStopWatch.Restart()
-            Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
-            Me.Device.TriggerSubsystem.CapturedSyncContext = SynchronizationContext.Current
-            Me.Device.TraceSubsystem.CapturedSyncContext = SynchronizationContext.Current
-            Me.Device.TriggerSubsystem.Initiate()
-            Windows.Forms.Application.DoEvents()
-            Me.Device.TraceSubsystem.StreamBufferAsync(Threading.SynchronizationContext.Current, Me.Device.TriggerSubsystem, TimeSpan.FromMilliseconds(5))
-            Me.BufferStreamingHandlerEnabled = True
+            If _StreamBufferMenuItem.Checked Then
+                Me.BufferStreamingHandlerEnabled = False
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.InterfaceStopWatch.Restart()
+                Me._BufferDataGridView.DataSource = Nothing
+                Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
+                Me.Device.TriggerSubsystem.CapturedSyncContext = SynchronizationContext.Current
+                Me.Device.TraceSubsystem.CapturedSyncContext = SynchronizationContext.Current
+                Me.Device.TriggerSubsystem.Initiate()
+                Windows.Forms.Application.DoEvents()
+                Me.Device.TraceSubsystem.StreamBufferAsync(Threading.SynchronizationContext.Current, Me.Device.TriggerSubsystem, TimeSpan.FromMilliseconds(5))
+                Me.BufferStreamingHandlerEnabled = True
+            Else
+                Me.BufferStreamingHandlerEnabled = False
+                activity = "Aborting trigger plan to stop buffer streaming"
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.AbortTriggerPlan(sender)
+                Me.Device.TriggerSubsystem.QueryTriggerState()
+            End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
@@ -1407,8 +1432,8 @@ Public Class K7500Panel
             activity = "fetching buffered readings"
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             Dim values As IEnumerable(Of BufferReading) = Me.Device.TraceSubsystem.QueryBufferReadings()
-            If Me.TraceReadings Is Nothing Then Me._TraceReadings = New Collections.ObjectModel.ObservableCollection(Of BufferReading)
-            For Each v As BufferReading In values : Windows.Forms.Application.DoEvents() : Me.TraceReadings.Add(v) : Next
+            If Me.TraceReadings Is Nothing Then Me._TraceReadings = New VI.BufferReadingCollection
+            Me.TraceReadings.Add(values)
         End If
         Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
         Me.InterfaceStopWatch.Stop()
@@ -1431,7 +1456,7 @@ Public Class K7500Panel
     Private Sub DisplayBuffer(ByVal readings As VI.BufferReadingCollection)
         Dim activity As String = "updating the display"
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, readings)
+        readings.DisplayReadings(Me._BufferDataGridView, True)
         Windows.Forms.Application.DoEvents()
         Me._BufferDataGridView.Invalidate()
     End Sub
@@ -1439,7 +1464,7 @@ Public Class K7500Panel
     Private Sub DisplayBuffer()
         Dim activity As String = "updating the display"
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.TraceReadings)
+        Me.TraceReadings.DisplayReadings(Me._BufferDataGridView, True)
         Windows.Forms.Application.DoEvents()
         Me._BufferDataGridView.Invalidate()
     End Sub
@@ -1552,17 +1577,17 @@ Public Class K7500Panel
                     activity = "fetching buffered readings"
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                     Dim values As IEnumerable(Of BufferReading) = Me.Device.TraceSubsystem.QueryBufferReadings()
-                    If Me.TraceReadings Is Nothing Then Me._TraceReadings = New Collections.ObjectModel.ObservableCollection(Of BufferReading)
+                    If Me.TraceReadings Is Nothing Then Me._TraceReadings = New VI.BufferReadingCollection
                     For Each v As BufferReading In values : Me.TraceReadings.Add(v) : Next
 
                     activity = "updating the display"
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                     If Me.TraceReadings.Count = values.Count Then
-                        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.TraceReadings)
+                        Me.TraceReadings.DisplayReadings(Me._BufferDataGridView, False)
                     Else
                         ' TO_DO: See if observable collection will work.
                         ' Me._BufferDataGridView.Invalidate()
-                        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.TraceReadings)
+                        Me.TraceReadings.DisplayReadings(Me._BufferDataGridView, False)
                     End If
                     Me._BufferDataGridView.Invalidate()
                     Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
@@ -1734,13 +1759,13 @@ Public Class K7500Panel
                     activity = "fetching buffered readings"
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                     Dim values As IEnumerable(Of BufferReading) = Me.Device.TraceSubsystem.QueryBufferReadings()
-                    If Me.TraceReadings Is Nothing Then Me._TraceReadings = New Collections.ObjectModel.ObservableCollection(Of BufferReading)
+                    If Me.TraceReadings Is Nothing Then Me._TraceReadings = New VI.BufferReadingCollection
                     For Each v As BufferReading In values : Me.TraceReadings.Add(v) : Next
 
                     activity = "updating the display"
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                     If Me.TraceReadings.Count = values.Count Then
-                        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, values)
+                        Me.TraceReadings.DisplayReadings(Me._BufferDataGridView, True)
                     Else
                         Me._BufferDataGridView.Invalidate()
                     End If
@@ -1931,8 +1956,8 @@ Public Class K7500Panel
 
             activity = "clearing buffer and display"
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Me._TraceReadings = New Collections.ObjectModel.ObservableCollection(Of BufferReading)
-            TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me._TraceReadings)
+            Me._TraceReadings = New VI.BufferReadingCollection
+            Me._TraceReadings.DisplayReadings(Me._BufferDataGridView, True)
 
             Me.Device.TraceSubsystem.ClearBuffer()
 
@@ -2057,7 +2082,9 @@ Public Class K7500Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             Me.InterfaceStopWatch.Restart()
-            TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.Device.TraceSubsystem.QueryBufferReadings())
+            Dim br As New VI.BufferReadingCollection
+            br.Add(Me.Device.TraceSubsystem.QueryBufferReadings)
+            br.DisplayReadings(Me._BufferDataGridView, True)
             Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
             Me.InterfaceStopWatch.Stop()
         Catch ex As Exception
@@ -2083,7 +2110,8 @@ Public Class K7500Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, New List(Of BufferReading))
+            Dim br As New VI.BufferReadingCollection
+            br.DisplayReadings(Me._BufferDataGridView, True)
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
@@ -2322,12 +2350,13 @@ Public Class K7500Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, New List(Of BufferReading))
+            Dim br As New VI.BufferReadingCollection : br.DisplayReadings(Me._BufferDataGridView, True)
             Me.Device.TraceSubsystem.ClearBuffer()
             Me.InterfaceStopWatch.Restart()
             Me.Device.TriggerSubsystem.Initiate()
             Me.Device.StatusSubsystem.Wait()
-            TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.Device.TraceSubsystem.QueryBufferReadings())
+            br.Add(Me.Device.TraceSubsystem.QueryBufferReadings)
+            br.DisplayReadings(Me._BufferDataGridView, False)
             Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
             Me.InterfaceStopWatch.Stop()
         Catch ex As Exception

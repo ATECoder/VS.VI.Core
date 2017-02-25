@@ -68,6 +68,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -116,7 +117,7 @@
     <Compile Include="READING\ReadingStatus.vb" />
     <Compile Include="DEVICE\SessionFactory.vb" />
     <Compile Include="SUBSYSTEMS\ArmLayerSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\BufferReading.vb" />
+    <Compile Include="READING\BufferReading.vb" />
     <Compile Include="SUBSYSTEMS\ChannelTriggerSusystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ChannelTraceSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ChannelMarkerSubsystemBase.vb" />
