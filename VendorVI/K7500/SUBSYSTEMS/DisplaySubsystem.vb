@@ -22,6 +22,19 @@ Public Class DisplaySubsystem
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.Enabled = True
+        Me.Exists = True
+    End Sub
+
+#End Region
+
+
+
 #Region " PUBLISHER "
 
     ''' <summary> Publishes all values by raising the property changed events. </summary>

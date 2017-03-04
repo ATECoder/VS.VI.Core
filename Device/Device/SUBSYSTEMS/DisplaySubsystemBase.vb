@@ -126,7 +126,11 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
     Public Function ApplyEnabled(ByVal value As Boolean) As Boolean?
         Me.WriteEnabled(value)
-        Return Me.QueryEnabled()
+        If String.IsNullOrWhiteSpace(Me.DisplayEnabledQueryCommand) Then
+            Return Me.Enabled
+        Else
+            Return Me.QueryEnabled()
+        End If
     End Function
 
     ''' <summary> Gets or sets the display enabled query command. </summary>
@@ -138,7 +142,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <returns> <c>null</c> display status is not known; <c>True</c> if enabled; otherwise, <c>False</c>. </returns>
     Public Function QueryEnabled() As Boolean?
         Me.Session.MakeEmulatedReplyIfEmpty(Me.Enabled.GetValueOrDefault(True))
-        If String.IsNullOrWhiteSpace(Me.DisplayEnabledQueryCommand) Then
+        If Not String.IsNullOrWhiteSpace(Me.DisplayEnabledQueryCommand) Then
             Me.Enabled = Me.Session.Query(Me.Enabled.GetValueOrDefault(True), Me.DisplayEnabledQueryCommand)
         End If
         Return Me.Enabled
@@ -189,7 +193,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <returns> <c>null</c> status is not known; <c>True</c> if display exists; otherwise, <c>False</c>. </returns>
     Public Overridable Function QueryExists() As Boolean?
         Me.Session.MakeEmulatedReplyIfEmpty(Me.Exists.GetValueOrDefault(True))
-        If String.IsNullOrWhiteSpace(Me.DisplayExistsQueryCommand) Then
+        If Not String.IsNullOrWhiteSpace(Me.DisplayExistsQueryCommand) Then
             Me.Exists = Me.Session.Query(Me.Exists.GetValueOrDefault(True), Me.DisplayExistsQueryCommand)
         End If
         Return Me.Exists

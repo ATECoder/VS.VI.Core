@@ -77,24 +77,24 @@ Public Class VersionInfo
     Public Function BuildIdentity() As String
         Dim builder As New System.Text.StringBuilder
         If String.IsNullOrWhiteSpace(Me.ManufacturerName) Then
-            builder.Append($"{Me.ManufacturerName},")
-        Else
             builder.Append("Manufacturer,")
+        Else
+            builder.Append($"{Me.ManufacturerName},")
         End If
         If String.IsNullOrWhiteSpace(Me.Model) Then
-            builder.Append($"{Me.Model},")
-        Else
             builder.Append("Model,")
+        Else
+            builder.Append($"{Me.Model},")
         End If
         If String.IsNullOrWhiteSpace(Me.SerialNumber) Then
-            builder.Append($"{Me.SerialNumber},")
-        Else
             builder.Append("1,")
+        Else
+            builder.Append($"{Me.SerialNumber},")
         End If
         If String.IsNullOrWhiteSpace(Me.FirmwareRevision) Then
-            builder.Append($"{Me.FirmwareRevision}")
-        Else
             builder.Append("Oct 10 1997")
+        Else
+            builder.Append($"{Me.FirmwareRevision}")
         End If
         Return builder.ToString
     End Function
