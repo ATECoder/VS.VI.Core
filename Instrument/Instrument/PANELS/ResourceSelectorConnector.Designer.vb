@@ -11,122 +11,87 @@ Partial Class ResourceSelectorConnector
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(ResourceSelectorConnector))
-        Me._ToolTip = New System.Windows.Forms.ToolTip(Me.components)
-        Me._ResourceNamesComboBox = New System.Windows.Forms.ComboBox()
-        Me._FindButton = New System.Windows.Forms.Button()
-        Me._ImageList = New System.Windows.Forms.ImageList(Me.components)
-        Me._ClearButton = New System.Windows.Forms.Button()
-        Me._MainTableLayoutPanel = New System.Windows.Forms.TableLayoutPanel()
         Me._ErrorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me._ToggleConnectionButton = New System.Windows.Forms.Button()
-        Me._MainTableLayoutPanel.SuspendLayout()
+        Me._ToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ClearButton = New System.Windows.Forms.ToolStripButton()
+        Me._ResourceNamesComboBox = New isr.Core.Pith.ToolStripSpringComboBox
+        Me._ToggleConnectionButton = New System.Windows.Forms.ToolStripButton()
+        Me._FindButton = New System.Windows.Forms.ToolStripButton()
         CType(Me._ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._ToolStrip.SuspendLayout()
         Me.SuspendLayout()
-        '
-        '_ResourceNamesComboBox
-        '
-        Me._ResourceNamesComboBox.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._ResourceNamesComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ResourceNamesComboBox.Location = New System.Drawing.Point(41, 9)
-        Me._ResourceNamesComboBox.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me._ResourceNamesComboBox.Name = "_ResourceNamesComboBox"
-        Me._ResourceNamesComboBox.Size = New System.Drawing.Size(231, 25)
-        Me._ResourceNamesComboBox.TabIndex = 5
-        Me._ToolTip.SetToolTip(Me._ResourceNamesComboBox, "Select an item from the list")
-        '
-        '_FindButton
-        '
-        Me._FindButton.Dock = System.Windows.Forms.DockStyle.Left
-        Me._FindButton.ImageIndex = 3
-        Me._FindButton.ImageList = Me._ImageList
-        Me._FindButton.Location = New System.Drawing.Point(278, 6)
-        Me._FindButton.Margin = New System.Windows.Forms.Padding(3, 1, 3, 1)
-        Me._FindButton.Name = "_FindButton"
-        Me._FindButton.Size = New System.Drawing.Size(31, 31)
-        Me._FindButton.TabIndex = 6
-        Me._ToolTip.SetToolTip(Me._FindButton, "Search for items")
-        Me._FindButton.UseVisualStyleBackColor = True
-        '
-        '_imageList
-        '
-        Me._ImageList.ImageStream = CType(resources.GetObject("_imageList.ImageStream"), System.Windows.Forms.ImageListStreamer)
-        Me._ImageList.TransparentColor = System.Drawing.SystemColors.Control
-        Me._ImageList.Images.SetKeyName(0, "")
-        Me._ImageList.Images.SetKeyName(1, "")
-        Me._ImageList.Images.SetKeyName(2, "")
-        Me._ImageList.Images.SetKeyName(3, "")
-        '
-        '_ClearButton
-        '
-        Me._ClearButton.Dock = System.Windows.Forms.DockStyle.Left
-        Me._ClearButton.Enabled = False
-        Me._ClearButton.ImageIndex = 0
-        Me._ClearButton.ImageList = Me._ImageList
-        Me._ClearButton.Location = New System.Drawing.Point(3, 6)
-        Me._ClearButton.Margin = New System.Windows.Forms.Padding(3, 1, 3, 1)
-        Me._ClearButton.Name = "_ClearButton"
-        Me._ClearButton.Size = New System.Drawing.Size(32, 31)
-        Me._ClearButton.TabIndex = 8
-        Me._ToolTip.SetToolTip(Me._ClearButton, "Clear Selected Item")
-        Me._ClearButton.UseVisualStyleBackColor = True
-        '
-        '_mainTableLayoutPanel
-        '
-        Me._MainTableLayoutPanel.ColumnCount = 4
-        Me._MainTableLayoutPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me._MainTableLayoutPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me._MainTableLayoutPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me._MainTableLayoutPanel.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
-        Me._MainTableLayoutPanel.Controls.Add(Me._ResourceNamesComboBox, 1, 1)
-        Me._MainTableLayoutPanel.Controls.Add(Me._ClearButton, 0, 1)
-        Me._MainTableLayoutPanel.Controls.Add(Me._FindButton, 2, 1)
-        Me._MainTableLayoutPanel.Controls.Add(Me._ToggleConnectionButton, 3, 1)
-        Me._MainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._MainTableLayoutPanel.Location = New System.Drawing.Point(0, 0)
-        Me._MainTableLayoutPanel.Margin = New System.Windows.Forms.Padding(0)
-        Me._MainTableLayoutPanel.Name = "_mainTableLayoutPanel"
-        Me._MainTableLayoutPanel.RowCount = 3
-        Me._MainTableLayoutPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._MainTableLayoutPanel.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._MainTableLayoutPanel.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._MainTableLayoutPanel.Size = New System.Drawing.Size(350, 43)
-        Me._MainTableLayoutPanel.TabIndex = 10
         '
         '_ErrorProvider
         '
         Me._ErrorProvider.ContainerControl = Me
         '
-        ' _ToggleConnectionButton
+        '_ToolStrip
         '
-        Me._ToggleConnectionButton.Dock = System.Windows.Forms.DockStyle.Left
-        Me._ToggleConnectionButton.ImageIndex = 1
-        Me._ToggleConnectionButton.ImageList = Me._ImageList
-        Me._ToggleConnectionButton.Location = New System.Drawing.Point(315, 6)
-        Me._ToggleConnectionButton.Margin = New System.Windows.Forms.Padding(3, 1, 3, 1)
+        Me._ToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
+        Me._ToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearButton, Me._ResourceNamesComboBox, Me._ToggleConnectionButton, Me._FindButton})
+        Me._ToolStrip.Location = New System.Drawing.Point(0, 0)
+        Me._ToolStrip.Name = "_ToolStrip"
+        Me._ToolStrip.Size = New System.Drawing.Size(474, 29)
+        Me._ToolStrip.TabIndex = 11
+        Me._ToolStrip.Text = "Resource Selector"
+        '
+        '_ClearButton
+        '
+        Me._ClearButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me._ClearButton.Image = Global.isr.VI.Instrument.My.Resources.Resources.Clear_22x22
+        Me._ClearButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
+        Me._ClearButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ClearButton.Name = "_ClearButton"
+        Me._ClearButton.Size = New System.Drawing.Size(26, 26)
+        Me._ClearButton.Text = "ToolStripButton1"
+        '
+        '_ResourceNamesComboBox
+        '
+        Me._ResourceNamesComboBox.AutoSize = True
+        Me._ResourceNamesComboBox.Name = "_ResourceNamesComboBox"
+        Me._ResourceNamesComboBox.Size = New System.Drawing.Size(121, 23)
+        Me._ResourceNamesComboBox.ToolTipText = "Available resource names"
+        '
+        '_ToggleConnectionButton
+        '
+        Me._ToggleConnectionButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._ToggleConnectionButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me._ToggleConnectionButton.Image = Global.isr.VI.Instrument.My.Resources.Resources.Connect_22x22
+        Me._ToggleConnectionButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
+        Me._ToggleConnectionButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ToggleConnectionButton.Name = "_ToggleConnectionButton"
-        Me._ToggleConnectionButton.Size = New System.Drawing.Size(32, 31)
-        Me._ToggleConnectionButton.TabIndex = 9
-        Me._ToolTip.SetToolTip(Me._ToggleConnectionButton, "Click to Connect")
-        Me._ToggleConnectionButton.UseVisualStyleBackColor = True
+        Me._ToggleConnectionButton.Size = New System.Drawing.Size(26, 26)
+        Me._ToggleConnectionButton.ToolTipText = "Click to connect"
         '
-        'ResourceSelectorConnector
+        '_FindButton
+        '
+        Me._FindButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._FindButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
+        Me._FindButton.Image = Global.isr.VI.Instrument.My.Resources.Resources.Find_22x22
+        Me._FindButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
+        Me._FindButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._FindButton.Name = "_FindButton"
+        Me._FindButton.Size = New System.Drawing.Size(26, 26)
+        Me._FindButton.ToolTipText = "Find resources"
+        '
+        'ResourceSelectorConnector1
         '
         Me.BackColor = System.Drawing.Color.Transparent
-        Me.Controls.Add(Me._MainTableLayoutPanel)
-        Me.Name = "ResourceSelectorConnector"
-        Me.Size = New System.Drawing.Size(350, 43)
-        Me._MainTableLayoutPanel.ResumeLayout(False)
+        Me.Controls.Add(Me._ToolStrip)
+        Me.Margin = New System.Windows.Forms.Padding(0)
+        Me.Name = "ResourceSelectorConnector1"
+        Me.Size = New System.Drawing.Size(474, 29)
         CType(Me._ErrorProvider, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._ToolStrip.ResumeLayout(False)
+        Me._ToolStrip.PerformLayout()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
-    Private WithEvents _ToolTip As System.Windows.Forms.ToolTip
-    Private WithEvents _ImageList As System.Windows.Forms.ImageList
-    Private WithEvents _ResourceNamesComboBox As System.Windows.Forms.ComboBox
-    Private WithEvents _FindButton As System.Windows.Forms.Button
-    Private WithEvents _ClearButton As System.Windows.Forms.Button
-    Private WithEvents _MainTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
     Private WithEvents _ErrorProvider As System.Windows.Forms.ErrorProvider
-    Private WithEvents _ToggleConnectionButton As Windows.Forms.Button
+    Private WithEvents _ClearButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ResourceNamesComboBox As isr.Core.Pith.ToolStripSpringComboBox
+    Private WithEvents _FindButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ToggleConnectionButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ToolStrip As Windows.Forms.ToolStrip
 End Class

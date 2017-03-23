@@ -2,7 +2,6 @@ Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EventHandlerExtensions
-Imports isr.Core.Pith.ErrorProviderExtensions
 ''' <summary> A control for selecting and connecting to a VISA resource. </summary>
 ''' <license> (c) 2006 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -26,6 +25,7 @@ Public Class ResourceSelectorConnector
 
         ' This call is required by the Windows Form Designer.
         Me.InitializeComponent()
+
         Me._ToggleConnectionButton.Enabled = False
         Me._ClearButton.Enabled = False
         Me._FindButton.Enabled = True
@@ -54,6 +54,19 @@ Public Class ResourceSelectorConnector
             MyBase.Dispose(disposing)
         End Try
     End Sub
+
+#End Region
+
+#Region " TYPES "
+
+    ''' <summary> Enumerates the image indexes. </summary>
+    Private Enum ImageIndex
+        None
+        Clear
+        Connect
+        Connected
+        Search
+    End Enum
 
 #End Region
 
@@ -144,8 +157,9 @@ Public Class ResourceSelectorConnector
         Me._ResourceNamesComboBox.Enabled = Not value
         Me._ClearButton.Enabled = Me.Clearable AndAlso value
         Me._FindButton.Enabled = Me.Searchable AndAlso Not value
-        Me._ToggleConnectionButton.ToolTipText = $"Click to {If(value, "Disconnect", "Connect")}"
-        Me._ToggleConnectionButton.Image = If(value, My.Resources.Disconnect_22x22, My.Resources.Connect_22x22)
+        Me._ToolTip.SetToolTip(Me._ToggleConnectionButton, $"Click to {IIf(value, "Disconnect", "Connect")}")
+        Me._ToggleConnectionButton.ImageIndex = CInt(IIf(value, ResourceSelectorConnector.ImageIndex.Connected,
+                                                             ResourceSelectorConnector.ImageIndex.Connect)) - 1
         Me._ToggleConnectionButton.Enabled = Me.Connectible
         Me._isConnected = value
         Me.AsyncNotifyPropertyChanged(NameOf(Me.IsConnected))
@@ -155,7 +169,7 @@ Public Class ResourceSelectorConnector
     ''' <remarks> David, 12/23/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification:="OK")>
-    Private Sub OnToggleConnection(ByVal sender As ToolStripItem)
+    Private Sub OnToggleConnection(ByVal sender As Button)
         If sender Is Nothing Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -166,7 +180,8 @@ Public Class ResourceSelectorConnector
                 Me.OnConnect(New System.ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
-            Me._ErrorProvider.Annunciate(sender, ex.Message)
+            Me._ErrorProvider.SetIconPadding(sender, -15)
+            Me._ErrorProvider.SetError(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception connecting resource '{0}';. Details: {1}", Me.SelectedResourceName, ex)
         Finally
@@ -230,7 +245,7 @@ Public Class ResourceSelectorConnector
 
     Private _ConnectionChanging As Boolean
     Private Sub _ToggleConnectionButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ToggleConnectionButton.Click
-        If sender IsNot Nothing AndAlso Not Me._ConnectionChanging Then Me.OnToggleConnection(TryCast(sender, ToolStripItem))
+        If sender IsNot Nothing AndAlso Not Me._ConnectionChanging Then Me.OnToggleConnection(TryCast(sender, Button))
     End Sub
 
 #End Region
@@ -265,7 +280,7 @@ Public Class ResourceSelectorConnector
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.ResourcesFilter) Then
                 Me._ResourcesFilter = value
-                Me._FindButton.ToolTipText = $"Search using the search pattern '{value}'"
+                Me._ToolTip.SetToolTip(Me._FindButton, "Search using the search pattern '" & value & "'")
                 Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourcesFilter))
             End If
         End Set
@@ -288,20 +303,23 @@ Public Class ResourceSelectorConnector
             End Using
             If resources.Count = 0 Then
                 Me.HasResources = False
-                Me._ResourceNamesComboBox.ToolTipText = isr.VI.My.Resources.LocalResourceNotFoundSynopsis
+                Me._ToolTip.SetToolTip(Me._ResourceNamesComboBox, isr.VI.My.Resources.LocalResourceNotFoundSynopsis)
+
+                Me._ErrorProvider.SetIconPadding(Me._FindButton, -15)
                 Dim message As String = $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}."
-                Me._ErrorProvider.Annunciate(Me._FindButton, message)
+                Me._ErrorProvider.SetError(Me._FindButton, message)
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, message)
             Else
-                Me._ResourceNamesComboBox.ComboBox.DataSource = Nothing
+                Me._ResourceNamesComboBox.DataSource = Nothing
                 Me._ResourceNamesComboBox.Items.Clear()
-                Me._ResourceNamesComboBox.ComboBox.DataSource = resources
+                Me._ResourceNamesComboBox.DataSource = resources
                 Me.HasResources = True
-                Me._ResourceNamesComboBox.ToolTipText = isr.VI.My.Resources.LocalResourceSelectorTip
+                Me._ToolTip.SetToolTip(Me._ResourceNamesComboBox, isr.VI.My.Resources.LocalResourceSelectorTip)
             End If
         Catch ex As Exception
             Me.HasResources = False
-            Me._ErrorProvider.Annunciate(Me._FindButton, ex.Message)
+            Me._ErrorProvider.SetIconPadding(Me._FindButton, -15)
+            Me._ErrorProvider.SetError(Me._FindButton, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{Environment.NewLine}Details: {ex.ToString}.")
         Finally
@@ -314,7 +332,7 @@ Public Class ResourceSelectorConnector
     Public Sub DisplayResourceNamePatterns()
 
         ' clear the interface names
-        Me._ResourceNamesComboBox.ComboBox.DataSource = Nothing
+        Me._ResourceNamesComboBox.DataSource = Nothing
         Me._ResourceNamesComboBox.Items.Clear()
 
         Dim resourceList As New List(Of String)
@@ -324,7 +342,7 @@ Public Class ResourceSelectorConnector
         resourceList.Add("TCPIP[board]::host address::port::SOCKET")
 
         ' set the list of available names
-        Me._ResourceNamesComboBox.ComboBox.DataSource = resourceList.ToArray
+        Me._ResourceNamesComboBox.DataSource = resourceList.ToArray
 
     End Sub
 
@@ -358,7 +376,8 @@ Public Class ResourceSelectorConnector
                             Me.SelectedResourceExists = rm.Exists(Value)
                         End Using
                     Catch ex As Exception
-                        Me._ErrorProvider.Annunciate(Me._ResourceNamesComboBox, ex.Message)
+                        Me._ErrorProvider.SetIconPadding(_ResourceNamesComboBox, -15)
+                        Me._ErrorProvider.SetError(_ResourceNamesComboBox, ex.Message)
                         Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception setting selected resource;. Details:{0}.", ex)
                     Finally
                         Me.Cursor = System.Windows.Forms.Cursors.Default
@@ -445,9 +464,10 @@ Public Class ResourceSelectorConnector
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
             Me.OnFindNames(New EventArgs)
         Catch ex As Exception
-            Dim c As ToolStripItem = TryCast(sender, ToolStripItem)
+            Dim c As Control = TryCast(sender, Control)
             If c IsNot Nothing Then
-                Me._ErrorProvider.Annunciate(c, ex.Message)
+                Me._ErrorProvider.SetIconPadding(c, -15)
+                Me._ErrorProvider.SetError(c, ex.Message)
             End If
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception finding resources;. Details: {0}", ex)
         Finally
@@ -470,9 +490,10 @@ Public Class ResourceSelectorConnector
             Me._ErrorProvider.Clear()
             Me.OnClear(New EventArgs)
         Catch ex As Exception
-            Dim c As ToolStripItem = TryCast(sender, ToolStripItem)
+            Dim c As Control = TryCast(sender, Control)
             If c IsNot Nothing Then
-                Me._ErrorProvider.Annunciate(c, ex.Message)
+                Me._ErrorProvider.SetIconPadding(c, -15)
+                Me._ErrorProvider.SetError(c, ex.Message)
             End If
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception clearing resource '{0}';. Details: {1}",
                                Me.SelectedResourceName, ex)
