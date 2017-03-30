@@ -145,31 +145,34 @@ Public Class BufferReading
 
     ''' <summary> The amount. </summary>
     ''' <value> The amount. </value>
+    ''' <remarks>Value is valid id the status word is not <see cref="BufferStatusBits.Questionable"/> </remarks>
     Public ReadOnly Property Amount As Arebis.TypedUnits.Amount
 
     ''' <summary> Parse unit. </summary>
     ''' <remarks> David, 2/25/2017. </remarks>
-    ''' <param name="reading"> The reading. </param>
-    Private Sub ParseUnit(ByVal reading As String)
-        Me._UnitReading = reading
-        Dim value As Double = Double.NaN
-        If Not Double.TryParse(reading, value) Then
-            value = Double.NaN
+    ''' <param name="unit"> The reading. </param>
+    Private Sub ParseUnit(ByVal unit As String)
+        Me._UnitReading = unit
+        Dim value As Double = 0
+        If Not Double.TryParse(Me.Reading, value) Then
+            value = 0
+            ' if failed to parse value, tag as questionable.
+            Me._StatusWord = Me._StatusWord Or BufferStatusBits.Questionable
         End If
         Select Case True
-            Case String.Equals(reading, "OHM", StringComparison.OrdinalIgnoreCase)
+            Case String.Equals(unit, "OHM", StringComparison.OrdinalIgnoreCase)
                 Me._Amount = New Arebis.TypedUnits.Amount(value, Arebis.StandardUnits.ElectricUnits.Ohm)
-            Case String.Equals(reading.SafeSubstring(0, 4), "VOLT", StringComparison.OrdinalIgnoreCase)
+            Case String.Equals(unit.SafeSubstring(0, 4), "VOLT", StringComparison.OrdinalIgnoreCase)
                 Me._Amount = New Arebis.TypedUnits.Amount(value, Arebis.StandardUnits.ElectricUnits.Volt)
-            Case String.Equals(reading.SafeSubstring(0, 3), "AMP", StringComparison.OrdinalIgnoreCase)
+            Case String.Equals(unit.SafeSubstring(0, 3), "AMP", StringComparison.OrdinalIgnoreCase)
                 Me._Amount = New Arebis.TypedUnits.Amount(value, Arebis.StandardUnits.ElectricUnits.Ampere)
-            Case String.Equals(reading.SafeSubstring(0, 4), "KELV", StringComparison.OrdinalIgnoreCase)
+            Case String.Equals(unit.SafeSubstring(0, 4), "KELV", StringComparison.OrdinalIgnoreCase)
                 Me._Amount = New Arebis.TypedUnits.Amount(value, Arebis.StandardUnits.TemperatureUnits.Kelvin)
-            Case String.Equals(reading.SafeSubstring(0, 4), "CELS", StringComparison.OrdinalIgnoreCase)
+            Case String.Equals(unit.SafeSubstring(0, 4), "CELS", StringComparison.OrdinalIgnoreCase)
                 Me._Amount = New Arebis.TypedUnits.Amount(value, Arebis.StandardUnits.TemperatureUnits.DegreeCelsius)
-            Case String.Equals(reading.SafeSubstring(0, 4), "FAHR", StringComparison.OrdinalIgnoreCase)
+            Case String.Equals(unit.SafeSubstring(0, 4), "FAHR", StringComparison.OrdinalIgnoreCase)
                 Me._Amount = New Arebis.TypedUnits.Amount(value, Arebis.StandardUnits.TemperatureUnits.DegreeFahrenheit)
-            Case String.Equals(reading, "DB", StringComparison.OrdinalIgnoreCase)
+            Case String.Equals(unit, "DB", StringComparison.OrdinalIgnoreCase)
                 Me._Amount = New Arebis.TypedUnits.Amount(value, Arebis.StandardUnits.UnitlessUnits.Decibel)
         End Select
 
