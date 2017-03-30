@@ -9,7 +9,7 @@ Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
-Imports isr.Core.Controls.DataGridViewExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Provides a user interface for a Keithley 200X Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -882,8 +882,8 @@ Public Class K2000Panel
             Me.Device.MeasureSubsystem.Readings.ActiveReadingType = Me.SelectedReadingType
             Me.DisplayActiveReading()
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -904,8 +904,8 @@ Public Class K2000Panel
             Me.InterfaceStopWatch.Restart()
             Me.Device.MeasureSubsystem.Read()
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -931,8 +931,8 @@ Public Class K2000Panel
             Me.ErrorProvider.Clear()
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1007,8 +1007,8 @@ Public Class K2000Panel
 
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(Me._ReadBufferButton, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(Me._ReadBufferButton, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1116,8 +1116,8 @@ Public Class K2000Panel
             End If
 
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1142,8 +1142,8 @@ Public Class K2000Panel
             Me.Device.TriggerSubsystem.Abort()
 
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1177,8 +1177,8 @@ Public Class K2000Panel
             Me.Device.TriggerSubsystem.Initiate()
 
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1205,8 +1205,8 @@ Public Class K2000Panel
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             Me.StartTriggerPlan(sender)
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1228,8 +1228,8 @@ Public Class K2000Panel
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             Me.AbortTriggerPlan(sender)
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1283,8 +1283,8 @@ Public Class K2000Panel
             Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
             Me.InterfaceStopWatch.Stop()
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1307,8 +1307,8 @@ Public Class K2000Panel
             TraceSubsystem.DisplayReadings(Me._ReadingsDataGridView, New List(Of Readings))
             Me._ReadingsCountLabel.Text = "0"
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1428,7 +1428,7 @@ Public Class K2000Panel
             Me.ErrorProvider.Clear()
             Me.applySenseSettings()
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initiating a measurement;. Details: {0}", ex)
         Finally
@@ -1455,8 +1455,8 @@ Public Class K2000Panel
                 Me.Device.SystemSubsystem.ClearInterface()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1479,8 +1479,8 @@ Public Class K2000Panel
                 Me.Device.SystemSubsystem.ClearDevice()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1505,8 +1505,8 @@ Public Class K2000Panel
                 Me.Device.SystemSubsystem.ClearExecutionState()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1531,8 +1531,8 @@ Public Class K2000Panel
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1561,8 +1561,8 @@ Public Class K2000Panel
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1591,8 +1591,8 @@ Public Class K2000Panel
                 Me.Device.SessionMessagesTraceEnabled = menuItem.Checked
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1625,8 +1625,8 @@ Public Class K2000Panel
                 Me.Device.StatusSubsystem.ReadRegisters()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1653,8 +1653,8 @@ Public Class K2000Panel
                 Me.Device.StatusSubsystem.ReadRegisters()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1677,8 +1677,8 @@ Public Class K2000Panel
                 Me.Device.SystemSubsystem.QueryFrontSwitched()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1721,7 +1721,7 @@ Public Class K2000Panel
                 Me.Device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.External)
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred setting the trigger plan;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
@@ -1749,7 +1749,7 @@ Public Class K2000Panel
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Initiating meter;. ")
             Me.Device.TriggerSubsystem.Initiate()
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
@@ -1831,7 +1831,7 @@ Public Class K2000Panel
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
@@ -1969,7 +1969,7 @@ End Class
                                "{0} clearing interface;. {1}", Me.ResourceTitle, Me.ResourceName)
             Me.Device.SystemSubsystem.ClearInterface()
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred clearing interface;. Details: {0}", ex)
         Finally
@@ -1990,7 +1990,7 @@ End Class
                                "{0} clearing selective device;. {1}", Me.ResourceTitle, Me.ResourceName)
             Me.Device.SystemSubsystem.ClearDevice()
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred sending SDC;. Details: {0}", ex)
         Finally
@@ -2012,7 +2012,7 @@ End Class
                 Me.Device.ResetKnownState()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred resetting known state;. Details: {0}", ex)
         Finally
@@ -2038,7 +2038,7 @@ End Class
                 Me.Device.InitKnownState()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initializing known state;. Details: {0}", ex)
         Finally
@@ -2060,7 +2060,7 @@ End Class
                 Me.Device.SessionMessagesTraceEnabled = menuItem.Checked
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred toggling session message tracing;. Details: {ex}")
         Finally
             Me.Cursor = Cursors.Default

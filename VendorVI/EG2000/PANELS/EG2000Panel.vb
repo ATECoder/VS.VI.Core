@@ -2,6 +2,7 @@ Imports System.Windows.Forms
 Imports System.ComponentModel
 Imports isr.Core.Pith
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.Core.Pith.SplitExtensions
 ''' <summary> Provides a user interface for the EG2000 Prober Device. </summary>
 ''' <license> (c) 2015 Integrated Scientific Resources, Inc.<para>
@@ -417,8 +418,8 @@ Public Class EG2000Panel
                 Me.Device.SystemSubsystem.ClearInterface()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -441,8 +442,8 @@ Public Class EG2000Panel
                 Me.Device.SystemSubsystem.ClearDevice()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -467,8 +468,8 @@ Public Class EG2000Panel
                 Me.Device.SystemSubsystem.ClearExecutionState()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -494,8 +495,8 @@ Public Class EG2000Panel
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -524,8 +525,8 @@ Public Class EG2000Panel
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -554,8 +555,8 @@ Public Class EG2000Panel
                 Me.Device.SessionMessagesTraceEnabled = menuItem.Checked
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -588,8 +589,8 @@ Public Class EG2000Panel
                 Me.Device.StatusSubsystem.ReadRegisters()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -616,8 +617,8 @@ Public Class EG2000Panel
                 Me.Device.StatusSubsystem.ReadRegisters()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -644,8 +645,8 @@ Public Class EG2000Panel
                 Me.Device.SessionMessagesTraceEnabled = checkBox.Checked
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -663,9 +664,9 @@ Public Class EG2000Panel
                 Me.Device.ProberSubsystem.LastReading = message
                 Me.Device.ProberSubsystem.ParseReading(message)
             Catch ex As Exception
-                Me.ErrorProvider.Annunciate(sender, ex.ToString)
+                Me.ErrorProvider.Annunciate(sender, ex.Message)
                 Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   "Exception occurred sending emulation message;. '{0}'. Details: {1}", message, ex)
+                                   "Exception occurred sending emulation message;. '{0}'. Details: {1}", message, ex.ToFullBlownString)
             End Try
         End If
     End Sub
@@ -705,9 +706,8 @@ Public Class EG2000Panel
                     End If
                 End If
             Catch ex As Exception
-                Me.ErrorProvider.SetError(c, ex.ToString)
-                Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   "Exception occurred sending message;. '{0}'. Details: {1}", message, ex)
+                Me.ErrorProvider.SetError(c, ex.Message)
+                Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred sending message;. '{0}'. Details: {1}", message, ex.ToFullBlownString)
             Finally
                 Me.Cursor = Windows.Forms.Cursors.Default
             End Try

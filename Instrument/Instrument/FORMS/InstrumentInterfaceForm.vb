@@ -2,6 +2,7 @@
 Imports System.ComponentModel
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EscapeSequencesExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Instrument Interface Panel. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -179,7 +180,7 @@ Public Class InstrumentInterfaceForm
                                     Me.Session.WriteLine(command)
                                 Catch ex As NativeException
                                     Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                                       $"{lastAction} failed;. Details: {ex.ToString}.")
+                                                       $"{lastAction} failed;. Details: {ex.ToFullBlownString}.")
                                 End Try
                             End If
                         Next
@@ -202,7 +203,7 @@ Public Class InstrumentInterfaceForm
                     ' if session service request handler was not released. 
                     Me.Session = Nothing
                 Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                    Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                 End Try
 
                 lastAction = "Session closed"
@@ -264,7 +265,7 @@ Public Class InstrumentInterfaceForm
                 e.Cancel = False
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+            Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
         Finally
             Application.DoEvents()
             MyBase.OnClosing(e)
@@ -288,7 +289,7 @@ Public Class InstrumentInterfaceForm
 
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception loading the instrument interface form;. Details: {0}", ex)
-            If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
+            If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
                 Application.Exit()
@@ -331,7 +332,7 @@ Public Class InstrumentInterfaceForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception showing the instrument interface form;. Details: {0}", ex)
-            If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
+            If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
                 Application.Exit()
@@ -360,7 +361,7 @@ Public Class InstrumentInterfaceForm
             Me.Session.Clear()
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{lastAction} failed;. Details: {ex.ToString}")
+                               $"{lastAction} failed;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 

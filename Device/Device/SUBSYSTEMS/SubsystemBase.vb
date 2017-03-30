@@ -1,5 +1,5 @@
 Imports isr.Core.Pith
-Imports isr.Core.Pith.EnumExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Defines the contract that must be implemented by Subsystems. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -427,7 +427,7 @@ Public Class SubsystemCollection
             Try
                 element.Dispose()
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
         Me.Clear()

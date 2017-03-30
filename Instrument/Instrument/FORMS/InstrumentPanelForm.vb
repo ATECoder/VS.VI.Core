@@ -1,6 +1,7 @@
 ﻿Imports System.Windows.Forms
 Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> The instrument panel form. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -99,9 +100,9 @@ Public Class InstrumentPanelForm
 
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception loading the form;. Details: {0}", ex)
-            If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
-                                                                  MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-                                                                  MessageBoxOptions.DefaultDesktopOnly) Then
+            If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
+                                                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
+                                                    MessageBoxOptions.DefaultDesktopOnly) Then
                 Application.Exit()
             End If
         Finally
@@ -129,9 +130,9 @@ Public Class InstrumentPanelForm
 
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception showing the form;. Details: {0}", ex)
-            If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
-                                                                  MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-                                                                  MessageBoxOptions.DefaultDesktopOnly) Then
+            If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
+                                                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
+                                                    MessageBoxOptions.DefaultDesktopOnly) Then
                 Application.Exit()
             End If
         Finally

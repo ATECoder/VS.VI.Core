@@ -3,6 +3,7 @@ Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EventHandlerExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> A control for selecting and connecting to a VISA resource. </summary>
 ''' <license> (c) 2006 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -186,7 +187,7 @@ Public Class ResourceSelectorConnector
             Try
                 RemoveHandler Me.Connect, CType(d, EventHandler(Of System.ComponentModel.CancelEventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub
@@ -213,7 +214,7 @@ Public Class ResourceSelectorConnector
             Try
                 RemoveHandler Me.Disconnect, CType(d, EventHandler(Of System.ComponentModel.CancelEventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub
@@ -303,7 +304,7 @@ Public Class ResourceSelectorConnector
             Me.HasResources = False
             Me._ErrorProvider.Annunciate(Me._FindButton, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{Environment.NewLine}Details: {ex.ToString}.")
+                               $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{Environment.NewLine}Details: {ex.ToFullBlownString}.")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -419,7 +420,7 @@ Public Class ResourceSelectorConnector
             Try
                 RemoveHandler Me.FindNames, CType(d, EventHandler(Of EventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub
@@ -493,7 +494,7 @@ Public Class ResourceSelectorConnector
             Try
                 RemoveHandler Me.Clear, CType(d, EventHandler(Of EventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub

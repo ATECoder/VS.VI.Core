@@ -1,5 +1,6 @@
 Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Provides a user interface for a
 ''' <see cref="VisaInterface">Visa interface</see>
 ''' such as a VISA Interface. </summary>
@@ -194,7 +195,7 @@ Public Class InterfacePanel
                         ' if session service request handler was not released. 
                         Me.VisaInterface = Nothing
                     Catch ex As ObjectDisposedException
-                        Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                        Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                     End Try
                 Catch ex As NativeException
                     Throw New OperationFailedException("Exception occurred closing the interface.", ex)

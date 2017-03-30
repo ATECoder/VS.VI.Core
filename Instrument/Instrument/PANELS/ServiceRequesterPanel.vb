@@ -2,6 +2,7 @@ Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EscapeSequencesExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Panel for simple service requests. </summary>
 ''' <remarks> David, 12/24/2015. </remarks>
 ''' <license>
@@ -57,7 +58,7 @@ Public Class ServiceRequesterPanel
                         ' if session service request handler was not released. 
                         Me._Session = Nothing
                     Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                        Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                     End Try
                 End If
                 ' unable to use null conditional because it is not seen by code analysis
@@ -97,7 +98,7 @@ Public Class ServiceRequesterPanel
                     ' if session service request handler was not released. 
                     Me._Session = Nothing
                 Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                    Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                 Finally
                     If Me.IsSessionOpen Then
                         Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed closing;. session to {0}", resource)

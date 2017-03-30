@@ -3,6 +3,7 @@ Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.ErrorProviderExtensions
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Provides a user interface for the Keithley 7000 Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -481,7 +482,7 @@ Public Class K7000Panel
             Me._CardTypeTextBox.Text = Me.Device.RouteSubsystem.QuerySlotCardType(slotNumber)
             Me._SettlingTimeTextBoxTextBox.Text = Me.Device.RouteSubsystem.QuerySlotCardSettlingTime(slotNumber).TotalSeconds.ToString(Globalization.CultureInfo.CurrentCulture)
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
@@ -497,7 +498,7 @@ Public Class K7000Panel
             Me._CardTypeTextBox.Text = Me.Device.RouteSubsystem.ApplySlotCardType(slotNumber, Me._CardTypeTextBox.Text)
             Me._SettlingTimeTextBoxTextBox.Text = Me.Device.RouteSubsystem.ApplySlotCardSettlingTime(slotNumber, TimeSpan.FromTicks(CLng(TimeSpan.TicksPerSecond * CDbl(Me._SettlingTimeTextBoxTextBox.Text)))).TotalSeconds.ToString(Globalization.CultureInfo.CurrentCulture)
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
@@ -520,7 +521,7 @@ Public Class K7000Panel
             ' close the scan list
             Me.Device.TriggerSubsystem.Initiate()
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
@@ -535,7 +536,7 @@ Public Class K7000Panel
             Me.Device.RouteSubsystem.ApplyScanList(Me._ScanListComboBox.Text)
             Me.RefreshDisplay()
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
@@ -558,7 +559,7 @@ Public Class K7000Panel
                 Int32.Parse(Me._RelayNumberTextBox.Text, Globalization.CultureInfo.CurrentCulture))
             Me._ChannelListComboBox.Text = Me._ChannelListBuilder.ChannelList
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
@@ -576,7 +577,7 @@ Public Class K7000Panel
             Me._ChannelListBuilder.AddChannel(Int32.Parse(Me._MemoryLocationChannelItemTextBox.Text, Globalization.CultureInfo.CurrentCulture))
             Me._ChannelListComboBox.Text = Me._ChannelListBuilder.ChannelList
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
@@ -594,7 +595,7 @@ Public Class K7000Panel
             Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyClosedChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(1))
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
@@ -612,7 +613,7 @@ Public Class K7000Panel
             Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyOpenChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(1))
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
@@ -628,7 +629,7 @@ Public Class K7000Panel
             Me._ChannelListBuilder = New isr.VI.ChannelListBuilder
             Me._ChannelListComboBox.Text = Me._ChannelListBuilder.ChannelList
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
@@ -644,7 +645,7 @@ Public Class K7000Panel
                 e.Cancel = True
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         End Try
     End Sub
@@ -661,7 +662,7 @@ Public Class K7000Panel
                 e.Cancel = True
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         End Try
     End Sub
@@ -675,7 +676,7 @@ Public Class K7000Panel
             Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(1))
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
@@ -695,7 +696,7 @@ Public Class K7000Panel
                 e.Cancel = True
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         End Try
     End Sub
@@ -710,7 +711,7 @@ Public Class K7000Panel
             Me.Device.RouteSubsystem.SaveChannelPattern(Int32.Parse(Me._MemoryLocationTextBox.Text, Globalization.CultureInfo.CurrentCulture),
                                                         TimeSpan.FromSeconds(1))
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
@@ -730,7 +731,7 @@ Public Class K7000Panel
                 e.Cancel = True
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         End Try
     End Sub
@@ -749,7 +750,7 @@ Public Class K7000Panel
             serviceByte = Convert.ToByte(serviceByte Or selectedFlag)
             Me._ServiceRequestMaskTextBox.Text = serviceByte.ToString(Globalization.CultureInfo.CurrentCulture)
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
@@ -766,7 +767,7 @@ Public Class K7000Panel
             serviceByte = Convert.ToByte(serviceByte And (Not selectedFlag))
             Me._ServiceRequestMaskTextBox.Text = serviceByte.ToString(Globalization.CultureInfo.CurrentCulture)
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
@@ -784,7 +785,7 @@ Public Class K7000Panel
                                                  CType(Me._ServiceRequestMaskTextBox.Text, isr.VI.ServiceRequests))
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
@@ -809,7 +810,7 @@ Public Class K7000Panel
                 e.Cancel = True
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred;. Details: {0}", ex)
         End Try
     End Sub
@@ -833,8 +834,8 @@ Public Class K7000Panel
                 Me.Device.SystemSubsystem.ClearInterface()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -857,8 +858,8 @@ Public Class K7000Panel
                 Me.Device.SystemSubsystem.ClearDevice()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -883,8 +884,8 @@ Public Class K7000Panel
                 Me.Device.SystemSubsystem.ClearExecutionState()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -910,8 +911,8 @@ Public Class K7000Panel
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -940,8 +941,8 @@ Public Class K7000Panel
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -970,8 +971,8 @@ Public Class K7000Panel
                 Me.Device.SessionMessagesTraceEnabled = menuItem.Checked
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1004,8 +1005,8 @@ Public Class K7000Panel
                 Me.Device.StatusSubsystem.ReadRegisters()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1032,8 +1033,8 @@ Public Class K7000Panel
                 Me.Device.StatusSubsystem.ReadRegisters()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1056,8 +1057,8 @@ Public Class K7000Panel
                 Me.Device.TriggerSubsystem.Abort()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1076,7 +1077,7 @@ Public Class K7000Panel
                 Me.Device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.External)
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred setting the trigger plan;. Details: {0}", ex)
         Finally
             Me.Cursor = Cursors.Default
@@ -1094,8 +1095,8 @@ Public Class K7000Panel
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             Me.Device.TriggerSubsystem.Initiate()
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1136,8 +1137,8 @@ Public Class K7000Panel
             Me.Device.TriggerSubsystem.ApplyDirection(Direction.Source)
             Me.StatusLabel.Text = "Ready: Initiate 7001 and then meter"
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default

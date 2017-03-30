@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Resource Manager Extensions. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -163,7 +164,7 @@ Friend Module ResourceManagerExtensions
             resources = ResourceManagerExtensions.buildResourceMessage(ex)
             Return False
         Catch ex As Ivi.Visa.NativeVisaException
-            resources = New String() {ex.ToString}
+            resources = New String() {ex.ToFullBlownString}
             Return False
         End Try
     End Function

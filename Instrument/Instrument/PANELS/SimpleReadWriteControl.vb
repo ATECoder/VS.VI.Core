@@ -2,6 +2,7 @@
 Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EscapeSequencesExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.Core.Pith.StopwatchExtensions
 ''' <summary> A simple read write control. </summary>
 ''' <remarks> David, 12/29/2015. </remarks>
@@ -238,7 +239,7 @@ Public Class SimpleReadWriteControl
             End If
         Catch ex As Exception
             Me.StatusMessage = "Error reading service request"
-            Me._ReadTextBox.Text = ex.ToString
+            Me._ReadTextBox.Text = ex.ToFullBlownString
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. Details: {0}", ex)
         End Try
     End Sub
@@ -272,7 +273,7 @@ Public Class SimpleReadWriteControl
             Me.StatusMessage = "Done Querying."
         Catch ex As Exception
             Me.StatusMessage = "Error Querying."
-            Me._ReadTextBox.Text = ex.ToString
+            Me._ReadTextBox.Text = ex.ToFullBlownString
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception Querying;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()
@@ -314,7 +315,7 @@ Public Class SimpleReadWriteControl
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Writing completed;. ")
         Catch ex As Exception
             Me.StatusMessage = "Error Writing."
-            Me._ReadTextBox.Text = ex.ToString
+            Me._ReadTextBox.Text = ex.ToFullBlownString
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception writing;. Details: {0}", ex)
         Finally
             If Not Me.ServiceRequestRegistered Then Me.ReadServiceRequestStatus()
@@ -339,7 +340,7 @@ Public Class SimpleReadWriteControl
             Me.StatusMessage = "Done Reading."
         Catch ex As Exception
             Me.StatusMessage = "Error Reading."
-            Me._ReadTextBox.Text = ex.ToString
+            Me._ReadTextBox.Text = ex.ToFullBlownString
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading;. Details: {0}", ex)
         Finally
             If Me._Session.ServiceRequestEventEnabled AndAlso Me.ServiceRequestRegistered Then
@@ -371,7 +372,7 @@ Public Class SimpleReadWriteControl
             End If
         Catch ex As Exception
             Me.StatusMessage = "Error clearing the session."
-            Me._ReadTextBox.Text = ex.ToString
+            Me._ReadTextBox.Text = ex.ToFullBlownString
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception clearing session;. Details: {0}", ex)
         Finally
             Me.ReadServiceRequestStatus()

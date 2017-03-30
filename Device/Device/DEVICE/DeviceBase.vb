@@ -3,6 +3,7 @@ Imports System.ComponentModel
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EventHandlerExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.Core.Pith.StopwatchExtensions
 ''' <summary> Defines the contract that must be implemented by Devices. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
@@ -79,7 +80,7 @@ Public MustInherit Class DeviceBase
                     Try
                         Me.CloseSession()
                     Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                        Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                     End Try
                     Try
                         If Me._Session IsNot Nothing Then
@@ -90,12 +91,12 @@ Public MustInherit Class DeviceBase
                         ' if session service request handler was not released. 
                         Me._Session = Nothing
                     Catch ex As ObjectDisposedException
-                        Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                        Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                     End Try
                 End If
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+            Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
         Finally
             MyBase.Dispose(disposing)
         End Try
@@ -566,7 +567,7 @@ Public MustInherit Class DeviceBase
         Try
             Me.OpenSession(resourceName, resourceTitle)
         Catch ex As OperationFailedException
-            e.RegisterCancellation($"Exception opening {resourceTitle}:{resourceName};. Details: {ex.ToString}")
+            e.RegisterCancellation($"Exception opening {resourceTitle}:{resourceName};. Details: {ex.ToFullBlownString}")
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, e.Details)
         End Try
         Return Not e.Cancel AndAlso Me.IsDeviceOpen
@@ -856,7 +857,7 @@ Public MustInherit Class DeviceBase
             Try
                 RemoveHandler Me.ServiceRequested, CType(d, EventHandler(Of EventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub
@@ -928,7 +929,7 @@ Public MustInherit Class DeviceBase
             Try
                 RemoveHandler Me.Opening, CType(d, EventHandler(Of ComponentModel.CancelEventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub
@@ -982,7 +983,7 @@ Public MustInherit Class DeviceBase
             Try
                 RemoveHandler Me.Opened, CType(d, EventHandler(Of EventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub
@@ -1035,7 +1036,7 @@ Public MustInherit Class DeviceBase
             Try
                 RemoveHandler Me.Closing, CType(d, EventHandler(Of System.ComponentModel.CancelEventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub
@@ -1088,7 +1089,7 @@ Public MustInherit Class DeviceBase
             Try
                 RemoveHandler Me.Closed, CType(d, EventHandler(Of EventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub
@@ -1141,7 +1142,7 @@ Public MustInherit Class DeviceBase
             Try
                 RemoveHandler Me.Initializing, CType(d, EventHandler(Of System.ComponentModel.CancelEventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub
@@ -1194,7 +1195,7 @@ Public MustInherit Class DeviceBase
             Try
                 RemoveHandler Me.Initialized, CType(d, EventHandler(Of EventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub

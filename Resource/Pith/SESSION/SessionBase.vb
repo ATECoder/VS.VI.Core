@@ -1,5 +1,6 @@
 ﻿Imports System.Timers
 Imports isr.Core.Pith.EventHandlerExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Base class for SessionBase. </summary>
 ''' <remarks> David, 11/21/2015. </remarks>
 ''' <license>
@@ -606,7 +607,7 @@ Public MustInherit Class SessionBase
             Try
                 RemoveHandler Me.ServiceRequested, CType(d, EventHandler(Of EventArgs))
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             End Try
         Next
     End Sub

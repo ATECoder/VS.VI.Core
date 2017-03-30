@@ -1,4 +1,5 @@
 ﻿Imports System.Windows.Forms
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Selects a VISA resource. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -69,7 +70,7 @@ Public Class ResourceSelectorDialog
 
         Catch ex As Exception
 
-            Me._AvailableResourcesListBox.Items.Add(ex.ToString)
+            Me._AvailableResourcesListBox.Items.Add(ex.ToFullBlownString)
 
         Finally
 
@@ -158,7 +159,7 @@ $"VISA Manager found no local resources. It reported: {resources(0)}. Make sure 
 
         Catch ex As Exception
 
-            Me._AvailableResourcesListBox.Items.Add(ex.ToString)
+            Me._AvailableResourcesListBox.Items.Add(ex.ToFullBlownString)
 
         Finally
 

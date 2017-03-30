@@ -1,9 +1,7 @@
 Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports isr.Core.Pith
-Imports isr.Core.Pith.EscapeSequencesExtensions
-Imports isr.Core.Pith.StopwatchExtensions
-
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Panel for simple read write messages. </summary>
 ''' <remarks> David, 12/24/2015. </remarks>
 ''' <license>
@@ -59,7 +57,7 @@ Public Class SimpleReadWritePanel
                         ' if session service request handler was not released. 
                         Me._session = Nothing
                     Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                        Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                     End Try
                 End If
                 ' unable to use null conditional because it is not seen by code analysis
@@ -111,7 +109,7 @@ Public Class SimpleReadWritePanel
             End Using
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception opening;. session to {0}. Details: {1}", resource, ex)
-            Me._SessionInfoTextBox.Text = ex.ToString
+            Me._SessionInfoTextBox.Text = ex.ToFullBlownString
         Finally
             Windows.Forms.Cursor.Current = Cursors.Default
         End Try
@@ -136,7 +134,7 @@ Public Class SimpleReadWritePanel
                 Me._session = Nothing
                 Me._SimpleReadWriteControl.Disconnect()
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToString)
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
             Finally
             End Try
         End If
