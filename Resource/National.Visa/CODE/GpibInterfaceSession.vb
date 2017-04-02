@@ -1,4 +1,5 @@
 ﻿Imports isr.VI.National.Visa.GpibInterfaceExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> A gpib interface session. </summary>
 ''' <remarks> David, 11/21/2015. </remarks>
 ''' <license>
@@ -39,7 +40,7 @@ Public Class GpibInterfaceSession
                     Me._CloseSession()
                 Catch ex As Exception
                     Debug.Assert(Not Debugger.IsAttached, "Failed discarding enabled events.",
-                                     "Failed discarding enabled events. Details: {0}", ex)
+                                 $"Failed discarding enabled events. Details: {ex.ToFullBlownString}")
                 End Try
             End If
         Finally

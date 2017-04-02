@@ -1,4 +1,5 @@
-﻿''' <summary> Implements a Keithley 2000 instrument device. </summary>
+﻿Imports isr.Core.Pith.ExceptionExtensions
+''' <summary> Implements a Keithley 2000 instrument device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
@@ -57,7 +58,7 @@ Public Class Device
                 If Me.IsDeviceOpen Then Me.OnClosing(New ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception details: {0}", ex)
+            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", $"Exception details: {ex.ToFullBlownString}")
         Finally
             MyBase.Dispose(disposing)
         End Try

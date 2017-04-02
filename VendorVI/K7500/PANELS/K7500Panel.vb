@@ -53,7 +53,6 @@ Public Class K7500Panel
             ' set defaults for the messages box.
             .ResetCount = 500
             .PresetCount = 250
-            .SupportsOpenLogFolderRequest = False
             .ContainerPanel = Me._MessagesTabPage
         End With
         With Me._StartTriggerDelayNumeric.NumericUpDownControl
@@ -125,7 +124,7 @@ Public Class K7500Panel
                 Try
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception details: {0}", ex)
+                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception details: {ex.ToFullBlownString}")
                 End Try
                 ' the device gets closed and disposed (if panel is device owner) in the base class
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
@@ -144,7 +143,7 @@ Public Class K7500Panel
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
-        Me._Device.CapturedSyncContext = Threading.SynchronizationContext.Current
+        Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
         Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub
@@ -293,7 +292,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling FORMAT '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling FORMAT '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -364,7 +363,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling MEASURE '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling MEASURE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -393,7 +392,7 @@ Public Class K7500Panel
             Me.OnSubsystemPropertyChanged(TryCast(sender, RouteSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling ROUTE '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling ROUTE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -515,7 +514,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              $"{Me.Device.ResourceTitle} exception handling SENSE '{e.PropertyName}' change event;. Details: {ex}")
+                              $"{Me.Device.ResourceTitle} exception handling SENSE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -557,7 +556,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling SENSE VOLT '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling SENSE VOLT '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -599,7 +598,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling SENSE CURR '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling SENSE CURR '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -646,7 +645,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling 4-WIRE RESISTANCE SENSE '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling 4-WIRE RESISTANCE SENSE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -688,7 +687,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling SENSE RESISTANCE '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling SENSE RESISTANCE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -734,7 +733,7 @@ Public Class K7500Panel
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling STATUS '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling STATUS '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -746,7 +745,7 @@ Public Class K7500Panel
             Me.Device.StatusSubsystem.ReadServiceRequestStatus()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling service request;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling service request;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -775,7 +774,7 @@ Public Class K7500Panel
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling SYSTEM '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling SYSTEM '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -836,7 +835,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling TRACE '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling TRACE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -896,7 +895,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling TRIGGER '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling TRIGGER '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -1357,8 +1356,8 @@ Public Class K7500Panel
                 Me.InterfaceStopWatch.Restart()
                 Me._BufferDataGridView.DataSource = Nothing
                 Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
-                Me.Device.TriggerSubsystem.CapturedSyncContext = SynchronizationContext.Current
-                Me.Device.TraceSubsystem.CapturedSyncContext = SynchronizationContext.Current
+                Me.Device.TriggerSubsystem.CaptureSyncContext(SynchronizationContext.Current)
+                Me.Device.TraceSubsystem.CaptureSyncContext(SynchronizationContext.Current)
                 Me.Device.TriggerSubsystem.Initiate()
                 Windows.Forms.Application.DoEvents()
                 Me.Device.TraceSubsystem.StreamBufferAsync(Threading.SynchronizationContext.Current, Me.Device.TriggerSubsystem, TimeSpan.FromMilliseconds(5))
@@ -1482,7 +1481,7 @@ Public Class K7500Panel
         Me.Device.TriggerSubsystem.Initiate()
         Windows.Forms.Application.DoEvents()
         Me.TriggerPlanStateChangeHandlerEnabled = stateChangeHandlingEnabled
-        Me.Device.TriggerSubsystem.CapturedSyncContext = SynchronizationContext.Current
+        Me.Device.TriggerSubsystem.CaptureSyncContext(SynchronizationContext.Current)
         Me.Device.TriggerSubsystem.AsyncMonitorTriggerState(Threading.SynchronizationContext.Current, TimeSpan.FromMilliseconds(5))
     End Sub
 
@@ -1508,7 +1507,7 @@ Public Class K7500Panel
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             Me.InterfaceStopWatch.Restart()
             Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
-            Me.Device.TriggerSubsystem.CapturedSyncContext = SynchronizationContext.Current
+            Me.Device.TriggerSubsystem.CaptureSyncContext(SynchronizationContext.Current)
             Me.Device.TriggerSubsystem.AsyncMonitorTriggerState(Threading.SynchronizationContext.Current, TimeSpan.FromMilliseconds(5))
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
@@ -2142,7 +2141,7 @@ Public Class K7500Panel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+                               $"Exception occurred initiating a measurement;. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -2197,7 +2196,7 @@ Public Class K7500Panel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+                               $"Exception occurred initiating a measurement;. Details: {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -2470,7 +2469,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling Read/Write '{e.PropertyName}' change event;. Details: {ex}")
+                               $"{Me.Device.ResourceTitle} exception handling Read/Write '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 #End Region
@@ -2729,7 +2728,7 @@ End Class
     Private Sub InitiateWaitRepeat()
         Dim activity As String = "starting trigger, wait, read, repeat loop"
         Try
-            SynchronizationContext.SetSynchronizationContext(CapturedSyncContext)
+            Me.ApplyCapturedSyncContext()
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             Dim repeatCount As Integer = 0
             Do While repeatCount = 0 OrElse Me._RepeatMenuItem.Checked
@@ -2746,7 +2745,7 @@ End Class
     End Sub
 
     Public Async Function AsyncTask() As Threading.Tasks.Task
-        Me.CapturedSyncContext = SynchronizationContext.Current
+        Me.CaptureSyncContext(SynchronizationContext.Current)
         Await Threading.Tasks.Task.Run(AddressOf Me.InitiateWaitRepeat)
     End Function
 
@@ -2763,7 +2762,7 @@ End Class
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Me.CapturedSyncContext = SynchronizationContext.Current
+            Me.CaptureSyncContext(SynchronizationContext.Current)
 #If False Then
             Dim task As Threading.Tasks.Task = New Threading.Tasks.Task(AddressOf Me.InitiateWaitRepeat)
             activity = $"task is {task.Status}; Control returned to operator"

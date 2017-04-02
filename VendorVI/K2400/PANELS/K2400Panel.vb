@@ -106,7 +106,7 @@ Public Class K2400Panel
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
-        Me._Device.CapturedSyncContext = Threading.SynchronizationContext.Current
+        Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
         Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub

@@ -620,7 +620,7 @@ Public MustInherit Class DeviceBase
         Try
             Me.CloseSession()
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred closing session;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred closing session;. Details: {ex.ToFullBlownString}")
             Return False
         End Try
         Return Not Me.IsDeviceOpen
@@ -839,7 +839,7 @@ Public MustInherit Class DeviceBase
             Me.ProcessServiceRequest()
         Catch ex As Exception
             Me.ServiceRequestFailureMessage = Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                                                 $"Exception occurred processing service request;. Details: {ex}")
+                                                                 $"Exception occurred processing service request;. Details: {ex.ToFullBlownString}")
             result = False
         End Try
         Return result
@@ -1378,12 +1378,12 @@ End Class
                             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opening {resourceTitle}:{resourceName} failed;. ")
                         End If
                     Catch ex As Exception
-                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} initializing failed;. Details: {0}", ex)
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} initializing failed;. Details: {ex.ToFullBlownString}"
                     End Try
                     Try
                         If Not e.Cancel AndAlso Me.IsDeviceOpen Then Me.OnInitialized()
                     Catch ex As Exception
-                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} initialize actions failed;. Details: {0}", ex)
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} initialize actions failed;. Details: {ex.ToFullBlownString}"
                     End Try
                 End If
             Else

@@ -81,7 +81,7 @@ Public Class SimpleReadWriteForm
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception loading the simple read and write form;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception loading the simple read and write form;. Details: {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -115,7 +115,7 @@ Public Class SimpleReadWriteForm
             End If
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception showing the simple read and write form;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the simple read and write form;. Details: {ex.ToFullBlownString}")
             If Windows.Forms.DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                                   MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                                   MessageBoxOptions.DefaultDesktopOnly) Then
@@ -194,7 +194,7 @@ Public Class SimpleReadWriteForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed reporting Trace Message Property Change;. Details: {0}", ex)
+                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 

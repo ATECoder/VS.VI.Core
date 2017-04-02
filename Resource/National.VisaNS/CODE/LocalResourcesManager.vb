@@ -1,4 +1,5 @@
 ﻿Imports isr.VI.National.VisaNS.ResourceManagerExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Local visa resources manager. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -35,7 +36,7 @@ Public Class LocalResourcesManager
             If Not Me.IsDisposed AndAlso disposing Then
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing resource manager", "Exception details: {0}", ex)
+            Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing resource manager", $"Exception details: {ex.ToFullBlownString}")
         Finally
             MyBase.Dispose(disposing)
         End Try

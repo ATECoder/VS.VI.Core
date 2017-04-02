@@ -85,13 +85,12 @@ Partial Public Class MovingWindowMeter
     ''' <param name="e">      Do work event information. </param>
     Private Sub worker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles worker.DoWork
 
-        If Me.CapturedSyncContext Is Nothing Then Throw New InvalidOperationException("Sync context Not set")
-        SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
-
+	  Me.ApplyCapturedSyncContext()
         Dim w As BackgroundWorker = TryCast(sender, BackgroundWorker)
         If w Is Nothing OrElse Me.IsDisposed OrElse e Is Nothing OrElse e.Cancel Then Return
 
         Dim userState As New UserState
+
         Dim payload As WorkerPayLoad = TryCast(e.Argument, WorkerPayLoad)
         If payload Is Nothing Then
 
@@ -135,14 +134,14 @@ Partial Public Class MovingWindowMeter
     ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="e">      Event information to send to registered event handlers. </param>
     Private Sub OnWorkerRunWorkerCompleted(ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
-        If Me.CapturedSyncContext Is Nothing Then Throw New InvalidOperationException("Sync context Not set")
-        SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
+	  Me.ApplyCapturedSyncContext()
         If e Is Nothing Then Return
         Dim result As TaskResult = TryCast(e.Result, TaskResult)
         If result Is Nothing Then Return
         If e.Cancelled AndAlso Not result.Failed Then
             result.RegisterFailure("Worker canceled")
         End If
+
         If e.Error IsNot Nothing AndAlso result.Exception Is Nothing Then
             result.RegisterFailure(e.Error, "Worker exception")
         End If
@@ -164,14 +163,14 @@ Partial Public Class MovingWindowMeter
     ''' <param name="e">      Progress changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub worker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles worker.ProgressChanged
-        If Me.CapturedSyncContext Is Nothing Then Throw New InvalidOperationException("Sync context not set")
-        SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
+        Me.ApplyCapturedSyncContext()
         Dim us As UserState = TryCast(e.UserState, UserState)
         Dim ma As New isr.Core.Engineering.MovingWindow(TryCast(us.MovingAverage, isr.Core.Engineering.MovingWindow))
         Me.ReportProgressChanged(ma, us.PercentProgress, us.Result)
     End Sub
 
     ''' <summary> Stops measure asynchronous if. </summary>
+
     ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
@@ -205,16 +204,16 @@ Partial Public Class MovingWindowMeter
     ''' <remarks> David, 1/30/2016. </remarks>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function StartMeasureWork(ByVal syncContext As SynchronizationContext) As Boolean
-        If syncContext Is Nothing Then Throw New ArgumentNullException(NameOf(syncContext))
         Me._MovingAverageTaskResult = New TaskResult
-        Me._CapturedSyncContext = syncContext
-        SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
+	  Me.CaptureSyncContext(syncContext)
         Dim stopped As Boolean = StopMeasureAsyncIf(TimeSpan.FromSeconds(1))
         If Not stopped Then Return False
         Me.InitializeWorker()
         Dim payload As New WorkerPayLoad
         payload.Device = Me.Device
+
         payload.MovingWindow = Me.MovingWindow
+
         payload.ClearKnownState()
         payload.InitializeKnownState(Me.MeasurementRate)
 

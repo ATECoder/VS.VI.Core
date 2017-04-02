@@ -450,7 +450,7 @@ Public Class ResourceSelectorConnector
             If c IsNot Nothing Then
                 Me._ErrorProvider.Annunciate(c, ex.Message)
             End If
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception finding resources;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception finding resources;. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try

@@ -1,5 +1,6 @@
 Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Provides a base user interface for a <see cref="isr.VI.DeviceBase">Visa Device</see>. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -57,13 +58,13 @@ Public Class ResourcePanelBase
                         ' this is required to release the device event handlers associated with this panel. 
                         If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                     Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception details: {0}", ex)
+                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception details: {ex.ToFullBlownString}")
                     End Try
                     Try
                         ' this also releases the device event handlers associated with this panel. 
                         Me.ReleaseDevice()
                     Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred releasing the device", "Exception details: {0}", ex)
+                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred releasing the device", $"Exception details: {ex.ToFullBlownString}")
                     End Try
                     Try
                         If Me.IsDeviceOwner Then
@@ -72,7 +73,7 @@ Public Class ResourcePanelBase
                         End If
                         Me._Device = Nothing
                     Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing the device", "Exception details: {0}", ex)
+                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing the device", $"Exception details: {ex.ToFullBlownString}")
                     End Try
                 End If
                 Me._ElapsedTimeStopwatch = Nothing
@@ -353,7 +354,7 @@ Public Class ResourcePanelBase
         Me._ReleaseDevice()
         Me._Device = value
         If value IsNot Nothing Then
-            Me.Device.CapturedSyncContext = Threading.SynchronizationContext.Current
+            Me.Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
             AddHandler Me.Device.PropertyChanged, AddressOf Me.DevicePropertyChanged
             AddHandler Me.Device.Opening, AddressOf Me.DeviceOpening
             AddHandler Me.Device.Opened, AddressOf Me.DeviceOpened
@@ -791,7 +792,7 @@ Public Class ResourcePanelBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed reporting Trace Message Property Change;. Details: {0}", ex)
+                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 

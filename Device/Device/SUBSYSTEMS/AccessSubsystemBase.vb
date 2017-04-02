@@ -1,3 +1,4 @@
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Defines the contract that must be implemented by an Output Subsystem. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -80,7 +81,7 @@ Public MustInherit Class AccessSubsystemBase
             Return Me.Certify(value).GetValueOrDefault(False)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                      "Exception occurred certifying access;. Details: {0}", ex)
+                                      $"Exception occurred certifying access;. Details: {ex.ToFullBlownString}")
             Return False
         End Try
     End Function

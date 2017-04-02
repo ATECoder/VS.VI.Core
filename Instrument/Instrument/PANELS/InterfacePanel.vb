@@ -97,7 +97,7 @@ Public Class InterfacePanel
             Me.OpenInterfaceSession(resourceName)
         Catch ex As OperationFailedException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred opening interface;. Details: {0}", ex)
+                               $"Exception occurred opening interface;. Details: {ex.ToFullBlownString}")
             Return False
         End Try
         Return Me.IsInterfaceOpen
@@ -174,7 +174,7 @@ Public Class InterfacePanel
         Try
             Me.CloseInterfaceSession()
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred closing interface;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred closing interface;. Details: {ex.ToFullBlownString}")
             Return False
         End Try
         Return Not Me.IsInterfaceOpen
@@ -269,7 +269,7 @@ Public Class InterfacePanel
             Me.Enabled = True
         Catch ex As System.ArgumentException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception finding interfaces;. Failed finding or listing interfaces. Connect the interface(s) and click Find. Details: {0}", ex)
+                               $"Exception finding interfaces;. Failed finding or listing interfaces. Connect the interface(s) and click Find. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -286,7 +286,7 @@ Public Class InterfacePanel
                 Me.VisaInterface.SendInterfaceClear()
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred clearing;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred clearing;. Details: {ex.ToFullBlownString}")
             Me._TraceMessagesBox.AddMessage(ex)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
@@ -531,7 +531,7 @@ Public Class InterfacePanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed reporting Trace Message Property Change;. Details: {0}", ex)
+                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 

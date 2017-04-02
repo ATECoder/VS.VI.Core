@@ -1,4 +1,5 @@
-﻿''' <summary> A Dummy GPIB interface session. </summary>
+﻿Imports isr.Core.Pith.ExceptionExtensions
+''' <summary> A Dummy GPIB interface session. </summary>
 ''' <remarks> David, 11/21/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
@@ -38,7 +39,7 @@ Public Class DummyGpibInterfaceSession
                     Me.CloseSession()
                 Catch ex As Exception
                     Debug.Assert(Not Debugger.IsAttached, "Failed discarding enabled events.",
-                                     "Failed discarding enabled events. Details: {0}", ex)
+                                 $"Failed discarding enabled events. Details: {ex.ToFullBlownString}")
                 End Try
             End If
         Finally

@@ -331,7 +331,7 @@ Public Class SimpleReadWritePanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed reporting Trace Message Property Change;. Details: {0}", ex)
+                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 

@@ -353,7 +353,7 @@ Public MustInherit Class TraceSubsystemBase
     Public Async Function StreamBufferAsync(ByVal syncContext As Threading.SynchronizationContext,
                                             ByVal triggerSubsystem As TriggerSubsystemBase, ByVal pollPeriod As TimeSpan) As Threading.Tasks.Task
         If triggerSubsystem Is Nothing Then Throw New ArgumentNullException(NameOf(triggerSubsystem))
-        Me.CapturedSyncContext = syncContext
+        Me.CaptureSyncContext(syncContext)
         Await Threading.Tasks.Task.Run(Sub() Me.StreamBuffer(triggerSubsystem, pollPeriod))
     End Function
 

@@ -561,13 +561,13 @@ Public Class MovingWindowMeter
     Private Sub MeasureMovingAverage(progress As IProgress(Of isr.Core.Engineering.MovingWindow))
         Me._MovingAverageTaskResult = New TaskResult
         Try
-            If Me.CapturedSyncContext Is Nothing Then Throw New InvalidOperationException("Sync context not set")
-            SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
+		Me.ApplyCapturedSyncContext()
             Me.MovingWindow.ClearKnownState()
             If Me.NotifyTaskStart(Me.TaskStartNotificationTimeout) Then
                 Do
                     ' measure and time
                     If Me.MovingWindow.ReadValue(Function() Me.Device.MultimeterSubsystem.Measure()) Then
+
                         progress.Report(New isr.Core.Engineering.MovingWindow(Me.MovingWindow))
                     Else
                         Me.MovingAverageTaskResult.RegisterFailure("device returned a null value")
@@ -692,15 +692,13 @@ Public Class MovingWindowMeter
     ''' <param name="runSynchronously"> True to run synchronously. </param>
     ''' <param name="syncContext">      Context for the synchronization. </param>
     Public Sub StartMeasureTask(ByVal runSynchronously As Boolean, ByVal syncContext As SynchronizationContext)
-        If syncContext Is Nothing Then Throw New ArgumentNullException(NameOf(syncContext),
-             "This call must pass a valid synchronization context from the UI thread in order to capture the synchronization context for the machine thread")
-        Me._CapturedSyncContext = syncContext
-        SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
+        Me.CaptureSyncContext(syncContext)
         Me.StopAsyncTask(Me.TaskStopTimeout)
         ' proceed even if not stopped
         Me._TaskStart = NotificationSemaphores.None
         Me.CancellationTokenSource = New CancellationTokenSource
         Me.CancellationToken = CancellationTokenSource.Token
+
         Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
         Me._task = New Task(Sub() Me.MeasureMovingAverage(progress))
         If runSynchronously Then
@@ -720,10 +718,7 @@ Public Class MovingWindowMeter
     ''' <summary> Activates the machine asynchronous task. </summary>
     ''' <remarks> This was suspected to cause issues. </remarks>
     Public Sub StartMeasureTaskStopRequired(ByVal runSynchronously As Boolean, ByVal syncContext As SynchronizationContext)
-        If syncContext Is Nothing Then Throw New ArgumentNullException(NameOf(syncContext),
-             "This call must pass a valid synchronization context from the UI thread in order to capture the synchronization context for the machine thread")
-        Me._CapturedSyncContext = syncContext
-        SynchronizationContext.SetSynchronizationContext(Me.CapturedSyncContext)
+        Me.CaptureSyncContext(syncContext)
         If Me.StopAsyncTask(Me.TaskStopTimeout) Then
             Me._TaskStart = NotificationSemaphores.None
             Me.CancellationTokenSource = New CancellationTokenSource
@@ -731,6 +726,7 @@ Public Class MovingWindowMeter
             Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
             Me._task = New Task(Sub() Me.MeasureMovingAverage(progress))
             If runSynchronously Then
+
                 Me.Task.RunSynchronously(TaskScheduler.FromCurrentSynchronizationContext)
             Else
                 Me.Task.Start()

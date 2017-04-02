@@ -772,7 +772,7 @@ Public MustInherit Class TriggerSubsystemBase
     ''' <param name="pollPeriod">  The poll period. </param>
     ''' <returns> A Threading.Tasks.Task. </returns>
     Public Async Function AsyncMonitorTriggerState(ByVal syncContext As Threading.SynchronizationContext, ByVal pollPeriod As TimeSpan) As Threading.Tasks.Task
-        Me.CapturedSyncContext = syncContext
+        Me.CaptureSyncContext(syncContext)
         Await Threading.Tasks.Task.Run(Sub() Me.MonitorActiveTriggerState(pollPeriod))
     End Function
 

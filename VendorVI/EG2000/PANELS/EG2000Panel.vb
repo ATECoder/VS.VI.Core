@@ -44,7 +44,6 @@ Public Class EG2000Panel
             ' set defaults for the messages box.
             .ResetCount = 500
             .PresetCount = 250
-            .SupportsOpenLogFolderRequest = False
             .ContainerPanel = Me._MessagesTabPage
         End With
         With Me._ServiceRequestEnableBitmaskNumeric.NumericUpDownControl
@@ -63,7 +62,7 @@ Public Class EG2000Panel
                 Try
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception details: {0}", ex)
+                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception details: {ex.ToFullBlownString}")
                 End Try
                 ' the device gets closed and disposed (if panel is device owner) in the base class
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
@@ -97,7 +96,7 @@ Public Class EG2000Panel
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
-        Me._Device.CapturedSyncContext = Threading.SynchronizationContext.Current
+        Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
         Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub
@@ -366,7 +365,7 @@ Public Class EG2000Panel
         Try
             Me.Device.StatusSubsystem.ReadServiceRequestStatus()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading service request;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 

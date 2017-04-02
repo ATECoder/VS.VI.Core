@@ -132,7 +132,7 @@ Public Class InstrumentInterfaceForm
 
         Catch ex As Exception
             ex.Data.Add("@isr", lastAction)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{lastAction};. {ex}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{lastAction};. {ex.ToFullBlownString}")
             Try
                 Me.CloseInstrumentSession()
             Finally
@@ -288,7 +288,8 @@ Public Class InstrumentInterfaceForm
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception loading the instrument interface form;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"Exception loading the instrument interface form;. Details: {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -331,7 +332,7 @@ Public Class InstrumentInterfaceForm
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception showing the instrument interface form;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the instrument interface form;. Details: {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -504,7 +505,7 @@ Public Class InstrumentInterfaceForm
             Me.ServiceRequestBits = Me.Session.ReadServiceRequestStatus
         Catch ex As Exception
             ex.Data.Add("@isr", lastAction)
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex}")
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -555,7 +556,7 @@ Public Class InstrumentInterfaceForm
             Me.readStatusRegister()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex}")
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -584,7 +585,7 @@ Public Class InstrumentInterfaceForm
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex}")
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -611,7 +612,7 @@ Public Class InstrumentInterfaceForm
                 Me.Session.WriteLine(transmitBuffer)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex}")
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -633,7 +634,7 @@ Public Class InstrumentInterfaceForm
             End If
             stopPollTimer()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. failed: {ex}")
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. failed: {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -659,7 +660,7 @@ Public Class InstrumentInterfaceForm
             AddHandler Me._pollTimer.Tick, AddressOf Me.onPollTimerTick
             Me._pollTimer.Enabled = True
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex}")
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -690,7 +691,7 @@ Public Class InstrumentInterfaceForm
                 End If
             Catch ex As Exception
                 ex.Data.Add("@isr", "failed service request")
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex}")
+                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
             End Try
         Else
             Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Sender is not a message-based session")
@@ -750,7 +751,7 @@ Public Class InstrumentInterfaceForm
                 Me._ReadStatusRegisterButton.Enabled = False
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex}")
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -832,7 +833,7 @@ Public Class InstrumentInterfaceForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed reporting Trace Message Property Change;. Details: {0}", ex)
+                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
