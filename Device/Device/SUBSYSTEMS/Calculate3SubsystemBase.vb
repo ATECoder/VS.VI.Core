@@ -36,7 +36,7 @@ Public MustInherit Class Calculate3SubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ForcedDigitalOutputPatternEnabled, value) Then
                 Me._ForcedDigitalOutputPatternEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ForcedDigitalOutputPatternEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -89,7 +89,7 @@ Public MustInherit Class Calculate3SubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.ForcedDigitalOutputPattern, value) Then
                 Me._ForcedDigitalOutputPattern = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ForcedDigitalOutputPattern))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

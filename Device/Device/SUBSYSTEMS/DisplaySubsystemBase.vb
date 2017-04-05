@@ -116,7 +116,7 @@ Public MustInherit Class DisplaySubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Enabled, value) Then
                 Me._Enabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Enabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -179,7 +179,7 @@ Public MustInherit Class DisplaySubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Exists, value) Then
                 Me._Exists = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Exists))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -215,7 +215,7 @@ Public MustInherit Class DisplaySubsystemBase
         Protected Set(ByVal value As DisplayScreens?)
             If Not Nullable.Equals(Me.DisplayScreen, value) Then
                 Me._DisplayScreen = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.DisplayScreen))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

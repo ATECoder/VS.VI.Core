@@ -34,7 +34,7 @@ Public MustInherit Class SystemSubsystemBase
         End Get
         Protected Set(value As Double?)
             Me._ScpiRevision = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ScpiRevision))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 

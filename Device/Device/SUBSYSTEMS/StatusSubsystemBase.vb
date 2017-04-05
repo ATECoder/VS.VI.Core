@@ -1,5 +1,6 @@
 ﻿Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.StackTraceExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Defines the contract that must be implemented by Status Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -120,7 +121,7 @@ Public MustInherit Class StatusSubsystemBase
             Me.ClearErrorQueue()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Exception ignored clearing error queue;. Details: {0}.", ex)
+                               $"Exception ignored clearing error queue;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -162,19 +163,19 @@ Public MustInherit Class StatusSubsystemBase
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.ServiceRequestStatus)
-                Me.SyncNotifyPropertyChanged(NameOf(Me.ServiceRequestStatus))
+                Me.SafeSendPropertyChanged(NameOf(Me.ServiceRequestStatus))
             Case NameOf(sender.ErrorAvailable)
                 ' this event occurs if value changed or is still on.
-                Me.SyncNotifyPropertyChanged(NameOf(Me.ErrorAvailable))
+                Me.SafeSendPropertyChanged(NameOf(Me.ErrorAvailable))
             Case NameOf(sender.MeasurementAvailable)
                 ' this event occurs if value changed or is still on.
-                Me.SyncNotifyPropertyChanged(NameOf(Me.MeasurementAvailable))
+                Me.SafeSendPropertyChanged(NameOf(Me.MeasurementAvailable))
             Case NameOf(sender.MessageAvailable)
                 ' this event occurs if value changed or is still on.
-                Me.SyncNotifyPropertyChanged(NameOf(Me.MessageAvailable))
+                Me.SafeSendPropertyChanged(NameOf(Me.MessageAvailable))
             Case NameOf(sender.StandardEventAvailable)
                 ' this event occurs if value changed or is still on.
-                Me.SyncNotifyPropertyChanged(NameOf(Me.StandardEventAvailable))
+                Me.SafeSendPropertyChanged(NameOf(Me.StandardEventAvailable))
         End Select
     End Sub
 
@@ -187,7 +188,7 @@ Public MustInherit Class StatusSubsystemBase
             Me.OnSessionPropertyChanged(TryCast(sender, SessionBase), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling status subsystem session property {0};. Details: {1}", e?.PropertyName, ex)
+                               $"Exception handling property Session.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -661,7 +662,7 @@ Public MustInherit Class StatusSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean?)
             Me._OperationCompleted = value
-            Me.SyncNotifyPropertyChanged()
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -1051,7 +1052,7 @@ Public MustInherit Class StatusSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean)
             Me._StandardDeviceErrorAvailable = value
-            Me.SyncNotifyPropertyChanged(NameOf(Me.StandardDeviceErrorAvailable))
+            Me.SafeSendPropertyChanged()
         End Set
     End Property
 

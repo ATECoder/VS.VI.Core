@@ -56,7 +56,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Set(ByVal value As Boolean)
             Me._ErrorRead = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ErrorRead))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -75,7 +75,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Set(ByVal value As Boolean)
             Me._IdentityRead = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.IdentityRead))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -94,7 +94,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Set(ByVal value As Boolean)
             Me._MessageFailed = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.MessageFailed))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -113,7 +113,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Set(ByVal value As Boolean)
             Me._MessageCompleted = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.MessageCompleted))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -134,7 +134,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean?)
             Me._PatternCompleteReceived = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.PatternCompleteReceived))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
             If value.GetValueOrDefault(False) Then
                 ' if pattern completed, turn off all other flags.
@@ -162,7 +162,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean)
             Me._SetModeSent = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.SetModeSent))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -188,7 +188,7 @@ Public MustInherit Class ProberSubsystemBase
                 Me.UnhandledMessageReceived = False
                 Me.TestStartReceived = False
             End If
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.TestCompleteSent))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -215,7 +215,7 @@ Public MustInherit Class ProberSubsystemBase
                 Me.PatternCompleteReceived = False
                 Me.TestCompleteSent = False
             End If
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.TestStartReceived))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -232,7 +232,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean?)
             Me._RetestRequested = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.RetestRequested))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -249,7 +249,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean?)
             Me._TestAgainRequested = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.TestAgainRequested))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -270,7 +270,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean?)
             Me._IsFirstTestStart = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.IsFirstTestStart))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -298,7 +298,7 @@ Public MustInherit Class ProberSubsystemBase
                 Me.TestCompleteSent = False
                 Me.TestStartReceived = False
             End If
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.WaferStartReceived))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -319,7 +319,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean?)
             Me._UnhandledMessageReceived = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.UnhandledMessageReceived))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -340,7 +340,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean?)
             Me._UnhandledMessageSent = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.UnhandledMessageSent))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -366,7 +366,7 @@ Public MustInherit Class ProberSubsystemBase
             End If
             If String.IsNullOrWhiteSpace(value) Then value = ""
             Me._LastReading = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.LastReading))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property

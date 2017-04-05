@@ -3,6 +3,7 @@ Imports isr.Core.Controls.ComboBoxExtensions
 Imports isr.Core.Controls.NumericUpDownExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Measure control -- defines the Four Wire Resistance Sense subsystem  settings. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -116,7 +117,7 @@ Public Class K7500MeasureControl
             Me.OnSubsystemPropertyChanged(TryCast(sender, TriggerSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling property '{e?.PropertyName}' change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -143,7 +144,7 @@ Public Class K7500MeasureControl
             Me.OnSubsystemPropertyChanged(TryCast(sender, SenseFourWireResistanceSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling property '{e?.PropertyName}' change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -291,7 +292,7 @@ Public Class K7500MeasureControl
         Set(value As Decimal)
             If Not Decimal.Equals(value, Me.MeterCurrent) Then
                 Me._MeterCurrentNumeric.SafeSilentValueSetter(value)
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MeterCurrent))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -306,7 +307,7 @@ Public Class K7500MeasureControl
         Set(value As Decimal)
             If Not Decimal.Equals(value, Me.MeterRange) Then
                 Me._MeterRangeNumeric.SafeSilentValueSetter(value)
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MeterRange))
+                Me.SafePostPropertyChanged()
                 'select a subsystem based on the range.
                 If value <= 2000000.0 Then
                     Me.SenseResistanceSubsystem = Me.FourWireResistanceSenseSubsystem
@@ -375,7 +376,7 @@ Public Class K7500MeasureControl
             If Not Decimal.Equals(value, Me.TriggerDelay) Then
                 Me._TriggerDelay = value
                 Me._TriggerDelayNumeric.SafeSilentValueSetter(value.TotalMilliseconds)
-                Me.SyncNotifyPropertyChanged(NameOf(Me.TriggerDelay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

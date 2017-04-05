@@ -54,7 +54,7 @@ Public MustInherit Class SenseSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean)
             Me._MeasurementAvailable = value
-            Me.SyncNotifyPropertyChanged(NameOf(Me.MeasurementAvailable))
+            Me.SafeSendPropertyChanged()
         End Set
     End Property
 

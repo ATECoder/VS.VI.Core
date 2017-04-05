@@ -81,7 +81,7 @@ Public MustInherit Class NumericLimitBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Failed, value) Then
                 Me._Failed = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Failed))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -114,7 +114,7 @@ Public MustInherit Class NumericLimitBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Enabled, value) Then
                 Me._Enabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Enabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

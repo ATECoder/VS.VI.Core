@@ -54,7 +54,7 @@ Public MustInherit Class SourceVoltageSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.ProtectionLevel, value) Then
                 Me._ProtectionLevel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ProtectionLevel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

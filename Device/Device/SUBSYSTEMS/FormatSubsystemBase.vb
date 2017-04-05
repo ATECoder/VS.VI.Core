@@ -83,7 +83,7 @@ Public MustInherit Class FormatSubsystemBase
         Protected Set(ByVal value As ReadingTypes)
             If Not Me.Elements.Equals(value) Then
                 Me._Elements = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Elements))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

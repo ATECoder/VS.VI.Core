@@ -63,7 +63,7 @@ Public MustInherit Class SlotSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(value, Me.IsSlotExists) Then
                 Me._isSlotExists = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsSlotExists))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -111,7 +111,7 @@ Public MustInherit Class SlotSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(value, Me.SupportsInterlock) Then
                 Me._SupportsInterlock = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportsInterlock))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -144,7 +144,7 @@ Public MustInherit Class SlotSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Integer?.Equals(value, Me.InterlocksState) Then
                 Me._InterlocksState = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.InterlocksState))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

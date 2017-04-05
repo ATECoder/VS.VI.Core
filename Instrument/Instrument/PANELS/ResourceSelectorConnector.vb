@@ -74,7 +74,7 @@ Public Class ResourceSelectorConnector
         Set(ByVal value As Boolean)
             If Not Me.Clearable.Equals(value) Then
                 Me._clearable = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Clearable))
+                Me.SafePostPropertyChanged()
             End If
             Me._ClearButton.Visible = value
         End Set
@@ -94,7 +94,7 @@ Public Class ResourceSelectorConnector
         Set(ByVal value As Boolean)
             If Not Me.Connectible.Equals(value) Then
                 Me._connectible = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Connectible))
+                Me.SafePostPropertyChanged()
             End If
             Me._ToggleConnectionButton.Visible = value
             If Not value Then
@@ -117,7 +117,7 @@ Public Class ResourceSelectorConnector
         Set(ByVal value As Boolean)
             If Not Me.Searchable.Equals(value) Then
                 Me._searchable = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Searchable))
+                Me.SafePostPropertyChanged()
             End If
             Me._FindButton.Visible = value
         End Set
@@ -149,7 +149,7 @@ Public Class ResourceSelectorConnector
         Me._ToggleConnectionButton.Image = If(value, My.Resources.Disconnect_22x22, My.Resources.Connect_22x22)
         Me._ToggleConnectionButton.Enabled = Me.Connectible
         Me._isConnected = value
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.IsConnected))
+        Me.SafePostPropertyChanged(NameOf(Me.IsConnected))
     End Sub
 
     ''' <summary> Executes the toggle connection action. </summary>
@@ -169,7 +169,7 @@ Public Class ResourceSelectorConnector
         Catch ex As Exception
             Me._ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception connecting resource '{0}';. Details: {1}", Me.SelectedResourceName, ex)
+                               $"Exception connecting resource '{Me.SelectedResourceName}';. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -249,7 +249,7 @@ Public Class ResourceSelectorConnector
         Set(ByVal value As Boolean)
             If Not Me.HasResources.Equals(value) Then
                 Me._HasResources = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.HasResources))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -267,7 +267,7 @@ Public Class ResourceSelectorConnector
             If Not value.Equals(Me.ResourcesFilter) Then
                 Me._ResourcesFilter = value
                 Me._FindButton.ToolTipText = $"Search using the search pattern '{value}'"
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourcesFilter))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -351,7 +351,7 @@ Public Class ResourceSelectorConnector
             If Not String.Equals(Value, Me.SelectedResourceName, StringComparison.OrdinalIgnoreCase) Then
                 If Not String.IsNullOrWhiteSpace(Value) Then
                     Me._SelectedResourceName = Value
-                    Me.AsyncNotifyPropertyChanged(NameOf(Me.SelectedResourceName))
+                    Me.SafePostPropertyChanged()
                     Try
                         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
                         Me._ErrorProvider.Clear()
@@ -360,7 +360,7 @@ Public Class ResourceSelectorConnector
                         End Using
                     Catch ex As Exception
                         Me._ErrorProvider.Annunciate(Me._ResourceNamesComboBox, ex.Message)
-                        Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception setting selected resource;. Details:{0}.", ex)
+                        Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception setting selected resource;. Details:{0}", ex.ToFullBlownString)
                     Finally
                         Me.Cursor = System.Windows.Forms.Cursors.Default
                     End Try
@@ -383,7 +383,7 @@ Public Class ResourceSelectorConnector
             ' resource was selected.
             Me._ToggleConnectionButton.Enabled = Me.Connectible AndAlso value
             Me._SelectedResourceExists = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.SelectedResourceExists))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -475,8 +475,8 @@ Public Class ResourceSelectorConnector
             If c IsNot Nothing Then
                 Me._ErrorProvider.Annunciate(c, ex.Message)
             End If
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception clearing resource '{0}';. Details: {1}",
-                               Me.SelectedResourceName, ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"Exception clearing resource '{Me.SelectedResourceName}';. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try

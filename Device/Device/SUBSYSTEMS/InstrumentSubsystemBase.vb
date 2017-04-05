@@ -36,7 +36,7 @@ Public MustInherit Class InstrumentSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.DmmInstalled, value) Then
                 Me._DmmInstalled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.DmmInstalled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

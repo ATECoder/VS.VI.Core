@@ -89,7 +89,7 @@ Public MustInherit Class ProberSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.MessageFailedPattern) Then
                 Me._MessageFailedPattern = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MessageFailedPattern))
+                Me.SafeSendPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -111,7 +111,7 @@ Public MustInherit Class ProberSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.MessageCompletedPattern) Then
                 Me._MessageCompletedPattern = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MessageCompletedPattern))
+                Me.SafeSendPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -208,7 +208,7 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Protected Set(value As String)
             Me._LastMessageSent = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.LastMessageSent))
+            Me.SafeSendPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property

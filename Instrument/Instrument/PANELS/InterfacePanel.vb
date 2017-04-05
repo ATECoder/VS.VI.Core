@@ -162,7 +162,7 @@ Public Class InterfacePanel
                     .Invalidate()
                 End With
                 Me.Cursor = System.Windows.Forms.Cursors.Default
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsInterfaceOpen))
+                Me.SafePostPropertyChanged(NameOf(Me.IsInterfaceOpen))
                 Windows.Forms.Application.DoEvents()
             End Try
         End If
@@ -217,7 +217,7 @@ Public Class InterfacePanel
                         .Visible = True
                         .Invalidate()
                     End With
-                    Me.AsyncNotifyPropertyChanged(NameOf(Me.IsInterfaceOpen))
+                    Me.SafePostPropertyChanged(NameOf(Me.IsInterfaceOpen))
                     Windows.Forms.Application.DoEvents()
                 End Try
             End If
@@ -246,7 +246,7 @@ Public Class InterfacePanel
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.InterfaceResourceName) Then
                 Me._InterfaceResourceName = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.InterfaceResourceName))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -357,7 +357,7 @@ Public Class InterfacePanel
             Me.OnPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling InterfaceChoose.{e?.PropertyName} change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -383,7 +383,7 @@ Public Class InterfacePanel
                 End If
             Catch ex As Exception
                 Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   "Exception occurred clearing '{0}';. Details: {1}.", Me._InstrumentChooser.SelectedResourceName, ex)
+                                   $"Exception clearing '{Me._InstrumentChooser.SelectedResourceName}';. Details: {ex.ToFullBlownString}")
             Finally
                 Me.Cursor = Windows.Forms.Cursors.Default
             End Try
@@ -406,7 +406,7 @@ Public Class InterfacePanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred clearing devices at '{0}';. Details: {1}.", Me.InterfaceResourceName, ex)
+                               $"Exception clearing devices at '{Me.InterfaceResourceName}';. Details: {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Windows.Forms.Cursors.Default
         End Try
@@ -490,7 +490,7 @@ Public Class InterfacePanel
             Me.OnInstrumentChooserPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling InstrumentChooser.{e?.PropertyName} change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 

@@ -57,7 +57,7 @@ Public MustInherit Class SenseResistanceSubsystemBase
         Protected Set(ByVal value As ConfigurationMode?)
             If Not Me.ConfigurationMode.Equals(value) Then
                 Me._ConfigurationMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ConfigurationMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

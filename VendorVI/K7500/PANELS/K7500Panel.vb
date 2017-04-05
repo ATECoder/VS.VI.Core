@@ -427,14 +427,18 @@ Public Class K7500Panel
             .Maximum = CDec(value.PowerLineCyclesRange.Max)
             .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.PowerLineCyclesRange.Min)))
         End With
+#If False Then
+        ' done on the device level.
         With value
             .QueryRange()
             .QueryAutoRangeEnabled()
             .QueryAutoZeroEnabled()
             .QueryPowerLineCycles()
         End With
+#End If
     End Sub
 
+#If False Then
     Private ReadOnly Property SelectedSenseSubsystem() As SenseFunctionSubsystemBase
         Get
             Return Me.SelectSenseSubsystem(Me.selectedFunctionMode)
@@ -461,27 +465,23 @@ Public Class K7500Panel
     ''' <param name="value"> The <see cref="TraceMessage">message</see> to display and
     ''' log. </param>
     Private Sub onFunctionModesChanged(ByVal value As VI.Scpi.SenseFunctionModes)
-        Me.onFunctionModesChanged(Me.SelectSenseSubsystem(value))
+        Me.onFunctionModesChanged(Me.Device.SelectSenseSubsystem(value))
     End Sub
+#End If
 
     ''' <summary> Handles the function modes changed action. </summary>
     ''' <param name="subsystem"> The subsystem. </param>
     Private Sub onFunctionModesChanged(ByVal subsystem As SenseSubsystem)
         If subsystem IsNot Nothing AndAlso subsystem.FunctionMode.HasValue Then
+            Me.Device.ParseMeasurementUnit(subsystem)
             Dim value As VI.Scpi.SenseFunctionModes = subsystem.FunctionMode.GetValueOrDefault(VI.Scpi.SenseFunctionModes.None)
             If value <> VI.Scpi.SenseFunctionModes.None Then
-                If Not VI.Scpi.SenseSubsystemBase.TryParse(value, Me.Device.MeasureSubsystem.Readings.Reading.Unit) Then
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                       "Failed parsing function mode '{0}' to a standard unit.", subsystem.FunctionMode.Value)
-                    Me.Device.MeasureSubsystem.Readings.Reading.Unit = Arebis.StandardUnits.ElectricUnits.Volt
-                End If
                 Me._OpenLeadsDetectionCheckBox.Enabled = (value = Scpi.SenseFunctionModes.FourWireResistance) OrElse (value = Scpi.SenseFunctionModes.Temperature)
-                subsystem.Readings.Reading.Unit = Me.Device.MeasureSubsystem.Readings.Reading.Unit
                 Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.Readings.Reading.Unit.Symbol}]:"
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
                 Me._SenseFunctionComboBox.SafeSelectItem(value, value.Description)
-                Me.onFunctionModesChanged(value)
             End If
+            Me.onFunctionModesChanged(Me.Device.SelectSenseSubsystem(subsystem))
         End If
     End Sub
 
@@ -1356,11 +1356,11 @@ Public Class K7500Panel
                 Me.InterfaceStopWatch.Restart()
                 Me._BufferDataGridView.DataSource = Nothing
                 Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
-                Me.Device.TriggerSubsystem.CaptureSyncContext(SynchronizationContext.Current)
-                Me.Device.TraceSubsystem.CaptureSyncContext(SynchronizationContext.Current)
+                Me.Device.TriggerSubsystem.CaptureSyncContext(Me.CapturedSyncContext)
+                Me.Device.TraceSubsystem.CaptureSyncContext(Me.CapturedSyncContext)
                 Me.Device.TriggerSubsystem.Initiate()
                 Windows.Forms.Application.DoEvents()
-                Me.Device.TraceSubsystem.StreamBufferAsync(Threading.SynchronizationContext.Current, Me.Device.TriggerSubsystem, TimeSpan.FromMilliseconds(5))
+                Me.Device.TraceSubsystem.StreamBufferAsync(Me.CapturedSyncContext, Me.Device.TriggerSubsystem, TimeSpan.FromMilliseconds(5))
                 Me.BufferStreamingHandlerEnabled = True
             Else
                 Me.BufferStreamingHandlerEnabled = False
@@ -1481,8 +1481,8 @@ Public Class K7500Panel
         Me.Device.TriggerSubsystem.Initiate()
         Windows.Forms.Application.DoEvents()
         Me.TriggerPlanStateChangeHandlerEnabled = stateChangeHandlingEnabled
-        Me.Device.TriggerSubsystem.CaptureSyncContext(SynchronizationContext.Current)
-        Me.Device.TriggerSubsystem.AsyncMonitorTriggerState(Threading.SynchronizationContext.Current, TimeSpan.FromMilliseconds(5))
+        Me.Device.TriggerSubsystem.CaptureSyncContext(Me.CapturedSyncContext)
+        Me.Device.TriggerSubsystem.AsyncMonitorTriggerState(Me.CapturedSyncContext, TimeSpan.FromMilliseconds(5))
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -1507,8 +1507,8 @@ Public Class K7500Panel
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
             Me.InterfaceStopWatch.Restart()
             Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
-            Me.Device.TriggerSubsystem.CaptureSyncContext(SynchronizationContext.Current)
-            Me.Device.TriggerSubsystem.AsyncMonitorTriggerState(Threading.SynchronizationContext.Current, TimeSpan.FromMilliseconds(5))
+            Me.Device.TriggerSubsystem.CaptureSyncContext(Me.CapturedSyncContext)
+            Me.Device.TriggerSubsystem.AsyncMonitorTriggerState(Me.CapturedSyncContext, TimeSpan.FromMilliseconds(5))
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
@@ -2061,7 +2061,7 @@ Public Class K7500Panel
                 If grid.IsCurrentCellInEditMode Then Return
                 If grid.IsCurrentRowDirty Then Return
                 Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   $"Exception occurred editing row {e.RowIndex} column {e.ColumnIndex};. Details: {e.Exception}")
+                                   $"Exception occurred editing row {e.RowIndex} column {e.ColumnIndex};. Details: {e.Exception.ToFullBlownString}")
                 Me.ErrorProvider.Annunciate(grid, "Exception occurred editing table")
             End If
         Catch
@@ -2160,7 +2160,7 @@ Public Class K7500Panel
     ''' </summary>
     Private Sub applySenseSettings()
 
-        With Me.SelectedSenseSubsystem
+        With Me.Device.SelectedSenseSubsystem
 
             If Me._OpenLeadsDetectionCheckBox.Enabled AndAlso Not Nullable.Equals(.OpenLeadDetectorEnabled, Me._OpenLeadsDetectionCheckBox.Checked) Then
                 .ApplyOpenLeadDetectorEnabled(Me._OpenLeadsDetectionCheckBox.Checked)
@@ -2505,280 +2505,3 @@ Public Class K7500Panel
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    Private _actualFunctionMode As VI.Scpi.SenseFunctionModes
-    ''' <summary>
-    ''' Return the last Sense function mode.  This is set only after the 
-    ''' actual value is applies whereas the <see cref="SelectedFunctionMode">selected mode</see>
-    ''' reflects the status of the combo box.
-    ''' </summary>
-    Friend ReadOnly Property ActualFunctionMode() As VI.Scpi.SenseFunctionModes
-        Get
-            Return Me._actualFunctionMode
-        End Get
-    End Property
-
-
-#End If
-#End Region
-#Region " UNUSED "
-#If False Then
-    Private Sub ApplyBinningTriggerModel()
-
-        If Me._LowerLimit1Numeric.Value <= 100 Then
-            With Device.SenseFourWireResistanceSubsystem
-                .ApplyAverageEnabled(True)
-                .ApplyAverageCount(10)
-                .ApplyAverageFilterType(AverageFilterType.Repeat)
-                .ApplyAveragePercentWindow(0.1)
-            End With
-        Else
-            With Device.SenseFourWireResistanceSubsystem
-                .ApplyAverageEnabled(False)
-            End With
-        End If
-
-        With Device.Calculate2FourWireResistanceSubsystem
-            .ApplyLimit1AutoClear(True)
-            .ApplyLimit1Enabled(True)
-            .ApplyLimit1LowerLevel(Me._LowerLimit1Numeric.Value)
-            .ApplyLimit1UpperLevel(Me._UpperLimit1Numeric.Value)
-        End With
-
-        ' set limits for open circuit to 10 times the range limit
-        With Device.Calculate2FourWireResistanceSubsystem
-            .ApplyLimit2AutoClear(True)
-            .ApplyLimit2Enabled(True)
-            .ApplyLimit2LowerLevel(-10 * Me._UpperLimit1Numeric.Value)
-            .ApplyLimit2UpperLevel(10 * Me._UpperLimit1Numeric.Value)
-        End With
-
-        ' enable open detection
-        With Device.SenseFourWireResistanceSubsystem
-            .ApplyOpenLeadDetectorEnabled(True)
-        End With
-
-        Dim passBitPattern As Integer = CInt(Me._PassBitPatternNumeric.Value)
-        ' TO_DO: Set Pass Bit Pattern
-        ' 
-
-        Dim failureBitPattern As Integer = CInt(Me._FailLimit1BitPatternNumeric.Value)
-        ' TO_DO: Set Failure Bit Pattern
-        ' 
-
-        Dim openBitPattern As Integer = CInt(Me._OpenLeadsBitPatternNumeric.Value)
-        ' TO_DO: Set Open Bit Pattern
-        ' 
-
-        ' use the mask to assign digital outputs.
-        Dim mask As Integer = failureBitPattern Or passBitPattern Or openBitPattern
-        Dim bitPattern As Integer = 1
-        For i As Integer = 1 To 6
-            If (mask And bitPattern) <> 0 Then
-                Me.Device.Session.Write($"DIG:LINE{i}:MODE DIG,OUT")
-            End If
-            bitPattern <<= 1
-        Next
-
-        Me.Device.TraceSubsystem.WriteFeedSource(Scpi.FeedSource.None)
-        Me.Device.TriggerSubsystem.ApplyTriggerSource(CType(Me._TriggerSourceComboBox.ComboBox.SelectedValue, TriggerSources))
-
-        Dim count As Integer = CInt(Me._TriggerCountNumeric.Value)
-        Me.Device.TriggerSubsystem.ApplyTriggerCount(count)
-
-        Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
-        Me.Device.TriggerSubsystem.ApplyDelay(startDelay)
-
-        If Me.Device.TriggerSubsystem.TriggerSource.Value = TriggerSources.External Then
-            Me.StatusLabel.Text = "Ready: Initiate meter and then scanner"
-        ElseIf Me.Device.TriggerSubsystem.TriggerSource.Value = TriggerSources.Immediate Then
-            Me.StatusLabel.Text = "Ready: Initiate meter to take a reading"
-        ElseIf Me.Device.TriggerSubsystem.TriggerSource.Value = TriggerSources.Bus Then
-            Me.StatusLabel.Text = "Ready: Click the Trigger button to take a reading"
-        Else
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Invalid trigger source {Me.Device.TriggerSubsystem.TriggerSource.Value}")
-        End If
-
-    End Sub
-
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ApplyBinningTriggerModeMenuItem_Click(sender As Object, e As EventArgs)
-        If Me._InitializingComponents Then Return
-        Dim activity As String = "applying binning trigger model"
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            If Me.IsDeviceOpen Then
-                Dim count As Integer = CInt(Me._TriggerCountNumeric.Value)
-                Dim startDelay As TimeSpan = TimeSpan.FromSeconds(Me._StartTriggerDelayNumeric.Value)
-                Me.Device.TriggerSubsystem.LoadSimpleLoop(count, startDelay)
-            End If
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
-    End Sub
-
-
-#End If
-#End Region
-
-#Region " UNUSED"
-#If False Then
-''' <summary> Initializes the wait read. </summary>
-    ''' <remarks> David, 2/2/2017. </remarks>
-    Private Sub InitWaitRead()
-
-        Dim activity As String = "Initiating trigger plan and wait"
-        activity = "initiating trigger plan"
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-        Me.InterfaceStopWatch.Restart()
-        Me.Device.TriggerSubsystem.Initiate()
-        Windows.Forms.Application.DoEvents()
-        Me.Device.Session.Write("*OPC")
-        Windows.Forms.Application.DoEvents()
-        Me.ReadServiceRequestStatus()
-
-        activity = $"wait completed {Me.InterfaceStopWatch.Elapsed.TotalMilliseconds:0.0} ms; reading buffer count"
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-
-        ' wait for actual trigger status
-        Me.Device.TriggerSubsystem.QueryTriggerState()
-        activity = $"trigger model state is {Me.Device.TriggerSubsystem.TriggerState}"
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-
-        Dim activated As Boolean = Me.Device.TriggerSubsystem.IsTriggerStateActive
-
-        ' wait until not waiting or running
-        Do While Me.Device.TriggerSubsystem.IsTriggerStateActive
-            Me.Device.TriggerSubsystem.QueryTriggerState()
-            If Not activated Then activated = Me.Device.TriggerSubsystem.IsTriggerStateActive
-            If Me.Device.TriggerSubsystem.IsTriggerStateActive Then Threading.Thread.Sleep(5)
-        Loop
-
-        activity = $"trigger model state is {Me.Device.TriggerSubsystem.TriggerState}"
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-
-        If activated Then
-
-            ' wait until stopped, failed or aborted
-            Do Until Me.Device.TriggerSubsystem.IsTriggerStateDone
-                Me.Device.TriggerSubsystem.QueryTriggerState()
-                If Not Me.Device.TriggerSubsystem.IsTriggerStateDone Then Threading.Thread.Sleep(5)
-            Loop
-
-            If Me.Device.TriggerSubsystem.IsTriggerStateIdle Then
-
-                activity = $"trigger model state is {Me.Device.TriggerSubsystem.TriggerState}"
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-
-                ' this assume buffer is cleared upon each new cycle
-                Dim newBufferCount As Integer = Me.Device.TraceSubsystem.QueryActualPointCount.GetValueOrDefault(0)
-                activity = $"buffer count {newBufferCount}"
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-
-                If newBufferCount > 0 Then
-
-                    activity = "fetching buffered readings"
-                    Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                    Dim values As IEnumerable(Of BufferReading) = Me.Device.TraceSubsystem.QueryBufferReadings()
-                    If Me.TraceReadings Is Nothing Then Me._TraceReadings = New Collections.ObjectModel.ObservableCollection(Of BufferReading)
-                    For Each v As BufferReading In values : Windows.Forms.Application.DoEvents() : Me.TraceReadings.Add(v) : Next
-
-                    activity = "updating the display"
-                    Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                    If Me.TraceReadings.Count = values.Count Then
-                        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.TraceReadings)
-                    Else
-                        ' TO_DO: See if observable collection will work.
-                        ' Me._BufferDataGridView.Invalidate()
-                        TraceSubsystem.DisplayBufferReadings(Me._BufferDataGridView, Me.TraceReadings)
-                    End If
-                    Windows.Forms.Application.DoEvents()
-                    Me._BufferDataGridView.Invalidate()
-
-                    Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
-                    Me.InterfaceStopWatch.Stop()
-                    Windows.Forms.Application.DoEvents()
-                End If
-
-            Else
-                activity = $"not retrieving data because trigger model is {Me.Device.TriggerSubsystem.TriggerState}"
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-
-            End If
-
-        Else
-            ' if the model was not activated, got to get out.
-            activity = $"exiting trigger model because it is {Me.Device.TriggerSubsystem.TriggerState}"
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-        End If
-
-    End Sub
-
-    Private Property CapturedSyncContext As SynchronizationContext
-
-    ''' <summary> Initiate wait repeat. </summary>
-    ''' <remarks> David, 2/2/2017. </remarks>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub InitiateWaitRepeat()
-        Dim activity As String = "starting trigger, wait, read, repeat loop"
-        Try
-            Me.ApplyCapturedSyncContext()
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Dim repeatCount As Integer = 0
-            Do While repeatCount = 0 OrElse Me._RepeatMenuItem.Checked
-                repeatCount += 1
-                Me.InitWaitRead()
-                Windows.Forms.Application.DoEvents()
-            Loop
-            activity = "exited trigger, wait, read, repeat loop"
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-        Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
-        Finally
-        End Try
-    End Sub
-
-    Public Async Function AsyncTask() As Threading.Tasks.Task
-        Me.CaptureSyncContext(SynchronizationContext.Current)
-        Await Threading.Tasks.Task.Run(AddressOf Me.InitiateWaitRepeat)
-    End Function
-
-    ''' <summary> Initializes the initialize wait read repeat menu item click. </summary>
-    ''' <remarks> David, 2/2/2017. </remarks>
-    ''' <param name="sender"> <see cref="System.Object"/>
-    '''                       instance of this
-    '''                       <see cref="System.Windows.Forms.Control"/> </param>
-    ''' <param name="e">      Event information. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _InitWaitReadRepeatMenuItem_Click(sender As Object, e As EventArgs) Handles _InitWaitReadRepeatMenuItem.Click
-        Dim activity As String = "starting the a-sync task"
-        Try
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
-            Me.CaptureSyncContext(SynchronizationContext.Current)
-#If False Then
-            Dim task As Threading.Tasks.Task = New Threading.Tasks.Task(AddressOf Me.InitiateWaitRepeat)
-            activity = $"task is {task.Status}; Control returned to operator"
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-            task.Start()
-            activity = $"task is {task.Status}; Control returned to operator"
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-#Else
-            Me.InitiateWaitRepeat()
-#End If
-        Catch ex As Exception
-            Me.ErrorProvider.Annunciate(Me._ReadBufferButton, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
-    End Sub
-#End If
-#End Region

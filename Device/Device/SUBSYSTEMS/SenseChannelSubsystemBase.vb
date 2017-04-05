@@ -104,7 +104,7 @@ Public MustInherit Class SenseChannelSubsystemBase
         Set(ByVal value As AdapterType)
             If Not Me.SupportedAdapterTypes.Equals(value) Then
                 Me._SupportedAdapterTypes = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedAdapterTypes))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -124,7 +124,7 @@ Public MustInherit Class SenseChannelSubsystemBase
         Protected Set(ByVal value As AdapterType?)
             If Not Nullable.Equals(Me.AdapterType, value) Then
                 Me._AdapterType = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AdapterType))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -210,7 +210,7 @@ Public MustInherit Class SenseChannelSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Aperture, value) Then
                 Me._Aperture = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Aperture))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -264,7 +264,7 @@ Public MustInherit Class SenseChannelSubsystemBase
         Protected Set(ByVal value As FrequencyPointsType?)
             If Not Nullable.Equals(Me.FrequencyPointsType, value) Then
                 Me._FrequencyPointsType = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FrequencyPointsType))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -333,7 +333,7 @@ Public MustInherit Class SenseChannelSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.SweepPoints, value) Then
                 Me._SweepPoints = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SweepPoints))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -392,7 +392,7 @@ Public MustInherit Class SenseChannelSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.SweepStart, value) Then
                 Me._SweepStart = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SweepStart))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -451,7 +451,7 @@ Public MustInherit Class SenseChannelSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.SweepStop, value) Then
                 Me._SweepStop = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SweepStop))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -510,7 +510,7 @@ Public MustInherit Class SenseChannelSubsystemBase
         Set(ByVal value As SweepType)
             If Not Me.SupportedSweepTypes.Equals(value) Then
                 Me._SupportedSweepTypes = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedSweepTypes))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -528,7 +528,7 @@ Public MustInherit Class SenseChannelSubsystemBase
         Protected Set(ByVal value As SweepType?)
             If Not Nullable.Equals(Me.SweepType, value) Then
                 Me._SweepType = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SweepType))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

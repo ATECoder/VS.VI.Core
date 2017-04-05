@@ -135,7 +135,7 @@ Public MustInherit Class ChannelTraceSubsystemBase
         Set(ByVal value As TraceParameters)
             If Not Me.SupportedParameters.Equals(value) Then
                 Me._SupportedParameters = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedParameters))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -153,7 +153,7 @@ Public MustInherit Class ChannelTraceSubsystemBase
         Protected Set(ByVal value As TraceParameters?)
             If Not Nullable.Equals(Me.Parameter, value) Then
                 Me._Parameter = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Parameter))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

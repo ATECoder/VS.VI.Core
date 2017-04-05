@@ -76,7 +76,7 @@ Public MustInherit Class SourceMeasureUnitBase
         Set(ByVal value As Integer)
             If Not value.Equals(Me.LocalNodeNumber) Then
                 Me._localNodeNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LocalNodeNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -92,7 +92,7 @@ Public MustInherit Class SourceMeasureUnitBase
         Set(ByVal Value As Integer)
             If Not Value.Equals(Me.NodeNumber) Then
                 Me._nodeNumber = Value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.NodeNumber))
+                Me.SafePostPropertyChanged()
                 If Not String.IsNullOrWhiteSpace(Me.UnitNumber) Then
                     ' update the smu reference
                     Me.UnitNumber = Me.UnitNumber
@@ -113,7 +113,7 @@ Public MustInherit Class SourceMeasureUnitBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.SourceMeasureUnitReference) Then
                 Me._SourceMeasureUnitReference = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SourceMeasureUnitReference))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -130,7 +130,7 @@ Public MustInherit Class SourceMeasureUnitBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.SourceMeasureUnitName) Then
                 Me._SourceMeasureUnitName = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SourceMeasureUnitName))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -148,7 +148,7 @@ Public MustInherit Class SourceMeasureUnitBase
             If String.IsNullOrWhiteSpace(Value) Then Value = ""
             If Not Value.Equals(Me.UnitNumber) Then
                 Me._unitNumber = Value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.UnitNumber))
+                Me.SafePostPropertyChanged()
             End If
             If String.IsNullOrWhiteSpace(Me.UnitNumber) Then
                 Me.SourceMeasureUnitName = ""

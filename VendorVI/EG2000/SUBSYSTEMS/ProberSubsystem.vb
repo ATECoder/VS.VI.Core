@@ -85,7 +85,7 @@ Public Class ProberSubsystem
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -110,7 +110,7 @@ Public Class ProberSubsystem
         Protected Set(ByVal value As ResponseModes?)
             If Not Nullable.Equals(Me.ResponseMode, value) Then
                 Me._ResponseMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ResponseMode))
+                Me.SafeSendPropertyChanged()
             End If
         End Set
     End Property

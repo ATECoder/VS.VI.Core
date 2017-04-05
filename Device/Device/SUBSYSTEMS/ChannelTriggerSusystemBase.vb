@@ -59,7 +59,7 @@ Public MustInherit Class ChannelTriggerSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ContinuousEnabled, value) Then
                 Me._ContinuousEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ContinuousEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

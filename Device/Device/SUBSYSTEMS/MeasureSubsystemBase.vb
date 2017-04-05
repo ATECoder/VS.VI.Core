@@ -42,7 +42,7 @@ Public MustInherit Class MeasureSubsystemBase
         End Get
         Set(ByVal value As String)
             Me._LastReading = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.LastReading))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -93,8 +93,7 @@ Public MustInherit Class MeasureSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean)
             Me._MeasurementAvailable = value
-            ' Me.SyncNotifyPropertyChanged(NameOf(me.MeasurementAvailable))
-            Me.SafeInvokePropertyChanged(NameOf(Me.MeasurementAvailable))
+            Me.SafeSendPropertyChanged()
         End Set
     End Property
 
@@ -102,7 +101,7 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <param name="value"> <c>True</c> to indicate that a measurement is available; Otherwise, <c>False</c>. </param>
     Public Sub AsyncMeasurementAvailable(ByVal value As Boolean)
         Me._MeasurementAvailable = value
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.MeasurementAvailable))
+        Me.SafePostPropertyChanged(NameOf(Me.MeasurementAvailable))
     End Sub
 
 #End Region

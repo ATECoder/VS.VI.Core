@@ -72,7 +72,7 @@ Public MustInherit Class MultimeterSubsystemBase
                 Else
                     Me.PowerLineCycles = New Double?
                 End If
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Aperture))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -127,7 +127,7 @@ Public MustInherit Class MultimeterSubsystemBase
         Protected Set(ByVal value As MultimeterAutoDelayMode?)
             If Not Nullable.Equals(Me.AutoDelayMode, value) Then
                 Me._AutoDelayMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoDelayMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -166,7 +166,7 @@ Public MustInherit Class MultimeterSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoRangeEnabled, value) Then
                 Me._AutoRangeEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoRangeEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -222,7 +222,7 @@ Public MustInherit Class MultimeterSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoZeroEnabled, value) Then
                 Me._AutoZeroEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoZeroEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -304,7 +304,7 @@ Public MustInherit Class MultimeterSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.FilterCount, value) Then
                 Me._FilterCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FilterCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -359,7 +359,7 @@ Public MustInherit Class MultimeterSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.FilterEnabled, value) Then
                 Me._FilterEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FilterEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -415,7 +415,7 @@ Public MustInherit Class MultimeterSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.MovingAverageFilterEnabled, value) Then
                 Me._MovingAverageFilterEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MovingAverageFilterEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -475,7 +475,7 @@ Public MustInherit Class MultimeterSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.FilterWindow, value) Then
                 Me._FilterWindow = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FilterWindow))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -554,7 +554,7 @@ Public MustInherit Class MultimeterSubsystemBase
                     Me.Amount.Unit = MultimeterSubsystemBase.ParseUnits(value.Value)
                     Me._RangeRange = Me.FunctionModeRanges(value.Value)
                 End If
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FunctionMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -605,7 +605,7 @@ Public MustInherit Class MultimeterSubsystemBase
                 If value.HasValue Then
                     Me.Amount.Value = value
                 End If
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Reading))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -642,7 +642,7 @@ Public MustInherit Class MultimeterSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.OpenDetectorEnabled, value) Then
                 Me._OpenDetectorEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OpenDetectorEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -703,7 +703,7 @@ Public MustInherit Class MultimeterSubsystemBase
             If Not Nullable.Equals(Me.PowerLineCycles, value) Then
                 Me._PowerLineCycles = value
                 Me._Aperture = StatusSubsystemBase.IntegrationPeriod(Me._PowerLineCycles.Value).TotalSeconds
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.PowerLineCycles))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -766,7 +766,7 @@ Public MustInherit Class MultimeterSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Range, value) Then
                 Me._Range = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Range))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

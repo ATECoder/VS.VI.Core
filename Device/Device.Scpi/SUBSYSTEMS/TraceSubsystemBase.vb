@@ -48,7 +48,7 @@ Public MustInherit Class TraceSubsystemBase
         Protected Set(ByVal value As FeedSource?)
             If Not Me.FeedSource.Equals(value) Then
                 Me._FeedSource = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FeedSource))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -103,7 +103,7 @@ Public MustInherit Class TraceSubsystemBase
         Protected Set(ByVal value As FeedControl?)
             If Not Me.FeedControl.Equals(value) Then
                 Me._FeedControl = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FeedControl))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

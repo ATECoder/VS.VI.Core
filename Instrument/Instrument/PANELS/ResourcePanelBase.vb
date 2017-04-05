@@ -252,7 +252,7 @@ Public Class ResourcePanelBase
                 Me._ResourceName = value
                 ResourcePanelBase.SafeTextSetter(Me.IdentityLabel, Me.ResourceName)
                 ResourcePanelBase.SafeToolTipTextSetter(Me.IdentityLabel, Me.ResourceName)
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourceName))
+                Me.SafePostPropertyChanged()
             End If
             Me.Connector.SelectedResourceName = value
         End Set
@@ -287,7 +287,7 @@ Public Class ResourcePanelBase
         End Get
         Set(value As String)
             Me._ResourceTitle = value
-            Me.AsyncNotifyPropertyChanged()
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -491,7 +491,7 @@ Public Class ResourcePanelBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling Device.{e?.PropertyName} change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -542,9 +542,9 @@ Public Class ResourcePanelBase
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Open {0} Failed;. ", resourceName)
             End If
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Failed opening {0};. Details: {1}", resourceName, ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed opening {resourceName};. Details: {ex.ToFullBlownString}")
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception opening {0};. Details: {1}", resourceName, ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening {resourceName};. Details: {ex.ToFullBlownString}")
         Finally
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
         End Try
@@ -733,7 +733,7 @@ Public Class ResourcePanelBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed Event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling Connector.{e?.PropertyName} change Event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 

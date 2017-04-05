@@ -59,7 +59,7 @@ Public MustInherit Class InteractiveSubsystem
         Set(ByVal value As TimeSpan)
             If Not value.Equals(Me.InitializeTimeout) Then
                 Me._InitializeTimeout = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.InitializeTimeout))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -197,7 +197,7 @@ Public MustInherit Class InteractiveSubsystem
         Set(value As Boolean)
             If Not value.Equals(Me._ProcessExecutionStateEnabled) Then
                 Me._ProcessExecutionStateEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ProcessExecutionStateEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -215,7 +215,7 @@ Public MustInherit Class InteractiveSubsystem
             If (Value.HasValue AndAlso Not Me.ExecutionState.HasValue) OrElse
                 (Not Value.HasValue AndAlso Me.ExecutionState.HasValue) OrElse Not Value.Equals(Me.ExecutionState) Then
                 Me._ExecutionState = Value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ExecutionState))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -319,7 +319,7 @@ Public MustInherit Class InteractiveSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Nullable.Equals(value, Me.ShowErrors) Then
                 Me._showErrors = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ShowErrors))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -390,7 +390,7 @@ Public MustInherit Class InteractiveSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Nullable.Equals(value, Me.ShowErrors) Then
                 Me._showPrompts = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ShowPrompts))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

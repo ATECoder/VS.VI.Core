@@ -322,7 +322,7 @@ Public Class EG2000Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling property '{e?.PropertyName}' change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -354,7 +354,7 @@ Public Class EG2000Panel
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling property '{e?.PropertyName}' change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -392,7 +392,7 @@ Public Class EG2000Panel
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling property '{e?.PropertyName}' change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -748,8 +748,7 @@ Public Class EG2000Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling {0} property change;. Details: {1}",
-                               e?.PropertyName, ex)
+                               $"Exception handling SimpleReadWrite.{e?.PropertyName} change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 

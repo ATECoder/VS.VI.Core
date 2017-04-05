@@ -66,7 +66,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As SenseFunctionModes?)
             If Not Nullable.Equals(Me.FunctionMode, value) Then
                 Me._FunctionMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FunctionMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -108,7 +108,7 @@ Public MustInherit Class SenseSubsystemBase
         Set(ByVal value As SenseFunctionModes)
             If Not Me.SupportedFunctionModes.Equals(value) Then
                 Me._SupportedFunctionModes = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedFunctionModes))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

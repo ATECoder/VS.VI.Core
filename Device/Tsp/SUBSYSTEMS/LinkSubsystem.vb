@@ -498,11 +498,11 @@ Public MustInherit Class LinkSubsystem
             If value Is Nothing Then
                 If Me.ControllerNode IsNot Nothing Then
                     Me._controllerNode = value
-                    Me.AsyncNotifyPropertyChanged(NameOf(Me.ControllerNode))
+                    Me.SafePostPropertyChanged()
                 End If
             ElseIf Me.ControllerNode Is Nothing OrElse Not value.Equals(Me.ControllerNode) Then
                 Me._controllerNode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ControllerNode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -521,7 +521,7 @@ Public MustInherit Class LinkSubsystem
             Me.QueryControllerNodeNumber()
             Me.ControllerNode = New NodeEntity(Me.ControllerNodeNumber.Value, Me.ControllerNodeNumber.Value)
             Me.ControllerNode.InitializeKnownState(Me.Session)
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ControllerNodeModel))
+            Me.SafePostPropertyChanged(NameOf(Me.ControllerNodeModel))
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Initiated controller node #{3};. Instrument model {0} S/N={1} Firmware={2} enumerated on node.",
                                Me.ControllerNode.ModelNumber, Me.ControllerNode.SerialNumber,
@@ -544,7 +544,7 @@ Public MustInherit Class LinkSubsystem
         Set(ByVal value As Integer?)
             If Not Nullable.Equals(value, Me.ControllerNodeNumber) Then
                 Me._ControllerNodeNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ControllerNodeNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -650,7 +650,7 @@ Public MustInherit Class LinkSubsystem
                 End If
             Next
         End If
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.NodeCount))
+        Me.SafePostPropertyChanged(NameOf(Me.NodeCount))
     End Sub
 
 #End Region
@@ -669,7 +669,7 @@ Public MustInherit Class LinkSubsystem
         Set(ByVal value As Boolean)
             If value <> Me.UsingTspLink Then
                 Me._usingTspLink = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.UsingTspLink))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -687,7 +687,7 @@ Public MustInherit Class LinkSubsystem
         Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(value, Me.IsTspLinkOnline) Then
                 Me._isTspLinkOnline = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsTspLinkOnline))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -721,7 +721,7 @@ Public MustInherit Class LinkSubsystem
         Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(value, Me.IsTspLinkOffline) Then
                 Me._isTspLinkOffline = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsTspLinkOffline))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -829,7 +829,7 @@ Public MustInherit Class LinkSubsystem
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.TspLinkState) Then
                 Me._TspLinkState = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TspLinkState))
+                Me.SafePostPropertyChanged()
                 Me.IsTspLinkOnline = Me.TspLinkState.Equals(LinkSubsystem.OnlineState, StringComparison.OrdinalIgnoreCase)
                 Me.IsTspLinkOffline = Not Me.IsTspLinkOnline.Value
             End If

@@ -73,7 +73,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As FanLevel?)
             If Not Nullable.Equals(Me.FanLevel, value) Then
                 Me._FanLevel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FanLevel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

@@ -72,7 +72,7 @@ Public MustInherit Class SourceMeasureUnit
         Protected Set(ByVal value As ContactCheckSpeedMode?)
             If Not Nullable.Equals(Me.ContactCheckSpeedMode, value) Then
                 Me._ContactCheckSpeedMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ContactCheckSpeedMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -128,7 +128,7 @@ Public MustInherit Class SourceMeasureUnit
         Set(ByVal value As Integer?)
             If Not Nullable.Equals(value, Me.ContactCheckThreshold) Then
                 Me._ContactCheckThreshold = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ContactCheckThreshold))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -173,7 +173,7 @@ Public MustInherit Class SourceMeasureUnit
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.ContactResistances) Then
                 Me._contactResistances = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ContactResistances))
+                Me.SafePostPropertyChanged()
             End If
         End Set
 
@@ -204,7 +204,7 @@ Public MustInherit Class SourceMeasureUnit
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ContactCheckOkay, value) Then
                 Me._ContactCheckOkay = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ContactCheckOkay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -289,7 +289,7 @@ Public MustInherit Class SourceMeasureUnit
         Protected Set(ByVal value As SourceFunctionMode?)
             If Not Nullable.Equals(Me.SourceFunction, value) Then
                 Me._SourceFunction = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SourceFunction))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -345,7 +345,7 @@ Public MustInherit Class SourceMeasureUnit
         Protected Set(ByVal value As SenseActionMode?)
             If Not Nullable.Equals(Me.SenseMode, value) Then
                 Me._SenseMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SenseMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

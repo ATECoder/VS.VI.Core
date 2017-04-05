@@ -683,9 +683,6 @@ Public Class MovingWindowMeter
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Public Property TaskStopTimeout As TimeSpan
 
-    ''' <summary> The synchronization context that is captured from the UI thread. </summary>
-    Public ReadOnly Property CapturedSyncContext As SynchronizationContext
-
     ''' <summary> Activates the machine asynchronous task. </summary>
     ''' <remarks> David, 9/1/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>

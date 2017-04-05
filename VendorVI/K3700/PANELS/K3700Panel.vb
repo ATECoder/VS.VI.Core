@@ -47,7 +47,6 @@ Public Class K3700Panel
             ' set defaults for the messages box.
             .ResetCount = 500
             .PresetCount = 250
-            .SupportsOpenLogFolderRequest = False
             .ContainerPanel = Me._MessagesTabPage
         End With
         With Me._ServiceRequestEnableBitmaskNumeric.NumericUpDownControl
@@ -531,7 +530,7 @@ Public Class K3700Panel
                     Me._LastReadingTextBox.SafeTextSetter(value)
                 End If
             End If
-            Me.SafeInvokePropertyChanged()
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 

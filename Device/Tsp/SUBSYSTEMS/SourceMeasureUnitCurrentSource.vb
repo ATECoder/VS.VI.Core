@@ -40,7 +40,7 @@ Public Class SourceMeasureUnitCurrentSource
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -66,7 +66,7 @@ Public Class SourceMeasureUnitCurrentSource
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoRangeEnabled, value) Then
                 Me._AutoRangeEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoRangeEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -128,7 +128,7 @@ Public Class SourceMeasureUnitCurrentSource
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Level, value) Then
                 Me._Level = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Level))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -180,7 +180,7 @@ Public Class SourceMeasureUnitCurrentSource
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Range, value) Then
                 Me._Range = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Range))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -239,7 +239,7 @@ Public Class SourceMeasureUnitCurrentSource
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.VoltageLimit, value) Then
                 Me._VoltageLimit = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.VoltageLimit))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

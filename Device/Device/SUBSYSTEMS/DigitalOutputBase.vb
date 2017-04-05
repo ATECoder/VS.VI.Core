@@ -86,7 +86,7 @@ Public MustInherit Class DigitalOutputBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoClearEnabled, value) Then
                 Me._AutoClearEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoClearEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -139,7 +139,7 @@ Public MustInherit Class DigitalOutputBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.BitSize, value) Then
                 Me._BitSize = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.BitSize))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -200,7 +200,7 @@ Public MustInherit Class DigitalOutputBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Nullable.Equals(Me.Delay, value) Then
                 Me._Delay = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Delay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -257,7 +257,7 @@ Public MustInherit Class DigitalOutputBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.Level, value) Then
                 Me._Level = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Level))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -312,7 +312,7 @@ Public MustInherit Class DigitalOutputBase
         Protected Set(ByVal value As OutputMode?)
             If Not Me.OutputMode.Equals(value) Then
                 Me._OutputMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OutputMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -367,7 +367,7 @@ Public MustInherit Class DigitalOutputBase
         Protected Set(ByVal value As OutputSignalPolarity?)
             If Not Me.OutputSignalPolarity.Equals(value) Then
                 Me._OutputSignalPolarity = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OutputSignalPolarity))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

@@ -62,7 +62,7 @@ Public MustInherit Class TraceSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.PointsCount, value) Then
                 Me._PointsCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.PointsCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -123,7 +123,7 @@ Public MustInherit Class TraceSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.ActualPointCount, value) Then
                 Me._ActualPointCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ActualPointCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -160,7 +160,7 @@ Public MustInherit Class TraceSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.FirstPointNumber, value) Then
                 Me._FirstPointNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FirstPointNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -197,7 +197,7 @@ Public MustInherit Class TraceSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.LastPointNumber, value) Then
                 Me._LastPointNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LastPointNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -231,7 +231,7 @@ Public MustInherit Class TraceSubsystemBase
         Protected Set(ByVal value As String)
             If Not Nullable.Equals(Me.Data, value) Then
                 Me._Data = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

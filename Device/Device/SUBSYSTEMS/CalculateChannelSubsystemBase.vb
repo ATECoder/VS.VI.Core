@@ -45,7 +45,7 @@ Public MustInherit Class CalculateChannelSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.TraceCount, value) Then
                 Me._TraceCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TraceCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -135,7 +135,7 @@ Public MustInherit Class CalculateChannelSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.AverageCount, value) Then
                 Me._AverageCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AverageCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -193,7 +193,7 @@ Public MustInherit Class CalculateChannelSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AveragingEnabled, value) Then
                 Me._AveragingEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AveragingEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

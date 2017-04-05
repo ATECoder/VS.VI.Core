@@ -329,7 +329,7 @@ Partial Public Class SessionBase
             Me.OperationAvailable = (value And Me.OperationAvailableBits) <> 0
             Me.QuestionableAvailable = (value And Me.QuestionableAvailableBits) <> 0
             Me.StandardEventAvailable = (value And Me.StandardEventAvailableBits) <> 0
-            If isNewValue Then Me.SyncNotifyPropertyChanged(NameOf(Me.ServiceRequestStatus))
+            If isNewValue Then Me.SafeSendPropertyChanged(NameOf(Me.ServiceRequestStatus))
         End Set
     End Property
 

@@ -72,7 +72,7 @@ Public MustInherit Class ContactCheckLimitBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.FailureBits, value) Then
                 Me._FailureBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FailureBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

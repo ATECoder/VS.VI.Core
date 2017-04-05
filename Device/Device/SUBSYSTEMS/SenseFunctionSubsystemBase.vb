@@ -48,7 +48,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AverageEnabled, value) Then
                 Me._AverageEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AverageEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -105,7 +105,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.AverageCount, value) Then
                 Me._AverageCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AverageCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -157,7 +157,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Protected Set(ByVal value As AverageFilterType?)
             If Not Me.AverageFilterType.Equals(value) Then
                 Me._AverageFilterType = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AverageFilterType))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -213,7 +213,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.AveragePercentWindow, value) Then
                 Me._AveragePercentWindow = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AveragePercentWindow))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -267,7 +267,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoRangeEnabled, value) Then
                 Me._AutoRangeEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoRangeEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -323,7 +323,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoZeroEnabled, value) Then
                 Me._AutoZeroEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoZeroEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -379,7 +379,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Nullable.Equals(Me.Delay, value) Then
                 Me._Delay = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Delay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -439,7 +439,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.OpenLeadDetectorEnabled, value) Then
                 Me._OpenLeadDetectorEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OpenLeadDetectorEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -511,7 +511,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.PowerLineCycles, value) Then
                 Me._PowerLineCycles = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.PowerLineCycles))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -569,7 +569,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Range, value) Then
                 Me._Range = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Range))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

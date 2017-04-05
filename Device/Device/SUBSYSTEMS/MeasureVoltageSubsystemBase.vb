@@ -74,7 +74,7 @@ Public MustInherit Class MeasureVoltageSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Level, value) Then
                 Me._Level = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Level))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

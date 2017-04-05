@@ -169,8 +169,6 @@ Partial Public Class MovingWindowMeter
         Me.ReportProgressChanged(ma, us.PercentProgress, us.Result)
     End Sub
 
-    ''' <summary> Stops measure asynchronous if. </summary>
-
     ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>

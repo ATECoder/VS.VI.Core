@@ -48,7 +48,7 @@ Public MustInherit Class Calculate2SubsystemBase
         Protected Set(ByVal value As FeedSource?)
             If Not Me.FeedSource.Equals(value) Then
                 Me._FeedSource = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FeedSource))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

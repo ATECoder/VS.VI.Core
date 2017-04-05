@@ -73,7 +73,7 @@ Public MustInherit Class ComplianceLimitBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.FailureBits, value) Then
                 Me._FailureBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FailureBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -131,7 +131,7 @@ Public MustInherit Class ComplianceLimitBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.IncomplianceCondition, value) Then
                 Me._IncomplianceCondition = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IncomplianceCondition))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

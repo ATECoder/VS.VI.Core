@@ -69,7 +69,7 @@ Public Class BinningInfo
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafeSendPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -91,7 +91,7 @@ Public Class BinningInfo
         Set(ByVal value As ArmSources)
             If Not Me.ArmSource.Equals(value) Then
                 Me._ArmSource = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmSource))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -110,7 +110,7 @@ Public Class BinningInfo
         Set(ByVal value As Integer)
             If Not Nullable.Equals(Me.ArmCount, value) Then
                 Me._ArmCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -132,7 +132,7 @@ Public Class BinningInfo
         Set(ByVal value As Direction)
             If Not Me.ArmDirection.Equals(value) Then
                 Me._ArmDirection = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ArmDirection))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -154,7 +154,7 @@ Public Class BinningInfo
         Set(ByVal value As Boolean)
             If Me.Enabled <> value Then
                 Me._Enabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Enabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -175,7 +175,7 @@ Public Class BinningInfo
         Set(ByVal value As Integer)
             If Me.FailureBits <> value Then
                 Me._FailureBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FailureBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -196,7 +196,7 @@ Public Class BinningInfo
         Set(ByVal value As Integer)
             If Not Nullable.Equals(Me.InputLineNumber, value) Then
                 Me._InputLineNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.InputLineNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -218,7 +218,7 @@ Public Class BinningInfo
         Set(ByVal value As Boolean?)
             If Not Boolean.Equals(Me.LimitFailed, value) Then
                 Me._LimitFailed = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LimitFailed))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -239,7 +239,7 @@ Public Class BinningInfo
         Set(ByVal value As Double)
             If Me.LowerLimit <> value Then
                 Me._LowerLimit = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LowerLimit))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -260,7 +260,7 @@ Public Class BinningInfo
         Set(ByVal value As Integer)
             If Me.LowerLimitFailureBits <> value Then
                 Me._LowerLimitFailureBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LowerLimitFailureBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -281,7 +281,7 @@ Public Class BinningInfo
         Set(ByVal value As Integer)
             If Not Nullable.Equals(Me.OutputLineNumber, value) Then
                 Me._OutputLineNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OutputLineNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -302,7 +302,7 @@ Public Class BinningInfo
         Set(ByVal value As Integer)
             If Me.PassBits <> value Then
                 Me._PassBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.PassBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -323,7 +323,7 @@ Public Class BinningInfo
         Set(ByVal value As TimeSpan)
             If Me.StrobePulseWidth <> value Then
                 Me._StrobePulseWidth = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.StrobePulseWidth))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -345,7 +345,7 @@ Public Class BinningInfo
         Set(ByVal value As TriggerSources)
             If Not Me.TriggerSource.Equals(value) Then
                 Me._TriggerSource = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerSource))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -367,7 +367,7 @@ Public Class BinningInfo
         Set(ByVal value As Direction)
             If Not Me.TriggerDirection.Equals(value) Then
                 Me._TriggerDirection = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerDirection))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -388,7 +388,7 @@ Public Class BinningInfo
         Set(ByVal value As Double)
             If Me.UpperLimit <> value Then
                 Me._UpperLimit = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.UpperLimit))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -409,7 +409,7 @@ Public Class BinningInfo
         Set(ByVal value As Integer)
             If Me.UpperLimitFailureBits <> value Then
                 Me._UpperLimitFailureBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.UpperLimitFailureBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

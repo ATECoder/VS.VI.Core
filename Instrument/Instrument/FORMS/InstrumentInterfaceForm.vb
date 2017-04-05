@@ -411,7 +411,7 @@ Public Class InstrumentInterfaceForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling InterfacePanel.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
 
         End Try
     End Sub

@@ -42,7 +42,7 @@ Public MustInherit Class SourceChannelSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoClearEnabled, value) Then
                 Me._AutoClearEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoClearEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -96,7 +96,7 @@ Public MustInherit Class SourceChannelSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoDelayEnabled, value) Then
                 Me._AutoDelayEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoDelayEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -162,7 +162,7 @@ Public MustInherit Class SourceChannelSubsystemBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Nullable.Equals(Me.Delay, value) Then
                 Me._Delay = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Delay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -221,7 +221,7 @@ Public MustInherit Class SourceChannelSubsystemBase
         Set(ByVal value As SourceFunctionModes)
             If Not Me.SupportedFunctionModes.Equals(value) Then
                 Me._SupportedFunctionModes = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedFunctionModes))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -286,7 +286,7 @@ Public MustInherit Class SourceChannelSubsystemBase
                 Else
                     Me._FunctionCode = ""
                 End If
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FunctionMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -360,7 +360,7 @@ Public MustInherit Class SourceChannelSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Level, value) Then
                 Me._Level = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Level))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -413,7 +413,7 @@ Public MustInherit Class SourceChannelSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.SweepPoints, value) Then
                 Me._SweepPoint = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SweepPoints))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

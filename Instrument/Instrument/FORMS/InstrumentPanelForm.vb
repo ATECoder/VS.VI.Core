@@ -204,7 +204,7 @@ Public Class InstrumentPanelForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed handling property {0} change;. Details: {1}", e?.PropertyName, ex)
+                               $"Exception handling IntstrumentPanel.{e?.PropertyName} change event;. Details: {ex.ToFullBlownString}")
 
 
         End Try
@@ -278,7 +278,7 @@ Public Class InstrumentPanelForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed handling property {0} change;. Details: {1}", e?.PropertyName, ex)
+                               $"Exception handling PropertyNotifyControl.{e?.PropertyName} change event;. Details: {ex.ToFullBlownString}")
 
         End Try
     End Sub
@@ -351,7 +351,7 @@ Public Class InstrumentPanelForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed handling property {0} change;. Details: {1}", e?.PropertyName, ex)
+                               $"Exception handling TalkerControl.{e?.PropertyName} change event;. Details: {ex.ToFullBlownString}")
 
         End Try
     End Sub

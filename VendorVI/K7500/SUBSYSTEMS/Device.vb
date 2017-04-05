@@ -93,7 +93,7 @@ Public Class Device
         Me.Subsystems.Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -110,6 +110,7 @@ Public Class Device
         If e?.Cancel Then Return
         If Me._FormatSubsystem IsNot Nothing Then RemoveHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
         If Me._StatusSubsystem IsNot Nothing Then RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
+        If Me._SenseSubsystem IsNot Nothing Then AddHandler Me.SenseSubsystem.PropertyChanged, AddressOf Me.SenseSubsystemPropertyChanged
         Me.Subsystems.DisposeItems()
     End Sub
 
@@ -148,6 +149,7 @@ Public Class Device
 
         Me._SenseSubsystem = New SenseSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.SenseSubsystem)
+        AddHandler Me.SenseSubsystem.PropertyChanged, AddressOf Me.SenseSubsystemPropertyChanged
 
         Me._SenseVoltageSubsystem = New SenseVoltageSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.SenseVoltageSubsystem)
@@ -244,12 +246,117 @@ Public Class Device
         Try
             Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling format subsystem {1} property change;. Details: {2}.",
-                               Me.ResourceName, e.PropertyName, ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                              $"{Me.ResourceTitle} exception handling FORMAT.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
+
+#End Region
+
+#Region " SENSE "
+
+    ''' <summary> Executes the function modes changed action. </summary>
+    ''' <remarks> David, 4/4/2017. </remarks>
+    ''' <param name="value"> The value. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Sub onFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
+        With value
+            .QueryRange()
+            .QueryAutoRangeEnabled()
+            .QueryAutoZeroEnabled()
+            .QueryPowerLineCycles()
+        End With
+    End Sub
+
+    ''' <summary> Gets the selected sense subsystem. </summary>
+    ''' <value> The selected sense subsystem. </value>
+    Public ReadOnly Property SelectedSenseSubsystem() As SenseFunctionSubsystemBase
+        Get
+            Return Me.SelectSenseSubsystem(Me.SenseSubsystem.FunctionMode.GetValueOrDefault(VI.Scpi.SenseFunctionModes.VoltageDC))
+        End Get
+    End Property
+
+    ''' <summary> Select sense subsystem. </summary>
+    ''' <remarks> David, 4/4/2017. </remarks>
+    ''' <param name="value"> The value. </param>
+    ''' <returns> A SenseFunctionSubsystemBase. </returns>
+    Public Function SelectSenseSubsystem(ByVal value As VI.Scpi.SenseFunctionModes) As SenseFunctionSubsystemBase
+        Dim result As SenseFunctionSubsystemBase = Me.SenseVoltageSubsystem
+        Select Case value
+            Case VI.Scpi.SenseFunctionModes.CurrentDC
+                result = Me.SenseCurrentSubsystem
+            Case VI.Scpi.SenseFunctionModes.VoltageDC
+                result = Me.SenseVoltageSubsystem
+            Case VI.Scpi.SenseFunctionModes.Resistance
+                result = Me.SenseResistanceSubsystem
+            Case VI.Scpi.SenseFunctionModes.FourWireResistance
+                result = Me.SenseFourWireResistanceSubsystem
+            Case Else
+        End Select
+        Return result
+    End Function
+
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")>
+    Public Function SelectSenseSubsystem(ByVal subsystem As SenseSubsystem) As SenseFunctionSubsystemBase
+        If subsystem Is Nothing Then Throw New ArgumentNullException(NameOf(subsystem))
+        Dim value As VI.Scpi.SenseFunctionModes = subsystem.FunctionMode.GetValueOrDefault(VI.Scpi.SenseFunctionModes.VoltageDC)
+        Return Me.SelectSenseSubsystem(value)
+    End Function
+
+    ''' <summary> Parse measurement unit. </summary>
+    ''' <remarks> David, 4/4/2017. </remarks>
+    ''' <param name="subsystem"> The subsystem. </param>
+    Public Sub ParseMeasurementUnit(ByVal subsystem As SenseSubsystem)
+        If subsystem IsNot Nothing AndAlso subsystem.FunctionMode.HasValue Then
+            Dim value As VI.Scpi.SenseFunctionModes = subsystem.FunctionMode.GetValueOrDefault(VI.Scpi.SenseFunctionModes.None)
+            If value <> VI.Scpi.SenseFunctionModes.None Then
+                If Not VI.Scpi.SenseSubsystemBase.TryParse(value, Me.MeasureSubsystem.Readings.Reading.Unit) Then
+                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                                       $"Failed parsing function mode '{value}' to a standard unit.")
+                    Me.MeasureSubsystem.Readings.Reading.Unit = Arebis.StandardUnits.ElectricUnits.Volt
+                End If
+                subsystem.Readings.Reading.Unit = Me.MeasureSubsystem.Readings.Reading.Unit
+            End If
+        End If
+    End Sub
+
+    ''' <summary> Handles the function modes changed action. </summary>
+    ''' <param name="subsystem"> The subsystem. </param>
+    Private Sub onFunctionModesChanged(ByVal subsystem As SenseSubsystem)
+        If subsystem IsNot Nothing AndAlso subsystem.FunctionMode.HasValue Then
+            Me.ParseMeasurementUnit(subsystem)
+            Me.onFunctionModesChanged(Me.SelectSenseSubsystem(subsystem))
+        End If
+    End Sub
+
+    ''' <summary> Handle the Sense subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseSubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
+        ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
+        Select Case propertyName
+            Case NameOf(subsystem.FunctionMode)
+                Me.onFunctionModesChanged(subsystem)
+        End Select
+    End Sub
+
+    ''' <summary> Sense subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SenseSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As SenseSubsystem = TryCast(sender, SenseSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                              $"{Me.ResourceTitle} exception handling SenseSubsystem.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
+        End Try
+    End Sub
 
 #End Region
 
@@ -271,9 +378,8 @@ Public Class Device
         Try
             Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Status subsystem {1} property change;. Details: {2}.",
-                               Me.ResourceName, e.PropertyName, ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                              $"{Me.ResourceTitle} exception handling STATUS.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 

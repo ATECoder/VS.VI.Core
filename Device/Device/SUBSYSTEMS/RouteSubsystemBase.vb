@@ -47,7 +47,7 @@ Public MustInherit Class RouteSubsystemBase
         Protected Set(ByVal value As String)
             If Not String.Equals(value, Me.ClosedChannel) Then
                 Me._ClosedChannel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ClosedChannel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -136,7 +136,7 @@ Public MustInherit Class RouteSubsystemBase
         Protected Set(ByVal value As String)
             If Not String.Equals(value, Me.ClosedChannels) Then
                 Me._ClosedChannels = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ClosedChannels))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -200,7 +200,7 @@ Public MustInherit Class RouteSubsystemBase
         Protected Set(ByVal value As String)
             If Not String.Equals(value, Me.OpenChannels) Then
                 Me._OpenChannels = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OpenChannels))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -371,7 +371,7 @@ Public MustInherit Class RouteSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.ScanList) Then
                 Me._ScanList = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ScanList))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -564,7 +564,7 @@ Public MustInherit Class RouteSubsystemBase
         Protected Set(ByVal value As RouteTerminalsMode?)
             If Not Nullable.Equals(Me.TerminalsMode, value) Then
                 Me._TerminalsMode = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

@@ -81,7 +81,7 @@ Public MustInherit Class Calculate2SubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Limit1Enabled, value) Then
                 Me._Limit1Enabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Limit1Enabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -138,7 +138,7 @@ Public MustInherit Class Calculate2SubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Limit1LowerLevel, value) Then
                 Me._Limit1LowerLevel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Limit1LowerLevel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -193,7 +193,7 @@ Public MustInherit Class Calculate2SubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Limit1UpperLevel, value) Then
                 Me._Limit1UpperLevel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Limit1UpperLevel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -247,7 +247,7 @@ Public MustInherit Class Calculate2SubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Limit1AutoClear, value) Then
                 Me._Limit1AutoClear = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Limit1AutoClear))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -307,7 +307,7 @@ Public MustInherit Class Calculate2SubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Limit2Enabled, value) Then
                 Me._Limit2Enabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Limit2Enabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -364,7 +364,7 @@ Public MustInherit Class Calculate2SubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Limit2LowerLevel, value) Then
                 Me._Limit2LowerLevel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Limit2LowerLevel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -419,7 +419,7 @@ Public MustInherit Class Calculate2SubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Limit2UpperLevel, value) Then
                 Me._Limit2UpperLevel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Limit2UpperLevel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -473,7 +473,7 @@ Public MustInherit Class Calculate2SubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Limit2AutoClear, value) Then
                 Me._Limit2AutoClear = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Limit2AutoClear))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

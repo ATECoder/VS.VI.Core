@@ -78,7 +78,7 @@ Public MustInherit Class ChannelMarkerSubsystemBase
         End Get
         Protected Set(ByVal value As Boolean)
             Me._MeasurementAvailable = value
-            Me.SyncNotifyPropertyChanged(NameOf(Me.MeasurementAvailable))
+            Me.SafeSendPropertyChanged()
         End Set
     End Property
 
@@ -99,7 +99,7 @@ Public MustInherit Class ChannelMarkerSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Abscissa, value) Then
                 Me._Abscissa = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Abscissa))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -152,7 +152,7 @@ Public MustInherit Class ChannelMarkerSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Enabled, value) Then
                 Me._Enabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Enabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

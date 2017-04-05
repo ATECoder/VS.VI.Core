@@ -76,7 +76,7 @@ Public MustInherit Class UpperLowerLimitBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.PassBits, value) Then
                 Me._PassBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.PassBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -133,7 +133,7 @@ Public MustInherit Class UpperLowerLimitBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.LowerLimit, value) Then
                 Me._LowerLimit = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LowerLimit))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -185,7 +185,7 @@ Public MustInherit Class UpperLowerLimitBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.LowerLimitFailureBits, value) Then
                 Me._LowerLimitFailureBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LowerLimitFailureBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -237,7 +237,7 @@ Public MustInherit Class UpperLowerLimitBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.UpperLimit, value) Then
                 Me._UpperLimit = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.UpperLimit))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -289,7 +289,7 @@ Public MustInherit Class UpperLowerLimitBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.UpperLimitFailureBits, value) Then
                 Me._UpperLimitFailureBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.UpperLimitFailureBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

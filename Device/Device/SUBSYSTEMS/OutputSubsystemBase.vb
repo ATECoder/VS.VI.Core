@@ -47,7 +47,7 @@ Public MustInherit Class OutputSubsystemBase
         Protected Set(ByVal value As OutputOffMode?)
             If Not Nullable.Equals(Me.OffMode, value) Then
                 Me._OffMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OffMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -87,7 +87,7 @@ Public MustInherit Class OutputSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.OutputOnState, value) Then
                 Me._OutputOnState = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OutputOnState))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -126,7 +126,7 @@ Public MustInherit Class OutputSubsystemBase
         Protected Set(ByVal value As OutputTerminalsMode?)
             If Not Nullable.Equals(Me.TerminalsMode, value) Then
                 Me._TerminalsMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TerminalsMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

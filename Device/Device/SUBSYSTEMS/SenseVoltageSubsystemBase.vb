@@ -51,7 +51,7 @@ Public MustInherit Class SenseVoltageSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.ProtectionLevel, value) Then
                 Me._ProtectionLevel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ProtectionLevel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -110,7 +110,7 @@ Public MustInherit Class SenseVoltageSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ProtectionEnabled, value) Then
                 Me._ProtectionEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ProtectionEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

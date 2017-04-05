@@ -53,7 +53,7 @@ Public MustInherit Class ChannelSubsystemBase
         Protected Set(ByVal value As String)
             If Not String.Equals(value, Me.ClosedChannels) Then
                 Me._ClosedChannels = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ClosedChannels))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

@@ -274,7 +274,7 @@ Public MustInherit Class SessionBase
         Set(value As Boolean)
             If value <> Me.SyncNotifyLastMessageReceivedEnabled Then
                 Me._SyncNotifyLastMessageReceivedEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.SyncNotifyLastMessageReceivedEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -290,7 +290,7 @@ Public MustInherit Class SessionBase
         Set(value As Boolean)
             If Not value.Equals(Me.SessionMessagesTraceEnabled) Then
                 Me._SessionMessagesTraceEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.SessionMessagesTraceEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -308,9 +308,9 @@ Public MustInherit Class SessionBase
             Me._LastMessageReceived = value
             If Me.SessionMessagesTraceEnabled Then
                 If Me.SyncNotifyLastMessageReceivedEnabled Then
-                    Me.SyncNotifyPropertyChanged(NameOf(Me.LastMessageReceived))
+                    Me.SafeSendPropertyChanged()
                 Else
-                    Me.SafePostPropertyChanged(NameOf(Me.LastMessageReceived))
+                    Me.SafePostPropertyChanged()
                 End If
             End If
         End Set
@@ -327,7 +327,7 @@ Public MustInherit Class SessionBase
         Protected Set(ByVal value As String)
             Me._LastMessageSent = value
             If Me.SessionMessagesTraceEnabled Then
-                Me.SafePostPropertyChanged(NameOf(Me.LastMessageSent))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

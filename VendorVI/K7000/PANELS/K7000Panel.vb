@@ -271,7 +271,7 @@ Public Class K7000Panel
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling Route Subsystem property changed Event;. Failed property {0}. Details: {1}",
-                               e.PropertyName, ex)
+                               e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -317,7 +317,7 @@ Public Class K7000Panel
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling property '{e?.PropertyName}' change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -355,7 +355,7 @@ Public Class K7000Panel
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling property '{e?.PropertyName}' change;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -388,7 +388,7 @@ Public Class K7000Panel
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling Trigger Subsystem property changed Event;. Failed property {0}. Details: {1}",
-                               e.PropertyName, ex)
+                               e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -1181,7 +1181,7 @@ Public Class K7000Panel
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling {0} property change;. Details: {1}",
-                               e?.PropertyName, ex)
+                               e?.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

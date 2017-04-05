@@ -118,7 +118,7 @@ Public MustInherit Class DeviceBase
         Set(ByVal value As TimeSpan)
             If Not value.Equals(Me.InitializeTimeout) Then
                 Me._InitializeTimeout = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.InitializeTimeout))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -169,7 +169,7 @@ Public MustInherit Class DeviceBase
         Set(value As TimeSpan)
             If Not value.Equals(Me.DeviceClearRefractoryPeriod) Then
                 Me._DeviceClearRefractoryPeriod = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -184,7 +184,7 @@ Public MustInherit Class DeviceBase
         Set(value As TimeSpan)
             If Not value.Equals(Me.ResetRefractoryPeriod) Then
                 Me._ResetRefractoryPeriod = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -199,7 +199,7 @@ Public MustInherit Class DeviceBase
         Set(value As TimeSpan)
             If Not value.Equals(Me.DeviceClearRefractoryPeriod) Then
                 Me._InitRefractoryPeriod = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -214,7 +214,7 @@ Public MustInherit Class DeviceBase
         Set(value As TimeSpan)
             If Not value.Equals(Me.ClearRefractoryPeriod) Then
                 Me._ClearRefractoryPeriod = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -283,6 +283,15 @@ Public MustInherit Class DeviceBase
 
 #Region " SESSION "
 
+    ''' <summary> Capture synchronization context. </summary>
+    ''' <remarks> David, 4/3/2017. </remarks>
+    ''' <param name="syncContext"> Context for the synchronization. </param>
+    Public Overrides Sub CaptureSyncContext(ByVal syncContext As Threading.SynchronizationContext)
+        MyBase.CaptureSyncContext(syncContext)
+        Me.Session?.CaptureSyncContext(syncContext)
+        Me.Subsystems?.CaptureSyncContext(syncContext)
+    End Sub
+
     ''' <summary> true if this object is session owner. </summary>
     Private _IsSessionOwner As Boolean
 
@@ -316,7 +325,7 @@ Public MustInherit Class DeviceBase
             Me.OnPropertyChanged(TryCast(sender, SessionBase), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               $"Exception handling property Session.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -344,7 +353,7 @@ Public MustInherit Class DeviceBase
         Set(value As String)
             If Not String.Equals(Me.ResourceTitle, value) Then
                 Me._ResourceTitle = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
             If Me.Session IsNot Nothing Then Me.Session.ResourceTitle = value
         End Set
@@ -363,7 +372,7 @@ Public MustInherit Class DeviceBase
         Set(ByVal value As String)
             If Not String.Equals(Me.ResourceName, value) Then
                 Me._ResourceName = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -408,7 +417,7 @@ Public MustInherit Class DeviceBase
         Set(ByVal value As Boolean)
             If Not Me.IsInitialized.Equals(value) Then
                 Me._IsInitialized = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsInitialized))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    $"{Me.ResourceTitle} {IIf(Me.IsInitialized, "initialized", "not ready")};. ")
@@ -427,7 +436,7 @@ Public MustInherit Class DeviceBase
         Set(ByVal value As Boolean)
             If Me.Enabled <> value Then
                 Me.Session.Enabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Enabled))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    $"{Me.ResourceTitle} {IIf(Me.Enabled, "enabled", "disabled")};. ")
@@ -470,7 +479,11 @@ Public MustInherit Class DeviceBase
     ''' to add subsystems to this device.
     ''' </remarks>
     Protected Overridable Sub OnOpened()
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDeviceOpen))
+
+        Me.Session?.CaptureSyncContext(Me.CapturedSyncContext)
+        Me.Subsystems?.CaptureSyncContext(Me.CapturedSyncContext)
+
+        Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
         ' 2016/01/18: this was done before adding listeners, which was useful when using the device
         ' as a class in a 'meter'. As a result, the actions taken when handling the Opened event, 
         ' such as Reset and Initialize do not get reported. 
@@ -589,7 +602,7 @@ Public MustInherit Class DeviceBase
     ''' <remarks> This override should occur as the last call of the overriding method. </remarks>
     Protected Overridable Sub OnClosed()
         Me.ResumePublishing()
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDeviceOpen))
+        Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
         Me.SyncNotifyClosed(System.EventArgs.Empty)
     End Sub
 
@@ -719,7 +732,7 @@ Public MustInherit Class DeviceBase
         Set(value As Boolean)
             If value <> Me.UsingSyncServiceRequestHandler Then
                 Me._UsingSyncServiceRequestHandler = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.UsingSyncServiceRequestHandler))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -862,25 +875,6 @@ Public MustInherit Class DeviceBase
         Next
     End Sub
 
-#Region " INVOKE "
-
-    ''' <summary> Synchronously Invokes the <see cref="ServiceRequested">Service Requested Event</see>. Must
-    ''' be called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="e"> The <see cref="EventArgs" /> instance containing the event data. </param>
-    Private Sub InvokeServiceRequested(ByVal e As EventArgs)
-        Dim evt As EventHandler(Of EventArgs) = Me.ServiceRequestedEvent
-        evt?.Invoke(Me, e)
-    End Sub
-
-    ''' <summary> Synchronously Invokes the <see cref="ServiceRequested">Service Requested Event</see>. Must
-    ''' be called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="obj"> The object. </param>
-    Private Sub InvokeServiceRequested(ByVal obj As Object)
-        Me.InvokeServiceRequested(CType(obj, EventArgs))
-    End Sub
-
-#End Region
-
 #Region " EVENT HANDLERS "
 
     ''' <summary> Synchronously handles the Service Request event of the <see cref="Session">session</see> control. </summary>
@@ -891,21 +885,9 @@ Public MustInherit Class DeviceBase
         Me.ApplyCapturedSyncContext()
         Me.TryProcessServiceRequest()
         If Me.UsingSyncServiceRequestHandler Then
-            If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
-                ' Even though the current sync context is nothing, one of the targets might 
-                ' still require invocation. Therefore, save invoke is implemented.
-                Me.ServiceRequestedEvent.SafeInvoke(Me, e)
-            Else
-                SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf InvokeServiceRequested), e)
-            End If
+            Me.SafeSendPropertyChanged()
         Else
-            If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
-                ' Even though the current sync context is nothing, one of the targets might 
-                ' still require invocation. Therefore, save invoke is implemented.
-                Me.ServiceRequestedEvent.SafeBeginInvoke(Me, e)
-            Else
-                SynchronizationContext.Current.Post(New SendOrPostCallback(AddressOf InvokeServiceRequested), e)
-            End If
+            Me.SafePostPropertyChanged()
         End If
     End Sub
 
@@ -939,33 +921,8 @@ Public MustInherit Class DeviceBase
     ''' invokes the <see cref="Opening">Opening Event</see>. </summary>
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing the event data. </param>
     Private Sub SyncNotifyOpening(ByVal e As ComponentModel.CancelEventArgs)
-        If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
-            ' Even though the current sync context is nothing, one of the targets might 
-            ' still require invocation. Therefore, save invoke is implemented.
-            Me.OpeningEvent.SafeInvoke(Me, e)
-        Else
-            SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeOpening), e)
-        End If
+        Me.OpeningEvent.SafeSend(Me, e)
     End Sub
-
-#Region " INVOKE "
-
-    ''' <summary> Synchronously Invokes the <see cref="Opening">Opening Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
-    ''' the event data. </param>
-    Private Sub InvokeOpening(ByVal e As ComponentModel.CancelEventArgs)
-        Me.OpeningEvent.UnsafeInvoke(Me, e)
-    End Sub
-
-    ''' <summary> Synchronously Invokes the <see cref="Opening">Opening Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="obj"> The object. </param>
-    Private Sub InvokeOpening(ByVal obj As Object)
-        Me.InvokeOpening(CType(obj, ComponentModel.CancelEventArgs))
-    End Sub
-
-#End Region
 
 #End Region
 
@@ -992,33 +949,8 @@ Public MustInherit Class DeviceBase
     ''' invokes the <see cref="Opened">Opened Event</see>. </summary>
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing the event data. </param>
     Protected Overridable Sub SyncNotifyOpened(ByVal e As System.EventArgs)
-        If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
-            ' Even though the current sync context is nothing, one of the targets might 
-            ' still require invocation. Therefore, save invoke is implemented.
-            Me.OpenedEvent.SafeInvoke(Me)
-        Else
-            SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeOpened), e)
-        End If
+        Me.OpenedEvent.SafeSend(Me, e)
     End Sub
-
-#Region " INVOKE "
-
-    ''' <summary> Synchronously Invokes the <see cref="Opened">Opened Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
-    ''' the event data. </param>
-    Private Sub InvokeOpened(ByVal e As System.EventArgs)
-        Me.OpenedEvent.UnsafeInvoke(Me, e)
-    End Sub
-
-    ''' <summary> Synchronously Invokes the <see cref="Opened">Opened Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="obj"> The object. </param>
-    Private Sub InvokeOpened(ByVal obj As Object)
-        Me.InvokeOpened(CType(obj, System.EventArgs))
-    End Sub
-
-#End Region
 
 #End Region
 
@@ -1045,33 +977,8 @@ Public MustInherit Class DeviceBase
     ''' invokes the <see cref="Closing">Closing Event</see>. </summary>
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing the event data. </param>
     Private Sub SyncNotifyClosing(ByVal e As System.ComponentModel.CancelEventArgs)
-        If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
-            ' Even though the current sync context is nothing, one of the targets might 
-            ' still require invocation. Therefore, save invoke is implemented.
-            Me.ClosingEvent.SafeInvoke(Me, e)
-        Else
-            SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeClosing), e)
-        End If
+        Me.ClosingEvent.SafeSend(Me, e)
     End Sub
-
-#Region " INVOKE "
-
-    ''' <summary> Synchronously Invokes the <see cref="Closing">Closing Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
-    ''' the event data. </param>
-    Private Sub InvokeClosing(ByVal e As System.ComponentModel.CancelEventArgs)
-        Me.ClosingEvent.UnsafeInvoke(Me, e)
-    End Sub
-
-    ''' <summary> Synchronously Invokes the <see cref="Closing">Closing Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="obj"> The object. </param>
-    Private Sub InvokeClosing(ByVal obj As Object)
-        Me.InvokeClosing(CType(obj, System.ComponentModel.CancelEventArgs))
-    End Sub
-
-#End Region
 
 #End Region
 
@@ -1098,33 +1005,8 @@ Public MustInherit Class DeviceBase
     ''' invokes the <see cref="Closed">Closed Event</see>. </summary>
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing the event data. </param>
     Private Sub SyncNotifyClosed(ByVal e As System.EventArgs)
-        If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
-            ' Even though the current sync context is nothing, one of the targets might 
-            ' still require invocation. Therefore, save invoke is implemented.
-            Me.ClosedEvent.SafeInvoke(Me, e)
-        Else
-            SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeClosed), e)
-        End If
+        Me.ClosedEvent.SafeSend(Me, e)
     End Sub
-
-#Region " INVOKE "
-
-    ''' <summary> Synchronously Invokes the <see cref="Closed">Closed Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
-    ''' the event data. </param>
-    Private Sub InvokeClosed(ByVal e As System.EventArgs)
-        Me.ClosedEvent.UnsafeInvoke(Me, e)
-    End Sub
-
-    ''' <summary> Synchronously Invokes the <see cref="Closed">Closed Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="obj"> The object. </param>
-    Private Sub InvokeClosed(ByVal obj As Object)
-        Me.InvokeClosed(CType(obj, System.EventArgs))
-    End Sub
-
-#End Region
 
 #End Region
 
@@ -1151,33 +1033,8 @@ Public MustInherit Class DeviceBase
     ''' invokes the <see cref="Initializing">Initializing Event</see>. </summary>
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing the event data. </param>
     Private Sub SyncNotifyInitializing(ByVal e As System.ComponentModel.CancelEventArgs)
-        If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
-            ' Even though the current sync context is nothing, one of the targets might 
-            ' still require invocation. Therefore, save invoke is implemented.
-            Me.InitializingEvent.SafeInvoke(Me, e)
-        Else
-            SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeInitializing), e)
-        End If
+        Me.InitializingEvent.SafeSend(Me, e)
     End Sub
-
-#Region " INVOKE "
-
-    ''' <summary> Synchronously Invokes the <see cref="Initializing">Initializing Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
-    ''' the event data. </param>
-    Private Sub InvokeInitializing(ByVal e As System.ComponentModel.CancelEventArgs)
-        Me.InitializingEvent.UnsafeInvoke(Me, e)
-    End Sub
-
-    ''' <summary> Synchronously Invokes the <see cref="Initializing">Initializing Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="obj"> The object. </param>
-    Private Sub InvokeInitializing(ByVal obj As Object)
-        Me.InvokeInitializing(CType(obj, System.ComponentModel.CancelEventArgs))
-    End Sub
-
-#End Region
 
 #End Region
 
@@ -1204,33 +1061,8 @@ Public MustInherit Class DeviceBase
     ''' invokes the <see cref="Initialized">Initialized Event</see>. </summary>
     ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing the event data. </param>
     Private Sub SyncNotifyInitialized(ByVal e As System.EventArgs)
-        If Me.MultipleSyncContextsExpected OrElse SynchronizationContext.Current Is Nothing Then
-            ' Even though the current sync context is nothing, one of the targets might 
-            ' still require invocation. Therefore, save invoke is implemented.
-            Me.InitializedEvent.SafeInvoke(Me)
-        Else
-            SynchronizationContext.Current.Send(New SendOrPostCallback(AddressOf Me.InvokeInitialized), e)
-        End If
+        Me.InitializedEvent.SafeSend(Me, e)
     End Sub
-
-#Region " INVOKE "
-
-    ''' <summary> Synchronously Invokes the <see cref="Initialized">Initialized Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="e"> The <see cref="System.EventArgs" /> instance containing
-    ''' the event data. </param>
-    Private Sub InvokeInitialized(ByVal e As System.EventArgs)
-        Me.InitializedEvent.UnsafeInvoke(Me, e)
-    End Sub
-
-    ''' <summary> Synchronously Invokes the <see cref="Initialized">Initialized Event</see>. Must be
-    ''' called with the <see cref="SynchronizationContext">sync context</see> </summary>
-    ''' <param name="obj"> The object. </param>
-    Private Sub InvokeInitialized(ByVal obj As Object)
-        Me.InvokeInitialized(CType(obj, System.EventArgs))
-    End Sub
-
-#End Region
 
 #End Region
 
@@ -1295,112 +1127,3 @@ Public MustInherit Class DeviceBase
 
 End Class
 
-#Region " UNUSED "
-' using event handler extensions.
-#If False Then
-#Region " SAFE EVENTS "
-
-    ''' <summary> Synchronously notifies (Invokes a <see cref="ISynchronizeInvoke">sync enabled
-    ''' entity</see>) or (Dynamically Invokes) an
-    ''' <see cref="EventHandler(Of EventArgs)">Event</see>. </summary>
-    ''' <param name="handler"> The event handler. </param>
-    Private Overloads Sub SafeInvoke(ByVal handler As EventHandler(Of EventArgs), ByVal e As EventArgs)
-        For Each d As [Delegate] In handler.SafeInvocationList
-            If d.Target Is Nothing Then
-                d.DynamicInvoke(New Object() {Me, e})
-            Else
-                Dim target As ISynchronizeInvoke = TryCast(d . Target, ISynchronizeInvoke)
-                If target Is Nothing Then
-                    d.DynamicInvoke(New Object() {Me, e})
-                Else
-                    target.Invoke(d, New Object() {Me, e})
-                End If
-            End If
-        Next
-    End Sub
-
-    ''' <summary> Asynchronously (Begins Invoke a <see cref="ISynchronizeInvoke">sync enabled
-    ''' entity</see>) or synchronously (Dynamically Invokes) notifies an 
-    ''' <see cref="EventHandler(Of EventArgs)">Event</see>. </summary>
-    ''' <param name="handler"> The event handler. </param>
-    Private Overloads Sub SafeBeginInvoke(ByVal handler As EventHandler(Of EventArgs), ByVal e As EventArgs)
-        For Each d As [Delegate] In handler.SafeInvocationList
-            If d.Target Is Nothing Then
-                d.DynamicInvoke(New Object() {Me, e})
-            Else
-                Dim target As ISynchronizeInvoke = TryCast(d . Target, ISynchronizeInvoke)
-                If target Is Nothing Then
-                    d.DynamicInvoke(New Object() {Me, e})
-                Else
-                    target.BeginInvoke(d, New Object() {Me, e})
-                End If
-            End If
-        Next
-    End Sub
-
-#End Region
-
-#End If
-#End Region
-
-#Region " OLD OPEN SESSION THAT PREVENTED EXCEPTIONS "
-#If False Then
-    ''' <summary> Opens the session. </summary>
-    ''' <remarks> Register the device trace notifier before opening the session. </remarks>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
-    ''' <param name="resourceName"> Name of the resource. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Overridable Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
-        Try
-            If Me.Enabled Then Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Opening session to {resourceName};. ")
-            Me.Session.ResourceTitle = resourceTitle
-            Me.Session.OpenSession(resourceName, resourceTitle)
-            If Me.Session.IsSessionOpen Then
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Session open to {resourceName};. ")
-            ElseIf Me.Session.Enabled Then
-                ' if session did not open and the session is enabled, then we have an error, which could be stressed.
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Unable to open session to {resourceName};. ")
-            ElseIf Not Me.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Unable to emulate {resourceName};. ")
-            End If
-            If Me.Session.IsSessionOpen OrElse (Me.IsDeviceOpen AndAlso Not Me.Session.Enabled) Then
-                Dim e As New ComponentModel.CancelEventArgs
-                Me.OnOpening(e)
-                If e.Cancel Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opening {resourceTitle}:{resourceName} canceled;. ")
-                    Me.TryCloseSession()
-                Else
-                    Me.OnOpened()
-                    Try
-                        If Me.IsDeviceOpen Then
-                            Me.OnInitializing(e)
-                        Else
-                            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opening {resourceTitle}:{resourceName} failed;. ")
-                        End If
-                    Catch ex As Exception
-                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} initializing failed;. Details: {ex.ToFullBlownString}"
-                    End Try
-                    Try
-                        If Not e.Cancel AndAlso Me.IsDeviceOpen Then Me.OnInitialized()
-                    Catch ex As Exception
-                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} initialize actions failed;. Details: {ex.ToFullBlownString}"
-                    End Try
-                End If
-            Else
-                ' if failed to open, close
-                Me.CloseSession()
-            End If
-        Catch ex As OperationFailedException
-            Throw
-        Catch ex As NativeException
-            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} failed connecting. Disconnecting.")
-            Me.TryCloseSession()
-            Throw New OperationFailedException($"VISA exception occurred opening session to '{resourceName}'.", ex)
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} failed connecting. Disconnecting.")
-            Me.TryCloseSession()
-            Throw New OperationFailedException($"Exception occurred opening session to '{resourceName}'.", ex)
-        End Try
-    End Sub
-#End If
-#End Region

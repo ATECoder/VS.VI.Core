@@ -19,9 +19,9 @@ Public Class SenseSubsystem
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me.SupportedFunctionModes = VI.Scpi.SenseFunctionModes.CurrentDC Or
-                                        VI.Scpi.SenseFunctionModes.VoltageDC Or
-                                        VI.Scpi.SenseFunctionModes.Resistance Or
-                                        VI.Scpi.SenseFunctionModes.FourWireResistance
+                                    VI.Scpi.SenseFunctionModes.VoltageDC Or
+                                    VI.Scpi.SenseFunctionModes.Resistance Or
+                                    VI.Scpi.SenseFunctionModes.FourWireResistance
         ' the readings are initialized when the format system is reset.
         Me._readings = New Readings
     End Sub
@@ -52,7 +52,7 @@ Public Class SenseSubsystem
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub

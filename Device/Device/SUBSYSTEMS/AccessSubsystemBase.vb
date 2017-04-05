@@ -45,7 +45,7 @@ Public MustInherit Class AccessSubsystemBase
         Set(ByVal value As TimeSpan)
             If Not Me.CertifyTimeout.Equals(value) Then
                 Me._CertifyTimeout = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.CertifyTimeout))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -62,7 +62,7 @@ Public MustInherit Class AccessSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Certified, value) Then
                 Me._Certified = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Certified))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -99,7 +99,7 @@ Public MustInherit Class AccessSubsystemBase
         End Get
         Protected Set(ByVal value As String)
             Me._certifiedInstruments = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.CertifiedInstruments))
+            Me.SafePostPropertyChanged()
         End Set
 
     End Property
@@ -114,7 +114,7 @@ Public MustInherit Class AccessSubsystemBase
         End Get
         Set(ByVal value As String)
             Me._releasedInstruments = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ReleasedInstruments))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 

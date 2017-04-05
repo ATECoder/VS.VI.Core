@@ -1,4 +1,5 @@
-﻿''' <summary> Defines the contract that must be implemented by SCPI Status Subsystem. </summary>
+﻿Imports isr.Core.Pith.ExceptionExtensions
+''' <summary> Defines the contract that must be implemented by SCPI Status Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
 ''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
@@ -54,14 +55,14 @@ Public MustInherit Class StatusSubsystemBase
             Me.EnableWaitComplete()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Exception enabling wait completion;. Details: {0}.", ex)
+                               $"Exception enabling wait completion;. Details: {ex.ToFullBlownString}")
         End Try
         Try
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading identity;. ")
             Me.QueryIdentity()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Exception reading identity;. Details: {0}.", ex)
+                               $"Exception reading identity;. Details: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -230,7 +231,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.MeasurementEventEnableBitmask, value) Then
                 Me._MeasurementEventEnableBitmask = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MeasurementEventEnableBitmask))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -297,7 +298,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.MeasurementEventCondition, value) Then
                 Me._MeasurementEventCondition = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MeasurementEventCondition))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -332,7 +333,7 @@ Public MustInherit Class StatusSubsystemBase
         End Get
         Protected Set(ByVal value As Integer?)
             Me._MeasurementEventStatus = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.MeasurementEventStatus))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -387,7 +388,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.OperationEventEnableBitmask, value) Then
                 Me._OperationEventEnableBitmask = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OperationEventEnableBitmask))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -457,7 +458,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.OperationNegativeTransitionEventEnableBitmask, value) Then
                 Me._OperationNegativeTransitionEventEnableBitmask = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OperationNegativeTransitionEventEnableBitmask))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -512,7 +513,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.OperationPositiveTransitionEventEnableBitmask, value) Then
                 Me._OperationPositiveTransitionEventEnableBitmask = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OperationPositiveTransitionEventEnableBitmask))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -568,7 +569,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.OperationEventCondition, value) Then
                 Me._OperationEventCondition = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OperationEventCondition))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -611,7 +612,7 @@ Public MustInherit Class StatusSubsystemBase
         End Get
         Protected Set(ByVal value As Integer?)
             Me._OperationEventStatus = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.OperationEventStatus))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -730,7 +731,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.QuestionableEventEnableBitmask, value) Then
                 Me._QuestionableEventEnableBitmask = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.QuestionableEventEnableBitmask))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -784,7 +785,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.QuestionableEventCondition, value) Then
                 Me._QuestionableEventCondition = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.QuestionableEventCondition))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -816,7 +817,7 @@ Public MustInherit Class StatusSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.QuestionableEventStatus, value) Then
                 Me._QuestionableEventStatus = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.QuestionableEventStatus))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

@@ -77,7 +77,7 @@ Public MustInherit Class SubsystemBase
     ''' <param name="value"> The value. </param>
     Public Sub ApplySession(ByVal value As SessionBase)
         Me._ApplySession(value)
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourceName))
+        Me.SafePostPropertyChanged(NameOf(Me.ResourceName))
     End Sub
 
     ''' <summary> Applies the session described by value. </summary>
@@ -112,7 +112,7 @@ Public MustInherit Class SubsystemBase
         End Get
         Set(ByVal value As String)
             Me._ResourceName = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourceName))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -461,6 +461,15 @@ Public Class SubsystemCollection
         For Each element As IPublisher In Me.Items
             element.SuspendPublishing()
             Me.Publishable = element.Publishable
+        Next
+    End Sub
+
+    ''' <summary> Capture synchronization context. </summary>
+    ''' <remarks> David, 4/3/2017. </remarks>
+    ''' <param name="syncContext"> Context for the synchronization. </param>
+    Public Sub CaptureSyncContext(ByVal syncContext As Threading.SynchronizationContext)
+        For Each ss As SubsystemBase In Me
+            ss.CaptureSyncContext(syncContext)
         Next
     End Sub
 

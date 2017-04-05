@@ -198,7 +198,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Set(ByVal value As CompensationTypes)
             If Not Me.SupportedCompensationTypes.Equals(value) Then
                 Me._SupportedCompensationTypes = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedCompensationTypes))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -230,7 +230,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
                 Else
                     Me._CompensationTypeCode = ""
                 End If
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.CompensationType))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -250,7 +250,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.Enabled, value) Then
                 Me._Enabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Enabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -307,7 +307,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.FrequencyStimulusPoints, value) Then
                 Me._FrequencyStimulusPoints = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FrequencyStimulusPoints))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -346,8 +346,8 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Protected Set(value As String)
             If Not String.Equals(value, Me.FrequencyArrayReading) Then
                 Me._FrequencyArrayReading = value
-                Me.AsyncNotifyPropertyChanged()
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.HasCompleteCompensationValues))
+                Me.SafePostPropertyChanged()
+                Me.SafePostPropertyChanged(NameOf(Me.HasCompleteCompensationValues))
             End If
         End Set
     End Property
@@ -366,7 +366,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Protected Set(ByVal value As IEnumerable(Of Double))
             If Not Nullable.Equals(Me.FrequencyArray, value) Then
                 Me._FrequencyArray = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -422,8 +422,8 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Protected Set(value As String)
             If Not String.Equals(value, Me.ImpedanceArrayReading) Then
                 Me._ImpedanceArrayReading = value
-                Me.AsyncNotifyPropertyChanged()
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.HasCompleteCompensationValues))
+                Me.SafePostPropertyChanged()
+                Me.SafePostPropertyChanged(NameOf(Me.HasCompleteCompensationValues))
             End If
         End Set
     End Property
@@ -442,7 +442,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Protected Set(ByVal value As IEnumerable(Of Double))
             If Not Nullable.Equals(Me.ImpedanceArray, value) Then
                 Me._ImpedanceArray = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -531,7 +531,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.ModelResistance, value) Then
                 Me._ModelResistance = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ModelResistance))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -588,7 +588,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.ModelCapacitance, value) Then
                 Me._ModelCapacitance = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ModelCapacitance))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -645,7 +645,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.ModelConductance, value) Then
                 Me._ModelConductance = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ModelConductance))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -702,7 +702,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.ModelInductance, value) Then
                 Me._ModelInductance = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ModelInductance))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

@@ -37,7 +37,7 @@ Public Class SourceMeasureUnitMeasure
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -63,7 +63,7 @@ Public Class SourceMeasureUnitMeasure
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoRangeVoltageEnabled, value) Then
                 Me._AutoRangeVoltageEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoRangeVoltageEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -124,7 +124,7 @@ Public Class SourceMeasureUnitMeasure
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.Reading) Then
                 Me._reading = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Reading))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -143,7 +143,7 @@ Public Class SourceMeasureUnitMeasure
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(value, Me.Resistance) Then
                 Me._resistance = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Resistance))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

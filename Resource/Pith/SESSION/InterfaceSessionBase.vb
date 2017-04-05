@@ -38,8 +38,8 @@ Public MustInherit Class InterfaceSessionBase
         Protected Set(value As Boolean)
             If value <> Me.IsOpen Then
                 Me._IsOpen = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsOpen))
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourceName))
+                Me.SafePostPropertyChanged(NameOf(Me.IsOpen))
+                Me.SafePostPropertyChanged(NameOf(Me.ResourceName))
             End If
         End Set
     End Property

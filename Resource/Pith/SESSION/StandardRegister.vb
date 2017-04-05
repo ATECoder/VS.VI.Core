@@ -45,7 +45,7 @@ Partial Public Class SessionBase
         End Get
         Set(ByVal value As StandardEvents?)
             Me._StandardEventStatus = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.StandardEventStatus))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 

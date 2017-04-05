@@ -40,7 +40,7 @@ Public MustInherit Class SourceFunctionSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Level, value) Then
                 Me._Level = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Level))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -95,7 +95,7 @@ Public MustInherit Class SourceFunctionSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Range, value) Then
                 Me._Range = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Range))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -149,7 +149,7 @@ Public MustInherit Class SourceFunctionSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoRangeEnabled, value) Then
                 Me._AutoRangeEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoRangeEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -206,7 +206,7 @@ Public MustInherit Class SourceFunctionSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.SweepStartLevel, value) Then
                 Me._SweepStartLevel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SweepStartLevel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -261,7 +261,7 @@ Public MustInherit Class SourceFunctionSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.SweepStopLevel, value) Then
                 Me._SweepStopLevel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SweepStopLevel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -314,7 +314,7 @@ Public MustInherit Class SourceFunctionSubsystemBase
         Protected Set(ByVal value As SweepMode?)
             If Not Nullable.Equals(Me.SweepMode, value) Then
                 Me._SweepMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SweepMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

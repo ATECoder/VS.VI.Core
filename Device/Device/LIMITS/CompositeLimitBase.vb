@@ -85,7 +85,7 @@ Public MustInherit Class CompositeLimitBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoClearEnabled, value) Then
                 Me._AutoClearEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoClearEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -138,7 +138,7 @@ Public MustInherit Class CompositeLimitBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.FailureBits, value) Then
                 Me._FailureBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FailureBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -190,7 +190,7 @@ Public MustInherit Class CompositeLimitBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.PassBits, value) Then
                 Me._PassBits = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.PassBits))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -245,7 +245,7 @@ Public MustInherit Class CompositeLimitBase
         Protected Set(ByVal value As BinningControl?)
             If Not Me.BinningControl.Equals(value) Then
                 Me._BinningControl = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.BinningControl))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -300,7 +300,7 @@ Public MustInherit Class CompositeLimitBase
         Protected Set(ByVal value As LimitMode?)
             If Not Me.LimitMode.Equals(value) Then
                 Me._LimitMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.LimitMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

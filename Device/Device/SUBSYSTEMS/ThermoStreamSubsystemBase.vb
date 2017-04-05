@@ -58,7 +58,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.CycleCount, value) Then
                 Me._CycleCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.CycleCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -111,7 +111,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.CycleNumber, value) Then
                 Me._CycleNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.CycleNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -169,7 +169,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As String)
             If Not Nullable.Equals(Me.DeviceError, value) Then
                 Me._DeviceError = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.DeviceError))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -202,7 +202,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.DeviceControl, value) Then
                 Me._DeviceControl = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.DeviceControl))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -257,7 +257,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As DeviceSensorType?)
             If Not Nullable.Equals(Me.DeviceSensorType, value) Then
                 Me._DeviceSensorType = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.DeviceSensorType))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -313,7 +313,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.DeviceThermalConstant, value) Then
                 Me._DeviceThermalConstant = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.DeviceThermalConstant))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -367,7 +367,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.HeadDown, value) Then
                 Me._HeadDown = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.HeadDown))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -456,7 +456,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.RampRate, value) Then
                 Me._RampRate = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.RampRate))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -558,7 +558,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Setpoint, value) Then
                 Me._Setpoint = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Setpoint))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -614,7 +614,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.SetpointNumber, value) Then
                 Me._SetpointNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SetpointNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -687,7 +687,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.SetpointWindow, value) Then
                 Me._SetpointWindow = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SetpointWindow))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -743,7 +743,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.SoakTime, value) Then
                 Me._SoakTime = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SoakTime))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -796,7 +796,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Temperature, value) Then
                 Me._Temperature = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Temperature))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -831,7 +831,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.MaximumTestTime, value) Then
                 Me._MaximumTestTime = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MaximumTestTime))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -884,7 +884,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.SystemScreen, value) Then
                 Me._SystemScreen = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SystemScreen))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -925,7 +925,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.TemperatureEventEnableBitmask, value) Then
                 Me._TemperatureEventEnableBitmask = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TemperatureEventEnableBitmask))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -986,7 +986,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.TemperatureEventCondition, value) Then
                 Me._TemperatureEventCondition = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TemperatureEventCondition))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -1019,7 +1019,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         End Get
         Protected Set(ByVal value As Integer?)
             Me._TemperatureEventStatus = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.TemperatureEventStatus))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -1055,7 +1055,7 @@ Public MustInherit Class ThermostreamSubsystemBase
         End Get
         Protected Set(ByVal value As Integer?)
             Me._AuxiliaryEventStatus = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.AuxiliaryEventStatus))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
