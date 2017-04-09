@@ -302,6 +302,10 @@ Public MustInherit Class TraceSubsystemBase
     ''' <value> The buffer readings. </value>
     Public ReadOnly Property BufferReadings As BufferReadingCollection
 
+    ''' <summary> Gets a queue of new buffer readings. </summary>
+    ''' <value> A thread safe Queue of buffer readings. </value>
+    Public ReadOnly Property NewBufferReadingsQueue As isr.Core.Pith.ThreadSafeQueue(Of BufferReading)
+
     ''' <summary> Gets the number of buffer readings. </summary>
     ''' <value> The number of buffer readings. </value>
     Public ReadOnly Property BufferReadingsCount As Integer
@@ -328,13 +332,16 @@ Public MustInherit Class TraceSubsystemBase
         Dim first As Integer = 0
         Dim last As Integer = 0
         Me._BufferReadings = New BufferReadingCollection
+        Me._NewBufferReadingsQueue = New isr.Core.Pith.ThreadSafeQueue(Of BufferReading)
         triggerSubsystem.QueryTriggerState()
         Do While triggerSubsystem.IsTriggerStateActive
             If first = 0 Then first = Me.QueryFirstPointNumber().GetValueOrDefault(0)
             If first > 0 Then
                 last = Me.QueryLastPointNumber().GetValueOrDefault(0)
                 If (last - first + 1) > Me.BufferReadings.Count Then
-                    Me.BufferReadings.Add(Me.QueryBufferReadings(Me.BufferReadings.Count + 1, last))
+                    Dim newReadings As IEnumerable(Of BufferReading) = Me.QueryBufferReadings(Me.BufferReadings.Count + 1, last)
+                    Me.BufferReadings.Add(newReadings)
+                    Me.NewBufferReadingsQueue.EnqueueRange(newReadings)
                     Me.SafePostPropertyChanged(NameOf(BufferReadingsCount))
                 End If
             End If
