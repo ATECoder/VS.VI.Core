@@ -1,5 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Measure sequencer. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -47,7 +48,7 @@ Public Class MeasureSequencer
             End If
 
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception details: {0}", ex)
+            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
         Finally
 
             ' dispose the base class.
@@ -85,7 +86,7 @@ Public Class MeasureSequencer
         Protected Set(value As MeasurementSequenceState)
             If Not value.Equals(Me.MeasurementSequenceState) Then
                 Me._MeasurementSequenceState = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

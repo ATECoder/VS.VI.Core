@@ -2,6 +2,7 @@
 Imports System.ComponentModel
 Imports System.Drawing
 Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Panel for editing the parts. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -117,12 +118,13 @@ Public Class PartsPanel
             End If
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception handling property '{0}'. Details: {1}.", e.PropertyName, ex.Message)
+                              "Exception handling property '{0}'. {1}.", e.PropertyName, ex.ToFullBlownString)
 
         End Try
     End Sub
 
     Private _measurementMessage As String
+
 
     ''' <summary> Gets or sets a message describing the measurement. </summary>
     ''' <value> A message describing the measurement. </value>
@@ -450,11 +452,12 @@ Public Class PartsPanel
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Done saving part number {0};. ", Part.PartNumber)
                 Me._SavePartsToolStripButton.Enabled = False
             Catch ex As Exception
-                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred saving;. data to {0}. Details: {1}", filePath, ex)
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred saving;. data to {0}. {1}", filePath, ex.ToFullBlownString)
                 Me._ErrorProvider.SetError(Me._PartsListToolStrip, "Exception occurred saving")
             Finally
 
             End Try
+
         End If
 
     End Sub

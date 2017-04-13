@@ -64,7 +64,7 @@ Public Class R2D2Panel
                 Try
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception details: {0}", ex)
+                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
                 End Try
                 ' the device gets closed and disposed (if panel is device owner) in the base class
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
@@ -215,7 +215,7 @@ Public Class R2D2Panel
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -226,7 +226,7 @@ Public Class R2D2Panel
         Try
             Me.Device.StatusSubsystem.ReadServiceRequestStatus()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -253,7 +253,7 @@ Public Class R2D2Panel
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -279,7 +279,7 @@ Public Class R2D2Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -303,7 +303,7 @@ Public Class R2D2Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -329,7 +329,7 @@ Public Class R2D2Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -356,7 +356,7 @@ Public Class R2D2Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -386,7 +386,7 @@ Public Class R2D2Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -416,7 +416,7 @@ Public Class R2D2Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -450,7 +450,7 @@ Public Class R2D2Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -478,7 +478,7 @@ Public Class R2D2Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -519,8 +519,8 @@ Public Class R2D2Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling {0} property change;. Details: {1}",
-                               e?.PropertyName, ex)
+                               "Exception handling {0} property change;. {1}",
+                               e?.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

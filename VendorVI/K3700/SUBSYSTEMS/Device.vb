@@ -1,5 +1,4 @@
-﻿Imports isr.VI
-Imports isr.VI.Tsp
+﻿Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> The Thermal Transient Meter device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
@@ -50,7 +49,7 @@ Public Class Device
                 If Me.IsDeviceOpen Then Me.OnClosing(New System.ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception details: {0}", ex)
+            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
         Finally
             MyBase.Dispose(disposing)
         End Try
@@ -164,7 +163,7 @@ Public Class Device
 
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed initiating controller node--closing this session;. Details: {0}.", ex)
+                               "Failed initiating controller node--closing this session;. {0}", ex.ToFullBlownString)
             Me.CloseSession()
         End Try
 
@@ -191,8 +190,8 @@ Public Class Device
             Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Status subsystem {1} property change;. Details: {2}.",
-                               Me.ResourceName, e.PropertyName, ex)
+                               "{0} exception handling Status subsystem {1} property change;. {2}",
+                               Me.ResourceName, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -227,8 +226,8 @@ Public Class Device
             Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling System subsystem {1} property change;. Details: {2}.",
-                               Me.ResourceName, e.PropertyName, ex)
+                               "{0} exception handling System subsystem {1} property change;. {2}",
+                               Me.ResourceName, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -261,8 +260,8 @@ Public Class Device
             Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Channel subsystem {1} property change;. Details: {2}.",
-                               Me.ResourceName, e.PropertyName, ex)
+                               "{0} exception handling Channel subsystem {1} property change;. {2}",
+                               Me.ResourceName, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -295,8 +294,8 @@ Public Class Device
             Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Display subsystem {1} property change;. Details: {2}.",
-                               Me.ResourceName, e.PropertyName, ex)
+                               "{0} exception handling Display subsystem {1} property change;. {2}",
+                               Me.ResourceName, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -329,8 +328,8 @@ Public Class Device
             Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Multimeter subsystem {1} property change;. Details: {2}.",
-                               Me.ResourceName, e.PropertyName, ex)
+                               "{0} exception handling Multimeter subsystem {1} property change;. {2}",
+                               Me.ResourceName, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -363,8 +362,8 @@ Public Class Device
             Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Slots subsystem {1} property change;. Details: {2}.",
-                               Me.ResourceName, e.PropertyName, ex)
+                               "{0} exception handling Slots subsystem {1} property change;. {2}",
+                               Me.ResourceName, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

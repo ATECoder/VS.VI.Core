@@ -3,6 +3,7 @@ Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.NumericExtensions
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Thermal Transient Meter Tester Console. </summary>
 ''' <license> (c) 2009 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -214,7 +215,7 @@ Public Class Console
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception loading the driver console form;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception loading the driver console form;. {0}", ex.ToFullBlownString)
             If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -275,7 +276,7 @@ Public Class Console
             Application.DoEvents()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception showing the driver console form;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception showing the driver console form;. {0}", ex.ToFullBlownString)
             If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -417,22 +418,24 @@ Public Class Console
             Me._ErrorProvider.SetError(Me._ConnectToggle, "Connection failed")
             Me._IdentityTextBox.Text = "Failed Connecting"
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred connecting to {0};. Details: {1}", resourceName, ex)
+                              "Exception occurred connecting to {0};. {1}", resourceName, ex.ToFullBlownString)
             Me._ConnectToggle.Checked = False
 
         Finally
 
             Try
+
                 Me.onConnectionChanged(resourceName)
             Catch ex As Exception
                 Me._ErrorProvider.SetError(Me._ConnectToggle, "Connection failed")
                 Me._IdentityTextBox.Text = "Failed Connecting"
                 Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                  "Exception occurred connecting to {0};. Details: {1}", resourceName, ex)
+                                  "Exception occurred connecting to {0};. {1}", resourceName, ex.ToFullBlownString)
             End Try
             Me.Cursor = Cursors.Default
 
         End Try
+
 
     End Sub
 
@@ -462,9 +465,10 @@ Public Class Console
             Me._ErrorProvider.SetError(Me._ConnectToggle, "Disconnection failed")
             Me._IdentityTextBox.Text = "Failed Disconnecting"
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred disconnecting from {0};. Details: {1}", resourceName, ex)
+                              "Exception occurred disconnecting from {0};. {1}", resourceName, ex.ToFullBlownString)
 
         Finally
+
 
             Try
                 Me.onConnectionChanged(resourceName)
@@ -472,9 +476,10 @@ Public Class Console
                 Me._ErrorProvider.SetError(Me._ConnectToggle, "Disconnection failed")
                 Me._IdentityTextBox.Text = "Failed Disconnecting"
                 Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                  "Exception occurred disconnecting from {0};. Details: {1}", resourceName, ex)
+                                  "Exception occurred disconnecting from {0};. {1}", resourceName, ex.ToFullBlownString)
             End Try
             Me.Cursor = Cursors.Default
+
 
         End Try
 
@@ -536,8 +541,9 @@ Public Class Console
             Me._ErrorProvider.SetIconPadding(comboBox, -15)
             Me._ErrorProvider.SetError(comboBox, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{Environment.NewLine}Details: {ex.ToString}.")
+                               $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{ex.ToFullBlownString}")
         Finally
+
             Me.Cursor = Cursors.Default
         End Try
     End Sub
@@ -594,7 +600,7 @@ Public Class Console
                 End If
             Catch ex As Exception
                 Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                  "Exception occurred finding the selected resource;. Details: {0}", ex)
+                                  "Exception occurred finding the selected resource;. {0}", ex.ToFullBlownString)
             Finally
                 Me.Cursor = Cursors.Default
             End Try
@@ -729,7 +735,7 @@ Public Class Console
             Me._ErrorProvider.SetError(Me._ApplyShuntResistanceConfigurationButton,
                                        "Failed configuring shunt resistance")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred configuring shunt resistance;. Details: {0}", ex)
+                              "Exception occurred configuring shunt resistance;. {0}", ex.ToFullBlownString)
         Finally
             Me.UpdateShuntConfigButtonCaption()
             Me.Cursor = Cursors.Default
@@ -769,7 +775,7 @@ Public Class Console
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._ApplyShuntResistanceConfigurationButton, "Failed configuring shunt resistance")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred configuring shunt resistance;. Details: {0}", ex)
+                              "Exception occurred configuring shunt resistance;. {0}", ex.ToFullBlownString)
         Finally
             Me.UpdateShuntConfigButtonCaption()
             Me.Cursor = Cursors.Default
@@ -817,7 +823,7 @@ Public Class Console
                 Me._ShuntResistanceTextBox.Text = ""
                 Me._ErrorProvider.SetError(Me._MeasureShuntResistanceButton, "Failed Measuring Shunt Resistance")
                 Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                  "Failed Measuring Shunt Resistance;. Details: {0}", ex)
+                                  "Failed Measuring Shunt Resistance;. {0}", ex.ToFullBlownString)
             Finally
                 Me.Cursor = Cursors.Default
             End Try
@@ -885,8 +891,8 @@ Public Class Console
         Try
             Me.OnPropertyChanged(TryCast(sender, ShuntResistance), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. Details: {1}.",
-                               e.PropertyName, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. {1}",
+                               e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -928,8 +934,8 @@ Public Class Console
                 Me.OnPropertyChanged(TryCast(sender, ConfigurationPanel), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. Details: {1}.",
-                               e.PropertyName, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. {1}",
+                               e.PropertyName, ex.ToFullBlownString)
 
         End Try
     End Sub
@@ -981,8 +987,8 @@ Public Class Console
                 Me.OnPropertyChanged(TryCast(sender, Meter), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. Details: {1}.",
-                               e.PropertyName, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. {1}",
+                               e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -1027,7 +1033,7 @@ Public Class Console
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -1044,7 +1050,7 @@ Public Class Console
             End If
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Failed adding part upon completing the sequence;. Details: {0}", ex)
+                              "Failed adding part upon completing the sequence;. {0}", ex.ToFullBlownString)
         End Try
 
     End Sub
@@ -1117,7 +1123,7 @@ Public Class Console
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -1341,11 +1347,12 @@ Public Class Console
             End If
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred;. @'{0}'.", System.Reflection.MethodInfo.GetCurrentMethod.Name, ex)
+                              "Exception occurred;. @'{0}'{1}", System.Reflection.MethodInfo.GetCurrentMethod.Name, ex.ToFullBlownString)
         Finally
             navigating = False
         End Try
     End Sub
+
 
     ''' <summary> Selects the navigator tree view node. </summary>
     ''' <param name="node"> The node. </param>
@@ -1402,7 +1409,7 @@ Public Class Console
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed reporting Trace Message {0} Property Change;. Details: {1}", e?.PropertyName, ex)
+                               "Failed reporting Trace Message {0} Property Change;. {1}", e?.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

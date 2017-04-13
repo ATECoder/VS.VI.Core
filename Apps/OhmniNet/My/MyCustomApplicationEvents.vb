@@ -47,7 +47,7 @@ Namespace My
 
                 ' Turn off the hourglass
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-                Me.SplashTraceEvent(TraceEventType.Error, "Exception occurred initializing application known state;. Details: {0}", ex)
+                Me.SplashTraceEvent(TraceEventType.Error, "Exception occurred initializing application known state;. {0}", ex.ToFullBlownString)
                 Try
                     Me.Destroy()
                 Finally

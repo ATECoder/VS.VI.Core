@@ -3,6 +3,7 @@ Imports isr.Core.Controls.ComboBoxExtensions
 Imports isr.Core.Controls.NumericUpDownExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Measure control -- defines the measure subsystem settings. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -109,7 +110,7 @@ Public Class T1750MeasureControl
             Me.OnSubsystemPropertyChanged(TryCast(sender, MeasureSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -287,7 +288,7 @@ Public Class T1750MeasureControl
         Set(value As Decimal)
             If Not Decimal.Equals(value, Me.MeterCurrent) Then
                 Me._MeterCurrentNumeric.SafeSilentValueSetter(value)
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MeterCurrent))
+                Me.SafePostPropertyChanged(NameOf(Me.MeterCurrent))
             End If
         End Set
     End Property
@@ -302,7 +303,7 @@ Public Class T1750MeasureControl
         Set(value As Decimal)
             If Not Decimal.Equals(value, Me.MeterRange) Then
                 Me._MeterRangeNumeric.SafeSilentValueSetter(value)
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MeterRange))
+                Me.SafePostPropertyChanged(NameOf(Me.MeterRange))
             End If
         End Set
     End Property
@@ -419,7 +420,7 @@ Public Class T1750MeasureControl
             If Not Decimal.Equals(value, Me.TriggerDelay) Then
                 Me._TriggerDelay = value
                 Me._TriggerDelayNumeric.SafeSilentValueSetter(value.TotalMilliseconds)
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerDelay))
+                Me.SafePostPropertyChanged(NameOf(Me.TriggerDelay))
             End If
         End Set
     End Property
@@ -454,7 +455,7 @@ Public Class T1750MeasureControl
                 If Me.MeasureSubsystem IsNot Nothing Then
                     Me.MeasureSubsystem.InitialDelay = value
                 End If
-                Me.SyncNotifyPropertyChanged(NameOf(Me.InitialDelay))
+                Me.SafeSendPropertyChanged(NameOf(Me.InitialDelay))
                 ' For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
             End If
         End Set
@@ -486,7 +487,7 @@ Public Class T1750MeasureControl
                 If Me.MeasureSubsystem IsNot Nothing Then
                     Me.MeasureSubsystem.MeasurementDelay = value
                 End If
-                Me.SyncNotifyPropertyChanged(NameOf(Me.MeasurementDelay))
+                Me.SafeSendPropertyChanged(NameOf(Me.MeasurementDelay))
                 ' For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
             End If
         End Set
@@ -518,7 +519,7 @@ Public Class T1750MeasureControl
                 If Me.MeasureSubsystem IsNot Nothing Then
                     Me.MeasureSubsystem.MaximumTrialsCount = value
                 End If
-                Me.SyncNotifyPropertyChanged(NameOf(Me.MaximumTrialsCount))
+                Me.SafeSendPropertyChanged(NameOf(Me.MaximumTrialsCount))
                 ' For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
             End If
         End Set
@@ -548,7 +549,7 @@ Public Class T1750MeasureControl
                 If Me.MeasureSubsystem IsNot Nothing Then
                     Me.MeasureSubsystem.MaximumDifference = Me.MaximumDifference
                 End If
-                Me.SyncNotifyPropertyChanged(NameOf(Me.MaximumDifference))
+                Me.SafeSendPropertyChanged(NameOf(Me.MaximumDifference))
                 ' this is required to ensure binding takes place.
                 ' For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
             End If

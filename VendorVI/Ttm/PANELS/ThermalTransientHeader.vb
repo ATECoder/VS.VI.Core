@@ -1,6 +1,6 @@
-﻿Imports System.Windows.Forms
-Imports System.ComponentModel
+﻿Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Thermal Transient Model header. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -67,8 +67,7 @@ Public Class ThermalTransientHeader
                 Me.OnPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                         e.PropertyName, ex.Message)
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
 
         End Try
     End Sub
@@ -133,8 +132,7 @@ Public Class ThermalTransientHeader
                 Me.OnPropertyChanged(TryCast(sender, ThermalTransient), e?.PropertyName)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                         e.PropertyName, ex.Message)
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

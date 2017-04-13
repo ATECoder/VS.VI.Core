@@ -124,7 +124,7 @@ Public Class K7500Panel
                 Try
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception details: {ex.ToFullBlownString}")
+                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
                 End Try
                 ' the device gets closed and disposed (if panel is device owner) in the base class
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
@@ -292,7 +292,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling FORMAT '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling FORMAT '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -363,7 +363,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling MEASURE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling MEASURE '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -392,7 +392,7 @@ Public Class K7500Panel
             Me.OnSubsystemPropertyChanged(TryCast(sender, RouteSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling ROUTE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling ROUTE '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -514,7 +514,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              $"{Me.Device.ResourceTitle} exception handling SENSE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                              $"{Me.Device.ResourceTitle} exception handling SENSE '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -556,7 +556,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling SENSE VOLT '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling SENSE VOLT '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -598,7 +598,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling SENSE CURR '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling SENSE CURR '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -645,7 +645,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling 4-WIRE RESISTANCE SENSE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling 4-WIRE RESISTANCE SENSE '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -687,7 +687,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling SENSE RESISTANCE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling SENSE RESISTANCE '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -733,7 +733,7 @@ Public Class K7500Panel
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling STATUS '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling STATUS '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -745,7 +745,7 @@ Public Class K7500Panel
             Me.Device.StatusSubsystem.ReadServiceRequestStatus()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling service request;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling service request;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -774,7 +774,7 @@ Public Class K7500Panel
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling SYSTEM '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling SYSTEM '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -835,7 +835,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling TRACE '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling TRACE '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -895,7 +895,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling TRIGGER '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling TRIGGER '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -948,7 +948,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -975,7 +975,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1004,7 +1004,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1034,7 +1034,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1067,7 +1067,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1089,7 +1089,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1119,7 +1119,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1153,7 +1153,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1181,7 +1181,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1205,7 +1205,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1300,7 +1300,7 @@ Public Class K7500Panel
             Me.Device.MeasureSubsystem.Read()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1327,7 +1327,7 @@ Public Class K7500Panel
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1371,7 +1371,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1415,7 +1415,7 @@ Public Class K7500Panel
         Try
             Me.ReadBuffer()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
         End Try
     End Sub
@@ -1446,7 +1446,7 @@ Public Class K7500Panel
         Try
             Me.DisplayBuffer()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
         End Try
     End Sub
@@ -1491,7 +1491,7 @@ Public Class K7500Panel
         Try
             Me.InitiateMonitorTriggerPlan(True)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
         End Try
     End Sub
@@ -1511,7 +1511,7 @@ Public Class K7500Panel
             Me.Device.TriggerSubsystem.AsyncMonitorTriggerState(Me.CapturedSyncContext, TimeSpan.FromMilliseconds(5))
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1524,7 +1524,7 @@ Public Class K7500Panel
         Try
             Me.InitiateMonitorTriggerPlan(True)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
         End Try
     End Sub
@@ -1606,7 +1606,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(Me._ReadBufferButton, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1717,7 +1717,7 @@ Public Class K7500Panel
 
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1788,7 +1788,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(Me._ReadBufferButton, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1906,7 +1906,7 @@ Public Class K7500Panel
 
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1934,7 +1934,7 @@ Public Class K7500Panel
 
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1968,7 +1968,7 @@ Public Class K7500Panel
 
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1996,7 +1996,7 @@ Public Class K7500Panel
             Me.StartTriggerPlan(sender)
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -2017,7 +2017,7 @@ Public Class K7500Panel
             Me.Device.TriggerSubsystem.QueryTriggerState()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -2035,7 +2035,7 @@ Public Class K7500Panel
             Me.Device.TriggerSubsystem.QueryTriggerState()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -2061,8 +2061,8 @@ Public Class K7500Panel
                 If grid.IsCurrentCellInEditMode Then Return
                 If grid.IsCurrentRowDirty Then Return
                 Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   $"Exception occurred editing row {e.RowIndex} column {e.ColumnIndex};. Details: {e.Exception.ToFullBlownString}")
-                Me.ErrorProvider.Annunciate(grid, "Exception occurred editing table")
+                                   $"{e.Exception.Message} occurred editing row {e.RowIndex} column {e.ColumnIndex};. {e.Exception.ToFullBlownString}")
+                Me.ErrorProvider.Annunciate(grid, $"{e.Exception.Message} occurred editing table")
             End If
         Catch
         End Try
@@ -2089,7 +2089,7 @@ Public Class K7500Panel
             Me.InterfaceStopWatch.Stop()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -2114,7 +2114,7 @@ Public Class K7500Panel
             br.DisplayReadings(Me._BufferDataGridView, True)
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -2141,7 +2141,7 @@ Public Class K7500Panel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception occurred initiating a measurement;. Details: {ex.ToFullBlownString}")
+                               $"{ex.Message} occurred initiating a measurement;. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -2196,7 +2196,7 @@ Public Class K7500Panel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception occurred initiating a measurement;. Details: {ex.ToFullBlownString}")
+                               $"{ex.Message} occurred initiating a measurement;. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -2308,7 +2308,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -2336,7 +2336,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -2361,7 +2361,7 @@ Public Class K7500Panel
             Me.InterfaceStopWatch.Stop()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -2383,7 +2383,7 @@ Public Class K7500Panel
             Me.InterfaceStopWatch.Stop()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -2401,7 +2401,7 @@ Public Class K7500Panel
             Me.Device.TriggerSubsystem.QueryTriggerState()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -2427,7 +2427,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -2469,7 +2469,7 @@ Public Class K7500Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling Read/Write '{e.PropertyName}' change event;. Details: {ex.ToFullBlownString}")
+                               $"{Me.Device.ResourceTitle} exception handling Read/Write '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 #End Region

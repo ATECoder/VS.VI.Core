@@ -1,4 +1,5 @@
-﻿''' <summary> Implements a Keysight 34980 Meter/Scanner device. </summary>
+﻿Imports isr.Core.Pith.ExceptionExtensions
+''' <summary> Implements a Keysight 34980 Meter/Scanner device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
@@ -56,7 +57,7 @@ Public Class Device
                 If Me.IsDeviceOpen Then Me.OnClosing(New ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception details: {0}", ex)
+            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
         Finally
             MyBase.Dispose(disposing)
         End Try
@@ -90,7 +91,7 @@ Public Class Device
         Me.Subsystems.Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -238,8 +239,8 @@ Public Class Device
                 Me.OnSubsystemPropertyChanged(TryCast(sender, FormatSubsystem), e.PropertyName)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                             e.PropertyName, ex.Message)
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}",
+                             e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -262,7 +263,7 @@ Public Class Device
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

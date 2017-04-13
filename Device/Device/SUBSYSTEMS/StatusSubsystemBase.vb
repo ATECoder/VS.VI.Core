@@ -121,7 +121,7 @@ Public MustInherit Class StatusSubsystemBase
             Me.ClearErrorQueue()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               $"Exception ignored clearing error queue;. Details: {ex.ToFullBlownString}")
+                               $"Exception ignored clearing error queue;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -188,7 +188,7 @@ Public MustInherit Class StatusSubsystemBase
             Me.OnSessionPropertyChanged(TryCast(sender, SessionBase), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling property Session.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling property Session.{e.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

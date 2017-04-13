@@ -52,7 +52,7 @@ Namespace My
 
             Catch ex As Exception
                 Cursor.Current = Cursors.Default
-                Me.SplashTraceEvent(TraceEventType.Error, "Exception occurred initializing application known state;. Details: {0}", ex)
+                Me.SplashTraceEvent(TraceEventType.Error, "Exception occurred initializing application known state;. {0}", ex.ToFullBlownString)
                 Try
                     Me.Destroy()
                 Finally

@@ -165,7 +165,7 @@ Public Class TestPanel
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception loading the form;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception loading the form;. {0}", ex.ToFullBlownString)
             If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -215,7 +215,7 @@ Public Class TestPanel
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Ready to open Visa Session;. ")
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception showing the form;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception showing the form;. {0}", ex.ToFullBlownString)
             If Windows.Forms.DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                                   MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                                   MessageBoxOptions.DefaultDesktopOnly) Then
@@ -301,12 +301,12 @@ Public Class TestPanel
             Me._clearInterfaceButton.Enabled = Me.TspSystem.IsDeviceOpen
         Catch ex As OperationFailedException
             Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
-                               "Failed connecting;. Failed opening VISA Session to {0}. Details: {1}",
-                               Me._ResourceSelectorConnector.SelectedResourceName, ex)
+                               "Failed connecting;. Failed opening VISA Session to {0}.{1}",
+                               Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception occurred connecting;. {0}. Details: {1}",
-                               Me._ResourceSelectorConnector.SelectedResourceName, ex)
+                               "Exception occurred connecting;. {0}.{1}",
+                               Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
         Finally
             ' cancel if failed to open
             If Not Me.TspSystem.IsDeviceOpen Then e.Cancel = True
@@ -328,12 +328,12 @@ Public Class TestPanel
             Me.TspSystem.Device.CloseSession()
         Catch ex As OperationFailedException
             Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
-                               "Failed disconnecting;. Failed closing VISA Session to {0}. Details: {1}",
-                               Me._ResourceSelectorConnector.SelectedResourceName, ex)
+                               "Failed disconnecting;. Failed closing VISA Session to {0}.{1}",
+                               Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception occurred disconnecting;. {0}. Details: {1}",
-                               Me._ResourceSelectorConnector.SelectedResourceName, ex)
+                               "Exception occurred disconnecting;. {0}.{1}",
+                               Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
         Finally
             If Me.TspSystem.Device.IsDeviceOpen Then
                 Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
@@ -386,7 +386,7 @@ Public Class TestPanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -465,7 +465,7 @@ Public Class TestPanel
                         Me.listUserScripts()
                     Catch ex As Exception
                         Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                                           "Exception occurred {0};. Details: {1}", Me._statusLabel.Text, ex)
+                                           "Exception occurred {0};. {1}", Me._statusLabel.Text, ex.ToFullBlownString)
                     End Try
 
                     Me.StartRefreshTimer(TimeSpan.FromMilliseconds(500))
@@ -486,7 +486,7 @@ Public Class TestPanel
         Catch ex As Exception
 
             Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception occurred {0};. Details: {1}", Me._statusLabel.Text, ex)
+                               "Exception occurred {0};. {1}", Me._statusLabel.Text, ex.ToFullBlownString)
 
         Finally
 
@@ -553,7 +553,7 @@ Public Class TestPanel
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -585,7 +585,7 @@ Public Class TestPanel
             Me.OnSubsystemPropertyChanged(TryCast(sender, Tsp.InteractiveSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -612,7 +612,7 @@ Public Class TestPanel
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -705,7 +705,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred listing scripts;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred listing scripts;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -759,7 +759,7 @@ Public Class TestPanel
 
             Catch ex As Exception
 
-                Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred receiving;. Details: {0}", ex)
+                Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred receiving;. {0}", ex.ToFullBlownString)
 
             Finally
 
@@ -806,7 +806,7 @@ Public Class TestPanel
         Catch ex As NativeException
             Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation(ex, "sending query/command;. '{0}'", sendBuffer)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred sending;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred sending;. {0}", ex.ToFullBlownString)
         Finally
 
             Me._refreshTimer.Enabled = True
@@ -929,7 +929,7 @@ Public Class TestPanel
             ' stop the time on error
             Me.StopRefreshTimer()
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred receiving;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred receiving;. {0}", ex.ToFullBlownString)
 
 
         Finally
@@ -958,7 +958,7 @@ Public Class TestPanel
             ' stop the time on error
             Me._testingTimer.Stop()
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred timing;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred timing;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -998,7 +998,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred clearing device;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred clearing device;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1029,7 +1029,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred displaying about panel;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred displaying about panel;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1076,7 +1076,7 @@ Public Class TestPanel
         Catch ex As Exception
             Me._errorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception occurred clearing interface;. Details: {0}", ex)
+                               "Exception occurred clearing interface;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -1109,7 +1109,7 @@ Public Class TestPanel
             Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation(ex, "calling function '{0}({1})';. ", functionName, functionArgs)
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred calling function;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred calling function;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1139,7 +1139,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred during device clear;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred during device clear;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1177,7 +1177,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred triggering device;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred triggering device;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1276,7 +1276,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading or running script;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading or running script;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1319,7 +1319,7 @@ Public Class TestPanel
             Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation(ex, "loading function code;. ")
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading function;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading function;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1359,7 +1359,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading script;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading script;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1403,7 +1403,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred removing script;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred removing script;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1454,7 +1454,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred setting prompts;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred setting prompts;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1483,7 +1483,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred running;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred running;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1519,7 +1519,7 @@ Public Class TestPanel
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred showing errors;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred showing errors;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -1551,7 +1551,7 @@ Public Class TestPanel
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred showing prompts;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred showing prompts;. {0}", ex.ToFullBlownString)
         Finally
             ' Turn off the form hourglass
             Me.Cursor = System.Windows.Forms.Cursors.Default
@@ -1610,7 +1610,7 @@ Public Class TestPanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed reporting Trace Message Property Change;. Details: {0}", ex)
+                               "Failed reporting Trace Message Property Change;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 

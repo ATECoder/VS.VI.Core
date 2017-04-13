@@ -34,7 +34,7 @@ Public Class ChannelMarkerSubsystem
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -57,7 +57,7 @@ Public Class ChannelMarkerSubsystem
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me._Readings.Initialize(ReadingTypes.Primary Or ReadingTypes.Secondary)
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.Readings))
+        Me.SafePostPropertyChanged(NameOf(Me.Readings))
     End Sub
 
 #End Region

@@ -59,7 +59,7 @@ Public Class Device
                 If Me.IsDeviceOpen Then Me.OnClosing(New ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, $"Exception disposing device", $"Exception details: {ex.ToFullBlownString}")
+            Debug.Assert(Not Debugger.IsAttached, $"Exception disposing device", $"Exception {ex.ToFullBlownString}")
         Finally
             MyBase.Dispose(disposing)
         End Try
@@ -247,7 +247,7 @@ Public Class Device
             Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              $"{Me.ResourceTitle} exception handling FORMAT.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
+                              $"{Me.ResourceTitle} exception handling FORMAT.{e.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -354,7 +354,7 @@ Public Class Device
             Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              $"{Me.ResourceTitle} exception handling SenseSubsystem.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
+                              $"{Me.ResourceTitle} exception handling SenseSubsystem.{e.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -379,7 +379,7 @@ Public Class Device
             Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              $"{Me.ResourceTitle} exception handling STATUS.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
+                              $"{Me.ResourceTitle} exception handling STATUS.{e.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

@@ -180,7 +180,7 @@ Public Class InstrumentInterfaceForm
                                     Me.Session.WriteLine(command)
                                 Catch ex As NativeException
                                     Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                                       $"{lastAction} failed;. Details: {ex.ToFullBlownString}.")
+                                                       $"{lastAction} failed;. {ex.ToFullBlownString}")
                                 End Try
                             End If
                         Next
@@ -289,7 +289,7 @@ Public Class InstrumentInterfaceForm
 
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception loading the instrument interface form;. Details: {ex.ToFullBlownString}")
+                               $"Exception loading the instrument interface form;. {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -332,7 +332,7 @@ Public Class InstrumentInterfaceForm
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the instrument interface form;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the instrument interface form;. {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -362,7 +362,7 @@ Public Class InstrumentInterfaceForm
             Me.Session.Clear()
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{lastAction} failed;. Details: {ex.ToFullBlownString}")
+                               $"{lastAction} failed;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -411,7 +411,7 @@ Public Class InstrumentInterfaceForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling InterfacePanel.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling InterfacePanel.{e.PropertyName} change event;. {ex.ToFullBlownString}")
 
         End Try
     End Sub
@@ -833,7 +833,7 @@ Public Class InstrumentInterfaceForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
+                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

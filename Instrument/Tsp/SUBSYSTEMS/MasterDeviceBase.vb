@@ -44,7 +44,7 @@ Public MustInherit Class MasterDeviceBase
                 If Me.IsDeviceOpen Then Me.OnClosing(New System.ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception details: {0}", ex)
+            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
         Finally
             MyBase.Dispose(disposing)
         End Try
@@ -86,13 +86,13 @@ Public MustInherit Class MasterDeviceBase
                 Me.InteractiveSubsystem.WriteShowPrompts(False)
                 Me.InteractiveSubsystem.WriteShowErrors(False)
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, "Exception turning of prompts", "Details: {0}", ex)
+                Debug.Assert(Not Debugger.IsAttached, "Exception turning of prompts", "{0}", ex.ToFullBlownString)
             End Try
             Try
                 ' set the state to closed
                 Me.InteractiveSubsystem.ExecutionState = TspExecutionState.Closed
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, "Exception disposing", "Details: {0}", ex)
+                Debug.Assert(Not Debugger.IsAttached, "Exception disposing", "{0}", ex.ToFullBlownString)
             End Try
         End If
 
@@ -129,7 +129,7 @@ Public MustInherit Class MasterDeviceBase
 
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed initiating controller node--closing this session;. Details: {0}.", ex)
+                               "Failed initiating controller node--closing this session;. {0}", ex.ToFullBlownString)
             Me.CloseSession()
         End Try
 
@@ -154,7 +154,7 @@ Public MustInherit Class MasterDeviceBase
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

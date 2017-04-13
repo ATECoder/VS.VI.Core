@@ -1,5 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Triggered Measurement sequencer. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -47,7 +48,7 @@ Public Class TriggerSequencer
             End If
 
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception details: {0}", ex)
+            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
         Finally
 
             ' dispose the base class.
@@ -68,7 +69,7 @@ Public Class TriggerSequencer
     ''' <summary> Asserts a trigger to emulate triggering for timing measurements. </summary>
     Public Sub AssertTrigger()
         Me.AssertRequested = True
-        Me.SyncNotifyPropertyChanged()
+        Me.SafeSendPropertyChanged()
         Windows.Forms.Application.DoEvents()
     End Sub
 
@@ -129,7 +130,7 @@ Public Class TriggerSequencer
         Protected Set(value As TriggerSequenceState)
             If TriggerSequenceState.WaitingForTrigger = value OrElse Not value.Equals(Me.TriggerSequenceState) Then
                 Me._TriggerSequenceState = value
-                Me.SyncNotifyPropertyChanged()
+                Me.SafeSendPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set

@@ -2,6 +2,7 @@
 Imports System.ComponentModel
 Imports System.Drawing
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Measurement panel base. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -180,7 +181,7 @@ Public Class MeasurementPanelBase
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._TtmMeasureControlsToolStrip, "Failed reading and displaying the thermal transient trace.")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                       "Exception occurred reading and displaying the trace;. details: {0}", ex)
+                                       "Exception occurred reading and displaying the trace;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -344,11 +345,12 @@ Public Class MeasurementPanelBase
 
             Catch ex As Exception
                 Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                           "Exception occurred saving trace;. to {0}. Details: {1}", filePath, ex)
+                                           "Exception occurred saving trace;. to {0}. {1}", filePath, ex.ToFullBlownString)
                 Me._ErrorProvider.SetError(Me._TtmMeasureControlsToolStrip, "Exception occurred saving trace")
             Finally
             End Try
         End If
+
 
     End Sub
 
@@ -371,7 +373,7 @@ Public Class MeasurementPanelBase
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._TtmMeasureControlsToolStrip, "Failed modeling the thermal transient trace.")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                       "Exception occurred modeling the trace;. details: {0}", ex)
+                                       "Exception occurred modeling the trace;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -423,7 +425,7 @@ Public Class MeasurementPanelBase
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._TtmMeasureControlsToolStrip, "Failed Measuring Initial Resistance")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                       "Failed Measuring Initial Resistance;. Details: {0}", ex)
+                                       "Failed Measuring Initial Resistance;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -456,7 +458,7 @@ Public Class MeasurementPanelBase
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._TtmMeasureControlsToolStrip, "Failed Measuring Thermal Transient")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                       "Failed Measuring Thermal Transient;. Details: {0}", ex)
+                                       "Failed Measuring Thermal Transient;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -487,7 +489,7 @@ Public Class MeasurementPanelBase
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._TtmMeasureControlsToolStrip, "Failed Measuring Final Resistance")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                       "Failed Measuring Final Resistance;. Details: {0}", ex)
+                                       "Failed Measuring Final Resistance;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -535,7 +537,7 @@ Public Class MeasurementPanelBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
 
         End Try
     End Sub
@@ -662,7 +664,7 @@ Public Class MeasurementPanelBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

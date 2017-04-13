@@ -325,7 +325,7 @@ Public MustInherit Class DeviceBase
             Me.OnPropertyChanged(TryCast(sender, SessionBase), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling property Session.{e.PropertyName} change event;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling property Session.{e.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -580,7 +580,7 @@ Public MustInherit Class DeviceBase
         Try
             Me.OpenSession(resourceName, resourceTitle)
         Catch ex As OperationFailedException
-            e.RegisterCancellation($"Exception opening {resourceTitle}:{resourceName};. Details: {ex.ToFullBlownString}")
+            e.RegisterCancellation($"Exception opening {resourceTitle}:{resourceName};. {ex.ToFullBlownString}")
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, e.Details)
         End Try
         Return Not e.Cancel AndAlso Me.IsDeviceOpen
@@ -633,7 +633,7 @@ Public MustInherit Class DeviceBase
         Try
             Me.CloseSession()
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred closing session;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred closing session;. {ex.ToFullBlownString}")
             Return False
         End Try
         Return Not Me.IsDeviceOpen
@@ -705,14 +705,14 @@ Public MustInherit Class DeviceBase
             End If
         Catch ex As Exception
             If e Is Nothing Then
-                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                         "Null event arguments", ex.Message)
+                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}",
+                         "Null event arguments", ex.ToFullBlownString)
             ElseIf String.IsNullOrEmpty(e.PropertyName) Then
-                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                         "Empty", ex.Message)
+                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}",
+                         "Empty", ex.ToFullBlownString)
             Else
-                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                         e.PropertyName, ex.Message)
+
+                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
             End If
         End Try
     End Sub
@@ -852,7 +852,7 @@ Public MustInherit Class DeviceBase
             Me.ProcessServiceRequest()
         Catch ex As Exception
             Me.ServiceRequestFailureMessage = Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                                                 $"Exception occurred processing service request;. Details: {ex.ToFullBlownString}")
+                                                                 $"{ex.Message} occurred processing service request;. {ex.ToFullBlownString}")
             result = False
         End Try
         Return result

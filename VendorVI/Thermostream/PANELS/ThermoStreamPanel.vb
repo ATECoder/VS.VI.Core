@@ -1,6 +1,5 @@
 Imports System.ComponentModel
 Imports System.Windows.Forms
-Imports isr.Core.Controls.ControlExtensions
 Imports isr.Core.Controls.ComboBoxExtensions
 Imports isr.Core.Controls.CheckBoxExtensions
 Imports isr.Core.Controls.SafeSetterExtensions
@@ -8,6 +7,7 @@ Imports isr.Core.Controls.ToolStripExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.StopwatchExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Provides a user interface for the Thermo Stream Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -53,7 +53,6 @@ Public Class ThermostreamPanel
             ' set defaults for the messages box.
             .ResetCount = 500
             .PresetCount = 250
-            .SupportsOpenLogFolderRequest = False
             .ContainerPanel = Me._MessagesTabPage
         End With
         With Me._ServiceRequestEnableNumeric.NumericUpDownControl
@@ -79,7 +78,7 @@ Public Class ThermostreamPanel
                 Try
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception details: {0}", ex)
+                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
                 End Try
                 ' the device gets disposed in the base class!
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
@@ -310,8 +309,8 @@ Public Class ThermostreamPanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling Sense Current Subsystem property changed Event;. Failed property {0}. Details: {1}",
-                               e.PropertyName, ex)
+                               "Exception handling Sense Current Subsystem property changed Event;. Failed property {0}. {1}",
+                               e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -364,7 +363,7 @@ Public Class ThermostreamPanel
             System.Windows.Forms.Application.DoEvents()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -375,7 +374,7 @@ Public Class ThermostreamPanel
         Try
             Me.Device.StatusSubsystem.ReadServiceRequestStatus()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -402,7 +401,7 @@ Public Class ThermostreamPanel
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -428,7 +427,7 @@ Public Class ThermostreamPanel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -452,7 +451,7 @@ Public Class ThermostreamPanel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -478,7 +477,7 @@ Public Class ThermostreamPanel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -505,7 +504,7 @@ Public Class ThermostreamPanel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -535,7 +534,7 @@ Public Class ThermostreamPanel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -565,7 +564,7 @@ Public Class ThermostreamPanel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -599,7 +598,7 @@ Public Class ThermostreamPanel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -627,7 +626,7 @@ Public Class ThermostreamPanel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -660,7 +659,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initializing known state;. Details: {0}", ex)
+                               "Exception occurred initializing known state;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -681,7 +680,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initializing known state;. Details: {0}", ex)
+                               "Exception occurred initializing known state;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -712,7 +711,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+                               "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -737,7 +736,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred reading temperature;. Details: {0}", ex)
+                               "Exception occurred reading temperature;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -783,7 +782,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred moving to the next setpoint;. Details: {0}", ex)
+                               "Exception occurred moving to the next setpoint;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -806,7 +805,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred moving to the next setpoint;. Details: {0}", ex)
+                               "Exception occurred moving to the next setpoint;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -828,7 +827,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred finding last set point;. Details: {0}", ex)
+                               "Exception occurred finding last set point;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -846,7 +845,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred reading temperature events;. Details: {0}", ex)
+                               "Exception occurred reading temperature events;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -864,7 +863,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred reading auxiliary event status;. Details: {0}", ex)
+                               "Exception occurred reading auxiliary event status;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -904,7 +903,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred selecting setpoint;. Details: {0}", ex)
+                               "Exception occurred selecting setpoint;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -925,7 +924,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred reading head status;. Details: {0}", ex)
+                               "Exception occurred reading head status;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -948,7 +947,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred reading the setpoint values;. Details: {0}", ex)
+                               "Exception occurred reading the setpoint values;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -971,7 +970,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred moving to the next setpoint;. Details: {0}", ex)
+                               "Exception occurred moving to the next setpoint;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -994,7 +993,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred setting and reading the maximum test time;. Details: {0}", ex)
+                               "Exception occurred setting and reading the maximum test time;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -1015,7 +1014,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred setting and reading the cycle count;. Details: {0}", ex)
+                               "Exception occurred setting and reading the cycle count;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -1035,7 +1034,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred starting cycling;. Details: {0}", ex)
+                               "Exception occurred starting cycling;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -1055,7 +1054,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred Stopping cycling;. Details: {0}", ex)
+                               "Exception occurred Stopping cycling;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -1095,7 +1094,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred Stopping cycling;. Details: {0}", ex)
+                               "Exception occurred Stopping cycling;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -1150,7 +1149,7 @@ Public Class ThermostreamPanel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred setting and reading the device sensor type;. Details: {0}", ex)
+                               "Exception occurred setting and reading the device sensor type;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -1191,8 +1190,8 @@ Public Class ThermostreamPanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling {0} property change;. Details: {1}",
-                               e?.PropertyName, ex)
+                               "Exception handling {0} property change;. {1}",
+                               e?.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

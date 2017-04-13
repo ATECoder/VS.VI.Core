@@ -1,5 +1,6 @@
 Imports System.Collections.Specialized
 Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Defines the device under test element including measurement and configuration. </summary>
 ''' <license> (c) 2009 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -186,7 +187,7 @@ Public Class DeviceUnderTest
         Me.Elements.Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -212,7 +213,7 @@ Public Class DeviceUnderTest
         Set(ByVal value As Integer)
             If Not value.Equals(Me.SampleNumber) Then
                 Me._SampleNumber = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SampleNumber))
+                Me.SafePostPropertyChanged(NameOf(Me.SampleNumber))
             End If
         End Set
     End Property
@@ -228,7 +229,7 @@ Public Class DeviceUnderTest
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me._uniqueKey) Then
                 Me._uniqueKey = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.UniqueKey))
+                Me.SafePostPropertyChanged(NameOf(Me.UniqueKey))
             End If
             Return Me._uniqueKey
         End Get
@@ -236,7 +237,7 @@ Public Class DeviceUnderTest
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.UniqueKey) Then
                 Me._uniqueKey = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.UniqueKey))
+                Me.SafePostPropertyChanged(NameOf(Me.UniqueKey))
             End If
         End Set
     End Property
@@ -295,7 +296,7 @@ Public Class DeviceUnderTest
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.PartNumber) Then
                 Me._PartNumber = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -311,7 +312,7 @@ Public Class DeviceUnderTest
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.LotId) Then
                 Me._LotId = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -327,7 +328,7 @@ Public Class DeviceUnderTest
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.OperatorId) Then
                 Me._OperatorId = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -342,7 +343,7 @@ Public Class DeviceUnderTest
         Set(ByVal value As Integer)
             If Not value.Equals(Me.SerialNumber) Then
                 Me._SerialNumber = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
 
         End Set
@@ -363,7 +364,7 @@ Public Class DeviceUnderTest
         Set(ByVal value As Boolean)
             If Not value.Equals(Me.ContactCheckEnabled) Then
                 Me._ContactCheckEnabled = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -378,7 +379,7 @@ Public Class DeviceUnderTest
         Set(ByVal value As Integer)
             If Not value.Equals(Me.ContactCheckThreshold) Then
                 Me._ContactCheckThreshold = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -410,10 +411,9 @@ Public Class DeviceUnderTest
         Try
             Me.OnPropertyChanged(TryCast(sender, ResistanceMeasureBase), e?.PropertyName)
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                         e.PropertyName, ex.Message)
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
         Finally
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.InitialResistance))
+            Me.SafePostPropertyChanged(NameOf(Me.InitialResistance))
         End Try
     End Sub
 
@@ -438,10 +438,9 @@ Public Class DeviceUnderTest
         Try
             Me.OnPropertyChanged(TryCast(sender, ResistanceMeasureBase), e?.PropertyName)
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                         e.PropertyName, ex.Message)
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
         Finally
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.FinalResistance))
+            Me.SafePostPropertyChanged(NameOf(Me.FinalResistance))
         End Try
     End Sub
 
@@ -462,7 +461,7 @@ Public Class DeviceUnderTest
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     Private Sub _ShuntResistance_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _ShuntResistance.PropertyChanged
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.ShuntResistance))
+        Me.SafePostPropertyChanged(NameOf(Me.ShuntResistance))
     End Sub
 
     Private WithEvents _ShuntResistance As ShuntResistance
@@ -485,10 +484,9 @@ Public Class DeviceUnderTest
         Try
             Me.OnPropertyChanged(TryCast(sender, ResistanceMeasureBase), e?.PropertyName)
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                         e.PropertyName, ex.Message)
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
         Finally
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.ThermalTransient))
+            Me.SafePostPropertyChanged(NameOf(Me.ThermalTransient))
         End Try
     End Sub
 
@@ -643,7 +641,7 @@ Public Class DeviceUnderTest
         End Get
         Set(value As Boolean)
             Me._AnyMeasurementAvailable = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.AnyMeasurementsAvailable))
+            Me.SafePostPropertyChanged(NameOf(Me.AnyMeasurementsAvailable))
         End Set
     End Property
 
@@ -667,7 +665,7 @@ Public Class DeviceUnderTest
         End Get
         Set(value As Boolean)
             Me._AllMeasurementAvailable = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.AllMeasurementsAvailable))
+            Me.SafePostPropertyChanged(NameOf(Me.AllMeasurementsAvailable))
         End Set
     End Property
 
@@ -711,7 +709,7 @@ Public Class DeviceUnderTest
             ' None is used to flag the measurements were cleared.
             If MeasurementOutcomes.None = value OrElse Not value.Equals(Me.Outcome) Then
                 Me._outcome = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
             Me.AllMeasurementsAvailable = Me.AllMeasurementsMade
             Me.AnyMeasurementsAvailable = Me.AnyMeasurementMade

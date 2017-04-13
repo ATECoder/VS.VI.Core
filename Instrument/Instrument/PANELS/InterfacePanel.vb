@@ -97,7 +97,7 @@ Public Class InterfacePanel
             Me.OpenInterfaceSession(resourceName)
         Catch ex As OperationFailedException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception occurred opening interface;. Details: {ex.ToFullBlownString}")
+                               $"{ex.Message} occurred opening interface;. {ex.ToFullBlownString}")
             Return False
         End Try
         Return Me.IsInterfaceOpen
@@ -174,7 +174,7 @@ Public Class InterfacePanel
         Try
             Me.CloseInterfaceSession()
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred closing interface;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred closing interface;. {ex.ToFullBlownString}")
             Return False
         End Try
         Return Not Me.IsInterfaceOpen
@@ -269,7 +269,7 @@ Public Class InterfacePanel
             Me.Enabled = True
         Catch ex As System.ArgumentException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception finding interfaces;. Failed finding or listing interfaces. Connect the interface(s) and click Find. Details: {ex.ToFullBlownString}")
+                               $"Exception finding interfaces;. Failed finding or listing interfaces. Connect the interface(s) and click Find. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -286,7 +286,7 @@ Public Class InterfacePanel
                 Me.VisaInterface.SendInterfaceClear()
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred clearing;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred clearing;. {ex.ToFullBlownString}")
             Me._TraceMessagesBox.AddMessage(ex)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
@@ -357,7 +357,7 @@ Public Class InterfacePanel
             Me.OnPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling InterfaceChoose.{e?.PropertyName} change event;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling InterfaceChoose.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -383,7 +383,7 @@ Public Class InterfacePanel
                 End If
             Catch ex As Exception
                 Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   $"Exception clearing '{Me._InstrumentChooser.SelectedResourceName}';. Details: {ex.ToFullBlownString}")
+                                   $"Exception clearing '{Me._InstrumentChooser.SelectedResourceName}';. {ex.ToFullBlownString}")
             Finally
                 Me.Cursor = Windows.Forms.Cursors.Default
             End Try
@@ -406,7 +406,7 @@ Public Class InterfacePanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception clearing devices at '{Me.InterfaceResourceName}';. Details: {ex.ToFullBlownString}")
+                               $"Exception clearing devices at '{Me.InterfaceResourceName}';. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Windows.Forms.Cursors.Default
         End Try
@@ -490,7 +490,7 @@ Public Class InterfacePanel
             Me.OnInstrumentChooserPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling InstrumentChooser.{e?.PropertyName} change event;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling InstrumentChooser.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -531,7 +531,7 @@ Public Class InterfacePanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
+                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

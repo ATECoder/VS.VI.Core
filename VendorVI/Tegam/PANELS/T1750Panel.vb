@@ -5,6 +5,7 @@ Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Provides a user interface for the a Tegam 1750 Resistance Measuring System. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -45,7 +46,6 @@ Public Class T1750Panel
             ' set defaults for the messages box.
             .ResetCount = 500
             .PresetCount = 250
-            .SupportsOpenLogFolderRequest = False
             .ContainerPanel = Me._MessagesTabPage
         End With
 		
@@ -91,7 +91,7 @@ Public Class T1750Panel
                 Try
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception details: {0}", ex)
+                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
                 End Try
                 ' the device gets closed and disposed (if panel is device owner) in the base class
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
@@ -381,7 +381,7 @@ Public Class T1750Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -425,7 +425,7 @@ Public Class T1750Panel
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -436,7 +436,7 @@ Public Class T1750Panel
         Try
             Me.Device.StatusSubsystem.ReadServiceRequestStatus()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -463,7 +463,7 @@ Public Class T1750Panel
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -482,7 +482,7 @@ Public Class T1750Panel
                 Me.Device.StatusSubsystem.ReadRegisters()
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading registers;. Details: {0}.", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading registers;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -508,7 +508,7 @@ Public Class T1750Panel
                 Me.Device.MeasureSubsystem.Read(False)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading;. Details: {0}.", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -532,7 +532,7 @@ Public Class T1750Panel
                 Me.Device.StatusSubsystem.ReadRegisters()
             Catch ex As Exception
                 Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   "Exception configuring;. Range {0} Trigger {1}. Details: {2}.", range, trigger, ex)
+                                   "Exception configuring;. Range {0} Trigger {1}. {2}.", range, trigger, ex.ToFullBlownString)
                 Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Finally
                 Me.Cursor = Cursors.Default
@@ -559,7 +559,7 @@ Public Class T1750Panel
             Catch ex As Exception
                 Me.ErrorProvider.Annunciate(sender, ex.ToString)
                 Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   "Exception occurred sending message;. '{0}'. Details: {1}", dataToWrite, ex)
+                                   "Exception occurred sending message;. '{0}'. {1}", dataToWrite, ex.ToFullBlownString)
             Finally
                 Me.Cursor = Cursors.Default
             End Try
@@ -607,7 +607,7 @@ Public Class T1750Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -631,7 +631,7 @@ Public Class T1750Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -657,7 +657,7 @@ Public Class T1750Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -684,7 +684,7 @@ Public Class T1750Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -714,7 +714,7 @@ Public Class T1750Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -744,7 +744,7 @@ Public Class T1750Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -778,7 +778,7 @@ Public Class T1750Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -806,7 +806,7 @@ Public Class T1750Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -847,8 +847,8 @@ Public Class T1750Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling {0} property change;. Details: {1}",
-                               e?.PropertyName, ex)
+                               "Exception handling {0} property change;. {1}",
+                               e?.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

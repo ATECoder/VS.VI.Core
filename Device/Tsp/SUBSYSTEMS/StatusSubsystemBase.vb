@@ -1,3 +1,4 @@
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Defines a Status Subsystem for a TSP System. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -71,7 +72,7 @@ Public MustInherit Class StatusSubsystemBase
             End If
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception ignored clearing read buffer;. Details: {0}.", ex)
+                               "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
         Try
@@ -83,7 +84,7 @@ Public MustInherit Class StatusSubsystemBase
             End If
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception ignored clearing read buffer;. Details: {0}.", ex)
+                               "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
         ' enable service request on all events

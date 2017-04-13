@@ -62,7 +62,7 @@ Public Class ThermalTransient
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -82,7 +82,7 @@ Public Class ThermalTransient
         Set(value As Double?)
             If Me.TimeConstant.Differs(value, 0.000000001) Then
                 Me._timeConstant = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TimeConstant))
+                Me.SafePostPropertyChanged(NameOf(Me.TimeConstant))
             End If
         End Set
     End Property
@@ -110,7 +110,7 @@ Public Class ThermalTransient
         Set(value As Double?)
             If Me.Asymptote.Differs(value, 0.000000001) Then
                 Me._Asymptote = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Asymptote))
+                Me.SafePostPropertyChanged(NameOf(Me.Asymptote))
             End If
         End Set
     End Property
@@ -138,7 +138,7 @@ Public Class ThermalTransient
         Set(value As Double?)
             If Me.EstimatedVoltage.Differs(value, 0.000000001) Then
                 Me._EstimatedVoltage = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.EstimatedVoltage))
+                Me.SafePostPropertyChanged(NameOf(Me.EstimatedVoltage))
             End If
         End Set
     End Property
@@ -166,7 +166,7 @@ Public Class ThermalTransient
         Set(value As Double?)
             If Me.CorrelationCoefficient.Differs(value, 0.000001) Then
                 Me._CorrelationCoefficient = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.CorrelationCoefficient))
+                Me.SafePostPropertyChanged(NameOf(Me.CorrelationCoefficient))
             End If
         End Set
     End Property
@@ -194,7 +194,7 @@ Public Class ThermalTransient
         Set(value As Double?)
             If Me.StandardError.Differs(value, 0.000001) Then
                 Me._StandardError = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.StandardError))
+                Me.SafePostPropertyChanged(NameOf(Me.StandardError))
             End If
         End Set
     End Property
@@ -222,7 +222,7 @@ Public Class ThermalTransient
         Set(value As Integer?)
             If Not Nullable.Equals(value, Me.Iterations) Then
                 Me._Iterations = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Iterations))
+                Me.SafePostPropertyChanged(NameOf(Me.Iterations))
             End If
         End Set
     End Property
@@ -250,7 +250,7 @@ Public Class ThermalTransient
         Set(value As OptimizationOutcome?)
             If Not Nullable.Equals(value, Me.OptimizationOutcome) Then
                 Me._OptimizationOutcome = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OptimizationOutcome))
+                Me.SafePostPropertyChanged(NameOf(Me.OptimizationOutcome))
             End If
         End Set
     End Property

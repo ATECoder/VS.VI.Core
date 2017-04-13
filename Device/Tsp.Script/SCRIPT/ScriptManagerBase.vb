@@ -2850,8 +2850,8 @@ Public MustInherit Class ScriptManagerBase
 
                     Catch ex As Exception
                         Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                           "Exception occurred testing if delete is required for firmware {0} from node {1};. Details: {2}",
-                                           script.Name, node.Number, ex)
+                                           "Exception occurred testing if delete is required for firmware {0} from node {1};. {2}",
+                                           script.Name, node.Number, ex.ToFullBlownString)
                     End Try
 
                 End If
@@ -3019,12 +3019,12 @@ Public MustInherit Class ScriptManagerBase
                         Try
                             success = success AndAlso Me.Session.IsNil(script.Name)
                             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                               "Exception occurred deleting firmware {0} from node {1};. Details: {2}",
-                                               script.Name, node.Number, ex)
+                                               "Exception occurred deleting firmware {0} from node {1};. {2}",
+                                               script.Name, node.Number, ex.ToFullBlownString)
                         Catch
                             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                               "Exception occurred checking existence after attempting deletion of firmware {0} from node {1};. Details: {2}",
-                                               script.Name, node.Number, ex)
+                                               "Exception occurred checking existence after attempting deletion of firmware {0} from node {1};. {2}",
+                                               script.Name, node.Number, ex.ToFullBlownString)
                             success = False
                         End Try
 

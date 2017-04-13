@@ -6,6 +6,7 @@ Imports isr.Core.Controls.ToolStripExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Provides a user interface for a Keithley 37XX Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -72,7 +73,7 @@ Public Class K3700Panel
                 Try
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception details: {0}", ex)
+                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
                 End Try
                 ' the device gets disposed in the base class!
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
@@ -345,8 +346,8 @@ Public Class K3700Panel
             Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Multimeter subsystem {1} property change;. Details: {2}.",
-                               Me.Name, e.PropertyName, ex)
+                               "{0} exception handling Multimeter subsystem {1} property change;. {2}",
+                               Me.Name, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -376,8 +377,8 @@ Public Class K3700Panel
             Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Channel subsystem {1} property change;. Details: {2}.",
-                               Me.Name, e.PropertyName, ex)
+                               "{0} exception handling Channel subsystem {1} property change;. {2}",
+                               Me.Name, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -407,8 +408,8 @@ Public Class K3700Panel
             Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Display subsystem {1} property change;. Details: {2}.",
-                               Me.Name, e.PropertyName, ex)
+                               "{0} exception handling Display subsystem {1} property change;. {2}",
+                               Me.Name, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -456,8 +457,8 @@ Public Class K3700Panel
             Me.OnPropertyChanged(subsystem, e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Status subsystem {1} property change;. Details: {2}.",
-                               Me.Name, e.PropertyName, ex)
+                               "{0} exception handling Status subsystem {1} property change;. {2}",
+                               Me.Name, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -468,7 +469,7 @@ Public Class K3700Panel
         Try
             Me.Device.StatusSubsystem.ReadServiceRequestStatus()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -497,8 +498,8 @@ Public Class K3700Panel
             Me.OnSubsystemPropertyChanged(subsystem, e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling System subsystem {1} property change;. Details: {2}.",
-                               Me.Name, e.PropertyName, ex)
+                               "{0} exception handling System subsystem {1} property change;. {2}",
+                               Me.Name, e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -631,7 +632,7 @@ Public Class K3700Panel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+                               "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -657,7 +658,7 @@ Public Class K3700Panel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+                               "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -686,7 +687,7 @@ Public Class K3700Panel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+                               "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -711,7 +712,7 @@ Public Class K3700Panel
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. Details: {0}", ex)
+                               "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -768,7 +769,7 @@ Public Class K3700Panel
             ' Me.Device.TriggerSubsystem.Initiate()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -791,7 +792,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -811,7 +812,7 @@ Public Class K3700Panel
             Me.Device.MultimeterSubsystem.Measure()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -848,7 +849,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, "Failed toggling session service request")
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred toggling session service request;. Details: {0}", ex)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred toggling session service request;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -873,7 +874,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, "Failed toggling device service request")
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred toggling service request;. Details: {0}", ex)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred toggling service request;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -940,7 +941,7 @@ Public Class K3700Panel
             Me.ApplyFunctionMode(Me.selectedFunctionMode)
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1014,7 +1015,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1097,7 +1098,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1121,7 +1122,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1147,7 +1148,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1174,7 +1175,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1204,7 +1205,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1234,7 +1235,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1272,7 +1273,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1300,7 +1301,7 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. Details: {ex.ToString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1341,8 +1342,8 @@ Public Class K3700Panel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling {0} property change;. Details: {1}",
-                               e?.PropertyName, ex)
+                               "Exception handling {0} property change;. {1}",
+                               e?.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

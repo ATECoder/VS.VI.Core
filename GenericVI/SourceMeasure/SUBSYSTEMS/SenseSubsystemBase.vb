@@ -37,7 +37,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoRangeEnabled, value) Then
                 Me._AutoRangeEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoRangeEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.AutoRangeEnabled))
             End If
         End Set
     End Property
@@ -92,7 +92,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ConcurrentSenseEnabled, value) Then
                 Me._ConcurrentSenseEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ConcurrentSenseEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.ConcurrentSenseEnabled))
             End If
         End Set
     End Property
@@ -143,7 +143,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.PowerLineCycles, value) Then
                 Me._PowerLineCycles = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.PowerLineCycles))
+                Me.SafePostPropertyChanged(NameOf(Me.PowerLineCycles))
             End If
         End Set
     End Property
@@ -198,7 +198,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.ProtectionLevel, value) Then
                 Me._ProtectionLevel = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ProtectionLevel))
+                Me.SafePostPropertyChanged(NameOf(Me.ProtectionLevel))
             End If
         End Set
     End Property
@@ -253,7 +253,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Range, value) Then
                 Me._Range = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Range))
+                Me.SafePostPropertyChanged(NameOf(Me.Range))
             End If
         End Set
     End Property
@@ -330,7 +330,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As VI.Scpi.SenseFunctionModes?)
             If Not Nullable.Equals(Me.FunctionModes, value) Then
                 Me._FunctionModes = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FunctionModes))
+                Me.SafePostPropertyChanged(NameOf(Me.FunctionModes))
             End If
         End Set
     End Property
@@ -366,7 +366,7 @@ Public MustInherit Class SenseSubsystemBase
         Set(ByVal value As Boolean)
             If Not Me.SupportsMultiFunctions.Equals(value) Then
                 Me._supportsMultiFunctions = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportsMultiFunctions))
+                Me.SafePostPropertyChanged(NameOf(Me.SupportsMultiFunctions))
             End If
         End Set
     End Property

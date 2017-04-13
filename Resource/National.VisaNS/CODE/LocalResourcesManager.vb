@@ -36,7 +36,7 @@ Public Class LocalResourcesManager
             If Not Me.IsDisposed AndAlso disposing Then
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing resource manager", $"Exception details: {ex.ToFullBlownString}")
+            Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing resource manager", $"Exception {ex.ToFullBlownString}")
         Finally
             MyBase.Dispose(disposing)
         End Try

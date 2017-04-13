@@ -58,13 +58,13 @@ Public Class ResourcePanelBase
                         ' this is required to release the device event handlers associated with this panel. 
                         If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                     Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception details: {ex.ToFullBlownString}")
+                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
                     End Try
                     Try
                         ' this also releases the device event handlers associated with this panel. 
                         Me.ReleaseDevice()
                     Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred releasing the device", $"Exception details: {ex.ToFullBlownString}")
+                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred releasing the device", $"Exception {ex.ToFullBlownString}")
                     End Try
                     Try
                         If Me.IsDeviceOwner Then
@@ -73,7 +73,7 @@ Public Class ResourcePanelBase
                         End If
                         Me._Device = Nothing
                     Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing the device", $"Exception details: {ex.ToFullBlownString}")
+                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing the device", $"Exception {ex.ToFullBlownString}")
                     End Try
                 End If
                 Me._ElapsedTimeStopwatch = Nothing
@@ -491,7 +491,7 @@ Public Class ResourcePanelBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling Device.{e?.PropertyName} change event;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling Device.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -542,9 +542,9 @@ Public Class ResourcePanelBase
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Open {0} Failed;. ", resourceName)
             End If
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed opening {resourceName};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed opening {resourceName};. {ex.ToFullBlownString}")
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening {resourceName};. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening {resourceName};. {ex.ToFullBlownString}")
         Finally
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
         End Try
@@ -733,7 +733,7 @@ Public Class ResourcePanelBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling Connector.{e?.PropertyName} change Event;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling Connector.{e?.PropertyName} change Event;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -792,7 +792,7 @@ Public Class ResourcePanelBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
+                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

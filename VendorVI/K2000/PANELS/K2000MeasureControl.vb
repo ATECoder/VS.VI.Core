@@ -117,7 +117,7 @@ Public Class K2000MeasureControl
             Me.OnSubsystemPropertyChanged(TryCast(sender, TriggerSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling property '{e?.PropertyName}' change;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling property '{e?.PropertyName}' change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -144,7 +144,7 @@ Public Class K2000MeasureControl
             Me.OnSubsystemPropertyChanged(TryCast(sender, SenseFourWireResistanceSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling property '{e?.PropertyName}' change;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling property '{e?.PropertyName}' change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

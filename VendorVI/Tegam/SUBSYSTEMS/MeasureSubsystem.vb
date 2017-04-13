@@ -73,7 +73,7 @@ Public Class MeasureSubsystem
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -169,7 +169,7 @@ Public Class MeasureSubsystem
         End Get
         Set(ByVal value As Double?)
             Me._resistance = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.Resistance))
+            Me.SafePostPropertyChanged(NameOf(Me.Resistance))
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -251,7 +251,7 @@ Public Class MeasureSubsystem
         Set(value As TimeSpan)
             If Not value.Equals(Me.OverRangeOpenWireTimeout) Then
                 Me._OverRangeOpenWireTimeout = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OverRangeOpenWireTimeout))
+                Me.SafePostPropertyChanged(NameOf(Me.OverRangeOpenWireTimeout))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -268,7 +268,7 @@ Public Class MeasureSubsystem
         Set(value As DateTimeOffset)
             If Not value.Equals(Me._OverRangeOpenWireTimeoutEndTime) Then
                 Me._OverRangeOpenWireTimeoutEndTime = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OverRangeOpenWireTimeoutEndTime))
+                Me.SafePostPropertyChanged(NameOf(Me.OverRangeOpenWireTimeoutEndTime))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -298,7 +298,7 @@ Public Class MeasureSubsystem
         End Get
         Set(ByVal value As Boolean?)
             Me._OverRangeOpenWire = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.OverRangeOpenWire))
+            Me.SafePostPropertyChanged(NameOf(Me.OverRangeOpenWire))
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -502,7 +502,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As RangeMode?)
             If Not Nullable.Equals(Me.RangeMode, value) Then
                 Me._RangeMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.RangeMode))
+                Me.SafePostPropertyChanged(NameOf(Me.RangeMode))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -568,7 +568,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As TimeSpan?)
             If Not Nullable.Equals(Me.TriggerDelay, value) Then
                 Me._TriggerDelay = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerDelay))
+                Me.SafePostPropertyChanged(NameOf(Me.TriggerDelay))
             End If
         End Set
     End Property
@@ -627,7 +627,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As TriggerMode?)
             If Not Nullable.Equals(Me.TriggerMode, value) Then
                 Me._TriggerMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.TriggerMode))
+                Me.SafePostPropertyChanged(NameOf(Me.TriggerMode))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -685,7 +685,7 @@ Public Class MeasureSubsystem
         Set(value As TimeSpan)
             If Not value.Equals(Me.InitialDelay) Then
                 Me._InitialDelay = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.InitialDelay))
+                Me.SafePostPropertyChanged(NameOf(Me.InitialDelay))
             End If
         End Set
     End Property
@@ -701,7 +701,7 @@ Public Class MeasureSubsystem
         Set(value As TimeSpan)
             If Not value.Equals(Me.MeasurementDelay) Then
                 Me._MeasurementDelay = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MeasurementDelay))
+                Me.SafePostPropertyChanged(NameOf(Me.MeasurementDelay))
             End If
         End Set
     End Property
@@ -717,7 +717,7 @@ Public Class MeasureSubsystem
         Set(value As Integer)
             If Not value.Equals(Me.MaximumTrialsCount) Then
                 Me._MaximumTrialsCount = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MaximumTrialsCount))
+                Me.SafePostPropertyChanged(NameOf(Me.MaximumTrialsCount))
             End If
         End Set
     End Property
@@ -733,7 +733,7 @@ Public Class MeasureSubsystem
         Set(value As Double)
             If Not value.Equals(Me._MaximumDifference) Then
                 Me._MaximumDifference = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.MaximumDifference))
+                Me.SafePostPropertyChanged(NameOf(Me.MaximumDifference))
             End If
         End Set
     End Property

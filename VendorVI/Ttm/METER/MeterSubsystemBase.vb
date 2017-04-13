@@ -97,7 +97,7 @@ Public MustInherit Class MeterSubsystemBase
         Set(ByVal value As ThermalTransientMeterEntity)
             If Not value.Equals(Me.MeterEntity) Then
                 Me._MeterEntity = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
                 Select Case value
                     Case ThermalTransientMeterEntity.FinalResistance
                         Me.EntityName = MeterSubsystemBase.FinalResistanceEntityName
@@ -142,7 +142,7 @@ Public MustInherit Class MeterSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.DefaultsName) Then
                 Me._DefaultsName = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -159,7 +159,7 @@ Public MustInherit Class MeterSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.EntityName) Then
                 Me._EntityName = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -175,7 +175,7 @@ Public MustInherit Class MeterSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.BaseEntityName) Then
                 Me._BaseEntityName = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -212,7 +212,7 @@ Public MustInherit Class MeterSubsystemBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.SourceMeasureUnit) Then
                 Me._SourceMeasureUnit = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -283,7 +283,7 @@ Public MustInherit Class MeterSubsystemBase
             End If
             If Me.Aperture.Differs(value, 0.000001) Then
                 Me._Aperture = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -351,7 +351,7 @@ Public MustInherit Class MeterSubsystemBase
             End If
             If Me.CurrentLevel.Differs(value, 0.000000001) Then
                 Me._CurrentLevel = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -419,7 +419,7 @@ Public MustInherit Class MeterSubsystemBase
             End If
             If Me.VoltageLimit.Differs(value, 0.000001) Then
                 Me._VoltageLimit = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -487,7 +487,7 @@ Public MustInherit Class MeterSubsystemBase
             End If
             If Me.HighLimit.Differs(value, 0.000001) Then
                 Me._HighLimit = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -555,7 +555,7 @@ Public MustInherit Class MeterSubsystemBase
             End If
             If Me.LowLimit.Differs(value, 0.000001) Then
                 Me._LowLimit = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -803,7 +803,7 @@ Public MustInherit Class MeterSubsystemBase
         End Get
         Protected Set(ByVal value As String)
             Me._lastReading = value
-            Me.AsyncNotifyPropertyChanged()
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -817,7 +817,7 @@ Public MustInherit Class MeterSubsystemBase
         End Get
         Protected Set(ByVal value As String)
             Me._lastOutcome = value
-            Me.AsyncNotifyPropertyChanged()
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -829,7 +829,7 @@ Public MustInherit Class MeterSubsystemBase
         End Get
         Protected Set(ByVal value As String)
             Me._lastMeasurementStatus = value
-            Me.AsyncNotifyPropertyChanged()
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -843,7 +843,7 @@ Public MustInherit Class MeterSubsystemBase
         End Get
         Set(ByVal value As Boolean)
             Me._MeasurementAvailable = value
-            Me.SyncNotifyPropertyChanged()
+            Me.SafeSendPropertyChanged()
         End Set
     End Property
 
@@ -860,7 +860,7 @@ Public MustInherit Class MeterSubsystemBase
         Protected Set(ByVal value As Integer)
             If Not Me.MeasurementEventCondition.Equals(value) Then
                 Me._MeasurementEventCondition = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

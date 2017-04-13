@@ -137,7 +137,7 @@ Public MustInherit Class ShuntResistanceBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.CurrentRange) Then
                 Me._CurrentRange = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

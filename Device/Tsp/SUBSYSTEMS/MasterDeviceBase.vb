@@ -44,7 +44,7 @@ Public MustInherit Class MasterDeviceBase
                 Me.OnClosing(New System.ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception details: {0}", ex)
+            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
         Finally
             MyBase.Dispose(disposing)
         End Try
@@ -86,13 +86,13 @@ Public MustInherit Class MasterDeviceBase
                 Me.InteractiveSubsystem.WriteShowPrompts(False)
                 Me.InteractiveSubsystem.WriteShowErrors(False)
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, "Exception turning of prompts", "Details: {0}", ex)
+                Debug.Assert(Not Debugger.IsAttached, "Exception turning of prompts", "{0}", ex.ToFullBlownString)
             End Try
             Try
                 ' set the state to closed
                 Me.InteractiveSubsystem.ExecutionState = TspExecutionState.Closed
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, "Exception disposing", "Details: {0}", ex)
+                Debug.Assert(Not Debugger.IsAttached, "Exception disposing", "{0}", ex.ToFullBlownString)
             End Try
         End If
 
@@ -102,7 +102,7 @@ Public MustInherit Class MasterDeviceBase
                 Me.StatusSubsystem.IsDeviceOpen = False
                 RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
             Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, "Exception disposing", "Details: {0}", ex)
+                Debug.Assert(Not Debugger.IsAttached, "Exception disposing", "{0}", ex.ToFullBlownString)
             End Try
         End If
     End Sub
@@ -136,7 +136,7 @@ Public MustInherit Class MasterDeviceBase
 
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed initiating controller node--closing this session;. Details: {0}.", ex)
+                               "Failed initiating controller node--closing this session;. {0}", ex.ToFullBlownString)
             Me.CloseSession()
         End Try
 
@@ -149,7 +149,7 @@ Public MustInherit Class MasterDeviceBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Exception ignored clearing error queue;. Details: {0}.", ex)
+                                   "Exception ignored clearing error queue;. {0}", ex.ToFullBlownString)
         Finally
             If Me.IsSessionOpen Then
                 Me.Session.RestoreTimeout()
@@ -164,7 +164,7 @@ Public MustInherit Class MasterDeviceBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Exception ignored turning off prompts;. Details: {0}.", ex)
+                               "Exception ignored turning off prompts;. {0}", ex.ToFullBlownString)
         Finally
             If Me.IsSessionOpen Then
                 Me.Session.RestoreTimeout()
@@ -182,7 +182,7 @@ Public MustInherit Class MasterDeviceBase
             End If
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   "Exception ignored clearing read buffer;. Details: {0}.", ex)
+                                   "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
         Try
@@ -196,7 +196,7 @@ Public MustInherit Class MasterDeviceBase
             End If
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                   "Exception ignored clearing read buffer;. Details: {0}.", ex)
+                                   "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -229,8 +229,7 @@ Public MustInherit Class MasterDeviceBase
                 End Select
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                         e.PropertyName, ex.Message)
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

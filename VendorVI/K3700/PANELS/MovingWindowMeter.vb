@@ -2,8 +2,8 @@
 Imports System.Threading
 Imports System.Windows.Forms
 Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.Core.Controls.ProgressBarExtensions
-
 ''' <summary> A moving window averaging meter. </summary>
 ''' <remarks> David, 1/30/2016. </remarks>
 ''' <license>
@@ -773,7 +773,7 @@ Public Class MovingWindowMeter
                 End If
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception starting or stopping;. Details: {0}", ex)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception starting or stopping;. {0}", ex.ToFullBlownString)
         Finally
             button.Text = $"{button.Checked.GetHashCode:'Stop';'Stop';'Start'}"
         End Try

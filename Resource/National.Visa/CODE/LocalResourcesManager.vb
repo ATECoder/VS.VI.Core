@@ -39,7 +39,7 @@ Public Class LocalResourcesManager
                 If Me._VisaResourceManager IsNot Nothing Then Me._VisaResourceManager.Dispose() : Me._VisaResourceManager = Nothing
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing resource manager", $"Exception details: {ex.ToFullBlownString}")
+            Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing resource manager", $"Exception {ex.ToFullBlownString}")
         Finally
             MyBase.Dispose(disposing)
         End Try

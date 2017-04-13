@@ -3,7 +3,7 @@ Imports isr.Core.Controls
 Imports isr.Core.Controls.ComboBoxExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
-
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Wizard for setting the compensation. </summary>
 ''' <remarks> David, 7/8/2016. </remarks>
 ''' <license>
@@ -146,7 +146,7 @@ Public Class CompensationWizard
             Me.OnPropertyChanged(TryCast(sender, CalculateChannelSubsystemBase), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -202,7 +202,7 @@ Public Class CompensationWizard
             Me.OnPropertyChanged(TryCast(sender, CompensateChannelSubsystemBase), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -233,7 +233,7 @@ Public Class CompensationWizard
             Me.OnPropertyChanged(TryCast(sender, ChannelMarkerSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -261,7 +261,7 @@ Public Class CompensationWizard
             Me.OnPropertyChanged(TryCast(sender, ChannelTraceSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -289,7 +289,7 @@ Public Class CompensationWizard
             Me.OnPropertyChanged(TryCast(sender, ChannelTriggerSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -317,7 +317,7 @@ Public Class CompensationWizard
             Me.OnPropertyChanged(TryCast(sender, DisplaySubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -367,7 +367,7 @@ Public Class CompensationWizard
             Me.OnPropertyChanged(TryCast(sender, SenseChannelSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -395,7 +395,7 @@ Public Class CompensationWizard
             Me.OnPropertyChanged(TryCast(sender, TriggerSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -431,7 +431,7 @@ Public Class CompensationWizard
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -442,7 +442,7 @@ Public Class CompensationWizard
         Try
             Me.Device.StatusSubsystem.ReadServiceRequestStatus()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -468,7 +468,7 @@ Public Class CompensationWizard
             Me.OnPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -507,7 +507,7 @@ Public Class CompensationWizard
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred restarting average;. Details: {0}", ex)
+                               "Exception occurred restarting average;. {0}", ex.ToFullBlownString)
         Finally
         End Try
     End Sub
@@ -523,7 +523,7 @@ Public Class CompensationWizard
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred applying settings;. Details: {0}", ex)
+                               "Exception occurred applying settings;. {0}", ex.ToFullBlownString)
         Finally
         End Try
     End Sub
@@ -576,7 +576,7 @@ Public Class CompensationWizard
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred acquiring open compensation;. Details: {0}", ex)
+                               "Exception occurred acquiring open compensation;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -629,7 +629,7 @@ Public Class CompensationWizard
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred acquiring short compensation;. Details: {0}", ex)
+                               "Exception occurred acquiring short compensation;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -686,7 +686,7 @@ Public Class CompensationWizard
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred acquiring Load compensation;. Details: {0}", ex)
+                               "Exception occurred acquiring Load compensation;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -784,7 +784,7 @@ Public Class CompensationWizard
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred reading marker;. Details: {0}", ex)
+                               "Exception occurred reading marker;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -824,7 +824,7 @@ Public Class CompensationWizard
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred after moving pages;. Details: {0}", ex)
+                               "Exception occurred after moving pages;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -870,7 +870,7 @@ Public Class CompensationWizard
             e.Cancel = True
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred before moving pages;. Details: {0}", ex)
+                               "Exception occurred before moving pages;. {0}", ex.ToFullBlownString)
         Finally
         End Try
     End Sub
@@ -904,7 +904,7 @@ Public Class CompensationWizard
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred canceling the wizard;. Details: {0}", ex)
+                               "Exception occurred canceling the wizard;. {0}", ex.ToFullBlownString)
         Finally
         End Try
     End Sub
@@ -934,7 +934,7 @@ Public Class CompensationWizard
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred closing the wizard;. Details: {0}", ex)
+                               "Exception occurred closing the wizard;. {0}", ex.ToFullBlownString)
         Finally
         End Try
     End Sub
@@ -969,7 +969,7 @@ Public Class CompensationWizard
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, InfoProviderLevel.Error, ex.ToString)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred showing help;. Details: {0}", ex)
+                               "Exception occurred showing help;. {0}", ex.ToFullBlownString)
         Finally
         End Try
     End Sub

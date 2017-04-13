@@ -80,7 +80,7 @@ Public Class ServiceRequesterForm
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception loading the form;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception loading the form;. {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -110,7 +110,7 @@ Public Class ServiceRequesterForm
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Ready to open Visa Session;. ")
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the form;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the form;. {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -191,7 +191,7 @@ Public Class ServiceRequesterForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
+                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

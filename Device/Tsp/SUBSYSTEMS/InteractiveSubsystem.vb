@@ -1,4 +1,4 @@
-Imports isr.Core.Pith.StackTraceExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Defines an Interactive Subsystem for a TSP System. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -89,7 +89,7 @@ Public MustInherit Class InteractiveSubsystem
             Me.TurnPromptsErrorsOff()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Exception ignored turning off prompts;. Details: {0}.", ex)
+                               "Exception ignored turning off prompts;. {0}", ex.ToFullBlownString)
         Finally
             Me.Session.RestoreTimeout()
         End Try
@@ -103,7 +103,7 @@ Public MustInherit Class InteractiveSubsystem
             End If
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception ignored clearing read buffer;. Details: {0}.", ex)
+                               "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
         Try
@@ -115,7 +115,7 @@ Public MustInherit Class InteractiveSubsystem
             End If
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception ignored clearing read buffer;. Details: {0}.", ex)
+                               "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
     End Sub

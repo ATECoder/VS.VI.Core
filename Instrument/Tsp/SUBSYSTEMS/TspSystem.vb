@@ -151,7 +151,7 @@ Public Class TspSystem
             Me.OnPropertyChanged(TryCast(sender, ScriptManager), e?.PropertyName)
         Catch ex As Exception
             Me.ScriptManager.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                             "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                                             "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

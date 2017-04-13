@@ -274,7 +274,7 @@ Public Class ServiceRequesterPanel
             Me._ServiceRequestStatusLabel.Text = $"0x{CInt(sb):X2}"
             Me._ServiceRequestStatusLabel.BackColor = System.Drawing.Color.LightGreen
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling session service request;. Details: {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling session service request;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -337,7 +337,7 @@ Public Class ServiceRequesterPanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
+                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

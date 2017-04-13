@@ -108,7 +108,7 @@ Public Class SimpleReadWritePanel
                 End If
             End Using
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening;. session to {resource}. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening;. session to {resource}. {ex.ToFullBlownString}")
             Me._SessionInfoTextBox.Text = ex.ToFullBlownString
         Finally
             Windows.Forms.Cursor.Current = Cursors.Default
@@ -179,7 +179,7 @@ Public Class SimpleReadWritePanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling SimpleReadWrite.{e?.PropertyName} change;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling SimpleReadWrite.{e?.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -330,7 +330,7 @@ Public Class SimpleReadWritePanel
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. Details: {ex.ToFullBlownString}")
+                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

@@ -1,6 +1,5 @@
-Imports System.ComponentModel
 Imports isr.Core.Pith
-Imports isr.Core.Pith.StopwatchExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.VI.Tsp
 Imports isr.VI.Tsp.K2600
 ''' <summary> Defines the thermal transient meter including measurement and
@@ -132,7 +131,7 @@ Public Class Meter
             End Try
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred closing Master Device;. Details: {0}", ex)
+                              "Exception occurred closing Master Device;. {0}", ex.ToFullBlownString)
         End Try
 
     End Sub
@@ -192,7 +191,7 @@ Public Class Meter
             Me.ResumePublishing()
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred initiating TTM elements;. Details: {0}", ex)
+                              "Exception occurred initiating TTM elements;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -202,7 +201,7 @@ Public Class Meter
 
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred initializing TTM elements;. Details: {0}", ex)
+                              "Exception occurred initializing TTM elements;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -213,7 +212,7 @@ Public Class Meter
             ' this is already done.  Me.MasterDevice.AddListeners(Me.Talker.Listeners)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred while TTM elements initialized;. Details: {0}", ex)
+                              "Exception occurred while TTM elements initialized;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -241,8 +240,8 @@ Public Class Meter
         Try
             Me.OnPropertyChanged(TryCast(sender, Device), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "", "Exception handling property '{0}'. Details: {1}.",
-                               e.PropertyName, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "", "Exception handling property '{0}'. {1}",
+                               e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -349,7 +348,7 @@ Public Class Meter
         Me.MasterDevice?.Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -470,7 +469,7 @@ Public Class Meter
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.SourceMeasureUnit) Then
                 Me._SourceMeasureUnit = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -521,7 +520,7 @@ Public Class Meter
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.FirmwareReleasedVersion) Then
                 Me._firmwareReleasedVersion = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -713,7 +712,7 @@ Public Class Meter
         Set(ByVal value As Boolean)
             If Not value.Equals(Me.MeasurementCompleted) Then
                 Me._MeasurementCompleted = value
-                Me.SyncNotifyPropertyChanged()
+                Me.SafeSendPropertyChanged()
             End If
         End Set
     End Property
@@ -884,7 +883,7 @@ Public Class Meter
             Me.OnPropertyChanged(TryCast(sender, MeasureSequencer), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -956,7 +955,7 @@ Public Class Meter
                     End If
                 Catch ex As Exception
                     Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                               "Exception occurred measuring initial resistance;. Details: {0}", ex)
+                                               "Exception occurred measuring initial resistance;. {0}", ex.ToFullBlownString)
                     Me.MeasureSequencer.Enqueue(MeasurementSequenceSignal.Failure)
                 End Try
 
@@ -971,7 +970,7 @@ Public Class Meter
 
                 Catch ex As Exception
                     Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                               "Exception occurred measuring thermal resistance;. Details: {0}", ex)
+                                               "Exception occurred measuring thermal resistance;. {0}", ex.ToFullBlownString)
                     Me.MeasureSequencer.Enqueue(MeasurementSequenceSignal.Failure)
                 End Try
 
@@ -991,7 +990,7 @@ Public Class Meter
 
                 Catch ex As Exception
                     Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                               "Exception occurred measuring final resistance;. Details: {0}", ex)
+                                               "Exception occurred measuring final resistance;. {0}", ex.ToFullBlownString)
                     Me.MeasureSequencer.Enqueue(MeasurementSequenceSignal.Failure)
                 End Try
 
@@ -1042,7 +1041,7 @@ Public Class Meter
             Me.OnPropertyChanged(TryCast(sender, TriggerSequencer), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -1102,7 +1101,7 @@ Public Class Meter
                     Me.TriggerSequencer.Enqueue(TriggerSequenceSignal.Step)
                 Catch ex As Exception
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                               "Exception occurred preparing instrument for waiting for trigger;. Details:{0}", ex)
+                                               "Exception occurred preparing instrument for waiting for trigger;. {0}", ex.ToFullBlownString)
                     ' step to the failed state.
                     Me.TriggerSequencer.Enqueue(TriggerSequenceSignal.Failure)
                 End Try
@@ -1133,7 +1132,7 @@ Public Class Meter
                     Me.TriggerSequencer.Enqueue(TriggerSequenceSignal.Step)
                 Catch ex As Exception
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                               "Exception occurred reading measurements;. Details:{0}", ex)
+                                               "Exception occurred reading measurements;. {0}", ex.ToFullBlownString)
                     ' step to the failed state.
                     Me.TriggerSequencer.Enqueue(TriggerSequenceSignal.Failure)
                 End Try

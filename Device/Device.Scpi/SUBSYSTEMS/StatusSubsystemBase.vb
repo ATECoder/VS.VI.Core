@@ -55,14 +55,14 @@ Public MustInherit Class StatusSubsystemBase
             Me.EnableWaitComplete()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               $"Exception enabling wait completion;. Details: {ex.ToFullBlownString}")
+                               $"Exception enabling wait completion;. {ex.ToFullBlownString}")
         End Try
         Try
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading identity;. ")
             Me.QueryIdentity()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               $"Exception reading identity;. Details: {ex.ToFullBlownString}")
+                               $"Exception reading identity;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

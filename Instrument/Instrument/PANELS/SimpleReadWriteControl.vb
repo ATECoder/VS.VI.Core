@@ -240,7 +240,7 @@ Public Class SimpleReadWriteControl
         Catch ex As Exception
             Me.StatusMessage = "Error reading service request"
             Me._ReadTextBox.Text = ex.ToFullBlownString
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading service request;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading service request;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -274,7 +274,7 @@ Public Class SimpleReadWriteControl
         Catch ex As Exception
             Me.StatusMessage = "Error Querying."
             Me._ReadTextBox.Text = ex.ToFullBlownString
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception Querying;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception Querying;. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default
@@ -316,7 +316,7 @@ Public Class SimpleReadWriteControl
         Catch ex As Exception
             Me.StatusMessage = "Error Writing."
             Me._ReadTextBox.Text = ex.ToFullBlownString
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception writing;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception writing;. {ex.ToFullBlownString}")
         Finally
             If Not Me.ServiceRequestRegistered Then Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default
@@ -341,7 +341,7 @@ Public Class SimpleReadWriteControl
         Catch ex As Exception
             Me.StatusMessage = "Error Reading."
             Me._ReadTextBox.Text = ex.ToFullBlownString
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading;. {ex.ToFullBlownString}")
         Finally
             If Me._Session.ServiceRequestEventEnabled AndAlso Me.ServiceRequestRegistered Then
                 Me.ServiceRequestRegistered = False
@@ -373,7 +373,7 @@ Public Class SimpleReadWriteControl
         Catch ex As Exception
             Me.StatusMessage = "Error clearing the session."
             Me._ReadTextBox.Text = ex.ToFullBlownString
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception clearing session;. Details: {ex.ToFullBlownString}")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception clearing session;. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default
@@ -410,7 +410,7 @@ Public Class SimpleReadWriteControl
             Me.HandleMessageService(requester, sb)
             sb = requester.ReadStatusByte()
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling session service request;. Details: {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling session service request;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

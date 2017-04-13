@@ -45,7 +45,7 @@ Public Class Session
                     Me._LastNativeError = Nothing
                 Catch ex As Exception
                     Debug.Assert(Not Debugger.IsAttached, "Failed discarding enabled events.",
-                                 "Failed discarding enabled events. Details: {0}", ex)
+                                 "Failed discarding enabled events. {0}", ex.ToFullBlownString)
                 End Try
             End If
         Finally

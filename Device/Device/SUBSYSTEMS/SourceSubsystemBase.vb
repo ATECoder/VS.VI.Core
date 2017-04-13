@@ -429,7 +429,7 @@ End Enum
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoClearEnabled, value) Then
                 Me._AutoClearEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoClearEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.AutoClearEnabled))
             End If
         End Set
     End Property
@@ -472,7 +472,7 @@ End Enum
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoDelayEnabled, value) Then
                 Me._AutoDelayEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoDelayEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.AutoDelayEnabled))
             End If
         End Set
     End Property
@@ -517,7 +517,7 @@ End Enum
         Protected Set(ByVal value As TimeSpan?)
             If Not Nullable.Equals(Me.Delay, value) Then
                 Me._Delay = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Delay))
+                Me.SafePostPropertyChanged(NameOf(Me.Delay))
             End If
         End Set
     End Property
@@ -576,7 +576,7 @@ End Enum
         Set(ByVal value As SourceFunctionModes)
             If Not Me.SupportedFunctionModes.Equals(value) Then
                 Me._SupportedFunctionModes = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportedFunctionModes))
+                Me.SafePostPropertyChanged(NameOf(Me.SupportedFunctionModes))
             End If
         End Set
     End Property
@@ -594,7 +594,7 @@ End Enum
         Protected Set(ByVal value As SourceFunctionModes?)
             If Not Nullable.Equals(Me.FunctionMode, value) Then
                 Me._FunctionMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FunctionMode))
+                Me.SafePostPropertyChanged(NameOf(Me.FunctionMode))
             End If
         End Set
     End Property
@@ -632,7 +632,7 @@ End Enum
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.SweepPoints, value) Then
                 Me._SweepPoints = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SweepPoints))
+                Me.SafePostPropertyChanged(NameOf(Me.SweepPoints))
             End If
         End Set
     End Property

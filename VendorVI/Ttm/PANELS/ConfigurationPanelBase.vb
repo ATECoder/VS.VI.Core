@@ -2,6 +2,7 @@
 Imports System.ComponentModel
 Imports isr.Core.Pith
 Imports isr.Core.Pith.NumericExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Panel for editing the configuration. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -105,8 +106,8 @@ Public Class ConfigurationPanelBase
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling {0} property change;. Details: {1}",
-                               e?.PropertyName, ex)
+                               "Exception handling {0} property change;. {1}",
+                               e?.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -309,7 +310,7 @@ Public Class ConfigurationPanelBase
         Set(value As Boolean)
             If Not value.Equals(Me.IsNewConfigurationSettingAvailable) Then
                 Me._IsNewConfigurationSettingAvailable = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -362,17 +363,17 @@ Public Class ConfigurationPanelBase
             Me._ErrorProvider.SetError(Me._ApplyNewConfigurationButton,
                                        "failed configuring--most one configuration element did not succeed in setting the correct value. See messages for details.")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred when configuring thermal transient;. Details: {0}", ex)
+                              "Exception occurred when configuring thermal transient;. {0}", ex.ToFullBlownString)
         Catch ex As ArgumentException
             Me._ErrorProvider.SetError(Me._ApplyNewConfigurationButton,
                                        "failed configuring--most likely due to a validation issue. See messages for details.")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred when configuring thermal transient;. Details: {0}", ex)
+                              "Exception occurred when configuring thermal transient;. {0}", ex.ToFullBlownString)
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._ApplyNewConfigurationButton,
                                        "failed configuring thermal transient")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred configuring thermal transient;. Details: {0}", ex)
+                              "Exception occurred configuring thermal transient;. {0}", ex.ToFullBlownString)
         Finally
             Me.onConfigurationChanged()
             Me.Cursor = Cursors.Default
@@ -408,16 +409,16 @@ Public Class ConfigurationPanelBase
             Me._ErrorProvider.SetError(Me._ApplyNewConfigurationButton,
                                        "failed configuring--most one configuration element did not succeed in setting the correct value. See messages for details.")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred when configuring thermal transient;. Details: {0}", ex)
+                              "Exception occurred when configuring thermal transient;. {0}", ex.ToFullBlownString)
         Catch ex As ArgumentException
             Me._ErrorProvider.SetError(Me._ApplyNewConfigurationButton,
                                        "failed configuring--most likely due to a validation issue. See messages for details.")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred when configuring thermal transient;. Details: {0}", ex)
+                              "Exception occurred when configuring thermal transient;. {0}", ex.ToFullBlownString)
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._ApplyNewConfigurationButton, "failed configuring thermal transient")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred configuring thermal transient;. Details: {0}", ex)
+                              "Exception occurred configuring thermal transient;. {0}", ex.ToFullBlownString)
         Finally
             Me.onConfigurationChanged()
             Me.Cursor = Cursors.Default

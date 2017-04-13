@@ -54,7 +54,7 @@ Public Class ThermalTransientEstimator
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -88,7 +88,7 @@ Public Class ThermalTransientEstimator
         Protected Set(ByVal value As Double?)
             If Me.ThermalCoefficient.Differs(value, 0.000000001) Then
                 Me._ThermalCoefficient = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

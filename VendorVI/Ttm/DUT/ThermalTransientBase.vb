@@ -174,7 +174,7 @@ Public MustInherit Class ThermalTransientBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.AllowedVoltageChange) Then
                 Me._AllowedVoltageChange = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -191,7 +191,7 @@ Public MustInherit Class ThermalTransientBase
         Set(ByVal value As Integer)
             If Not value.Equals(Me.MedianFilterSize) Then
                 Me._MedianFilterSize = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -207,7 +207,7 @@ Public MustInherit Class ThermalTransientBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.PostTransientDelay) Then
                 Me._PostTransientDelay = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -222,7 +222,7 @@ Public MustInherit Class ThermalTransientBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.SamplingInterval) Then
                 Me._SamplingInterval = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -237,7 +237,7 @@ Public MustInherit Class ThermalTransientBase
         Set(ByVal value As Integer)
             If Not value.Equals(Me.TracePoints) Then
                 Me._TracePoints = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

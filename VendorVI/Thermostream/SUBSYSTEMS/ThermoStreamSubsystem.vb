@@ -47,7 +47,7 @@ Public Class ThermostreamSubsystem
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -292,7 +292,7 @@ Public Class ThermostreamSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.CycleScreen, value) Then
                 Me._CycleScreen = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.CycleScreen))
+                Me.SafePostPropertyChanged(NameOf(Me.CycleScreen))
             End If
         End Set
     End Property
@@ -354,7 +354,7 @@ Public Class ThermostreamSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.OperatorScreen, value) Then
                 Me._OperatorScreen = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.OperatorScreen))
+                Me.SafePostPropertyChanged(NameOf(Me.OperatorScreen))
             End If
         End Set
     End Property
@@ -938,7 +938,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsCycleCompleted Then
                 Me._IsCycleCompleted = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsCycleCompleted))
+                Me.SafePostPropertyChanged(NameOf(Me.IsCycleCompleted))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -955,7 +955,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsCyclesCompleted Then
                 Me._IsCyclesCompleted = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsCyclesCompleted))
+                Me.SafePostPropertyChanged(NameOf(Me.IsCyclesCompleted))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -972,7 +972,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsTestTimeElapsed Then
                 Me._IsTestTimeElapsed = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsTestTimeElapsed))
+                Me.SafePostPropertyChanged(NameOf(Me.IsTestTimeElapsed))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -989,7 +989,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsCyclingStopped Then
                 Me._IsCyclingStopped = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsCyclingStopped))
+                Me.SafePostPropertyChanged(NameOf(Me.IsCyclingStopped))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1008,7 +1008,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsAtTemperature Then
                 Me._IsAtTemperature = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsAtTemperature))
+                Me.SafePostPropertyChanged(NameOf(Me.IsAtTemperature))
             End If
         End Set
     End Property
@@ -1024,7 +1024,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsNotAtTemperature Then
                 Me._IsNotAtTemperature = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsNotAtTemperature))
+                Me.SafePostPropertyChanged(NameOf(Me.IsNotAtTemperature))
             End If
         End Set
     End Property
@@ -1267,7 +1267,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsRampMode Then
                 Me._IsRampMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsRampMode))
+                Me.SafePostPropertyChanged(NameOf(Me.IsRampMode))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1284,7 +1284,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsReady Then
                 Me._IsReady = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsReady))
+                Me.SafePostPropertyChanged(NameOf(Me.IsReady))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1302,7 +1302,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsHeadUp Then
                 Me._IsHeadUp = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsHeadUp))
+                Me.SafePostPropertyChanged(NameOf(Me.IsHeadUp))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1319,7 +1319,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsManualMode Then
                 Me._IsManualMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsManualMode))
+                Me.SafePostPropertyChanged(NameOf(Me.IsManualMode))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1336,7 +1336,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsHeatOnlyMode Then
                 Me._IsHeatOnlyMode = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsHeatOnlyMode))
+                Me.SafePostPropertyChanged(NameOf(Me.IsHeatOnlyMode))
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1353,7 +1353,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsDutControl Then
                 Me._IsDutControl = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDutControl))
+                Me.SafePostPropertyChanged(NameOf(Me.IsDutControl))
             End If
         End Set
     End Property
@@ -1369,7 +1369,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsFlowOn Then
                 Me._IsFlowOn = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsFlowOn))
+                Me.SafePostPropertyChanged(NameOf(Me.IsFlowOn))
             End If
         End Set
     End Property

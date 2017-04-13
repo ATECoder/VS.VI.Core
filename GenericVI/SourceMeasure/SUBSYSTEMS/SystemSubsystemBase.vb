@@ -1,3 +1,4 @@
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary>
 ''' Defines a SCPI System Subsystem for a generic Source Measure instrument such as the Keithley 2400.
 ''' </summary>
@@ -38,7 +39,7 @@ Public MustInherit Class SystemSubsystemBase
             Me.QueryOptions()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Exception reading options;. Details: {0}.", ex)
+                               "Exception reading options;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -68,7 +69,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoZeroEnabled, value) Then
                 Me._AutoZeroEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoZeroEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.AutoZeroEnabled))
             End If
         End Set
     End Property
@@ -109,7 +110,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ContactCheckEnabled, value) Then
                 Me._ContactCheckEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ContactCheckEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.ContactCheckEnabled))
             End If
         End Set
     End Property
@@ -150,7 +151,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.ContactCheckResistance, value) Then
                 Me._ContactCheckResistance = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ContactCheckResistance))
+                Me.SafePostPropertyChanged(NameOf(Me.ContactCheckResistance))
             End If
         End Set
     End Property
@@ -202,7 +203,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.FourWireSenseEnabled, value) Then
                 Me._FourWireSenseEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FourWireSenseEnabled))
+                Me.SafePostPropertyChanged(NameOf(Me.FourWireSenseEnabled))
             End If
         End Set
     End Property
@@ -261,7 +262,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.SupportsContactCheck, value) Then
                 Me._SupportsContactCheck = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportsContactCheck))
+                Me.SafePostPropertyChanged(NameOf(Me.SupportsContactCheck))
             End If
         End Set
     End Property

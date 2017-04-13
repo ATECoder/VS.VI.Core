@@ -48,7 +48,7 @@ Public Class Device
                 If Me.IsDeviceOpen Then Me.OnClosing(New ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", $"Exception details: {ex.ToFullBlownString}")
+            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", $"Exception {ex.ToFullBlownString}")
         Finally
             MyBase.Dispose(disposing)
         End Try
@@ -178,7 +178,7 @@ Public Class Device
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling property '{e?.PropertyName}' change;. Details: {ex.ToFullBlownString}")
+                               $"Exception handling property '{e?.PropertyName}' change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

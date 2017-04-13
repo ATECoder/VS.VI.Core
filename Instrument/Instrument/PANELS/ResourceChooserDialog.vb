@@ -1,4 +1,5 @@
 Imports System.ComponentModel
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Selects a resource. </summary>
 ''' <license> (c) 2006 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -176,8 +177,7 @@ Public Class ResourceChooserDialog
                 Me.OnPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. Details: {1}.",
-                         e.PropertyName, ex.Message)
+            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

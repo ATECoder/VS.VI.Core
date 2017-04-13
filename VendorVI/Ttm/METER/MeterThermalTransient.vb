@@ -68,7 +68,7 @@ Public Class MeterThermalTransient
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -155,7 +155,7 @@ Public Class MeterThermalTransient
             End If
             If Not Nullable.Equals(Me.MedianFilterSize, value) Then
                 Me._MedianFilterSize = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -217,7 +217,7 @@ Public Class MeterThermalTransient
             End If
             If Me.PostTransientDelay.Differs(value, 0.001) Then
                 Me._PostTransientDelay = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -280,7 +280,7 @@ Public Class MeterThermalTransient
             End If
             If Me.SamplingInterval.Differs(value, 0.000001) Then
                 Me._SamplingInterval = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -337,7 +337,7 @@ Public Class MeterThermalTransient
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.TracePoints, value) Then
                 Me._TracePoints = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -392,7 +392,7 @@ Public Class MeterThermalTransient
         End Get
         Protected Set(ByVal value As String)
             Me._lastTrace = value
-            Me.AsyncNotifyPropertyChanged()
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -536,7 +536,7 @@ Public Class MeterThermalTransient
             End If
             If Me.VoltageChange.Differs(value, 0.000001) Then
                 Me._VoltageChange = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -885,7 +885,7 @@ Public Class MeterThermalTransient
             Loop
             Me.LastTrace = builder.ToString
         End If
-        Me.AsyncNotifyPropertyChanged()
+        Me.SafePostPropertyChanged()
 
     End Sub
 

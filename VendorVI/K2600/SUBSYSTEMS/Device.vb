@@ -1,5 +1,4 @@
-﻿Imports isr.VI
-Imports isr.VI.Tsp
+﻿Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> The Thermal Transient Meter device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
@@ -48,7 +47,7 @@ Public Class Device
                 If Me.IsDeviceOpen Then Me.OnClosing(New System.ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception details: {0}", ex)
+            Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
         Finally
             MyBase.Dispose(disposing)
         End Try
@@ -78,7 +77,7 @@ Public Class Device
             Me.StatusSubsystem.ClearErrorQueue()
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Exception ignored clearing error queue;. Details: {0}.", ex)
+                               "Exception ignored clearing error queue;. {0}", ex.ToFullBlownString)
         Finally
             Me.Session.RestoreTimeout()
         End Try
@@ -92,7 +91,7 @@ Public Class Device
             End If
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception ignored clearing read buffer;. Details: {0}.", ex)
+                               "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
         Try
@@ -104,7 +103,7 @@ Public Class Device
             End If
         Catch ex As NativeException
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception ignored clearing read buffer;. Details: {0}.", ex)
+                               "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -117,7 +116,7 @@ Public Class Device
         Me.Subsystems.Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -205,7 +204,7 @@ Public Class Device
             Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed initiating controller node--closing this session;. Details: {0}.", ex)
+                               "Failed initiating controller node--closing this session;. {0}", ex.ToFullBlownString)
             Me.CloseSession()
         End Try
     End Sub
@@ -229,7 +228,7 @@ Public Class Device
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -260,7 +259,7 @@ Public Class Device
             Me.OnSubsystemPropertyChanged(TryCast(sender, DisplaySubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -297,8 +296,8 @@ Public Class Device
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling System Subsystem property changed Event;. Failed property {0}. Details: {1}",
-                               e.PropertyName, ex)
+                               "Exception handling System Subsystem property changed Event;. Failed property {0}. {1}",
+                               e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -329,7 +328,7 @@ Public Class Device
             Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.SourceMeasureUnitBase), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -362,7 +361,7 @@ Public Class Device
             Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.SourceMeasureUnitCurrentSource), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -396,7 +395,7 @@ Public Class Device
             Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.SourceMeasureUnitMeasure), e?.PropertyName)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. Details: {1}", e.PropertyName, ex)
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 

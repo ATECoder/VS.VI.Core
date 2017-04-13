@@ -183,7 +183,7 @@ Public Class ResourceSelectorConnector
             Me._ErrorProvider.SetIconPadding(sender, -15)
             Me._ErrorProvider.SetError(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception connecting resource '{0}';. Details: {1}", Me.SelectedResourceName, ex)
+                               "Exception connecting resource '{0}';. {1}", Me.SelectedResourceName, ex.ToFullBlownString)
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -321,7 +321,7 @@ Public Class ResourceSelectorConnector
             Me._ErrorProvider.SetIconPadding(Me._FindButton, -15)
             Me._ErrorProvider.SetError(Me._FindButton, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{Environment.NewLine}Details: {ex.ToString}.")
+                               $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -378,7 +378,7 @@ Public Class ResourceSelectorConnector
                     Catch ex As Exception
                         Me._ErrorProvider.SetIconPadding(_ResourceNamesComboBox, -15)
                         Me._ErrorProvider.SetError(_ResourceNamesComboBox, ex.Message)
-                        Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception setting selected resource;. Details:{0}.", ex)
+                        Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception setting selected resource;. {0}.", ex.ToFullBlownString)
                     Finally
                         Me.Cursor = System.Windows.Forms.Cursors.Default
                     End Try
@@ -469,7 +469,7 @@ Public Class ResourceSelectorConnector
                 Me._ErrorProvider.SetIconPadding(c, -15)
                 Me._ErrorProvider.SetError(c, ex.Message)
             End If
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception finding resources;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception finding resources;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -495,8 +495,8 @@ Public Class ResourceSelectorConnector
                 Me._ErrorProvider.SetIconPadding(c, -15)
                 Me._ErrorProvider.SetError(c, ex.Message)
             End If
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception clearing resource '{0}';. Details: {1}",
-                               Me.SelectedResourceName, ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception clearing resource '{0}';. {1}",
+                               Me.SelectedResourceName, ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try

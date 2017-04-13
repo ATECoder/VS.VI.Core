@@ -203,7 +203,7 @@ Public MustInherit Class ResistanceMeasureBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.ResistanceDisplayFormat) Then
                 Me._ResistanceDisplayFormat = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -219,7 +219,7 @@ Public MustInherit Class ResistanceMeasureBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.VoltageDisplayFormat) Then
                 Me._VoltageDisplayFormat = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -239,7 +239,7 @@ Public MustInherit Class ResistanceMeasureBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.LastReading) Then
                 Me._lastReading = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -255,7 +255,7 @@ Public MustInherit Class ResistanceMeasureBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.LastOutcome) Then
                 Me._lastOutcome = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -271,7 +271,7 @@ Public MustInherit Class ResistanceMeasureBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.LastStatus) Then
                 Me._lastStatus = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -379,7 +379,7 @@ Public MustInherit Class ResistanceMeasureBase
         End Get
         Set(ByVal value As Boolean)
             Me._MeasurementAvailable = value
-            Me.SyncNotifyPropertyChanged()
+            Me.SafeSendPropertyChanged()
         End Set
     End Property
 
@@ -393,7 +393,7 @@ Public MustInherit Class ResistanceMeasureBase
         Set(ByVal value As MeasurementOutcomes)
             If Not value.Equals(Me.Outcome) Then
                 Me._outcome = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -409,7 +409,7 @@ Public MustInherit Class ResistanceMeasureBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.Reading) Then
                 Me._reading = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -424,7 +424,7 @@ Public MustInherit Class ResistanceMeasureBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.Resistance) Then
                 Me._resistance = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
                 If Me.Outcome = MeasurementOutcomes.None OrElse ((Outcome And MeasurementOutcomes.MeasurementNotMade) <> 0) Then
                     Me.ResistanceCaption = ""
                 ElseIf String.IsNullOrWhiteSpace(Me.Reading) OrElse ((Outcome And MeasurementOutcomes.MeasurementFailed) <> 0) Then
@@ -447,7 +447,7 @@ Public MustInherit Class ResistanceMeasureBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.ResistanceCaption) Then
                 Me._ResistanceCaption = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -465,7 +465,7 @@ Public MustInherit Class ResistanceMeasureBase
         Protected Set(ByVal value As DateTime)
             If Not value.Equals(Me.Timestamp) Then
                 Me._timestamp = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -496,7 +496,7 @@ Public MustInherit Class ResistanceMeasureBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.Voltage) Then
                 Me._Voltage = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
                 If (Me.Outcome And MeasurementOutcomes.MeasurementNotMade) <> 0 Then
                     Me.VoltageCaption = ""
                 ElseIf String.IsNullOrWhiteSpace(Me.Reading) OrElse ((Outcome And MeasurementOutcomes.MeasurementFailed) <> 0) Then
@@ -519,7 +519,7 @@ Public MustInherit Class ResistanceMeasureBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.VoltageCaption) Then
                 Me._VoltageCaption = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -540,7 +540,7 @@ Public MustInherit Class ResistanceMeasureBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.SourceMeasureUnit) Then
                 Me._SourceMeasureUnit = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -556,7 +556,7 @@ Public MustInherit Class ResistanceMeasureBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.Aperture) Then
                 Me._Aperture = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -571,7 +571,7 @@ Public MustInherit Class ResistanceMeasureBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.CurrentLevel) Then
                 Me._CurrentLevel = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -586,7 +586,7 @@ Public MustInherit Class ResistanceMeasureBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.HighLimit) Then
                 Me._HighLimit = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -601,7 +601,7 @@ Public MustInherit Class ResistanceMeasureBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.LowLimit) Then
                 Me._LowLimit = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -616,7 +616,7 @@ Public MustInherit Class ResistanceMeasureBase
         Set(ByVal value As Double)
             If Not value.Equals(Me.VoltageLimit) Then
                 Me._VoltageLimit = value
-                Me.AsyncNotifyPropertyChanged()
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

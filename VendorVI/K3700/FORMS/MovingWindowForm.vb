@@ -1,6 +1,7 @@
 ﻿Imports System.Windows.Forms
 Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> The Test Panel. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -79,7 +80,7 @@ Public Class MovingWindowForm
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception loading the form;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception loading the form;. {0}", ex.ToFullBlownString)
             If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -110,7 +111,7 @@ Public Class MovingWindowForm
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Ready to open Visa Session;. ")
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception showing the form;. Details: {0}", ex)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception showing the form;. {0}", ex.ToFullBlownString)
             If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -195,7 +196,7 @@ Public Class MovingWindowForm
             End If
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed reporting Trace Message Property Change;. Details: {0}", ex)
+                               "Failed reporting Trace Message Property Change;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
