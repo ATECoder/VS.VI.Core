@@ -20,13 +20,13 @@ Public Class Console
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private _InitializingComponents As Boolean
+    Private Property InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
-        Me._InitializingComponents = True
+        Me.InitializingComponents = True
         Me.InitializeComponent()
-        Me._InitializingComponents = False
+        Me.InitializingComponents = False
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
         Me.AddListeners()
     End Sub
@@ -249,9 +249,6 @@ Public Class Console
             Me.Cursor = Cursors.WaitCursor
             Application.DoEvents()
 
-            ' select the start node.
-            Me.SelectNavigatorTreeViewNode(TreeViewNode.ConnectNode)
-
             Me.RefreshCaption()
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                               "Logging;. to {0}.", My.Application.Log.DefaultFileLogWriter.FullLogFileName)
@@ -272,7 +269,11 @@ Public Class Console
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Ready - List resources and select one to connect too;. ")
             Me._ResourceNameComboBox.Focus()
             Me._ResourceNameComboBox.Enabled = True
-            Me.FindSelectedResource()
+            Me._ConnectToggle.Enabled = Console.TryFindInstrumentResource(Me._ResourceNameComboBox.Text)
+            If Me._ConnectToggle.Enabled Then
+                Me._IdentityTextBox.Text = "Resource located"
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Resource {0} located. Connect;. ", Me._ResourceNameComboBox.Text)
+            End If
             Application.DoEvents()
 
         Catch ex As Exception
@@ -288,6 +289,10 @@ Public Class Console
             MyBase.OnShown(e)
             Me.Cursor = System.Windows.Forms.Cursors.Default
             Trace.CorrelationManager.StopLogicalOperation()
+
+            Application.DoEvents()
+            Me.SelectNavigatorTreeViewNode(TreeViewNode.ConnectNode)
+            Application.DoEvents()
 
         End Try
 
@@ -382,7 +387,7 @@ Public Class Console
             Me._MeterTimer.Enabled = False
         End If
 
-        Me._ListResourcesButton.Enabled = Not Me.Meter.IsDeviceOpen
+        Me._DisplayResourceNamesButton.Enabled = Not Me.Meter.IsDeviceOpen
         Me._ResourceNameComboBox.Enabled = Not Me.Meter.IsDeviceOpen
         Me.onMeasurementStatusChanged()
     End Sub
@@ -407,6 +412,7 @@ Public Class Console
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Connecting to {0};. ", resourceName)
 
             Me._IdentityTextBox.Text = "<connecting>"
+            Me.Meter.CaptureSyncContext(Threading.SynchronizationContext.Current)
             Me.Meter.MasterDevice.OpenSession(resourceName, "TTM")
 
             ' allow events to take shape before completion of actions -- there is an issue with the 
@@ -492,7 +498,7 @@ Public Class Console
     ''' <param name="e">      The <see cref="System.EventArgs" /> instance containing the event data. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _connectToggle_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ConnectToggle.CheckedChanged
-        If Not Me._InitializingComponents Then
+        If Not Me.InitializingComponents Then
             Me._ErrorProvider.Clear()
             Dim resourceName As String = Me._ResourceNameComboBox.Text
             If Me._ConnectToggle.Checked Then
@@ -513,28 +519,33 @@ Public Class Console
     ''' <param name="comboBox"> The combo box. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub DisplayResourceNames(ByVal comboBox As Windows.Forms.ListControl)
-        Dim resources As IEnumerable(Of String) = New String() {}
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._ErrorProvider.Clear()
             Dim filter As String = VI.ResourceNamesManager.BuildInstrumentFilter(VI.HardwareInterfaceType.Gpib,
                                                                                  VI.HardwareInterfaceType.Usb, VI.HardwareInterfaceType.Tcpip)
+            Dim resources As IEnumerable(Of String) = New String() {}
+            comboBox.Text = ""
+            comboBox.DataSource = resources
             Using rm As isr.VI.ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
                 If String.IsNullOrWhiteSpace(filter) Then
-                    resources = rm.FindResources()
+                    Resources = rm.FindResources()
                 Else
-                    resources = rm.FindResources(filter).ToArray
+                    Resources = rm.FindResources(filter)
                 End If
             End Using
-            If resources.Count = 0 Then
+            If Resources.Count = 0 Then
                 Me._ToolTip.SetToolTip(comboBox, isr.VI.My.Resources.LocalResourceNotFoundSynopsis)
                 Me._ErrorProvider.SetIconPadding(comboBox, -15)
                 Dim message As String = $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}."
                 Me._ErrorProvider.SetError(comboBox, message)
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, message)
             Else
-                comboBox.DataSource = Nothing
+                If Console.TryFindInstrumentResource(My.Settings.ResourceName) Then
+                    comboBox.Text = My.Settings.ResourceName
+                End If
                 comboBox.DataSource = resources
+                comboBox.Invalidate()
                 Me._ToolTip.SetToolTip(comboBox, isr.VI.My.Resources.LocalResourceSelectorTip)
             End If
         Catch ex As Exception
@@ -543,7 +554,6 @@ Public Class Console
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{ex.ToFullBlownString}")
         Finally
-
             Me.Cursor = Cursors.Default
         End Try
     End Sub
@@ -562,7 +572,7 @@ Public Class Console
     ''' <summary> Event handler. Called by _RefreshResourcesButton for click events. </summary>
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub _ListResourcesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ListResourcesButton.Click
+    Private Sub _DisplayResourceNamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _DisplayResourceNamesButton.Click
         Me.DisplayResourceNames(Me._ResourceNameComboBox)
     End Sub
 
@@ -570,7 +580,7 @@ Public Class Console
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Event information. </param>
     Private Sub _ResourceNameComboBox_SelectedValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ResourceNameComboBox.SelectedValueChanged
-        Me.FindSelectedResource()
+        If Not Me.InitializingComponents Then Me.FindSelectedResource()
     End Sub
 
     ''' <summary> Event handler. Called by _ResourceNameComboBox for validated events. </summary>
@@ -585,26 +595,24 @@ Public Class Console
     ''' <summary> Searches for the selected resource. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub FindSelectedResource()
-        If Me._ResourceNameComboBox.Enabled AndAlso Me._meter IsNot Nothing Then
-            Try
-                Me.Cursor = Cursors.WaitCursor
-                Me._ConnectToggle.Enabled = Console.TryFindInstrumentResource(Me._ResourceNameComboBox.Text)
-                If Me._ConnectToggle.Enabled Then
-                    Me._IdentityTextBox.Text = "Resource located"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                      "Resource {0} located. Connect;. ", Me._ResourceNameComboBox.Text)
-                Else
-                    Me._IdentityTextBox.Text = "Resource not found"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                      "Resource {0} not found;. ", Me._ResourceNameComboBox.Text)
-                End If
-            Catch ex As Exception
-                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                  "Exception occurred finding the selected resource;. {0}", ex.ToFullBlownString)
-            Finally
-                Me.Cursor = Cursors.Default
-            End Try
-        End If
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me._ConnectToggle.Enabled = Console.TryFindInstrumentResource(Me._ResourceNameComboBox.Text)
+            If Me._ConnectToggle.Enabled Then
+                Me._IdentityTextBox.Text = "Resource located"
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                  "Resource {0} located. Connect;. ", Me._ResourceNameComboBox.Text)
+            Else
+                Me._IdentityTextBox.Text = "Resource not found"
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                  "Resource {0} not found;. ", Me._ResourceNameComboBox.Text)
+            End If
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                              "Exception occurred finding the selected resource;. {0}", ex.ToFullBlownString)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
     End Sub
 
 #End Region
@@ -1005,6 +1013,7 @@ Public Class Console
         End Get
         Set(value As MeasureSequencer)
             Me._MeasureSequencer = value
+            Me._MeasureSequencer?.CaptureSyncContext(Threading.SynchronizationContext.Current)
         End Set
     End Property
 
@@ -1414,7 +1423,6 @@ Public Class Console
     End Sub
 
 #End Region
-
 
 End Class
 

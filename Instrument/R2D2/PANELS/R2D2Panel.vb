@@ -2,6 +2,7 @@ Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.VI.Instrument
 ''' <summary> Provides a user interface for a generic R2D2 Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>

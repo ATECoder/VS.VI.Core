@@ -1,4 +1,5 @@
-﻿''' <summary> A Dummy message based session. </summary>
+﻿Imports isr.Core.Pith.ExceptionExtensions
+''' <summary> A Dummy message based session. </summary>
 ''' <remarks> David, 11/20/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>

@@ -53,7 +53,7 @@ Public MustInherit Class SourceCurrentSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ProtectionEnabled, value) Then
                 Me._ProtectionEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ProtectionEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

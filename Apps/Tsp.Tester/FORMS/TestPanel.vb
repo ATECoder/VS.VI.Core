@@ -2,7 +2,7 @@ Imports System.ComponentModel
 Imports isr.Core.Controls
 Imports isr.Core.Controls.CheckBoxExtensions
 Imports isr.Core.Pith
-Imports isr.VI.Tsp.Script
+Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.VI.Tsp.Instrument
 ''' <summary> TSP Test panel. </summary>
 ''' <license> (c) 2010 Integrated Scientific Resources, Inc.<para>

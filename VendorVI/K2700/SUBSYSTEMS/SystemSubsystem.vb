@@ -41,7 +41,7 @@ Public Class SystemSubsystem
     Public Overrides Sub Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub
@@ -62,7 +62,7 @@ Public Class SystemSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoZeroEnabled, value) Then
                 Me._AutoZeroEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.AutoZeroEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -110,7 +110,7 @@ Public Class SystemSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.BeeperEnabled, value) Then
                 Me._BeeperEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.BeeperEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -164,7 +164,7 @@ Public Class SystemSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.FourWireSenseEnabled, value) Then
                 Me._FourWireSenseEnabled = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FourWireSenseEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -213,7 +213,7 @@ Public Class SystemSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.FrontSwitched, value) Then
                 Me._FrontSwitched = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FrontSwitched))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

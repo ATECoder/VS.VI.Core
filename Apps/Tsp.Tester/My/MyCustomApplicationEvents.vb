@@ -1,4 +1,5 @@
 ﻿Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 Namespace My
 
     Partial Friend Class MyApplication
@@ -88,7 +89,7 @@ Namespace My
         ''' <param name="value"> The value. </param>
         Public Sub Apply(ByVal value As MyLog)
             Me._MyLog = value
-            Global.isr.VI.My.MyLibrary.apply(value)
+            Global.isr.VI.My.MyLibrary.Apply(value)
         End Sub
 
         ''' <summary> Processes the startup. Sets the event arguments

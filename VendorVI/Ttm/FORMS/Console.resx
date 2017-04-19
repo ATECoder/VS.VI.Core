@@ -123,6 +123,11 @@
   <metadata name="_ErrorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>109, 17</value>
   </metadata>
+  <data name="_ResourceInfoLabel.Text" xml:space="preserve">
+    <value>Listing resources, displays the resource names that NI Max finds. Typically, NI Max is capable of finding USB and GPIB resources automatically.  TCP/IP resources will be listed if registered with NI Max through the NI Max user interface.
+	
+	Also, NI VISA correctly reports when a USB or GPIB resource actually exists and is active. TCP/IP resources may be reported as found even if not connected.</value>
+  </data>
   <metadata name="_StatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>352, 17</value>
   </metadata>

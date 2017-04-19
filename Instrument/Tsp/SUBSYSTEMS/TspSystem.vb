@@ -1,4 +1,5 @@
 Imports isr.Core.Pith.EventHandlerExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Defines a Test Script Processor (TSP) System consists of one or more TSP nodes. </summary>
 ''' <license> (c) 2007 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

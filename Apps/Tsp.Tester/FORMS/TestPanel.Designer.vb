@@ -427,7 +427,6 @@ Partial Class TestPanel
         Me._tspScriptSelector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._tspScriptSelector.Location = New System.Drawing.Point(3, 22)
         Me._tspScriptSelector.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me._tspScriptSelector.MultipleSyncContextsExpected = False
         Me._tspScriptSelector.Name = "_tspScriptSelector"
         Me._tspScriptSelector.Padding = New System.Windows.Forms.Padding(3)
         Me._tspScriptSelector.Size = New System.Drawing.Size(598, 27)
@@ -509,7 +508,6 @@ Partial Class TestPanel
         Me._ResourceSelectorConnector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ResourceSelectorConnector.Location = New System.Drawing.Point(205, 1)
         Me._ResourceSelectorConnector.Margin = New System.Windows.Forms.Padding(1)
-        Me._ResourceSelectorConnector.MultipleSyncContextsExpected = False
         Me._ResourceSelectorConnector.Name = "_ResourceSelectorConnector"
         Me._ResourceSelectorConnector.Searchable = False
         Me._ResourceSelectorConnector.Size = New System.Drawing.Size(493, 35)

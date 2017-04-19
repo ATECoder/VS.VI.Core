@@ -1,4 +1,5 @@
 Imports isr.Core.Pith.StackTraceExtensions
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Loads and runs TSP scripts. </summary>
 ''' <license> (c) 2007 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -116,7 +117,7 @@ Public MustInherit Class ScriptManagerBase
         Set(ByVal Value As Boolean)
             If Not Value.Equals(Me.AutoLoadEnabled) Then
                 Me._AutoLoadEnabled = Value
-                Me.AsyncNotifyPropertyChanged(NameOf(AutoLoadEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -141,7 +142,7 @@ Public MustInherit Class ScriptManagerBase
         If Not value.Equals(Me.Name) Then
             If ScriptEntityBase.IsValidScriptName(value) Then
                 Me._name = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Name))
+                Me.SafePostPropertyChanged(NameOf(Name))
             Else
                 ' now report the error to the calling module
                 Throw New System.IO.IOException(String.Format(Globalization.CultureInfo.CurrentCulture,
@@ -163,7 +164,7 @@ Public MustInherit Class ScriptManagerBase
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.FilePath) Then
                 Me._FilePath = value
-                Me.AsyncNotifyPropertyChanged(NameOf(FilePath))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -770,7 +771,7 @@ Public MustInherit Class ScriptManagerBase
         Set(ByVal Value As TimeSpan)
             If Me._nilifyTimeout = Value Then
                 Me._nilifyTimeout = Value
-                Me.AsyncNotifyPropertyChanged(NameOf(NilifyTimeout))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -1014,7 +1015,7 @@ Public MustInherit Class ScriptManagerBase
         Set(ByVal Value As TimeSpan)
             If Not Me.DeleteTimeout.Equals(Value) Then
                 Me._deleteTimeout = Value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.DeleteTimeout))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -1256,7 +1257,7 @@ Public MustInherit Class ScriptManagerBase
         Set(ByVal Value As TimeSpan)
             If Not Me.SaveTimeout.Equals(Value) Then
                 Me._saveTimeout = Value
-                Me.AsyncNotifyPropertyChanged(NameOf(SaveTimeout))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -2546,7 +2547,7 @@ Public MustInherit Class ScriptManagerBase
         Set(value As Boolean?)
             If Not Nullable.Equals(value, Me.FirmwareExists) Then
                 Me._FirmwareExists = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.FirmwareExists))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -2588,7 +2589,7 @@ Public MustInherit Class ScriptManagerBase
         Set(value As Boolean?)
             If Not Nullable.Equals(value, Me.SupportFirmwareExists1) Then
                 Me._SupportfirmwareExists = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.SupportFirmwareExists1))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

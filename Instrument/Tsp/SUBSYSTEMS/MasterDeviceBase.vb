@@ -1,4 +1,5 @@
-﻿''' <summary> Implements a TSP based device. Defines the I/O driver for accessing the master node
+﻿Imports isr.Core.Pith.ExceptionExtensions
+''' <summary> Implements a TSP based device. Defines the I/O driver for accessing the master node
 ''' of a TSP Linked system. </summary>
 ''' <license> (c) 2009 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

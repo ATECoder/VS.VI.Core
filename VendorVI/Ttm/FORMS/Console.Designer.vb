@@ -13,7 +13,7 @@ Partial Class Console
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Console))
         Me._MainLayout = New System.Windows.Forms.TableLayoutPanel()
         Me._ConfigurationLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._TTMConfigurationPanel = New ConfigurationPanel()
+        Me._TTMConfigurationPanel = New isr.VI.Ttm.ConfigurationPanel()
         Me._ShuntResistanceConfigurationGroupBox = New System.Windows.Forms.GroupBox()
         Me._RestoreShuntResistanceDefaultsButton = New System.Windows.Forms.Button()
         Me._ApplyNewShuntResistanceConfigurationButton = New System.Windows.Forms.Button()
@@ -32,7 +32,6 @@ Partial Class Console
         Me._ShuntResistanceTextBoxLabel = New System.Windows.Forms.Label()
         Me._ShuntResistanceTextBox = New System.Windows.Forms.TextBox()
         Me._ToolTip = New System.Windows.Forms.ToolTip(Me.components)
-        Me._ListResourcesButton = New System.Windows.Forms.Button()
         Me._ResourceNameComboBox = New System.Windows.Forms.ComboBox()
         Me._ConnectToggle = New System.Windows.Forms.CheckBox()
         Me._IdentityTextBox = New System.Windows.Forms.TextBox()
@@ -44,10 +43,11 @@ Partial Class Console
         Me._ConnectTabPage = New System.Windows.Forms.TabPage()
         Me._ConnectTabLayout = New System.Windows.Forms.TableLayoutPanel()
         Me._ConnectGroupBox = New System.Windows.Forms.GroupBox()
+        Me._ResourceInfoLabel = New System.Windows.Forms.Label()
         Me._TtmConfigTabPage = New System.Windows.Forms.TabPage()
         Me._TtmTabPage = New System.Windows.Forms.TabPage()
         Me._TtmLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._MeasurementPanel = New MeasurementPanel()
+        Me._MeasurementPanel = New isr.VI.Ttm.MeasurementPanel()
         Me._ShuntTabPage = New System.Windows.Forms.TabPage()
         Me._ShuntLayout = New System.Windows.Forms.TableLayoutPanel()
         Me._ShuntDisplayLayout = New System.Windows.Forms.TableLayoutPanel()
@@ -55,14 +55,15 @@ Partial Class Console
         Me._ShuntConfigureGroupBoxLayout = New System.Windows.Forms.TableLayoutPanel()
         Me._PartsTabPage = New System.Windows.Forms.TabPage()
         Me._PartsLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._PartsPanel = New PartsPanel()
+        Me._PartsPanel = New isr.VI.Ttm.PartsPanel()
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
         Me._TraceMessagesBox = New isr.Core.Pith.TraceMessagesBox()
-        Me._MeasurementsHeader = New MeasurementsHeader()
-        Me._ThermalTransientHeader = New ThermalTransientHeader()
-        Me._PartHeader = New PartHeader()
+        Me._MeasurementsHeader = New isr.VI.Ttm.MeasurementsHeader()
+        Me._ThermalTransientHeader = New isr.VI.Ttm.ThermalTransientHeader()
+        Me._PartHeader = New isr.VI.Ttm.PartHeader()
         Me._SplitContainer = New System.Windows.Forms.SplitContainer()
         Me._NavigatorTreeView = New System.Windows.Forms.TreeView()
+        Me._DisplayResourceNamesButton = New System.Windows.Forms.Button()
         Me._MainLayout.SuspendLayout()
         Me._ConfigurationLayout.SuspendLayout()
         Me._ShuntResistanceConfigurationGroupBox.SuspendLayout()
@@ -131,6 +132,7 @@ Partial Class Console
         '
         Me._TTMConfigurationPanel.BackColor = System.Drawing.Color.Transparent
         Me._TTMConfigurationPanel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._TTMConfigurationPanel.IsNewConfigurationSettingAvailable = False
         Me._TTMConfigurationPanel.Location = New System.Drawing.Point(68, 4)
         Me._TTMConfigurationPanel.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._TTMConfigurationPanel.Name = "_TTMConfigurationPanel"
@@ -286,7 +288,7 @@ Partial Class Console
         Me._ShuntResistanceVoltageLimitNumericLabel.AutoSize = True
         Me._ShuntResistanceVoltageLimitNumericLabel.Location = New System.Drawing.Point(38, 102)
         Me._ShuntResistanceVoltageLimitNumericLabel.Name = "_ShuntResistanceVoltageLimitNumericLabel"
-        Me._ShuntResistanceVoltageLimitNumericLabel.Size = New System.Drawing.Size(121, 17)
+        Me._ShuntResistanceVoltageLimitNumericLabel.Size = New System.Drawing.Size(119, 17)
         Me._ShuntResistanceVoltageLimitNumericLabel.TabIndex = 4
         Me._ShuntResistanceVoltageLimitNumericLabel.Text = "&VOLTAGE LIMIT [V]:"
         Me._ShuntResistanceVoltageLimitNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -356,18 +358,6 @@ Partial Class Console
         '_ToolTip
         '
         Me._ToolTip.IsBalloon = True
-        '
-        '_ListResourcesButton
-        '
-        Me._ListResourcesButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ListResourcesButton.Location = New System.Drawing.Point(28, 26)
-        Me._ListResourcesButton.Name = "_ListResourcesButton"
-        Me._ListResourcesButton.Size = New System.Drawing.Size(136, 30)
-        Me._ListResourcesButton.TabIndex = 0
-        Me._ListResourcesButton.Text = "LIST RESOURCES: "
-        Me._ListResourcesButton.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me._ToolTip.SetToolTip(Me._ListResourcesButton, "Refreshes the list of resources")
-        Me._ListResourcesButton.UseVisualStyleBackColor = True
         '
         '_ResourceNameComboBox
         '
@@ -474,16 +464,27 @@ Partial Class Console
         '
         '_ConnectGroupBox
         '
-        Me._ConnectGroupBox.Controls.Add(Me._ListResourcesButton)
+        Me._ConnectGroupBox.Controls.Add(Me._DisplayResourceNamesButton)
+        Me._ConnectGroupBox.Controls.Add(Me._ResourceInfoLabel)
         Me._ConnectGroupBox.Controls.Add(Me._ResourceNameComboBox)
         Me._ConnectGroupBox.Controls.Add(Me._ConnectToggle)
         Me._ConnectGroupBox.Controls.Add(Me._IdentityTextBox)
-        Me._ConnectGroupBox.Location = New System.Drawing.Point(5, 154)
+        Me._ConnectGroupBox.Location = New System.Drawing.Point(5, 100)
         Me._ConnectGroupBox.Name = "_ConnectGroupBox"
-        Me._ConnectGroupBox.Size = New System.Drawing.Size(634, 94)
+        Me._ConnectGroupBox.Size = New System.Drawing.Size(634, 203)
         Me._ConnectGroupBox.TabIndex = 2
         Me._ConnectGroupBox.TabStop = False
         Me._ConnectGroupBox.Text = "CONNECT"
+        '
+        '_ResourceInfoLabel
+        '
+        Me._ResourceInfoLabel.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me._ResourceInfoLabel.Location = New System.Drawing.Point(28, 89)
+        Me._ResourceInfoLabel.Name = "_ResourceInfoLabel"
+        Me._ResourceInfoLabel.Size = New System.Drawing.Size(578, 102)
+        Me._ResourceInfoLabel.TabIndex = 4
+        Me._ResourceInfoLabel.Text = resources.GetString("_ResourceInfoLabel.Text")
         '
         '_TtmConfigTabPage
         '
@@ -662,7 +663,9 @@ Partial Class Console
         '
         Me._TraceMessagesBox.AlertLevel = System.Diagnostics.TraceEventType.Warning
         Me._TraceMessagesBox.BackColor = System.Drawing.SystemColors.Info
+        Me._TraceMessagesBox.CaptionFormat = "{0} ≡"
         Me._TraceMessagesBox.CausesValidation = False
+        Me._TraceMessagesBox.Font = New System.Drawing.Font("Consolas", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._TraceMessagesBox.Location = New System.Drawing.Point(0, 0)
         Me._TraceMessagesBox.Multiline = True
         Me._TraceMessagesBox.Name = "_TraceMessagesBox"
@@ -672,6 +675,7 @@ Partial Class Console
         Me._TraceMessagesBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
         Me._TraceMessagesBox.Size = New System.Drawing.Size(601, 471)
         Me._TraceMessagesBox.TabIndex = 0
+        Me._TraceMessagesBox.TraceLevel = System.Diagnostics.TraceEventType.Verbose
         '
         '_MeasurementsHeader
         '
@@ -709,7 +713,7 @@ Partial Class Console
         '
         '_SplitContainer
         '
-        Me._SplitContainer.Location = New System.Drawing.Point(12, 320)
+        Me._SplitContainer.Location = New System.Drawing.Point(12, 413)
         Me._SplitContainer.Name = "_SplitContainer"
         '
         '_SplitContainer.Panel1
@@ -727,6 +731,17 @@ Partial Class Console
         Me._NavigatorTreeView.Name = "_NavigatorTreeView"
         Me._NavigatorTreeView.Size = New System.Drawing.Size(133, 231)
         Me._NavigatorTreeView.TabIndex = 3
+        '
+        '_DisplayResourceNamesButton
+        '
+        Me._DisplayResourceNamesButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._DisplayResourceNamesButton.Location = New System.Drawing.Point(31, 26)
+        Me._DisplayResourceNamesButton.Name = "_DisplayResourceNamesButton"
+        Me._DisplayResourceNamesButton.Size = New System.Drawing.Size(134, 30)
+        Me._DisplayResourceNamesButton.TabIndex = 0
+        Me._DisplayResourceNamesButton.Text = "LIST RESOURCES: "
+        Me._ToolTip.SetToolTip(Me._DisplayResourceNamesButton, "Displays available and registered VISA resource names. ")
+        Me._DisplayResourceNamesButton.UseVisualStyleBackColor = True
         '
         'Console
         '
@@ -807,7 +822,6 @@ Partial Class Console
     Private WithEvents _ConnectTabPage As System.Windows.Forms.TabPage
     Private WithEvents _ConnectTabLayout As System.Windows.Forms.TableLayoutPanel
     Private WithEvents _ConnectGroupBox As System.Windows.Forms.GroupBox
-    Private WithEvents _ListResourcesButton As System.Windows.Forms.Button
     Private WithEvents _ResourceNameComboBox As System.Windows.Forms.ComboBox
     Private WithEvents _ConnectToggle As System.Windows.Forms.CheckBox
     Private WithEvents _IdentityTextBox As System.Windows.Forms.TextBox
@@ -830,5 +844,6 @@ Partial Class Console
     Private WithEvents _PartsTabPage As System.Windows.Forms.TabPage
     Private WithEvents _PartsLayout As System.Windows.Forms.TableLayoutPanel
     Private WithEvents _PartsPanel As PartsPanel
-
+    Private WithEvents _ResourceInfoLabel As Windows.Forms.Label
+    Private WithEvents _DisplayResourceNamesButton As Windows.Forms.Button
 End Class

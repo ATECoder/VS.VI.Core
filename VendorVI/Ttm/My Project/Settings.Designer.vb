@@ -956,7 +956,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("GPIB0::26::INSTR")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("TCPIP0::192.168.0.134::inst0::INSTR")>  _
         Public Property ResourceName() As String
             Get
                 Return CType(Me("ResourceName"),String)

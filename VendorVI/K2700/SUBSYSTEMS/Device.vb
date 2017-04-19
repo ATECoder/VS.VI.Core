@@ -1,4 +1,5 @@
-﻿''' <summary> Implements a Keithley 2700 instrument device. </summary>
+﻿Imports isr.Core.Pith.ExceptionExtensions
+''' <summary> Implements a Keithley 2700 instrument device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
@@ -88,7 +89,7 @@ Public Class Device
         Me.Subsystems.Publish()
         If Me.Publishable Then
             For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
-                Me.AsyncNotifyPropertyChanged(p.Name)
+                Me.SafePostPropertyChanged(p.Name)
             Next
         End If
     End Sub

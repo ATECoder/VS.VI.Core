@@ -125,6 +125,15 @@ Public Class Device
 
 #Region " SESSION "
 
+    ''' <summary> Capture synchronization context. </summary>
+    ''' <remarks> David, 4/3/2017. </remarks>
+    ''' <param name="syncContext"> Context for the synchronization. </param>
+    Public Overrides Sub CaptureSyncContext(ByVal syncContext As Threading.SynchronizationContext)
+        MyBase.CaptureSyncContext(syncContext)
+        Me.Session?.CaptureSyncContext(syncContext)
+        Me.Subsystems?.CaptureSyncContext(syncContext)
+    End Sub
+
     ''' <summary> Allows the derived device to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
@@ -202,6 +211,7 @@ Public Class Device
         Try
             MyBase.OnOpened()
             Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
+            Me.CaptureSyncContext(Me.CapturedSyncContext)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Failed initiating controller node--closing this session;. {0}", ex.ToFullBlownString)

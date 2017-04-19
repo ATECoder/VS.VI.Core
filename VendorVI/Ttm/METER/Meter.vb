@@ -61,6 +61,14 @@ Public Class Meter
 
 #Region " MASTER DEVICE "
 
+    ''' <summary> Capture synchronization context. </summary>
+    ''' <remarks> David, 4/3/2017. </remarks>
+    ''' <param name="syncContext"> Context for the synchronization. </param>
+    Public Overrides Sub CaptureSyncContext(ByVal syncContext As Threading.SynchronizationContext)
+        MyBase.CaptureSyncContext(syncContext)
+        Me.MasterDevice?.CaptureSyncContext(syncContext)
+    End Sub
+
     Private WithEvents _MasterDevice As Device
 
     ''' <summary> Gets the master device. </summary>
@@ -110,12 +118,12 @@ Public Class Meter
                 Debug.Assert(Not Debugger.IsAttached, ex.ToString)
             End Try
             Try
-                If Me._MeasureSequencer IsNot Nothing Then Me._MeasureSequencer.Dispose() : Me._MeasureSequencer = Nothing
+                If Me._MeasureSequencer1 IsNot Nothing Then Me._MeasureSequencer1.Dispose() : Me._MeasureSequencer1 = Nothing
             Catch ex As Exception
                 Debug.Assert(Not Debugger.IsAttached, ex.ToString)
             End Try
             Try
-                If Me._TriggerSequencer IsNot Nothing Then Me._TriggerSequencer.Dispose() : Me._TriggerSequencer = Nothing
+                If Me._TriggerSequencer1 IsNot Nothing Then Me._TriggerSequencer1.Dispose() : Me._TriggerSequencer1 = Nothing
             Catch ex As Exception
                 Debug.Assert(Not Debugger.IsAttached, ex.ToString)
             End Try
@@ -158,8 +166,8 @@ Public Class Meter
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     Private Sub _MasterDevice_Opening(ByVal sender As Object, ByVal e As System.EventArgs) Handles _MasterDevice.Opening
-        Me._MeasureSequencer = New MeasureSequencer
-        Me._TriggerSequencer = New TriggerSequencer
+        Me.MeasureSequencer = New MeasureSequencer
+        Me.TriggerSequencer = New TriggerSequencer
         Me.SuspendPublishing()
     End Sub
 
@@ -187,6 +195,9 @@ Public Class Meter
 
             Me.ThermalTransient = New MeterThermalTransient(Me.MasterDevice.StatusSubsystem, Me.ConfigInfo.ThermalTransient)
             Me.MasterDevice.AddSubsystem(Me.ThermalTransient)
+
+            ' updates sync context for all subsystems.
+            Me.MasterDevice.CaptureSyncContext(Me.CapturedSyncContext)
 
             Me.ResumePublishing()
         Catch ex As Exception
@@ -852,14 +863,18 @@ Public Class Meter
 
 #Region " SEQUENCED MEASUREMENTS "
 
-    Private WithEvents _MeasureSequencer As MeasureSequencer
+    Private WithEvents _MeasureSequencer1 As MeasureSequencer
 
     ''' <summary> Gets the sequencer. </summary>
     ''' <value> The sequencer. </value>
-    Public ReadOnly Property MeasureSequencer As MeasureSequencer
+    Public Property MeasureSequencer As MeasureSequencer
         Get
-            Return Me._MeasureSequencer
+            Return Me._MeasureSequencer1
         End Get
+        Protected Set(value As MeasureSequencer)
+            Me._MeasureSequencer1 = value
+            Me._MeasureSequencer1?.CaptureSyncContext(Me.CapturedSyncContext)
+        End Set
     End Property
 
     ''' <summary> Handles the measure sequencer property changed event. </summary>
@@ -878,7 +893,7 @@ Public Class Meter
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _MeasureSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _MeasureSequencer.PropertyChanged
+    Private Sub _MeasureSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _MeasureSequencer1.PropertyChanged
         Try
             Me.OnPropertyChanged(TryCast(sender, MeasureSequencer), e?.PropertyName)
         Catch ex As Exception
@@ -1006,14 +1021,18 @@ Public Class Meter
 
 #Region " TRIGGER SEQUENCE "
 
-    Private WithEvents _TriggerSequencer As TriggerSequencer
+    Private WithEvents _TriggerSequencer1 As TriggerSequencer
 
     ''' <summary> Gets the trigger sequencer. </summary>
     ''' <value> The sequencer. </value>
-    Public ReadOnly Property TriggerSequencer As TriggerSequencer
+    Public Property TriggerSequencer As TriggerSequencer
         Get
-            Return Me._TriggerSequencer
+            Return Me._TriggerSequencer1
         End Get
+        Set(value As TriggerSequencer)
+            Me._TriggerSequencer1 = value
+            Me._TriggerSequencer1?.CaptureSyncContext(Me.CapturedSyncContext)
+        End Set
     End Property
 
     ''' <summary> Handles the trigger sequencer property changed event. </summary>
@@ -1036,7 +1055,7 @@ Public Class Meter
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _TriggerSequencer_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _TriggerSequencer.PropertyChanged
+    Private Sub _TriggerSequencer_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _TriggerSequencer1.PropertyChanged
         Try
             Me.OnPropertyChanged(TryCast(sender, TriggerSequencer), e?.PropertyName)
         Catch ex As Exception

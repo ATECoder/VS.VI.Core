@@ -812,7 +812,7 @@ Public Class ResistanceMeasureCollection
     ''' <summary> Clears the listeners. </summary>
     ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker.Listeners.Clear()
+        Me.Talker?.Listeners?.Clear()
         For Each element As ITalker In Me.Items
             element.ClearListeners()
         Next

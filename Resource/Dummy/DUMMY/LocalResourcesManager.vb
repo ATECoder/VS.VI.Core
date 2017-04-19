@@ -1,4 +1,5 @@
-﻿''' <summary> Local visa resources manager. </summary>
+﻿Imports isr.Core.Pith.ExceptionExtensions
+''' <summary> Local visa resources manager. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
 ''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING

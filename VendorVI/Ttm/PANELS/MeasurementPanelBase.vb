@@ -509,6 +509,7 @@ Public Class MeasurementPanelBase
         End Get
         Set(value As MeasureSequencer)
             Me._MeasureSequencer = value
+            Me._MeasureSequencer?.CaptureSyncContext(Threading.SynchronizationContext.Current)
         End Set
     End Property
 
@@ -636,6 +637,7 @@ Public Class MeasurementPanelBase
         End Get
         Set(value As TriggerSequencer)
             Me._TriggerSequencer = value
+            Me._TriggerSequencer?.CaptureSyncContext(Threading.SynchronizationContext.Current)
         End Set
     End Property
 
