@@ -340,7 +340,7 @@ Public MustInherit Class SenseSubsystemBase
     Public MustOverride Function QueryFunctionModes() As VI.Scpi.SenseFunctionModes?
 
     ''' <summary> Writes the Sense Function Modes. Does not read back from the instrument. </summary>
-    ''' <param name="value"> The Sense Function mode. </param>
+    ''' <param name="value"> The Sense Function Mode. </param>
     ''' <returns> The Function Modes or null if unknown. </returns>
     Public MustOverride Function WriteFunctionModes(ByVal value As VI.Scpi.SenseFunctionModes) As VI.Scpi.SenseFunctionModes?
 
@@ -352,7 +352,7 @@ Public MustInherit Class SenseSubsystemBase
         Return Me.QueryFunctionModes()
     End Function
 
-    Private _supportsMultiFunctions As Boolean
+    Private _SupportsMultiFunctions As Boolean
 
     ''' <summary> Gets or sets the condition telling if the instrument supports multi-functions. For
     ''' example, the 2400 source-measure instrument support measuring voltage, current, and
@@ -375,7 +375,7 @@ Public MustInherit Class SenseSubsystemBase
 
 #Region " LATEST DATA "
 
-    Private _readings As Readings
+    Private _Readings As Readings
 
     ''' <summary> Returns the readings. </summary>
     ''' <returns> The readings. </returns>

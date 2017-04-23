@@ -90,7 +90,7 @@ Public Class TspMessage
 
     ''' <summary>Gets or sets the failure message parsing the message.
     ''' </summary>
-    Private _failureMessage As String
+    Private _FailureMessage As String
 
     ''' <summary>Gets or sets the failure message parsing the message.
     ''' </summary>

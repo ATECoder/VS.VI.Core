@@ -105,7 +105,7 @@ Public Class T1750Panel
     ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="control"> The control. </param>
     ''' <param name="value">   true to value. </param>
-    Private Sub enableControls(ByVal control As Windows.Forms.Control, ByVal value As Boolean)
+    Private Sub EnableControls(ByVal control As Windows.Forms.Control, ByVal value As Boolean)
         If control IsNot Nothing Then
             control.Enabled = value
             If control.Controls IsNot Nothing AndAlso control.Controls.Count > 0 Then
@@ -234,7 +234,7 @@ Public Class T1750Panel
 #Region " MEASURE "
 
     ''' <summary> handles the last reading available action. </summary>
-    Private Sub onLastReadingAvailable(ByVal subsystem As MeasureSubsystem)
+    Private Sub OnLastReadingAvailable(ByVal subsystem As MeasureSubsystem)
         If subsystem Is Nothing Then
             Me.onMeasurementAvailable(subsystem)
         Else
@@ -249,7 +249,7 @@ Public Class T1750Panel
 
     ''' <summary> Handles the measurement available action. </summary>
     ''' <param name="subsystem"> The subsystem. </param>
-    Private Sub onMeasurementAvailable(ByVal subsystem As MeasureSubsystem)
+    Private Sub OnMeasurementAvailable(ByVal subsystem As MeasureSubsystem)
         If subsystem Is Nothing Then
             Me._ReadingToolStripStatusLabel.Text = "-.---- Ohm"
             Me._ComplianceToolStripStatusLabel.Text = "  "
@@ -278,7 +278,7 @@ Public Class T1750Panel
 
     ''' <summary> Handles the measurement available action. </summary>
     <Obsolete("replaced with measurementAvailable(MeasureSubsystem)")>
-    Private Sub onMeasurementAvailable()
+    Private Sub OnMeasurementAvailable()
         If Me.Device.MeasureSubsystem.MeasurementAvailable AndAlso Me._ReadContinuouslyCheckBox.Checked Then
             Windows.Forms.Application.DoEvents()
             Me.Device.StatusSubsystem.ReadRegisters()
@@ -298,7 +298,7 @@ Public Class T1750Panel
 
     ''' <summary> Executes the over range open wire action. </summary>
     <Obsolete("replaced with measurementAvailable(MeasureSubsystem)")>
-    Private Sub onOverRangeOpenWire()
+    Private Sub OnOverRangeOpenWire()
         If Me.Device.MeasureSubsystem.OverRangeOpenWire.GetValueOrDefault(False) Then
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Measurement over range or open wire detected;. ")
             Me._ReadingToolStripStatusLabel.Text = Me.Device.MeasureSubsystem.LastReading
@@ -309,7 +309,7 @@ Public Class T1750Panel
 
     ''' <summary> Handles the supported commands changed action. </summary>
     ''' <param name="subsystem"> The subsystem. </param>
-    Private Sub onSupportedCommandsChanged(ByVal subsystem As MeasureSubsystem)
+    Private Sub OnSupportedCommandsChanged(ByVal subsystem As MeasureSubsystem)
         If subsystem IsNot Nothing Then
             With Me._CommandComboBox
                 .DataSource = Nothing
@@ -322,7 +322,7 @@ Public Class T1750Panel
 
     ''' <summary> Updates the display of measurement settings. </summary>
     ''' <param name="subsystem"> The subsystem. </param>
-    Private Sub onMeasureSettingsChanged(ByVal subsystem As MeasureSubsystem)
+    Private Sub OnMeasureSettingsChanged(ByVal subsystem As MeasureSubsystem)
         If subsystem IsNot Nothing Then
             Me._measureSettingsLabel.Text = String.Format(Globalization.CultureInfo.CurrentCulture,
                                                           "Trials: {0}; Initial Delay: {1} ms; Measurement Delay: {2} ms; Delta: {3:0.0%}",
@@ -372,7 +372,7 @@ Public Class T1750Panel
 
     ''' <summary> Measure subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub MeasureSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -390,7 +390,7 @@ Public Class T1750Panel
 #Region " STATUS "
 
     ''' <summary> Reports the last error. </summary>
-    Private Sub onLastError(ByVal lastError As VI.DeviceError)
+    Private Sub OnLastError(ByVal lastError As VI.DeviceError)
         If lastError?.IsError Then
             Me._LastErrorTextBox.ForeColor = Drawing.Color.OrangeRed
         Else
@@ -418,7 +418,7 @@ Public Class T1750Panel
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -456,7 +456,7 @@ Public Class T1750Panel
 
     ''' <summary> System subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -836,7 +836,7 @@ Public Class T1750Panel
     ''' <summary> Event handler. Called by <see crefname="_SimpleReadWriteControl"/> for property changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SimpleReadWriteControl_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
         Try

@@ -181,7 +181,7 @@ Public Class Device
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Protected Overloads Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)
@@ -217,7 +217,7 @@ Public Class Device
 
     ''' <summary> System subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As SystemSubsystem = TryCast(sender, SystemSubsystem)
@@ -251,7 +251,7 @@ Public Class Device
 
     ''' <summary> Channel subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ChannelSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As ChannelSubsystem = TryCast(sender, ChannelSubsystem)
@@ -285,7 +285,7 @@ Public Class Device
 
     ''' <summary> Display subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub DisplaySubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As DisplaySubsystem = TryCast(sender, DisplaySubsystem)
@@ -319,7 +319,7 @@ Public Class Device
 
     ''' <summary> Multimeter subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub MultimeterSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As MultimeterSubsystem = TryCast(sender, MultimeterSubsystem)
@@ -353,7 +353,7 @@ Public Class Device
 
     ''' <summary> Slots subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SlotsSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As SlotsSubsystem = TryCast(sender, SlotsSubsystem)

@@ -67,7 +67,7 @@ Public Class MeterColdResistance
     Public Overrides Sub ResetKnownState()
 #If False Then
             Me.Session.WriteLine("{0}.level = nil", Me.EntityName)
-            Dim B As Boolean = Me.Session.IsStatementTrue("{0}.level==nil", Me.EntityName)
+            Dim b As Boolean = Me.Session.IsStatementTrue("{0}.level==nil", Me.EntityName)
             'Me.Session.WriteLine("{0}.level = 0.09", Me.EntityName)
             'B = Me.Session.IsStatementTrue("{0}.level==nil", Me.EntityName)
             Dim val As String = Me.Session.QueryPrintStringFormat("%9.6f", "_G.ttm.coldResistance.Defaults.level")

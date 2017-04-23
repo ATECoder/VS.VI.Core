@@ -117,11 +117,13 @@ Public MustInherit Class SessionBase
 
     ''' <summary> Executes the session open action. </summary>
     ''' <remarks> David, 1/25/2016. </remarks>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Private Sub OnSessionOpen()
         If Me.ResourceInfo.InterfaceType = HardwareInterfaceType.Tcpip AndAlso Me.KeepAliveInterval > TimeSpan.Zero Then
-            Me._KeepAliveTimer = New Timers.Timer
-            Me._KeepAliveTimer.Interval = Me.KeepAliveInterval.TotalMilliseconds
-            Me._KeepAliveTimer.Enabled = True
+            Me._KeepAliveTimer = New Timers.Timer With {
+                .Interval = Me.KeepAliveInterval.TotalMilliseconds,
+                .Enabled = True
+            }
         End If
         Me._IsDeviceOpen = True
         Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))

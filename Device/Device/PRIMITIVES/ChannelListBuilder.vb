@@ -170,7 +170,7 @@ Public Class ChannelListBuilder
     End Sub
 
     ''' <summary> The channel list string builder. </summary>
-    Private _channelListStringBuilder As System.Text.StringBuilder
+    Private _ChannelListStringBuilder As System.Text.StringBuilder
 
     ''' <summary> Gets or sets the channel list sans the '(@' prefix and ')' suffix. </summary>
     ''' <value> A List of naked channels. </value>
@@ -204,7 +204,7 @@ Public Class ChannelListBuilder
     End Property
 
     ''' <summary> Number of elements. </summary>
-    Private _elementCount As Int32
+    Private _ElementCount As Int32
 
     ''' <summary> Returns the number of elements in the channel list.  This is not the same as the
     ''' number of channels. </summary>

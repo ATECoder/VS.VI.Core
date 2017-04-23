@@ -362,7 +362,7 @@ Public MustInherit Class ScriptEntityBase
 
 #Region " FILE "
 
-    Private _fileName As String
+    Private _FileName As String
 
     ''' <summary> Gets or sets the filename of the file. </summary>
     ''' <value> The name of the file. </value>
@@ -391,7 +391,7 @@ Public MustInherit Class ScriptEntityBase
     ''' <value> The saved to file. </value>
     Public Property SavedToFile() As Boolean
 
-    Private _sourceFormat As ScriptFileFormats
+    Private _SourceFormat As ScriptFileFormats
 
     ''' <summary> Gets the format of the contents that was used to set the source. </summary>
     ''' <value> The source format. </value>
@@ -415,7 +415,7 @@ Public MustInherit Class ScriptEntityBase
     ''' <value> The requires deletion. </value>
     Public Property RequiresDeletion() As Boolean
 
-    Private _requiresReadParseWrite As Boolean
+    Private _RequiresReadParseWrite As Boolean
     ''' <summary> Indicates if the script requires update from file. </summary>
     ''' <returns> <c>True</c> if the script requires update from file; otherwise, <c>False</c>. </returns>
     Public Function RequiresReadParseWrite() As Boolean
@@ -426,7 +426,7 @@ Public MustInherit Class ScriptEntityBase
 
 #Region " MODEL MANAGEMENT "
 
-    Private _modelMask As String
+    Private _ModelMask As String
 
     ''' <summary> Specifies the family of instrument models for this script. </summary>
     ''' <value> The model mask. </value>
@@ -489,7 +489,7 @@ Public MustInherit Class ScriptEntityBase
 
 #Region " SCRIPT SPECIFICATIONS "
 
-    Private _isBinaryScript As Boolean
+    Private _IsBinaryScript As Boolean
 
     ''' <summary> Gets the sentinel indicating if this is a binary script. This is determined when
     ''' setting the source. </summary>
@@ -512,7 +512,7 @@ Public MustInherit Class ScriptEntityBase
     ''' <value> <c>True</c> if this is a Support script; otherwise, <c>False</c>. </value>
     Public Property IsSupportScript() As Boolean
 
-    Private _name As String
+    Private _Name As String
 
     ''' <summary> Gets the name of the script. </summary>
     ''' <value> The name. </value>
@@ -522,7 +522,7 @@ Public MustInherit Class ScriptEntityBase
         End Get
     End Property
 
-    Private _source As String
+    Private _Source As String
 
     ''' <summary> Gets or sets the source for the script. </summary>
     ''' <value> The source. </value>
@@ -579,7 +579,7 @@ Public MustInherit Class ScriptEntityBase
 
     ''' <summary> Namespace list setter. </summary>
     ''' <param name="value"> The value. </param>
-    Private Sub namespaceListSetter(ByVal value As String)
+    Private Sub NamespaceListSetter(ByVal value As String)
         If String.IsNullOrWhiteSpace(value) Then value = ""
         Me._namespaceList = value
         If String.IsNullOrWhiteSpace(value) Then
@@ -589,7 +589,7 @@ Public MustInherit Class ScriptEntityBase
         End If
     End Sub
 
-    Private _namespaceList As String
+    Private _NamespaceList As String
 
     ''' <summary> Gets or sets a list of namespaces. </summary>
     ''' <value> A List of namespaces. </value>
@@ -602,7 +602,7 @@ Public MustInherit Class ScriptEntityBase
         End Set
     End Property
 
-    Private _namespaces() As String
+    Private _Namespaces() As String
 
     ''' <summary> Gets the namespaces. </summary>
     ''' <returns> A list of. </returns>
@@ -759,7 +759,7 @@ Public Class ScriptEntityBaseCollection(Of TItem As ScriptEntityBase)
 
 #Region " FIRMWARE "
 
-    Private _identifiedScript As TItem
+    Private _IdentifiedScript As TItem
 
     ''' <summary> Gets any script identified using the test methods. </summary>
     ''' <value> The identified script. </value>
@@ -769,7 +769,7 @@ Public Class ScriptEntityBaseCollection(Of TItem As ScriptEntityBase)
         End Get
     End Property
 
-    Private _outcomeDetails As System.Text.StringBuilder
+    Private _OutcomeDetails As System.Text.StringBuilder
 
     ''' <summary> Gets or sets the status message. Used with reading to identify any problem. </summary>
     ''' <value> The outcome details. </value>

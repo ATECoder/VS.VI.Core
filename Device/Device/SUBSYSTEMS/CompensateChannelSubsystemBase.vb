@@ -113,11 +113,12 @@ Public MustInherit Class CompensateChannelSubsystemBase
         Dim startIndex As Integer = If(includesFrequency, 1, 0)
         If lowFrequencyImpedance.Count <> startIndex + 2 Then Throw New InvalidOperationException($"Low frequency array has {lowFrequencyImpedance.Count} values instead of {startIndex + 2}")
         If highFrequencyImpedance.Count <> startIndex + 2 Then Throw New InvalidOperationException($"High frequency array has {highFrequencyImpedance.Count} values instead of {startIndex + 2}")
-        Dim l As New List(Of Double)
-        l.Add(lowFrequencyImpedance(startIndex))
-        l.Add(lowFrequencyImpedance(startIndex + 1))
-        l.Add(highFrequencyImpedance(startIndex))
-        l.Add(highFrequencyImpedance(startIndex + 1))
+        Dim l As New List(Of Double) From {
+            lowFrequencyImpedance(startIndex),
+            lowFrequencyImpedance(startIndex + 1),
+            highFrequencyImpedance(startIndex),
+            highFrequencyImpedance(startIndex + 1)
+        }
         Return l.ToArray
     End Function
 

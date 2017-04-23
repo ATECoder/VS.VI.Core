@@ -63,7 +63,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
-        Friend ReadOnly Property bmp101() As System.Drawing.Bitmap
+        Friend ReadOnly Property Bmp101() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("bmp101", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
@@ -73,7 +73,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
-        Friend ReadOnly Property bmp102() As System.Drawing.Bitmap
+        Friend ReadOnly Property Bmp102() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("bmp102", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
@@ -83,7 +83,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
-        Friend ReadOnly Property bmp103() As System.Drawing.Bitmap
+        Friend ReadOnly Property Bmp103() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("bmp103", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
@@ -93,7 +93,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to This will clear all tests done on this lot.  Are you sure?.
         '''</summary>
-        Friend ReadOnly Property str1001() As String
+        Friend ReadOnly Property Str1001() As String
             Get
                 Return ResourceManager.GetString("str1001", resourceCulture)
             End Get
@@ -102,7 +102,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to This will complete testing on this lot.  Are you sure?.
         '''</summary>
-        Friend ReadOnly Property str1002() As String
+        Friend ReadOnly Property Str1002() As String
             Get
                 Return ResourceManager.GetString("str1002", resourceCulture)
             End Get
@@ -111,7 +111,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to This will complete testing on this lot item.  Are you sure?.
         '''</summary>
-        Friend ReadOnly Property str1003() As String
+        Friend ReadOnly Property Str1003() As String
             Get
                 Return ResourceManager.GetString("str1003", resourceCulture)
             End Get
@@ -120,7 +120,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to This will remove this lot item from the lot.  Are you sure?.
         '''</summary>
-        Friend ReadOnly Property str1004() As String
+        Friend ReadOnly Property Str1004() As String
             Get
                 Return ResourceManager.GetString("str1004", resourceCulture)
             End Get
@@ -129,7 +129,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to This will clear all tests done on this lot item from the lot.  Are you sure?.
         '''</summary>
-        Friend ReadOnly Property str1005() As String
+        Friend ReadOnly Property Str1005() As String
             Get
                 Return ResourceManager.GetString("str1005", resourceCulture)
             End Get
@@ -138,7 +138,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to This will retest this lot item clearing all previous tests.  Are you sure?.
         '''</summary>
-        Friend ReadOnly Property str1006() As String
+        Friend ReadOnly Property Str1006() As String
             Get
                 Return ResourceManager.GetString("str1006", resourceCulture)
             End Get
@@ -147,7 +147,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to Most likely the class specified below is not compatible with this application.  We suggest to install new class files from the original media for this application..
         '''</summary>
-        Friend ReadOnly Property str101() As String
+        Friend ReadOnly Property Str101() As String
             Get
                 Return ResourceManager.GetString("str101", resourceCulture)
             End Get
@@ -156,7 +156,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to The program failed to locate the settings file: .
         '''</summary>
-        Friend ReadOnly Property str102() As String
+        Friend ReadOnly Property Str102() As String
             Get
                 Return ResourceManager.GetString("str102", resourceCulture)
             End Get
@@ -165,7 +165,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to Wrong case number..
         '''</summary>
-        Friend ReadOnly Property str103() As String
+        Friend ReadOnly Property Str103() As String
             Get
                 Return ResourceManager.GetString("str103", resourceCulture)
             End Get
@@ -174,7 +174,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to Program will resume after this message..
         '''</summary>
-        Friend ReadOnly Property str104() As String
+        Friend ReadOnly Property Str104() As String
             Get
                 Return ResourceManager.GetString("str104", resourceCulture)
             End Get
@@ -183,7 +183,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to Printer error.  Please correct and try again..
         '''</summary>
-        Friend ReadOnly Property str105() As String
+        Friend ReadOnly Property Str105() As String
             Get
                 Return ResourceManager.GetString("str105", resourceCulture)
             End Get
@@ -192,7 +192,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized string similar to Most likely, either the printer isn&apos;t online -- physically switch the printer online, or the printer is jammed or out of paper -- physically correct the problem..
         '''</summary>
-        Friend ReadOnly Property str106() As String
+        Friend ReadOnly Property Str106() As String
             Get
                 Return ResourceManager.GetString("str106", resourceCulture)
             End Get

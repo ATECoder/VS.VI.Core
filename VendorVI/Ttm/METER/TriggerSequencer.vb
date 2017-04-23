@@ -140,7 +140,7 @@ Public Class TriggerSequencer
 
     ''' <summary> Gets or sets a queue of signals. </summary>
     ''' <value> A Queue of signals. </value>
-    Private Property lockedSignalQueue As Queue(Of TriggerSequenceSignal)
+    Private Property LockedSignalQueue As Queue(Of TriggerSequenceSignal)
 
     ''' <summary> Clears the signal queue. </summary>
     Public Sub ClearSignalQueue()
@@ -190,13 +190,13 @@ Public Class TriggerSequencer
     End Sub
 
     ''' <summary> Gets or sets the timer. </summary>
-    Private WithEvents _sequencerTimer As Timers.Timer
+    Private WithEvents _SequencerTimer As Timers.Timer
 
     ''' <summary> Executes the state sequence. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _sequencerTimer_Elapsed(ByVal sender As Object, ByVal e As System.EventArgs) Handles _sequencerTimer.Elapsed
+    Private Sub _SequencerTimer_Elapsed(ByVal sender As Object, ByVal e As System.EventArgs) Handles _sequencerTimer.Elapsed
 
         Try
             Me._sequencerTimer.Enabled = False
@@ -225,7 +225,7 @@ Public Class TriggerSequencer
     ''' <returns> The next state. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
-    Private Function executeMeasurementSequence(ByVal currentState As TriggerSequenceState) As TriggerSequenceState
+    Private Function ExecuteMeasurementSequence(ByVal currentState As TriggerSequenceState) As TriggerSequenceState
 
         Dim signal As TriggerSequenceSignal
         Select Case currentState

@@ -80,16 +80,16 @@ Public MustInherit Class SenseSubsystemBase
     End Function
 
     ''' <summary> Queries the Sense Function Mode. Also sets the <see cref="FunctionMode"></see> cached value. </summary>
-    ''' <returns> The Sense Function mode or null if unknown. </returns>
+    ''' <returns> The Sense Function Mode or null if unknown. </returns>
     Public Function QueryFunctionMode() As SenseFunctionModes?
         ' the instrument expects single quotes when writing the value but sends back items delimited with double quotes.
         Me.FunctionMode = SenseSubsystemBase.ParseSenseFunctionMode(Me.Session.QueryTrimEnd(":SENS:FUNC?").Replace(CChar(""""), "'"c))
         Return Me.FunctionMode
     End Function
 
-    ''' <summary> Writes the Sense Function mode. Does not read back from the instrument. </summary>
-    ''' <param name="value"> The Function mode. </param>
-    ''' <returns> The Sense Function mode or null if unknown. </returns>
+    ''' <summary> Writes the Sense Function Mode. Does not read back from the instrument. </summary>
+    ''' <param name="value"> The Function Mode. </param>
+    ''' <returns> The Sense Function Mode or null if unknown. </returns>
     Public Function WriteFunctionMode(ByVal value As SenseFunctionModes) As SenseFunctionModes?
         Me.Session.WriteLine(":SENS:FUNC {0}", value.ExtractBetween())
         Me.FunctionMode = value

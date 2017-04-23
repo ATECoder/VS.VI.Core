@@ -92,7 +92,7 @@ Public MustInherit Class Calculate2SubsystemBase
         Me._AddLimit()
     End Sub
 
-    Private _limits As PresettablePropertyPublisherCollection
+    Private _Limits As PresettablePropertyPublisherCollection
     ''' <summary> Gets reference to the collection of calculation limits </summary>
     Public ReadOnly Property Limits() As PresettablePropertyPublisherCollection
         Get
@@ -657,7 +657,7 @@ Public MustInherit Class Calculate2SubsystemBase
 
 #Region " COMPOSITE LIMITS FAILURE BITS "
 
-    Private _compositeLimitsFailureBits As Integer?
+    Private _CompositeLimitsFailureBits As Integer?
     ''' <summary> Gets or sets the cached Composite Limits Failure Bits. </summary>
     ''' <value> The Composite Limits Failure Bits or none if not set or unknown. </value>
     Public Overloads Property CompositeLimitsFailureBits As Integer?
@@ -709,7 +709,7 @@ Public MustInherit Class Calculate2SubsystemBase
 
 #Region " COMPOSITE LIMITS Pass BITS "
 
-    Private _compositeLimitsPassBits As Integer?
+    Private _CompositeLimitsPassBits As Integer?
     ''' <summary> Gets or sets the cached Composite Limits Pass Bits. </summary>
     ''' <value> The Composite Limits Pass Bits or none if not set or unknown. </value>
     Public Overloads Property CompositeLimitsPassBits As Integer?

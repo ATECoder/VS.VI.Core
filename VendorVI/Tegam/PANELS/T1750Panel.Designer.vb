@@ -566,7 +566,7 @@ Partial Class T1750Panel
     Private WithEvents _TriggerComboBoxLabel As System.Windows.Forms.Label
     Private WithEvents _ConfigureButton As System.Windows.Forms.Button
     Private WithEvents _RangeComboBoxLabel As System.Windows.Forms.Label
-    Private WithEvents _measureSettingsLabel As System.Windows.Forms.Label
+    Private WithEvents _MeasureSettingsLabel As System.Windows.Forms.Label
     Private WithEvents _MeasureButton As System.Windows.Forms.Button
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
     Private WithEvents _ComplianceToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel

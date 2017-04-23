@@ -253,7 +253,7 @@ Public Class K2000Panel
 
     ''' <summary> ArmLayer1 subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ArmLayer1SubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -283,7 +283,7 @@ Public Class K2000Panel
 
     ''' <summary> Format subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub FormatSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -354,7 +354,7 @@ Public Class K2000Panel
 
     ''' <summary> Measure subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub MeasureSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -373,7 +373,7 @@ Public Class K2000Panel
 
     ''' <summary> Handles the supported function modes changed action. </summary>
     ''' <param name="subsystem"> The subsystem. </param>
-    Private Sub onSupportedFunctionModesChanged(ByVal subsystem As SenseSubsystem)
+    Private Sub OnSupportedFunctionModesChanged(ByVal subsystem As SenseSubsystem)
         If subsystem IsNot Nothing AndAlso subsystem.SupportedFunctionModes <> VI.Scpi.SenseFunctionModes.None Then
             subsystem.DisplaySupportedFunctionModes(Me._SenseFunctionComboBox)
         End If
@@ -418,7 +418,7 @@ Public Class K2000Panel
 
     ''' <summary> Handles the function modes changed action. </summary>
     ''' <param name="subsystem"> The subsystem. </param>
-    Private Sub onFunctionModesChanged(ByVal subsystem As SenseSubsystem)
+    Private Sub OnFunctionModesChanged(ByVal subsystem As SenseSubsystem)
         If subsystem IsNot Nothing AndAlso subsystem.FunctionMode.HasValue Then
             Dim value As VI.Scpi.SenseFunctionModes = subsystem.FunctionMode.GetValueOrDefault(VI.Scpi.SenseFunctionModes.None)
             If value <> VI.Scpi.SenseFunctionModes.None Then
@@ -451,7 +451,7 @@ Public Class K2000Panel
 
     ''' <summary> Sense subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SenseSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -494,7 +494,7 @@ Public Class K2000Panel
 
     ''' <summary> Sense voltage subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SenseVoltageSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -537,7 +537,7 @@ Public Class K2000Panel
 
     ''' <summary> Sense Current subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SenseCurrentSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -580,7 +580,7 @@ Public Class K2000Panel
 
     ''' <summary> Sense Four Wire Resistance subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SenseFourWireResistanceSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -623,7 +623,7 @@ Public Class K2000Panel
 
     ''' <summary> Sense Four Wire Resistance subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SenseResistanceSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -641,7 +641,7 @@ Public Class K2000Panel
 #Region " STATUS "
 
     ''' <summary> Reports the last error. </summary>
-    Private Sub onLastError(ByVal lastError As DeviceError)
+    Private Sub OnLastError(ByVal lastError As DeviceError)
         If lastError?.IsError Then
             Me._LastErrorTextBox.ForeColor = Drawing.Color.OrangeRed
         Else
@@ -671,7 +671,7 @@ Public Class K2000Panel
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -711,7 +711,7 @@ Public Class K2000Panel
 
     ''' <summary> System subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -743,7 +743,7 @@ Public Class K2000Panel
 
     ''' <summary> Trace subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031: DoNotCatchGeneralExceptionTypes")>
     Private Sub TraceSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -784,7 +784,7 @@ Public Class K2000Panel
 
     ''' <summary> Trigger subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub TriggerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -803,7 +803,7 @@ Public Class K2000Panel
 
 #Region " DEVICE SETTINGS: FUNCTION MODE "
 
-    Private _actualFunctionMode As VI.Scpi.SenseFunctionModes
+    Private _ActualFunctionMode As VI.Scpi.SenseFunctionModes
     ''' <summary>
     ''' Return the last Sense function mode.  This is set only after the 
     ''' actual value is applies whereas the <see cref="SelectedFunctionMode">selected mode</see>
@@ -830,7 +830,7 @@ Public Class K2000Panel
     ''' Gets or sets the selected function mode.
     ''' </summary>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Private ReadOnly Property selectedFunctionMode() As VI.Scpi.SenseFunctionModes
+    Private ReadOnly Property SelectedFunctionMode() As VI.Scpi.SenseFunctionModes
         Get
             Return CType(CType(Me._SenseFunctionComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(
                   Of [Enum], String)).Key, VI.Scpi.SenseFunctionModes)
@@ -1336,7 +1336,7 @@ Public Class K2000Panel
     ''' <summary>
     ''' Applies the selected measurements settings.
     ''' </summary>
-    Private Sub applySenseSettings()
+    Private Sub ApplySenseSettings()
 
         Me.Device.ClearExecutionState()
 
@@ -1863,7 +1863,7 @@ Public Class K2000Panel
     ''' <summary> Event handler. Called by <see crefname="_SimpleReadWriteControl"/> for property changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SimpleReadWriteControl_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
         Try

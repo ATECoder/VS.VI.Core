@@ -65,7 +65,7 @@ Public MustInherit Class SourceMeasureUnitBase
         Return Not Me.Session.IsNil(Me.SourceMeasureUnitReference)
     End Function
 
-    Private _localNodeNumber As Integer
+    Private _LocalNodeNumber As Integer
 
     ''' <summary> Gets or sets the local node number. </summary>
     ''' <value> The local node number. </value>
@@ -81,7 +81,7 @@ Public MustInherit Class SourceMeasureUnitBase
         End Set
     End Property
 
-    Private _nodeNumber As Integer
+    Private _NodeNumber As Integer
 
     ''' <summary> Gets or sets the one-based node number. </summary>
     ''' <value> The node number. </value>
@@ -136,7 +136,7 @@ Public MustInherit Class SourceMeasureUnitBase
     End Property
 
     ''' <summary> Gets or sets the SMU Unit number. </summary>
-    Private _unitNumber As String
+    Private _UnitNumber As String
 
     ''' <summary> Gets or sets the SMU unit number (a or b). </summary>
     ''' <value> The unit number. </value>

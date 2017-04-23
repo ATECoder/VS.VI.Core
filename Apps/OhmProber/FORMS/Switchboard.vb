@@ -54,7 +54,7 @@ Public Class Switchboard
     ''' <see cref="System.Windows.Forms.Form"/> </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub form_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+    Private Sub Form_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         Try
 
@@ -85,7 +85,7 @@ Public Class Switchboard
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Form"/> </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub form_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown
+    Private Sub Form_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown
         Try
             ' Turn on the form hourglass cursor
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
@@ -114,7 +114,7 @@ Public Class Switchboard
 
     ''' <summary> Populates the list of options in the action combo box. </summary>
     ''' <remarks> It seems that out enumerated list does not work very well with this list. </remarks>
-    Private Sub populateActiveList()
+    Private Sub PopulateActiveList()
 
         ' set the action list
         Me._ApplicationsListBox.DataSource = Nothing
@@ -127,7 +127,7 @@ Public Class Switchboard
 
     ''' <summary> Gets the selected action. </summary>
     ''' <value> The selected action. </value>
-    Private ReadOnly Property selectedAction() As ActionOption
+    Private ReadOnly Property SelectedAction() As ActionOption
         Get
             Return CType(CType(Me._ApplicationsListBox.SelectedItem, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, ActionOption)
         End Get

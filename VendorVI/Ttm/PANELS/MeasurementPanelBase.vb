@@ -59,7 +59,7 @@ Public Class MeasurementPanelBase
     <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
     Public Overridable ReadOnly Property IsDeviceOpen As Boolean
 
-    Private _isTraceAvailable As Boolean
+    Private _IsTraceAvailable As Boolean
     ''' <summary> Updates the availability of the controls. </summary>
     Protected Sub OnStateChanged()
 
@@ -113,7 +113,7 @@ Public Class MeasurementPanelBase
     ''' <summary> Displays a part described by grid. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="grid"> The grid. </param>
-    Private Shared Sub displayTrace(ByVal grid As DataGridView, ByVal values As ObjectModel.ReadOnlyCollection(Of System.Drawing.PointF))
+    Private Shared Sub DisplayTrace(ByVal grid As DataGridView, ByVal values As ObjectModel.ReadOnlyCollection(Of System.Drawing.PointF))
 
         If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
@@ -227,7 +227,7 @@ Public Class MeasurementPanelBase
     ''' <summary> Sets the default file path in case the data folder does not exist. </summary>
     ''' <param name="filePath"> The file path. </param>
     ''' <returns> System.String. </returns>
-    Private Shared Function updateDefaultFilePath(ByVal filePath As String) As String
+    Private Shared Function UpdateDefaultFilePath(ByVal filePath As String) As String
 
         ' check validity of data folder.
         Dim dataFolder As String = System.IO.Path.GetDirectoryName(filePath)
@@ -271,7 +271,7 @@ Public Class MeasurementPanelBase
     ''' <summary> Gets a new file for storing the data. </summary>
     ''' <param name="filePath"> The file path. </param>
     ''' <returns> A file name or empty if error. </returns>
-    Private Shared Function browseForFile(ByVal filePath As String) As String
+    Private Shared Function BrowseForFile(ByVal filePath As String) As String
 
         ' make sure the default data file name is valid.
         filePath = updateDefaultFilePath(filePath)
@@ -527,7 +527,7 @@ Public Class MeasurementPanelBase
 
     ''' <summary> Event handler. Called by _MeasureSequencer for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _MeasureSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _MeasureSequencer.PropertyChanged
         Try
@@ -545,7 +545,7 @@ Public Class MeasurementPanelBase
 
     ''' <summary> Updates the progress bar. </summary>
     ''' <param name="state"> The state. </param>
-    Private Sub updateProgressbar(ByVal state As MeasurementSequenceState)
+    Private Sub UpdateProgressbar(ByVal state As MeasurementSequenceState)
 
         ' unhide the progress bar.
         Me._TtmToolStripProgressBar.Visible = True
@@ -655,7 +655,7 @@ Public Class MeasurementPanelBase
 
     ''' <summary> Event handler. Called by _TriggerSequencer for property changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TriggerSequencer_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TriggerSequencer.PropertyChanged
         Try

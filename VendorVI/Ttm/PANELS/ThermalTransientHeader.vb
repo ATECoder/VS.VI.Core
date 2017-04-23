@@ -36,7 +36,7 @@ Public Class ThermalTransientHeader
     End Property
 
     ''' <summary> Releases the resources. </summary>
-    Private Sub releaseResources()
+    Private Sub ReleaseResources()
         Me._ThermalTransient = Nothing
         Me._DeviceUnderTest = Nothing
     End Sub
@@ -57,7 +57,7 @@ Public Class ThermalTransientHeader
 
     ''' <summary> Event handler. Called by _DeviceUnderTest for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _DeviceUnderTest_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _DeviceUnderTest.PropertyChanged
         Try
@@ -122,7 +122,7 @@ Public Class ThermalTransientHeader
 
     ''' <summary> Event handler. Called by _ThermalTransient for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ThermalTransient_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _ThermalTransient.PropertyChanged
         Try

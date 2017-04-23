@@ -100,7 +100,7 @@ Public Class ReadingValue
 
 #Region " SIMULATION "
 
-    Private _generator As RandomNumberGenerator
+    Private _Generator As RandomNumberGenerator
 
     ''' <summary> Gets the generator. </summary>
     ''' <value> The generator. </value>

@@ -36,7 +36,7 @@ Public Class PartsPanel
     End Sub
 
     ''' <summary> Release resources. </summary>
-    Private Sub releaseResources()
+    Private Sub ReleaseResources()
 
         Me._Part = Nothing
         If Me.Parts IsNot Nothing Then
@@ -107,7 +107,7 @@ Public Class PartsPanel
 
     ''' <summary> Event handler. Called by _Part for property changed events. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Part_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _Part.PropertyChanged
         Try
@@ -123,7 +123,7 @@ Public Class PartsPanel
         End Try
     End Sub
 
-    Private _measurementMessage As String
+    Private _MeasurementMessage As String
 
 
     ''' <summary> Gets or sets a message describing the measurement. </summary>
@@ -334,7 +334,7 @@ Public Class PartsPanel
     ''' <summary> Sets the default file path in case the data folder does not exist. </summary>
     ''' <param name="filePath"> The file path. </param>
     ''' <returns> System.String. </returns>
-    Private Shared Function updateDefaultFilePath(ByVal filePath As String) As String
+    Private Shared Function UpdateDefaultFilePath(ByVal filePath As String) As String
 
         ' check validity of data folder.
         Dim dataFolder As String = System.IO.Path.GetDirectoryName(filePath)
@@ -379,7 +379,7 @@ Public Class PartsPanel
     ''' <summary> Gets a new file for storing the data. </summary>
     ''' <param name="filePath"> The file path. </param>
     ''' <returns> A file name or empty if error. </returns>
-    Private Shared Function browseForFile(ByVal filePath As String) As String
+    Private Shared Function BrowseForFile(ByVal filePath As String) As String
 
         ' make sure the default data file name is valid.
         filePath = updateDefaultFilePath(filePath)
@@ -513,8 +513,7 @@ Public Class PartsPanel
 
         If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
-        Me._PartsBindingSource = New BindingSource()
-        Me._PartsBindingSource.DataSource = Me.Parts
+        Me._PartsBindingSource = New BindingSource() With {.DataSource = Me.Parts}
 
         grid.Enabled = False
         grid.Columns.Clear()

@@ -24,16 +24,16 @@ Partial Public Class SenseSubsystem
 #Region " FUNCTION MODE "
 
     ''' <summary> Queries the Sense Function Modes. Also sets the <see cref="FunctionModes"></see> cached value. </summary>
-    ''' <returns> The Sense Function mode or null if unknown. </returns>
+    ''' <returns> The Sense Function Mode or null if unknown. </returns>
     Public Overrides Function QueryFunctionModes() As VI.Scpi.SenseFunctionModes?
         ' the instrument expects single quotes when writing the value but sends back items delimited with double quotes.
         Me.FunctionModes = SenseSubsystemBase.ParseSenseFunctionModes(Me.Session.QueryTrimEnd(":SENS:FUNC?").Replace(CChar(""""), "'"c))
         Return Me.FunctionModes
     End Function
 
-    ''' <summary> Writes the Sense Function mode. Does not read back from the instrument. </summary>
-    ''' <param name="value"> The Function mode. </param>
-    ''' <returns> The Sense Function mode or null if unknown. </returns>
+    ''' <summary> Writes the Sense Function Mode. Does not read back from the instrument. </summary>
+    ''' <param name="value"> The Function Mode. </param>
+    ''' <returns> The Sense Function Mode or null if unknown. </returns>
     Public Overrides Function WriteFunctionModes(ByVal value As VI.Scpi.SenseFunctionModes) As VI.Scpi.SenseFunctionModes?
         Me.Session.WriteLine(":SENS:FUNC {0}", SenseSubsystemBase.BuildRecord(value))
         Me.FunctionModes = value

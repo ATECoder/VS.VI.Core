@@ -303,7 +303,7 @@ Public Class Console
 #Region " CONNECT "
 
     ''' <summary> Updates the availability of the controls. </summary>
-    Private Sub onMeasurementStatusChanged()
+    Private Sub OnMeasurementStatusChanged()
 
         Dim measurementSequenceState As MeasurementSequenceState = MeasurementSequenceState.Idle
         If Me.MeasureSequencer IsNot Nothing Then
@@ -330,7 +330,7 @@ Public Class Console
 
     ''' <summary> Updates the connection related controls. </summary>
     ''' <param name="resourceName"> The resource name to connect. </param>
-    Private Sub onConnectionChanged(ByVal resourceName As String)
+    Private Sub OnConnectionChanged(ByVal resourceName As String)
 
         If Me.Meter.IsDeviceOpen AndAlso Not String.IsNullOrWhiteSpace(resourceName) Then
 
@@ -497,7 +497,7 @@ Public Class Console
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      The <see cref="System.EventArgs" /> instance containing the event data. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _connectToggle_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ConnectToggle.CheckedChanged
+    Private Sub _ConnectToggle_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ConnectToggle.CheckedChanged
         If Not Me.InitializingComponents Then
             Me._ErrorProvider.Clear()
             Dim resourceName As String = Me._ResourceNameComboBox.Text
@@ -845,7 +845,7 @@ Public Class Console
 #Region " DISPLAY "
 
     ''' <summary> Displays the thermal transient. </summary>
-    Private Sub setErrorProvider(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
+    Private Sub SetErrorProvider(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
         If (resistance.Outcome And MeasurementOutcomes.PartFailed) <> 0 Then
             Me._ErrorProvider.SetError(textBox, "Value out of range")
         ElseIf (resistance.Outcome And MeasurementOutcomes.MeasurementFailed) <> 0 Then
@@ -856,13 +856,13 @@ Public Class Console
     End Sub
 
     ''' <summary> Displays the resistance. </summary>
-    Private Sub showResistance(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
+    Private Sub ShowResistance(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
         textBox.Text = resistance.ResistanceCaption
         Me.setErrorProvider(textBox, resistance)
     End Sub
 
     ''' <summary> Displays the thermal transient. </summary>
-    Private Sub showThermalTransient(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
+    Private Sub ShowThermalTransient(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
         textBox.Text = resistance.VoltageCaption
         Me.setErrorProvider(textBox, resistance)
     End Sub
@@ -893,7 +893,7 @@ Public Class Console
 
     ''' <summary> Event handler. Called by _ShuntResistance for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ShuntResistancePropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -953,7 +953,7 @@ Public Class Console
 #Region " TTM: METER "
 
     ''' <summary> The with events. </summary>
-    Private WithEvents _meter As Meter
+    Private WithEvents _Meter As Meter
 
     ''' <summary> Gets or sets reference to the thermal transient meter device. </summary>
     ''' <value> The meter. </value>
@@ -985,9 +985,9 @@ Public Class Console
 
     ''' <summary> Event handler. Called by _meter for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _meter_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _meter.PropertyChanged
+    Private Sub _Meter_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _meter.PropertyChanged
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._meter_PropertyChanged), New Object() {sender, e})
@@ -1031,7 +1031,7 @@ Public Class Console
 
     ''' <summary> Event handler. Called by _MeasureSequencer for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _MeasureSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _MeasureSequencer.PropertyChanged
         Try
@@ -1121,7 +1121,7 @@ Public Class Console
 
     ''' <summary> Event handler. Called by _TriggerSequencer for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TriggerSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _TriggerSequencer.PropertyChanged
         Try
@@ -1328,7 +1328,7 @@ Public Class Console
     ''' <remarks> Used to ignore changes in grids during the navigation. The grids go through selecting
     ''' their rows when navigating. </remarks>
     ''' <value> <c>True</c> if navigating; otherwise, <c>False</c>. </value>
-    Private Property navigating As Boolean
+    Private Property Navigating As Boolean
 
     ''' <summary> Handles the BeforeSelect event of the _NavigatorTreeView control. </summary>
     ''' <param name="sender"> The source of the event. </param>
@@ -1407,7 +1407,7 @@ Public Class Console
     ''' <summary> Trace messages box property changed. </summary>
     ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="sender"> The sender. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
         Try

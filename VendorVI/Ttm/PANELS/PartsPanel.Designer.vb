@@ -261,28 +261,28 @@ Partial Class PartsPanel
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents _PartsListToolStrip As System.Windows.Forms.ToolStrip
-    Friend WithEvents _AddPartToolStripButton As System.Windows.Forms.ToolStripButton
-    Friend WithEvents _ClearPartListToolStripButton As System.Windows.Forms.ToolStripButton
-    Friend WithEvents _SavePartsToolStripButton As System.Windows.Forms.ToolStripButton
-    Friend WithEvents _PartNumberToolStrip As System.Windows.Forms.ToolStrip
-    Friend WithEvents _OperatorLabel As System.Windows.Forms.ToolStripLabel
-    Friend WithEvents _OperatorToolStripTextBox As System.Windows.Forms.ToolStripTextBox
-    Friend WithEvents _LotToolStripLabel As System.Windows.Forms.ToolStripLabel
-    Friend WithEvents _LotToolStripTextBox As System.Windows.Forms.ToolStripTextBox
-    Friend WithEvents _PartNumberToolStripLabel As System.Windows.Forms.ToolStripLabel
-    Friend WithEvents _PartNumberToolStripTextBox As System.Windows.Forms.ToolStripTextBox
-    Friend WithEvents _PartToolStrip As System.Windows.Forms.ToolStrip
-    Friend WithEvents _SerialNumberToolStripLabel As System.Windows.Forms.ToolStripLabel
-    Friend WithEvents _SerialNumberToolStripTextBox As System.Windows.Forms.ToolStripTextBox
-    Friend WithEvents _ToolStripSplitButton As System.Windows.Forms.ToolStripSplitButton
-    Friend WithEvents _AutoAddToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents _ClearMeasurementsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents _ErrorProvider As System.Windows.Forms.ErrorProvider
-    Friend WithEvents _ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
-    Friend WithEvents _ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
-    Friend WithEvents _OutcomeToolStripLabel As System.Windows.Forms.ToolStripLabel
-    Friend WithEvents _PassFailToolStripButton As System.Windows.Forms.ToolStripButton
-    Friend WithEvents _PartsDataGridView As System.Windows.Forms.DataGridView
+    Private WithEvents _PartsListToolStrip As System.Windows.Forms.ToolStrip
+    Private WithEvents _AddPartToolStripButton As System.Windows.Forms.ToolStripButton
+    Private WithEvents _ClearPartListToolStripButton As System.Windows.Forms.ToolStripButton
+    Private WithEvents _SavePartsToolStripButton As System.Windows.Forms.ToolStripButton
+    Private WithEvents _PartNumberToolStrip As System.Windows.Forms.ToolStrip
+    Private WithEvents _OperatorLabel As System.Windows.Forms.ToolStripLabel
+    Private WithEvents _OperatorToolStripTextBox As System.Windows.Forms.ToolStripTextBox
+    Private WithEvents _LotToolStripLabel As System.Windows.Forms.ToolStripLabel
+    Private WithEvents _LotToolStripTextBox As System.Windows.Forms.ToolStripTextBox
+    Private WithEvents _PartNumberToolStripLabel As System.Windows.Forms.ToolStripLabel
+    Private WithEvents _PartNumberToolStripTextBox As System.Windows.Forms.ToolStripTextBox
+    Private WithEvents _PartToolStrip As System.Windows.Forms.ToolStrip
+    Private WithEvents _SerialNumberToolStripLabel As System.Windows.Forms.ToolStripLabel
+    Private WithEvents _SerialNumberToolStripTextBox As System.Windows.Forms.ToolStripTextBox
+    Private WithEvents _ToolStripSplitButton As System.Windows.Forms.ToolStripSplitButton
+    Private WithEvents _AutoAddToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ClearMeasurementsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ErrorProvider As System.Windows.Forms.ErrorProvider
+    Private WithEvents _ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
+    Private WithEvents _ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
+    Private WithEvents _OutcomeToolStripLabel As System.Windows.Forms.ToolStripLabel
+    Private WithEvents _PassFailToolStripButton As System.Windows.Forms.ToolStripButton
+    Private WithEvents _PartsDataGridView As System.Windows.Forms.DataGridView
 
 End Class

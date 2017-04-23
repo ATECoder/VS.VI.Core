@@ -4,7 +4,7 @@ Namespace My
 
     Partial Friend Class MyApplication
 
-        Private _myApplicationInfo As MyAssemblyInfo
+        Private _MyApplicationInfo As MyAssemblyInfo
 
         ''' <summary> Gets an object that provides information about the application's assembly. </summary>
         ''' <value> The assembly information object. </value>

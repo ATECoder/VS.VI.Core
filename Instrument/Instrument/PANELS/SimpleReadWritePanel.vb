@@ -72,7 +72,7 @@ Public Class SimpleReadWritePanel
 
 #Region " SESSION "
 
-    Private _session As VI.SessionBase
+    Private _Session As VI.SessionBase
 
     ''' <summary> Selects a resource and open a message based session with this resource. </summary>
     ''' <param name="sender"> Source of the event. </param>
@@ -168,7 +168,7 @@ Public Class SimpleReadWritePanel
     ''' <summary> Event handler. Called by <see crefname="_SimpleReadWriteControl"/> for property changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SimpleReadWriteControl_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
         Try
@@ -228,7 +228,7 @@ Public Class SimpleReadWritePanel
     End Sub
 
     ''' <summary> Reads and displays the status byte. </summary>
-    Private Function displayStatusByte() As Integer
+    Private Function DisplayStatusByte() As Integer
         Dim statusByte As Integer = -1
         If Me._session Is Nothing Then
             Me._ServiceRequestStatusLabel.Text = "0x.."
@@ -318,7 +318,7 @@ Public Class SimpleReadWritePanel
     ''' <summary> Trace messages box property changed. </summary>
     ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
         Try

@@ -276,7 +276,7 @@ Public Class TestPanel
     ''' <summary> Clears the instrument by calling a propagating clear command. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
-    Private Sub connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceSelectorConnector.Clear
+    Private Sub Connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceSelectorConnector.Clear
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
                            "Resetting, clearing and initializing resource;. {0}", Me._ResourceSelectorConnector.SelectedResourceName)
         Me.TspSystem.Device.ResetClearInit()
@@ -288,7 +288,7 @@ Public Class TestPanel
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub connector_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ResourceSelectorConnector.Connect
+    Private Sub Connector_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ResourceSelectorConnector.Connect
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
@@ -319,7 +319,7 @@ Public Class TestPanel
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub connector_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ResourceSelectorConnector.Disconnect
+    Private Sub Connector_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ResourceSelectorConnector.Disconnect
         Try
             If Me.TspSystem.Device.IsDeviceOpen Then
                 Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
@@ -355,7 +355,7 @@ Public Class TestPanel
     ''' <summary> Displays available instrument names. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
-    Private Sub connector_FindNames(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceSelectorConnector.FindNames
+    Private Sub Connector_FindNames(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceSelectorConnector.FindNames
         Me.DisplayNames()
     End Sub
 
@@ -375,9 +375,9 @@ Public Class TestPanel
     ''' <summary> Event handler. Called by _ResourceNameSelectorConnector for property changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub connector_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _ResourceSelectorConnector.PropertyChanged
+    Private Sub Connector_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _ResourceSelectorConnector.PropertyChanged
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf connector_PropertyChanged), New Object() {sender, e})
@@ -506,7 +506,7 @@ Public Class TestPanel
     Dim queryCommand As String
 
     ''' <summary> Gets or sets reference to the timing stop watch. </summary>
-    Dim TimingStopwatch As System.Diagnostics.Stopwatch
+    Dim timingStopwatch As System.Diagnostics.Stopwatch
 
     ''' <summary> Gets or sets reference to the TSP system. </summary>
     Private WithEvents TspSystem As TspSystem
@@ -546,7 +546,7 @@ Public Class TestPanel
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -578,7 +578,7 @@ Public Class TestPanel
 
     ''' <summary> Interactive subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub InteractiveSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -605,7 +605,7 @@ Public Class TestPanel
 
     ''' <summary> System subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -625,7 +625,7 @@ Public Class TestPanel
     ''' <summary>Gets the current line of the text box.
     ''' </summary>
     ''' <param name="control">Specifies reference to a text box.</param>
-    Private Shared Function getLineOld(ByVal control As System.Windows.Forms.TextBoxBase) As String
+    Private Shared Function GetLineOld(ByVal control As System.Windows.Forms.TextBoxBase) As String
         Dim commandText As String
         Dim commandStart As Integer
         Dim commandEnd As Integer
@@ -668,7 +668,7 @@ Public Class TestPanel
     ''' <summary>List the user scripts.
     ''' </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Function listUserScripts() As Boolean
+    Private Function ListUserScripts() As Boolean
 
         Dim refreshTimeState As TimerStates = TimerStates.None
         Try
@@ -725,7 +725,7 @@ Public Class TestPanel
     ''' </summary>
     ''' <param name="updateConsole">True to update the instrument output text box.</param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub receive(ByVal updateConsole As Boolean)
+    Private Sub Receive(ByVal updateConsole As Boolean)
 
         SyncLock (receiveLock)
 
@@ -776,7 +776,7 @@ Public Class TestPanel
     ''' <param name="sendBuffer">         Specifies the message to send. </param>
     ''' <param name="updateInputConsole"> True to update the instrument input text box. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub send(ByVal sendBuffer As String, ByVal updateInputConsole As Boolean)
+    Private Sub Send(ByVal sendBuffer As String, ByVal updateInputConsole As Boolean)
 
         ' Turn on the form hourglass
         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
@@ -818,7 +818,7 @@ Public Class TestPanel
 
     End Sub
 
-    Private _validatedGpibAddress As Nullable(Of Integer)
+    Private _ValidatedGpibAddress As Nullable(Of Integer)
     ''' <summary>
     ''' Enables connecting to the GPIB board.
     ''' </summary>
@@ -854,9 +854,9 @@ Public Class TestPanel
 
     ''' <summary> Starts refresh timer. </summary>
     ''' <param name="interval"> The interval. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Private Sub StartRefreshTimer(ByVal interval As TimeSpan)
-        Me._refreshTimer = New isr.Core.Controls.StateAwareTimer
-        Me._refreshTimer.SynchronizingObject = Me
+        Me._RefreshTimer = New isr.Core.Controls.StateAwareTimer With {.SynchronizingObject = Me}
         Me.RestartRefreshTimer(interval)
     End Sub
 
@@ -898,12 +898,12 @@ Public Class TestPanel
         isr.Core.Controls.ToolStripExtensions.SafeTextSetter(Me._srqStatusLabel, value, format)
     End Sub
 
-    Private WithEvents _refreshTimer As isr.Core.Controls.StateAwareTimer
+    Private WithEvents _RefreshTimer As isr.Core.Controls.StateAwareTimer
     ''' <summary>
     ''' Serial polls and receives.
     ''' </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _refreshTimer_Tick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _refreshTimer.Tick
+    Private Sub _RefreshTimer_Tick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _refreshTimer.Tick
 
         Try
 
@@ -942,12 +942,12 @@ Public Class TestPanel
 
 #Region " TESTING TIMER "
 
-    Private WithEvents _testingTimer As isr.Core.Controls.StateAwareTimer
+    Private WithEvents _TestingTimer As isr.Core.Controls.StateAwareTimer
 
     ''' <summary>
     ''' Serial polls and receives.
     ''' </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")> Private Sub _testingTimer_Tick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _testingTimer.Tick
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")> Private Sub _TestingTimer_Tick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _testingTimer.Tick
 
         Try
 
@@ -974,7 +974,7 @@ Public Class TestPanel
     ''' Terminates script execution.
     ''' </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _abortButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _abortButton.Click
+    Private Sub _AbortButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _abortButton.Click
 
         Try
 
@@ -1013,7 +1013,7 @@ Public Class TestPanel
     ''' Displays the application information
     ''' </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _aboutButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _aboutButton.Click
+    Private Sub _AboutButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _aboutButton.Click
 
         ' Display the application information
         Using aboutScreen As New isr.Core.WindowsForms.About
@@ -1043,7 +1043,7 @@ Public Class TestPanel
     ''' <summary> Toggle the font on the control to highlight selection of this control. </summary>
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
-    Private Sub _button_Enter(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _ExitButton.Enter, _abortButton.Enter, _aboutButton.Enter, _callFunctionButton.Enter,
+    Private Sub _Button_Enter(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _ExitButton.Enter, _abortButton.Enter, _aboutButton.Enter, _callFunctionButton.Enter,
       _clearInterfaceButton.Enter, _deviceClearButton.Enter, _ExitButton.Enter, _groupTriggerButton.Enter,
        _removeScriptButton.Enter, _resetLocalNodeButton.Enter, _resetLocalNodeButton.Enter, _refreshUserScriptsListButton.Enter
         Dim thisButton As Control = CType(eventSender, Control)
@@ -1053,7 +1053,7 @@ Public Class TestPanel
     ''' <summary> Toggle the font on the control to highlight leaving this control. </summary>
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
-    Private Sub _button_Leave(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _ExitButton.Leave, _abortButton.Leave, _aboutButton.Leave, _callFunctionButton.Leave,
+    Private Sub _Button_Leave(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _ExitButton.Leave, _abortButton.Leave, _aboutButton.Leave, _callFunctionButton.Leave,
       _clearInterfaceButton.Leave, _deviceClearButton.Leave, _ExitButton.Leave, _groupTriggerButton.Leave,
        _removeScriptButton.Leave, _resetLocalNodeButton.Leave, _resetLocalNodeButton.Leave, _refreshUserScriptsListButton.Leave
         Dim thisButton As Control = CType(eventSender, Control)
@@ -1064,7 +1064,7 @@ Public Class TestPanel
     ''' <param name="sender"> The event sender. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _clearInterfaceButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _clearInterfaceButton.Click
+    Private Sub _ClearInterfaceButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _clearInterfaceButton.Click
 
         Try
             ' Turn on the form hourglass
@@ -1087,7 +1087,7 @@ Public Class TestPanel
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _callFunctionButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _callFunctionButton.Click
+    Private Sub _CallFunctionButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _callFunctionButton.Click
 
         Dim functionName As String = ""
         Dim functionArgs As String = ""
@@ -1124,7 +1124,7 @@ Public Class TestPanel
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _deviceClearButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _deviceClearButton.Click
+    Private Sub _DeviceClearButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _deviceClearButton.Click
 
         Try
 
@@ -1161,7 +1161,7 @@ Public Class TestPanel
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _groupTriggerButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _groupTriggerButton.Click,
+    Private Sub _GroupTriggerButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _groupTriggerButton.Click,
                                                                                                             _groupTriggerButton.Click
 
         Try
@@ -1192,9 +1192,9 @@ Public Class TestPanel
     '''           </summary>
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Key press event information. </param>
-    Private Sub _inputTextBox_KeyPress(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.KeyPressEventArgs) Handles _inputTextBox.KeyPress
+    Private Sub _InputTextBox_KeyPress(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.KeyPressEventArgs) Handles _inputTextBox.KeyPress
 
-        Dim KeyAscii As Integer = Asc(eventArgs.KeyChar)
+        Dim keyAscii As Integer = Asc(eventArgs.KeyChar)
 
         Select Case KeyAscii
 
@@ -1255,7 +1255,7 @@ Public Class TestPanel
     ''' <param name="scriptName">Name of the script.</param>
     ''' <param name="filePath">The file path.</param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _loadAndRunScript(ByVal scriptName As String, ByVal filePath As String)
+    Private Sub _LoadAndRunScript(ByVal scriptName As String, ByVal filePath As String)
 
         Try
 
@@ -1290,7 +1290,7 @@ Public Class TestPanel
     ''' <summary> Event handler. Called by _loadAndRunButton for click events. </summary>
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
-    Private Sub _loadAndRunButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _loadAndRunButton.Click
+    Private Sub _LoadAndRunButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _loadAndRunButton.Click
 
         Me._loadAndRunScript(Me._scriptNameTextBox.Text, Me._tspScriptSelector.FilePath)
 
@@ -1300,7 +1300,7 @@ Public Class TestPanel
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _loadFunctionButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _loadFunctionButton.Click
+    Private Sub _LoadFunctionButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _loadFunctionButton.Click
 
         Try
 
@@ -1334,7 +1334,7 @@ Public Class TestPanel
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _loadScriptButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _loadScriptButton.Click
+    Private Sub _LoadScriptButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _loadScriptButton.Click
 
         If Not Tsp.Script.ScriptEntityBase.IsValidScriptFileName(Me._scriptNameTextBox.Text) Then
             Return
@@ -1376,7 +1376,7 @@ Public Class TestPanel
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Form"/> </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub _refreshUserScriptsListButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _refreshUserScriptsListButton.Click
+    Private Sub _RefreshUserScriptsListButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _refreshUserScriptsListButton.Click
         Me.listUserScripts()
     End Sub
 
@@ -1384,7 +1384,7 @@ Public Class TestPanel
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _removeScriptButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _removeScriptButton.Click
+    Private Sub _RemoveScriptButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _removeScriptButton.Click
 
         ' Turn on the form hourglass
         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
@@ -1418,7 +1418,7 @@ Public Class TestPanel
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _resetLocalNodeButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _resetLocalNodeButton.Click
+    Private Sub _ResetLocalNodeButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _resetLocalNodeButton.Click
 
         Try
 
@@ -1469,7 +1469,7 @@ Public Class TestPanel
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _runScriptButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _runScriptButton.Click
+    Private Sub _RunScriptButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _runScriptButton.Click
 
         Try
 
@@ -1498,7 +1498,7 @@ Public Class TestPanel
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _showErrorsCheckBox_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _showErrorsCheckBox.CheckStateChanged
+    Private Sub _ShowErrorsCheckBox_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _showErrorsCheckBox.CheckStateChanged
         If Me._InitializingComponents Then Return
         Try
             ' Turn on the form hourglass
@@ -1529,7 +1529,7 @@ Public Class TestPanel
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _showPromptsCheckBox_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _showPromptsCheckBox.CheckStateChanged
+    Private Sub _ShowPromptsCheckBox_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _showPromptsCheckBox.CheckStateChanged
         If Me._InitializingComponents Then Return
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
@@ -1561,7 +1561,7 @@ Public Class TestPanel
     ''' <summary> Event handler. Called by _tspScriptSelector for selected changed events. </summary>
     ''' <param name="Sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub _tspScriptSelector_SelectedChanged(ByVal Sender As System.Object, ByVal e As EventArgs) Handles _tspScriptSelector.SelectedChanged
+    Private Sub _TspScriptSelector_SelectedChanged(ByVal Sender As System.Object, ByVal e As EventArgs) Handles _tspScriptSelector.SelectedChanged
         If Not String.IsNullOrWhiteSpace(Me._tspScriptSelector.FileTitle) Then
             Me._scriptNameTextBox.Text = Me._tspScriptSelector.FileTitle.Replace(".", "_")
             Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Selected Script;. '{0}'.", Me._scriptNameTextBox.Text)
@@ -1598,7 +1598,7 @@ Public Class TestPanel
     ''' <summary> Trace messages box property changed. </summary>
     ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
         Try

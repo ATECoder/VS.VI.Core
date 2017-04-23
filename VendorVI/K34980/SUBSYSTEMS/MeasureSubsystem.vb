@@ -67,7 +67,7 @@ Public Class MeasureSubsystem
 
 #Region " PARSE READING "
 
-    Private _readings As Readings
+    Private _Readings As Readings
 
     ''' <summary> Returns the readings. </summary>
     ''' <returns> The readings. </returns>

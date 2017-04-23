@@ -90,7 +90,7 @@ Public MustInherit Class AccessSubsystemBase
 
 #Region " RESOURCES "
 
-    Private _certifiedInstruments As String
+    Private _CertifiedInstruments As String
     ''' <summary> Gets the list of certified instruments. </summary>
     ''' <value> The certified instruments. </value>
     Public Property CertifiedInstruments() As String
@@ -104,7 +104,7 @@ Public MustInherit Class AccessSubsystemBase
 
     End Property
 
-    Private _releasedInstruments As String
+    Private _ReleasedInstruments As String
 
     ''' <summary> Gets the list of released instruments. </summary>
     ''' <value> The released instruments. </value>

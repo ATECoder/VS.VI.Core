@@ -100,7 +100,7 @@ Public Class MeasureSubsystem
 
 #Region " WRITE "
 
-    Private _supportedCommands As String()
+    Private _SupportedCommands As String()
 
     ''' <summary> Gets the supported commands. </summary>
     ''' <returns> A String </returns>
@@ -146,7 +146,7 @@ Public Class MeasureSubsystem
 
     ''' <summary> Gets the random resistance. </summary>
     ''' <value> The random reading. </value>
-    Private Property randomResistance As Random
+    Private Property RandomResistance As Random
 
     ''' <summary> Creates a new reading. </summary>
     ''' <returns> null if it fails, else a list of. </returns>
@@ -159,7 +159,7 @@ Public Class MeasureSubsystem
 
 #Region " PARSE READING "
 
-    Private _resistance As Double?
+    Private _Resistance As Double?
 
     ''' <summary> Gets or sets the resistance. </summary>
     ''' <value> The resistance. </value>
@@ -766,7 +766,7 @@ Public Class MeasureSubsystem
     ''' <summary> Waits. </summary>
     ''' <param name="value">     The value. </param>
     ''' <param name="sleepTime"> The sleep time. </param>
-    Private Shared Sub wait(ByVal value As TimeSpan, ByVal sleepTime As TimeSpan)
+    Private Shared Sub Wait(ByVal value As TimeSpan, ByVal sleepTime As TimeSpan)
         Dim finalTime As DateTime = DateTime.Now.Add(value)
         Do
             Windows.Forms.Application.DoEvents()

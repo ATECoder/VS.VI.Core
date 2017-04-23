@@ -52,7 +52,7 @@ Public MustInherit Class SlotSubsystemBase
 
 #Region " EXISTS "
 
-    Private _isSlotExists As Boolean?
+    Private _IsSlotExists As Boolean?
 
     ''' <summary> Gets or sets (Protected) the Slot existence indicator. </summary>
     ''' <value> The Slot existence indicator. </value>

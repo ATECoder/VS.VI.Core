@@ -72,7 +72,7 @@ Public Class ResourceSelectorConnector
 
 #Region " BROWSABLE PROPERTIES "
 
-    Private _clearable As Boolean
+    Private _Clearable As Boolean
 
     ''' <summary> Gets or sets the value indicating if the clear button is visible and can be enabled.
     ''' An item can be cleared only if it is connected. </summary>
@@ -92,7 +92,7 @@ Public Class ResourceSelectorConnector
         End Set
     End Property
 
-    Private _connectible As Boolean
+    Private _Connectible As Boolean
     ''' <summary> Gets or sets the value indicating if the connect button is visible and can be
     ''' enabled. An item can be connected only if it is selected. </summary>
     ''' <value> The connectible. </value>
@@ -116,7 +116,7 @@ Public Class ResourceSelectorConnector
         End Set
     End Property
 
-    Private _searchable As Boolean
+    Private _Searchable As Boolean
     ''' <summary> Gets or sets the condition determining if the control can be searchable. The elements
     ''' can be searched only if not connected. </summary>
     ''' <value> The searchable. </value>
@@ -139,7 +139,7 @@ Public Class ResourceSelectorConnector
 
 #Region " CONNECT "
 
-    Private _isConnected As Boolean
+    Private _IsConnected As Boolean
     ''' <summary> Gets or sets the connected status and enables the clear button. </summary>
     ''' <value> The is connected. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>

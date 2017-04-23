@@ -228,7 +228,7 @@ Public MustInherit Class ResistanceMeasureBase
 
 #Region " PARSER "
 
-    Private _lastReading As String
+    Private _LastReading As String
     ''' <summary> Gets or sets the last reading. </summary>
     ''' <value> The last reading. </value>
     Public Property LastReading() As String
@@ -244,7 +244,7 @@ Public MustInherit Class ResistanceMeasureBase
         End Set
     End Property
 
-    Private _lastOutcome As String
+    Private _LastOutcome As String
     ''' <summary> Gets or sets the last outcome. </summary>
     ''' <value> The last outcome. </value>
     Public Property LastOutcome() As String
@@ -260,7 +260,7 @@ Public MustInherit Class ResistanceMeasureBase
         End Set
     End Property
 
-    Private _lastStatus As String
+    Private _LastStatus As String
     ''' <summary> Gets or sets the last status. </summary>
     ''' <value> The last status. </value>
     Public Property LastStatus() As String
@@ -383,7 +383,7 @@ Public MustInherit Class ResistanceMeasureBase
         End Set
     End Property
 
-    Private _outcome As MeasurementOutcomes
+    Private _Outcome As MeasurementOutcomes
     ''' <summary> Gets or sets the measurement outcome. </summary>
     ''' <value> The outcome. </value>
     Public Property Outcome() As MeasurementOutcomes
@@ -398,7 +398,7 @@ Public MustInherit Class ResistanceMeasureBase
         End Set
     End Property
 
-    Private _reading As String
+    Private _Reading As String
     ''' <summary> Gets  or sets (protected) the reading.  When set, the value is converted to resistance. </summary>
     ''' <value> The reading. </value>
     Public Property Reading() As String
@@ -414,7 +414,7 @@ Public MustInherit Class ResistanceMeasureBase
         End Set
     End Property
 
-    Private _resistance As Double
+    Private _Resistance As Double
     ''' <summary> Gets or sets (protected) the measured resistance. </summary>
     ''' <value> The resistance. </value>
     Public Property Resistance() As Double
@@ -453,7 +453,7 @@ Public MustInherit Class ResistanceMeasureBase
     End Property
 
     ''' <summary> Date/Time of the timestamp. </summary>
-    Private _timestamp As DateTime
+    Private _Timestamp As DateTime
 
     ''' <summary> Gets or sets (protected) the measurement time stamp. Gets set when setting the reading or resistance
     ''' value. </summary>
@@ -476,7 +476,7 @@ Public MustInherit Class ResistanceMeasureBase
     ''' <remarks> David, 1/26/2016. </remarks>
     ''' <returns> The random reading. </returns>
     Public Function GenerateRandomReading() As Double
-        Dim K As Double = 1000
+        Dim k As Double = 1000
         Return randomNumberGenerator.Next(CInt(K * Me.LowLimit), CInt(K * Me.HighLimit)) / K
     End Function
 

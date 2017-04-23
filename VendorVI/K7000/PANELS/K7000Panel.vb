@@ -261,7 +261,7 @@ Public Class K7000Panel
 
     ''' <summary> Route subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RouteSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -280,7 +280,7 @@ Public Class K7000Panel
 #Region " STATUS "
 
     ''' <summary> Reports the last error. </summary>
-    Private Sub onLastError(ByVal lastError As DeviceError)
+    Private Sub OnLastError(ByVal lastError As DeviceError)
         If lastError?.IsError Then
             Me._LastErrorTextBox.ForeColor = Drawing.Color.OrangeRed
         Else
@@ -310,7 +310,7 @@ Public Class K7000Panel
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -348,7 +348,7 @@ Public Class K7000Panel
 
     ''' <summary> System subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -378,7 +378,7 @@ Public Class K7000Panel
 
     ''' <summary> Trigger subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub TriggerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -455,7 +455,7 @@ Public Class K7000Panel
     Private _ChannelListBuilder As isr.VI.ChannelListBuilder
 
     ''' <summary>Adds new items to the combo box.</summary>
-    Private Sub updateChannelListComboBox()
+    Private Sub UpdateChannelListComboBox()
 
         If Me.Visible Then
             ' check if we are asking for a new channel list
@@ -637,7 +637,7 @@ Public Class K7000Panel
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _memoryLocationTextBox_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _MemoryLocationTextBox.Validating
+    Private Sub _MemoryLocationTextBox_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _MemoryLocationTextBox.Validating
         Try
             If Integer.Parse(Me._MemoryLocationTextBox.Text, Globalization.CultureInfo.CurrentCulture) < 1 OrElse
                 Integer.Parse(Me._MemoryLocationTextBox.Text, Globalization.CultureInfo.CurrentCulture) > 100 Then
@@ -650,7 +650,7 @@ Public Class K7000Panel
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub memoryLocationChannelItemTextBox_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _MemoryLocationChannelItemTextBox.Validating
+    Private Sub MemoryLocationChannelItemTextBox_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _MemoryLocationChannelItemTextBox.Validating
         Try
             Dim dataValue As Int32
             If Not String.IsNullOrWhiteSpace(Me._MemoryLocationChannelItemTextBox.Text.Trim) AndAlso
@@ -684,7 +684,7 @@ Public Class K7000Panel
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub relayNumberTextBox_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _RelayNumberTextBox.Validating
+    Private Sub RelayNumberTextBox_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _RelayNumberTextBox.Validating
         Try
             Dim dataValue As Integer
             If Not String.IsNullOrWhiteSpace(Me._RelayNumberTextBox.Text.Trim) AndAlso
@@ -792,7 +792,7 @@ Public Class K7000Panel
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub serviceRequestMaskTextBox_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ServiceRequestMaskTextBox.Validating
+    Private Sub ServiceRequestMaskTextBox_Validating(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ServiceRequestMaskTextBox.Validating
         Try
             Dim data As String = Me._ServiceRequestMaskTextBox.Text.Trim
             Dim dataValue As Integer
@@ -1169,7 +1169,7 @@ Public Class K7000Panel
     ''' <summary> Event handler. Called by <see crefname="_SimpleReadWriteControl"/> for property changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SimpleReadWriteControl_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
         Try

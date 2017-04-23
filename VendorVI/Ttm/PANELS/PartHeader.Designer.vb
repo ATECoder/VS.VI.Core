@@ -115,10 +115,10 @@ Partial Class PartHeader
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents _TableLayoutPanel As System.Windows.Forms.TableLayoutPanel
-    Friend WithEvents _PartNumberTextBoxLabel As System.Windows.Forms.Label
-    Friend WithEvents _PartNumberTextBox As System.Windows.Forms.TextBox
-    Friend WithEvents _PartSerialNumberTextBoxLabel As System.Windows.Forms.Label
-    Friend WithEvents _PartSerialNumberTextBox As System.Windows.Forms.TextBox
+    Private WithEvents _TableLayoutPanel As System.Windows.Forms.TableLayoutPanel
+    Private WithEvents _PartNumberTextBoxLabel As System.Windows.Forms.Label
+    Private WithEvents _PartNumberTextBox As System.Windows.Forms.TextBox
+    Private WithEvents _PartSerialNumberTextBoxLabel As System.Windows.Forms.Label
+    Private WithEvents _PartSerialNumberTextBox As System.Windows.Forms.TextBox
 
 End Class

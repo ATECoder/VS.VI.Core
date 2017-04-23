@@ -234,7 +234,7 @@ Public Class BufferReading
     ''' <summary> Adjust relative timespan. </summary>
     ''' <remarks> David, 8/11/2016. </remarks>
     ''' <param name="firstReading"> The first buffer reading. </param>
-    Private Sub _adjustRelativeTimespan(ByVal firstReading As BufferReading)
+    Private Sub _AdjustRelativeTimespan(ByVal firstReading As BufferReading)
         If firstReading Is Nothing Then
             Me.RelativeTimespan = TimeSpan.Zero
         Else

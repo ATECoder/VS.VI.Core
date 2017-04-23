@@ -29,7 +29,7 @@ Public Class MeasurementsHeader
     End Sub
 
     ''' <summary> Releases the resources. </summary>
-    Private Sub releaseResources()
+    Private Sub ReleaseResources()
         Me._InitialResistance = Nothing
         Me._FinalResistance = Nothing
         Me._ThermalTransient = Nothing
@@ -77,7 +77,7 @@ Public Class MeasurementsHeader
 
     ''' <summary> Event handler. Called by _DeviceUnderTest for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _DeviceUnderTest_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _DeviceUnderTest.PropertyChanged
         Try
@@ -92,7 +92,7 @@ Public Class MeasurementsHeader
         End Try
     End Sub
 
-    Private _measurementMessage As String
+    Private _MeasurementMessage As String
 
     ''' <summary> Gets or sets a message describing the measurement. </summary>
     ''' <value> A message describing the measurement. </value>
@@ -227,7 +227,7 @@ Public Class MeasurementsHeader
     End Sub
 
     ''' <summary> Displays the thermal transient. </summary>
-    Private Sub setErrorProvider(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
+    Private Sub SetErrorProvider(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
         If (resistance.Outcome And MeasurementOutcomes.PartFailed) <> 0 Then
             Me._ErrorProvider.SetIconPadding(textBox, -Me._ErrorProvider.Icon.Width)
             Me._ErrorProvider.SetError(textBox, "Value out of range")
@@ -243,7 +243,7 @@ Public Class MeasurementsHeader
     End Sub
 
     ''' <summary> Displays the resistance. </summary>
-    Private Sub clearResistance(ByVal textBox As TextBox)
+    Private Sub ClearResistance(ByVal textBox As TextBox)
         If textBox IsNot Nothing Then
             If textBox.InvokeRequired Then
                 textBox.Invoke(New Action(Of TextBox)(AddressOf clearResistance), textBox)
@@ -255,7 +255,7 @@ Public Class MeasurementsHeader
     End Sub
 
     ''' <summary> Displays the resistance. </summary>
-    Private Sub showResistance(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
+    Private Sub ShowResistance(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
         If textBox IsNot Nothing Then
             If textBox.InvokeRequired Then
                 textBox.Invoke(New Action(Of TextBox, ResistanceMeasureBase)(AddressOf showResistance), New Object() {textBox, resistance})
@@ -267,7 +267,7 @@ Public Class MeasurementsHeader
     End Sub
 
     ''' <summary> Displays the thermal transient. </summary>
-    Private Sub showThermalTransient(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
+    Private Sub ShowThermalTransient(ByVal textBox As TextBox, ByVal resistance As ResistanceMeasureBase)
         If textBox IsNot Nothing Then
             If textBox.InvokeRequired Then
                 textBox.Invoke(New Action(Of TextBox, ResistanceMeasureBase)(AddressOf showThermalTransient), New Object() {textBox, resistance})
@@ -305,7 +305,7 @@ Public Class MeasurementsHeader
 
     ''' <summary> Event handler. Called by _InitialResistance for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InitialResistance_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _InitialResistance.PropertyChanged
         Try
@@ -347,7 +347,7 @@ Public Class MeasurementsHeader
 
     ''' <summary> Event handler. Called by _FinalResistance for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _FinalResistance_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _FinalResistance.PropertyChanged
         Try
@@ -389,7 +389,7 @@ Public Class MeasurementsHeader
 
     ''' <summary> Event handler. Called by _ThermalTransient for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ThermalTransient_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _ThermalTransient.PropertyChanged
         Try

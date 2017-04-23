@@ -323,7 +323,7 @@ Partial Class ThermalTransientHeader
     Private WithEvents _TimeConstantTextBox As System.Windows.Forms.TextBox
     Private WithEvents _EstimatedVoltageTextBoxLabel As System.Windows.Forms.Label
     Private WithEvents _TimeConstantTextBoxLabel As System.Windows.Forms.Label
-    Friend WithEvents _ToolTip As System.Windows.Forms.ToolTip
+    Private WithEvents _ToolTip As System.Windows.Forms.ToolTip
     Private WithEvents _CorrelationCoefficientTextBoxLabel As System.Windows.Forms.Label
     Private WithEvents _CorrelationCoefficientTextBox As System.Windows.Forms.TextBox
     Private WithEvents _StandardErrorTextBox As System.Windows.Forms.TextBox

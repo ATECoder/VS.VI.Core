@@ -229,7 +229,7 @@ Public Class ThermostreamPanel
     End Function
 
     ''' <summary> Executes the measurement available action. </summary>
-    Private Sub onMeasurementAvailable(ByVal value As Double?)
+    Private Sub OnMeasurementAvailable(ByVal value As Double?)
         If value.HasValue Then
             Me.onMeasurementAvailable(CStr(value.Value))
         Else
@@ -238,7 +238,7 @@ Public Class ThermostreamPanel
     End Sub
 
     ''' <summary> Executes the measurement available action. </summary>
-    Private Sub onMeasurementAvailable(ByVal value As String)
+    Private Sub OnMeasurementAvailable(ByVal value As String)
         Const clear As String = "    "
         If String.IsNullOrWhiteSpace(value) Then
             Me._ReadingToolStripStatusLabel.Text = ThermostreamPanel.DegreesCaption("-.-")
@@ -299,7 +299,7 @@ Public Class ThermostreamPanel
 
     ''' <summary> Sense Current subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ThermoStreamSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -319,7 +319,7 @@ Public Class ThermostreamPanel
 #Region " STATUS "
 
     ''' <summary> Reports the last error. </summary>
-    Private Sub onLastError(ByVal lastError As DeviceError)
+    Private Sub OnLastError(ByVal lastError As DeviceError)
         If lastError?.IsError Then
             Me._LastErrorTextBox.ForeColor = Drawing.Color.OrangeRed
         Else
@@ -355,7 +355,7 @@ Public Class ThermostreamPanel
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -394,7 +394,7 @@ Public Class ThermostreamPanel
 
     ''' <summary> System subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -745,7 +745,7 @@ Public Class ThermostreamPanel
 
     ''' <summary> Reads service request. </summary>
     ''' <returns> The service request. </returns>
-    Private Function readServiceRequest() As isr.VI.ServiceRequests
+    Private Function ReadServiceRequest() As isr.VI.ServiceRequests
         Dim srq As isr.VI.ServiceRequests = ServiceRequests.None
         If Me.IsDeviceOpen Then
             ' it takes a few ms for the event to register. 
@@ -1179,7 +1179,7 @@ Public Class ThermostreamPanel
     ''' <summary> Event handler. Called by <see crefname="_SimpleReadWriteControl"/> for property changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SimpleReadWriteControl_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
         Try

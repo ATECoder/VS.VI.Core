@@ -124,7 +124,7 @@ Public Class DummyResourceManager
     End Function
 
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")>
-    Private _resourceName As String
+    Private _ResourceName As String
     ''' <summary> Returns true if the specified resource exists. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="resourceName"> The resource name. </param>

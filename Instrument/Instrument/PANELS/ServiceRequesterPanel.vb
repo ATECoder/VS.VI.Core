@@ -196,7 +196,7 @@ Public Class ServiceRequesterPanel
         Me.WriteToSession(_WriteTextBox.Text)
     End Sub
 
-    Private Sub clearButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ClearButton.Click
+    Private Sub ClearButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ClearButton.Click
         Me._ReadTextBox.Clear()
         Me._ServiceRequestStatusLabel.Text = ""
     End Sub
@@ -325,7 +325,7 @@ Public Class ServiceRequesterPanel
     ''' <summary> Trace messages box property changed. </summary>
     ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
         Try

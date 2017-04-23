@@ -72,7 +72,7 @@ Namespace My
         End Function
 
         ''' <summary> Processes the shut down. </summary>
-        Private Sub processShutDown()
+        Private Sub ProcessShutDown()
 
             My.Application.SaveMySettingsOnExit = True
             If My.Application.SaveMySettingsOnExit Then

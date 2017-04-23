@@ -774,5 +774,5 @@ Partial Class K2700Panel
     Private WithEvents _ReadingsCountLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
     Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
-    Friend WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
+    Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
 End Class

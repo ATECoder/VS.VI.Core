@@ -66,7 +66,7 @@ Public MustInherit Class NodeEntityBase
     End Function
 
     ''' <summary> <c>True</c> if boot script save required. </summary>
-    Private _bootScriptSaveRequired As Boolean
+    Private _BootScriptSaveRequired As Boolean
 
     ''' <summary> Gets or sets the condition to indicate that the boot script must be re-saved because
     ''' a script reference changes as would happened if a new binary script was created with a table
@@ -83,7 +83,7 @@ Public MustInherit Class NodeEntityBase
     End Property
 
     ''' <summary> The controller node number. </summary>
-    Private _controllerNodeNumber As Integer
+    Private _ControllerNodeNumber As Integer
 
     ''' <summary> Returns the controller node number. </summary>
     ''' <value> The controller node number. </value>
@@ -130,7 +130,7 @@ Public MustInherit Class NodeEntityBase
     End Sub
 
     ''' <summary> The instrument model family. </summary>
-    Private _instrumentModelFamily As InstrumentModelFamily
+    Private _InstrumentModelFamily As InstrumentModelFamily
 
     ''' <summary> Gets the <see cref="InstrumentModelFamily">instrument model family.</see> </summary>
     ''' <value> The instrument model family. </value>
@@ -149,7 +149,7 @@ Public MustInherit Class NodeEntityBase
     End Property
 
     ''' <summary> The model number. </summary>
-    Private _modelNumber As String
+    Private _ModelNumber As String
 
     ''' <summary> Gets the model number. </summary>
     ''' <value> The model number. </value>

@@ -336,10 +336,10 @@ Partial Class MovingWindowMeter
     End Sub
 
     Private WithEvents _TopLayout As Windows.Forms.TableLayoutPanel
-    Friend WithEvents _MiddleLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _MiddleLayout As Windows.Forms.TableLayoutPanel
     Private WithEvents _AverageProgressBar As Windows.Forms.ProgressBar
     Private WithEvents _ToolTip As Windows.Forms.ToolTip
-    Friend WithEvents _AverageLabel As Windows.Forms.Label
+    Private WithEvents _AverageLabel As Windows.Forms.Label
     Private WithEvents _LeftLayout As Windows.Forms.TableLayoutPanel
     Private WithEvents _ElapsedTimeLabel As Windows.Forms.Label
     Private WithEvents _CountLabel As Windows.Forms.Label
@@ -350,10 +350,10 @@ Partial Class MovingWindowMeter
     Private WithEvents _MinimumLabel As Windows.Forms.Label
     Private WithEvents _ReadingLabel As Windows.Forms.Label
     Private WithEvents _StatusLabel As Windows.Forms.Label
-    Friend WithEvents _SettingsToolStrip As Windows.Forms.ToolStrip
-    Friend WithEvents _LengthTextBoxLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _SettingsToolStrip As Windows.Forms.ToolStrip
+    Private WithEvents _LengthTextBoxLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _LengthTextBox As Windows.Forms.ToolStripTextBox
-    Friend WithEvents _WindowTextBoxLabel As Windows.Forms.ToolStripLabel
+    Private WithEvents _WindowTextBoxLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _WindowTextBox As Windows.Forms.ToolStripTextBox
     Private WithEvents _TimeoutTextBoxLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _TimeoutTextBox As Windows.Forms.ToolStripTextBox

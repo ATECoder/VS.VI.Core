@@ -134,10 +134,10 @@ Partial Class SelectResources
 
     Private WithEvents _ResourceStringsListBoxLabel As Label
     Private WithEvents _AvailableResourcesListBoxLabel As Label
-    Private WithEvents closeButton As Button
-    Private WithEvents okButton As Button
+    Private WithEvents CloseButton As Button
+    Private WithEvents OkButton As Button
     Private WithEvents _AvailableResourcesListBox As ListBox
-    Friend WithEvents _ResourceStringsListBox As ListBox
+    Private WithEvents _ResourceStringsListBox As ListBox
     Private WithEvents _AddButton As Button
     Private WithEvents _RemoveButton As Button
 End Class

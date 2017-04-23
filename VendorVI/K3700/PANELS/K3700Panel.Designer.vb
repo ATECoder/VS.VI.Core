@@ -922,8 +922,8 @@ Partial Class K3700Panel
     Private WithEvents _FilterWindowNumericLabel As Windows.Forms.Label
     Private WithEvents _FilterWindowNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _ApplyFunctionModeButton As Windows.Forms.Button
-    Friend WithEvents _OpenDetectorCheckBox As Windows.Forms.CheckBox
-    Friend WithEvents _AutoDelayCheckBox As Windows.Forms.CheckBox
+    Private WithEvents _OpenDetectorCheckBox As Windows.Forms.CheckBox
+    Private WithEvents _AutoDelayCheckBox As Windows.Forms.CheckBox
     Private WithEvents _SystemToolStrip As Windows.Forms.ToolStrip
     Private WithEvents _ResetSplitButton As Windows.Forms.ToolStripSplitButton
     Private WithEvents _ClearInterfaceMenuItem As Windows.Forms.ToolStripMenuItem

@@ -95,9 +95,9 @@ Public Class ConfigurationPanelBase
 
     ''' <summary> Event handler. Called by _InitialResistance for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _part_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _Part.PropertyChanged
+    Private Sub _Part_PropertyChanged(ByVal sender As System.Object, ByVal e As PropertyChangedEventArgs) Handles _Part.PropertyChanged
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._part_PropertyChanged), New Object() {sender, e})
@@ -316,7 +316,7 @@ Public Class ConfigurationPanelBase
     End Property
 
     ''' <summary> Updates the configuration status. </summary>
-    Private Sub onConfigurationChanged()
+    Private Sub OnConfigurationChanged()
         Dim caption As String = Me.ApplyConfigurationButtonCaption
         Dim changedCaption As String = Me.ApplyNewConfigurationButtonCaption
         Me.IsNewConfigurationSettingAvailable = Me.IsNewConfigurationSettings

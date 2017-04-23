@@ -6,7 +6,7 @@ Imports NationalInstruments.Visa
 Public Class SelectResource
 		Inherits System.Windows.Forms.Form
 
-		Private WithEvents availableResourcesListBox As System.Windows.Forms.ListBox
+		Private WithEvents AvailableResourcesListBox As System.Windows.Forms.ListBox
 		Private okButton As System.Windows.Forms.Button
 		Private closeButton As System.Windows.Forms.Button
 		Private visaResourceNameTextBox As System.Windows.Forms.TextBox
@@ -147,14 +147,14 @@ Public Class SelectResource
 			End Using
 		End Sub
 
-		Private Sub availableResourcesListBox_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles availableResourcesListBox.DoubleClick
+		Private Sub AvailableResourcesListBox_DoubleClick(ByVal sender As Object, ByVal e As System.EventArgs) Handles availableResourcesListBox.DoubleClick
 			Dim selectedString As String = CStr(availableResourcesListBox.SelectedItem)
 			ResourceName = selectedString
 			Me.DialogResult = System.Windows.Forms.DialogResult.OK
 			Me.Close()
 		End Sub
 
-		Private Sub availableResourcesListBox_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles availableResourcesListBox.SelectedIndexChanged
+		Private Sub AvailableResourcesListBox_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles availableResourcesListBox.SelectedIndexChanged
 			Dim selectedString As String = CStr(availableResourcesListBox.SelectedItem)
 			ResourceName = selectedString
 		End Sub

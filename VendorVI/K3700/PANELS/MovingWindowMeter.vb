@@ -21,7 +21,7 @@ Public Class MovingWindowMeter
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private _initializingComponents As Boolean
+    Private _InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
@@ -668,7 +668,7 @@ Public Class MovingWindowMeter
     End Function
 
     ''' <summary> The task. </summary>
-    Private _task As Task
+    Private _Task As Task
 
     ''' <summary> Gets the task. </summary>
     ''' <value> The task. </value>

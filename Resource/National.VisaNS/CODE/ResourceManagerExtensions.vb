@@ -46,7 +46,7 @@ Friend Module ResourceManagerExtensions
     ''' <summary> Build resource message. </summary>
     ''' <param name="ex"> Details of the exception. </param>
     ''' <returns> A an array with a single resource expressing the error. </returns>
-    Private Function buildResourceMessage(ByVal ex As Exception) As IEnumerable(Of String)
+    Private Function BuildResourceMessage(ByVal ex As Exception) As IEnumerable(Of String)
         If TypeOf ex.InnerException Is NationalInstruments.VisaNS.VisaException Then
             With CType(ex.InnerException, NationalInstruments.VisaNS.VisaException)
                 If .ErrorCode = NationalInstruments.VisaNS.VisaStatusCode.ErrorResourceNotFound Then

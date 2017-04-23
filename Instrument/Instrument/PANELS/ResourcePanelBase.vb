@@ -553,7 +553,7 @@ Public Class ResourcePanelBase
     ''' <summary> Connects the instrument by calling a propagating connect command. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
-    Private Sub connector_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles Connector.Connect
+    Private Sub Connector_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles Connector.Connect
         Me.openSession(Me.Connector.SelectedResourceName, Me.ResourceTitle)
         ' cancel if failed to open
         If Not Me.IsDeviceOpen Then e.Cancel = True
@@ -617,7 +617,7 @@ Public Class ResourcePanelBase
 #Region " CLOSING / CLOSED "
 
     ''' <summary> Disconnects the instrument by closing the open session. </summary>
-    Private Sub closeSession()
+    Private Sub CloseSession()
         If Me.Device.IsDeviceOpen Then
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Releasing {0};. ", Me.Device.ResourceName)
         End If
@@ -631,7 +631,7 @@ Public Class ResourcePanelBase
     ''' <summary> Disconnects the instrument by calling a propagating disconnect command. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
-    Private Sub connector_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles Connector.Disconnect
+    Private Sub Connector_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles Connector.Disconnect
         Me.closeSession()
         ' Cancel if failed to closed
         If Me.IsDeviceOpen Then e.Cancel = True
@@ -691,7 +691,7 @@ Public Class ResourcePanelBase
     ''' <summary> Clears the instrument by calling a propagating clear command. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
-    Private Sub connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles Connector.Clear
+    Private Sub Connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles Connector.Clear
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                            "Resetting, clearing and initializing resource to know state;. {0}", Me.Connector.SelectedResourceName)
         Me.Device.ResetClearInit()
@@ -702,7 +702,7 @@ Public Class ResourcePanelBase
     ''' <summary> Displays available instrument names. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
-    Private Sub connector_FindNames(ByVal sender As Object, ByVal e As System.EventArgs) Handles Connector.FindNames
+    Private Sub Connector_FindNames(ByVal sender As Object, ByVal e As System.EventArgs) Handles Connector.FindNames
         Me.DisplayNames()
     End Sub
 
@@ -722,9 +722,9 @@ Public Class ResourcePanelBase
     ''' <summary> Event handler. Called by _ResourceNameSelectorConnector for property changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub connector_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles Connector.PropertyChanged
+    Private Sub Connector_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles Connector.PropertyChanged
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.connector_PropertyChanged), New Object() {sender, e})
@@ -780,7 +780,7 @@ Public Class ResourcePanelBase
     ''' <summary> Trace messages box property changed. </summary>
     ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles TraceMessagesBox.PropertyChanged
         Try

@@ -49,7 +49,7 @@ Public Class ResourceSelectorDialog
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub form_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown
+    Private Sub Form_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown
 
         ' allow form rendering time to complete: process all messages currently in the queue.
         Application.DoEvents()
@@ -110,7 +110,7 @@ Public Class ResourceSelectorDialog
     End Property
 
     ''' <summary> Selects first not serial instrument. </summary>
-    Private Sub selectFirstNotSerialInstrument()
+    Private Sub SelectFirstNotSerialInstrument()
         For Each item As String In Me._AvailableResourcesListBox.Items
             If item.Contains("GPIB") AndAlso item.Contains("INSTR") Then
                 Me._AvailableResourcesListBox.SelectedItem = item
@@ -121,7 +121,7 @@ Public Class ResourceSelectorDialog
 
     ''' <summary> Displays the resources. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub displayResources()
+    Private Sub DisplayResources()
 
         Try
 

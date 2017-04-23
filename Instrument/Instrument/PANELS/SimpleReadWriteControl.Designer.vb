@@ -211,5 +211,5 @@ Partial Class SimpleReadWriteControl
     Private WithEvents _WriteButton As Windows.Forms.Button
     Private WithEvents _QueryButton As Windows.Forms.Button
     Private WithEvents _WriteComboBoxLabel As Windows.Forms.Label
-    Friend WithEvents _ControlsLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _ControlsLayout As Windows.Forms.TableLayoutPanel
 End Class

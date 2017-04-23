@@ -382,7 +382,7 @@ Public Class MeterThermalTransient
 
 #Region " TIME SERIES "
 
-    Dim _lastTrace As String
+    Dim _LastTrace As String
 
     ''' <summary> Gets or sets (protected) the last trace. </summary>
     ''' <value> The last trace. </value>
@@ -396,7 +396,7 @@ Public Class MeterThermalTransient
         End Set
     End Property
 
-    Dim _lastTimeSeries As List(Of System.Drawing.PointF)
+    Dim _LastTimeSeries As List(Of System.Drawing.PointF)
 
     ''' <summary> Gets or sets the thermal transient time series. </summary>
     ''' <value> The last time series. </value>
@@ -457,7 +457,7 @@ Public Class MeterThermalTransient
     ''' <returns> null if it fails, else a list of. </returns>
     Private Shared Function Simulate(ByVal asymptote As Double, ByVal timeConstant As Double) As ObjectModel.ReadOnlyCollection(Of System.Drawing.PointF)
         Dim l As New List(Of Drawing.PointF)
-        Dim Vc As Double = 0
+        Dim vc As Double = 0
         Dim deltaT As Double = 0.1
         For i As Integer = 0 To 99
             Dim deltaV As Double = deltaT * (asymptote - Vc) / timeConstant
@@ -893,7 +893,7 @@ Public Class MeterThermalTransient
 
 #Region " ESTIMATE "
 
-    Dim _model As isr.Algorithms.Optima.PulseResponseFunction
+    Dim _Model As isr.Algorithms.Optima.PulseResponseFunction
 
     ''' <summary> Gets the model. </summary>
     ''' <value> The model. </value>
@@ -903,7 +903,7 @@ Public Class MeterThermalTransient
         End Get
     End Property
 
-    Dim _simplex As isr.Algorithms.Optima.Simplex
+    Dim _Simplex As isr.Algorithms.Optima.Simplex
 
     ''' <summary> Model transient response. </summary>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>

@@ -122,7 +122,7 @@ Public Class DeviceError
     End Property
 
     ''' <summary> Message describing the error. </summary>
-    Private _errorMessage As String
+    Private _ErrorMessage As String
 
     ''' <summary> Gets or sets (protected) the error message. </summary>
     ''' <value> A message describing the error. </value>

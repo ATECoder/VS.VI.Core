@@ -74,7 +74,7 @@ Public Class SenseSubsystem
 
 #Region " LATEST DATA "
 
-    Private _readings As Readings
+    Private _Readings As Readings
 
     ''' <summary> Returns the readings. </summary>
     ''' <returns> The readings. </returns>

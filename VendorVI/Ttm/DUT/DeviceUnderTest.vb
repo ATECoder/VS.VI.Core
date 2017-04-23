@@ -219,7 +219,7 @@ Public Class DeviceUnderTest
     End Property
 
     ''' <summary> The unique key. </summary>
-    Private _uniqueKey As String
+    Private _UniqueKey As String
 
     ''' <summary> Gets or sets (protected) the unique key. </summary>
     ''' <value> The unique key. </value>
@@ -253,7 +253,7 @@ Public Class DeviceUnderTest
         End Get
     End Property
 
-    Private _dataRecordFormat As String
+    Private _DataRecordFormat As String
     ''' <summary> Gets the data record to save to a comma separated file. </summary>
     ''' <value> The data record. </value>
     Public ReadOnly Property DataRecord() As String
@@ -405,7 +405,7 @@ Public Class DeviceUnderTest
 
     ''' <summary> Event handler. Called by _InitialResistance for property changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InitialResistance_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _InitialResistance.PropertyChanged
         Try
@@ -432,7 +432,7 @@ Public Class DeviceUnderTest
 
     ''' <summary> Event handler. Called by _FinalResistance for property changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _FinalResistance_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _FinalResistance.PropertyChanged
         Try
@@ -459,7 +459,7 @@ Public Class DeviceUnderTest
 
     ''' <summary> Event handler. Called by _ShuntResistance for property changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     Private Sub _ShuntResistance_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _ShuntResistance.PropertyChanged
         Me.SafePostPropertyChanged(NameOf(Me.ShuntResistance))
     End Sub
@@ -478,7 +478,7 @@ Public Class DeviceUnderTest
 
     ''' <summary> Event handler. Called by _ThermalTransient for property changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ThermalTransient_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _ThermalTransient.PropertyChanged
         Try
@@ -682,7 +682,7 @@ Public Class DeviceUnderTest
     ''' compliance set to hit compliance. </summary>
     ''' <param name="existingOutcome"> The existing outcome. </param>
     ''' <param name="newOutcome">      The new outcome. </param>
-    Private Shared Function mergeOutcomes(ByVal existingOutcome As MeasurementOutcomes,
+    Private Shared Function MergeOutcomes(ByVal existingOutcome As MeasurementOutcomes,
                                           ByVal newOutcome As MeasurementOutcomes) As MeasurementOutcomes
 
         If (newOutcome And MeasurementOutcomes.PartPassed) <> 0 Then
@@ -698,7 +698,7 @@ Public Class DeviceUnderTest
 
     End Function
 
-    Private _outcome As MeasurementOutcomes
+    Private _Outcome As MeasurementOutcomes
     ''' <summary> Gets or sets the measurement outcome for the part. </summary>
     ''' <value> The outcome. </value>
     Public Property Outcome() As MeasurementOutcomes
@@ -747,7 +747,7 @@ Public Class DeviceUnderTestCollection
         End Function
     End Class
 
-    Private _devices As DeviceCollection
+    Private _Devices As DeviceCollection
 
     Protected Overrides Sub OnCollectionChanged(e As NotifyCollectionChangedEventArgs)
         Me._devices.Clear()

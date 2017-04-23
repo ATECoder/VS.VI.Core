@@ -9,15 +9,15 @@ Public Class MainForm
     Private lastResourceString As String = Nothing
     Private writeTextBox As System.Windows.Forms.TextBox
     Private _ReadTextBox As System.Windows.Forms.TextBox
-    Private WithEvents queryButton As System.Windows.Forms.Button
-    Private WithEvents writeButton As System.Windows.Forms.Button
-    Private WithEvents readButton As System.Windows.Forms.Button
+    Private WithEvents QueryButton As System.Windows.Forms.Button
+    Private WithEvents WriteButton As System.Windows.Forms.Button
+    Private WithEvents ReadButton As System.Windows.Forms.Button
     Private WithEvents _OpenSessionButton As System.Windows.Forms.Button
-    Private WithEvents clearButton As System.Windows.Forms.Button
+    Private WithEvents ClearButton As System.Windows.Forms.Button
     Private WithEvents _CloseSessionButton As System.Windows.Forms.Button
     Private stringToWriteLabel As System.Windows.Forms.Label
     Private _ReadTextBoxLabel As System.Windows.Forms.Label
-    Friend WithEvents _ResourcesComboBox As ComboBox
+    Private WithEvents _ResourcesComboBox As ComboBox
     Private WithEvents _ResourcesComboBoxLabel As Label
     Private WithEvents _MultipleResourcesCheckBox As CheckBox
     ''' <summary>
@@ -335,7 +335,7 @@ Public Class MainForm
         End Using
     End Sub
 
-    Private Sub openSession_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _OpenSessionButton.Click
+    Private Sub OpenSession_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _OpenSessionButton.Click
         If Me._MultipleResourcesCheckBox.Checked Then
             Me.OpenSessions()
         Else
@@ -343,7 +343,7 @@ Public Class MainForm
         End If
     End Sub
 
-    Private Sub closeSession_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _CloseSessionButton.Click
+    Private Sub CloseSession_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _CloseSessionButton.Click
         SetupControlState(False)
         If Me._Sessions Is Nothing Then
             If Me._Session IsNot Nothing Then
@@ -418,7 +418,7 @@ Public Class MainForm
 
     <CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub query_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles queryButton.Click
+    Private Sub Query_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles queryButton.Click
         _ReadTextBox.Text = String.Empty
         Cursor.Current = Cursors.WaitCursor
         Try
@@ -434,7 +434,7 @@ Public Class MainForm
 
     <CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub write_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles writeButton.Click
+    Private Sub Write_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles writeButton.Click
         Try
             Dim textToWrite As String = ReplaceCommonEscapeSequences(writeTextBox.Text)
             _Session.RawIO.Write(textToWrite)
@@ -445,7 +445,7 @@ Public Class MainForm
 
     <CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub read_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles readButton.Click
+    Private Sub Read_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles readButton.Click
         _ReadTextBox.Text = String.Empty
         Cursor.Current = Cursors.WaitCursor
         Try
@@ -457,7 +457,7 @@ Public Class MainForm
         End Try
     End Sub
 
-    Private Sub clear_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles clearButton.Click
+    Private Sub Clear_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles clearButton.Click
         _ReadTextBox.Text = String.Empty
     End Sub
 

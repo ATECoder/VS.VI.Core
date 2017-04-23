@@ -63,7 +63,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
-        Friend ReadOnly Property document_decrypt() As System.Drawing.Bitmap
+        Friend ReadOnly Property Document_decrypt() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("document-decrypt", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
@@ -73,7 +73,7 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
-        Friend ReadOnly Property document_encrypt() As System.Drawing.Bitmap
+        Friend ReadOnly Property Document_encrypt() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("document-encrypt", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)

@@ -427,8 +427,8 @@ Partial Class SimpleReadWritePanel
     Private WithEvents _CloseSessionButton As Windows.Forms.Button
     Private WithEvents _ServiceRequestStatusLabel As Windows.Forms.ToolStripStatusLabel
     Private WithEvents _PollTimer As Windows.Forms.Timer
-    Friend WithEvents _ReadWriteTabPage As Windows.Forms.TabPage
-    Friend WithEvents _SimpleReadWriteControl As SimpleReadWriteControl
-    Friend WithEvents _ErrorProvider As Windows.Forms.ErrorProvider
+    Private WithEvents _ReadWriteTabPage As Windows.Forms.TabPage
+    Private WithEvents _SimpleReadWriteControl As SimpleReadWriteControl
+    Private WithEvents _ErrorProvider As Windows.Forms.ErrorProvider
     Private WithEvents _SessionInfoTextBox As Windows.Forms.TextBox
 End Class

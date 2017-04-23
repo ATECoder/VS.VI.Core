@@ -245,7 +245,7 @@ Public Class Meter
 
     ''' <summary> Event handler. Called by _MasterDevice for property changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _MasterDevice_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _MasterDevice.PropertyChanged
         Try
@@ -517,7 +517,7 @@ Public Class Meter
         End If
     End Function
 
-    Private _firmwareReleasedVersion As String
+    Private _FirmwareReleasedVersion As String
     ''' <summary> Gets or sets the version of the current firmware release. </summary>
     ''' <value> The firmware released version. </value>
     Public Property FirmwareReleasedVersion() As String
@@ -677,7 +677,7 @@ Public Class Meter
 #Region " TTM FRAMEWORK: TRIGGER "
 
     ''' <summary> True if the meter was enabled to respond to trigger events. </summary>
-    Private _isAwaitingTrigger As Boolean
+    Private _IsAwaitingTrigger As Boolean
 
     ''' <summary> Abort triggered measurements. </summary>
     Public Sub AbortTriggerSequenceIf()
@@ -692,7 +692,7 @@ Public Class Meter
     End Sub
 
     ''' <summary> true if this object is starting. </summary>
-    Private _isStarting As Boolean
+    Private _IsStarting As Boolean
 
     ''' <summary> Primes the instrument to wait for a trigger. This clears the digital outputs and
     ''' loops until trigger or external *TRG command. </summary>
@@ -891,7 +891,7 @@ Public Class Meter
 
     ''' <summary> Event handler. Called by _MeasureSequencer for property changed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _MeasureSequencer_PropertyChanged(ByVal sender As System.Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _MeasureSequencer1.PropertyChanged
         Try
@@ -906,7 +906,7 @@ Public Class Meter
     ''' <param name="currentState"> The current state. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
-    Private Sub onMeasurementSequenceStateChanged(ByVal currentState As MeasurementSequenceState)
+    Private Sub OnMeasurementSequenceStateChanged(ByVal currentState As MeasurementSequenceState)
 
         Select Case currentState
 
@@ -1053,7 +1053,7 @@ Public Class Meter
 
     ''' <summary> Event handler. Called by _TriggerSequencer for property changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TriggerSequencer_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _TriggerSequencer1.PropertyChanged
         Try
@@ -1068,7 +1068,7 @@ Public Class Meter
     ''' <param name="currentState"> The current state. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
-    Private Sub onTriggerSequenceStateChanged(ByVal currentState As TriggerSequenceState)
+    Private Sub OnTriggerSequenceStateChanged(ByVal currentState As TriggerSequenceState)
 
         Select Case currentState
 

@@ -238,7 +238,7 @@ Public Class Device
 
     ''' <summary> Format subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub FormatSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As FormatSubsystem = TryCast(sender, FormatSubsystem)
@@ -260,7 +260,7 @@ Public Class Device
     ''' <remarks> David, 4/4/2017. </remarks>
     ''' <param name="value"> The value. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub onFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
+    Private Sub OnFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
         With value
             .QueryRange()
             .QueryAutoRangeEnabled()
@@ -323,7 +323,7 @@ Public Class Device
 
     ''' <summary> Handles the function modes changed action. </summary>
     ''' <param name="subsystem"> The subsystem. </param>
-    Private Sub onFunctionModesChanged(ByVal subsystem As SenseSubsystem)
+    Private Sub OnFunctionModesChanged(ByVal subsystem As SenseSubsystem)
         If subsystem IsNot Nothing AndAlso subsystem.FunctionMode.HasValue Then
             Me.ParseMeasurementUnit(subsystem)
             Me.onFunctionModesChanged(Me.SelectSenseSubsystem(subsystem))
@@ -345,7 +345,7 @@ Public Class Device
 
     ''' <summary> Sense subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SenseSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As SenseSubsystem = TryCast(sender, SenseSubsystem)
@@ -370,7 +370,7 @@ Public Class Device
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)

@@ -15,16 +15,18 @@ Public MustInherit Class ProberSubsystemBase
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me.worker = New System.ComponentModel.BackgroundWorker()
-        Me.worker.WorkerSupportsCancellation = True
+        Me.Worker = New System.ComponentModel.BackgroundWorker() With {
+            .WorkerSupportsCancellation = True
+        }
         Me._CommandTrialCount = 3
         Me._CommandPollInterval = TimeSpan.FromMilliseconds(30)
         Me._CommandTimeoutInterval = TimeSpan.FromMilliseconds(200)
 
-        Me.proberTimer = New Timers.Timer(1.5 * Me._CommandTrialCount * Me._CommandTimeoutInterval.TotalMilliseconds)
-        Me.proberTimer.Stop()
+        Me.ProberTimer = New Timers.Timer(1.5 * Me._CommandTrialCount * Me._CommandTimeoutInterval.TotalMilliseconds)
+        Me.ProberTimer.Stop()
 
     End Sub
 
@@ -39,18 +41,18 @@ Public MustInherit Class ProberSubsystemBase
     Protected Overloads Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                If Me.proberTimer IsNot Nothing Then
-                    Me.proberTimer.Stop()
+                If Me.ProberTimer IsNot Nothing Then
+                    Me.ProberTimer.Stop()
                     System.Windows.Forms.Application.DoEvents()
-                    Me.proberTimer.Dispose()
-                    Me.proberTimer = Nothing
+                    Me.ProberTimer.Dispose()
+                    Me.ProberTimer = Nothing
                 End If
                 ' Free managed resources when explicitly called
-                If Me.worker IsNot Nothing Then
-                    Me.worker.CancelAsync()
+                If Me.Worker IsNot Nothing Then
+                    Me.Worker.CancelAsync()
                     Windows.Forms.Application.DoEvents()
-                    If Not (Me.worker.IsBusy OrElse Me.worker.CancellationPending) Then
-                        Me.worker.Dispose()
+                    If Not (Me.Worker.IsBusy OrElse Me.Worker.CancellationPending) Then
+                        Me.Worker.Dispose()
                     End If
                 End If
             End If
@@ -171,32 +173,32 @@ Public MustInherit Class ProberSubsystemBase
 
 #Region " WRITE "
 
-    Private _supportedCommandPrefixes As String()
+    Private _SupportedCommandPrefixes As String()
 
     ''' <summary> Gets the supported command prefixes. </summary>
     ''' <returns> A String </returns>
     Public Function SupportedCommandPrefixes() As String()
-        Return Me._supportedCommandPrefixes
+        Return Me._SupportedCommandPrefixes
     End Function
 
     ''' <summary> Sets supported command prefixes. </summary>
     ''' <param name="value"> The value. </param>
     Protected Sub SetSupportedCommandPrefixes(ByVal value As String())
-        Me._supportedCommandPrefixes = value
+        Me._SupportedCommandPrefixes = value
     End Sub
 
-    Private _supportedCommands As String()
+    Private _SupportedCommands As String()
 
     ''' <summary> Gets the supported commands. </summary>
     ''' <returns> A String </returns>
     Public Function SupportedCommands() As String()
-        Return Me._supportedCommands
+        Return Me._SupportedCommands
     End Function
 
     ''' <summary> Sets supported commands. </summary>
     ''' <param name="value"> The value. </param>
     Protected Sub SetSupportedCommands(ByVal value As String())
-        Me._supportedCommands = value
+        Me._SupportedCommands = value
     End Sub
 
     Private _LastMessageSent As String
@@ -224,7 +226,7 @@ Public MustInherit Class ProberSubsystemBase
     '''           <see cref="SessionBase.Termination">termination character</see>. </summary>
     ''' <param name="dataToWrite"> The data to write. </param>
     Public Sub Send(ByVal dataToWrite As String)
-        Me.proberTimer.Stop()
+        Me.ProberTimer.Stop()
         Me.ClearSendSentinels()
         Me.ClearFetchSentinels()
         If Not String.IsNullOrWhiteSpace(dataToWrite) Then
@@ -234,7 +236,7 @@ Public MustInherit Class ProberSubsystemBase
                 Me.TestCompleteSent = True
             ElseIf dataToWrite.StartsWith(Me.SetModeCommandPrefix, StringComparison.OrdinalIgnoreCase) Then
                 Me.SetModeSent = True
-            ElseIf Me._supportedCommandPrefixes.Contains(dataToWrite.Substring(0, 2), StringComparer.OrdinalIgnoreCase) Then
+            ElseIf Me._SupportedCommandPrefixes.Contains(dataToWrite.Substring(0, 2), StringComparer.OrdinalIgnoreCase) Then
             ElseIf dataToWrite.StartsWith("*SRE", StringComparison.OrdinalIgnoreCase) Then
                 Me.LastReading = Me.MessageCompletedPattern
                 Me.ParseReading(Me.LastReading)
@@ -260,9 +262,9 @@ Public MustInherit Class ProberSubsystemBase
         Public Property TimeoutInterval As TimeSpan
     End Class
 
-    Private WithEvents worker As System.ComponentModel.BackgroundWorker
+    Private WithEvents Worker As System.ComponentModel.BackgroundWorker
 
-    Private Sub worker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles worker.DoWork
+    Private Sub Worker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles Worker.DoWork
         If Not (Me.IsDisposed OrElse e Is Nothing OrElse e.Cancel) Then
             Dim payload As WorkerPayLoad = TryCast(e.Argument, WorkerPayLoad)
             payload.TrialNumber = 0
@@ -280,7 +282,7 @@ Public MustInherit Class ProberSubsystemBase
         End If
     End Sub
 
-    Private Sub worker_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles worker.RunWorkerCompleted
+    Private Sub Worker_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles Worker.RunWorkerCompleted
         If Not (Me.IsDisposed OrElse e Is Nothing OrElse e.Cancelled OrElse e.Error IsNot Nothing) Then
         End If
     End Sub
@@ -314,39 +316,39 @@ Public MustInherit Class ProberSubsystemBase
                                  ByVal pollInterval As TimeSpan, ByVal timeout As TimeSpan) As Boolean
         ' wait for previous operation to complete.
         Dim endTime As DateTime = DateTime.Now.Add(timeout)
-        Do Until Me.IsDisposed OrElse Not worker.IsBusy OrElse DateTime.Now > endTime
+        Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.Now > endTime
             Windows.Forms.Application.DoEvents()
         Loop
-        If worker.IsBusy Then
-            worker.CancelAsync()
+        If Worker.IsBusy Then
+            Worker.CancelAsync()
         End If
         endTime = DateTime.Now.Add(timeout)
-        Do Until Me.IsDisposed OrElse Not worker.IsBusy OrElse DateTime.Now > endTime
+        Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.Now > endTime
             Windows.Forms.Application.DoEvents()
         Loop
-        If worker.IsBusy Then
+        If Worker.IsBusy Then
             Return False
         End If
 
-        Dim payload As New WorkerPayLoad
-        payload.Message = value
-        payload.TrialCount = trialCount
-        payload.PollInterval = pollInterval
-        payload.TimeoutInterval = timeout
-        payload.ResendOnRetry = False
+        Dim payload As New WorkerPayLoad With {
+            .Message = value,
+            .TrialCount = trialCount,
+            .PollInterval = pollInterval,
+            .TimeoutInterval = timeout,
+            .ResendOnRetry = False}
 
-        If Not (Me.IsDisposed OrElse Me.worker.IsBusy) Then
+        If Not (Me.IsDisposed OrElse Me.Worker.IsBusy) Then
             endTime = DateTime.Now.Add(payload.TimeoutInterval)
-            Me.worker.RunWorkerAsync(payload)
+            Me.Worker.RunWorkerAsync(payload)
             ' wait for worker to get busy.
-            Do While Not (Me.IsDisposed OrElse worker.IsBusy)
+            Do While Not (Me.IsDisposed OrElse Worker.IsBusy)
                 Windows.Forms.Application.DoEvents()
             Loop
             ' wait till worker is done
-            Do Until Me.IsDisposed OrElse Not worker.IsBusy OrElse DateTime.Now > endTime
+            Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.Now > endTime
                 Windows.Forms.Application.DoEvents()
             Loop
-            Do Until Me.IsDisposed OrElse Not worker.IsBusy
+            Do Until Me.IsDisposed OrElse Not Worker.IsBusy
                 Windows.Forms.Application.DoEvents()
             Loop
         End If
@@ -367,27 +369,27 @@ Public MustInherit Class ProberSubsystemBase
     ''' <param name="command">   The command. </param>
     ''' <param name="timeDelay"> The time delay. </param>
     Public Sub Emulate(ByVal command As String, ByVal timeDelay As TimeSpan)
-        Me.proberCommand = ""
-        If Me.proberTimer IsNot Nothing Then
-            Me.proberTimer.Stop()
-            Me.proberCommand = command
-            Me.proberTimer.Interval = timeDelay.TotalMilliseconds
-            Me.proberTimer.Start()
+        Me.ProberCommand = ""
+        If Me.ProberTimer IsNot Nothing Then
+            Me.ProberTimer.Stop()
+            Me.ProberCommand = command
+            Me.ProberTimer.Interval = timeDelay.TotalMilliseconds
+            Me.ProberTimer.Start()
         End If
     End Sub
 
     ''' <summary> Gets or sets the Prober command. </summary>
     ''' <value> The Prober command. </value>
-    Private Property proberCommand As String
+    Private Property ProberCommand As String
 
-    Dim WithEvents proberTimer As System.Timers.Timer
+    Dim WithEvents ProberTimer As System.Timers.Timer
 
     ''' <summary> Event handler. Called by the Prober Timer for elapsed events. </summary>
     ''' <param name="sender"> The source of the event. </param>
     ''' <param name="e">      Elapsed event information. </param>
-    Private Sub proberTimer_Elapsed(ByVal sender As Object, ByVal e As System.Timers.ElapsedEventArgs) Handles proberTimer.Elapsed
-        If Me.proberTimer IsNot Nothing Then
-            Me.proberTimer.Stop()
+    Private Sub ProberTimer_Elapsed(ByVal sender As Object, ByVal e As System.Timers.ElapsedEventArgs) Handles ProberTimer.Elapsed
+        If Me.ProberTimer IsNot Nothing Then
+            Me.ProberTimer.Stop()
         End If
         If Not String.IsNullOrWhiteSpace(Me.proberCommand) Then
             Dim value As String = Me.proberCommand
@@ -401,7 +403,7 @@ Public MustInherit Class ProberSubsystemBase
 
 #Region " FETCH "
 
-    Private _supportedEmulationCommands As String()
+    Private _SupportedEmulationCommands As String()
 
     ''' <summary> Gets the supported emulation commands. </summary>
     ''' <returns> A String. </returns>

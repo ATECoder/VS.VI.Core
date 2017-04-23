@@ -20,11 +20,11 @@ Public Class RandomNumberGenerator
     End Sub
 
     ''' <summary> Holds a shared reference to the number generator. </summary>
-    Private Property generator As Random
+    Private Property Generator As Random
 
     ''' <summary> Gets the range. </summary>
     ''' <value> The range. </value>
-    Private ReadOnly Property range As Double
+    Private ReadOnly Property Range As Double
         Get
             Return Me._Max - Me._Min
         End Get

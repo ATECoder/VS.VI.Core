@@ -318,7 +318,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Session property changed. </summary>
     ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Session_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _Session.PropertyChanged
         Try
@@ -696,7 +696,7 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Session property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SessionPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try

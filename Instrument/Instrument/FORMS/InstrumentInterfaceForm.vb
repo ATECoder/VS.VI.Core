@@ -71,11 +71,11 @@ Public Class InstrumentInterfaceForm
 
     ''' <summary> Gets the last message that was received from the instrument. </summary>
     ''' <value> A Buffer for receive data. </value>
-    Private Property receiveBuffer As String
+    Private Property ReceiveBuffer As String
 
     ''' <summary> Gets the last message that was sent to the instrument. </summary>
     ''' <value> A Buffer for transmit data. </value>
-    Private Property transmitBuffer As String
+    Private Property TransmitBuffer As String
 
 #End Region
 
@@ -350,11 +350,11 @@ Public Class InstrumentInterfaceForm
 
 #Region " INTERFACE EVENT HANDLERS "
 
-    Private WithEvents _pollTimer As Timer
+    Private WithEvents _PollTimer As Timer
 
-    Private WithEvents _instrumentChooser As isr.VI.Instrument.ResourceSelectorConnector
+    Private WithEvents _InstrumentChooser As isr.VI.Instrument.ResourceSelectorConnector
 
-    Private Sub _instrumentChooser_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _instrumentChooser.Clear
+    Private Sub _InstrumentChooser_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _instrumentChooser.Clear
         Dim lastAction As String = "N/A"
         Try
             lastAction = "Clearing the device"
@@ -366,14 +366,14 @@ Public Class InstrumentInterfaceForm
         End Try
     End Sub
 
-    Private Sub _instrumentChooser_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _instrumentChooser.Connect
+    Private Sub _InstrumentChooser_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _instrumentChooser.Connect
         ' exception handling is done in the resource connector.
         Me.OpenInstrumentSession()
         ' cancel if failed to open
         If Not Me.IsOpen Then e.Cancel = True
     End Sub
 
-    Private Sub _instrumentChooser_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _instrumentChooser.Disconnect
+    Private Sub _InstrumentChooser_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _instrumentChooser.Disconnect
         ' exception handling is done in the resource connector.
         Me.CloseInstrumentSession()
         ' cancel if failed to close.
@@ -400,7 +400,7 @@ Public Class InstrumentInterfaceForm
 
     ''' <summary> Event handler. Called by _InterfacePanel for property changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InterfacePanel_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _InterfacePanel.PropertyChanged
         Try
@@ -432,7 +432,7 @@ Public Class InstrumentInterfaceForm
             If value <> Me.ServiceRequestBits Then
                 Me._ServiceRequestBits = value
                 Me._StatusRegisterLabel.Text = $"0x{value And &HFF:X2}"
-                Dim MAV As Integer = CInt(Me._MessageAvailableBitsNumeric.Value)
+                Dim mAV As Integer = CInt(Me._MessageAvailableBitsNumeric.Value)
                 Me.MessageAvailable = (value And MAV) <> 0
             End If
         End Set
@@ -459,7 +459,7 @@ Public Class InstrumentInterfaceForm
 #Region " TIMER HANDLERS "
 
     ''' <summary> Stops poll timer. </summary>
-    Private Sub stopPollTimer()
+    Private Sub StopPollTimer()
 
         If Me._pollTimer IsNot Nothing Then
             Me._pollTimer.Enabled = False
@@ -494,7 +494,7 @@ Public Class InstrumentInterfaceForm
 
     ''' <summary> Reads status register. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub readStatusRegister()
+    Private Sub ReadStatusRegister()
 
         Dim lastAction As String = "N/A"
         Try
@@ -513,7 +513,7 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Event handler. Called by readStatusRegisterButton for click events. </summary>
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
-    Private Sub readStatusRegisterButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _ReadStatusRegisterButton.Click
+    Private Sub ReadStatusRegisterButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _ReadStatusRegisterButton.Click
         Me.readStatusRegister()
     End Sub
 
@@ -526,7 +526,7 @@ Public Class InstrumentInterfaceForm
 
     ''' <summary> Receives this object. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub receive()
+    Private Sub Receive()
 
         Dim lastAction As String = "N/A"
         Try
@@ -564,14 +564,14 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Event handler. Called by receiveButton for click events. </summary>
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
-    Private Sub receiveButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _ReceiveButton.Click
+    Private Sub ReceiveButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _ReceiveButton.Click
         Me.receive()
     End Sub
 
     ''' <summary> Send this message. </summary>
     ''' <param name="value"> The value. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub send(ByVal value As String)
+    Private Sub Send(ByVal value As String)
 
         Dim lastAction As String = "N/A"
         Try
@@ -592,7 +592,7 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Event handler. Called by sendButton for click events. </summary>
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
-    Private Sub sendButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _SendButton.Click
+    Private Sub SendButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _SendButton.Click
         Me.send(_InputTextBox.Text.Trim)
     End Sub
 
@@ -600,7 +600,7 @@ Public Class InstrumentInterfaceForm
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub sendComboCommandButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _SendComboCommandButton.Click
+    Private Sub SendComboCommandButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _SendComboCommandButton.Click
 
         Dim lastAction As String = "N/A"
         Try
@@ -621,7 +621,7 @@ Public Class InstrumentInterfaceForm
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _readManualRadioButton_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ReadManualRadioButton.CheckedChanged
+    Private Sub _ReadManualRadioButton_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ReadManualRadioButton.CheckedChanged
         If Me._InitializingComponents Then Return
         If Not Me._ReadManualRadioButton.Checked Then
             Exit Sub
@@ -642,8 +642,9 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Event handler. Called by _pollRadioButton for checked changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _pollRadioButton_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _PollRadioButton.CheckedChanged
+    Private Sub _PollRadioButton_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _PollRadioButton.CheckedChanged
         If Me._InitializingComponents Then Return
         If Not Me._PollRadioButton.Checked Then
             Exit Sub
@@ -654,9 +655,11 @@ Public Class InstrumentInterfaceForm
             If Me.Session IsNot Nothing Then
                 Me.DisableServiceRequestEventHandler()
             End If
-            Me._pollTimer = New Timer
-            Me._pollTimer.Enabled = False
-            Me._pollTimer.Interval = CInt(Me._PollIntervalNumericUpDown.Value)
+
+            Me._PollTimer = New Timer With {
+                .Enabled = False,
+                .Interval = CInt(Me._PollIntervalNumericUpDown.Value)
+            }
             AddHandler Me._pollTimer.Tick, AddressOf Me.onPollTimerTick
             Me._pollTimer.Enabled = True
         Catch ex As Exception
@@ -668,7 +671,7 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Raises the system. event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information to send to registered event handlers. </param>
-    Private Sub onPollTimerTick(ByVal sender As Object, ByVal e As System.EventArgs)
+    Private Sub OnPollTimerTick(ByVal sender As Object, ByVal e As System.EventArgs)
         Static pollTimerLocker As New Object
         SyncLock pollTimerLocker
             Me.readStatusRegister()
@@ -730,7 +733,7 @@ Public Class InstrumentInterfaceForm
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _serviceRequestReceiveOptionRadioButton_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ServiceRequestReceiveOptionRadioButton.CheckedChanged
+    Private Sub _ServiceRequestReceiveOptionRadioButton_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ServiceRequestReceiveOptionRadioButton.CheckedChanged
         If Me._InitializingComponents Then Return
         If Not Me._ServiceRequestReceiveOptionRadioButton.Checked Then
             Exit Sub
@@ -759,7 +762,7 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Event handler. Called by _pollIntervalNumericUpDown for value changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub _pollIntervalNumericUpDown_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _PollIntervalNumericUpDown.ValueChanged
+    Private Sub _PollIntervalNumericUpDown_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _PollIntervalNumericUpDown.ValueChanged
 
         If Me._pollTimer IsNot Nothing Then
             Me._pollTimer.Interval = CInt(Me._PollIntervalNumericUpDown.Value)
@@ -821,7 +824,7 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Trace messages box property changed. </summary>
     ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
         Try

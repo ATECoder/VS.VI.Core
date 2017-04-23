@@ -245,7 +245,7 @@ Public Class SimpleReadWriteControl
     End Sub
 
     ''' <summary> Builds write message. Add Return and New Line in this order as required. </summary>
-    Private Function buildWriteMessage() As String
+    Private Function BuildWriteMessage() As String
         Dim message As New System.Text.StringBuilder(_WriteComboBox.Text.Trim)
         Return message.ToString
     End Function
@@ -428,13 +428,13 @@ Public Class SimpleReadWriteControl
     ''' <summary> Writes a message to the instrument. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub write_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _WriteButton.Click
+    Private Sub Write_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _WriteButton.Click
         Me.Write(Me.buildWriteMessage)
     End Sub
 
     ''' <summary> Updates the read message described by message. </summary>
     ''' <param name="message"> The message. </param>
-    Private Sub updateReadMessage(ByVal message As String)
+    Private Sub UpdateReadMessage(ByVal message As String)
         Me.ReceivedMessage = message
         Dim builder As New System.Text.StringBuilder()
         If Me._ReadTextBox.Text.Length > 0 Then
@@ -447,7 +447,7 @@ Public Class SimpleReadWriteControl
     ''' <summary> Reads a message from the instrument. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub read_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ReadButton.Click
+    Private Sub Read_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ReadButton.Click
         Me.read()
     End Sub
 

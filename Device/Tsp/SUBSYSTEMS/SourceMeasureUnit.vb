@@ -161,7 +161,7 @@ Public MustInherit Class SourceMeasureUnit
 
 #Region " RESISTANCES "
 
-    Dim _contactResistances As String
+    Dim _ContactResistances As String
 
     ''' <summary> Gets or sets (Protected) the contact resistances. </summary>
     ''' <value> The contact resistances. </value>
@@ -319,7 +319,7 @@ Public MustInherit Class SourceMeasureUnit
         Return Me.SourceFunction
     End Function
 
-    ''' <summary> Writes the Source Function without reading back the value from the device. </summary>
+    ''' <summary> Writes the Source Function Without reading back the value from the device. </summary>
     ''' <param name="value"> The Source Function. </param>
     ''' <returns> The <see cref="SourceFunctionMode">Source Function</see> or none if unknown. </returns>
     Public Function WriteSourceFunction(ByVal value As SourceFunctionMode) As SourceFunctionMode?

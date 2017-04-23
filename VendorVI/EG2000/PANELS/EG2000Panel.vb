@@ -222,7 +222,7 @@ Public Class EG2000Panel
     ''' <summary> Updates the indicator. </summary>
     ''' <param name="label">    The label. </param>
     ''' <param name="sentinel"> The sentinel. </param>
-    Private Shared Sub updateIndicator(ByVal label As Windows.Forms.Label, ByVal sentinel As Boolean?)
+    Private Shared Sub UpdateIndicator(ByVal label As Windows.Forms.Label, ByVal sentinel As Boolean?)
         If sentinel.GetValueOrDefault(False) Then
             label.BackColor = Drawing.Color.LightGreen
         Else
@@ -233,7 +233,7 @@ Public Class EG2000Panel
     ''' <summary> Updates the indicator. </summary>
     ''' <param name="label">    The label. </param>
     ''' <param name="value"> The value. </param>
-    Private Shared Sub updateIndicator(ByVal label As Windows.Forms.Label, ByVal prefix As String, ByVal value As String, ByVal sentinel As Boolean?)
+    Private Shared Sub UpdateIndicator(ByVal label As Windows.Forms.Label, ByVal prefix As String, ByVal value As String, ByVal sentinel As Boolean?)
         updateIndicator(label, sentinel)
         If sentinel.GetValueOrDefault(False) Then
             label.Text = prefix & value
@@ -246,7 +246,7 @@ Public Class EG2000Panel
 
     ''' <summary> Handles the last reading available action. </summary>
     ''' <param name="value"> The reading. </param>
-    Private Sub onLastReadingAvailable(ByVal value As String)
+    Private Sub OnLastReadingAvailable(ByVal value As String)
         If String.IsNullOrWhiteSpace(value) Then
             value = ""
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Last reading cleared")
@@ -259,7 +259,7 @@ Public Class EG2000Panel
 
     ''' <summary> Handles the test start requested action. </summary>
     ''' <param name="subsystem"> The subsystem. </param>
-    Private Sub onTestStartRequested(ByVal subsystem As ProberSubsystem)
+    Private Sub OnTestStartRequested(ByVal subsystem As ProberSubsystem)
         If subsystem Is Nothing Then
         ElseIf subsystem.IsFirstTestStart.GetValueOrDefault(False) Then
             EG2000Panel.updateIndicator(Me._TestStartAttributeLabel, "..", "First Test", subsystem.IsFirstTestStart)
@@ -313,7 +313,7 @@ Public Class EG2000Panel
 
     ''' <summary> Prober subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ProberSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -347,7 +347,7 @@ Public Class EG2000Panel
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -385,7 +385,7 @@ Public Class EG2000Panel
 
     ''' <summary> System subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -737,7 +737,7 @@ Public Class EG2000Panel
     ''' <summary> Event handler. Called by <see crefname="_SimpleReadWriteControl"/> for property changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SimpleReadWriteControl_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
         Try

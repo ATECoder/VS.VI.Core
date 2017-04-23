@@ -71,7 +71,7 @@ Public Class ThermalTransient
 
 #Region " MODEL VALUES "
 
-    Private _timeConstant As Double?
+    Private _TimeConstant As Double?
 
     ''' <summary> Gets or sets the time constant. </summary>
     ''' <value> The time constant. </value>

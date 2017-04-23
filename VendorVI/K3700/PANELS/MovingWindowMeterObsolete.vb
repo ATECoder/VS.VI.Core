@@ -3,10 +3,12 @@ Imports System.Threading
 
 Partial Public Class MovingWindowMeter
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Private Sub InitializeWorker()
-        Me.worker = New System.ComponentModel.BackgroundWorker()
-        Me.worker.WorkerSupportsCancellation = True
-        Me.worker.WorkerReportsProgress = True
+        Me.Worker = New System.ComponentModel.BackgroundWorker() With {
+            .WorkerSupportsCancellation = True,
+            .WorkerReportsProgress = True
+        }
     End Sub
 
     Private Sub DisposeWorker()
@@ -77,13 +79,13 @@ Partial Public Class MovingWindowMeter
         End Property
     End Class
 
-    Private WithEvents worker As System.ComponentModel.BackgroundWorker
+    Private WithEvents Worker As System.ComponentModel.BackgroundWorker
 
     ''' <summary> Worker do work. </summary>
     ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Do work event information. </param>
-    Private Sub worker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles worker.DoWork
+    Private Sub Worker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles worker.DoWork
 
 	  Me.ApplyCapturedSyncContext()
         Dim w As BackgroundWorker = TryCast(sender, BackgroundWorker)
@@ -153,7 +155,7 @@ Partial Public Class MovingWindowMeter
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Run worker completed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031: DoNotCatchGeneralExceptionTypes")>
-    Private Sub worker_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles worker.RunWorkerCompleted
+    Private Sub Worker_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles worker.RunWorkerCompleted
         Me.OnWorkerRunWorkerCompleted(e)
     End Sub
 
@@ -162,7 +164,7 @@ Partial Public Class MovingWindowMeter
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Progress changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub worker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles worker.ProgressChanged
+    Private Sub Worker_ProgressChanged(sender As Object, e As ProgressChangedEventArgs) Handles worker.ProgressChanged
         Me.ApplyCapturedSyncContext()
         Dim us As UserState = TryCast(e.UserState, UserState)
         Dim ma As New isr.Core.Engineering.MovingWindow(TryCast(us.MovingAverage, isr.Core.Engineering.MovingWindow))
@@ -207,10 +209,10 @@ Partial Public Class MovingWindowMeter
         Dim stopped As Boolean = StopMeasureAsyncIf(TimeSpan.FromSeconds(1))
         If Not stopped Then Return False
         Me.InitializeWorker()
-        Dim payload As New WorkerPayLoad
-        payload.Device = Me.Device
-
-        payload.MovingWindow = Me.MovingWindow
+        Dim payload As New WorkerPayLoad With {
+            .Device = Me.Device,
+            .MovingWindow = Me.MovingWindow
+        }
 
         payload.ClearKnownState()
         payload.InitializeKnownState(Me.MeasurementRate)

@@ -12,10 +12,10 @@ Partial Class InstrumentInterfaceForm
     Private WithEvents _SendComboCommandButton As System.Windows.Forms.Button
     Private WithEvents _SendReceiveTabPage As System.Windows.Forms.TabPage
     Private WithEvents _TraceMessagesBox As isr.Core.Pith.TraceMessagesBox
-    Private WithEvents _messagesTabPage As System.Windows.Forms.TabPage
+    Private WithEvents _MessagesTabPage As System.Windows.Forms.TabPage
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _StatusLabel As System.Windows.Forms.ToolStripStatusLabel
-    Private WithEvents _statusBar As System.Windows.Forms.StatusStrip
+    Private WithEvents _StatusBar As System.Windows.Forms.StatusStrip
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.
     'Do not modify it using the code editor.
@@ -676,24 +676,24 @@ Partial Class InstrumentInterfaceForm
 
     End Sub
     Private WithEvents _ReceiveOptionsGroupBox As System.Windows.Forms.GroupBox
-    Private WithEvents _connectTabPage As System.Windows.Forms.TabPage
+    Private WithEvents _ConnectTabPage As System.Windows.Forms.TabPage
     Private WithEvents _ConnectTabLayout As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _connectGroupBox As System.Windows.Forms.GroupBox
+    Private WithEvents _ConnectGroupBox As System.Windows.Forms.GroupBox
     Private WithEvents _ReadManualRadioButton As System.Windows.Forms.RadioButton
     Private WithEvents _ServiceRequestReceiveOptionRadioButton As System.Windows.Forms.RadioButton
     Private WithEvents _PollRadioButton As System.Windows.Forms.RadioButton
     Private WithEvents _StatusRegisterLabel As System.Windows.Forms.ToolStripStatusLabel
-    Private WithEvents _sendReceiveSplitContainer As System.Windows.Forms.SplitContainer
+    Private WithEvents _SendReceiveSplitContainer As System.Windows.Forms.SplitContainer
     Private WithEvents _SendGroupBox As System.Windows.Forms.GroupBox
     Private WithEvents _InputTextBox As System.Windows.Forms.TextBox
     Private WithEvents _ReceiveGroupBox As System.Windows.Forms.GroupBox
-    Private WithEvents _sendReceiveLayout As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _sendReceiveControlPanel As System.Windows.Forms.Panel
+    Private WithEvents _SendReceiveLayout As System.Windows.Forms.TableLayoutPanel
+    Private WithEvents _SendReceiveControlPanel As System.Windows.Forms.Panel
     Private WithEvents _OutputTextBox As System.Windows.Forms.TextBox
     Private WithEvents _PollIntervalUnitsLabel As System.Windows.Forms.Label
     Private WithEvents _PollIntervalNumericUpDown As System.Windows.Forms.NumericUpDown
     Private WithEvents _InterfacePanel As Instrument.InterfacePanel
-    Private WithEvents _settingsGroupBox As System.Windows.Forms.GroupBox
+    Private WithEvents _SettingsGroupBox As System.Windows.Forms.GroupBox
     Private WithEvents _DisconnectCommandsTextBox As System.Windows.Forms.TextBox
     Private WithEvents _SendDisconnectCommandsCheckBox As System.Windows.Forms.CheckBox
     Private WithEvents _ToolTip As System.Windows.Forms.ToolTip

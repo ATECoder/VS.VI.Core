@@ -1427,7 +1427,7 @@ Partial Class K2400Panel
     Private WithEvents _Panel As System.Windows.Forms.Panel
     Private WithEvents _Layout As System.Windows.Forms.TableLayoutPanel
     Private WithEvents _TitleLabel As System.Windows.Forms.Label
-    Private WithEvents _sourceDelayTextBoxLabel As Windows.Forms.Label
+    Private WithEvents _SourceDelayTextBoxLabel As Windows.Forms.Label
     Private WithEvents _ApplySourceSettingButton As Windows.Forms.Button
     Private WithEvents _SourceRangeNumericLabel As Windows.Forms.Label
     Private WithEvents _SourceFunctionComboBox As Windows.Forms.ComboBox
@@ -1454,11 +1454,11 @@ Partial Class K2400Panel
     Private WithEvents _VoltageLevelNumericLabel As Windows.Forms.Label
     Private WithEvents _VoltageLevelNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _ResistanceRangeNumericLabel As Windows.Forms.Label
-    Private WithEvents _resistanceLowLimitNumericLabel As Windows.Forms.Label
+    Private WithEvents _ResistanceLowLimitNumericLabel As Windows.Forms.Label
     Private WithEvents _ResistanceRangeNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _ResistanceLowLimitNumeric As Windows.Forms.NumericUpDown
-    Private WithEvents _dwellTimeNumericLabel As Windows.Forms.Label
-    Private WithEvents _dwellTimeNumeric As Windows.Forms.NumericUpDown
+    Private WithEvents _DwellTimeNumericLabel As Windows.Forms.Label
+    Private WithEvents _DwellTimeNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _ApertureNumeric As Windows.Forms.NumericUpDown
     Private WithEvents _ApertureNumericLabel As Windows.Forms.Label
     Private WithEvents _BinningLayout As Windows.Forms.TableLayoutPanel
@@ -1499,7 +1499,7 @@ Partial Class K2400Panel
     Private WithEvents _EnabledSenseFunctionsListBox As Windows.Forms.CheckedListBox
     Private WithEvents _TriggerDelayNumericLabel As Windows.Forms.Label
     Private WithEvents _TriggerDelayNumeric As Windows.Forms.NumericUpDown
-    Friend WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ServiceRequestEnableBitmaskNumericLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ServiceRequestEnableBitmaskNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _ReadingsDataGridView As Windows.Forms.DataGridView

@@ -430,7 +430,7 @@ Public Class ThermostreamSubsystem
     ''' <value> The Next Set Point command. </value>
     Protected Overrides ReadOnly Property NextSetpointCommand As String = "NEXT"
 
-    Private _cycleCompletedCache As Boolean
+    Private _CycleCompletedCache As Boolean
 
     ''' <summary> Gets a value indicating whether the cycle completed cache. </summary>
     ''' <value> <c>true</c> if cycle completed cache; otherwise <c>false</c> </value>
@@ -605,7 +605,7 @@ Public Class ThermostreamSubsystem
 
 #Region " PROFILE "
 
-    Private _thermalProfile As ThermalProfileCollection
+    Private _ThermalProfile As ThermalProfileCollection
 
     ''' <summary> Thermal profile. </summary>
     ''' <returns> A ThermalProfileCollection. </returns>

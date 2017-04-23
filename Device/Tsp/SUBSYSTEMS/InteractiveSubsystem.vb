@@ -149,7 +149,7 @@ Public MustInherit Class InteractiveSubsystem
 
     ''' <summary> Handles the Session property changed event. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     Private Sub SessionPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         If sender IsNot Nothing AndAlso e IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(e.PropertyName) Then
             Me.OnSessionPropertyChanged(e)
@@ -303,7 +303,7 @@ Public MustInherit Class InteractiveSubsystem
 
 #Region " SHOW ERRORS "
 
-    Private _showErrors As Nullable(Of Boolean)
+    Private _ShowErrors As Nullable(Of Boolean)
 
     ''' <summary> Gets or sets the Show Errors sentinel. </summary>
     ''' <remarks> When true, the unit will automatically display the errors stored in the error queue,
@@ -363,7 +363,7 @@ Public MustInherit Class InteractiveSubsystem
 
 #Region " SHOW PROMPTS "
 
-    Private _showPrompts As Boolean?
+    Private _ShowPrompts As Boolean?
 
     ''' <summary> Gets or sets the Show Prompts sentinel. </summary>
     ''' <remarks> When true, prompts are issued after each command message is processed by the

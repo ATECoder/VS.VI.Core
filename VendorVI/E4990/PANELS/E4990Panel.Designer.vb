@@ -1418,14 +1418,14 @@ Partial Class E4990Panel
     Private WithEvents _PrimaryTraceParameterComboBoxLabel As Windows.Forms.Label
     Private WithEvents _SecondaryTraceParameterComboBoxLabel As Windows.Forms.Label
     Private WithEvents _SecondaryTraceParameterComboBox As Windows.Forms.ComboBox
-    Friend WithEvents _SourceLayout As Windows.Forms.TableLayoutPanel
-    Friend WithEvents _SourcePanel As Windows.Forms.Panel
-    Friend WithEvents _ApplyAveragingButton As Windows.Forms.Button
-    Friend WithEvents _ScaleSplitButton As Windows.Forms.ToolStripSplitButton
+    Private WithEvents _SourceLayout As Windows.Forms.TableLayoutPanel
+    Private WithEvents _SourcePanel As Windows.Forms.Panel
+    Private WithEvents _ApplyAveragingButton As Windows.Forms.Button
+    Private WithEvents _ScaleSplitButton As Windows.Forms.ToolStripSplitButton
     Private WithEvents _AutoScaleMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _TriggerActivationSplitButton As Windows.Forms.ToolStripSplitButton
-    Friend WithEvents _TriggerSourceComboBox As Windows.Forms.ToolStripComboBox
-    Friend WithEvents _ContinuousEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _TriggerSourceComboBox As Windows.Forms.ToolStripComboBox
+    Private WithEvents _ContinuousEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ApplyTriggerOptionsMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ServiceRequestEnableBitmaskNumeric As Core.Controls.ToolStripNumericUpDown

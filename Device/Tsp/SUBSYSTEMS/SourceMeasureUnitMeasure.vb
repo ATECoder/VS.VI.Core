@@ -113,7 +113,7 @@ Public Class SourceMeasureUnitMeasure
 
 #Region " READING "
 
-    Private _reading As String
+    Private _Reading As String
     ''' <summary> Gets  or sets (protected) the reading.  When set, the value is converted to resistance. </summary>
     ''' <value> The reading. </value>
     Public Property Reading() As String
@@ -133,7 +133,7 @@ Public Class SourceMeasureUnitMeasure
 
 #Region " RESISTANCE "
 
-    Private _resistance As Double?
+    Private _Resistance As Double?
     ''' <summary> Gets or sets (protected) the measured resistance. </summary>
     ''' <value> The resistance. </value>
     Public Property Resistance() As Double?

@@ -337,7 +337,7 @@ Public Class K3700Panel
 
     ''' <summary> Multimeter subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub MultimeterSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As MultimeterSubsystem = TryCast(sender, MultimeterSubsystem)
@@ -368,7 +368,7 @@ Public Class K3700Panel
 
     ''' <summary> Channel subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ChannelSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As ChannelSubsystem = TryCast(sender, ChannelSubsystem)
@@ -399,7 +399,7 @@ Public Class K3700Panel
 
     ''' <summary> Display subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub DisplaySubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As DisplaySubsystem = TryCast(sender, DisplaySubsystem)
@@ -418,7 +418,7 @@ Public Class K3700Panel
 #Region " STATUS "
 
     ''' <summary> Reports the last error. </summary>
-    Private Sub onLastError(ByVal lastError As VI.DeviceError)
+    Private Sub OnLastError(ByVal lastError As VI.DeviceError)
         If lastError?.IsError Then
             Me._LastErrorTextBox.ForeColor = Drawing.Color.OrangeRed
         Else
@@ -448,7 +448,7 @@ Public Class K3700Panel
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)
@@ -489,7 +489,7 @@ Public Class K3700Panel
 
     ''' <summary> System subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Dim subsystem As SystemSubsystem = TryCast(sender, SystemSubsystem)
@@ -565,7 +565,7 @@ Public Class K3700Panel
     ''' Gets or sets the selected function mode.
     ''' </summary>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Private ReadOnly Property selectedFunctionMode() As VI.Tsp.MultimeterFunctionMode
+    Private ReadOnly Property SelectedFunctionMode() As VI.Tsp.MultimeterFunctionMode
         Get
             Return CType(CType(Me._SenseFunctionComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(
                   Of [Enum], String)).Key, VI.Tsp.MultimeterFunctionMode)
@@ -601,7 +601,7 @@ Public Class K3700Panel
     End Property
 
     ''' <summary> Adds new items to the combo box. </summary>
-    Friend Sub updateChannelListComboBox()
+    Friend Sub UpdateChannelListComboBox()
         If Me.Visible Then
             ' check if we are asking for a new channel list
             If Me._ChannelListComboBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(Me._ChannelListComboBox.Text) AndAlso
@@ -738,7 +738,7 @@ Public Class K3700Panel
     ''' <summary> Gets the selected reading. </summary>
     ''' <value> The selected reading. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Private ReadOnly Property selectedReading() As VI.ReadingTypes
+    Private ReadOnly Property SelectedReading() As VI.ReadingTypes
         Get
             Return CType(CType(Me._ReadingComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(
                                             Of [Enum], String)).Key, VI.ReadingTypes)
@@ -951,7 +951,7 @@ Public Class K3700Panel
     ''' <summary>
     ''' Applies the selected measurements settings.
     ''' </summary>
-    Private Sub applySenseSettings()
+    Private Sub ApplySenseSettings()
 
         With Me.Device.MultimeterSubsystem
             If Not Nullable.Equals(.PowerLineCycles, Me._PowerLineCyclesNumeric.Value) Then
@@ -1331,7 +1331,7 @@ Public Class K3700Panel
     ''' <summary> Event handler. Called by <see crefname="_SimpleReadWriteControl"/> for property changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SimpleReadWriteControl_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
         Try

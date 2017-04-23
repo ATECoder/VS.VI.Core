@@ -352,7 +352,7 @@ Partial Class MeasurementPanelBase
     Private WithEvents _ClearTraceToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Private WithEvents _ReadTraceToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Private WithEvents _AbortToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents _TraceDataGridView As System.Windows.Forms.DataGridView
-    Friend WithEvents _SplitContainer As System.Windows.Forms.SplitContainer
+    Private WithEvents _TraceDataGridView As System.Windows.Forms.DataGridView
+    Private WithEvents _SplitContainer As System.Windows.Forms.SplitContainer
 
 End Class

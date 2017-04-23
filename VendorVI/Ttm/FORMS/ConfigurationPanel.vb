@@ -20,7 +20,7 @@ Public Class ConfigurationPanel
     End Sub
 
     ''' <summary> The with events. </summary>
-    Private _meter As Meter
+    Private _Meter As Meter
 
     ''' <summary> Gets or sets reference to the thermal transient meter device. </summary>
     ''' <value> The meter. </value>

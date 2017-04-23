@@ -793,7 +793,7 @@ Public MustInherit Class MeterSubsystemBase
 
 #Region " READ "
 
-    Private _lastReading As String
+    Private _LastReading As String
 
     ''' <summary> Gets or sets (protected) the last reading. </summary>
     ''' <value> The last reading. </value>
@@ -807,7 +807,7 @@ Public MustInherit Class MeterSubsystemBase
         End Set
     End Property
 
-    Private _lastOutcome As String
+    Private _LastOutcome As String
 
     ''' <summary> Gets or sets (protected) the last outcome. </summary>
     ''' <value> The last outcome. </value>
@@ -821,7 +821,7 @@ Public MustInherit Class MeterSubsystemBase
         End Set
     End Property
 
-    Private _lastMeasurementStatus As String
+    Private _LastMeasurementStatus As String
     ''' <summary> Gets or sets (protected) the last measurement status. </summary>
     Public Property LastMeasurementStatus() As String
         Get

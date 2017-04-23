@@ -4,50 +4,50 @@ Partial Class TestPanel
 
     'Required by the Windows Form Designer
     Private components As System.ComponentModel.IContainer
-    Private _toolTip As System.Windows.Forms.ToolTip
-    Private WithEvents _aboutButton As System.Windows.Forms.Button
+    Private _ToolTip As System.Windows.Forms.ToolTip
+    Private WithEvents _AboutButton As System.Windows.Forms.Button
     Private WithEvents _ExitButton As System.Windows.Forms.Button
-    Private WithEvents _errorProvider As ErrorProvider
-    Private WithEvents _outputTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _executionTimeTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _inputTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _executionTimeTextBoxLabel As System.Windows.Forms.Label
-    Private WithEvents _replyTextBoxLabel As System.Windows.Forms.Label
-    Private WithEvents _queryCommandTextBoxLabel As System.Windows.Forms.Label
-    Private WithEvents _consoleTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _loadAndRunButton As System.Windows.Forms.Button
-    Private WithEvents _runScriptButton As System.Windows.Forms.Button
-    Private WithEvents _loadScriptButton As System.Windows.Forms.Button
-    Private WithEvents _removeScriptButton As System.Windows.Forms.Button
-    Private WithEvents _userScriptsList As System.Windows.Forms.ListBox
-    Private WithEvents _scriptNameTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _tspScriptSelector As isr.Core.Controls.FileSelector
-    Private WithEvents _userScriptsListLabel As System.Windows.Forms.Label
-    Private WithEvents _tspScriptSelectorLabel As System.Windows.Forms.Label
-    Private WithEvents _scriptNameTextBoxLabel As System.Windows.Forms.Label
-    Private WithEvents _scriptsTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _functionArgsTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _callFunctionButton As System.Windows.Forms.Button
-    Private WithEvents _functionCodeTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _functionNameTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _loadFunctionButton As System.Windows.Forms.Button
-    Private WithEvents _functionArgsTextBoxLabel As System.Windows.Forms.Label
-    Private WithEvents _callInstructionsLabel As System.Windows.Forms.Label
-    Private WithEvents _functionCodeTextBoxLabel As System.Windows.Forms.Label
-    Private WithEvents _functionNameTextBoxLabel As System.Windows.Forms.Label
-    Private WithEvents _functionsTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _resetLocalNodeButton As System.Windows.Forms.Button
-    Private WithEvents _showPromptsCheckBox As System.Windows.Forms.CheckBox
-    Private WithEvents _showErrorsCheckBox As System.Windows.Forms.CheckBox
-    Private WithEvents _abortButton As System.Windows.Forms.Button
-    Private WithEvents _groupTriggerButton As System.Windows.Forms.Button
-    Private WithEvents _deviceClearButton As System.Windows.Forms.Button
-    Private WithEvents _instrumentTabPage As System.Windows.Forms.TabPage
+    Private WithEvents _ErrorProvider As ErrorProvider
+    Private WithEvents _OutputTextBox As System.Windows.Forms.TextBox
+    Private WithEvents _ExecutionTimeTextBox As System.Windows.Forms.TextBox
+    Private WithEvents _InputTextBox As System.Windows.Forms.TextBox
+    Private WithEvents _ExecutionTimeTextBoxLabel As System.Windows.Forms.Label
+    Private WithEvents _ReplyTextBoxLabel As System.Windows.Forms.Label
+    Private WithEvents _QueryCommandTextBoxLabel As System.Windows.Forms.Label
+    Private WithEvents _ConsoleTabPage As System.Windows.Forms.TabPage
+    Private WithEvents _LoadAndRunButton As System.Windows.Forms.Button
+    Private WithEvents _RunScriptButton As System.Windows.Forms.Button
+    Private WithEvents _LoadScriptButton As System.Windows.Forms.Button
+    Private WithEvents _RemoveScriptButton As System.Windows.Forms.Button
+    Private WithEvents _UserScriptsList As System.Windows.Forms.ListBox
+    Private WithEvents _ScriptNameTextBox As System.Windows.Forms.TextBox
+    Private WithEvents _TspScriptSelector As isr.Core.Controls.FileSelector
+    Private WithEvents _UserScriptsListLabel As System.Windows.Forms.Label
+    Private WithEvents _TspScriptSelectorLabel As System.Windows.Forms.Label
+    Private WithEvents _ScriptNameTextBoxLabel As System.Windows.Forms.Label
+    Private WithEvents _ScriptsTabPage As System.Windows.Forms.TabPage
+    Private WithEvents _FunctionArgsTextBox As System.Windows.Forms.TextBox
+    Private WithEvents _CallFunctionButton As System.Windows.Forms.Button
+    Private WithEvents _FunctionCodeTextBox As System.Windows.Forms.TextBox
+    Private WithEvents _FunctionNameTextBox As System.Windows.Forms.TextBox
+    Private WithEvents _LoadFunctionButton As System.Windows.Forms.Button
+    Private WithEvents _FunctionArgsTextBoxLabel As System.Windows.Forms.Label
+    Private WithEvents _CallInstructionsLabel As System.Windows.Forms.Label
+    Private WithEvents _FunctionCodeTextBoxLabel As System.Windows.Forms.Label
+    Private WithEvents _FunctionNameTextBoxLabel As System.Windows.Forms.Label
+    Private WithEvents _FunctionsTabPage As System.Windows.Forms.TabPage
+    Private WithEvents _ResetLocalNodeButton As System.Windows.Forms.Button
+    Private WithEvents _ShowPromptsCheckBox As System.Windows.Forms.CheckBox
+    Private WithEvents _ShowErrorsCheckBox As System.Windows.Forms.CheckBox
+    Private WithEvents _AbortButton As System.Windows.Forms.Button
+    Private WithEvents _GroupTriggerButton As System.Windows.Forms.Button
+    Private WithEvents _DeviceClearButton As System.Windows.Forms.Button
+    Private WithEvents _InstrumentTabPage As System.Windows.Forms.TabPage
     Private WithEvents _TraceMessagesBox As isr.Core.Pith.TraceMessagesBox
-    Private WithEvents _messagesTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _tabControl As System.Windows.Forms.TabControl
-    Private WithEvents _statusLabel As System.Windows.Forms.ToolStripStatusLabel
-    Private WithEvents _statusStrip As System.Windows.Forms.StatusStrip
+    Private WithEvents _MessagesTabPage As System.Windows.Forms.TabPage
+    Private WithEvents _TabControl As System.Windows.Forms.TabControl
+    Private WithEvents _StatusLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _StatusStrip As System.Windows.Forms.StatusStrip
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.
     'Do not modify it using the code editor.
@@ -1147,29 +1147,29 @@ Partial Class TestPanel
         Me.PerformLayout()
 
     End Sub
-    Private WithEvents _srqStatusLabel As System.Windows.Forms.ToolStripStatusLabel
-    Private WithEvents _tspStatusLabel As System.Windows.Forms.ToolStripStatusLabel
-    Private WithEvents _clearInterfaceButton As System.Windows.Forms.Button
-    Private WithEvents _outputPanel As System.Windows.Forms.Panel
-    Private WithEvents _timingTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _inputPanel As System.Windows.Forms.Panel
-    Private WithEvents _consoleTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _instrumentPanel1 As System.Windows.Forms.Panel
-    Private WithEvents _instrumentTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _instrumentPanel2 As System.Windows.Forms.Panel
-    Private WithEvents _controlsTableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _controlsTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _scriptsPanel3 As System.Windows.Forms.Panel
-    Private WithEvents _scriptsPanel2 As System.Windows.Forms.Panel
-    Private WithEvents _scriptsPanel1 As System.Windows.Forms.Panel
-    Private WithEvents _scriptsPanel4 As System.Windows.Forms.Panel
-    Private WithEvents _scriptsTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _functionsPanel1 As System.Windows.Forms.Panel
-    Private WithEvents _functionsTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _functionsTableLayoutPanel5 As System.Windows.Forms.TableLayoutPanel
-    Private WithEvents _instrumentPanel3 As System.Windows.Forms.Panel
-    Private WithEvents _refreshUserScriptsListButton As System.Windows.Forms.Button
-    Private WithEvents _retainCodeOutlineToggle As System.Windows.Forms.CheckBox
+    Private WithEvents _SrqStatusLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _TspStatusLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _ClearInterfaceButton As System.Windows.Forms.Button
+    Private WithEvents _OutputPanel As System.Windows.Forms.Panel
+    Private WithEvents _TimingTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
+    Private WithEvents _InputPanel As System.Windows.Forms.Panel
+    Private WithEvents _ConsoleTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
+    Private WithEvents _InstrumentPanel1 As System.Windows.Forms.Panel
+    Private WithEvents _InstrumentTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
+    Private WithEvents _InstrumentPanel2 As System.Windows.Forms.Panel
+    Private WithEvents _ControlsTableLayoutPanel1 As System.Windows.Forms.TableLayoutPanel
+    Private WithEvents _ControlsTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
+    Private WithEvents _ScriptsPanel3 As System.Windows.Forms.Panel
+    Private WithEvents _ScriptsPanel2 As System.Windows.Forms.Panel
+    Private WithEvents _ScriptsPanel1 As System.Windows.Forms.Panel
+    Private WithEvents _ScriptsPanel4 As System.Windows.Forms.Panel
+    Private WithEvents _ScriptsTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
+    Private WithEvents _FunctionsPanel1 As System.Windows.Forms.Panel
+    Private WithEvents _FunctionsTableLayoutPanel As System.Windows.Forms.TableLayoutPanel
+    Private WithEvents _FunctionsTableLayoutPanel5 As System.Windows.Forms.TableLayoutPanel
+    Private WithEvents _InstrumentPanel3 As System.Windows.Forms.Panel
+    Private WithEvents _RefreshUserScriptsListButton As System.Windows.Forms.Button
+    Private WithEvents _RetainCodeOutlineToggle As System.Windows.Forms.CheckBox
     Private WithEvents _ResourceSelectorConnector As isr.VI.Instrument.ResourceSelectorConnector
 
 End Class

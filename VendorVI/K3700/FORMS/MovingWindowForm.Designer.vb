@@ -179,6 +179,6 @@ Partial Class MovingWindowForm
     Private WithEvents _InstrumentTabPage As System.Windows.Forms.TabPage
     Private WithEvents _InstrumentLayout As System.Windows.Forms.TableLayoutPanel
     Private WithEvents _InstrumentPanel As K3700Panel
-    Friend WithEvents _MovingWindowMeter As MovingWindowMeter
+    Private WithEvents _MovingWindowMeter As MovingWindowMeter
 End Class
 

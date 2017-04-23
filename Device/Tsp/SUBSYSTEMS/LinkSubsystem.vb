@@ -486,7 +486,7 @@ Public MustInherit Class LinkSubsystem
         End Get
     End Property
 
-    Private _controllerNode As NodeEntityBase
+    Private _ControllerNode As NodeEntityBase
 
     ''' <summary> Gets reference to the controller node. </summary>
     ''' <value> The controller node. </value>
@@ -657,7 +657,7 @@ Public MustInherit Class LinkSubsystem
 
 #Region " TSP LINK "
 
-    Private _usingTspLink As Boolean
+    Private _UsingTspLink As Boolean
 
     ''' <summary> Gets or sets the condition for using TSP Link. Must be affirmative otherwise TSP link
     ''' reset commands are ignored. </summary>
@@ -676,7 +676,7 @@ Public MustInherit Class LinkSubsystem
 
 #Region " TSP LINK ONLINE STATE "
 
-    Private _isTspLinkOnline As Boolean?
+    Private _IsTspLinkOnline As Boolean?
 
     ''' <summary> gets or sets the sentinel indicating if the TSP Link System is ready. </summary>
     ''' <value> <c>null</c> if Not known; <c>True</c> if the tsp link is on line; otherwise <c>False</c>. </value>
@@ -710,7 +710,7 @@ Public MustInherit Class LinkSubsystem
 
 #Region " TSP LINK OFFLINE STATE "
 
-    Private _isTspLinkOffline As Boolean?
+    Private _IsTspLinkOffline As Boolean?
 
     ''' <summary> gets or sets the sentinel indicating if the TSP Link System is ready. </summary>
     ''' <value> <c>null</c> if Not known; <c>True</c> if the tsp link is Off line; otherwise <c>False</c>. </value>

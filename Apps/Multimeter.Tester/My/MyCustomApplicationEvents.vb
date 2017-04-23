@@ -54,7 +54,7 @@ Namespace My
 
         ''' <summary> Processes the shut down. </summary>
         <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-        Private Sub processShutDown()
+        Private Sub ProcessShutDown()
             Try
                 If My.Application.SaveMySettingsOnExit Then
                     Me.MyLog.TraceSource.TraceEventOverride(TraceEventType.Verbose, My.MyApplication.TraceEventId,

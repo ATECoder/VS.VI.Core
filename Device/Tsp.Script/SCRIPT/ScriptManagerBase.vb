@@ -84,7 +84,7 @@ Public MustInherit Class ScriptManagerBase
 
 #Region " IDENTITY "
 
-    Private _newProgramRequired As String
+    Private _NewProgramRequired As String
 
     ''' <summary> Gets the message indicating that a new program is required for the instrument because
     ''' this instrument is not included in the instrument list. </summary>
@@ -124,7 +124,7 @@ Public MustInherit Class ScriptManagerBase
 
     ''' <summary>Gets or sets the script name.
     ''' </summary>
-    Private _name As String
+    Private _Name As String
 
     ''' <summary> Gets or sets the script name. </summary>
     ''' <value> The name. </value>
@@ -174,7 +174,7 @@ Public MustInherit Class ScriptManagerBase
 #Region " USER SCRIPTS "
 
     ''' <summary> Stores user script names. </summary>
-    Private _userScriptNames() As String
+    Private _UserScriptNames() As String
 
     ''' <summary> Returns the list of user script names. </summary>
     ''' <returns> the list of user script names. </returns>
@@ -685,7 +685,7 @@ Public MustInherit Class ScriptManagerBase
         Return Me.Session.IsStatementTrue("string.sub({0}.source,1,24) == 'loadstring(table.concat('", name)
     End Function
 
-    Private _lastFetchScriptSource As String
+    Private _LastFetchScriptSource As String
 
     ''' <summary> Gets the last source fetched from the instrument. </summary>
     ''' <value> The last fetch script source. </value>
@@ -760,7 +760,7 @@ Public MustInherit Class ScriptManagerBase
 
 #Region " NILIFY SCRIPT "
 
-    Private _nilifyTimeout As TimeSpan = TimeSpan.Zero
+    Private _NilifyTimeout As TimeSpan = TimeSpan.Zero
 
     ''' <summary> Gets or sets the time out for nilifying a script. </summary>
     ''' <value> The Nilify timeout. </value>
@@ -783,7 +783,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <exception cref="OperationFailedException"> Thrown when a Script Delete error condition occurs. </exception>
     ''' <param name="name"> Specifies the script name. </param>
-    Private Sub _nilifyScript(ByVal name As String)
+    Private Sub _NilifyScript(ByVal name As String)
 
         If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
@@ -816,7 +816,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="nodeNumber"> Specifies the remote node number. </param>
     ''' <param name="name">       Specifies the script name. </param>
     ''' <returns> <c>True</c> if the script is nil; otherwise <c>False</c>. </returns>
-    Private Function _nilifyScript(ByVal nodeNumber As Integer, ByVal name As String) As Boolean
+    Private Function _NilifyScript(ByVal nodeNumber As Integer, ByVal name As String) As Boolean
         If String.IsNullOrWhiteSpace(name) Then
             Return False
         End If
@@ -1004,7 +1004,7 @@ Public MustInherit Class ScriptManagerBase
         Return True
     End Function
 
-    Private _deleteTimeout As TimeSpan
+    Private _DeleteTimeout As TimeSpan
 
     ''' <summary> Gets or sets the time out for deleting a script. </summary>
     ''' <value> The delete timeout. </value>
@@ -1025,7 +1025,7 @@ Public MustInherit Class ScriptManagerBase
 #Region " FETCH SCRIPTS "
 
     Private Const AuthodPrefix As String = "isr_"
-    Private _lastFetchedAuthorScripts As List(Of String)
+    Private _LastFetchedAuthorScripts As List(Of String)
 
     ''' <summary> Last fetched author scripts. </summary>
     ''' <returns> A list of strings. </returns>
@@ -1125,7 +1125,7 @@ Public MustInherit Class ScriptManagerBase
         End If
     End Sub
 
-    Private _lastFetchedSavedScripts As String
+    Private _LastFetchedSavedScripts As String
 
     ''' <summary> Gets a comma-separated and comma-terminated list of the saved scripts that was
     ''' fetched last.  A new script is fetched after save and delete. </summary>
@@ -1136,7 +1136,7 @@ Public MustInherit Class ScriptManagerBase
         End Get
     End Property
 
-    Private _lastFetchedSavedRemoteScripts As String
+    Private _LastFetchedSavedRemoteScripts As String
 
     ''' <summary> Gets a comma-separated and comma-terminated list of the saved scripts that was
     ''' fetched last from the remote node.  A new script is fetched after save and delete. </summary>
@@ -1246,7 +1246,7 @@ Public MustInherit Class ScriptManagerBase
 
 #Region " SAVE SCRIPT "
 
-    Private _saveTimeout As TimeSpan = TimeSpan.Zero
+    Private _SaveTimeout As TimeSpan = TimeSpan.Zero
 
     ''' <summary> Gets or sets the time out for saving a script. </summary>
     ''' <value> The save timeout. </value>
@@ -2305,7 +2305,7 @@ Public MustInherit Class ScriptManagerBase
 
 #Region " TSP X: SCRIPT COLLECTION  - LEGACY "
 
-    Private _legacyScripts As ScriptEntityCollection
+    Private _LegacyScripts As ScriptEntityCollection
 
     ''' <summary> Gets the list of legacy scripts. </summary>
     ''' <returns> List of legacy scripts. </returns>
@@ -2333,7 +2333,7 @@ Public MustInherit Class ScriptManagerBase
 
 #Region " TSP X: SCRIPT COLLECTION "
 
-    Private _scripts As ScriptEntityCollection
+    Private _Scripts As ScriptEntityCollection
 
     ''' <summary> Gets the list of scripts. </summary>
     ''' <returns> List of scripts. </returns>
@@ -3243,7 +3243,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="loadingScriptName"> Specifies the name of the loading script that will be deleted
     ''' after the process is done. </param>
     ''' <returns> The script with the load and end commands. </returns>
-    Private Shared Function buildScriptLoaderScript(ByVal nodeNumber As Integer,
+    Private Shared Function BuildScriptLoaderScript(ByVal nodeNumber As Integer,
                                                     ByVal script As ScriptEntityBase,
                                                     ByVal loadingScriptName As String) As System.Text.StringBuilder
 

@@ -181,7 +181,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Handles the Session property changed event. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SessionPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
@@ -572,7 +572,7 @@ Public MustInherit Class StatusSubsystemBase
 
 #Region " SERIAL NUMBER "
 
-    Private _serialNumberReading As String
+    Private _SerialNumberReading As String
 
     ''' <summary> Gets or sets the serial number reading. </summary>
     ''' <value> The serial number reading. </value>
@@ -618,7 +618,7 @@ Public MustInherit Class StatusSubsystemBase
         Return Me.SerialNumberReading
     End Function
 
-    Private _serialNumber As Long?
+    Private _SerialNumber As Long?
     ''' <summary>
     ''' Reads and returns the instrument serial number
     ''' </summary>
@@ -1393,7 +1393,7 @@ Public MustInherit Class StatusSubsystemBase
     Public Shared Property StationLineFrequency As Double? = New Double?
 
     ''' <summary> The line frequency. </summary>
-    Private _lineFrequency As Double?
+    Private _LineFrequency As Double?
 
     ''' <summary> Gets or sets the line frequency. </summary>
     ''' <value> The line frequency. </value>

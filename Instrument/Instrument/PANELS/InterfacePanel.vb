@@ -73,7 +73,7 @@ Public Class InterfacePanel
     ''' <summary> Event handler. Called by form for load events. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub form_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+    Private Sub Form_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Me._StatusLabel.Text = "Find and select an interface."
     End Sub
 
@@ -279,7 +279,7 @@ Public Class InterfacePanel
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub interfaceChooser_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InterfaceChooser.Clear
+    Private Sub InterfaceChooser_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InterfaceChooser.Clear
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
             If Me.IsInterfaceOpen Then
@@ -297,7 +297,7 @@ Public Class InterfacePanel
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub interfaceChooser_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _InterfaceChooser.Connect
+    Private Sub InterfaceChooser_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _InterfaceChooser.Connect
         Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                            "Connecting {0};. ", Me._InterfaceChooser.SelectedResourceName)
         Dim resourcename As String = Me._InterfaceChooser.SelectedResourceName
@@ -309,7 +309,7 @@ Public Class InterfacePanel
     ''' <summary> Disconnects the interface. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
-    Private Sub interfaceChooser_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _InterfaceChooser.Disconnect
+    Private Sub InterfaceChooser_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _InterfaceChooser.Disconnect
         Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                            "Disconnecting {0};. ", Me._InterfaceChooser.SelectedResourceName)
         Me.TryCloseInterfaceSession()
@@ -320,7 +320,7 @@ Public Class InterfacePanel
     ''' <summary> Displays available interface names. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
-    Private Sub interfaceChooser_FindNames(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InterfaceChooser.FindNames
+    Private Sub InterfaceChooser_FindNames(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InterfaceChooser.FindNames
         Me.DisplayInterfaceNames()
     End Sub
 
@@ -347,7 +347,7 @@ Public Class InterfacePanel
 
     ''' <summary> Event handler. Called by _InterfaceChooser for property changed events. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InterfaceChooser_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _InterfaceChooser.PropertyChanged
         If Me.InvokeRequired Then
@@ -369,7 +369,7 @@ Public Class InterfacePanel
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _clearSelectedResourceButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearSelectedResourceButton.Click
+    Private Sub _ClearSelectedResourceButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearSelectedResourceButton.Click
         ' Transmit the SDC command to the interface.
         If Not String.IsNullOrWhiteSpace(Me._InstrumentChooser.SelectedResourceName) Then
             Try
@@ -425,7 +425,7 @@ Public Class InterfacePanel
     End Property
 
     ''' <summary> Displays instrument resource names. </summary>
-    Private Sub displayResourceNames()
+    Private Sub DisplayResourceNames()
         If Me.VisaInterface Is Nothing Then
             Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Finding resources;. Finding resources {0}", VI.ResourceNamesManager.BuildInstrumentFilter())
@@ -480,7 +480,7 @@ Public Class InterfacePanel
 
     ''' <summary> Event handler. Called by _ResourceChooser for property changed events. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InstrumentChooser_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _InstrumentChooser.PropertyChanged
         If Me.InvokeRequired Then
@@ -519,7 +519,7 @@ Public Class InterfacePanel
     ''' <summary> Trace messages box property changed. </summary>
     ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
         Try

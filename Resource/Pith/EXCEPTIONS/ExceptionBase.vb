@@ -103,7 +103,7 @@ Public MustInherit Class ExceptionBase
 #Region " ADDITIONAL INFORMATION "
 
     ''' <summary> Information describing the additional. </summary>
-    Private _additionalInformation As System.Collections.Specialized.NameValueCollection
+    Private _AdditionalInformation As System.Collections.Specialized.NameValueCollection
 
     ''' <summary> Collection allowing additional information to be added to the exception. </summary>
     ''' <value> The additional information. </value>
@@ -117,7 +117,7 @@ Public MustInherit Class ExceptionBase
     End Property
 
     ''' <summary> Name of the application domain. </summary>
-    Private _appDomainName As String
+    Private _AppDomainName As String
 
     ''' <summary> AppDomain name where the Exception occurred. </summary>
     ''' <value> The name of the application domain. </value>
@@ -128,7 +128,7 @@ Public MustInherit Class ExceptionBase
     End Property
 
     ''' <summary> Time of the created date. </summary>
-    Private _createdDateTime As DateTime
+    Private _CreatedDateTime As DateTime
 
     ''' <summary> Date and Time the exception was created. </summary>
     ''' <value> The created date time. </value>
@@ -139,7 +139,7 @@ Public MustInherit Class ExceptionBase
     End Property
 
     ''' <summary> Name of the machine. </summary>
-    Private _machineName As String
+    Private _MachineName As String
 
     ''' <summary> Machine name where the Exception occurred. </summary>
     ''' <value> The name of the machine. </value>
@@ -161,7 +161,7 @@ Public MustInherit Class ExceptionBase
     End Property
 
     ''' <summary> Name of the thread identity. </summary>
-    Private _threadIdentityName As String
+    Private _ThreadIdentityName As String
 
     ''' <summary> Identity of the executing thread on which the exception was created. </summary>
     ''' <value> The name of the thread identity. </value>
@@ -172,7 +172,7 @@ Public MustInherit Class ExceptionBase
     End Property
 
     ''' <summary> Name of the windows identity. </summary>
-    Private _windowsIdentityName As String
+    Private _WindowsIdentityName As String
 
     ''' <summary> Windows identity under which the code was running. </summary>
     ''' <value> The name of the windows identity. </value>
@@ -184,7 +184,7 @@ Public MustInherit Class ExceptionBase
 
     ''' <summary> Gathers environment information safely. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub obtainEnvironmentInformation()
+    Private Sub ObtainEnvironmentInformation()
 
         Const unknown As String = "N/A"
         Me._createdDateTime = DateTime.Now
@@ -215,12 +215,14 @@ Public MustInherit Class ExceptionBase
             Me._OSVersion = unknown
         End If
 
-        Me._additionalInformation = New System.Collections.Specialized.NameValueCollection
-        Me._additionalInformation.Add(AdditionalInfoItem.MachineName.ToString, My.Computer.Name)
-        Me._additionalInformation.Add(AdditionalInfoItem.Timestamp.ToString, Date.Now.ToString(System.Globalization.CultureInfo.CurrentCulture))
-        Me._additionalInformation.Add(AdditionalInfoItem.FullName.ToString, Reflection.Assembly.GetExecutingAssembly().FullName)
-        Me._additionalInformation.Add(AdditionalInfoItem.AppDomainName.ToString, AppDomain.CurrentDomain.FriendlyName)
-        Me._additionalInformation.Add(AdditionalInfoItem.ThreadIdentity.ToString, My.User.Name) ' Thread.CurrentPrincipal.Identity.Name
+        Me._AdditionalInformation = New System.Collections.Specialized.NameValueCollection From {
+            {AdditionalInfoItem.MachineName.ToString, My.Computer.Name},
+            {AdditionalInfoItem.Timestamp.ToString, Date.Now.ToString(System.Globalization.CultureInfo.CurrentCulture)},
+            {AdditionalInfoItem.FullName.ToString, Reflection.Assembly.GetExecutingAssembly().FullName},
+            {AdditionalInfoItem.AppDomainName.ToString, AppDomain.CurrentDomain.FriendlyName},
+            {AdditionalInfoItem.ThreadIdentity.ToString, My.User.Name} ' Thread.CurrentPrincipal.Identity.Name
+            }
+
         Try
             ' WMI may not be installed on the computer
             Me._additionalInformation.Add(AdditionalInfoItem.WindowsIdentity.ToString, My.Computer.Info.OSFullName)

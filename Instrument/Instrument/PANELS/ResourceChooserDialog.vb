@@ -99,7 +99,7 @@ Public Class ResourceChooserDialog
     ''' <summary> Event handler. Called by form for load events. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub form_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+    Private Sub Form_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         Try
 
@@ -126,7 +126,7 @@ Public Class ResourceChooserDialog
     ''' <summary> Event handler. Called by form for shown events. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
-    Private Sub form_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown
+    Private Sub Form_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown
         Me._ResourceNameSelectorConnector.ResourcesFilter = Me.ResourcesFilter
         Me._ResourceNameSelectorConnector.DisplayResourceNames()
     End Sub
@@ -167,7 +167,7 @@ Public Class ResourceChooserDialog
     ''' <summary> Event handler. Called by _ResourceNameSelectorConnector for property changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property changed event information. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ResourceNameSelectorConnector_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _ResourceNameSelectorConnector.PropertyChanged
         Try
