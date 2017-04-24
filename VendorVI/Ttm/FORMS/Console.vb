@@ -152,7 +152,7 @@ Public Class Console
                 Me._PartsPanel.CopySettings()
                 Me._TTMConfigurationPanel.CopySettings()
                 Me.CopyShuntSettings()
-                My.MySettings.Default.ResourceName = Me._ResourceNameComboBox.Text
+                My.MySettings.Default.ResourceName = Me.ResourceName
                 My.MySettings.Default.Save()
 
                 ' flush the log.
@@ -261,19 +261,15 @@ Public Class Console
             Me.Part = New DeviceUnderTest
             AddHandler Me._Part.ShuntResistance.PropertyChanged, AddressOf Me.ShuntResistancePropertyChanged
 
-            Me._ConnectToggle.Enabled = False
-            Me._ResourceNameComboBox.Enabled = False
-            Me._ResourceNameComboBox.Text = My.MySettings.Default.ResourceName
+            Me._ResourceSelectorConnector.Enabled = False
+            With Me._ResourceSelectorConnector
+                .Connectable = True : .Clearable = True : .Searchable = True
+                .ClearToolTipText = "Reset, clear, initialize the device"
+            End With
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Enabling controls;. ")
             Me.onConnectionChanged("")
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Ready - List resources and select one to connect too;. ")
-            Me._ResourceNameComboBox.Focus()
-            Me._ResourceNameComboBox.Enabled = True
-            Me._ConnectToggle.Enabled = Console.TryFindInstrumentResource(Me._ResourceNameComboBox.Text)
-            If Me._ConnectToggle.Enabled Then
-                Me._IdentityTextBox.Text = "Resource located"
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Resource {0} located. Connect;. ", Me._ResourceNameComboBox.Text)
-            End If
+            Me._ResourceSelectorConnector.Enabled = True
             Application.DoEvents()
 
         Catch ex As Exception
@@ -292,6 +288,8 @@ Public Class Console
 
             Application.DoEvents()
             Me.SelectNavigatorTreeViewNode(TreeViewNode.ConnectNode)
+            Me._ResourceSelectorConnector.Focus()
+            Me._ResourceSelectorConnector.SelectedResourceName = My.Settings.ResourceName
             Application.DoEvents()
 
         End Try
@@ -357,11 +355,11 @@ Public Class Console
             Me.TriggerSequencer = Me.Meter.TriggerSequencer
 
             ' initialize the device system state.
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clear master device active state;. ")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Clearing master device active state;. ")
             Me.Meter.MasterDevice.ClearActiveState()
             Application.DoEvents()
 
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading identity from {0};. ", resourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading identity from {0};. ", resourceName)
             Me._IdentityTextBox.Text = Me.Meter.MasterDevice.StatusSubsystem.QueryIdentity
             Application.DoEvents()
 
@@ -379,239 +377,211 @@ Public Class Console
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Binding controls;. ")
             Me.BindShuntControls()
 
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Connected to {0};. ", resourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Connected to {0};. ", resourceName)
             Application.DoEvents()
 
         ElseIf Not String.IsNullOrWhiteSpace(resourceName) Then
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Disconnected from {0};. ", resourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Disconnected from {0};. ", resourceName)
             Me._MeterTimer.Enabled = False
         End If
-
-        Me._DisplayResourceNamesButton.Enabled = Not Me.Meter.IsDeviceOpen
-        Me._ResourceNameComboBox.Enabled = Not Me.Meter.IsDeviceOpen
-        Me.onMeasurementStatusChanged()
+        Me.OnMeasurementStatusChanged()
     End Sub
 
-    ''' <summary> Connects. </summary>
-    ''' <param name="resourceName"> The resource name to connect. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub Connect(ByVal resourceName As String)
+#End Region
 
-        Try
+#Region " RESOURCE CONNECTOR "
 
-            Me.Cursor = Cursors.WaitCursor
-
-            If String.IsNullOrWhiteSpace(resourceName) Then
-                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Resource name is empty;. ")
-                Me._ConnectToggle.Enabled = False
-                Me._ConnectToggle.Checked = False
-                Me._ConnectToggle.Enabled = True
-                Return
+    ''' <summary> Gets or sets the name of the resource. </summary>
+    ''' <value> The name of the resource. </value>
+    Public Property ResourceName As String
+        Get
+            Return Me._ResourceSelectorConnector.SelectedResourceName
+        End Get
+        Set(ByVal value As String)
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.ResourceName) Then
+                Me._ResourceSelectorConnector.SelectedResourceName = value
             End If
+        End Set
+    End Property
 
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Connecting to {0};. ", resourceName)
+    ''' <summary> Gets or sets the Search Pattern of the resource. </summary>
+    ''' <value> The Search Pattern of the resource. </value>
+    Public Property ResourceFilter As String
+        Get
+            Return Me._ResourceSelectorConnector.ResourcesFilter
+        End Get
+        Set(ByVal value As String)
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.ResourceFilter) Then
+                Me._ResourceSelectorConnector.ResourcesFilter = value
+            End If
+        End Set
+    End Property
 
-            Me._IdentityTextBox.Text = "<connecting>"
+    ''' <summary> Displays the resource names based on the device resource search pattern. </summary> 
+    Public Sub DisplayNames()
+        ' get the list of available resources
+        If Me.Meter IsNot Nothing AndAlso Me.Meter.MasterDevice IsNot Nothing AndAlso
+            Me.Meter.MasterDevice.ResourcesFilter IsNot Nothing Then
+            Me._ResourceSelectorConnector.ResourcesFilter = Me.Meter.MasterDevice.ResourcesFilter
+        End If
+        Me._ResourceSelectorConnector.DisplayResourceNames()
+    End Sub
+
+    ''' <summary> Clears the instrument by calling a propagating clear command. </summary>
+    ''' <param name="sender"> Specifies the object where the call originated. </param>
+    ''' <param name="e">      Specifies the event arguments provided with the call. </param>
+    Private Sub Connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceSelectorConnector.Clear
+        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+                           "Resetting, clearing and initializing resource;. {0}", Me.ResourceName)
+        Me.Meter.MasterDevice.ResetClearInit()
+        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+                           "Resource reset, initialized and cleared;. {0}", Me.ResourceName)
+    End Sub
+
+    ''' <summary> Connects the instrument by calling a propagating connect command. </summary>
+    ''' <param name="sender"> Specifies the object where the call originated. </param>
+    ''' <param name="e">      Specifies the event arguments provided with the call. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub Connector_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ResourceSelectorConnector.Connect
+        Dim action As String = $"opening VISA Session to {Me.ResourceName}"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Connecting;. {action}")
+            Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
+            ' Me.Meter.MasterDevice.RegisterNotifier(Me._ResourceSelectorConnector.Talker)
             Me.Meter.CaptureSyncContext(Threading.SynchronizationContext.Current)
-            Me.Meter.MasterDevice.OpenSession(resourceName, "TTM")
+            Me._IdentityTextBox.Text = $"Connecting {Me.ResourceName}"
+            Me.Meter.MasterDevice.OpenSession(Me.ResourceName, "TTM")
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Connected;. Opened VISA Session to {Me.ResourceName}")
 
             ' allow events to take shape before completion of actions -- there is an issue with the 
             ' meter elements not established 
             Application.DoEvents()
-
+        Catch ex As OperationFailedException
+            Me._ErrorProvider.SetError(Me._IdentityTextBox, "Connection failed")
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed connecting;. Failed {action}.{ex.ToFullBlownString}")
         Catch ex As Exception
-
-            Me._ErrorProvider.SetError(Me._ConnectToggle, "Connection failed")
-            Me._IdentityTextBox.Text = "Failed Connecting"
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred connecting to {0};. {1}", resourceName, ex.ToFullBlownString)
-            Me._ConnectToggle.Checked = False
-
+            Me._ErrorProvider.SetError(Me._IdentityTextBox, "Connection failed")
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed connecting;. Exception {action}.{ex.ToFullBlownString}")
         Finally
-
             Try
-
-                Me.onConnectionChanged(resourceName)
+                action = $"preparing {Me.ResourceName}"
+                Me.OnConnectionChanged(Me.ResourceName)
             Catch ex As Exception
-                Me._ErrorProvider.SetError(Me._ConnectToggle, "Connection failed")
-                Me._IdentityTextBox.Text = "Failed Connecting"
-                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                  "Exception occurred connecting to {0};. {1}", resourceName, ex.ToFullBlownString)
+                Me._ErrorProvider.SetError(Me._IdentityTextBox, "Connection failed")
+                Me._IdentityTextBox.Text = $"Failed {action}"
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred {action};. {ex.ToFullBlownString}")
+            Finally
+                ' cancel if failed to open
+                If Not Me.Meter.IsDeviceOpen Then e.Cancel = True
+                Me.Cursor = Cursors.Default
             End Try
-            Me.Cursor = Cursors.Default
-
         End Try
-
 
     End Sub
 
-    ''' <summary> Disconnects the given resourceName. </summary>
-    ''' <param name="resourceName"> The resource name to connect. </param>
+    ''' <summary> Disconnects the instrument by calling a propagating disconnect command. </summary>
+    ''' <param name="sender"> Specifies the object where the call originated. </param>
+    ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub Disconnect(ByVal resourceName As String)
-
+    Private Sub Connector_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ResourceSelectorConnector.Disconnect
+        Dim action As String = $"closing VISA Session to {Me.ResourceName}"
         Try
+            If Me.Meter.MasterDevice.IsDeviceOpen Then
+                ' stop publishing
+                Me.Part.SuspendPublishing()
 
-            Me.Cursor = Cursors.WaitCursor
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
 
-            ' stop publishing
-            Me.Part.SuspendPublishing()
+                Me._IdentityTextBox.Text = action
 
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Disconnecting from {0};. ", resourceName)
+                Me.Meter.CaptureSyncContext(Threading.SynchronizationContext.Current)
+                Me.Meter.MasterDevice.CloseSession()
 
-            Me._IdentityTextBox.Text = "Disconnecting..."
+            End If
 
-            Me.Meter.MasterDevice.CloseSession()
-
-            Me._IdentityTextBox.Text = "Disconnected"
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Disconnected from {0};. ", resourceName)
-
+        Catch ex As OperationFailedException
+            Me._ErrorProvider.SetError(Me._IdentityTextBox, $"{action} failed")
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
         Catch ex As Exception
-
-            Me._ErrorProvider.SetError(Me._ConnectToggle, "Disconnection failed")
-            Me._IdentityTextBox.Text = "Failed Disconnecting"
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred disconnecting from {0};. {1}", resourceName, ex.ToFullBlownString)
-
+            Me._ErrorProvider.SetError(Me._IdentityTextBox, $"{action} failed")
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         Finally
-
-
+            If Me.Meter.MasterDevice.IsDeviceOpen Then
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Still open--{action}failed;. ")
+                Me._IdentityTextBox.Text = $"Still open; Failed {action}"
+            Else
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                   "Disconnected;. Ended access To {0}", Me.ResourceName)
+                Me._IdentityTextBox.Text = $"Disconnected from {Me.ResourceName}"
+            End If
             Try
-                Me.onConnectionChanged(resourceName)
+                Me.OnConnectionChanged(Me.ResourceName)
             Catch ex As Exception
-                Me._ErrorProvider.SetError(Me._ConnectToggle, "Disconnection failed")
+                Me._ErrorProvider.SetError(Me._IdentityTextBox, "Disconnection failed")
                 Me._IdentityTextBox.Text = "Failed Disconnecting"
                 Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                  "Exception occurred disconnecting from {0};. {1}", resourceName, ex.ToFullBlownString)
+                                  "Exception occurred disconnecting from {0};. {1}", ResourceName, ex.ToFullBlownString)
+            Finally
+                ' cancel if failed to close
+                If Me.Meter.IsDeviceOpen Then e.Cancel = True
+                Me.Cursor = Cursors.Default
             End Try
-            Me.Cursor = Cursors.Default
 
 
         End Try
-
     End Sub
 
-    ''' <summary> Handles the <see cref="CheckBox.CheckedChanged">event</see> of the _connectToggle
-    ''' control. Connects or disconnected from the instrument using the
-    ''' <see cref="_ResourceNameComboBox">resource name</see> </summary>
-    ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      The <see cref="System.EventArgs" /> instance containing the event data. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ConnectToggle_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ConnectToggle.CheckedChanged
-        If Not Me.InitializingComponents Then
-            Me._ErrorProvider.Clear()
-            Dim resourceName As String = Me._ResourceNameComboBox.Text
-            If Me._ConnectToggle.Checked Then
-                Me.Connect(resourceName)
-            Else
-                Me.Disconnect(resourceName)
-            End If
-        End If
-        If Me._ConnectToggle.Checked Then
-            Me._ConnectToggle.Text = "DISCONNECT"
-        Else
-            Me._ConnectToggle.Text = "CONNECT"
-        End If
+    ''' <summary> Displays available instrument names. </summary>
+    ''' <param name="sender"> Specifies the object where the call originated. </param>
+    ''' <param name="e">      Specifies the event arguments provided with the call. </param>
+    Private Sub Connector_FindNames(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceSelectorConnector.FindNames
+        Me.DisplayNames()
     End Sub
 
-    ''' <summary> Displays a resource names described by comboBox. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
-    ''' <param name="comboBox"> The combo box. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub DisplayResourceNames(ByVal comboBox As Windows.Forms.ListControl)
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me._ErrorProvider.Clear()
-            Dim filter As String = VI.ResourceNamesManager.BuildInstrumentFilter(VI.HardwareInterfaceType.Gpib,
-                                                                                 VI.HardwareInterfaceType.Usb, VI.HardwareInterfaceType.Tcpip)
-            Dim resources As IEnumerable(Of String) = New String() {}
-            comboBox.Text = ""
-            comboBox.DataSource = resources
-            Using rm As isr.VI.ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
-                If String.IsNullOrWhiteSpace(filter) Then
-                    Resources = rm.FindResources()
+    ''' <summary> Executes the connector property changed action. </summary>
+    ''' <remarks> David, 1/13/2016. </remarks>
+    ''' <param name="sender">       Specifies the object where the call originated. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnPropertyChanged(ByVal sender As Instrument.ResourceSelectorConnector, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.SelectedResourceName)
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Selected {sender.SelectedResourceName};. ")
+            Case NameOf(sender.SelectedResourceExists)
+                If sender.SelectedResourceExists Then
+                    If Me.Meter.IsDeviceOpen Then
+                        Me._IdentityTextBox.Text = $"Resource {Me.ResourceName} connected"
+                        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Resource connected;. {Me.ResourceName}")
+                    Else
+                        Me._IdentityTextBox.Text = $"Resource {Me.ResourceName} located"
+                        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Resource located;. {Me.ResourceName}")
+                    End If
                 Else
-                    Resources = rm.FindResources(filter)
+                    Me._IdentityTextBox.Text = $"Resource {Me.ResourceName} not found"
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Resource not found;. {Me.ResourceName}")
                 End If
-            End Using
-            If Resources.Count = 0 Then
-                Me._ToolTip.SetToolTip(comboBox, isr.VI.My.Resources.LocalResourceNotFoundSynopsis)
-                Me._ErrorProvider.SetIconPadding(comboBox, -15)
-                Dim message As String = $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}."
-                Me._ErrorProvider.SetError(comboBox, message)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, message)
-            Else
-                If Console.TryFindInstrumentResource(My.Settings.ResourceName) Then
-                    comboBox.Text = My.Settings.ResourceName
-                End If
-                comboBox.DataSource = resources
-                comboBox.Invalidate()
-                Me._ToolTip.SetToolTip(comboBox, isr.VI.My.Resources.LocalResourceSelectorTip)
-            End If
-        Catch ex As Exception
-            Me._ErrorProvider.SetIconPadding(comboBox, -15)
-            Me._ErrorProvider.SetError(comboBox, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{ex.ToFullBlownString}")
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
+
+        End Select
     End Sub
 
-    ''' <summary> Finds the instrument resource. </summary>
-    ''' <param name="resourceName"> Name of the resource. </param>
-    ''' <returns> <c>True</c> if resource is located, <c>False</c> otherwise. </returns>
-    Public Shared Function TryFindInstrumentResource(ByVal resourceName As String) As Boolean
-        Using rm As isr.VI.ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
-            Dim resources As IEnumerable(Of String) = New String() {}
-            rm.TryFindInstruments(resources)
-            Return resources.Contains(resourceName, StringComparer.CurrentCultureIgnoreCase)
-        End Using
-    End Function
-
-    ''' <summary> Event handler. Called by _RefreshResourcesButton for click events. </summary>
-    ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    Private Sub _DisplayResourceNamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _DisplayResourceNamesButton.Click
-        Me.DisplayResourceNames(Me._ResourceNameComboBox)
-    End Sub
-
-    ''' <summary> Event handler. Called by _ResourceNameComboBox for selected value changed events. </summary>
-    ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    Private Sub _ResourceNameComboBox_SelectedValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ResourceNameComboBox.SelectedValueChanged
-        If Not Me.InitializingComponents Then Me.FindSelectedResource()
-    End Sub
-
-    ''' <summary> Event handler. Called by _ResourceNameComboBox for validated events. </summary>
-    ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    Private Sub _ResourceNameComboBox_Validated(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ResourceNameComboBox.Validated
-        Me.FindSelectedResource()
-        Application.DoEvents()
-        If Me._ConnectToggle.Enabled Then Me._ConnectToggle.Focus()
-    End Sub
-
-    ''' <summary> Searches for the selected resource. </summary>
+    ''' <summary> Event handler. Called by _ResourceNameSelectorConnector for property changed
+    ''' events. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub FindSelectedResource()
+    Private Sub Connector_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _ResourceSelectorConnector.PropertyChanged
         Try
-            Me.Cursor = Cursors.WaitCursor
-            Me._ConnectToggle.Enabled = Console.TryFindInstrumentResource(Me._ResourceNameComboBox.Text)
-            If Me._ConnectToggle.Enabled Then
-                Me._IdentityTextBox.Text = "Resource located"
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                  "Resource {0} located. Connect;. ", Me._ResourceNameComboBox.Text)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Connector_PropertyChanged), New Object() {sender, e})
             Else
-                Me._IdentityTextBox.Text = "Resource not found"
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                  "Resource {0} not found;. ", Me._ResourceNameComboBox.Text)
+                Me.OnPropertyChanged(TryCast(sender, Instrument.ResourceSelectorConnector), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Exception occurred finding the selected resource;. {0}", ex.ToFullBlownString)
-        Finally
-            Me.Cursor = Cursors.Default
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -1426,3 +1396,221 @@ Public Class Console
 
 End Class
 
+#Region " unused "
+#If False Then
+    ''' <summary> Handles the <see cref="CheckBox.CheckedChanged">event</see> of the _connectToggle
+    ''' control. Connects or disconnected from the instrument using the
+    ''' <see cref="_ResourceNameComboBox">resource name</see> </summary>
+    ''' <param name="sender"> The source of the event. </param>
+    ''' <param name="e">      The <see cref="System.EventArgs" /> instance containing the event data. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _ConnectToggle_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) 
+        If Not Me.InitializingComponents Then
+            Me._ErrorProvider.Clear()
+            Dim resourceName As String = Me._ResourceNameComboBox.Text
+            If Me._ConnectToggle.Checked Then
+                Me.Connect(resourceName)
+            Else
+                Me.Disconnect(resourceName)
+            End If
+        End If
+        If Me._ConnectToggle.Checked Then
+            Me._ConnectToggle.Text = "DISCONNECT"
+        Else
+            Me._ConnectToggle.Text = "CONNECT"
+        End If
+    End Sub
+
+    ''' <summary> Displays a resource names described by comboBox. </summary>
+    ''' <remarks> David, 1/6/2016. </remarks>
+    ''' <param name="comboBox"> The combo box. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub DisplayResourceNames(ByVal comboBox As Windows.Forms.ListControl)
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me._ErrorProvider.Clear()
+            Dim filter As String = VI.ResourceNamesManager.BuildInstrumentFilter(VI.HardwareInterfaceType.Gpib,
+                                                                                 VI.HardwareInterfaceType.Usb, VI.HardwareInterfaceType.Tcpip)
+            Dim resources As IEnumerable(Of String) = New String() {}
+            comboBox.Text = ""
+            comboBox.DataSource = resources
+            Using rm As isr.VI.ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
+                If String.IsNullOrWhiteSpace(filter) Then
+                    Resources = rm.FindResources()
+                Else
+                    Resources = rm.FindResources(filter)
+                End If
+            End Using
+            If Resources.Count = 0 Then
+                Me._ToolTip.SetToolTip(comboBox, isr.VI.My.Resources.LocalResourceNotFoundSynopsis)
+                Me._ErrorProvider.SetIconPadding(comboBox, -15)
+                Dim message As String = $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}."
+                Me._ErrorProvider.SetError(comboBox, message)
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, message)
+            Else
+                If Console.TryFindInstrumentResource(My.Settings.ResourceName) Then
+                    comboBox.Text = My.Settings.ResourceName
+                End If
+                comboBox.DataSource = resources
+                comboBox.Invalidate()
+                Me._ToolTip.SetToolTip(comboBox, isr.VI.My.Resources.LocalResourceSelectorTip)
+            End If
+        Catch ex As Exception
+            Me._ErrorProvider.SetIconPadding(comboBox, -15)
+            Me._ErrorProvider.SetError(comboBox, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{ex.ToFullBlownString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary> Finds the instrument resource. </summary>
+    ''' <param name="resourceName"> Name of the resource. </param>
+    ''' <returns> <c>True</c> if resource is located, <c>False</c> otherwise. </returns>
+    Public Shared Function TryFindInstrumentResource(ByVal resourceName As String) As Boolean
+        Using rm As isr.VI.ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
+            Dim resources As IEnumerable(Of String) = New String() {}
+            rm.TryFindInstruments(resources)
+            Return resources.Contains(resourceName, StringComparer.CurrentCultureIgnoreCase)
+        End Using
+    End Function
+
+    ''' <summary> Event handler. Called by _RefreshResourcesButton for click events. </summary>
+    ''' <param name="sender"> The source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    Private Sub _DisplayResourceNamesButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) 
+        Me.DisplayResourceNames(Me._ResourceNameComboBox)
+    End Sub
+
+    ''' <summary> Event handler. Called by _ResourceNameComboBox for selected value changed events. </summary>
+    ''' <param name="sender"> The source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    Private Sub _ResourceNameComboBox_SelectedValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) 
+        If Not Me.InitializingComponents Then Me.FindSelectedResource()
+    End Sub
+
+    ''' <summary> Searches for the selected resource. </summary>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Function FindSelectedResource() As Boolean
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            If Console.TryFindInstrumentResource(me.ResourceName) Then
+                Me._IdentityTextBox.Text = "Resource located"
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                  "Resource {0} located. Connect;. ", me.ResourceName)
+            Else
+                Me._IdentityTextBox.Text = "Resource not found"
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                  "Resource {0} not found;. ", me.ResourceName)
+            End If
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                              "Exception occurred finding the selected resource;. {0}", ex.ToFullBlownString)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Function
+
+    ''' <summary> Disconnects the given resourceName. </summary>
+    ''' <param name="resourceName"> The resource name to connect. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub Disconnect(ByVal resourceName As String)
+
+        Try
+
+            Me.Cursor = Cursors.WaitCursor
+
+            ' stop publishing
+            Me.Part.SuspendPublishing()
+
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Disconnecting from {0};. ", resourceName)
+
+            Me._IdentityTextBox.Text = "Disconnecting..."
+
+            Me.Meter.MasterDevice.CloseSession()
+
+            Me._IdentityTextBox.Text = "Disconnected"
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Disconnected from {0};. ", resourceName)
+
+        Catch ex As Exception
+
+            Me._ErrorProvider.SetError(Me._ConnectToggle, "Disconnection failed")
+            Me._IdentityTextBox.Text = "Failed Disconnecting"
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                              "Exception occurred disconnecting from {0};. {1}", resourceName, ex.ToFullBlownString)
+
+        Finally
+
+
+            Try
+                Me.onConnectionChanged(resourceName)
+            Catch ex As Exception
+                Me._ErrorProvider.SetError(Me._ConnectToggle, "Disconnection failed")
+                Me._IdentityTextBox.Text = "Failed Disconnecting"
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                                  "Exception occurred disconnecting from {0};. {1}", resourceName, ex.ToFullBlownString)
+            End Try
+            Me.Cursor = Cursors.Default
+
+
+        End Try
+
+    End Sub
+
+    ''' <summary> Connects. </summary>
+    ''' <param name="resourceName"> The resource name to connect. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub Connect(ByVal resourceName As String)
+
+        Try
+
+            Me.Cursor = Cursors.WaitCursor
+
+            If String.IsNullOrWhiteSpace(resourceName) Then
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Resource name is empty;. ")
+                Me._ConnectToggle.Enabled = False
+                Me._ConnectToggle.Checked = False
+                Me._ConnectToggle.Enabled = True
+                Return
+            End If
+
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Connecting to {0};. ", resourceName)
+
+            Me._IdentityTextBox.Text = "<connecting>"
+            Me.Meter.CaptureSyncContext(Threading.SynchronizationContext.Current)
+            Me.Meter.MasterDevice.OpenSession(resourceName, "TTM")
+
+            ' allow events to take shape before completion of actions -- there is an issue with the 
+            ' meter elements not established 
+            Application.DoEvents()
+
+        Catch ex As Exception
+
+            Me._ErrorProvider.SetError(Me._ConnectToggle, "Connection failed")
+            Me._IdentityTextBox.Text = "Failed Connecting"
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                              "Exception occurred connecting to {0};. {1}", resourceName, ex.ToFullBlownString)
+            Me._ConnectToggle.Checked = False
+
+        Finally
+
+            Try
+
+                Me.onConnectionChanged(resourceName)
+            Catch ex As Exception
+                Me._ErrorProvider.SetError(Me._ConnectToggle, "Connection failed")
+                Me._IdentityTextBox.Text = "Failed Connecting"
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                                  "Exception occurred connecting to {0};. {1}", resourceName, ex.ToFullBlownString)
+            End Try
+            Me.Cursor = Cursors.Default
+
+        End Try
+
+
+    End Sub
+
+
+#End If
+#End Region

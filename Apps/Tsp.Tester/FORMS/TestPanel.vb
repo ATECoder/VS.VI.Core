@@ -37,7 +37,7 @@ Public Class TestPanel
         With Me._ResourceSelectorConnector
             .Searchable = True
             .Clearable = True
-            .Connectible = True
+            .Connectable = True
         End With
         Me._TraceMessagesBox.ContainerPanel = Me._messagesTabPage
         Me.AddListeners()
@@ -208,7 +208,7 @@ Public Class TestPanel
 
                 Me._ResourceSelectorConnector.Clearable = True
                 Me._ResourceSelectorConnector.Searchable = True
-                Me._ResourceSelectorConnector.Connectible = True
+                Me._ResourceSelectorConnector.Connectable = True
                 Me._ResourceSelectorConnector.Enabled = True
 
             End If

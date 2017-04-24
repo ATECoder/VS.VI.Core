@@ -32,7 +32,7 @@ Public Class ResourcePanelBase
         Me.InitializeComponent()
         Me._ElapsedTimeStopwatch = New Stopwatch
         Me._AssignDevice(device)
-        Me.Connector.Connectible = True
+        Me.Connector.Connectable = True
         Me.Connector.Clearable = True
         Me.StatusRegisterLabel.Visible = False
         Me.StandardRegisterLabel.Visible = False

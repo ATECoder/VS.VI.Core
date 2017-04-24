@@ -43,7 +43,8 @@ Partial Class ResourceSelectorConnector
         Me._ClearButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ClearButton.Name = "_ClearButton"
         Me._ClearButton.Size = New System.Drawing.Size(26, 26)
-        Me._ClearButton.Text = "ToolStripButton1"
+        Me._ClearButton.Text = "Clear device state"
+        Me._FindButton.ToolTipText = "Clear device state"
         '
         '_ResourceNamesComboBox
         '

@@ -20,7 +20,7 @@ Partial Class ResourceChooserDialog
         '
         Me._ResourceNameSelectorConnector.BackColor = System.Drawing.Color.Transparent
         Me._ResourceNameSelectorConnector.Clearable = False
-        Me._ResourceNameSelectorConnector.Connectible = False
+        Me._ResourceNameSelectorConnector.Connectable = False
         Me._ResourceNameSelectorConnector.Location = New System.Drawing.Point(2, 35)
         Me._ResourceNameSelectorConnector.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._ResourceNameSelectorConnector.Name = "_ResourceNameSelectorConnector"

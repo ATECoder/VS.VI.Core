@@ -28,7 +28,7 @@ Partial Class ResourcePanelBase
         '
         Me.Connector.BackColor = System.Drawing.Color.Transparent
         Me.Connector.Clearable = False
-        Me.Connector.Connectible = False
+        Me.Connector.Connectable = False
         Me.Connector.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.Connector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Connector.Location = New System.Drawing.Point(0, 10)

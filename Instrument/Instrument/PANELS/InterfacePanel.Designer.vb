@@ -63,7 +63,7 @@ Partial Class InterfacePanel
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._InstrumentChooser.BackColor = System.Drawing.Color.Transparent
         Me._InstrumentChooser.Clearable = False
-        Me._InstrumentChooser.Connectible = False
+        Me._InstrumentChooser.Connectable = False
         Me._InstrumentChooser.Enabled = False
         Me._InstrumentChooser.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._InstrumentChooser.Location = New System.Drawing.Point(22, 98)
@@ -90,7 +90,7 @@ Partial Class InterfacePanel
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._InterfaceChooser.BackColor = System.Drawing.Color.Transparent
         Me._InterfaceChooser.Clearable = False
-        Me._InterfaceChooser.Connectible = False
+        Me._InterfaceChooser.Connectable = False
         Me._InterfaceChooser.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._InterfaceChooser.Location = New System.Drawing.Point(22, 31)
         Me._InterfaceChooser.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)

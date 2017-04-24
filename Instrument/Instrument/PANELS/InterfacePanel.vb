@@ -28,11 +28,11 @@ Public Class InterfacePanel
 
         ' disable until the connectible interface is set
         Me.Enabled = False
-        Me._InterfaceChooser.Connectible = True
+        Me._InterfaceChooser.Connectable = True
         Me._InterfaceChooser.Clearable = True
         Me._InterfaceChooser.Searchable = True
 
-        Me._InstrumentChooser.Connectible = True
+        Me._InstrumentChooser.Connectable = True
         Me._InstrumentChooser.Clearable = True
         Me._InstrumentChooser.Searchable = True
 
@@ -339,7 +339,7 @@ Public Class InterfacePanel
             Case NameOf(sender.ResourcesFilter)
             Case NameOf(sender.IsConnected)
             Case NameOf(sender.Clearable)
-            Case NameOf(sender.Connectible)
+            Case NameOf(sender.Connectable)
             Case NameOf(sender.Searchable)
             Case NameOf(sender.HasResources)
         End Select
@@ -470,7 +470,7 @@ Public Class InterfacePanel
             Case NameOf(sender.ResourcesFilter)
             Case NameOf(sender.IsConnected)
             Case NameOf(sender.Clearable)
-            Case NameOf(sender.Connectible)
+            Case NameOf(sender.Connectable)
             Case NameOf(sender.Searchable)
             Case NameOf(sender.HasResources)
                 Me._ClearSelectedResourceButton.Enabled = sender.HasResources AndAlso Not String.IsNullOrWhiteSpace(sender.SelectedResourceName)

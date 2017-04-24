@@ -318,7 +318,7 @@ Public Class InstrumentInterfaceForm
                 ' allow connecting the resource.
                 Me._instrumentChooser = _InterfacePanel.InstrumentChooser
                 Me._instrumentChooser.AddListeners(Me.Talker.Listeners)
-                Me._InterfacePanel.InstrumentChooser.Connectible = True
+                Me._InterfacePanel.InstrumentChooser.Connectable = True
 
                 ' allow form rendering time to complete: process all messages currently in the queue.
                 Application.DoEvents()

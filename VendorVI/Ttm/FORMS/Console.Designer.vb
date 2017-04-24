@@ -32,8 +32,6 @@ Partial Class Console
         Me._ShuntResistanceTextBoxLabel = New System.Windows.Forms.Label()
         Me._ShuntResistanceTextBox = New System.Windows.Forms.TextBox()
         Me._ToolTip = New System.Windows.Forms.ToolTip(Me.components)
-        Me._ResourceNameComboBox = New System.Windows.Forms.ComboBox()
-        Me._ConnectToggle = New System.Windows.Forms.CheckBox()
         Me._IdentityTextBox = New System.Windows.Forms.TextBox()
         Me._ErrorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me._MeterTimer = New System.Windows.Forms.Timer(Me.components)
@@ -63,7 +61,7 @@ Partial Class Console
         Me._PartHeader = New isr.VI.Ttm.PartHeader()
         Me._SplitContainer = New System.Windows.Forms.SplitContainer()
         Me._NavigatorTreeView = New System.Windows.Forms.TreeView()
-        Me._DisplayResourceNamesButton = New System.Windows.Forms.Button()
+        Me._ResourceSelectorConnector = New isr.VI.Instrument.ResourceSelectorConnector()
         Me._MainLayout.SuspendLayout()
         Me._ConfigurationLayout.SuspendLayout()
         Me._ShuntResistanceConfigurationGroupBox.SuspendLayout()
@@ -359,32 +357,6 @@ Partial Class Console
         '
         Me._ToolTip.IsBalloon = True
         '
-        '_ResourceNameComboBox
-        '
-        Me._ResourceNameComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ResourceNameComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ResourceNameComboBox.FormattingEnabled = True
-        Me._ResourceNameComboBox.Location = New System.Drawing.Point(168, 29)
-        Me._ResourceNameComboBox.Name = "_ResourceNameComboBox"
-        Me._ResourceNameComboBox.Size = New System.Drawing.Size(330, 25)
-        Me._ResourceNameComboBox.TabIndex = 1
-        Me._ToolTip.SetToolTip(Me._ResourceNameComboBox, "Lists the resource names.")
-        '
-        '_ConnectToggle
-        '
-        Me._ConnectToggle.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ConnectToggle.Appearance = System.Windows.Forms.Appearance.Button
-        Me._ConnectToggle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ConnectToggle.Location = New System.Drawing.Point(502, 26)
-        Me._ConnectToggle.Name = "_ConnectToggle"
-        Me._ConnectToggle.Size = New System.Drawing.Size(104, 30)
-        Me._ConnectToggle.TabIndex = 2
-        Me._ConnectToggle.Text = "CONNECT"
-        Me._ConnectToggle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        Me._ToolTip.SetToolTip(Me._ConnectToggle, "Depress to connect or release to disconnect the meter")
-        Me._ConnectToggle.UseVisualStyleBackColor = True
-        '
         '_IdentityTextBox
         '
         Me._IdentityTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
@@ -464,10 +436,8 @@ Partial Class Console
         '
         '_ConnectGroupBox
         '
-        Me._ConnectGroupBox.Controls.Add(Me._DisplayResourceNamesButton)
+        Me._ConnectGroupBox.Controls.Add(Me._ResourceSelectorConnector)
         Me._ConnectGroupBox.Controls.Add(Me._ResourceInfoLabel)
-        Me._ConnectGroupBox.Controls.Add(Me._ResourceNameComboBox)
-        Me._ConnectGroupBox.Controls.Add(Me._ConnectToggle)
         Me._ConnectGroupBox.Controls.Add(Me._IdentityTextBox)
         Me._ConnectGroupBox.Location = New System.Drawing.Point(5, 100)
         Me._ConnectGroupBox.Name = "_ConnectGroupBox"
@@ -732,16 +702,17 @@ Partial Class Console
         Me._NavigatorTreeView.Size = New System.Drawing.Size(133, 231)
         Me._NavigatorTreeView.TabIndex = 3
         '
-        '_DisplayResourceNamesButton
+        '_ResourceSelectorConnector
         '
-        Me._DisplayResourceNamesButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._DisplayResourceNamesButton.Location = New System.Drawing.Point(31, 26)
-        Me._DisplayResourceNamesButton.Name = "_DisplayResourceNamesButton"
-        Me._DisplayResourceNamesButton.Size = New System.Drawing.Size(134, 30)
-        Me._DisplayResourceNamesButton.TabIndex = 0
-        Me._DisplayResourceNamesButton.Text = "LIST RESOURCES: "
-        Me._ToolTip.SetToolTip(Me._DisplayResourceNamesButton, "Displays available and registered VISA resource names. ")
-        Me._DisplayResourceNamesButton.UseVisualStyleBackColor = True
+        Me._ResourceSelectorConnector.BackColor = System.Drawing.Color.Transparent
+        Me._ResourceSelectorConnector.Clearable = False
+        Me._ResourceSelectorConnector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._ResourceSelectorConnector.Location = New System.Drawing.Point(28, 21)
+        Me._ResourceSelectorConnector.Margin = New System.Windows.Forms.Padding(0)
+        Me._ResourceSelectorConnector.Name = "_ResourceSelectorConnector"
+        Me._ResourceSelectorConnector.Size = New System.Drawing.Size(578, 29)
+        Me._ResourceSelectorConnector.TabIndex = 5
+        Me._ToolTip.SetToolTip(Me._ResourceSelectorConnector, "Find resources and connect")
         '
         'Console
         '
@@ -822,8 +793,6 @@ Partial Class Console
     Private WithEvents _ConnectTabPage As System.Windows.Forms.TabPage
     Private WithEvents _ConnectTabLayout As System.Windows.Forms.TableLayoutPanel
     Private WithEvents _ConnectGroupBox As System.Windows.Forms.GroupBox
-    Private WithEvents _ResourceNameComboBox As System.Windows.Forms.ComboBox
-    Private WithEvents _ConnectToggle As System.Windows.Forms.CheckBox
     Private WithEvents _IdentityTextBox As System.Windows.Forms.TextBox
     Private WithEvents _ApplyNewShuntResistanceConfigurationButton As System.Windows.Forms.Button
     Private WithEvents _ShuntTabPage As System.Windows.Forms.TabPage
@@ -845,5 +814,5 @@ Partial Class Console
     Private WithEvents _PartsLayout As System.Windows.Forms.TableLayoutPanel
     Private WithEvents _PartsPanel As PartsPanel
     Private WithEvents _ResourceInfoLabel As Windows.Forms.Label
-    Private WithEvents _DisplayResourceNamesButton As Windows.Forms.Button
+    Private WithEvents _ResourceSelectorConnector As Instrument.ResourceSelectorConnector
 End Class

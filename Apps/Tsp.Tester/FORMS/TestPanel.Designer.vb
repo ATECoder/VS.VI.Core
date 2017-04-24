@@ -503,7 +503,7 @@ Partial Class TestPanel
         '
         Me._ResourceSelectorConnector.BackColor = System.Drawing.Color.Transparent
         Me._ResourceSelectorConnector.Clearable = False
-        Me._ResourceSelectorConnector.Connectible = False
+        Me._ResourceSelectorConnector.Connectable = False
         Me._ResourceSelectorConnector.Dock = System.Windows.Forms.DockStyle.Fill
         Me._ResourceSelectorConnector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ResourceSelectorConnector.Location = New System.Drawing.Point(205, 1)

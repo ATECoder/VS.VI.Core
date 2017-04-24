@@ -27,6 +27,9 @@ Public Class ResourceSelectorConnector
 
         ' This call is required by the Windows Form Designer.
         Me.InitializeComponent()
+        Me._Clearable = True
+        Me._Connectable = True
+        Me._Searchable = True
         Me._ToggleConnectionButton.Enabled = False
         Me._ClearButton.Enabled = False
         Me._FindButton.Enabled = True
@@ -60,8 +63,7 @@ Public Class ResourceSelectorConnector
 
 #Region " BROWSABLE PROPERTIES "
 
-    Private _Clearable As Boolean
-
+    Private _clearable As Boolean
     ''' <summary> Gets or sets the value indicating if the clear button is visible and can be enabled.
     ''' An item can be cleared only if it is connected. </summary>
     ''' <value> The clearable. </value>
@@ -80,23 +82,24 @@ Public Class ResourceSelectorConnector
         End Set
     End Property
 
-    Private _Connectible As Boolean
+    Private _Connectable As Boolean
     ''' <summary> Gets or sets the value indicating if the connect button is visible and can be
     ''' enabled. An item can be connected only if it is selected. </summary>
-    ''' <value> The connectible. </value>
+    ''' <value> The connectable. </value>
     <Category("Appearance"), Description("Shows or hides the Connect button"), Browsable(True),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Visible),
     RefreshProperties(RefreshProperties.All), DefaultValue(True)>
-    Public Property Connectible() As Boolean
+    Public Property Connectable() As Boolean
         Get
-            Return Me._connectible
+            Return Me._Connectable
         End Get
         Set(ByVal value As Boolean)
-            If Not Me.Connectible.Equals(value) Then
-                Me._connectible = value
+            If Not Me.Connectable.Equals(value) Then
+                Me._Connectable = value
                 Me.SafePostPropertyChanged()
             End If
             Me._ToggleConnectionButton.Visible = value
+            Me._ToolStrip.Invalidate()
             If Not value Then
                 ' cannot clear a device if we do not connect to it.
                 Me.Clearable = False
@@ -112,11 +115,11 @@ Public Class ResourceSelectorConnector
     DesignerSerializationVisibility(DesignerSerializationVisibility.Visible), DefaultValue(True)>
     Public Property Searchable() As Boolean
         Get
-            Return Me._searchable
+            Return Me._Searchable
         End Get
         Set(ByVal value As Boolean)
             If Not Me.Searchable.Equals(value) Then
-                Me._searchable = value
+                Me._Searchable = value
                 Me.SafePostPropertyChanged()
             End If
             Me._FindButton.Visible = value
@@ -133,22 +136,26 @@ Public Class ResourceSelectorConnector
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Public ReadOnly Property IsConnected() As Boolean
         Get
-            Return Me._isConnected
+            Return Me._IsConnected
         End Get
     End Property
 
     ''' <summary> Toggle connection. </summary>
     ''' <remarks> David, 12/23/2015. </remarks>
-    ''' <param name="value"> The value. </param>
-    Private Sub UpdateConnectionState(ByVal value As Boolean)
+    ''' <param name="affirmative"> The value. </param>
+    Private Sub UpdateConnectionState(ByVal affirmative As Boolean)
         ' enable or disable based on the connection status.
-        Me._ResourceNamesComboBox.Enabled = Not value
-        Me._ClearButton.Enabled = Me.Clearable AndAlso value
-        Me._FindButton.Enabled = Me.Searchable AndAlso Not value
-        Me._ToggleConnectionButton.ToolTipText = $"Click to {If(value, "Disconnect", "Connect")}"
-        Me._ToggleConnectionButton.Image = If(value, My.Resources.Disconnect_22x22, My.Resources.Connect_22x22)
-        Me._ToggleConnectionButton.Enabled = Me.Connectible
-        Me._isConnected = value
+        Me._ResourceNamesComboBox.Enabled = Not affirmative
+        Me._ClearButton.Enabled = Me.Clearable AndAlso affirmative
+        Me._FindButton.Enabled = Me.Searchable AndAlso Not affirmative
+        Me._ToggleConnectionButton.ToolTipText = $"Click to {If(affirmative, "Disconnect", "Connect")}"
+        ' turning off visibility is required -- otherwise, control overflows and both search and toggle disappear 
+        Me._ToggleConnectionButton.Visible = False
+        Me._ToggleConnectionButton.Image = If(affirmative, My.Resources.Connect_22x22, My.Resources.Disconnect_22x22)
+        Me._ToggleConnectionButton.Visible = Me.Connectable
+        Me._ToggleConnectionButton.Enabled = Me.Connectable
+        Me._ToolStrip.Invalidate()
+        Me._IsConnected = affirmative
         Me.SafePostPropertyChanged(NameOf(Me.IsConnected))
     End Sub
 
@@ -306,6 +313,7 @@ Public Class ResourceSelectorConnector
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{Environment.NewLine}{ex.ToFullBlownString}")
         Finally
+            Me._ToolStrip.Invalidate()
             Me.Cursor = Cursors.Default
         End Try
     End Sub
@@ -382,7 +390,8 @@ Public Class ResourceSelectorConnector
         Private Set(ByVal value As Boolean)
             ' not checking for changed value here because this needs to be refreshed if a new
             ' resource was selected.
-            Me._ToggleConnectionButton.Enabled = Me.Connectible AndAlso value
+            Me._ToggleConnectionButton.Enabled = Me.Connectable AndAlso value
+            Me._ToolStrip.Invalidate()
             Me._SelectedResourceExists = value
             Me.SafePostPropertyChanged()
         End Set
@@ -461,6 +470,16 @@ Public Class ResourceSelectorConnector
 
 #Region " CLEAR "
 
+    Public Property ClearToolTipText As String
+        Get
+            Return Me._ClearButton.ToolTipText
+        End Get
+        Set(value As String)
+            Me._ClearButton.ToolTipText = value
+            Me._ToolStrip.Invalidate()
+        End Set
+    End Property
+
     ''' <summary> Synchronously Invokes <see cref="OnClear">clear</see> to clear resources or whatever else needs
     ''' clearing. </summary>
     ''' <param name="sender"> Source of the event. </param>
@@ -505,6 +524,15 @@ Public Class ResourceSelectorConnector
     Protected Sub OnClear(ByVal e As EventArgs)
         Dim evt As EventHandler(Of EventArgs) = Me.ClearEvent
         evt?.Invoke(Me, e)
+    End Sub
+
+    Private Sub _ResourceNamesComboBox_DoubleClick(sender As Object, e As EventArgs) Handles _ResourceNamesComboBox.DoubleClick
+        Static connected As Boolean
+        Me._ToggleConnectionButton.Visible = False
+        Me._ToggleConnectionButton.Image = If(connected, My.Resources.Connect_22x22, My.Resources.Disconnect_22x22)
+        Me._ToggleConnectionButton.Visible = True
+        connected = False
+        Me._ToolStrip.Refresh()
     End Sub
 
 #End Region
