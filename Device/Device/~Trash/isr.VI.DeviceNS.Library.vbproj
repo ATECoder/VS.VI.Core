@@ -29,7 +29,7 @@
     <BaseAddress>961548288</BaseAddress>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DefineConstants>NI_VISA,NI_VISA_NS</DefineConstants>
-    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\FromAllRules2015.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>

@@ -25,6 +25,20 @@ Public Class Device
                                                                            HardwareInterfaceType.Usb)
     End Sub
 
+    ''' <summary> Creates a new Device. </summary>
+    ''' <remarks> David, 5/1/2017. </remarks>
+    ''' <returns> A Device. </returns>
+    Public Shared Function Create() As Device
+        Dim device As Device = Nothing
+        Try
+            device = New Device
+        Catch
+            device.Dispose()
+            Throw
+        End Try
+        Return device
+    End Function
+
 #Region "IDisposable Support"
 
     ''' <summary>
