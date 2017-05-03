@@ -922,6 +922,44 @@ Public Class Console
 
 #Region " TTM: METER "
 
+    ''' <summary> Assigns a Meter. </summary>
+    ''' <remarks> David, 1/21/2016. </remarks>
+    ''' <param name="value"> True to show or False to hide the control. </param>
+    Private Sub _AssignMeter(ByVal value As Meter)
+        Me._Meter = value
+        Me._Meter.CaptureSyncContext(Threading.SynchronizationContext.Current)
+        Me.AddListeners()
+        Me.OnConnectionChanged(Me.ResourceName)
+    End Sub
+
+    Private Property IsMeterOwner As Boolean
+
+    ''' <summary> Assigns a Meter. </summary>
+    ''' <remarks> David, 1/21/2016. </remarks>
+    ''' <param name="value"> True to show or False to hide the control. </param>
+    Public Overloads Sub AssignMeter(ByVal value As Meter)
+        Me.IsMeterOwner = False
+        Me._AssignMeter(value)
+    End Sub
+
+    ''' <summary> Releases the Meter. </summary>
+    ''' <remarks> David, 1/21/2016. </remarks>
+    Protected Sub ReleaseMeter()
+        If Me.IsMeterOwner Then
+            Me._Meter?.Dispose() : Me._Meter = Nothing
+        Else
+            Me._Meter = Nothing
+        End If
+    End Sub
+
+    ''' <summary> Gets the is Meter assigned. </summary>
+    ''' <value> The is Meter assigned. </value>
+    Public ReadOnly Property IsMeterAssigned As Boolean
+        Get
+            Return Me.Meter IsNot Nothing AndAlso Not Me.Meter.IsDisposed
+        End Get
+    End Property
+
     ''' <summary> The with events. </summary>
     Private WithEvents _Meter As Meter
 

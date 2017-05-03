@@ -27,6 +27,20 @@ Public Class Meter
         Me._Talker = New TraceMessageTalker
     End Sub
 
+    ''' <summary> Creates a new Device. </summary>
+    ''' <remarks> David, 5/1/2017. </remarks>
+    ''' <returns> A Device. </returns>
+    Public Shared Function Create() As Meter
+        Dim device As Meter = Nothing
+        Try
+            device = New Meter
+        Catch
+            device.Dispose()
+            Throw
+        End Try
+        Return device
+    End Function
+
 #Region " I Disposable Support "
 
     ''' <summary> Cleans up unmanaged or managed and unmanaged resources. </summary>
