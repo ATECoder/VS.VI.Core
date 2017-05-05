@@ -15,7 +15,6 @@ Public Class MeterColdResistance
 #Region " CONSTRUCTORS  AND  CLONES "
 
     ''' <summary> Default constructor. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="statusSubsystem"> The status subsystem. </param>
     ''' <param name="resistance">      The cold resistance. </param>
     ''' <param name="meterEntity">     The meter entity type. </param>
@@ -229,7 +228,6 @@ Public Class MeterColdResistance
 #Region " MEASURE "
 
     ''' <summary> Measures the Final resistance. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="resistance"> The resistance. </param>
     Public Overloads Sub Measure(ByVal resistance As ResistanceMeasureBase)
@@ -282,7 +280,6 @@ Public Class MeterColdResistance
     End Sub
 
     ''' <summary> Reads cold resistance. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="resistance"> The cold resistance. </param>
     Public Sub ReadResistance(ByVal resistance As ResistanceMeasureBase)
         If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))

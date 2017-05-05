@@ -17,7 +17,6 @@ Public Class ReadingValue
     ''' Constructs a measured value without specifying the value or its validity, which must be
     ''' specified for the value to be made valid.
     ''' </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <param name="readingType"> Type of the reading. </param>
     Public Sub New(ByVal readingType As ReadingTypes)
         MyBase.New(readingType)

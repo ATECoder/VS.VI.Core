@@ -42,7 +42,6 @@ Public Class ReadingStatus
     End Property
 
     ''' <summary> Query if 'bit' is bit. </summary>
-    ''' <remarks> David, 3/7/2016. </remarks>
     ''' <param name="bit"> The bit. </param>
     ''' <returns> <c>true</c> if bit; otherwise <c>false</c> </returns>
     Public Function IsBit(ByVal bit As Integer) As Boolean
@@ -50,7 +49,6 @@ Public Class ReadingStatus
     End Function
 
     ''' <summary> Returns a string that represents the current object. </summary>
-    ''' <remarks> David, 3/17/2016. </remarks>
     ''' <returns> A string that represents the current object. </returns>
     Public Overrides Function ToString() As String
         If Me.StatusValue.HasValue Then

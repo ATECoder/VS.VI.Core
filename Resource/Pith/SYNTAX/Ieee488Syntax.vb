@@ -68,7 +68,6 @@ Namespace Ieee488
 #Region " BUILDERS "
 
             ''' <summary> Builds the device clear (DCL) command. </summary>
-            ''' <remarks> David, 11/23/2015. </remarks>
             ''' <returns>
             ''' An enumerator that allows for-each to be used to process build device clear command in this
             ''' collection.
@@ -84,7 +83,6 @@ Namespace Ieee488
             End Function
 
             ''' <summary> Builds selective device clear (SDC) in this collection. </summary>
-            ''' <remarks> David, 11/23/2015. </remarks>
             ''' <param name="gpibAddress"> The gpib address. </param>
             ''' <returns>
             ''' An enumerator that allows for-each to be used to process build selective device clear in this

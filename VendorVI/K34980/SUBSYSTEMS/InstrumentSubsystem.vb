@@ -25,7 +25,6 @@ Public Class InstrumentSubsystem
 #Region " I PRESETTABLE "
 
     ''' <summary> Sets the subsystem to its reset state. </summary>
-    ''' <remarks> David, 7/1/2016. </remarks>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.QueryDmmInstalled()

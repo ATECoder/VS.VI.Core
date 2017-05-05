@@ -42,7 +42,6 @@ Public Class ThermalTransientHeader
     End Sub
 
     ''' <summary> Executes the device under test property changed action. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As DeviceUnderTest, ByVal propertyName As String)
@@ -96,7 +95,6 @@ Public Class ThermalTransientHeader
     Private WithEvents _ThermalTransient As ThermalTransient
 
     ''' <summary> Executes the device under test property changed action. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As ThermalTransient, ByVal propertyName As String)

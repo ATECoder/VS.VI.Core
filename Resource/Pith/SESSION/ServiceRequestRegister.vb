@@ -3,7 +3,6 @@ Imports System.ComponentModel
 Partial Public Class SessionBase
 
     ''' <summary> Initializes the service request register bits. </summary>
-    ''' <remarks> David, 11/18/2015. </remarks>
     Private Sub _InitializeServiceRequestRegisterBits()
         Me._MessageAvailableBits = ServiceRequests.MessageAvailable
         Me._ErrorAvailableBits = ServiceRequests.ErrorAvailable

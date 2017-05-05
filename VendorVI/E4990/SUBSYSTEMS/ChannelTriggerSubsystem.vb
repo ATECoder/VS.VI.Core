@@ -16,7 +16,6 @@ Public Class ChannelTriggerSubsystem
     ''' <summary>
     ''' Initializes a new instance of the <see cref="SourceChannelSubsystem" /> class.
     ''' </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     ''' <param name="channelNumber">   A reference to a <see cref="VI.StatusSubsystemBase">message
     '''                                based session</see>. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>

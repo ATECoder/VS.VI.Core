@@ -210,7 +210,6 @@ Public MustInherit Class LinkSubsystem
 #Region " COLLECT GARBAGE "
 
     ''' <summary> Collect garbage wait complete. </summary>
-    ''' <remarks> David, 1/11/2016. </remarks>
     ''' <param name="node">    Specifies the remote node number to validate. </param>
     ''' <param name="timeout"> Specifies the time to wait for the instrument to return operation
     '''                        completed. </param>

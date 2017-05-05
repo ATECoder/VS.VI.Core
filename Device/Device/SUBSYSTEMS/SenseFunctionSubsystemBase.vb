@@ -611,7 +611,6 @@ Public MustInherit Class SenseFunctionSubsystemBase
 End Class
 
 ''' <summary> Values that represent average filter types. </summary>
-''' <remarks> David, 12/30/2016. </remarks>
 Public Enum AverageFilterType
     <ComponentModel.Description("Repeat (REP)")> Repeat
     <ComponentModel.Description("Moving (MOV)")> Moving

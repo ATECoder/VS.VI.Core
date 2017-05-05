@@ -59,7 +59,6 @@ Public MustInherit Class ChannelSubsystemBase
     End Property
 
     ''' <summary> Applies the closed channels described by value. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <param name="value">   The scan list. </param>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
@@ -74,7 +73,6 @@ Public MustInherit Class ChannelSubsystemBase
     Protected Overridable ReadOnly Property ClosedChannelsQueryCommand As String
 
     ''' <summary> Queries closed channels. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <returns> The closed channels. </returns>
     Public Function QueryClosedChannels() As String
         Me.ClosedChannels = Me.Query(Me.ClosedChannels, Me.ClosedChannelsQueryCommand)
@@ -87,7 +85,6 @@ Public MustInherit Class ChannelSubsystemBase
     Protected Overridable ReadOnly Property ClosedChannelsCommandFormat As String
 
     ''' <summary> Writes a closed channels. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <param name="value">   The scan list. </param>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
@@ -104,7 +101,6 @@ Public MustInherit Class ChannelSubsystemBase
     Protected Overridable ReadOnly Property OpenChannelsCommandFormat As String
 
     ''' <summary> Open the specified channels in the list and read back the closed channels. </summary>
-    ''' <remarks> David, 2/9/2016. </remarks>
     ''' <param name="channelList"> List of channels. </param>
     ''' <param name="timeout">     The timeout. </param>
     ''' <returns> A String. </returns>
@@ -114,7 +110,6 @@ Public MustInherit Class ChannelSubsystemBase
     End Function
 
     ''' <summary> Opens the specified channels in the list. </summary>
-    ''' <remarks> David, 2/9/2016. </remarks>
     ''' <param name="channelList"> List of channels. </param>
     ''' <param name="timeout">     The timeout. </param>
     ''' <returns> A String. </returns>
@@ -131,7 +126,6 @@ Public MustInherit Class ChannelSubsystemBase
     Protected Overridable ReadOnly Property OpenChannelsCommand As String
 
     ''' <summary> Opens all channels and reads back the closed channels. </summary>
-    ''' <remarks> David, 2/9/2016. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
     Public Function ApplyOpenAll(ByVal timeout As TimeSpan) As String
@@ -140,7 +134,6 @@ Public MustInherit Class ChannelSubsystemBase
     End Function
 
     ''' <summary> Opens all channels. </summary>
-    ''' <remarks> David, 2/9/2016. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
     Public Function WriteOpenAll(ByVal timeout As TimeSpan) As String

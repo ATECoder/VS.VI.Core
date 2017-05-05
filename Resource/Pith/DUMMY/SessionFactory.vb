@@ -1,5 +1,4 @@
 ﻿''' <summary> A session factory for dummy session, interface and resource manager. </summary>
-''' <remarks> David, 11/29/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -14,21 +13,18 @@ Public Class DummySessionFactory
     Inherits SessionFactoryBase
 
     ''' <summary> Creates gpib interface session. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     ''' <returns> The new gpib interface session. </returns>
     Public Overrides Function CreateGpibInterfaceSession() As InterfaceSessionBase
         Return New DummyGpibInterfaceSession()
     End Function
 
     ''' <summary> Creates resources manager. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     ''' <returns> The new resources manager. </returns>
     Public Overrides Function CreateResourcesManager() As ResourcesManagerBase
         Return New DummyLocalResourcesManager()
     End Function
 
     ''' <summary> Creates a session. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     ''' <returns> The new session. </returns>
     Public Overrides Function CreateSession() As SessionBase
         Return New DummySession()

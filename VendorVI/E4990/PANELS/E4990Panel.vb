@@ -38,7 +38,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="device"> The device. </param>
     Protected Sub New(ByVal device As Device)
         MyBase.New(device)
@@ -68,7 +67,6 @@ Public Class E4990Panel
     ''' Releases the unmanaged resources used by the isr.VI.Instrument.ResourcePanelBase and
     ''' optionally releases the managed resources.
     ''' </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                          release only unmanaged resources. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -94,7 +92,6 @@ Public Class E4990Panel
 #Region " DEVICE "
 
     ''' <summary> Assigns a device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
@@ -104,7 +101,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Assigns a device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
@@ -113,7 +109,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Releases the device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     Protected Overrides Sub ReleaseDevice()
         If Me.IsDeviceOwner Then
             MyBase.ReleaseDevice()
@@ -178,7 +173,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Device initialized. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <param name="sender"> <see cref="T:System.Object" />
     '''                       instance of this
     '''                                          <see cref="T:System.Windows.Forms.Control" /> </param>
@@ -224,7 +218,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Executes the title changed action. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Protected Overrides Sub OnTitleChanged(ByVal value As String)
@@ -347,7 +340,6 @@ Public Class E4990Panel
 #Region " CHANNEL MARKER "
 
     ''' <summary> Displays the active reading caption and status. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     Private Sub DisplayActiveReading()
         Const clear As String = "    "
         Dim caption As String = clear
@@ -653,7 +645,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Reads a service request status. </summary>
-    ''' <remarks> David, 12/26/2015. </remarks>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub ReadServiceRequestStatus()
         Try
@@ -668,7 +659,6 @@ Public Class E4990Panel
 #Region " SYSTEM "
 
     ''' <summary> Contact check enabled menu item check state changed. </summary>
-    ''' <remarks> David, 3/7/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId:="menuItem")>
@@ -731,7 +721,6 @@ Public Class E4990Panel
     End Property
 
     ''' <summary> Abort button click. </summary>
-    ''' <remarks> David, 1/20/2017. </remarks>
     ''' <param name="sender"> <see cref="T:System.Object" />
     '''                                             instance of this
     '''                       <see cref="T:System.Windows.Forms.Control" /> </param>
@@ -792,7 +781,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Reading combo box selected value changed. </summary>
-    ''' <remarks> David, 3/17/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -904,7 +892,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Select source function mode. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     Private Sub SelectSourceFunctionMode()
         Me.Device.SourceChannelSubsystem.SafeSelectFunctionMode(Me._SourceFunctionComboBox)
         If Me.Device.SourceChannelSubsystem.FunctionMode.HasValue Then
@@ -1022,7 +1009,6 @@ Public Class E4990Panel
 #Region " SENSE / SWEEP "
 
     ''' <summary> Configure sweep. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <param name="lowFrequency">  The low frequency. </param>
     ''' <param name="highFrequency"> The high frequency. </param>
     Public Sub ConfigureSweep(ByVal lowFrequency As Double, ByVal highFrequency As Double)
@@ -1067,7 +1053,6 @@ Public Class E4990Panel
 #Region " SENSE / TRACES "
 
     ''' <summary> Configure sweep. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     Public Sub ConfigureTrace()
 
         ' Setup Channel 1
@@ -1168,7 +1153,6 @@ Public Class E4990Panel
 #Region " CONTROL EVENT HANDLERS: SENSE / CAL "
 
     ''' <summary> Selects a new Adapter to display. </summary>
-    ''' <remarks> David, 7/9/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     ''' <returns> A VI.AdapterType. </returns>
     Friend Function SelectAdapter(ByVal value As String) As VI.AdapterType
@@ -1284,7 +1268,6 @@ Public Class E4990Panel
 #Region " CONTROL EVENT HANDLERS: SCALE "
 
     ''' <summary> Automatic scale menu item click. </summary>
-    ''' <remarks> David, 7/12/2016. </remarks>
     ''' <param name="sender"> <see cref="T:System.Object" />
     '''                                             instance of this
     '''                       <see cref="T:System.Windows.Forms.Control" /> </param>
@@ -1311,7 +1294,6 @@ Public Class E4990Panel
 #Region " CONTROL EVENT HANDLERS: TRIGGER "
 
     ''' <summary> Applies the trigger options menu item click. </summary>
-    ''' <remarks> David, 7/12/2016. </remarks>
     ''' <param name="sender"> <see cref="T:System.Object" />
     '''                                             instance of this
     '''                       <see cref="T:System.Windows.Forms.Control" /> </param>
@@ -1391,7 +1373,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Clears (CLS) the execution state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -1417,7 +1398,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Resets (RST) the known state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -1443,7 +1423,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Initializes to known state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -1612,14 +1591,12 @@ Public Class E4990Panel
 #Region " TALKER "
 
     ''' <summary> Adds listeners such as current level trace message box and log. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Protected Overrides Sub AddListeners()
         MyBase.AddListeners()
         Me._SimpleReadWriteControl.AddListeners(Me.Talker.Listeners)
     End Sub
 
     ''' <summary> Adds listeners such as top level trace message box and log. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
         MyBase.AddListeners(listeners)
@@ -1627,7 +1604,6 @@ Public Class E4990Panel
     End Sub
 
     ''' <summary> Adds the log listener. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="log"> The log. </param>
     Public Overrides Sub AddListeners(ByVal log As MyLog)

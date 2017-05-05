@@ -1,7 +1,6 @@
 ﻿Imports isr.VI.National.Visa.GpibInterfaceExtensions
 Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> A gpib interface session. </summary>
-''' <remarks> David, 11/21/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -18,7 +17,6 @@ Public Class GpibInterfaceSession
 #Region " CONSTRUCTOR "
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     Public Sub New()
         MyBase.New()
     End Sub
@@ -63,7 +61,6 @@ Public Class GpibInterfaceSession
     Private ReadOnly Property GpibInterface As NationalInstruments.Visa.GpibInterface
 
     ''' <summary> Opens a session. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <param name="timeout">      The timeout. </param>
     Public Overrides Sub OpenSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
@@ -72,7 +69,6 @@ Public Class GpibInterfaceSession
     End Sub
 
     ''' <summary> Opens a session. </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     Private Sub _OpenSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
         Me._GpibInterface = New NationalInstruments.Visa.GpibInterface(resourceName, Ivi.Visa.AccessModes.None,
@@ -80,7 +76,6 @@ Public Class GpibInterfaceSession
     End Sub
 
     ''' <summary> Opens a session. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     Public Overrides Sub OpenSession(ByVal resourceName As String)
         Me._OpenSession(resourceName)
@@ -88,21 +83,18 @@ Public Class GpibInterfaceSession
     End Sub
 
     ''' <summary> Opens a session. </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     Private Sub _OpenSession(ByVal resourceName As String)
         Me._GpibInterface = New NationalInstruments.Visa.GpibInterface(resourceName)
     End Sub
 
     ''' <summary> Closes the session. </summary>
-    ''' <remarks> David, 11/30/2015. </remarks>
     Public Overrides Sub CloseSession()
         Me._CloseSession()
         MyBase.CloseSession()
     End Sub
 
     ''' <summary> Closes the session. </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     Private Sub _CloseSession()
         If Me._GpibInterface IsNot Nothing Then
             Me._GpibInterface.DiscardEvents(Ivi.Visa.EventType.AllEnabled)
@@ -115,7 +107,6 @@ Public Class GpibInterfaceSession
 #Region " GPIB INTERFACE "
 
     ''' <summary> Sends the interface clear. </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     Public Overrides Sub SendInterfaceClear()
         Me.GpibInterface.SendInterfaceClear()
     End Sub

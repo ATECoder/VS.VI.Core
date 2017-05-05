@@ -1,6 +1,5 @@
 ﻿Imports isr.Core.Pith
 ''' <summary> An insulation test. </summary>
-''' <remarks> David, 3/9/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -66,7 +65,6 @@ Public Class InsulationTest
 #End Region
 
     ''' <summary> Publishes this object. </summary>
-    ''' <remarks> David, 3/10/2016. </remarks>
     Public Overrides Sub Publish() Implements IPresettablePropertyPublisher.Publish
         Me.Binning.Publish()
         Me.Insulation.Publish()

@@ -31,7 +31,6 @@ Public Class EG2000Panel
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="device"> The device. </param>
     Protected Sub New(ByVal device As Device)
         MyBase.New(device)
@@ -77,7 +76,6 @@ Public Class EG2000Panel
 #Region " FORM EVENTS "
 
     ''' <summary> Handles the <see cref="E:System.Windows.Forms.UserControl.Load" /> event. </summary>
-    ''' <remarks> David, 1/4/2016. </remarks>
     ''' <param name="e"> An <see cref="T:System.EventArgs" /> that contains the event data. </param>
     Protected Overrides Sub OnLoad(e As EventArgs)
         Try
@@ -92,7 +90,6 @@ Public Class EG2000Panel
 #Region " DEVICE "
 
     ''' <summary> Assigns a device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
@@ -102,7 +99,6 @@ Public Class EG2000Panel
     End Sub
 
     ''' <summary> Assigns a device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
@@ -111,7 +107,6 @@ Public Class EG2000Panel
     End Sub
 
     ''' <summary> Releases the device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     Protected Overrides Sub ReleaseDevice()
         If Me.IsDeviceOwner Then
             MyBase.ReleaseDevice()
@@ -193,7 +188,6 @@ Public Class EG2000Panel
     End Sub
 
     ''' <summary> Executes the title changed action. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Protected Overrides Sub OnTitleChanged(ByVal value As String)
         Me._TitleLabel.Text = value
@@ -359,7 +353,6 @@ Public Class EG2000Panel
     End Sub
 
     ''' <summary> Reads a service request status. </summary>
-    ''' <remarks> David, 12/26/2015. </remarks>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub ReadServiceRequestStatus()
         Try
@@ -450,7 +443,6 @@ Public Class EG2000Panel
     End Sub
 
     ''' <summary> Clears (CLS) the execution state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -477,7 +469,6 @@ Public Class EG2000Panel
 
 
     ''' <summary> Resets (RST) the known state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -503,7 +494,6 @@ Public Class EG2000Panel
     End Sub
 
     ''' <summary> Initializes to known state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -757,14 +747,12 @@ Public Class EG2000Panel
 #Region " TALKER "
 
     ''' <summary> Adds listeners such as current level trace message box and log. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Protected Overrides Sub AddListeners()
         MyBase.AddListeners()
         Me._SimpleReadWriteControl.AddListeners(Me.Talker.Listeners)
     End Sub
 
     ''' <summary> Adds listeners such as top level trace message box and log. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
         MyBase.AddListeners(listeners)
@@ -772,7 +760,6 @@ Public Class EG2000Panel
     End Sub
 
     ''' <summary> Adds the log listener. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="log"> The log. </param>
     Public Overrides Sub AddListeners(ByVal log As MyLog)

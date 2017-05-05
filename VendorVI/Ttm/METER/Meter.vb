@@ -28,7 +28,6 @@ Public Class Meter
     End Sub
 
     ''' <summary> Creates a new Device. </summary>
-    ''' <remarks> David, 5/1/2017. </remarks>
     ''' <returns> A Device. </returns>
     Public Shared Function Create() As Meter
         Dim device As Meter = Nothing
@@ -76,7 +75,6 @@ Public Class Meter
 #Region " MASTER DEVICE "
 
     ''' <summary> Capture synchronization context. </summary>
-    ''' <remarks> David, 4/3/2017. </remarks>
     ''' <param name="syncContext"> Context for the synchronization. </param>
     Public Overrides Sub CaptureSyncContext(ByVal syncContext As Threading.SynchronizationContext)
         MyBase.CaptureSyncContext(syncContext)
@@ -242,7 +240,6 @@ Public Class Meter
     End Sub
 
     ''' <summary> Raises the system. component model. property changed event. </summary>
-    ''' <remarks> David, 3/25/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As Device, ByVal propertyName As String)
@@ -320,7 +317,6 @@ Public Class Meter
     End Sub
 
     ''' <summary> Preforms a full reset, initialize and clear. </summary>
-    ''' <remarks> David, 1/8/2016. </remarks>
     Public Sub ResetClear()
 
         Me.ResetKnownState()
@@ -892,7 +888,6 @@ Public Class Meter
     End Property
 
     ''' <summary> Handles the measure sequencer property changed event. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As MeasureSequencer, ByVal propertyName As String)
@@ -1050,7 +1045,6 @@ Public Class Meter
     End Property
 
     ''' <summary> Handles the trigger sequencer property changed event. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As TriggerSequencer, ByVal propertyName As String)
@@ -1183,14 +1177,12 @@ Public Class Meter
 #Region " TALKER "
 
     ''' <summary> Adds subsystem listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub AddSubsystemListeners()
         Me.ShuntResistance.AddListeners(Me.Talker.Listeners)
         Me.MasterDevice.AddListeners(Me.Talker.Listeners)
     End Sub
 
     ''' <summary> Clears the subsystem listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub ClearSubsystemListeners()
         Me.MasterDevice.ClearListeners()
     End Sub
@@ -1200,7 +1192,6 @@ Public Class Meter
 #Region " I TALKER IMPLEMENTATION "
 
     ''' <summary> Dispose talker. </summary>
-    ''' <remarks> David, 12/15/2016. </remarks>
     Private Sub DisposeTalker()
         Me.Talker?.Listeners.Clear()
         Me._Talker = Nothing
@@ -1211,28 +1202,24 @@ Public Class Meter
     Public ReadOnly Property Talker As ITraceMessageTalker
 
     ''' <summary> Adds a listener. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="item"> The item. </param>
     Public Overridable Sub AddListener(ByVal item As ITraceMessageListener)
         Me._Talker.AddListener(item)
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
         Me._Talker.AddListeners(listeners)
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="talker"> The talker. </param>
     Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
         Me._Talker.AddListeners(talker)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
         Me.Talker.Listeners.Clear()
         Me.ShuntResistance.ClearListeners()
@@ -1240,14 +1227,12 @@ Public Class Meter
     End Sub
 
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
         Me.Talker.UpdateTraceLogLevel(traceLevel)
     End Sub
 
     ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
         Me.Talker.UpdateTraceShowLevel(traceLevel)

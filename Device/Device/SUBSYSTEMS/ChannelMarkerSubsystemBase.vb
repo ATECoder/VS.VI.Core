@@ -17,7 +17,6 @@ Public MustInherit Class ChannelMarkerSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="Calculate2SubsystemBase" /> class.
     ''' </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     ''' <param name="markerNumber">    The Marker number. </param>
     ''' <param name="channelNumber">   The channel number. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>

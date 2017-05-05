@@ -4,7 +4,6 @@ Imports isr.Core.Pith
 Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Panel for simple service requests. </summary>
-''' <remarks> David, 12/24/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -43,7 +42,6 @@ Public Class ServiceRequesterPanel
     ''' Disposes of the resources (other than memory) used by the
     ''' <see cref="T:System.Windows.Forms.Form" />.
     ''' </summary>
-    ''' <remarks> David, 12/19/2015. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                          release only unmanaged resources. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -76,7 +74,6 @@ Public Class ServiceRequesterPanel
     Private _Session As SessionBase
 
     ''' <summary> Queries if a session is open. </summary>
-    ''' <remarks> David, 11/27/2015. </remarks>
     ''' <returns> <c>true</c> if a session is open; otherwise <c>false</c> </returns>
     Private Function IsSessionOpen() As Boolean
         Return Me._Session IsNot Nothing AndAlso Me._Session.IsSessionOpen
@@ -188,7 +185,6 @@ Public Class ServiceRequesterPanel
     End Sub
 
     ''' <summary> Writes a button click. </summary>
-    ''' <remarks> David, 11/27/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")>
@@ -241,7 +237,6 @@ Public Class ServiceRequesterPanel
     End Sub
 
     ''' <summary> Raises the service requested event. </summary>
-    ''' <remarks> David, 11/27/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub HandleMessageService(ByVal sender As SessionBase, value As ServiceRequests)
@@ -257,7 +252,6 @@ Public Class ServiceRequesterPanel
     End Sub
 
     ''' <summary> Raises the service requested event. </summary>
-    ''' <remarks> David, 11/27/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -305,13 +299,11 @@ Public Class ServiceRequesterPanel
 #Region " TALKER "
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     Protected Overloads Sub AddListeners()
         Me.Talker.Listeners.Add(Me._TraceMessagesBox)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
@@ -323,7 +315,6 @@ Public Class ServiceRequesterPanel
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>

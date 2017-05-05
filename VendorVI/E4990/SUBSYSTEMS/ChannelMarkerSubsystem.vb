@@ -16,7 +16,6 @@ Public Class ChannelMarkerSubsystem
     ''' <summary>
     ''' Initializes a new instance of the <see cref="SourceChannelSubsystem" /> class.
     ''' </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     ''' <param name="markerNumber">    The marker number. </param>
     ''' <param name="channelNumber">   A reference to a <see cref="VI.StatusSubsystemBase">message
     '''                                based session</see>. </param>
@@ -140,7 +139,6 @@ Public Class ChannelMarkerSubsystem
     End Sub
 
     ''' <summary> Initializes the marker average. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="device"> The device. </param>
     Public Sub InitializeMarkerAverage(ByVal device As Device)
@@ -153,7 +151,6 @@ Public Class ChannelMarkerSubsystem
     End Sub
 
     ''' <summary> Reads marker average. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <param name="device"> The device. </param>
     Public Sub ReadMarkerAverage(ByVal device As Device)
         If device Is Nothing Then Throw New ArgumentNullException(NameOf(device))

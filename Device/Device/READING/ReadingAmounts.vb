@@ -23,7 +23,6 @@ Public MustInherit Class ReadingAmounts
     End Sub
 
     ''' <summary> Constructs this class. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <param name="model"> The value. </param>
     Protected Sub New(ByVal model As ReadingAmounts)
         Me.New()
@@ -43,7 +42,6 @@ Public MustInherit Class ReadingAmounts
     Public Const DefaultDelimiter As String = ","
 
     ''' <summary> Applies the measured data. </summary>
-    ''' <remarks> David, 3/17/2016. </remarks>
     ''' <param name="values">    A record of one or more reading values or an empty string to clear
     '''                            the current readings. </param>
     ''' <param name="delimiter"> The delimiter. </param>
@@ -80,7 +78,6 @@ Public MustInherit Class ReadingAmounts
     End Function
 
     ''' <summary> Applies  the measured data. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <param name="values"> Specifies the values. </param>
     ''' <returns> <c>True</c> if applies; <c>False</c> otherwise. </returns>
     Public Overridable Function TryApplyReadings(ByVal values As Queue(Of String)) As Boolean
@@ -132,7 +129,6 @@ Public MustInherit Class ReadingAmounts
     End Function
 
     ''' <summary> Attempts to evaluate using the applied reading and given status. </summary>
-    ''' <remarks> David, 3/17/2016. </remarks>
     ''' <param name="status"> The status. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Overridable Function TryEvaluate(ByVal status As Long) As Boolean
@@ -153,7 +149,6 @@ Public MustInherit Class ReadingAmounts
 #Region " UNITS "
 
     ''' <summary> Adds a unit to the units dictionary. </summary>
-    ''' <remarks> David, 3/19/2016. </remarks>
     ''' <param name="suffix"> The suffix. </param>
     ''' <param name="unit">   The unit. </param>
     Public Shared Sub AddUnit(ByVal suffix As String, ByVal unit As Arebis.TypedUnits.Unit)
@@ -280,7 +275,6 @@ Public MustInherit Class ReadingAmounts
     Public Property ActiveReadingType As isr.VI.ReadingTypes
 
     ''' <summary> Returns the meta status of the active reading. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <returns> The MetaStatus. </returns>
     Public Function ActiveMetaStatus() As MetaStatus
         Dim result As MetaStatus = New MetaStatus
@@ -290,14 +284,12 @@ Public MustInherit Class ReadingAmounts
     End Function
 
     ''' <summary> Active reading amount. </summary>
-    ''' <remarks> David, 3/19/2016. </remarks>
     ''' <returns> A ReadingAmount. </returns>
     Public Function ActiveReadingAmount() As ReadingAmount
         Return TryCast(Me.Readings(Me.ActiveReadingType), ReadingAmount)
     End Function
 
     ''' <summary> Active reading unit symbol. </summary>
-    ''' <remarks> David, 3/19/2016. </remarks>
     ''' <returns> A String. </returns>
     Public Function ActiveReadingUnitSymbol() As String
         Dim result As String = ""
@@ -309,7 +301,6 @@ Public MustInherit Class ReadingAmounts
     End Function
 
     ''' <summary> Returns the caption value of the active reading. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <returns> A String. </returns>
     Public Function ActiveAmountCaption() As String
         Dim result As String = ""
@@ -336,7 +327,6 @@ Public MustInherit Class ReadingAmounts
     End Function
 
     ''' <summary> List elements. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     ''' <param name="excluded">    The excluded. </param>

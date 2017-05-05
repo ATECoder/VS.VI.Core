@@ -73,7 +73,6 @@ Public MustInherit Class SubsystemBase
 #Region " SESSION "
 
     ''' <summary> Applies the session described by value. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The value. </param>
     Public Sub ApplySession(ByVal value As SessionBase)
         Me._ApplySession(value)
@@ -81,7 +80,6 @@ Public MustInherit Class SubsystemBase
     End Sub
 
     ''' <summary> Applies the session described by value. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The value. </param>
     Private Sub _ApplySession(ByVal value As SessionBase)
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
@@ -265,7 +263,6 @@ Public MustInherit Class SubsystemBase
     End Function
 
     ''' <summary> Write the value without reading back the value from the device. </summary>
-    ''' <remarks> David, 1/11/2016. </remarks>
     ''' <param name="commandFormat"> The command format. </param>
     ''' <param name="args">          A variable-length parameters list containing arguments. </param>
     ''' <returns> The value. </returns>
@@ -274,7 +271,6 @@ Public MustInherit Class SubsystemBase
     End Function
 
     ''' <summary> Write the value without reading back the value from the device. </summary>
-    ''' <remarks> David, 12/21/2015. </remarks>
     ''' <param name="value"> The value. </param>
     ''' <returns> The value. </returns>
     Public Function Write(ByVal value As String) As String
@@ -320,14 +316,12 @@ Public MustInherit Class SubsystemBase
     Public ReadOnly Property Talker As ITraceMessageTalker
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
         Me.Talker.AddListeners(listeners)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Sub ClearListeners() Implements ITalker.ClearListeners
         Me.Talker.Listeners.Clear()
     End Sub
@@ -337,14 +331,12 @@ Public MustInherit Class SubsystemBase
     End Sub
 
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
         Me.Talker.UpdateTraceLogLevel(traceLevel)
     End Sub
 
     ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
         Me.Talker.UpdateTraceShowLevel(traceLevel)
@@ -355,7 +347,6 @@ Public MustInherit Class SubsystemBase
 End Class
 
 ''' <summary> Collection of subsystems. </summary>
-''' <remarks> David, 12/21/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -419,7 +410,6 @@ Public Class SubsystemCollection
 #Region " CLEAR/DISPOSE "
 
     ''' <summary> Dispose items. </summary>
-    ''' <remarks> David, 1/1/2016. </remarks>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub DisposeItems()
         Me.ClearListeners()
@@ -465,7 +455,6 @@ Public Class SubsystemCollection
     End Sub
 
     ''' <summary> Capture synchronization context. </summary>
-    ''' <remarks> David, 4/3/2017. </remarks>
     ''' <param name="syncContext"> Context for the synchronization. </param>
     Public Sub CaptureSyncContext(ByVal syncContext As Threading.SynchronizationContext)
         For Each ss As SubsystemBase In Me
@@ -478,7 +467,6 @@ Public Class SubsystemCollection
 #Region " TALKER "
 
     ''' <summary> Adds the listeners. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
         For Each element As ITalker In Me.Items
@@ -487,7 +475,6 @@ Public Class SubsystemCollection
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Sub ClearListeners() Implements ITalker.ClearListeners
         For Each element As ITalker In Me.Items
             element.ClearListeners()
@@ -495,7 +482,6 @@ Public Class SubsystemCollection
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="talker"> The talker. </param>
     Public Sub AddListeners(talker As ITraceMessageTalker) Implements ITalker.AddListeners
         For Each element As ITalker In Me.Items
@@ -504,7 +490,6 @@ Public Class SubsystemCollection
     End Sub
 
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
         For Each element As ITalker In Me.Items
@@ -513,7 +498,6 @@ Public Class SubsystemCollection
     End Sub
 
     ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
         For Each element As ITalker In Me.Items

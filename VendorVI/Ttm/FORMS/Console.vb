@@ -35,7 +35,6 @@ Public Class Console
     ''' Disposes of the resources (other than memory) used by the
     ''' <see cref="T:System.Windows.Forms.Form" />.
     ''' </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                          release only unmanaged resources. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -542,7 +541,6 @@ Public Class Console
     End Sub
 
     ''' <summary> Executes the connector property changed action. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       Specifies the object where the call originated. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As Instrument.ResourceSelectorConnector, ByVal propertyName As String)
@@ -848,7 +846,6 @@ Public Class Console
 #Region " PART: SHUNT RESISTANCE "
 
     ''' <summary> Raises the property changed event. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="sender"> The source of the event. </param>
     Private Sub OnPropertyChanged(ByVal sender As ShuntResistance, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
@@ -886,7 +883,6 @@ Public Class Console
     End Sub
 
     ''' <summary> Raises the property changed event. </summary>
-    ''' <remarks> David, 3/25/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As ConfigurationPanel, propertyName As String)
@@ -923,7 +919,6 @@ Public Class Console
 #Region " TTM: METER "
 
     ''' <summary> Assigns a Meter. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignMeter(ByVal value As Meter)
         Me._Meter = value
@@ -935,7 +930,6 @@ Public Class Console
     Private Property IsMeterOwner As Boolean
 
     ''' <summary> Assigns a Meter. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Public Overloads Sub AssignMeter(ByVal value As Meter)
         Me.IsMeterOwner = False
@@ -943,7 +937,6 @@ Public Class Console
     End Sub
 
     ''' <summary> Releases the Meter. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     Protected Sub ReleaseMeter()
         If Me.IsMeterOwner Then
             Me._Meter?.Dispose() : Me._Meter = Nothing
@@ -978,7 +971,6 @@ Public Class Console
     End Property
 
     ''' <summary> Raises the property changed event. </summary>
-    ''' <remarks> David, 3/25/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As Meter, ByVal propertyName As String)
@@ -1026,7 +1018,6 @@ Public Class Console
     End Property
 
     ''' <summary> Handles the measure sequencer property changed event. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As MeasureSequencer, ByVal propertyName As String)
@@ -1115,7 +1106,6 @@ Public Class Console
     End Property
 
     ''' <summary> Handles the trigger sequencer property changed event. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As TriggerSequencer, ByVal propertyName As String)
@@ -1382,7 +1372,6 @@ Public Class Console
 #Region " TALKER "
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     Protected Overloads Sub AddListeners()
         Me.Talker.Listeners.Add(Me._TraceMessagesBox)
         Me._PartsPanel.AddListeners(Me.Talker.Listeners)
@@ -1390,7 +1379,6 @@ Public Class Console
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     Public Overrides Sub AddListener(ByVal item As ITraceMessageListener)
         If item Is Nothing Then Throw New ArgumentNullException(NameOf(item))
         MyBase.AddListener(item)
@@ -1402,7 +1390,6 @@ Public Class Console
     End Sub
 
     ''' <summary> Executes the trace messages box property changed action. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="sender">       The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, ByVal propertyName As String)
@@ -1413,7 +1400,6 @@ Public Class Console
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="sender"> The sender. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -1460,7 +1446,6 @@ End Class
     End Sub
 
     ''' <summary> Displays a resource names described by comboBox. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="comboBox"> The combo box. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub DisplayResourceNames(ByVal comboBox As Windows.Forms.ListControl)

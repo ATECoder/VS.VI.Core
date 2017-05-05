@@ -72,7 +72,6 @@ Public Class VersionInfo
     End Sub
 
     ''' <summary> Builds the identity. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <returns> A String. </returns>
     Public Function BuildIdentity() As String
         Dim builder As New System.Text.StringBuilder

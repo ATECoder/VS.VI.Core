@@ -24,7 +24,6 @@ Public MustInherit Class ArmLayerSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="ArmLayerSubsystemBase" /> class.
     ''' </summary>
-    ''' <remarks> David, 3/11/2016. </remarks>
     ''' <param name="layerNumber">     The arm layer number. </param>
     ''' <param name="statusSubsystem"> A reference to a
     '''                                <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
@@ -222,7 +221,6 @@ Public MustInherit Class ArmLayerSubsystemBase
     End Property
 
     ''' <summary> List supported Arm sources. </summary>
-    ''' <remarks> David, 1/23/2017. </remarks>
     ''' <param name="comboBox"> The combo box. </param>
     Public Sub ListSupportedArmSources(ByVal comboBox As System.Windows.Forms.ComboBox)
         If comboBox Is Nothing Then Throw New ArgumentNullException(NameOf(comboBox))
@@ -533,7 +531,6 @@ End Class
 #Region " UNUSED "
 #If False Then
     ''' <summary> Builds a command. </summary>
-    ''' <remarks> David, 3/10/2016. </remarks>
     ''' <param name="baseCommand"> The base command. </param>
     ''' <returns> A String. </returns>
     Protected Function BuildCommand(ByVal baseCommand As String) As String

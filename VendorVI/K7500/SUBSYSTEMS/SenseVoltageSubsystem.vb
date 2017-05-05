@@ -25,7 +25,6 @@ Public Class SenseVoltageSubsystem
 #Region " I PRESETTABLE "
 
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
-    ''' <remarks> David, 6/27/2016. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         If Me.StatusSubsystem.LineFrequency.GetValueOrDefault(60) = 60 Then

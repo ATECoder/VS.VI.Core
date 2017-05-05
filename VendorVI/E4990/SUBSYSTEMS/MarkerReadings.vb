@@ -62,7 +62,6 @@ Public Class MarkerReadings
 #Region " PARSE "
 
     ''' <summary> Attempts to evaluate using the applied reading and given status. </summary>
-    ''' <remarks> David, 3/17/2016. </remarks>
     ''' <param name="status"> The status. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Overrides Function TryEvaluate(ByVal status As Long) As Boolean
@@ -93,7 +92,6 @@ Public Class MarkerReadings
     End Function
 
     ''' <summary> Attempts to parse from the given data. </summary>
-    ''' <remarks> David, 3/17/2016. </remarks>
     ''' <param name="values">  A queue of reading values. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function TryParse(ByVal values As Queue(Of String)) As Boolean

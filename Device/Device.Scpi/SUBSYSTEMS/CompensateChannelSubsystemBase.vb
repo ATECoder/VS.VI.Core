@@ -18,7 +18,6 @@ Public MustInherit Class CompensateChannelSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="Calculate2SubsystemBase" /> class.
     ''' </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     ''' <param name="compensationType"> Type of the compensation. </param>
     ''' <param name="channelNumber">    A reference to a <see cref="VI.StatusSubsystemBase">status
     '''                                 subsystem</see>. </param>

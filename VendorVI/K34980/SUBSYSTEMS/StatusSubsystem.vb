@@ -74,7 +74,6 @@ Public Class StatusSubsystem
 #Region " DEVICE ERRORS "
 
     ''' <summary> Reads the device errors. </summary>
-    ''' <remarks> David, 6/25/2016. </remarks>
     ''' <returns> The device errors. </returns>
     Public Overrides Function QueryDeviceErrors() As String
         ' the 7510 does not support reading the entire error queue.

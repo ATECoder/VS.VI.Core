@@ -53,7 +53,6 @@ Public MustInherit Class RouteSubsystemBase
     End Property
 
     ''' <summary> Applies the closed Channel described by value. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <param name="value">   The scan list. </param>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
@@ -68,7 +67,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property ClosedChannelQueryCommand As String
 
     ''' <summary> Queries closed Channel. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <returns> The closed Channel. </returns>
     Public Function QueryClosedChannel() As String
         Me.ClosedChannel = Me.Query(Me.ClosedChannel, Me.ClosedChannelQueryCommand)
@@ -81,7 +79,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property ClosedChannelCommandFormat As String
 
     ''' <summary> Writes a closed Channel. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <param name="value"> The scan list. </param>
     ''' <returns> A String. </returns>
     Public Function WriteClosedChannel(ByVal value As String, ByVal timeout As TimeSpan) As String
@@ -98,7 +95,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property OpenChannelCommandFormat As String
 
     ''' <summary> Applies the open channel list and reads back the list. </summary>
-    ''' <remarks> David, 2/9/2016. </remarks>
     ''' <param name="channelList"> List of Channel. </param>
     ''' <param name="timeout">     The timeout. </param>
     ''' <returns> A String. </returns>
@@ -142,7 +138,6 @@ Public MustInherit Class RouteSubsystemBase
     End Property
 
     ''' <summary> Applies the closed channels described by value. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <param name="value">   The scan list. </param>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
@@ -157,7 +152,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property ClosedChannelsQueryCommand As String
 
     ''' <summary> Queries closed channels. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <returns> The closed channels. </returns>
     Public Function QueryClosedChannels() As String
         Me.ClosedChannels = Me.Query(Me.ClosedChannels, Me.ClosedChannelsQueryCommand)
@@ -170,7 +164,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property ClosedChannelsCommandFormat As String
 
     ''' <summary> Writes a closed channels. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <param name="value">   The scan list. </param>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
@@ -206,7 +199,6 @@ Public MustInherit Class RouteSubsystemBase
     End Property
 
     ''' <summary> Applies the Open channels described by value. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <param name="value">   The scan list. </param>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
@@ -221,7 +213,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property OpenChannelsQueryCommand As String
 
     ''' <summary> Queries Open channels. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <returns> The Open channels. </returns>
     Public Function QueryOpenChannels() As String
         Me.OpenChannels = Me.Query(Me.OpenChannels, Me.OpenChannelsQueryCommand)
@@ -234,7 +225,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property OpenChannelsCommandFormat As String
 
     ''' <summary> Opens the specified channels in the list. </summary>
-    ''' <remarks> David, 2/9/2016. </remarks>
     ''' <param name="channelList"> List of channels. </param>
     ''' <param name="timeout">     The timeout. </param>
     ''' <returns> A String. </returns>
@@ -257,7 +247,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property OpenChannelsCommand As String
 
     ''' <summary> Applies the open all command, wait for timeout and read back the closed channels. </summary>
-    ''' <remarks> David, 2/9/2016. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
     Public Function ApplyOpenAll(ByVal timeout As TimeSpan) As String
@@ -266,7 +255,6 @@ Public MustInherit Class RouteSubsystemBase
     End Function
 
     ''' <summary> Opens all channels. </summary>
-    ''' <remarks> David, 2/9/2016. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> A String. </returns>
     Public Function WriteOpenAll(ByVal timeout As TimeSpan) As String
@@ -288,7 +276,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property RecallChannelPatternCommandFormat As String
 
     ''' <summary> Recalls channel pattern from a memory location. </summary>
-    ''' <remarks> David, 2/19/2016. </remarks>
     ''' <param name="memoryLocation"> Specifies a memory location between 1 and 100. </param>
     ''' <param name="timeout">        The timeout. </param>
     Public Sub RecallChannelPattern(ByVal memoryLocation As Integer, ByVal timeout As TimeSpan)
@@ -301,7 +288,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property SaveChannelPatternCommandFormat As String
 
     ''' <summary> Saves existing channel pattern into a memory location. </summary>
-    ''' <remarks> David, 2/19/2016. </remarks>
     ''' <param name="memoryLocation"> Specifies a memory location between 1 and 100. </param>
     ''' <param name="timeout">        The timeout. </param>
     Public Sub SaveChannelPattern(ByVal memoryLocation As Integer, ByVal timeout As TimeSpan)
@@ -339,7 +325,6 @@ Public MustInherit Class RouteSubsystemBase
     ''' Adds a channel list to the <see cref="LastMemoryLocation">+1: first available memory
     ''' location</see>.
     ''' </summary>
-    ''' <remarks> David, 2/9/2016. </remarks>
     ''' <param name="channelList"> List of channels. </param>
     ''' <param name="timeout">     The timeout. </param>
     ''' <returns> The new memory location. </returns>
@@ -419,7 +404,6 @@ Public MustInherit Class RouteSubsystemBase
     Private _SlotCardTypes As Dictionary(Of Integer, String)
 
     ''' <summary> Slot card type. </summary>
-    ''' <remarks> David, 12/4/2015. </remarks>
     ''' <param name="slotNumber"> The slot number. </param>
     ''' <returns> A String. </returns>
     Public Function SlotCardType(ByVal slotNumber As Integer) As String
@@ -431,7 +415,6 @@ Public MustInherit Class RouteSubsystemBase
     End Function
 
     ''' <summary> Applies the card type. </summary>
-    ''' <remarks> David, 12/4/2015. </remarks>
     ''' <param name="cardNumber"> The card number. </param>
     ''' <param name="cardType">   Type of the card. </param>
     ''' <returns> A String. </returns>
@@ -465,7 +448,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property SlotCardTypeCommandFormat As String
 
     ''' <summary> Writes a slot card type. </summary>
-    ''' <remarks> David, 12/4/2015. </remarks>
     ''' <param name="cardNumber"> The card number. </param>
     ''' <param name="cardType">   Type of the card. </param>
     ''' <returns> A String. </returns>
@@ -487,7 +469,6 @@ Public MustInherit Class RouteSubsystemBase
     Private _SlotCardSettlingTimes As Dictionary(Of Integer, TimeSpan)
 
     ''' <summary> Slot card settling time. </summary>
-    ''' <remarks> David, 12/4/2015. </remarks>
     ''' <param name="slotNumber"> The slot number. </param>
     ''' <returns> A TimeSpan. </returns>
     Public Function SlotCardSettlingTime(ByVal slotNumber As Integer) As TimeSpan
@@ -499,7 +480,6 @@ Public MustInherit Class RouteSubsystemBase
     End Function
 
     ''' <summary> Applies the slot card settling time. </summary>
-    ''' <remarks> David, 12/4/2015. </remarks>
     ''' <param name="cardNumber">   The card number. </param>
     ''' <param name="settlingTime"> The settling time. </param>
     ''' <returns> A TimeSpan. </returns>
@@ -536,7 +516,6 @@ Public MustInherit Class RouteSubsystemBase
     Protected Overridable ReadOnly Property SlotCardSettlingTimeCommandFormat As String
 
     ''' <summary> Writes a slot card settling time. </summary>
-    ''' <remarks> David, 12/4/2015. </remarks>
     ''' <param name="cardNumber">   The card number. </param>
     ''' <param name="settlingTime"> The settling time. </param>
     ''' <returns> A TimeSpan. </returns>

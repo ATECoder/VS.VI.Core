@@ -1,6 +1,5 @@
 ﻿Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> A Dummy GPIB interface session. </summary>
-''' <remarks> David, 11/21/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -17,7 +16,6 @@ Public Class DummyGpibInterfaceSession
 #Region " CONSTRUCTOR "
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     Public Sub New()
         MyBase.New()
     End Sub
@@ -62,7 +60,6 @@ Public Class DummyGpibInterfaceSession
 #Region " GPIB INTERFACE "
 
     ''' <summary> Sends the interface clear. </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     Public Overrides Sub SendInterfaceClear()
     End Sub
 

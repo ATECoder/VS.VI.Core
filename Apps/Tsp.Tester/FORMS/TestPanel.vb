@@ -47,7 +47,6 @@ Public Class TestPanel
     ''' Disposes of the resources (other than memory) used by the
     ''' <see cref="T:System.Windows.Forms.Form" />.
     ''' </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                          release only unmanaged resources. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -360,7 +359,6 @@ Public Class TestPanel
     End Sub
 
     ''' <summary> Executes the connector property changed action. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       Specifies the object where the call originated. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As Instrument.ResourceSelectorConnector, ByVal propertyName As String)
@@ -395,7 +393,6 @@ Public Class TestPanel
 #Region " TSP SYSTEM "
 
     ''' <summary> Updates the connection change described by isOpen. </summary>
-    ''' <remarks> David, 12/23/2015. </remarks>
     ''' <param name="isOpen"> true if this object is open. </param>
     Private Sub UpdateConnectionChange(ByVal isOpen As Boolean)
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, $"{IIf(isOpen, "Connected;. ", "Not connected;. ")}")
@@ -1574,14 +1571,12 @@ Public Class TestPanel
 #Region " TALKER "
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     Protected Overloads Sub AddListeners()
         Me.Talker.Listeners.Add(Me._TraceMessagesBox)
         'Me._InstrumentPanel.AddListeners(Me.Talker.Listeners)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
@@ -1596,7 +1591,6 @@ Public Class TestPanel
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>

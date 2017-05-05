@@ -3,7 +3,6 @@
     Namespace Support
 
         ''' <summary> A syntax of the Support LUA subsystem. </summary>
-        ''' <remarks> David, 1/6/2016. </remarks>
         ''' <license>
         ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
         ''' Licensed under The MIT License.</para><para>
@@ -23,7 +22,6 @@
     Namespace Meters
 
         ''' <summary> Syntax of the thermal transient subsystem. </summary>
-        ''' <remarks> David, 1/6/2016. </remarks>
         ''' <license>
         ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
         ''' Licensed under The MIT License.</para><para>

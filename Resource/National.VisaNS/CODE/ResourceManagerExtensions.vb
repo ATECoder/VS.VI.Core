@@ -15,7 +15,6 @@ Friend Module ResourceManagerExtensions
 #Region " CONVERSIONS "
 
     ''' <summary> Converts the given value. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     ''' <param name="value"> Reference to the
     '''                      <see cref="NationalInstruments.VisaNS.ResourceManager">resource
     '''                      manager</see>. </param>
@@ -29,7 +28,6 @@ Friend Module ResourceManagerExtensions
     End Function
 
     ''' <summary> Converts the given value. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     ''' <param name="value"> Reference to the
     '''                      <see cref="NationalInstruments.VisaNS.ResourceManager">resource
     '''                      manager</see>. </param>

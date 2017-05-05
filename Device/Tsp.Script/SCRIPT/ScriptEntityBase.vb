@@ -198,7 +198,6 @@ Public MustInherit Class ScriptEntityBase
     End Function
 
     ''' <summary> Query if 'value' includes any of the characters. </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="value">      The value. </param>
     ''' <param name="characters"> The characters. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
@@ -210,7 +209,6 @@ Public MustInherit Class ScriptEntityBase
     End Function
 
     ''' <summary> Query if 'value' is valid script name. </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="value"> The value. </param>
     ''' <returns> <c>true</c> if valid script name; otherwise <c>false</c> </returns>
     Public Shared Function IsValidScriptName(ByVal value As String) As Boolean
@@ -222,7 +220,6 @@ Public MustInherit Class ScriptEntityBase
     End Function
 
     ''' <summary> Query if 'value' is valid script file name. </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="value"> The value. </param>
     ''' <returns> <c>true</c> if valid script name; otherwise <c>false</c> </returns>
     Public Shared Function IsValidScriptFileName(ByVal value As String) As Boolean
@@ -630,7 +627,6 @@ Public Class ScriptEntityCollection
     Inherits ScriptEntityBaseCollection(Of ScriptEntityBase)
 
     ''' <summary> Gets key for item. </summary>
-    ''' <remarks> David, 12/21/2015. </remarks>
     ''' <param name="item"> The item. </param>
     ''' <returns> The key for item. </returns>
     Protected Overloads Overrides Function GetKeyForItem(ByVal item As ScriptEntityBase) As String

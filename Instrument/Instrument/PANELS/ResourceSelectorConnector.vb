@@ -141,7 +141,6 @@ Public Class ResourceSelectorConnector
     End Property
 
     ''' <summary> Toggle connection. </summary>
-    ''' <remarks> David, 12/23/2015. </remarks>
     ''' <param name="affirmative"> The value. </param>
     Private Sub UpdateConnectionState(ByVal affirmative As Boolean)
         ' enable or disable based on the connection status.
@@ -160,7 +159,6 @@ Public Class ResourceSelectorConnector
     End Sub
 
     ''' <summary> Executes the toggle connection action. </summary>
-    ''' <remarks> David, 12/23/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification:="OK")>
     Private Sub OnToggleConnection(ByVal sender As ToolStripItem)
@@ -186,7 +184,6 @@ Public Class ResourceSelectorConnector
     Public Event Connect As EventHandler(Of System.ComponentModel.CancelEventArgs)
 
     ''' <summary> Removes the event handler. </summary>
-    ''' <remarks> David, 12/21/2015. </remarks>
     ''' <param name="value"> The value. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveConnectEventHandler(ByVal value As EventHandler(Of System.ComponentModel.CancelEventArgs))
@@ -213,7 +210,6 @@ Public Class ResourceSelectorConnector
     Public Event Disconnect As EventHandler(Of System.ComponentModel.CancelEventArgs)
 
     ''' <summary> Removes the event handler. </summary>
-    ''' <remarks> David, 12/21/2015. </remarks>
     ''' <param name="value"> The value. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveDisconnectEventHandler(ByVal value As EventHandler(Of System.ComponentModel.CancelEventArgs))
@@ -422,7 +418,6 @@ Public Class ResourceSelectorConnector
     Public Event FindNames As EventHandler(Of EventArgs)
 
     ''' <summary> Removes the event handler. </summary>
-    ''' <remarks> David, 12/21/2015. </remarks>
     ''' <param name="value"> The value. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveFindNamesEventHandler(ByVal value As EventHandler(Of EventArgs))
@@ -506,7 +501,6 @@ Public Class ResourceSelectorConnector
     Public Event Clear As EventHandler(Of EventArgs)
 
     ''' <summary> Removes the event handler. </summary>
-    ''' <remarks> David, 12/21/2015. </remarks>
     ''' <param name="value"> The value. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveClearEventHandler(ByVal value As EventHandler(Of EventArgs))

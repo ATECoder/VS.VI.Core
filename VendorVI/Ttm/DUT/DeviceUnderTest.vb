@@ -389,7 +389,6 @@ Public Class DeviceUnderTest
 #Region " MEASUREMENT ELEMENTS "
 
     ''' <summary> Handles the resistance measure property changed event. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -721,7 +720,6 @@ Public Class DeviceUnderTest
 End Class
 
 ''' <summary> Collection of device under tests. </summary>
-''' <remarks> David, 1/6/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

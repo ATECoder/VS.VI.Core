@@ -68,7 +68,6 @@ Public MustInherit Class TriggerSubsystemBase
     Protected Overridable ReadOnly Property ClearCommand As String
 
     ''' <summary> Clears the triggers. </summary>
-    ''' <remarks> David, 3/10/2016. </remarks>
     Public Sub ClearTriggers()
         Me.Write(Me.ClearCommand)
     End Sub
@@ -79,7 +78,6 @@ Public MustInherit Class TriggerSubsystemBase
     Protected Overridable ReadOnly Property ClearTriggerModelCommand As String
 
     ''' <summary> Clears the trigger model. </summary>
-    ''' <remarks> David, 3/10/2016. </remarks>
     Public Sub ClearTriggerModel()
         Me.Write(Me.ClearTriggerModelCommand)
     End Sub
@@ -616,7 +614,6 @@ Public MustInherit Class TriggerSubsystemBase
 #Region " TRIGGER SOURCE "
 
     ''' <summary> List Trigger Sources. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     Public Sub ListTriggerSources(ByVal listControl As Windows.Forms.ComboBox)
@@ -635,7 +632,6 @@ Public MustInherit Class TriggerSubsystemBase
     End Sub
 
     ''' <summary> Returns the function mode selected by the list control. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     ''' <returns> The SenseTriggerSource. </returns>
@@ -645,7 +641,6 @@ Public MustInherit Class TriggerSubsystemBase
     End Function
 
     ''' <summary> Safe select function mode. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     Public Sub SafeSelectTriggerSource(ByVal listControl As Windows.Forms.ComboBox)
@@ -673,7 +668,6 @@ Public MustInherit Class TriggerSubsystemBase
     End Property
 
     ''' <summary> List supported trigger sources. </summary>
-    ''' <remarks> David, 1/23/2017. </remarks>
     ''' <param name="comboBox"> The combo box. </param>
     Public Sub ListSupportedTriggerSources(ByVal comboBox As System.Windows.Forms.ComboBox)
         If comboBox Is Nothing Then Throw New ArgumentNullException(NameOf(comboBox))
@@ -754,7 +748,6 @@ Public MustInherit Class TriggerSubsystemBase
 #Region " TRIGGER STATE "
 
     ''' <summary> Monitor active trigger state. </summary>
-    ''' <remarks> David, 2/3/2017. </remarks>
     ''' <param name="pollPeriod"> The poll period. </param>
     Public Sub MonitorActiveTriggerState(ByVal pollPeriod As TimeSpan)
         Me.ApplyCapturedSyncContext()
@@ -767,7 +760,6 @@ Public MustInherit Class TriggerSubsystemBase
     End Sub
 
     ''' <summary> Asynchronous monitor trigger state. </summary>
-    ''' <remarks> David, 2/3/2017. </remarks>
     ''' <param name="syncContext"> Context for the synchronization. </param>
     ''' <param name="pollPeriod">  The poll period. </param>
     ''' <returns> A Threading.Tasks.Task. </returns>
@@ -824,7 +816,6 @@ Public MustInherit Class TriggerSubsystemBase
     End Property
 
     ''' <summary> Query if this object is trigger state done. </summary>
-    ''' <remarks> David, 2/2/2017. </remarks>
     ''' <returns> <c>true</c> if trigger state done; otherwise <c>false</c> </returns>
     Public Function IsTriggerStateDone() As Boolean
         Dim result As Boolean = False
@@ -842,7 +833,6 @@ Public MustInherit Class TriggerSubsystemBase
     End Function
 
     ''' <summary> Queries if a trigger state is active. </summary>
-    ''' <remarks> David, 2/2/2017. </remarks>
     ''' <returns> <c>true</c> if a trigger state is active; otherwise <c>false</c> </returns>
     Public Function IsTriggerStateActive() As Boolean
         Dim result As Boolean = False
@@ -857,7 +847,6 @@ Public MustInherit Class TriggerSubsystemBase
     End Function
 
     ''' <summary> Queries if a trigger state is aborting. </summary>
-    ''' <remarks> David, 2/2/2017. </remarks>
     ''' <returns> <c>true</c> if a trigger state is active; otherwise <c>false</c> </returns>
     Public Function IsTriggerStateAborting() As Boolean
         Dim result As Boolean = False
@@ -871,7 +860,6 @@ Public MustInherit Class TriggerSubsystemBase
     End Function
 
     ''' <summary> Queries if a trigger state is Failed. </summary>
-    ''' <remarks> David, 2/2/2017. </remarks>
     ''' <returns> <c>true</c> if a trigger state is active; otherwise <c>false</c> </returns>
     Public Function IsTriggerStateFailed() As Boolean
         Dim result As Boolean = False
@@ -885,7 +873,6 @@ Public MustInherit Class TriggerSubsystemBase
     End Function
 
     ''' <summary> Queries if a trigger state is Idle. </summary>
-    ''' <remarks> David, 2/2/2017. </remarks>
     ''' <returns> <c>true</c> if a trigger state is active; otherwise <c>false</c> </returns>
     Public Function IsTriggerStateIdle() As Boolean
         Dim result As Boolean = False
@@ -966,7 +953,6 @@ Public Enum TriggerSources
 End Enum
 
 ''' <summary> Values that represent trigger state. </summary>
-''' <remarks> David, 2/2/2017. </remarks>
 Public Enum TriggerState
     <ComponentModel.Description("No Defined")> None
     <ComponentModel.Description("Building")> Building

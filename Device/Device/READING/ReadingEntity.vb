@@ -16,7 +16,6 @@ Public Class ReadingEntity
     ''' Constructs a measured value without specifying the value or its validity, which must be
     ''' specified for the value to be made valid.
     ''' </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <param name="readingType"> The type of the reading. </param>
     Public Sub New(ByVal readingType As ReadingTypes)
         MyBase.New()
@@ -44,7 +43,6 @@ Public Class ReadingEntity
     ''' fetched values. This methods removes alpha characters as well as the number sign which the
     ''' instruments append to the reading number.
     ''' </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="value"> A delimited string of values. </param>
     ''' <returns> A String. </returns>
     Public Shared Function TrimUnits(ByVal value As String) As String

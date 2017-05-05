@@ -16,7 +16,6 @@ Public NotInheritable Class ResourceManager
     ''' <summary>
     ''' Constructor that prevents a default instance of this class from being created.
     ''' </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     Private Sub New()
         MyBase.New
     End Sub
@@ -26,7 +25,6 @@ Public NotInheritable Class ResourceManager
 #Region " PARSE RESOURCES "
 
     ''' <summary> Parse resource. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
     Public Shared Function ParseResource(ByVal resourceName As String) As VI.ResourceParseResult

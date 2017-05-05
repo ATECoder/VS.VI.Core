@@ -256,7 +256,6 @@ Public MustInherit Class StatusSubsystemBase
     Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = TspSyntax.ErrorQueueQueryCommand
 
     ''' <summary> Queue device error. </summary>
-    ''' <remarks> David, 1/12/2016. </remarks>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Protected Overrides Function EnqueueDeviceError(ByVal compoundErrorMessage As String) As VI.DeviceError

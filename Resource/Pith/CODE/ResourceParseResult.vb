@@ -1,6 +1,5 @@
 ﻿
 ''' <summary> Encapsulates the result of a resource parse. </summary>
-''' <remarks> David, 11/23/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -14,21 +13,18 @@
 Public Class ResourceParseResult
 
     ''' <summary> Default constructor. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     Public Sub New()
         MyBase.New()
         Me.ResourceName = ""
     End Sub
 
     ''' <summary> Default constructor. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     Public Sub New(ByVal resourceName As String)
         MyBase.New()
         Me._Parse(resourceName)
     End Sub
 
     ''' <summary> Default constructor. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     Public Sub New(ByVal resourceName As String, ByVal interfaceType As HardwareInterfaceType, ByVal interfaceNumber As Integer)
         MyBase.New()
         Me._ResourceName = resourceName
@@ -49,7 +45,6 @@ Public Class ResourceParseResult
     End Sub
 
     ''' <summary> Parses. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     ''' <param name="resourceName"> The name of the resource. </param>
     Private Sub _Parse(ByVal resourceName As String)
         Me._ResourceName = resourceName
@@ -71,7 +66,6 @@ Public Class ResourceParseResult
     End Sub
 
     ''' <summary> Parses resource name </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="resourceName"> The name of the resource. </param>
     Public Sub Parse(ByVal resourceName As String)
         Me._Parse(resourceName)

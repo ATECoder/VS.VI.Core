@@ -2,7 +2,6 @@
 Imports isr.Core.Pith.EventHandlerExtensions
 Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Base class for SessionBase. </summary>
-''' <remarks> David, 11/21/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -19,7 +18,6 @@ Public MustInherit Class SessionBase
 #Region " CONSTRUCTORS "
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 11/25/2015. </remarks>
     Protected Sub New()
         MyBase.New()
         Me._ResourceInfo = New ResourceParseResult
@@ -104,7 +102,6 @@ Public MustInherit Class SessionBase
 
 
     ''' <summary> Executes the opening session action. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     ''' <param name="resourceName">  The name of the resource. </param>
     ''' <param name="resourceTitle"> The short title of the device. </param>
     Private Sub OnOpeningSession(ByVal resourceName As String, ByVal resourceTitle As String)
@@ -116,7 +113,6 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Executes the session open action. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Private Sub OnSessionOpen()
         If Me.ResourceInfo.InterfaceType = HardwareInterfaceType.Tcpip AndAlso Me.KeepAliveInterval > TimeSpan.Zero Then
@@ -161,25 +157,21 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     ''' <param name="resourceName"> The name of the resource. </param>
     Public Sub OpenSession(ByVal resourceName As String, ByVal syncContext As Threading.SynchronizationContext)
         Me.OpenSession(resourceName, resourceName, Me.DefaultOpenTimeout, syncContext)
     End Sub
 
     ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     Public Sub OpenSession(ByVal resourceName As String, ByVal timeout As TimeSpan, ByVal syncContext As Threading.SynchronizationContext)
         Me.OpenSession(resourceName, resourceName, timeout, syncContext)
     End Sub
 
     ''' <summary> Discards the session. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     Protected MustOverride Sub DiscardSession()
 
     ''' <summary> Closes the <see cref="SessionBase">Session</see>. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     Public Sub CloseSession()
         If Me._KeepAliveTimer IsNot Nothing Then
             Me._KeepAliveTimer.Enabled = False
@@ -341,7 +333,6 @@ Public MustInherit Class SessionBase
     Private WithEvents _KeepAliveTimer As Timers.Timer
 
     ''' <summary> Keep alive timer elapsed. </summary>
-    ''' <remarks> David, 3/14/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Elapsed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -362,7 +353,6 @@ Public MustInherit Class SessionBase
     Public Property KeepAliveInterval As TimeSpan
 
     ''' <summary> Query if this object is alive. </summary>
-    ''' <remarks> David, 3/14/2016. </remarks>
     ''' <returns> <c>true</c> if alive; otherwise <c>false</c> </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Function IsAlive() As Boolean
@@ -390,7 +380,6 @@ Public MustInherit Class SessionBase
     Public Property IsAliveQueryCommand As String = "*OPC?"
 
     ''' <summary> Keep alive. </summary>
-    ''' <remarks> David, 3/15/2016. </remarks>
     Public MustOverride Function KeepAlive() As Boolean
 
 #End Region
@@ -421,7 +410,6 @@ Public MustInherit Class SessionBase
     ''' <see cref="InputBufferSize"/>. Will time out if end of line is not read before reading a
     ''' buffer.
     ''' </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <returns> The received message. </returns>
     Public MustOverride Function ReadFiniteLine() As String
 
@@ -430,7 +418,6 @@ Public MustInherit Class SessionBase
     ''' <see cref="TerminationCharacter">termination character</see>. Not limited by the
     ''' <see cref="InputBufferSize"/>.
     ''' </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <returns> The received message. </returns>
     Public MustOverride Function ReadFreeLine() As String
 
@@ -439,7 +426,6 @@ Public MustInherit Class SessionBase
     Public MustOverride Sub Write(ByVal dataToWrite As String)
 
     ''' <summary> Clears the device. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public MustOverride Sub Clear()
 
     ''' <summary> Reads status byte. </summary>
@@ -455,14 +441,12 @@ Public MustInherit Class SessionBase
 #Region " EMULATION "
 
     ''' <summary> Makes emulated reply. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeTrueFalseReply(ByVal value As Boolean)
         Me.EmulatedReply = SessionBase.ToTrueFalse(value)
     End Sub
 
     ''' <summary> Makes emulated reply if empty. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeTrueFalseReplyIfEmpty(ByVal value As Boolean)
         If String.IsNullOrWhiteSpace(Me.EmulatedReply) Then
@@ -471,14 +455,12 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Makes emulated reply. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReply(ByVal value As Boolean)
         Me.EmulatedReply = SessionBase.ToOneZero(value)
     End Sub
 
     ''' <summary> Makes emulated reply if empty. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReplyIfEmpty(ByVal value As Boolean)
         If String.IsNullOrWhiteSpace(Me.EmulatedReply) Then
@@ -487,14 +469,12 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Makes emulated reply. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReply(ByVal value As Double)
         Me.EmulatedReply = CStr(value)
     End Sub
 
     ''' <summary> Makes emulated reply if empty. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReplyIfEmpty(ByVal value As Double)
         If String.IsNullOrWhiteSpace(Me.EmulatedReply) Then
@@ -503,14 +483,12 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Makes emulated reply. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReply(ByVal value As Integer)
         Me.EmulatedReply = CStr(value)
     End Sub
 
     ''' <summary> Makes emulated reply if empty. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReplyIfEmpty(ByVal value As Integer)
         If String.IsNullOrWhiteSpace(Me.EmulatedReply) Then
@@ -519,14 +497,12 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Makes emulated reply. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReply(ByVal value As TimeSpan)
         Me.EmulatedReply = value.ToString
     End Sub
 
     ''' <summary> Makes emulated reply if empty. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReplyIfEmpty(ByVal value As TimeSpan)
         If String.IsNullOrWhiteSpace(Me.EmulatedReply) Then
@@ -535,13 +511,11 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Makes emulated reply. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     Public Sub MakeEmulatedReply(ByVal value As String)
         Me.EmulatedReply = value
     End Sub
 
     ''' <summary> Makes emulated reply if empty. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReplyIfEmpty(ByVal value As String)
         If String.IsNullOrWhiteSpace(Me.EmulatedReply) Then
@@ -558,14 +532,12 @@ Public MustInherit Class SessionBase
     Public Property EmulatedStatusByte As ServiceRequests
 
     ''' <summary> Makes emulated status byte. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReply(ByVal value As ServiceRequests)
         Me.EmulatedStatusByte = value
     End Sub
 
     ''' <summary> Makes emulated status byte if none. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The emulated value. </param>
     Public Sub MakeEmulatedReplyIfEmpty(ByVal value As ServiceRequests)
         If Me.EmulatedStatusByte = ServiceRequests.None Then
@@ -574,7 +546,6 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Queries if a service request is enabled. </summary>
-    ''' <remarks> David, 1/18/2017. </remarks>
     ''' <param name="bitmask"> The bit mask. </param>
     ''' <returns> <c>true</c> if a service request is enabled; otherwise <c>false</c> </returns>
     Public Function IsServiceRequestEnabled(ByVal bitmask As ServiceRequests) As Boolean
@@ -588,7 +559,6 @@ Public MustInherit Class SessionBase
     ''' <summary>
     ''' Applies the service request bitmask. Disables service request if bitmask is 0.
     ''' </summary>
-    ''' <remarks> David, 1/18/2017. </remarks>
     ''' <param name="commandFormat"> The service request enable command format. </param>
     ''' <param name="bitmask">       The bitmask. </param>
     Public Sub ApplyServiceRequestEnableBitmask(ByVal commandFormat As String, ByVal bitmask As ServiceRequests)
@@ -601,7 +571,6 @@ Public MustInherit Class SessionBase
     Public Event ServiceRequested As EventHandler(Of EventArgs)
 
     ''' <summary> Removes event handler. </summary>
-    ''' <remarks> David, 12/17/2015. </remarks>
     ''' <param name="value"> The emulated value. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveEventHandler(ByVal value As EventHandler(Of EventArgs))
@@ -615,7 +584,6 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Emulate service request. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     ''' <param name="statusByte"> The status byte. </param>
     Public Sub EmulateServiceRequest(ByVal statusByte As ServiceRequests)
         Me.EmulatedStatusByte = statusByte
@@ -623,7 +591,6 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Executes the service requested action. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Protected Sub OnServiceRequested()
         Dim evt As EventHandler(Of EventArgs) = Me.ServiceRequestedEvent
         evt?.Invoke(Me, System.EventArgs.Empty)
@@ -634,11 +601,9 @@ Public MustInherit Class SessionBase
     Public MustOverride ReadOnly Property ServiceRequestEventEnabled As Boolean
 
     ''' <summary> Enables the service request. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public MustOverride Sub EnableServiceRequest()
 
     ''' <summary> Disables the service request. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public MustOverride Sub DisableServiceRequest()
 
 #End Region
@@ -646,7 +611,6 @@ Public MustInherit Class SessionBase
 #Region " TRIGGER "
 
     ''' <summary> Assert trigger. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public MustOverride Sub AssertTrigger()
 
 #End Region
@@ -654,7 +618,6 @@ Public MustInherit Class SessionBase
 #Region " INTERFACE "
 
     ''' <summary> Determines if we can requires keep alive. </summary>
-    ''' <remarks> David, 3/15/2016. </remarks>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function RequiresKeepAlive() As Boolean
         Return Me.ResourceInfo.InterfaceType = VI.HardwareInterfaceType.Tcpip
@@ -787,7 +750,6 @@ Public MustInherit Class SessionBase
     End Sub
 
     ''' <summary> Executes the command using the specified timeout. </summary>
-    ''' <remarks> David, 1/9/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="action">  The action. </param>
     ''' <param name="timeout"> The timeout. </param>
@@ -830,7 +792,6 @@ Public MustInherit Class SessionBase
     ''' <summary>
     ''' Reads to and including the end <see cref="Termination">termination character</see>.
     ''' </summary>
-    ''' <remarks> David, 11/17/2015. </remarks>
     ''' <returns> The string. </returns>
     Public Function ReadLine() As String
 #If LogIO Then
@@ -929,7 +890,6 @@ Public MustInherit Class SessionBase
     End Function
 
     ''' <summary> Reads free line trim end. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     ''' <returns> The free line trim end. </returns>
     Public Overloads Function ReadFreeLineTrimEnd() As String
         Return Me.ReadFreeLine().TrimEnd(Me.Termination.ToArray)
@@ -956,7 +916,6 @@ Public MustInherit Class SessionBase
     ''' <summary>
     ''' Reads multiple lines from the instrument until data is no longer available.
     ''' </summary>
-    ''' <remarks> David, 11/18/2015. </remarks>
     ''' <param name="pollDelay"> Time to wait between service requests. </param>
     ''' <param name="timeout">   Specifies the time to wait for message available. </param>
     ''' <param name="trimEnd">   Specifies a directive to trim the end character from each line. </param>
@@ -968,7 +927,6 @@ Public MustInherit Class SessionBase
     ''' <summary>
     ''' Reads multiple lines from the instrument until data is no longer available.
     ''' </summary>
-    ''' <remarks> David, 11/18/2015. </remarks>
     ''' <param name="pollDelay">  Time to wait between service requests. </param>
     ''' <param name="timeout">    Specifies the time to wait for message available. </param>
     ''' <param name="trimSpaces"> Specifies a directive to trim leading and trailing spaces from each
@@ -1076,7 +1034,6 @@ Public MustInherit Class SessionBase
     ''' Reads and discards all data from the VISA session until the END indicator is read and no data
     ''' are added to the output buffer.
     ''' </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     ''' <param name="pollDelay"> Time to wait between service requests. </param>
     ''' <param name="timeout">   Specifies the time to wait for message available. </param>
     Public Sub DiscardUnreadData(ByVal pollDelay As TimeSpan, ByVal timeout As TimeSpan)

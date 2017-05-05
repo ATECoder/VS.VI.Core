@@ -29,7 +29,6 @@ Public Class SimpleReadWriteForm
     ''' Disposes of the resources (other than memory) used by the
     ''' <see cref="T:System.Windows.Forms.Form" />.
     ''' </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                          release only unmanaged resources. </param>
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -152,7 +151,6 @@ Public Class SimpleReadWriteForm
     End Sub
 
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overrides Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType)
         MyBase.UpdateTraceLogLevel(traceLevel)
@@ -160,7 +158,6 @@ Public Class SimpleReadWriteForm
     End Sub
 
     ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overrides Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType)
         MyBase.UpdateTraceShowLevel(traceLevel)
@@ -168,7 +165,6 @@ Public Class SimpleReadWriteForm
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
@@ -180,7 +176,6 @@ Public Class SimpleReadWriteForm
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>

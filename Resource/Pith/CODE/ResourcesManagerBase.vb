@@ -1,5 +1,4 @@
 ﻿''' <summary> The resources manager base. </summary>
-''' <remarks> David, 11/21/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -20,7 +19,6 @@ Public MustInherit Class ResourcesManagerBase
     Public MustOverride ReadOnly Property IsDummy As Boolean
 
     ''' <summary> Parse resource. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     ''' <param name="resourceName"> The resource name. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
     Public MustOverride Function ParseResource(ByVal resourceName As String) As VI.ResourceParseResult
@@ -35,7 +33,6 @@ Public MustInherit Class ResourcesManagerBase
     Public MustOverride Function FindResources() As IEnumerable(Of String)
 
     ''' <summary> Lists all resources. </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     ''' <param name="filter"> A pattern specifying the search. </param>
     ''' <returns> List of all resources. </returns>
     Public MustOverride Function FindResources(ByVal filter As String) As IEnumerable(Of String)
@@ -171,7 +168,6 @@ Public MustInherit Class ResourcesManagerBase
 
 
     ''' <summary> Searches for the first resource. </summary>
-    ''' <remarks> David, 5/2/2016. </remarks>
     ''' <param name="resourceNames"> List of names of the resources. </param>
     ''' <returns> The found resource. </returns>
     Public Function FindResource(ByVal resourceNames As IEnumerable(Of String)) As String
@@ -213,9 +209,7 @@ Public MustInherit Class ResourcesManagerBase
     End Sub
 
     ''' <summary> Finalizes this object. </summary>
-    ''' <remarks>
-    ''' David, 11/21/2015.
-    ''' Override because Dispose(disposing As Boolean) above has code to free unmanaged resources.
+    ''' <remarks> David, 11/21/2015: Override because Dispose(disposing As Boolean) above has code to free unmanaged resources.
     ''' </remarks>
     Protected Overrides Sub Finalize()
         ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
@@ -227,7 +221,6 @@ Public MustInherit Class ResourcesManagerBase
     ''' Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
     ''' resources.
     ''' </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     Public Sub Dispose() Implements IDisposable.Dispose
         ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
         Dispose(True)

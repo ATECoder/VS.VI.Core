@@ -64,7 +64,6 @@ Public Class MeasurementsHeader
     End Property
 
     ''' <summary> Handles the device under test property changed event. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As DeviceUnderTest, ByVal propertyName As String)
@@ -286,7 +285,6 @@ Public Class MeasurementsHeader
     Private WithEvents _InitialResistance As ColdResistance
 
     ''' <summary> Executes the initial resistance property changed action. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnInitialResistancePropertyChanged(ByVal sender As ColdResistance, ByVal propertyName As String)
@@ -328,7 +326,6 @@ Public Class MeasurementsHeader
     Private WithEvents _FinalResistance As ColdResistance
 
     ''' <summary> Executes the Final resistance property changed action. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnFinalResistancePropertyChanged(ByVal sender As ColdResistance, ByVal propertyName As String)
@@ -370,7 +367,6 @@ Public Class MeasurementsHeader
     Private WithEvents _ThermalTransient As ThermalTransient
 
     ''' <summary> Executes the initial resistance property changed action. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As ResistanceMeasureBase, ByVal propertyName As String)

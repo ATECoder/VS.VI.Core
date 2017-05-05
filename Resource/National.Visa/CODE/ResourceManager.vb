@@ -17,7 +17,6 @@ Public Class ResourceManager
     ''' <summary>
     ''' Constructor that prevents a default instance of this class from being created.
     ''' </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     Public Sub New()
         MyBase.New
         Me._VisaResourceManager = New NationalInstruments.Visa.ResourceManager
@@ -46,9 +45,10 @@ Public Class ResourceManager
     End Sub
 
     ''' <summary> Finalizes this object. </summary>
-    ''' <remarks> David, 11/23/2015. 
-    '''           Override Finalize() only if Dispose(disposing As Boolean) above has code to free unmanaged resources.
-    '''           </remarks>
+    ''' <remarks>
+    ''' David, 11/23/2015. Override Finalize() only if Dispose(disposing As Boolean) above has code
+    ''' to free unmanaged resources.
+    ''' </remarks>
     Protected Overrides Sub Finalize()
         ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
         Dispose(False)
@@ -59,7 +59,6 @@ Public Class ResourceManager
     ''' Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
     ''' resources.
     ''' </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     Public Sub Dispose() Implements IDisposable.Dispose
         ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
         Dispose(True)
@@ -81,7 +80,6 @@ Public Class ResourceManager
 #Region " PARSE RESOURCES "
 
     ''' <summary> Parse resource. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
     Public Function ParseResource(ByVal resourceName As String) As VI.ResourceParseResult

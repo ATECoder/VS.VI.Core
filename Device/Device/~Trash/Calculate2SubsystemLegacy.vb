@@ -80,7 +80,6 @@ Public MustInherit Class Calculate2SubsystemBase
     Public Property ActiveLimit() As CalculateLimit
 
     ''' <summary> Adds limit. </summary>
-    ''' <remarks> David, 3/9/2016. </remarks>
     Private Sub _AddLimit()
         Me._ActiveLimit = New CalculateLimit()
         Me._limits.Add(Me._ActiveLimit)

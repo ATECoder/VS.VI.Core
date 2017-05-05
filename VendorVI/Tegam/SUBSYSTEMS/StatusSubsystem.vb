@@ -154,7 +154,6 @@ Public Class StatusSubsystem
     Protected Overrides ReadOnly Property LastErrorQueryCommand As String = "U1x"
 
     ''' <summary> Queue device error. </summary>
-    ''' <remarks> David, 1/12/2016. </remarks>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Protected Overrides Function EnqueueDeviceError(ByVal compoundErrorMessage As String) As VI.DeviceError

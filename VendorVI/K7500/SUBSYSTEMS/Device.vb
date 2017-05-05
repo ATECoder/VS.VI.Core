@@ -26,7 +26,6 @@ Public Class Device
     End Sub
 
     ''' <summary> Creates a new Device. </summary>
-    ''' <remarks> David, 5/1/2017. </remarks>
     ''' <returns> A Device. </returns>
     Public Shared Function Create() As Device
         Dim device As Device = Nothing
@@ -92,7 +91,6 @@ Public Class Device
     End Sub
 
     ''' <summary> Initializes the Device. Used after reset to set a desired initial state. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
@@ -271,7 +269,6 @@ Public Class Device
 #Region " SENSE "
 
     ''' <summary> Executes the function modes changed action. </summary>
-    ''' <remarks> David, 4/4/2017. </remarks>
     ''' <param name="value"> The value. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     Private Sub OnFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
@@ -292,7 +289,6 @@ Public Class Device
     End Property
 
     ''' <summary> Select sense subsystem. </summary>
-    ''' <remarks> David, 4/4/2017. </remarks>
     ''' <param name="value"> The value. </param>
     ''' <returns> A SenseFunctionSubsystemBase. </returns>
     Public Function SelectSenseSubsystem(ByVal value As VI.Scpi.SenseFunctionModes) As SenseFunctionSubsystemBase
@@ -319,7 +315,6 @@ Public Class Device
     End Function
 
     ''' <summary> Parse measurement unit. </summary>
-    ''' <remarks> David, 4/4/2017. </remarks>
     ''' <param name="subsystem"> The subsystem. </param>
     Public Sub ParseMeasurementUnit(ByVal subsystem As SenseSubsystem)
         If subsystem IsNot Nothing AndAlso subsystem.FunctionMode.HasValue Then

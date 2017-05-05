@@ -15,7 +15,6 @@ Friend Module ResourceManagerExtensions
 #Region " CONVERSIONS "
 
     ''' <summary> Converts the given value. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     ''' <returns> A Ivi.Visa.HardwareInterfaceType. </returns>
     Public Function ConvertInterfaceType(ByVal value As Ivi.Visa.HardwareInterfaceType) As VI.HardwareInterfaceType
         If [Enum].IsDefined(GetType(VI.HardwareInterfaceType), CInt(value)) Then
@@ -26,7 +25,6 @@ Friend Module ResourceManagerExtensions
     End Function
 
     ''' <summary> Converts the given value. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     ''' <returns> A Ivi.Visa.HardwareInterfaceType. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     Public Function ConvertInterfaceType(ByVal value As VI.HardwareInterfaceType) As Ivi.Visa.HardwareInterfaceType
@@ -57,7 +55,6 @@ Friend Module ResourceManagerExtensions
     End Function
 
     ''' <summary> Convert parse result. </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <param name="value"> Reference to the
     '''                      <see cref="NationalInstruments.Visa.ResourceManager">resource
     '''                      manager</see>. </param>

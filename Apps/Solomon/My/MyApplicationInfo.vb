@@ -10,7 +10,6 @@
         Public Const AssemblyProduct As String = "VI.Solomon.Gauge.2017"
 
         ''' <summary> Identifies this talker. </summary>
-        ''' <remarks> David, 1/21/2016. </remarks>
         ''' <param name="talker"> The talker. </param>
         Public Shared Sub Identify(ByVal talker As isr.Core.Pith.ITraceMessageTalker)
             talker?.Publish(TraceEventType.Information, MyApplication.TraceEventId, $"{MyApplication.AssemblyProduct} ID = {MyApplication.TraceEventId:X}")

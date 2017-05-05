@@ -133,7 +133,6 @@ Public Class MeasureTest
     End Sub
 
     ''' <summary> (Unit Test Method) tests start commands. </summary>
-    ''' <remarks> David, 5/2/2016. </remarks>
     <TestMethod()>
     Public Sub StartCommandsTest()
         Dim resourceName As String = "TCPIP0::192.168.1.134::inst0::INSTR"

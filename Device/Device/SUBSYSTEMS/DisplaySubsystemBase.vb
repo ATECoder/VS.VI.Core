@@ -29,7 +29,6 @@ Public MustInherit Class DisplaySubsystemBase
     Protected Overridable ReadOnly Property ClearCautionMessagesCommand As String
 
     ''' <summary> Clears the caution messages. </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     Public Sub ClearCautionMessages()
         If Not String.IsNullOrWhiteSpace(Me.ClearCautionMessagesCommand) Then
             Me.Session.WriteLine(Me.ClearCautionMessagesCommand)
@@ -46,7 +45,6 @@ Public MustInherit Class DisplaySubsystemBase
     Protected Overridable ReadOnly Property ClearCommand As String
 
     ''' <summary> Clears the triggers. </summary>
-    ''' <remarks> David, 3/10/2016. </remarks>
     Public Overridable Sub ClearDisplay()
         If Me.QueryExists.GetValueOrDefault(False) Then
             Me.Write(Me.ClearCommand)
@@ -81,7 +79,6 @@ Public MustInherit Class DisplaySubsystemBase
     Protected Overridable ReadOnly Property DisplayLineCommandFormat As String
 
     ''' <summary> Displays a line of text. </summary>
-    ''' <remarks> David, 10/15/2016. </remarks>
     ''' <param name="lineNumber"> The line number. </param>
     Public Overridable Sub DisplayLine(ByVal lineNumber As Integer, ByVal value As String)
         If Not String.IsNullOrWhiteSpace(Me.DisplayLineCommandFormat) Then
@@ -90,7 +87,6 @@ Public MustInherit Class DisplaySubsystemBase
     End Sub
 
     ''' <summary> Displays a line of text. </summary>
-    ''' <remarks> David, 10/17/2016. </remarks>
     ''' <param name="lineNumber"> The line number. </param>
     ''' <param name="format">     Describes the format to use. </param>
     ''' <param name="args">       A variable-length parameters list containing arguments. </param>
@@ -257,7 +253,6 @@ Public MustInherit Class DisplaySubsystemBase
 End Class
 
 ''' <summary> A bit-field of flags for specifying display screens. </summary>
-''' <remarks> David, 10/15/2016. </remarks>
 <Flags>
 Public Enum DisplayScreens
     <ComponentModel.Description("Not specified")> None

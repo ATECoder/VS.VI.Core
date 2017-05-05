@@ -1,5 +1,4 @@
 ﻿''' <summary> A buffer element. </summary>
-''' <remarks> David, 1/9/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

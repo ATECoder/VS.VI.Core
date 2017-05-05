@@ -1,6 +1,5 @@
 ﻿Imports System.ComponentModel
 ''' <summary> Base class manager of VISA resource names. </summary>
-''' <remarks> David, 11/21/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -18,7 +17,6 @@ Public NotInheritable Class ResourceNamesManager
     ''' <summary>
     ''' Constructor that prevents a default instance of this class from being created.
     ''' </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     Private Sub New()
         MyBase.New()
     End Sub
@@ -58,7 +56,6 @@ Public NotInheritable Class ResourceNamesManager
     Public Const InterfaceResourceFormat As String = "{0}{1}::" & InterfaceBaseName
 
     ''' <summary> Parse address. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="resourceName"> The name of the resource. </param>
     ''' <returns> A String. </returns>
     Public Shared Function ParseAddress(ByVal resourceName As String) As String
@@ -72,7 +69,6 @@ Public NotInheritable Class ResourceNamesManager
     End Function
 
     ''' <summary> Parse gpib address. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     ''' <param name="resourceName"> The name of the resource. </param>
     ''' <returns> An Integer. </returns>
     Public Shared Function ParseGpibAddress(ByVal resourceName As String) As Integer
@@ -84,7 +80,6 @@ Public NotInheritable Class ResourceNamesManager
     End Function
 
     ''' <summary> Parse interface number. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> An Integer. </returns>
     Public Shared Function ParseInterfaceNumber(ByVal resourceName As String) As Integer
@@ -101,7 +96,6 @@ Public NotInheritable Class ResourceNamesManager
 
 
     ''' <summary> Parse resource type. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A HardwareInterfaceType. </returns>
     Public Shared Function ParseResourceType(ByVal resourceName As String) As ResourceType
@@ -119,7 +113,6 @@ Public NotInheritable Class ResourceNamesManager
     End Function
 
     ''' <summary> Resource type base name. </summary>
-    ''' <remarks> David, 1/27/2016. </remarks>
     ''' <param name="resourceType"> Type of the resource. </param>
     ''' <returns> A String. </returns>
     Public Shared Function ResourceTypeBaseName(ByVal resourceType As ResourceType) As String
@@ -139,7 +132,6 @@ Public NotInheritable Class ResourceNamesManager
 
 
     ''' <summary> Parse hardware interface type. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A HardwareInterfaceType. </returns>
     Public Shared Function ParseHardwareInterfaceType(ByVal resourceName As String) As HardwareInterfaceType
@@ -295,7 +287,6 @@ Public NotInheritable Class ResourceNamesManager
 End Class
 
 ''' <summary> Values that represent resource types. </summary>
-''' <remarks> David, 1/27/2016. </remarks>
 Public Enum ResourceType
     <Description("Not specified")> None = 0
     <Description("Instrument")> Instrument
@@ -304,7 +295,6 @@ Public Enum ResourceType
 End Enum
 
 ''' <summary> Values that represent hardware interface types. </summary>
-''' <remarks> David, 11/21/2015. </remarks>
 Public Enum HardwareInterfaceType
     <Description("Custom")> Custom = 0
     ''' <summary> An enum constant representing the gpib interface. </summary>

@@ -93,7 +93,6 @@ Public MustInherit Class CalculateChannelSubsystemBase
 #Region " AVERAGE "
 
     ''' <summary> Applies the average settings. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <param name="enabled"> true to enable, false to disable. </param>
     ''' <param name="count">   Number of. </param>
     Public Sub ApplyAverageSettings(ByVal enabled As Boolean, ByVal count As Integer)
@@ -113,7 +112,6 @@ Public MustInherit Class CalculateChannelSubsystemBase
     Protected Overridable ReadOnly Property AverageClearCommand As String
 
     ''' <summary> Clears the average. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     Public Sub ClearAverage()
         Me.Write(Me.AverageClearCommand)
     End Sub

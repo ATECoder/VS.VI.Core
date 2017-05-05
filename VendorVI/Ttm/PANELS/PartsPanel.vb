@@ -82,7 +82,6 @@ Public Class PartsPanel
     End Sub
 
     ''' <summary> Executes the part property changed action. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       Specifies the object where the call originated. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPartPropertyChanged(ByVal sender As DeviceUnderTest, ByVal propertyName As String)

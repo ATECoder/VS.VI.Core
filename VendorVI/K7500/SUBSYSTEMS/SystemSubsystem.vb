@@ -32,7 +32,6 @@ Public Class SystemSubsystem
     End Sub
 
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
-    ''' <remarks> David, 6/25/2016. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         ' reduce noise when using IDE.

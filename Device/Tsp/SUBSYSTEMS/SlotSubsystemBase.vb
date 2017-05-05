@@ -69,7 +69,6 @@ Public MustInherit Class SlotSubsystemBase
     End Property
 
     ''' <summary> Queries slot exists. </summary>
-    ''' <remarks> David, 2/15/2016. </remarks>
     ''' <returns> The slot exists. </returns>
     Public Function QuerySlotExists() As Boolean?
         Me.IsSlotExists = Not Me.Session.IsNil(String.Format(TspSyntax.Slot.SubsystemNameFormat, Me.SlotNumber))
@@ -89,7 +88,6 @@ Public MustInherit Class SlotSubsystemBase
     Public ReadOnly Property Interlocks As InterlockCollection
 
     ''' <summary> Enumerate interlocks. </summary>
-    ''' <remarks> David, 2/16/2016. </remarks>
     ''' <param name="interlockCount"> Number of interlocks. </param>
     Private Sub _EnumerateInterlocks(ByVal interlockCount As Integer)
         Me._Interlocks = New InterlockCollection
@@ -117,7 +115,6 @@ Public MustInherit Class SlotSubsystemBase
     End Property
 
     ''' <summary> Queries supports interlock. </summary>
-    ''' <remarks> David, 2/15/2016. </remarks>
     ''' <returns> The supports interlock. </returns>
     Public Function QuerySupportsInterlock() As Boolean?
         If Not Me.IsSlotExists.HasValue Then
@@ -150,7 +147,6 @@ Public MustInherit Class SlotSubsystemBase
     End Property
 
     ''' <summary> Queries interlocks state. </summary>
-    ''' <remarks> David, 2/15/2016. </remarks>
     ''' <returns> The interlock state. </returns>
     Public Function QueryInterlocksState() As Integer?
         If Not Me.IsSlotExists.HasValue Then Me.QuerySlotExists()
@@ -163,7 +159,6 @@ Public MustInherit Class SlotSubsystemBase
     End Function
 
     ''' <summary> Query if 'interlockNumber' is interlock engaged. </summary>
-    ''' <remarks> David, 2/15/2016. </remarks>
     ''' <param name="interlockNumber"> The interlock number. </param>
     ''' <returns> <c>true</c> if interlock engaged; otherwise <c>false</c> </returns>
     Public Function IsInterlockEngaged(ByVal interlockNumber As Integer) As Boolean

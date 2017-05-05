@@ -160,7 +160,6 @@ Public Class SystemSubsystem
     Private Const ContactCheckOption As String = "CONTACT-CHECK"
 
     ''' <summary> Queries support for contact check. </summary>
-    ''' <remarks> David, 3/5/2016. </remarks>
     ''' <returns> <c>True</c> if supports contact check; otherwise <c>False</c>. </returns>
     Public Overrides Function QuerySupportsContactCheck() As Boolean?
         If String.IsNullOrWhiteSpace(Me.Options) Then Me.QueryOptions()

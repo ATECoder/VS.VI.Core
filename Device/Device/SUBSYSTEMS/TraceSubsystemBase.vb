@@ -39,7 +39,6 @@ Public MustInherit Class TraceSubsystemBase
     Protected Overridable ReadOnly Property ClearBufferCommand As String
 
     ''' <summary> Clears the buffer. </summary>
-    ''' <remarks> David, 6/25/2016. </remarks>
     Public Sub ClearBuffer()
         Me.Write(Me.ClearBufferCommand)
     End Sub
@@ -284,7 +283,6 @@ Public MustInherit Class TraceSubsystemBase
     Public ReadOnly Property DefaultBuffer1ReadCommandFormat As String = ":TRAC:DATA? {0},{1},'defbuffer1',READ,TST,STAT,UNIT"
 
     ''' <summary> Queries the current Data. </summary>
-    ''' <remarks> David, 2/23/2017. </remarks>
     ''' <param name="firstIndex"> Zero-based index of the first. </param>
     ''' <param name="lastIndex">  Zero-based index of the last. </param>
     ''' <returns> The Data or empty if none. </returns>
@@ -323,7 +321,6 @@ Public MustInherit Class TraceSubsystemBase
     End Property
 
     ''' <summary> Stream buffer. </summary>
-    ''' <remarks> David, 2/23/2017. </remarks>
     ''' <param name="triggerSubsystem"> The trigger subsystem. </param>
     ''' <param name="pollPeriod">       The poll period. </param>
     Public Sub StreamBuffer(ByVal triggerSubsystem As TriggerSubsystemBase, ByVal pollPeriod As TimeSpan)
@@ -352,7 +349,6 @@ Public MustInherit Class TraceSubsystemBase
     End Sub
 
     ''' <summary> Asynchronous stream buffer. </summary>
-    ''' <remarks> David, 2/23/2017. </remarks>
     ''' <param name="syncContext">      Context for the synchronization. </param>
     ''' <param name="triggerSubsystem"> The trigger subsystem. </param>
     ''' <param name="pollPeriod">       The poll period. </param>

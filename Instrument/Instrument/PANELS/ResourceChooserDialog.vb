@@ -153,7 +153,6 @@ Public Class ResourceChooserDialog
     End Sub
 
     ''' <summary> Executes the property changed action. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)

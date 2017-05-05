@@ -491,7 +491,6 @@ Public MustInherit Class ProberSubsystemBase
 #Region " READ "
 
     ''' <summary> Attempts to read from the given data. </summary>
-    ''' <remarks> David, 1/20/2016. </remarks>
     ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="raiseException"> true to raise exception. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>

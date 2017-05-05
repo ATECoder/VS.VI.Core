@@ -1,7 +1,6 @@
 ﻿Namespace My
 
     ''' <summary> Provides assembly information for the class library. </summary>
-    ''' <remarks> David, 11/26/2015. </remarks>
     Partial Friend NotInheritable Class MyLibrary
 
         ''' <summary> Constructor that prevents a default instance of this class from being created. </summary>
@@ -16,7 +15,6 @@
     End Class
 
     ''' <summary> Values that represent project trace event identifiers. </summary>
-    ''' <remarks> David, 11/26/2015. </remarks>
     Public Enum ProjectTraceEventId
         <System.ComponentModel.Description("Not specified")> None
         <System.ComponentModel.Description("VI Base Trace Event IO")> VI = &H70

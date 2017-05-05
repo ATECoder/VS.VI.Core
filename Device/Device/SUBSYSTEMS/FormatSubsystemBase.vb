@@ -145,7 +145,6 @@ Public MustInherit Class FormatSubsystemBase
     End Function
 
     ''' <summary> List elements. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     ''' <param name="excluded">    The excluded. </param>

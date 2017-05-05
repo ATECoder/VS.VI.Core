@@ -16,7 +16,6 @@ Public Class ResourceSelectorDialog
 #Region " CONSTRUCTORS AND DESTRUCTORS "
 
     ''' <summary> Default constructor. </summary>
-    ''' <remarks> David, 12/19/2015. </remarks>
     Public Sub New()
         MyBase.New()
         Me.InitializeComponent()

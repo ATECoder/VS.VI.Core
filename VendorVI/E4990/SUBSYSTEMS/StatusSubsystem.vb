@@ -84,7 +84,6 @@ Public Class StatusSubsystem
 #Region " MEASUREMENET AVAILABLE "
 
     ''' <summary> Enables the measurement available. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     Public Sub EnableMeasurementAvailable()
 
         ' Sets the positive transition filter to 0 and the negative transition filter to 1 

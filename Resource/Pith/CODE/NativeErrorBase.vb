@@ -1,5 +1,4 @@
 ﻿''' <summary> An inner error base class. </summary>
-''' <remarks> David, 11/24/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -13,7 +12,6 @@
 Public MustInherit Class NativeErrorBase
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <param name="errorCode"> The error code. </param>
     Protected Sub New(ByVal errorCode As Integer)
         MyBase.New
@@ -25,7 +23,6 @@ Public MustInherit Class NativeErrorBase
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 12/2/2015. </remarks>
     ''' <param name="errorCode">       The error code. </param>
     ''' <param name="resourceName">    The name of the resource. </param>
     ''' <param name="lastMessageSent"> The last message sent. </param>
@@ -40,7 +37,6 @@ Public MustInherit Class NativeErrorBase
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 12/2/2015. </remarks>
     ''' <param name="errorCode">       The error code. </param>
     ''' <param name="resourceName">    The name of the resource. </param>
     ''' <param name="nodeNumber">      The node number. </param>
@@ -89,14 +85,12 @@ Public MustInherit Class NativeErrorBase
 #Region " ERROR OR STATUS DETAILS "
 
     ''' <summary> Builds an error code or status message. </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <param name="lastAction"> The last visa action. </param>
     Public Function BuildErrorCodeDetails(ByVal lastAction As String) As String
         Return $"{lastAction} {Me.BuildErrorCodeDetails()}."
     End Function
 
     ''' <summary> Builds an error code or status message. </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     Public Function BuildErrorCodeDetails() As String
 
         Const innerErrorConstructName As String = "Native I/O"

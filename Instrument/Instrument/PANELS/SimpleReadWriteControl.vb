@@ -5,7 +5,6 @@ Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.Core.Pith.StopwatchExtensions
 ''' <summary> A simple read write control. </summary>
-''' <remarks> David, 12/29/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -24,7 +23,6 @@ Public Class SimpleReadWriteControl
     ''' <summary>
     ''' Constructor that prevents a default instance of this class from being created.
     ''' </summary>
-    ''' <remarks> David, 1/18/2017. </remarks>
     Public Sub New()
 
         ' This call is required by the designer.
@@ -75,7 +73,6 @@ Public Class SimpleReadWriteControl
     Protected ReadOnly Property Session As SessionBase
 
     ''' <summary> Connects the given session. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="session"> The session to connect. </param>
     Public Sub Connect(ByVal session As SessionBase)
         Me.Erase()
@@ -91,7 +88,6 @@ Public Class SimpleReadWriteControl
     End Sub
 
     ''' <summary> Disconnects this object. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     Public Sub Disconnect()
         Me._Session = Nothing
         Me.ReadServiceRequestStatus()
@@ -107,7 +103,6 @@ Public Class SimpleReadWriteControl
     End Property
 
     ''' <summary> Executes the connection changed action. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     Private Sub OnConnectionChanged()
         Me._ClearSessionButton.Enabled = Me.IsSessionOpen
         Me._QueryButton.Enabled = Me.IsSessionOpen
@@ -222,7 +217,6 @@ Public Class SimpleReadWriteControl
 #Region " READ AND WRITE "
 
     ''' <summary> Reads a service request status. </summary>
-    ''' <remarks> David, 12/26/2015. </remarks>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub ReadServiceRequestStatus()
         Try
@@ -253,7 +247,6 @@ Public Class SimpleReadWriteControl
     Private ReadOnly Property StopWatch As Stopwatch
 
     ''' <summary> Queries. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="textToWrite"> The text to write. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub Query(ByVal textToWrite As String)
@@ -286,7 +279,6 @@ Public Class SimpleReadWriteControl
     Private Property ServiceRequestRegistered As Boolean
 
     ''' <summary> Writes. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="textToWrite"> The text to write. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub Write(ByVal textToWrite As String)
@@ -359,7 +351,6 @@ Public Class SimpleReadWriteControl
     End Sub
 
     ''' <summary> Clears the session. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub ClearSession()
         Try
@@ -385,7 +376,6 @@ Public Class SimpleReadWriteControl
 #Region " SERVICE REQUESTS "
 
     ''' <summary> Raises the service requested event. </summary>
-    ''' <remarks> David, 11/27/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     Private Sub HandleMessageService(ByVal sender As SessionBase, value As ServiceRequests)
         If sender Is Nothing Then Throw New ArgumentNullException(NameOf(sender))
@@ -397,7 +387,6 @@ Public Class SimpleReadWriteControl
     End Sub
 
     ''' <summary> Raises the service requested event. </summary>
-    ''' <remarks> David, 11/27/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>

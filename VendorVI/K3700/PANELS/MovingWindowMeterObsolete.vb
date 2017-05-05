@@ -82,7 +82,6 @@ Partial Public Class MovingWindowMeter
     Private WithEvents Worker As System.ComponentModel.BackgroundWorker
 
     ''' <summary> Worker do work. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Do work event information. </param>
     Private Sub Worker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles worker.DoWork
@@ -133,7 +132,6 @@ Partial Public Class MovingWindowMeter
     End Sub
 
     ''' <summary> Handles run worker completed event. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="e">      Event information to send to registered event handlers. </param>
     Private Sub OnWorkerRunWorkerCompleted(ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs)
 	  Me.ApplyCapturedSyncContext()
@@ -151,7 +149,6 @@ Partial Public Class MovingWindowMeter
     End Sub
 
     ''' <summary> Worker run worker completed. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Run worker completed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031: DoNotCatchGeneralExceptionTypes")>
@@ -160,7 +157,6 @@ Partial Public Class MovingWindowMeter
     End Sub
 
     ''' <summary> Worker progress changed. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Progress changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -171,7 +167,6 @@ Partial Public Class MovingWindowMeter
         Me.ReportProgressChanged(ma, us.PercentProgress, us.Result)
     End Sub
 
-    ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function StopMeasureAsyncIf(ByVal timeout As TimeSpan) As Boolean
@@ -201,7 +196,6 @@ Partial Public Class MovingWindowMeter
     End Function
 
     ''' <summary> Starts measure asynchronous. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function StartMeasureWork(ByVal syncContext As SynchronizationContext) As Boolean
         Me._MovingAverageTaskResult = New TaskResult
@@ -229,7 +223,6 @@ Partial Public Class MovingWindowMeter
     End Function
 
     ''' <summary> Starts a measure. </summary>
-    ''' <remarks> David, 9/23/2016. </remarks>
     ''' <param name="syncContext"> Context for the synchronization. </param>
     Public Sub StartMeasureWorkSync(ByVal syncContext As SynchronizationContext)
         If Me.StartMeasureWork(syncContext) Then
@@ -252,7 +245,6 @@ End Class
 #Region " UNUSED "
 #If False Then
     ''' <summary> Executes the worker progress changed action. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
     Private Sub OnWorkerProgressChanged(ByVal userState1 As UserState)
         If Me.InvokeRequired Then
             Me.Invoke(New Action(Of UserState)(AddressOf OnWorkerProgressChanged), New Object() {UserState})

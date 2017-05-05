@@ -88,7 +88,6 @@ Public Class ChannelListBuilder
     End Function
 
     ''' <summary> Builds a range. </summary>
-    ''' <remarks> David, 1/5/2016. </remarks>
     ''' <param name="fromChannelElement"> Specifies the starting channel element to add. </param>
     ''' <param name="toChannelElement">   Specifies the ending channel element to add. </param>
     ''' <returns> A String. </returns>

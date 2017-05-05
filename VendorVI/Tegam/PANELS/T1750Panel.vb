@@ -33,7 +33,6 @@ Public Class T1750Panel
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="device"> The device. </param>
     Protected Sub New(ByVal device As Device)
         MyBase.New(device)
@@ -80,7 +79,6 @@ Public Class T1750Panel
     ''' Releases the unmanaged resources used by the isr.VI.Instrument.ResourcePanelBase and
     ''' optionally releases the managed resources.
     ''' </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                          release only unmanaged resources. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -102,7 +100,6 @@ Public Class T1750Panel
     End Sub
 
     ''' <summary> Enables the controls. </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="control"> The control. </param>
     ''' <param name="value">   true to value. </param>
     Private Sub EnableControls(ByVal control As Windows.Forms.Control, ByVal value As Boolean)
@@ -121,7 +118,6 @@ Public Class T1750Panel
 #Region " DEVICE "
 
     ''' <summary> Assigns a device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
@@ -131,7 +127,6 @@ Public Class T1750Panel
     End Sub
 
     ''' <summary> Assigns a device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
@@ -140,7 +135,6 @@ Public Class T1750Panel
     End Sub
 
     ''' <summary> Releases the device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     Protected Overrides Sub ReleaseDevice()
         If Me.IsDeviceOwner Then
             MyBase.ReleaseDevice()
@@ -159,7 +153,6 @@ Public Class T1750Panel
 #Region " DEVICE EVENT HANDLERS "
 
     ''' <summary> Executes the device open changed action. </summary>
-    ''' <remarks> David, 3/3/2016. </remarks>
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
         Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
         If isOpen Then
@@ -205,7 +198,6 @@ Public Class T1750Panel
     End Sub
 
     ''' <summary> Executes the title changed action. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Protected Overrides Sub OnTitleChanged(ByVal value As String)
         Me._TitleLabel.Text = value
@@ -430,7 +422,6 @@ Public Class T1750Panel
     End Sub
 
     ''' <summary> Reads a service request status. </summary>
-    ''' <remarks> David, 12/26/2015. </remarks>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub ReadServiceRequestStatus()
         Try
@@ -639,7 +630,6 @@ Public Class T1750Panel
     End Sub
 
     ''' <summary> Clears (CLS) the execution state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -666,7 +656,6 @@ Public Class T1750Panel
 
 
     ''' <summary> Resets (RST) the known state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -692,7 +681,6 @@ Public Class T1750Panel
     End Sub
 
     ''' <summary> Initializes to known state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -857,14 +845,12 @@ Public Class T1750Panel
 #Region " TALKER "
 
     ''' <summary> Adds listeners such as current level trace message box and log. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Protected Overrides Sub AddListeners()
         MyBase.AddListeners()
         Me._SimpleReadWriteControl.AddListeners(Me.Talker.Listeners)
     End Sub
 
     ''' <summary> Adds listeners such as top level trace message box and log. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
         MyBase.AddListeners(listeners)
@@ -872,7 +858,6 @@ Public Class T1750Panel
     End Sub
 
     ''' <summary> Adds the log listener. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="log"> The log. </param>
     Public Overrides Sub AddListeners(ByVal log As MyLog)

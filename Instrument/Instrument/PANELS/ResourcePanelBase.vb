@@ -25,7 +25,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Specialized default constructor for use only by derived classes. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="device"> The connectable resource. </param>
     Protected Sub New(ByVal device As DeviceBase)
         MyBase.New()
@@ -91,7 +90,6 @@ Public Class ResourcePanelBase
 #Region " FORM EVENT HANDLERS "
 
     ''' <summary> Handles the <see cref="E:System.Windows.Forms.UserControl.Load" /> event. </summary>
-    ''' <remarks> David, 1/4/2016. </remarks>
     ''' <param name="e"> An <see cref="T:System.EventArgs" /> that contains the event data. </param>
     Protected Overrides Sub OnLoad(e As EventArgs)
         Try
@@ -110,7 +108,6 @@ Public Class ResourcePanelBase
 #Region " SAFE SETTERS "
 
     ''' <summary> Recursively enable. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="control"> The control. </param>
     ''' <param name="value">   True to show or False to hide the control. </param>
     Protected Sub RecursivelyEnable(ByVal control As System.Windows.Forms.Control, ByVal value As Boolean)
@@ -125,7 +122,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Safe visible setter. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="control"> The control. </param>
     ''' <param name="value">   True to show or False to hide the control. </param>
     Private Shared Sub SafeVisibleSetter(ByVal control As System.Windows.Forms.ToolStripItem, value As Boolean)
@@ -139,7 +135,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Safe text setter. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="control"> The control. </param>
     ''' <param name="value">   True to show or False to hide the control. </param>
     Private Shared Sub SafeTextSetter(ByVal control As System.Windows.Forms.ToolStripItem, value As String)
@@ -154,7 +149,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Safe tool tip text setter. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="control"> The control. </param>
     ''' <param name="value">   True to show or False to hide the control. </param>
     Private Shared Sub SafeToolTipTextSetter(ByVal control As System.Windows.Forms.ToolStripItem, value As String)
@@ -209,7 +203,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Displays the standard register status. Uses Hex format. </summary>
-    ''' <remarks> David, 1/2/2016. </remarks>
     ''' <param name="value"> The register value. </param>
     Public Sub DisplayStandardRegisterStatus(ByVal value As StandardEvents?)
         If value.HasValue Then Me.DisplayStatusRegisterStatus(CInt(value.Value))
@@ -292,7 +285,6 @@ Public Class ResourcePanelBase
     End Property
 
     ''' <summary> Builds the title. </summary>
-    ''' <remarks> David, 1/4/2016. </remarks>
     ''' <returns> A String. </returns>
     Protected Function BuildTitle() As String
         If Me.IsDeviceOpen Then
@@ -325,7 +317,6 @@ Public Class ResourcePanelBase
     Public Property IsDeviceOwner As Boolean
 
     ''' <summary> Releases the device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     Private Sub _ReleaseDevice()
         If Me.Device IsNot Nothing Then
             Me.Device.Talker.Listeners.Clear()
@@ -342,13 +333,11 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Releases the device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     Protected Overridable Sub ReleaseDevice()
         Me._ReleaseDevice()
     End Sub
 
     ''' <summary> Assign device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As VI.DeviceBase)
         Me._ReleaseDevice()
@@ -370,7 +359,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Assign device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Public Overridable Sub AssignDevice(ByVal value As VI.DeviceBase)
         Me._AssignDevice(value)
@@ -496,7 +484,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Executes the subsystem property changed action. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Protected Overridable Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
@@ -593,7 +580,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Device initialized. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -601,7 +587,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Executes the title changed action. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Protected Overridable Sub OnTitleChanged(ByVal value As String)
         Me.Title = value
@@ -707,7 +692,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Executes the property changed action. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
@@ -742,7 +726,6 @@ Public Class ResourcePanelBase
 #Region " TALKER "
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     Protected Overridable Overloads Sub AddListeners()
         Me.Talker.Listeners.Add(Me.TraceMessagesBox)
         Me.Connector.AddListeners(Me.Talker.Listeners)
@@ -750,7 +733,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
         MyBase.AddListeners(listeners)
@@ -759,14 +741,12 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Adds the log listener. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="log"> The log. </param>
     Public Overridable Overloads Sub AddListeners(ByVal log As MyLog)
         Me.AddListeners(New ITraceMessageListener() {log})
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
@@ -778,7 +758,6 @@ Public Class ResourcePanelBase
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>

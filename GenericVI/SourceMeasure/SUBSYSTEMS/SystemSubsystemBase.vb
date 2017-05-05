@@ -268,7 +268,6 @@ Public MustInherit Class SystemSubsystemBase
     End Property
 
     ''' <summary> Queries support for contact check. </summary>
-    ''' <remarks> David, 3/5/2016. </remarks>
     ''' <returns> <c>True</c> if supports contact check; otherwise <c>False</c>. </returns>
     Public MustOverride Function QuerySupportsContactCheck() As Boolean?
 

@@ -229,7 +229,6 @@ Public MustInherit Class SourceSubsystemBase
     End Property
 
     ''' <summary> Displays a supported function modes. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <param name="listControl"> The list control. </param>
     Public Sub DisplaySupportedFunctionModes(ByVal listControl As Windows.Forms.ComboBox)
         If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
@@ -246,7 +245,6 @@ Public MustInherit Class SourceSubsystemBase
     End Sub
 
     ''' <summary> Returns the function mode selected by the list control. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     ''' <returns> The SenseFunctionModes. </returns>
@@ -256,7 +254,6 @@ Public MustInherit Class SourceSubsystemBase
     End Function
 
     ''' <summary> Safe select function mode. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     Public Sub SafeSelectFunctionMode(ByVal listControl As Windows.Forms.ComboBox)
@@ -399,7 +396,6 @@ End Class
 ''' Specifies the source function modes. Using flags permits using these values to define the
 ''' supported function modes.
 ''' </summary>
-''' <remarks> David, 3/12/2016. </remarks>
 <Flags>
 Public Enum SourceFunctionModes
     <ComponentModel.Description("None")> None = 0

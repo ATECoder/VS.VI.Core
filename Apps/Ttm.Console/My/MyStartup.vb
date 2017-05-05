@@ -33,7 +33,6 @@ Namespace My
         Public ReadOnly Property MyLog As MyLog = New MyLog()
 
         ''' <summary> Applies the given value. </summary>
-        ''' <remarks> David, 3/16/2016. </remarks>
         ''' <param name="value"> The value. </param>
         Public Sub Apply(ByVal value As MyLog)
             Me._MyLog = value

@@ -117,7 +117,6 @@ Public Class StatusSubsystem
     Protected Overrides ReadOnly Property IdentityQueryCommand As String = "ID"
 
     ''' <summary> Queries the Identity. </summary>
-    ''' <remarks> David, 1/20/2016. </remarks>
     ''' <returns> System.String. </returns>
     Public Overrides Function QueryIdentity() As String
         If Not String.IsNullOrWhiteSpace(Me.IdentityQueryCommand) Then
@@ -166,7 +165,6 @@ Public Class StatusSubsystem
     Protected Overrides ReadOnly Property LastErrorQueryCommand As String = "?E"
 
     ''' <summary> Queues device error. </summary>
-    ''' <remarks> David, 1/12/2016. </remarks>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Protected Overrides Function EnqueueDeviceError(ByVal compoundErrorMessage As String) As VI.DeviceError
@@ -181,7 +179,6 @@ Public Class StatusSubsystem
 #Region " READ "
 
     ''' <summary> Attempts to read from the given data. </summary>
-    ''' <remarks> David, 1/20/2016. </remarks>
     ''' <param name="value"> [in,out] The value. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="0#")>

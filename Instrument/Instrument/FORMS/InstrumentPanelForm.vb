@@ -28,7 +28,6 @@ Public Class InstrumentPanelForm
     ''' Disposes of the resources (other than memory) used by the
     ''' <see cref="T:System.Windows.Forms.Form" />.
     ''' </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                          release only unmanaged resources. </param>
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -152,7 +151,6 @@ Public Class InstrumentPanelForm
     Private WithEvents _InstrumentPanel As Instrument.ResourcePanelBase
 
     ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="title">          The title. </param>
     ''' <param name="value">          The value. </param>
     ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
@@ -177,7 +175,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Executes the property change action. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="sender">       The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChange(sender As Instrument.ResourcePanelBase, ByVal propertyName As String)
@@ -191,7 +188,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Instrument panel property changed. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="sender"> The sender. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -220,14 +216,12 @@ Public Class InstrumentPanelForm
     Private WithEvents _PropertyNotifyControl As PropertyNotifyControlBase
 
     ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="value"> The value. </param>
     Public Sub AddPropertyNotifyControl(ByVal value As PropertyNotifyControlBase)
         Me.AddPropertyNotifyControl("Instrument", value, True)
     End Sub
 
     ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="title"> The title. </param>
     ''' <param name="value"> The value. </param>
     Public Sub AddPropertyNotifyControl(ByVal title As String, ByVal value As PropertyNotifyControlBase)
@@ -235,7 +229,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="title">          The title. </param>
     ''' <param name="value">          The value. </param>
     ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
@@ -256,7 +249,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Executes the property change action. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="sender">       The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
@@ -265,7 +257,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Instrument panel property changed. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="sender"> The sender. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -293,14 +284,12 @@ Public Class InstrumentPanelForm
     Private WithEvents _TalkerControl As TalkerControlBase
 
     ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="value"> The value. </param>
     Public Sub AddTalkerControl(ByVal value As TalkerControlBase)
         Me.AddTalkerControl("Instrument", value, True)
     End Sub
 
     ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="title"> The title. </param>
     ''' <param name="value"> The value. </param>
     Public Sub AddTalkerControl(ByVal title As String, ByVal value As TalkerControlBase)
@@ -308,7 +297,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="title">          The title. </param>
     ''' <param name="value">          The value. </param>
     ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
@@ -329,7 +317,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Executes the property change action. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="sender">       The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
@@ -338,7 +325,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Instrument panel property changed. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="sender"> The sender. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -380,7 +366,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overrides Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType)
         MyBase.UpdateTraceLogLevel(traceLevel)
@@ -388,7 +373,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overrides Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType)
         MyBase.UpdateTraceShowLevel(traceLevel)
@@ -396,7 +380,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
@@ -408,7 +391,6 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -432,7 +414,6 @@ Public Class InstrumentPanelForm
 End Class
 
 ''' <summary> Collection of instrument panel forms. </summary>
-''' <remarks> David, 1/15/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -447,7 +428,6 @@ Public Class InstrumentPanelFormCollection
     Inherits isr.Core.Pith.ListenerFormCollection
 
     ''' <summary> Adds and shows the form. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="title">          The title. </param>
     ''' <param name="form">           The form. </param>
     ''' <param name="panel">          The panel. </param>
@@ -463,7 +443,6 @@ Public Class InstrumentPanelFormCollection
     End Sub
 
     ''' <summary> Adds and shows the form. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="form">  The form. </param>
     ''' <param name="panel"> The panel. </param>
     ''' <param name="log">   The log. </param>
@@ -481,14 +460,12 @@ End Class
 #Region " UNUSED "
 #If False Then
     ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="value"> The value. </param>
     Public Sub AddInstrumentPanel(ByVal value As Instrument.ResourcePanelBase)
         Me.AddInstrumentPanel("Instrument", value, True)
     End Sub
 
     ''' <summary> Adds an instrument panel. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="title"> The title. </param>
     ''' <param name="value"> The value. </param>
     Public Sub AddInstrumentPanel(ByVal title As String, ByVal value As Instrument.ResourcePanelBase)
@@ -496,7 +473,6 @@ End Class
     End Sub
 
     ''' <summary> Adds and shows the form. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="title"> The title. </param>
     ''' <param name="form">  The form. </param>
     ''' <param name="panel"> The panel. </param>
@@ -511,7 +487,6 @@ End Class
     End Sub
 
     ''' <summary> Adds and shows the form. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="form">  The form. </param>
     ''' <param name="panel"> The panel. </param>
     ''' <param name="log">   The log. </param>
@@ -524,7 +499,6 @@ End Class
     End Sub
 
     ''' <summary> Adds and shows the form. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="form">  The form. </param>
     ''' <param name="panel"> The panel. </param>
     ''' <param name="log">   The log. </param>

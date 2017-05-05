@@ -5,7 +5,6 @@ Imports isr.Core.Pith
 Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.Core.Controls.ProgressBarExtensions
 ''' <summary> A moving window averaging meter. </summary>
-''' <remarks> David, 1/30/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -86,7 +85,6 @@ Public Class MovingWindowMeter
 #Region " MOVING AVERAGE "
 
     ''' <summary> Device open changed. </summary>
-    ''' <remarks> David, 9/23/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     Private Sub _Device_OpenChanged(sender As Object, e As EventArgs) Handles _Device.Opened, _Device.Closed
@@ -176,7 +174,6 @@ Public Class MovingWindowMeter
     End Property
 
     ''' <summary> Updates the reading timespan caption described by value. </summary>
-    ''' <remarks> David, 9/24/2016. </remarks>
     ''' <param name="value"> The value. </param>
     Private Sub UpdateReadingTimespanCaption(ByVal value As TimeSpan)
         Dim caption As String = $"{value.TotalMilliseconds:0}"
@@ -235,14 +232,12 @@ Public Class MovingWindowMeter
 
 
     ''' <summary> Clears the task complete semaphore. </summary>
-    ''' <remarks> David, 12/22/2016. </remarks>
     Private Sub ClearTaskComplete()
         Me._TaskComplete = NotificationSemaphores.None
         Me.SafePostPropertyChanged(NameOf(Me.TaskComplete))
     End Sub
 
     ''' <summary> Set the task complete semaphore. </summary>
-    ''' <remarks> David, 12/22/2016. </remarks>
     Private Sub NotifyTaskComplete()
         Me._TaskComplete = NotificationSemaphores.Sent
         Me.SafePostPropertyChanged(NameOf(Me.TaskComplete))
@@ -258,7 +253,6 @@ Public Class MovingWindowMeter
     End Function
 
     ''' <summary> Acknowledge task complete semaphore. </summary>
-    ''' <remarks> David, 12/22/2016. </remarks>
     Public Sub AcknowledgeTaskComplete()
         Me._TaskComplete = Me.TaskComplete Or NotificationSemaphores.Acknowledged
     End Sub
@@ -279,14 +273,12 @@ Public Class MovingWindowMeter
     Public Property TaskStartNotificationTimeout As TimeSpan
 
     ''' <summary> Clears the task Start semaphore. </summary>
-    ''' <remarks> David, 12/22/2016. </remarks>
     Private Sub ClearTaskStart()
         Me._TaskStart = NotificationSemaphores.None
         Me.SafePostPropertyChanged(NameOf(Me.TaskStart))
     End Sub
 
     ''' <summary> Set the task Start semaphore. </summary>
-    ''' <remarks> David, 12/22/2016. </remarks>
     Private Sub NotifyTaskStart()
         Me._TaskStart = NotificationSemaphores.Sent
         Me.SafePostPropertyChanged(NameOf(Me.TaskStart))
@@ -302,7 +294,6 @@ Public Class MovingWindowMeter
     End Function
 
     ''' <summary> Acknowledge task Start semaphore. </summary>
-    ''' <remarks> David, 12/22/2016. </remarks>
     Public Sub AcknowledgeTaskStart()
         Me._TaskStart = Me.TaskStart Or NotificationSemaphores.Acknowledged
     End Sub
@@ -487,7 +478,6 @@ Public Class MovingWindowMeter
     End Property
 
     ''' <summary> Reports progress changed. </summary>
-    ''' <remarks> David, 9/17/2016. </remarks>
     ''' <param name="movingWindow">    The moving window. </param>
     ''' <param name="percentProgress"> The percent progress. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -522,14 +512,12 @@ Public Class MovingWindowMeter
     End Sub
 
     ''' <summary> Reports progress changed. </summary>
-    ''' <remarks> David, 9/17/2016. </remarks>
     ''' <param name="movingWindow"> The moving window. </param>
     Private Sub ReportProgressChanged(ByVal movingWindow As isr.Core.Engineering.MovingWindow)
         Me.ReportProgressChanged(movingWindow, movingWindow.PercentProgress, Me.MovingAverageTaskResult)
     End Sub
 
     ''' <summary> Process the completion described by result. </summary>
-    ''' <remarks> David, 9/17/2016. </remarks>
     ''' <param name="result"> The result. </param>
     Private Sub ProcessCompletion(ByVal result As TaskResult)
         If result Is Nothing Then
@@ -554,7 +542,6 @@ Public Class MovingWindowMeter
     Private ReadOnly Property MovingAverageTaskResult As New TaskResult
 
     ''' <summary> Measure moving average. </summary>
-    ''' <remarks> David, 9/17/2016. </remarks>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
     ''' <param name="progress"> The progress reporter. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -605,7 +592,6 @@ Public Class MovingWindowMeter
     End Sub
 
     ''' <summary> Query if cancellation requested. </summary>
-    ''' <remarks> David, 8/31/2016. </remarks>
     ''' <value> <c>true</c> if cancellation requested; otherwise <c>false</c> </value>
     Public ReadOnly Property IsCancellationRequested() As Boolean
         Get
@@ -634,7 +620,6 @@ Public Class MovingWindowMeter
     Public Property ExpectedStopTimeout As TimeSpan
 
     ''' <summary> Stops measure asynchronous if. </summary>
-    ''' <remarks> David, 9/26/2016. </remarks>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c>
     ''' </returns>
     Public Function StopAsyncTask() As Boolean
@@ -642,7 +627,6 @@ Public Class MovingWindowMeter
     End Function
 
     ''' <summary> Stops measure asynchronous if. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Private Function StopAsyncTask(ByVal timeout As TimeSpan) As Boolean
@@ -684,7 +668,6 @@ Public Class MovingWindowMeter
     Public Property TaskStopTimeout As TimeSpan
 
     ''' <summary> Activates the machine asynchronous task. </summary>
-    ''' <remarks> David, 9/1/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="runSynchronously"> True to run synchronously. </param>
     ''' <param name="syncContext">      Context for the synchronization. </param>
@@ -706,7 +689,6 @@ Public Class MovingWindowMeter
     End Sub
 
     ''' <summary> Starts measure asynchronous. </summary>
-    ''' <remarks> David, 12/23/2016. </remarks>
     ''' <param name="syncContext"> Context for the synchronization. </param>
     Public Sub StartMeasureAsync(ByVal syncContext As SynchronizationContext)
         Me.StartMeasureTask(False, syncContext)
@@ -748,7 +730,6 @@ Public Class MovingWindowMeter
 #Region " START STOP "
 
     ''' <summary> Starts moving average button check state changed. </summary>
-    ''' <remarks> David, 1/30/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -784,7 +765,6 @@ Public Class MovingWindowMeter
 #Region " TASK RESULT "
 
     ''' <summary> Encapsulates the result of a task. </summary>
-    ''' <remarks> David, 9/24/2016. </remarks>
     ''' <license>
     ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
     ''' Licensed under The MIT License.</para><para>
@@ -798,7 +778,6 @@ Public Class MovingWindowMeter
     Private Class TaskResult
 
         ''' <summary> Registers the failure described by exception. </summary>
-        ''' <remarks> David, 9/24/2016. </remarks>
         ''' <param name="details"> The details. </param>
         Public Sub RegisterFailure(ByVal details As String)
             Me._Failed = True
@@ -806,7 +785,6 @@ Public Class MovingWindowMeter
         End Sub
 
         ''' <summary> Registers the failure described by exception. </summary>
-        ''' <remarks> David, 9/24/2016. </remarks>
         ''' <param name="exception"> The exception. </param>
         Public Sub RegisterFailure(ByVal exception As Exception)
             Me.RegisterFailure(exception, "Exception occurred")
@@ -837,7 +815,6 @@ Public Class MovingWindowMeter
 End Class
 
 ''' <summary> Values that represent notification semaphores. </summary>
-''' <remarks> David, 12/22/2016. </remarks>
 <Flags> Public Enum NotificationSemaphores
     <Description("Not set")> None = 0
     <Description("Notification Sent")> Sent = 1

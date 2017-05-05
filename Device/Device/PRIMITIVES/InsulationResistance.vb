@@ -1,6 +1,5 @@
 ﻿Imports isr.Core.Pith
 ''' <summary> An insulation test configuration. </summary>
-''' <remarks> David, 3/9/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

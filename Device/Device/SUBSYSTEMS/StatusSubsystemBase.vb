@@ -19,7 +19,6 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="StatusSubsystemBase" /> class.
     ''' </summary>
-    ''' <remarks> David, 1/12/2016. </remarks>
     ''' <param name="visaSession">            A reference to a <see cref="Session">message based
     '''                                       session</see>. </param>
     ''' <param name="noErrorCompoundMessage"> A message describing the no error. </param>
@@ -156,7 +155,6 @@ Public MustInherit Class StatusSubsystemBase
 #Region " SESSION "
 
     ''' <summary> Executes the session property changed action. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Protected Overridable Sub OnSessionPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
@@ -263,7 +261,6 @@ Public MustInherit Class StatusSubsystemBase
     Protected Property DeviceErrorBuilder As System.Text.StringBuilder
 
     ''' <summary> Appends a device error message. </summary>
-    ''' <remarks> David, 1/12/2016. </remarks>
     ''' <param name="value"> The value. </param>
     Public Sub AppendDeviceErrorMessage(ByVal value As String)
         If Not String.IsNullOrWhiteSpace(value) Then
@@ -306,7 +303,6 @@ Public MustInherit Class StatusSubsystemBase
     Protected Overridable ReadOnly Property ErrorQueueQueryCommand As String
 
     ''' <summary> Enqueues device error. </summary>
-    ''' <remarks> David, 1/12/2016. </remarks>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Protected Overridable Function EnqueueDeviceError(ByVal compoundErrorMessage As String) As DeviceError
@@ -332,7 +328,6 @@ Public MustInherit Class StatusSubsystemBase
     End Property
 
     ''' <summary> Queries if error bit is set without affecting the <see cref="ErrorAvailable"/> property. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <returns> <c>true</c> if it error bit is on; otherwise <c>false</c> </returns>
     Public Function IsErrorBitSet() As Boolean
         ' read status byte without affecting the error available property.
@@ -455,7 +450,6 @@ Public MustInherit Class StatusSubsystemBase
     End Function
 
     ''' <summary> Appends a device error message. </summary>
-    ''' <remarks> David, 1/12/2016. </remarks>
     ''' <param name="value"> The value. </param>
     Public Sub AppendLastDeviceErrorMessage(ByVal value As String)
         Me.DeviceErrorBuilder.AppendLine(value)
@@ -463,7 +457,6 @@ Public MustInherit Class StatusSubsystemBase
     End Sub
 
     ''' <summary> Enqueue last error. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
     ''' <returns> A DeviceError. </returns>
     Public Function EnqueueLastError(ByVal compoundErrorMessage As String) As DeviceError
@@ -478,7 +471,6 @@ Public MustInherit Class StatusSubsystemBase
     End Function
 
     ''' <summary> Reads last error. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <returns> The last error. </returns>
     Public Function ReadLastError() As DeviceError
         Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
@@ -489,7 +481,6 @@ Public MustInherit Class StatusSubsystemBase
     End Function
 
     ''' <summary> Writes the last error query command. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     Public Sub WriteLastErrorQueryCommand()
         If Not String.IsNullOrWhiteSpace(Me.LastErrorQueryCommand) Then
             Me.Session.WriteLine(Me.LastErrorQueryCommand)
@@ -645,7 +636,6 @@ Public MustInherit Class StatusSubsystemBase
     Protected Overridable ReadOnly Property WaitCommand As String = Ieee488.Syntax.WaitCommand
 
     ''' <summary> Issues the wait command. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     Public Sub Wait()
         Me.Write(Me.WaitCommand)
     End Sub
@@ -706,7 +696,6 @@ Public MustInherit Class StatusSubsystemBase
     Public Property ServiceRequestWaitCompleteBitmask As ServiceRequests = ServiceRequests.StandardEvent
 
     ''' <summary> Enabled detection of completion. </summary>
-    ''' <remarks> David, 2/18/2016. </remarks>
     ''' <param name="standardEventEnableBitmask">  Specifies standard events will issue an SRQ. </param>
     ''' <param name="serviceRequestEnableBitmask"> Specifies which status registers will issue an
     '''                                            SRQ. </param>
@@ -789,7 +778,6 @@ Public MustInherit Class StatusSubsystemBase
     End Sub
 
     ''' <summary> Waits for completion of last operation. </summary>
-    ''' <remarks> David, 2/10/2016. </remarks>
     ''' <param name="value">   The value. </param>
     ''' <param name="timeout"> Specifies the time to wait for the instrument to return operation
     '''                        completed. </param>
@@ -1275,7 +1263,6 @@ Public MustInherit Class StatusSubsystemBase
     End Sub
 
     ''' <summary> Trace visa node operation. Can be used with queries. </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <param name="nodeNumber"> Specifies the remote node number to validate. </param>
     ''' <param name="format">     Describes the format to use. </param>
     ''' <param name="args">       A variable-length parameters list containing arguments. </param>
@@ -1320,7 +1307,6 @@ Public MustInherit Class StatusSubsystemBase
     Protected Overridable ReadOnly Property CollectGarbageWaitCompleteCommand As String = ""
 
     ''' <summary> Collect garbage wait complete. </summary>
-    ''' <remarks> David, 1/11/2016. </remarks>
     ''' <param name="timeout"> Specifies how long to wait for the service request before throwing
     '''                        the timeout exception. Set to zero for an infinite (120 seconds)
     '''                        timeout. </param>

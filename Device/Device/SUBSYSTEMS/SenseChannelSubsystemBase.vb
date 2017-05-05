@@ -17,7 +17,6 @@ Public MustInherit Class SenseChannelSubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystemBase" /> class. </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     ''' <param name="channelNumber">   The channel number. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>
     Protected Sub New(ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
@@ -53,7 +52,6 @@ Public MustInherit Class SenseChannelSubsystemBase
 #Region " ADAPTER TYPE "
 
     ''' <summary> List adapters. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     Public Sub ListAdapters(ByVal listControl As Windows.Forms.ComboBox)
@@ -72,7 +70,6 @@ Public MustInherit Class SenseChannelSubsystemBase
     End Sub
 
     ''' <summary> Returns the function mode selected by the list control. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     ''' <returns> The SenseAdapterType. </returns>
@@ -82,7 +79,6 @@ Public MustInherit Class SenseChannelSubsystemBase
     End Function
 
     ''' <summary> Safe select function mode. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     Public Sub SafeSelectAdapterType(ByVal listControl As Windows.Forms.ComboBox)
@@ -588,7 +584,6 @@ End Class
 ''' <summary>
 ''' Specifies the adapter types.
 ''' </summary>
-''' <remarks> David, 3/12/2016. </remarks>
 Public Enum AdapterType
     <ComponentModel.Description("None (NONE)")> None = 0
     <ComponentModel.Description("4TP 1m (E4M1)")> E4M1

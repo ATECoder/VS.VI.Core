@@ -133,7 +133,6 @@ Public Class ProberSubsystem
     End Function
 
     ''' <summary> Writes the Response Mode and reads back a reply from the instrument. </summary>
-    ''' <remarks> David, 1/19/2016. </remarks>
     ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="mode">           The mode. </param>
     ''' <param name="raiseException"> true to raise exception. </param>

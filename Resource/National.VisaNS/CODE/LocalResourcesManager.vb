@@ -16,7 +16,6 @@ Public Class LocalResourcesManager
 #Region " CONSTRUCTOR "
 
         ''' <summary> Default constructor. </summary>
-        ''' <remarks> David, 11/23/2015. </remarks>
         Public Sub New()
             MyBase.New
         End Sub
@@ -57,7 +56,6 @@ Public Class LocalResourcesManager
 #Region " PARSE RESOURCES "
 
     ''' <summary> Parse resource. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
     Public Overrides Function ParseResource(ByVal resourceName As String) As VI.ResourceParseResult
@@ -88,7 +86,6 @@ Public Class LocalResourcesManager
         End Function
 
         ''' <summary> Lists all resources. </summary>
-        ''' <remarks> David, 11/21/2015. </remarks>
         ''' <param name="filter"> A pattern specifying the search. </param>
         ''' <returns> List of all resources. </returns>
         Public Overrides Function FindResources(ByVal filter As String) As IEnumerable(Of String)

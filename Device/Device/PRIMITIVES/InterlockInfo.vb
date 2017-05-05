@@ -1,5 +1,4 @@
 ﻿''' <summary> Information about the interlock. </summary>
-''' <remarks> David, 2/16/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -13,7 +12,6 @@
 Public Class InterlockInfo
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 2/16/2016. </remarks>
     ''' <param name="interlockNumber"> The interlock number. </param>
     Public Sub New(ByVal interlockNumber As Integer)
         MyBase.New
@@ -38,7 +36,6 @@ Public Class InterlockInfo
 End Class
 
 ''' <summary> Collection of interlocks. </summary>
-''' <remarks> David, 2/16/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -55,7 +52,6 @@ Public Class InterlockCollection
     ''' <summary>
     ''' When implemented in a derived class, extracts the key from the specified element.
     ''' </summary>
-    ''' <remarks> David, 2/16/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="item"> The element from which to extract the key. </param>
     ''' <returns> The key for the specified element. </returns>
@@ -65,7 +61,6 @@ Public Class InterlockCollection
     End Function
 
     ''' <summary> Adds interlockNumber. </summary>
-    ''' <remarks> David, 2/16/2016. </remarks>
     ''' <param name="interlockNumber"> The interlock number to add. </param>
     ''' <returns> An InterlockInfo. </returns>
     Public Overloads Function Add(ByVal interlockNumber As Integer) As InterlockInfo
@@ -75,7 +70,6 @@ Public Class InterlockCollection
     End Function
 
     ''' <summary> Updates the interlock state described by state. </summary>
-    ''' <remarks> David, 2/16/2016. </remarks>
     ''' <param name="state"> The state. </param>
     Public Sub UpdateInterlockState(ByVal state As Integer)
         For Each ilock As InterlockInfo In Me
@@ -112,7 +106,6 @@ Public Class InterlockCollection
 End Class
 
 ''' <summary> Values that represent interlock states. </summary>
-''' <remarks> David, 2/16/2016. </remarks>
 Public Enum InterlockState
     <ComponentModel.Description("Open")> [Open]
     <ComponentModel.Description("Engaged")> Engaged

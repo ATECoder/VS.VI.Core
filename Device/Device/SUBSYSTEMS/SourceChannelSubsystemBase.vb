@@ -19,7 +19,6 @@ Public MustInherit Class SourceChannelSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="SourceSubsystemBase" /> class.
     ''' </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     ''' <param name="channelNumber">   The channel number. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>
     Protected Sub New(ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
@@ -227,7 +226,6 @@ Public MustInherit Class SourceChannelSubsystemBase
     End Property
 
     ''' <summary> Displays a supported function modes. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <param name="listControl"> The list control. </param>
     Public Sub DisplaySupportedFunctionModes(ByVal listControl As Windows.Forms.ComboBox)
         If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
@@ -244,7 +242,6 @@ Public MustInherit Class SourceChannelSubsystemBase
     End Sub
 
     ''' <summary> Returns the function mode selected by the list control. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     ''' <returns> The SenseFunctionModes. </returns>
@@ -254,7 +251,6 @@ Public MustInherit Class SourceChannelSubsystemBase
     End Function
 
     ''' <summary> Safe select function mode. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     Public Sub SafeSelectFunctionMode(ByVal listControl As Windows.Forms.ComboBox)

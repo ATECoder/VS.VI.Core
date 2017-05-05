@@ -16,7 +16,6 @@ Public Class ResourceManager
     ''' <summary>
     ''' Constructor that prevents a default instance of this class from being created.
     ''' </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     Public Sub New()
         MyBase.New
     End Sub
@@ -56,7 +55,6 @@ Public Class ResourceManager
     ''' Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
     ''' resources.
     ''' </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     Public Sub Dispose() Implements IDisposable.Dispose
         ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
         Dispose(True)
@@ -74,7 +72,6 @@ Public Class ResourceManager
 #Region " PARSE RESOURCES "
 
     ''' <summary> Parse resource. </summary>
-    ''' <remarks> David, 11/23/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>

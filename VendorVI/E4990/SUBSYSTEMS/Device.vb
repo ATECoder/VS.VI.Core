@@ -24,7 +24,6 @@ Public Class Device
     End Sub
 
     ''' <summary> Creates a new Device. </summary>
-    ''' <remarks> David, 5/1/2017. </remarks>
     ''' <returns> A Device. </returns>
     Public Shared Function Create() As Device
         Dim device As Device = Nothing
@@ -89,7 +88,6 @@ Public Class Device
     End Sub
 
     ''' <summary> Initializes the Device. Used after reset to set a desired initial state. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
@@ -232,7 +230,6 @@ Public Class Device
 #Region " COMPENSATION "
 
     ''' <summary> Clears the compensations. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     Public Sub ClearCompensations()
 
         ' clear the calibration parameters

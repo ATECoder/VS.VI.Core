@@ -1,6 +1,5 @@
 ﻿Imports isr.Core.Pith.SplitExtensions
 ''' <summary> A native error. </summary>
-''' <remarks> David, 11/24/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -15,7 +14,6 @@ Public Class NativeError
     Inherits isr.VI.NativeErrorBase
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <param name="errorCode"> The error code. </param>
     Public Sub New(ByVal errorCode As Integer)
         MyBase.New(errorCode)
@@ -23,7 +21,6 @@ Public Class NativeError
     End Sub
 
     ''' <summary> Initializes the error code. </summary>
-    ''' <remarks> David, 11/25/2015. </remarks>
     ''' <param name="errorCode"> The error code. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub InitErrorCode(ByVal errorCode As Integer)
@@ -37,7 +34,6 @@ Public Class NativeError
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <param name="errorCode">       The error code. </param>
     ''' <param name="resourceName">    Name of the resource. </param>
     ''' <param name="lastMessageSent"> The last message sent. </param>
@@ -49,7 +45,6 @@ Public Class NativeError
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <param name="errorCode">       The error code. </param>
     ''' <param name="resourceName">    Name of the resource. </param>
     ''' <param name="nodeNumber">      The node number. </param>

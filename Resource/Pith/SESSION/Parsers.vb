@@ -24,7 +24,6 @@ Partial Public Class SessionBase
     End Function
 
     ''' <summary> Converts a value to an one zero. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The value. </param>
     ''' <returns> value as a String. </returns>
     Public Shared Function ToOneZero(ByVal value As Boolean) As String
@@ -32,7 +31,6 @@ Partial Public Class SessionBase
     End Function
 
     ''' <summary> Converts a value to a true false. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="value"> The value. </param>
     ''' <returns> value as a String. </returns>
     Public Shared Function ToTrueFalse(ByVal value As Boolean) As String

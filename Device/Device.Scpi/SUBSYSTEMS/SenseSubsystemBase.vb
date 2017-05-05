@@ -114,7 +114,6 @@ Public MustInherit Class SenseSubsystemBase
     End Property
 
     ''' <summary> Displays a supported function modes. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <param name="listControl"> The list control. </param>
     Public Sub DisplaySupportedFunctionModes(ByVal listControl As Windows.Forms.ComboBox)
         If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
@@ -131,7 +130,6 @@ Public MustInherit Class SenseSubsystemBase
     End Sub
 
     ''' <summary> Returns the function mode selected by the list control. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     ''' <returns> The SenseFunctionModes. </returns>
@@ -141,7 +139,6 @@ Public MustInherit Class SenseSubsystemBase
     End Function
 
     ''' <summary> Safe select function mode. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     Public Sub SafeSelectFunctionMode(ByVal listControl As Windows.Forms.ComboBox)
@@ -210,7 +207,6 @@ Public MustInherit Class SenseSubsystemBase
     End Function
 
     ''' <summary> Parse units. </summary>
-    ''' <remarks> David, 6/27/2016. </remarks>
     ''' <param name="functionMode"> The function mode. </param>
     ''' <returns> An Arebis.TypedUnits.Unit. </returns>
     Public Overloads Shared Function ParseUnits(ByVal functionMode As SenseFunctionModes) As Arebis.TypedUnits.Unit

@@ -18,7 +18,6 @@ Public MustInherit Class CompensateChannelSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="Calculate2SubsystemBase" /> class.
     ''' </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     ''' <param name="compensationType"> The Compensation Type. </param>
     ''' <param name="channelNumber">    The channel number. </param>
     ''' <param name="statusSubsystem">  The status subsystem. </param>
@@ -41,7 +40,6 @@ Public MustInherit Class CompensateChannelSubsystemBase
 #Region " ARRAY <> STRING "
 
     ''' <summary> Parses an impedance array string. </summary>
-    ''' <remarks> David, 7/7/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <exception cref="InvalidCastException">  Thrown when an object cannot be cast to a required
     '''                                          type. </exception>
@@ -65,7 +63,6 @@ Public MustInherit Class CompensateChannelSubsystemBase
     End Function
 
     ''' <summary> Builds an impedance array string. </summary>
-    ''' <remarks> David, 7/7/2016. </remarks>
     ''' <param name="values"> The values. </param>
     ''' <returns> A String. </returns>
     Public Shared Function Build(ByVal values As IEnumerable(Of Double)) As String
@@ -80,7 +77,6 @@ Public MustInherit Class CompensateChannelSubsystemBase
     End Function
 
     ''' <summary> Builds impedance array string. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
     '''                                              null. </exception>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
@@ -95,7 +91,6 @@ Public MustInherit Class CompensateChannelSubsystemBase
     End Function
 
     ''' <summary> Merges the impedance arrays into a single array. </summary>
-    ''' <remarks> David, 7/7/2016. </remarks>
     ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
     '''                                              null. </exception>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
@@ -123,7 +118,6 @@ Public MustInherit Class CompensateChannelSubsystemBase
     End Function
 
     ''' <summary> Merge frequency and impedance arrays. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
     '''                                              null. </exception>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
@@ -449,7 +443,6 @@ Public MustInherit Class CompensateChannelSubsystemBase
     End Property
 
     ''' <summary> Writes and reads back the Impedance Array. </summary>
-    ''' <remarks> David, 7/9/2016. </remarks>
     ''' <param name="reading"> The reading. </param>
     ''' <returns> The Impedance Array. </returns>
     Public Function ApplyImpedanceArray(ByVal reading As String) As IEnumerable(Of Double)
@@ -747,7 +740,6 @@ Public MustInherit Class CompensateChannelSubsystemBase
 End Class
 
 ''' <summary> A bit-field of flags for specifying compensation types. </summary>
-''' <remarks> David, 7/7/2016. </remarks>
 <Flags>
 Public Enum CompensationTypes
     <ComponentModel.Description("None")> None = 0

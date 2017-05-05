@@ -104,7 +104,6 @@ Public Class ThermalTransientEstimator
     End Function
 
     ''' <summary> Queries the Thermal Coefficient. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <returns> The ThermalCoefficient or none if unknown. </returns>
     Public Function QueryThermalCoefficient() As Double?
         Const printFormat As Decimal = 9.6D

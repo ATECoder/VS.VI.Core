@@ -299,7 +299,6 @@ Public MustInherit Class MeterSubsystemBase
     End Function
 
     ''' <summary> Queries the Aperture. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <returns> The Aperture or none if unknown. </returns>
     Public Function QueryAperture() As Double?
         Const printFormat As Decimal = 7.4D

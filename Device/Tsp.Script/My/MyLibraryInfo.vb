@@ -1,7 +1,6 @@
 ﻿Namespace My
 
     ''' <summary> Provides assembly information for the class library. </summary>
-    ''' <remarks> David, 11/26/2015. </remarks>
     Public NotInheritable Class MyLibrary
 
         ''' <summary> Constructor that prevents a default instance of this class from being created. </summary>
@@ -17,7 +16,6 @@
         Public Const AssemblyProduct As String = "VI.Device.Tsp.Script.2017"
 
         ''' <summary> Identifies this talker. </summary>
-        ''' <remarks> David, 1/21/2016. </remarks>
         ''' <param name="talker"> The talker. </param>
         Public Shared Sub Identify(ByVal talker As isr.Core.Pith.ITraceMessageTalker)
             talker?.Publish(TraceEventType.Information, MyLibrary.TraceEventId, $"{MyLibrary.AssemblyProduct} ID = {MyLibrary.TraceEventId:X}")

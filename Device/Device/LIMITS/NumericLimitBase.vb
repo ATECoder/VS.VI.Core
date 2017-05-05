@@ -59,7 +59,6 @@ Public MustInherit Class NumericLimitBase
     Protected ReadOnly Property LimitNumber As Integer
 
     ''' <summary> Builds a command. </summary>
-    ''' <remarks> David, 3/10/2016. </remarks>
     ''' <param name="baseCommand"> The base command. </param>
     ''' <returns> A String. </returns>
     Protected Function BuildCommand(ByVal baseCommand As String) As String

@@ -3,7 +3,6 @@ Imports System.Windows.Forms
 Imports isr.Core.Pith.SubstringExtensions
 
 ''' <summary> A buffer reading. </summary>
-''' <remarks> David, 7/23/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -19,14 +18,12 @@ Public Class BufferReading
 #Region " CONSTRUCTORS "
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     Public Sub New()
         MyBase.New()
         Me._Clear()
     End Sub
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <param name="data"> The value. </param>
     Public Sub New(ByVal data As Queue(Of String))
         Me.New()
@@ -34,7 +31,6 @@ Public Class BufferReading
     End Sub
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 8/11/2016. </remarks>
     ''' <param name="data">         The value. </param>
     ''' <param name="firstReading"> The first buffer reading. </param>
     Public Sub New(ByVal data As Queue(Of String), ByVal firstReading As BufferReading)
@@ -43,7 +39,6 @@ Public Class BufferReading
     End Sub
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 2/23/2017. </remarks>
     ''' <param name="reading">      The reading. </param>
     ''' <param name="firstReading"> The first buffer reading. </param>
     Public Sub New(ByVal reading As BufferReading, ByVal firstReading As BufferReading)
@@ -59,7 +54,6 @@ Public Class BufferReading
     End Sub
 
     ''' <summary> Clears this object to its blank/initial state. </summary>
-    ''' <remarks> David, 8/11/2016. </remarks>
     Private Sub _Clear()
         Me._Reading = ""
         Me._TimestampReading = ""
@@ -87,7 +81,6 @@ Public Class BufferReading
 
 
     ''' <summary> Parses the given value. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <param name="data"> The value. </param>
     Private Sub _Parse(ByVal data As Queue(Of String))
         If data Is Nothing Then Throw New ArgumentNullException(NameOf(data))
@@ -108,7 +101,6 @@ Public Class BufferReading
     End Sub
 
     ''' <summary> Parses the given value. </summary>
-    ''' <remarks> David, 8/11/2016. </remarks>
     ''' <param name="data">         The value. </param>
     ''' <param name="firstReading"> The first buffer reading. </param>
     Private Sub _Parse(ByVal data As Queue(Of String), ByVal firstReading As BufferReading)
@@ -127,7 +119,6 @@ Public Class BufferReading
     Public ReadOnly Property StatusWord As Integer
 
     ''' <summary> Parse status. </summary>
-    ''' <remarks> David, 2/24/2017. </remarks>
     ''' <param name="reading"> The reading. </param>
     Private Sub ParseStatus(ByVal reading As String)
         Me._StatusReading = reading
@@ -149,7 +140,6 @@ Public Class BufferReading
     Public ReadOnly Property Amount As Arebis.TypedUnits.Amount
 
     ''' <summary> Parse unit. </summary>
-    ''' <remarks> David, 2/25/2017. </remarks>
     ''' <param name="unit"> The reading. </param>
     Private Sub ParseUnit(ByVal unit As String)
         Me._UnitReading = unit
@@ -183,7 +173,6 @@ Public Class BufferReading
 #Region " TIMESTAMP "
 
     ''' <summary> Parse timestamp. </summary>
-    ''' <remarks> David, 8/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="timestamp"> The time stamp rounded down to the second. </param>
     Private Sub ParseTimestamp(ByVal timestamp As String)
@@ -223,7 +212,6 @@ Public Class BufferReading
     Public Property RelativeTimespan As TimeSpan
 
     ''' <summary> Parses the given value. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <param name="data">         The value. </param>
     ''' <param name="firstReading"> The first buffer reading. </param>
     Public Sub Parse(ByVal data As Queue(Of String), ByVal firstReading As BufferReading)
@@ -232,7 +220,6 @@ Public Class BufferReading
     End Sub
 
     ''' <summary> Adjust relative timespan. </summary>
-    ''' <remarks> David, 8/11/2016. </remarks>
     ''' <param name="firstReading"> The first buffer reading. </param>
     Private Sub _AdjustRelativeTimespan(ByVal firstReading As BufferReading)
         If firstReading Is Nothing Then
@@ -243,7 +230,6 @@ Public Class BufferReading
     End Sub
 
     ''' <summary> Adjust relative timespan. </summary>
-    ''' <remarks> David, 8/11/2016. </remarks>
     ''' <param name="firstReading"> The first buffer reading. </param>
     Public Sub AdjustRelativeTimespan(ByVal firstReading As BufferReading)
         Me._adjustRelativeTimespan(firstReading)
@@ -254,7 +240,6 @@ Public Class BufferReading
 End Class
 
 ''' <summary> A buffer readings collection. </summary>
-''' <remarks> David, 7/23/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -281,7 +266,6 @@ Public Class BufferReadingCollection
 #Region " ADD "
 
     ''' <summary> Parses the reading and adds values to the collection. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="data"> The data. </param>
     Public Overloads Sub Add(ByVal data As String)
@@ -293,7 +277,6 @@ Public Class BufferReadingCollection
     End Sub
 
     ''' <summary> Parses the reading and adds values to the collection. </summary>
-    ''' <remarks> David, 2/23/2017. </remarks>
     ''' <param name="readingTimestampQueue"> The reading plus timestamp pair of values to add. </param>
     Public Overloads Sub Add(ByVal readingTimestampQueue As Queue(Of String))
         If readingTimestampQueue Is Nothing Then Throw New ArgumentNullException(NameOf(readingTimestampQueue))
@@ -304,7 +287,6 @@ Public Class BufferReadingCollection
     ''' Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />
     ''' .
     ''' </summary>
-    ''' <remarks> David, 2/23/2017. </remarks>
     ''' <param name="value"> The object to add to the
     '''                      <see cref="T:System.Collections.Generic.ICollection`1" />
     '''                      . </param>
@@ -320,7 +302,6 @@ Public Class BufferReadingCollection
     End Sub
 
     ''' <summary> Parses the reading and adds values to the collection. </summary>
-    ''' <remarks> David, 2/23/2017. </remarks>
     ''' <param name="values"> The values to add. </param>
     Public Overloads Sub Add(ByVal values As IEnumerable(Of BufferReading))
         If values Is Nothing Then Throw New ArgumentNullException(NameOf(values))
@@ -352,7 +333,6 @@ Public Class BufferReadingCollection
 #Region " DISPLAY "
 
     ''' <summary> Configure buffer display. </summary>
-    ''' <remarks> David, 2/24/2017. </remarks>
     ''' <param name="grid"> The grid. </param>
     ''' <returns> An Integer. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
@@ -431,7 +411,6 @@ Public Class BufferReadingCollection
     End Function
 
     ''' <summary> Displays the readings described by grid. </summary>
-    ''' <remarks> David, 2/24/2017. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="grid"> The grid. </param>
     ''' <returns> An Integer. </returns>
@@ -464,7 +443,6 @@ Public Class BufferReadingCollection
 End Class
 
 ''' <summary> Values that represent Buffer status bits for sense measurements. </summary>
-''' <remarks> David, 2/24/2017. </remarks>
 <Flags>
 Public Enum BufferStatusBits
     <Description("Not specified")> None

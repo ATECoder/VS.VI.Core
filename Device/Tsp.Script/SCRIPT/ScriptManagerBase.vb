@@ -16,7 +16,6 @@ Public MustInherit Class ScriptManagerBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="ScriptManagerBase" /> class. </summary>
-    ''' <remarks> David, 1/11/2016. </remarks>
     Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me._lastFetchedSavedScripts = ""
@@ -183,7 +182,6 @@ Public MustInherit Class ScriptManagerBase
     End Function
 
     ''' <summary> Gets all users scripts from the instrument. </summary>
-    ''' <remarks> David, 11/25/2015. </remarks>
     ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <exception cref="TimeoutException">         Thrown when a Timeout error condition occurs. </exception>
     ''' <returns> The user script names. </returns>
@@ -3591,7 +3589,6 @@ Public MustInherit Class ScriptManagerBase
     End Function
 
     ''' <summary> Executes the specified TSP script from file. </summary>
-    ''' <remarks> David, 12/31/2015. </remarks>
     ''' <param name="script"> Specifies reference to a valid <see cref="ScriptEntity">script</see> </param>
     ''' <returns> <c>True</c> if okay; otherwise, <c>False</c>. </returns>
     Public Function RunUserScript(ByVal script As ScriptEntityBase) As Boolean
@@ -3688,7 +3685,6 @@ Public MustInherit Class ScriptManagerBase
     End Function
 
     ''' <summary> Executes the specified TSP script from file. </summary>
-    ''' <remarks> David, 12/31/2015. </remarks>
     ''' <param name="node">   The node. </param>
     ''' <param name="script"> Specifies reference to a valid <see cref="ScriptEntity">script</see> </param>
     ''' <returns> <c>True</c> if okay; otherwise, <c>False</c>. </returns>

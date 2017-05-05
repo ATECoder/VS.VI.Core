@@ -1,6 +1,5 @@
 Imports isr.VI.Tsp
 ''' <summary> A slots subsystem base. </summary>
-''' <remarks> David, 2/15/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -19,7 +18,6 @@ Public MustInherit Class SlotsSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="DisplaySubsystemBase" /> class.
     ''' </summary>
-    ''' <remarks> David, 2/15/2016. </remarks>
     ''' <param name="maxSlotCount">    Number of maximum slots. </param>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystemBase">status
     '''                                Subsystem</see>. </param>
@@ -62,7 +60,6 @@ Public MustInherit Class SlotsSubsystemBase
 #Region " I PRESETTABLE "
 
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
-    ''' <remarks> David, 2/15/2016. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         For Each s As SlotSubsystemBase In Me.Slots
@@ -90,7 +87,6 @@ Public MustInherit Class SlotsSubsystemBase
 End Class
 
 ''' <summary> Collection of slots. </summary>
-''' <remarks> David, 2/15/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

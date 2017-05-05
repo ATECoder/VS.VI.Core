@@ -17,7 +17,6 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="StatusSubsystemBase" /> class.
     ''' </summary>
-    ''' <remarks> David, 1/12/2016. </remarks>
     ''' <param name="visaSession">            A reference to a <see cref="VI.SessionBase">message based
     '''                                       session</see>. </param>
     ''' <param name="noErrorCompoundMessage"> Message describing the no error compound. </param>

@@ -324,7 +324,6 @@ Public Class ThermostreamSubsystem
     End Function
 
     ''' <summary> Applies the operator screen. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     Public Sub ApplyCyclesScreen()
         Me.ResetCycleScreen()
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Awaiting reset to Cycles (manual mode) screen;. ")
@@ -372,7 +371,6 @@ Public Class ThermostreamSubsystem
     End Function
 
     ''' <summary> Applies the operator screen. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     Public Sub ApplyOperatorScreen()
         Me.ResetOperatorScreen()
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Awaiting reset to Operator screen;. ")

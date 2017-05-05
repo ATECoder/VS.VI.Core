@@ -26,7 +26,6 @@ Public Class Device
     End Sub
 
     ''' <summary> Creates a new Device. </summary>
-    ''' <remarks> David, 5/1/2017. </remarks>
     ''' <returns> A Device. </returns>
     Public Shared Function Create() As Device
         Dim device As Device = Nothing

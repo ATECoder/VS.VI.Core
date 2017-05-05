@@ -124,7 +124,6 @@ Public Class TriggerSubsystem
     Private Const SimpleLoopModel As String = "SimpleLoop"
 
     ''' <summary> Loads simple loop. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <param name="count"> Number of. </param>
     ''' <param name="delay"> The delay. </param>
     Public Sub LoadSimpleLoop(ByVal count As Integer, ByVal delay As TimeSpan)
@@ -188,7 +187,6 @@ Public Class TriggerSubsystem
 #Region " CUSTOM BINNING "
 
     ''' <summary> Applies the grade binning. </summary>
-    ''' <remarks> David, 12/30/2016. </remarks>
     ''' <param name="count">            Number of. </param>
     ''' <param name="startDelay">       The start delay. </param>
     ''' <param name="failedBitPattern"> A pattern specifying the failed bit. </param>

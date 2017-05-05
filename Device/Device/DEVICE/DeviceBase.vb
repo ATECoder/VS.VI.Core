@@ -223,7 +223,6 @@ Public MustInherit Class DeviceBase
     ''' Resets, clears and initializes the device. Starts with issuing a selective-device-clear, reset (RST),
     ''' Clear Status (CLS, and clear error queue) and initialize.
     ''' </summary>
-    ''' <remarks> David, 1/8/2016. </remarks>
     ''' <param name="deviceClearRefractoryPeriod"> The device clear refractory period. </param>
     ''' <param name="resetRefractoryPeriod">       The reset refractory period. </param>
     ''' <param name="initRefractoryPeriod">        The initialize refractory period. </param>
@@ -284,7 +283,6 @@ Public MustInherit Class DeviceBase
 #Region " SESSION "
 
     ''' <summary> Capture synchronization context. </summary>
-    ''' <remarks> David, 4/3/2017. </remarks>
     ''' <param name="syncContext"> Context for the synchronization. </param>
     Public Overrides Sub CaptureSyncContext(ByVal syncContext As Threading.SynchronizationContext)
         MyBase.CaptureSyncContext(syncContext)
@@ -296,7 +294,6 @@ Public MustInherit Class DeviceBase
     Private _IsSessionOwner As Boolean
 
     ''' <summary> Executes the property changed action. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
@@ -316,7 +313,6 @@ Public MustInherit Class DeviceBase
     End Sub
 
     ''' <summary> Session property changed. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -494,7 +490,6 @@ Public MustInherit Class DeviceBase
     End Sub
 
     ''' <summary> Executes the initializing actions. </summary>
-    ''' <remarks> David, 1/20/2016. </remarks>
     Protected Overridable Sub OnInitializing(ByVal e As ComponentModel.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Me.SyncNotifyInitializing(e)
@@ -569,7 +564,6 @@ Public MustInherit Class DeviceBase
     End Sub
 
     ''' <summary> Try open session. </summary>
-    ''' <remarks> David, 10/13/2016. </remarks>
     ''' <param name="resourceName">  Name of the resource. </param>
     ''' <param name="resourceTitle"> The resource title. </param>
     ''' <param name="e">             Cancel details event information. </param>
@@ -666,7 +660,6 @@ Public MustInherit Class DeviceBase
     End Property
 
     ''' <summary> Session property changed. </summary>
-    ''' <remarks> David, 3/7/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub SessionPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
@@ -862,7 +855,6 @@ Public MustInherit Class DeviceBase
     Public Event ServiceRequested As EventHandler(Of EventArgs)
 
     ''' <summary> Removes event handler. </summary>
-    ''' <remarks> David, 12/17/2015. </remarks>
     ''' <param name="value"> The handler. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveEventHandler(ByVal value As EventHandler(Of EventArgs))
@@ -903,7 +895,6 @@ Public MustInherit Class DeviceBase
     Public Event Opening As EventHandler(Of ComponentModel.CancelEventArgs)
 
     ''' <summary> Removes event handler. </summary>
-    ''' <remarks> David, 12/17/2015. </remarks>
     ''' <param name="value"> The handler. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveOpeningEventHandler(ByVal value As EventHandler(Of ComponentModel.CancelEventArgs))
@@ -932,7 +923,6 @@ Public MustInherit Class DeviceBase
     Public Event Opened As EventHandler(Of System.EventArgs)
 
     ''' <summary> Removes event handler. </summary>
-    ''' <remarks> David, 12/17/2015. </remarks>
     ''' <param name="value"> The handler. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveOpenedEventHandler(ByVal value As EventHandler(Of EventArgs))
@@ -960,7 +950,6 @@ Public MustInherit Class DeviceBase
     Public Event Closing As EventHandler(Of System.ComponentModel.CancelEventArgs)
 
     ''' <summary> Removes event handler. </summary>
-    ''' <remarks> David, 12/17/2015. </remarks>
     ''' <param name="value"> The handler. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveClosingEventHandler(ByVal value As EventHandler(Of System.ComponentModel.CancelEventArgs))
@@ -988,7 +977,6 @@ Public MustInherit Class DeviceBase
     Public Event Closed As EventHandler(Of System.EventArgs)
 
     ''' <summary> Removes event handler. </summary>
-    ''' <remarks> David, 12/17/2015. </remarks>
     ''' <param name="value"> The handler. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveClosedEventHandler(ByVal value As EventHandler(Of EventArgs))
@@ -1016,7 +1004,6 @@ Public MustInherit Class DeviceBase
     Public Event Initializing As EventHandler(Of System.ComponentModel.CancelEventArgs)
 
     ''' <summary> Removes event handler. </summary>
-    ''' <remarks> David, 12/17/2015. </remarks>
     ''' <param name="value"> The handler. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveInitializingEventHandler(ByVal value As EventHandler(Of System.ComponentModel.CancelEventArgs))
@@ -1044,7 +1031,6 @@ Public MustInherit Class DeviceBase
     Public Event Initialized As EventHandler(Of System.EventArgs)
 
     ''' <summary> Removes event handler. </summary>
-    ''' <remarks> David, 12/17/2015. </remarks>
     ''' <param name="value"> The handler. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveInitializedEventHandler(ByVal value As EventHandler(Of EventArgs))
@@ -1075,28 +1061,24 @@ Public MustInherit Class DeviceBase
     Public ReadOnly Property Talker As ITraceMessageTalker
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
         Me.Talker.Listeners.Add(listeners)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Sub ClearListeners() Implements ITalker.ClearListeners
         Me.Talker.Listeners?.Clear()
         Me.Subsystems.ClearListeners()
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="talker"> The talker. </param>
     Public Sub AddListeners(talker As ITraceMessageTalker) Implements ITalker.AddListeners
         Me.Talker.AddListeners(talker)
     End Sub
 
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
         Me.Talker.UpdateTraceLogLevel(traceLevel)
@@ -1104,7 +1086,6 @@ Public MustInherit Class DeviceBase
     End Sub
 
     ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
         Me.Talker.UpdateTraceShowLevel(traceLevel)
@@ -1112,13 +1093,11 @@ Public MustInherit Class DeviceBase
     End Sub
 
     ''' <summary> Adds subsystem listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub AddSubsystemListeners()
         Me.Subsystems.AddListeners(Me.Talker.Listeners)
     End Sub
 
     ''' <summary> Clears the subsystem listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub ClearSubsystemListeners()
         Me.Subsystems.ClearListeners()
     End Sub

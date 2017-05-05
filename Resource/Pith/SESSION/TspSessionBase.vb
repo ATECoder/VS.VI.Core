@@ -775,7 +775,6 @@ Partial Public Class SessionBase
     ''' <summary>
     ''' Checks the series of values and return <c>True</c> if any one of them is nil.
     ''' </summary>
-    ''' <remarks> David, 11/30/2015. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="isControllerNode"> true if this object is controller node. </param>
     ''' <param name="nodeNumber">       Specifies the remote node number to validate. </param>

@@ -19,7 +19,6 @@ Public MustInherit Class ChannelTraceSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="Calculate2SubsystemBase" /> class.
     ''' </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     ''' <param name="TraceNumber">    The Trace number. </param>
     ''' <param name="channelNumber">   The channel number. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>
@@ -55,7 +54,6 @@ Public MustInherit Class ChannelTraceSubsystemBase
     Protected Overridable ReadOnly Property AutoScaleCommand As String
 
     ''' <summary> Automatic scale. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     Public Sub AutoScale()
         If Not String.IsNullOrWhiteSpace(Me.SelectCommand) Then
             Me.Session.WriteLine(Me.SelectCommand)
@@ -83,7 +81,6 @@ Public MustInherit Class ChannelTraceSubsystemBase
 #Region " TRACE PARAMETER "
 
     ''' <summary> List adapters. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     Public Sub ListParameters(ByVal listControl As Windows.Forms.ComboBox)
@@ -102,7 +99,6 @@ Public MustInherit Class ChannelTraceSubsystemBase
     End Sub
 
     ''' <summary> Returns the function mode selected by the list control. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     ''' <returns> The SenseTraceParameters. </returns>
@@ -112,7 +108,6 @@ Public MustInherit Class ChannelTraceSubsystemBase
     End Function
 
     ''' <summary> Safe select function mode. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="listControl"> The list control. </param>
     Public Sub SafeSelectTraceParameters(ByVal listControl As Windows.Forms.ComboBox)
@@ -211,7 +206,6 @@ Public MustInherit Class ChannelTraceSubsystemBase
 End Class
 
 ''' <summary> A bit-field of flags for specifying trace parameters. </summary>
-''' <remarks> David, 7/6/2016. </remarks>
 <Flags>
 Public Enum TraceParameters
     <ComponentModel.Description("None")> None = 0

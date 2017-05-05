@@ -422,14 +422,12 @@ Public Class MetaStatus
     Public Property FailStatusBitmask As Long
 
     ''' <summary> Applies the default fail status bitmask. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     Private Sub _ApplyDefaultFailStatusBitmask()
         Me._FailStatusBitmask = 1L << MetaStatusBit.Low Or
                                 1L << MetaStatusBit.High
     End Sub
 
     ''' <summary> Applies the default fail status bitmask. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     Public Sub ApplyDefaultFailStatusBitmask()
         Me._ApplyDefaultFailStatusBitmask()
     End Sub
@@ -448,7 +446,6 @@ Public Class MetaStatus
     Public Property InvalidStatusBitmask As Long
 
     ''' <summary> Applies the default invalid status bitmask. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     Private Sub _ApplyDefaultInvalidStatusBitmask()
         Me._InvalidStatusBitmask = 1L << MetaStatusBit.NotANumber Or
                                    1L << MetaStatusBit.Infinity Or
@@ -461,7 +458,6 @@ Public Class MetaStatus
     End Sub
 
     ''' <summary> Applies the default invalid status bitmask. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     Public Sub ApplyDefaultInvalidStatusBitmask()
         Me._ApplyDefaultInvalidStatusBitmask()
     End Sub

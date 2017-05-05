@@ -1,5 +1,4 @@
 ﻿''' <summary> A session factory. </summary>
-''' <remarks> David, 11/29/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -15,7 +14,6 @@ Public Class SessionFactory
     ''' <summary>
     ''' Constructor that prevents a default instance of this class from being created.
     ''' </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     Private Sub New()
         MyBase.New
     End Sub

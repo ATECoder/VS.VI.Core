@@ -39,7 +39,6 @@ Public MustInherit Class ChannelTriggerSubsystemBase
     Protected Overridable ReadOnly Property InitiateCommand As String
 
     ''' <summary> Changes the state of the channel to the initiation state of the trigger system. </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     Public Sub Initiate()
         Me.Write(Me.InitiateCommand)
     End Sub

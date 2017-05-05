@@ -16,7 +16,6 @@ Public MustInherit Class SenseChannelSubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystemBase" /> class. </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     ''' <param name="channelNumber">   A reference to a <see cref="VI.StatusSubsystemBase">status
     '''                                subsystem</see>. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>

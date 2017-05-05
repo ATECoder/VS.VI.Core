@@ -514,7 +514,6 @@ Public Class MeasurementPanelBase
     End Property
 
     ''' <summary> Handles the measure sequencer property changed event. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As MeasureSequencer, ByVal propertyName As String)
@@ -642,7 +641,6 @@ Public Class MeasurementPanelBase
     End Property
 
     ''' <summary> Handles the trigger sequencer property changed event. </summary>
-    ''' <remarks> David, 1/13/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(ByVal sender As TriggerSequencer, ByVal propertyName As String)

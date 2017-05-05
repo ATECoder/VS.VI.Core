@@ -1,6 +1,5 @@
 ﻿Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> A National Instrument message based session. </summary>
-''' <remarks> David, 11/20/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -134,7 +133,6 @@ Public Class Session
     End Sub
 
     ''' <summary> Dispose session. </summary>
-    ''' <remarks> David, 3/14/2016. </remarks>
     Private Sub DisposeSession()
         Me._IsVisaSessionDisposed = True
         If Me.VisaSession IsNot Nothing Then
@@ -144,7 +142,6 @@ Public Class Session
     End Sub
 
     ''' <summary> Discards the session. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     Protected Overrides Sub DiscardSession()
         If Me.IsSessionOpen Then
@@ -267,7 +264,6 @@ Public Class Session
 
     ''' <summary>
     ''' Synchronously reads ASCII-encoded string data. </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
     Public Overrides Function ReadFreeLine() As String
@@ -295,7 +291,6 @@ Public Class Session
     ''' Synchronously reads ASCII-encoded string data. Reads up to the
     ''' <see cref="TerminationCharacter">termination character</see>.
     ''' </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
     Public Overrides Function ReadFiniteLine() As String
@@ -323,7 +318,6 @@ Public Class Session
     ''' Synchronously writes ASCII-encoded string data to the device or interface. Terminates the
     ''' data with the <see cref="TerminationCharacter">termination character</see>.
     ''' </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <param name="dataToWrite"> The data to write. </param>
     Public Overrides Sub Write(ByVal dataToWrite As String)
@@ -348,7 +342,6 @@ Public Class Session
     End Sub
 
     ''' <summary> Sends a TCP/IP message to keep the socket connected. </summary>
-    ''' <remarks> David, 3/14/2016. </remarks>
     ''' <returns> <c>true</c> if success; otherwise <c>false</c> </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Function KeepAlive() As Boolean
@@ -382,7 +375,6 @@ Public Class Session
 #Region " REGISTERS "
 
     ''' <summary> Reads status byte. </summary>
-    ''' <remarks> David, 11/17/2015. </remarks>
     ''' <returns> The status byte. </returns>
     Public Overrides Function ReadStatusByte() As ServiceRequests
         Try
@@ -406,7 +398,6 @@ Public Class Session
     End Function
 
     ''' <summary> Clears the device. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub Clear()
         Try
             Me._LastNativeError = NativeError.Success
@@ -428,7 +419,6 @@ Public Class Session
 #Region " EVENTS "
 
     ''' <summary> Visa session service request. </summary>
-    ''' <remarks> David, 11/21/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Message based session event information. </param>
     Private Overloads Sub OnServiceRequested(sender As Object, e As NationalInstruments.VisaNS.MessageBasedSessionEventArgs)
@@ -452,7 +442,6 @@ Public Class Session
     End Property
 
     ''' <summary> Enables the service request. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub EnableServiceRequest()
         Try
             If Not Me.ServiceRequestEventEnabled Then
@@ -476,7 +465,6 @@ Public Class Session
     End Sub
 
     ''' <summary> Disables the service request. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub DisableServiceRequest()
         Try
             If Me.ServiceRequestEventEnabled Then
@@ -505,7 +493,6 @@ Public Class Session
 #Region " TRIGGER "
 
     ''' <summary> Assert trigger. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub AssertTrigger()
         Try
             Me._LastNativeError = NativeError.Success

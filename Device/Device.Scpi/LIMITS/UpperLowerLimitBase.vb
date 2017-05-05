@@ -20,7 +20,6 @@ Public MustInherit Class UpperLowerLimitBase
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 3/10/2016. </remarks>
     ''' <param name="limitNumber">     The limit number. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>
     Protected Sub New(ByVal limitNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)

@@ -76,7 +76,6 @@ Public Class ConfigurationPanelBase
     End Property
 
     ''' <summary> Executes the property changed action. </summary>
-    ''' <remarks> David, 1/6/2016. </remarks>
     ''' <param name="sender">       The source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>

@@ -1,7 +1,6 @@
 ﻿
 
     ''' <summary> Builds compensation string. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
     '''                                              null. </exception>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
@@ -23,7 +22,6 @@
     End Function
 
     ''' <summary> Merge compensations. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
     '''                                              null. </exception>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
@@ -52,7 +50,6 @@
     End Function
 
     ''' <summary> Builds the compensations. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
     '''                                              null. </exception>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
@@ -92,7 +89,6 @@
     End Function
 
     ''' <summary> Adapter setup. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     Sub AdapterSetup()
 
         ' TimeOut time should be greater than the measurement time.    
@@ -144,7 +140,6 @@
     End Sub
 
     ''' <summary> Toggle open compensation state. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <param name="enabled"> true to enable, false to disable. </param>
     Public Sub ToggleOpenCompensationState(ByVal enabled As Boolean)
         Me.Device.Session.WriteLine(":SENS1:CORR2:OPEN {0}", If(enabled, "1", "0"))
@@ -152,7 +147,6 @@
     End Sub
 
     ''' <summary> Applies the open compensation. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
     '''                                              null. </exception>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
@@ -170,7 +164,6 @@
     End Sub
 
     ''' <summary> Reads open compensations. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <returns> The open compensations. </returns>
     Public Function ReadOpenCompensations() As String
 
@@ -187,7 +180,6 @@
     End Function
 
     ''' <summary> Acquires the open compensation. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <param name="lowFrequency">  The low frequency. </param>
     ''' <param name="highFrequency"> The high frequency. </param>
     Public Sub AcquireOpenCompensation(ByVal lowFrequency As Double, ByVal highFrequency As Double)
@@ -213,7 +205,6 @@
     End Sub
 
     ''' <summary> Toggle short compensation state. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <param name="enabled"> true to enable, false to disable. </param>
     Public Sub ToggleShortCompensationState(ByVal enabled As Boolean)
         Me.Device.Session.WriteLine(":SENS1:CORR2:SHOR {0}", If(enabled, "1", "0"))
@@ -423,7 +414,6 @@
     End Sub
 
     ''' <summary> Select active trace. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <param name="channelNumber"> The channel number. </param>
     ''' <param name="traceNumber">   The trace number. </param>
     Public Sub SelectActiveTrace(ByVal channelNumber As Integer, ByVal traceNumber As Integer)
@@ -433,7 +423,6 @@
     End Sub
 
     ''' <summary> Reads a marker. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <param name="channelNumber"> The channel number. </param>
     ''' <param name="markerNumber">  The marker number. </param>
     ''' <returns> The marker. </returns>
@@ -448,7 +437,6 @@
     End Function
 
     ''' <summary> Attempts to averaging wait complete from the given data. </summary>
-    ''' <remarks> David, 7/6/2016. </remarks>
     ''' <param name="count">   Number of. </param>
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
@@ -465,7 +453,6 @@
     End Function
 
     ''' <summary> Automatic scale. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <param name="channelNumber"> The channel number. </param>
     ''' <param name="traceNumber">   The trace number. </param>
     Public Sub AutoScale(ByVal channelNumber As Integer, ByVal traceNumber As Integer)
@@ -474,7 +461,6 @@
     End Sub
 
     ''' <summary> Enables the measurement available. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     Public Sub EnableMeasurementAvailable()
 
         ' Sets the positive transition filter to 0 and the negative transition filter to 1 
@@ -494,7 +480,6 @@
     End Sub
 
     ''' <summary> Configure impedance measurement. </summary>
-    ''' <remarks> David, 4/15/2016. </remarks>
     ''' <param name="sourceMode">    Source mode. </param>
     ''' <param name="aperture">      The aperture. </param>
     ''' <param name="level">         The level. </param>

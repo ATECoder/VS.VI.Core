@@ -268,7 +268,6 @@ Public MustInherit Class MultimeterSubsystemBase
     Protected Overridable ReadOnly Property ConnectCommand As String
 
     ''' <summary> Connects this object. </summary>
-    ''' <remarks> David, 4/25/2016. </remarks>
     Public Sub Connect()
         Me.Session.Execute(Me.ConnectCommand)
     End Sub
@@ -276,7 +275,6 @@ Public MustInherit Class MultimeterSubsystemBase
     Protected Overridable ReadOnly Property DisconnectCommand As String
 
     ''' <summary> Disconnects this object. </summary>
-    ''' <remarks> David, 4/25/2016. </remarks>
     Public Sub Disconnect()
         Me.Session.Execute(DisconnectCommand)
     End Sub
@@ -524,7 +522,6 @@ Public MustInherit Class MultimeterSubsystemBase
     Private _FunctionMode As MultimeterFunctionMode?
 
     ''' <summary> Parse units. </summary>
-    ''' <remarks> David, 1/15/2016. </remarks>
     ''' <param name="value"> The  Multimeter Function Mode. </param>
     ''' <returns> An Arebis.TypedUnits.Unit. </returns>
     Public Shared Function ParseUnits(ByVal value As MultimeterFunctionMode) As Arebis.TypedUnits.Unit
@@ -829,7 +826,6 @@ Public Enum MultimeterFunctionMode
 End Enum
 
 ''' <summary> Dictionary of function ranges. </summary>
-''' <remarks> David, 1/16/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -846,7 +842,6 @@ Public Class FunctionRangeDictionary
 End Class
 
 ''' <summary> Dictionary of function-related enabled functionality. </summary>
-''' <remarks> David, 2/8/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

@@ -50,7 +50,6 @@ Public Class DeviceError
 #Region " PARSE "
 
     ''' <summary> Parses the error message </summary>
-    ''' <remarks> David, 1/11/2016. </remarks>
     ''' <param name="compoundError"> The compound error. </param>
     Public Overridable Sub Parse(ByVal compoundError As String)
         If String.IsNullOrWhiteSpace(compoundError) Then
@@ -214,7 +213,6 @@ Public Class DeviceError
 End Class
 
 ''' <summary> Queue of device errors. </summary>
-''' <remarks> David, 1/12/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -229,7 +227,6 @@ Public Class DeviceErrorQueue
     Inherits Queue(Of DeviceError)
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 1/12/2016. </remarks>
     ''' <param name="noErrorCompoundMessage"> A message describing the empty error message. </param>
     Public Sub New(ByVal noErrorCompoundMessage As String)
         MyBase.New

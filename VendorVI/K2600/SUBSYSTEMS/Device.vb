@@ -26,7 +26,6 @@ Public Class Device
     End Sub
 
     ''' <summary> Creates a new Device. </summary>
-    ''' <remarks> David, 5/1/2017. </remarks>
     ''' <returns> A Device. </returns>
     Public Shared Function Create() As Device
         Dim device As Device = Nothing
@@ -80,7 +79,6 @@ Public Class Device
     End Sub
 
     ''' <summary> Initializes the Device. Used after reset to set a desired initial state. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
@@ -140,7 +138,6 @@ Public Class Device
 #Region " SESSION "
 
     ''' <summary> Capture synchronization context. </summary>
-    ''' <remarks> David, 4/3/2017. </remarks>
     ''' <param name="syncContext"> Context for the synchronization. </param>
     Public Overrides Sub CaptureSyncContext(ByVal syncContext As Threading.SynchronizationContext)
         MyBase.CaptureSyncContext(syncContext)

@@ -473,7 +473,6 @@ Public MustInherit Class ResistanceMeasureBase
     Private randomNumberGenerator As Random
 
     ''' <summary> Generates a random reading. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <returns> The random reading. </returns>
     Public Function GenerateRandomReading() As Double
         Dim k As Double = 1000
@@ -626,7 +625,6 @@ Public MustInherit Class ResistanceMeasureBase
 #Region " I TALKER IMPLEMENTATION "
 
     ''' <summary> Dispose talker. </summary>
-    ''' <remarks> David, 12/15/2016. </remarks>
     Private Sub DisposeTalker()
         Me.Talker?.Listeners.Clear()
         Me._Talker = Nothing
@@ -637,41 +635,35 @@ Public MustInherit Class ResistanceMeasureBase
     Public ReadOnly Property Talker As ITraceMessageTalker
 
     ''' <summary> Adds a listener. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="item"> The item. </param>
     Public Overridable Sub AddListener(ByVal item As ITraceMessageListener)
         Me._Talker.AddListener(item)
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
         Me._Talker.AddListeners(listeners)
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="talker"> The talker. </param>
     Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
         Me._Talker.AddListeners(talker)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
         Me.Talker.Listeners.Clear()
     End Sub
 
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
         Me.Talker.UpdateTraceLogLevel(traceLevel)
     End Sub
 
     ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
         Me.Talker.UpdateTraceShowLevel(traceLevel)
@@ -786,14 +778,12 @@ Public Class ResistanceMeasureCollection
     Public ReadOnly Property Talker As ITraceMessageTalker
 
     ''' <summary> Adds a listener. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="item"> The item. </param>
     Public Overridable Sub AddListener(ByVal item As ITraceMessageListener)
         Me._Talker.AddListener(item)
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
         Me._Talker.AddListeners(listeners)
@@ -803,14 +793,12 @@ Public Class ResistanceMeasureCollection
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="talker"> The talker. </param>
     Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
         Me._Talker.AddListeners(talker)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
         Me.Talker?.Listeners?.Clear()
         For Each element As ITalker In Me.Items
@@ -819,14 +807,12 @@ Public Class ResistanceMeasureCollection
     End Sub
 
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
         Me.Talker.UpdateTraceLogLevel(traceLevel)
     End Sub
 
     ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
         Me.Talker.UpdateTraceShowLevel(traceLevel)

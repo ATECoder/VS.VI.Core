@@ -90,7 +90,6 @@ Public Class TraceSubsystem
     End Function
 
     ''' <summary> Displays the readings described by values. </summary>
-    ''' <remarks> David, 12/1/2016. </remarks>
     ''' <param name="values"> The values. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Shared Sub DisplayReadings(ByVal grid As Windows.Forms.DataGridView, ByVal values As IEnumerable(Of Readings))

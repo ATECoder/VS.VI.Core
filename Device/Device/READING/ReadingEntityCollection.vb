@@ -17,13 +17,11 @@ Public Class ReadingEntityCollection
     End Function
 
     ''' <summary> Default constructor. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     Public Sub New()
         MyBase.New
     End Sub
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <param name="model"> The model. </param>
     Public Sub New(ByVal model As ReadingEntityCollection)
         Me.New
@@ -45,7 +43,6 @@ Public Class ReadingEntityCollection
     End Sub
 
     ''' <summary> Adds if reading entity type is included in the mask. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <param name="mask"> The mask. </param>
     ''' <param name="item"> The item. </param>
     Public Sub AddIf(ByVal mask As ReadingTypes, ByVal item As ReadingEntity)
@@ -53,7 +50,6 @@ Public Class ReadingEntityCollection
     End Sub
 
     ''' <summary> Include unit suffix if. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <param name="value"> The value. </param>
     Public Sub IncludeUnitSuffixIf(ByVal value As ReadingTypes)
         ' Units is a property of each element. If units are turned on, each element units is enabled.

@@ -40,7 +40,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="device"> The device. </param>
     Protected Sub New(ByVal device As Device)
         MyBase.New(device)
@@ -113,7 +112,6 @@ Public Class K7500Panel
     ''' Releases the unmanaged resources used by the isr.VI.Instrument.ResourcePanelBase and
     ''' optionally releases the managed resources.
     ''' </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                          release only unmanaged resources. </param>
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -139,7 +137,6 @@ Public Class K7500Panel
 #Region " DEVICE "
 
     ''' <summary> Assigns a device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
@@ -149,7 +146,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Assigns a device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
@@ -158,7 +154,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Releases the device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     Protected Overrides Sub ReleaseDevice()
         If Me.IsDeviceOwner Then
             MyBase.ReleaseDevice()
@@ -177,7 +172,6 @@ Public Class K7500Panel
 #Region " DEVICE EVENT HANDLERS "
 
     ''' <summary> Executes the device open changed action. </summary>
-    ''' <remarks> David, 3/3/2016. </remarks>
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
         Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
         If isOpen Then
@@ -233,7 +227,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Executes the title changed action. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Protected Overrides Sub OnTitleChanged(ByVal value As String)
         Me._TitleLabel.Text = value
@@ -301,7 +294,6 @@ Public Class K7500Panel
 #Region " MEASURE "
 
     ''' <summary> Displays the active reading caption and status. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     Private Sub DisplayActiveReading()
         Const clear As String = "    "
         Dim caption As String = clear
@@ -738,7 +730,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Reads a service request status. </summary>
-    ''' <remarks> David, 12/26/2015. </remarks>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub ReadServiceRequestStatus()
         Try
@@ -983,7 +974,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Clears (CLS) the execution state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -1013,7 +1003,6 @@ Public Class K7500Panel
 
 
     ''' <summary> Resets (RST) the known state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -1042,7 +1031,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Initializes to known state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -1213,7 +1201,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Displays terminal state. </summary>
-    ''' <remarks> David, 1/20/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -1261,7 +1248,6 @@ Public Class K7500Panel
     End Property
 
     ''' <summary> Reading combo box selected value changed. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -1312,7 +1298,6 @@ Public Class K7500Panel
 #Region " EVENTS "
 
     ''' <summary> Toggles auto trigger. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     ''' <param name="sender"> <see cref="Object"/>
     '''                       instance of this
     '''                       <see cref="Control"/> </param>
@@ -1452,7 +1437,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Displays a buffer. </summary>
-    ''' <remarks> David, 2/23/2017. </remarks>
     Private Sub DisplayBuffer(ByVal readings As VI.BufferReadingCollection)
         Dim activity As String = "updating the display"
         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
@@ -1470,7 +1454,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Initiate monitor trigger plan. </summary>
-    ''' <remarks> David, 2/23/2017. </remarks>
     ''' <param name="stateChangeHandlingEnabled"> True to enable, false to disable the state change
     '''                                           handling. </param>
     Private Sub InitiateMonitorTriggerPlan(ByVal stateChangeHandlingEnabled As Boolean)
@@ -1534,7 +1517,6 @@ Public Class K7500Panel
 #Region " TRIGGER PLAN EVENT HANDLING "
 
     ''' <summary> Handles the measurement completed request. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     ''' <param name="sender"> <see cref="Object"/>
     '''                       instance of this
     '''                       <see cref="Control"/> </param>
@@ -1618,7 +1600,6 @@ Public Class K7500Panel
     Private Property MeasurementCompleteHandlerAdded As Boolean
 
     ''' <summary> Adds measurement complete event handler. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     Private Sub AddMeasurementCompleteEventHandler()
 
         Dim activity As String = ""
@@ -1656,7 +1637,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Removes the measurement complete event handler. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     Private Sub RemoveMeasurementCompleteEventHandler()
 
         Dim activity As String = ""
@@ -1729,7 +1709,6 @@ Public Class K7500Panel
 #Region " BUFFER HANDLER "
 
     ''' <summary> Handles the buffer full request. </summary>
-    ''' <remarks> David, 1/24/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -1805,7 +1784,6 @@ Public Class K7500Panel
     Private Property BufferFullOperationConditionBitNumber As Integer
 
     ''' <summary> Adds Buffer Full event handler. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     Private Sub AddBufferFullEventHandler()
 
         Dim activity As String = ""
@@ -1843,7 +1821,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Removes the Buffer Full event handler. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     Private Sub RemoveBufferFullEventHandler()
 
         Dim activity As String = ""
@@ -1916,7 +1893,6 @@ Public Class K7500Panel
 #End Region
 
     ''' <summary> Aborts trigger plan. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     ''' <param name="sender"> <see cref="Object"/>
     '''                       instance of this
     '''                       <see cref="Control"/> </param>
@@ -1942,7 +1918,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Starts trigger plan. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -2069,7 +2044,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Reads buffer button click. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -2098,7 +2072,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Clears the buffer display button click. </summary>
-    ''' <remarks> David, 12/10/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -2129,7 +2102,6 @@ Public Class K7500Panel
 #Region " CONTROL EVENT HANDLERS: SENSE "
 
     ''' <summary> Applies the function mode button click. </summary>
-    ''' <remarks> David, 6/27/2016. </remarks>
     ''' <param name="sender"> <see cref="Object"/> instance of this
     '''                       <see cref="Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -2150,7 +2122,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Sense range setter. </summary>
-    ''' <remarks> David, 2/10/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub SenseRangeSetter(ByVal value As Double)
         If value <= Me._SenseRangeNumeric.Maximum AndAlso value >= Me._SenseRangeNumeric.Minimum Then Me._SenseRangeNumeric.Value = CDec(value)
@@ -2285,7 +2256,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Loads grade bin trigger model button click. </summary>
-    ''' <remarks> David, 12/10/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -2316,7 +2286,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Simple loop load run button click. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <param name="sender"> <see cref="Object"/>
     '''                       instance of this
     '''                       <see cref="Control"/> </param>
@@ -2478,14 +2447,12 @@ Public Class K7500Panel
 #Region " TALKER "
 
     ''' <summary> Adds listeners such as current level trace message box and log. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Protected Overrides Sub AddListeners()
         MyBase.AddListeners()
         Me._SimpleReadWriteControl.AddListeners(Me.Talker.Listeners)
     End Sub
 
     ''' <summary> Adds listeners such as top level trace message box and log. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
         MyBase.AddListeners(listeners)
@@ -2493,7 +2460,6 @@ Public Class K7500Panel
     End Sub
 
     ''' <summary> Adds the log listener. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="log"> The log. </param>
     Public Overrides Sub AddListeners(ByVal log As MyLog)

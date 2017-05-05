@@ -5,7 +5,6 @@ Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Wizard for setting the compensation. </summary>
-''' <remarks> David, 7/8/2016. </remarks>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -52,7 +51,6 @@ Public Class CompensationWizard
     ''' Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control" />
     ''' and its child controls and optionally releases the managed resources.
     ''' </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                                                   release only unmanaged resources. </param>
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -436,7 +434,6 @@ Public Class CompensationWizard
     End Sub
 
     ''' <summary> Reads a service request status. </summary>
-    ''' <remarks> David, 12/26/2015. </remarks>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub ReadServiceRequestStatus()
         Try
@@ -534,7 +531,6 @@ Public Class CompensationWizard
 #Region " OPEN "
 
     ''' <summary> Acquires the open compensation. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     Private Sub AcquireOpenCompensation()
 
         ' Set user-specified frequencies
@@ -549,7 +545,6 @@ Public Class CompensationWizard
     End Sub
 
     ''' <summary> Reads open compensation. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     Private Sub ReadOpenCompensation()
 
         ' read the frequencies
@@ -561,7 +556,6 @@ Public Class CompensationWizard
     End Sub
 
     ''' <summary> Acquires the open compensation button context menu strip changed. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -589,7 +583,6 @@ Public Class CompensationWizard
 #Region " SHORT "
 
     ''' <summary> Acquires the Short compensation. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     Private Sub AcquireShortCompensation()
 
         ' Set user-specified frequencies
@@ -604,7 +597,6 @@ Public Class CompensationWizard
     End Sub
 
     ''' <summary> Reads Short compensation. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     Private Sub ReadShortCompensation()
 
         ' read the frequencies
@@ -616,7 +608,6 @@ Public Class CompensationWizard
     End Sub
 
     ''' <summary> Acquires the Short compensation button context menu strip changed. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -641,7 +632,6 @@ Public Class CompensationWizard
 #Region " LOAD "
 
     ''' <summary> Acquires the Load compensation. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     Private Sub AcquireLoadCompensation()
 
         ' Set user-specified frequencies
@@ -661,7 +651,6 @@ Public Class CompensationWizard
     End Sub
 
     ''' <summary> Reads Load compensation. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     Private Sub ReadLoadCompensation()
 
         ' read the frequencies
@@ -673,7 +662,6 @@ Public Class CompensationWizard
     End Sub
 
     ''' <summary> Acquires the Load compensation button context menu strip changed. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -743,7 +731,6 @@ Public Class CompensationWizard
     End Property
 
     ''' <summary> Updates the yardstick values. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     Private Sub UpdateYardstickValues()
 
         Me._InfoProvider.Clear()
@@ -761,7 +748,6 @@ Public Class CompensationWizard
     End Sub
 
     ''' <summary> Annunciate yardstick result. </summary>
-    ''' <remarks> David, 7/11/2016. </remarks>
     Private Sub AnnunciateYardstickResult()
         If Not Me.YardstickResistanceValidated Then
             Me._InfoProvider.Annunciate(Me._YardstickAcceptanceToleranceNumeric, InfoProviderLevel.Alert, "Exceeds minimum")
@@ -772,7 +758,6 @@ Public Class CompensationWizard
     End Sub
 
     ''' <summary> Measure yardstick button click. </summary>
-    ''' <remarks> David, 7/8/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -1008,7 +993,6 @@ Public Class CompensationWizard
 #Region " I TALKER IMPLEMENTATION "
 
     ''' <summary> Dispose talker. </summary>
-    ''' <remarks> David, 12/15/2016. </remarks>
     Private Sub DisposeTalker()
         Me.Talker?.Listeners.Clear()
         Me._Talker = Nothing
@@ -1020,41 +1004,35 @@ Public Class CompensationWizard
     Public ReadOnly Property Talker As ITraceMessageTalker
 
     ''' <summary> Adds a listener. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="item"> The item. </param>
     Public Overridable Sub AddListener(ByVal item As ITraceMessageListener)
         Me._Talker.AddListener(item)
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
         Me._Talker.AddListeners(listeners)
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="talker"> The talker. </param>
     Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
         Me._Talker.AddListeners(talker)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
         Me.Talker.Listeners.Clear()
     End Sub
 
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
         Me.Talker.UpdateTraceLogLevel(traceLevel)
     End Sub
 
     ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <remarks> David, 12/14/2016. </remarks>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
         Me.Talker.UpdateTraceShowLevel(traceLevel)

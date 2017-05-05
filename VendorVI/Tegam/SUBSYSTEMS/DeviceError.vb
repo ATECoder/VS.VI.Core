@@ -13,7 +13,6 @@ Public Class DeviceError
     Inherits isr.VI.DeviceError
 
     ''' <summary> Default constructor. </summary>
-    ''' <remarks> David, 1/12/2016. </remarks>
     Public Sub New()
         MyBase.New(Scpi.Syntax.NoErrorCompoundMessage)
     End Sub

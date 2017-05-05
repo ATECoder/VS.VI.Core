@@ -3,7 +3,6 @@ Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Panel for simple read write messages. </summary>
-''' <remarks> David, 12/24/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -42,7 +41,6 @@ Public Class SimpleReadWritePanel
     ''' Disposes of the resources (other than memory) used by the
     ''' <see cref="T:System.Windows.Forms.Form" />.
     ''' </summary>
-    ''' <remarks> David, 12/19/2015. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                          release only unmanaged resources. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -289,14 +287,12 @@ Public Class SimpleReadWritePanel
 #Region " TALKER "
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     Protected Overloads Sub AddListeners()
         Me.Talker.Listeners.Add(Me._TraceMessagesBox)
         Me._SimpleReadWriteControl.Talker.Listeners.Add(Me._TraceMessagesBox)
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <remarks> David, 12/29/2015. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
         MyBase.AddListeners(listeners)
@@ -304,7 +300,6 @@ Public Class SimpleReadWritePanel
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Overloads Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
@@ -316,7 +311,6 @@ Public Class SimpleReadWritePanel
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>
-    ''' <remarks> David, 9/5/2016. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>

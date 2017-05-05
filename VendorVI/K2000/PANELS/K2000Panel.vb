@@ -39,7 +39,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="device"> The device. </param>
     Protected Sub New(ByVal device As Device)
         MyBase.New(device)
@@ -67,7 +66,6 @@ Public Class K2000Panel
     ''' Releases the unmanaged resources used by the isr.VI.Instrument.ResourcePanelBase and
     ''' optionally releases the managed resources.
     ''' </summary>
-    ''' <remarks> David, 12/22/2015. </remarks>
     ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
     '''                          release only unmanaged resources. </param>
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -93,7 +91,6 @@ Public Class K2000Panel
 #Region " DEVICE "
 
     ''' <summary> Assigns a device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
@@ -103,7 +100,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Assigns a device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
@@ -112,7 +108,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Releases the device. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     Protected Overrides Sub ReleaseDevice()
         If Me.IsDeviceOwner Then
             MyBase.ReleaseDevice()
@@ -131,7 +126,6 @@ Public Class K2000Panel
 #Region " DEVICE EVENT HANDLERS "
 
     ''' <summary> Executes the device open changed action. </summary>
-    ''' <remarks> David, 3/3/2016. </remarks>
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
         Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
         If isOpen Then
@@ -193,7 +187,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Executes the title changed action. </summary>
-    ''' <remarks> David, 1/14/2016. </remarks>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Protected Overrides Sub OnTitleChanged(ByVal value As String)
         Me._TitleLabel.Text = value
@@ -301,7 +294,6 @@ Public Class K2000Panel
 #Region " MEASURE "
 
     ''' <summary> Displays the active reading caption and status. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     Private Sub DisplayActiveReading()
         Const clear As String = "    "
         Dim caption As String = clear
@@ -683,7 +675,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Reads a service request status. </summary>
-    ''' <remarks> David, 12/26/2015. </remarks>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub ReadServiceRequestStatus()
         Try
@@ -866,7 +857,6 @@ Public Class K2000Panel
     End Property
 
     ''' <summary> Reading combo box selected index changed. </summary>
-    ''' <remarks> David, 3/18/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -889,7 +879,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Read button click. </summary>
-    ''' <remarks> David, 1/20/2017. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -916,7 +905,6 @@ Public Class K2000Panel
 #Region " EVENTS "
 
     ''' <summary> Toggles auto trigger. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     ''' <param name="sender"> <see cref="Object"/>
     '''                       instance of this
     '''                       <see cref="Control"/> </param>
@@ -942,7 +930,6 @@ Public Class K2000Panel
     Private ReadOnly Property TraceReadings As List(Of Readings)
 
     ''' <summary> Handles the measurement completed request. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     ''' <param name="sender"> <see cref="Object"/>
     '''                       instance of this
     '''                       <see cref="Control"/> </param>
@@ -1019,7 +1006,6 @@ Public Class K2000Panel
     Private Property MeasurementCompleteHandlerAdded As Boolean
 
     ''' <summary> Adds measurement complete event handler. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     Private Sub AddMeasurementCompleteEventHandler()
 
         Dim activity As String = ""
@@ -1055,7 +1041,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Removes the measurement complete event handler. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     Private Sub RemoveMeasurementCompleteEventHandler()
 
         Dim activity As String = ""
@@ -1124,7 +1109,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Aborts trigger plan. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     ''' <param name="sender"> <see cref="Object"/>
     '''                       instance of this
     '''                       <see cref="Control"/> </param>
@@ -1150,7 +1134,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Starts trigger plan. </summary>
-    ''' <remarks> David, 1/21/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -1262,7 +1245,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Reads buffer button click. </summary>
-    ''' <remarks> David, 7/23/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -1290,7 +1272,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Clears the buffer display button click. </summary>
-    ''' <remarks> David, 12/10/2016. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -1487,7 +1468,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Clears (CLS) the execution state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -1513,7 +1493,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Resets (RST) the known state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -1539,7 +1518,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Initializes to known state menu item click. </summary>
-    ''' <remarks> David, 1/19/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -1685,7 +1663,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Displays terminal state. </summary>
-    ''' <remarks> David, 1/20/2017. </remarks>
     ''' <param name="sender"> <see cref="System.Object"/>
     '''                       instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
@@ -1883,14 +1860,12 @@ Public Class K2000Panel
 #Region " TALKER "
 
     ''' <summary> Adds listeners such as current level trace message box and log. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     Protected Overrides Sub AddListeners()
         MyBase.AddListeners()
         Me._SimpleReadWriteControl.AddListeners(Me.Talker.Listeners)
     End Sub
 
     ''' <summary> Adds listeners such as top level trace message box and log. </summary>
-    ''' <remarks> David, 12/30/2015. </remarks>
     ''' <param name="listeners"> The listeners. </param>
     Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
         MyBase.AddListeners(listeners)
@@ -1898,7 +1873,6 @@ Public Class K2000Panel
     End Sub
 
     ''' <summary> Adds the log listener. </summary>
-    ''' <remarks> David, 1/21/2016. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="log"> The log. </param>
     Public Overrides Sub AddListeners(ByVal log As MyLog)
@@ -1915,7 +1889,6 @@ End Class
 #If False Then
 
     ''' <summary> Displays the readings described by values. </summary>
-    ''' <remarks> David, 12/1/2016. </remarks>
     ''' <param name="values"> The values. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Private Sub DisplayReadings(ByVal values As IEnumerable(Of Readings))

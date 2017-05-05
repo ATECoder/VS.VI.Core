@@ -1,5 +1,4 @@
 ﻿''' <summary> An interface session base class. </summary>
-''' <remarks> David, 11/24/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -15,7 +14,6 @@ Public MustInherit Class InterfaceSessionBase
     Implements IDisposable
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
-    ''' <remarks> David, 11/30/2015. </remarks>
     Protected Sub New()
         MyBase.New
     End Sub
@@ -45,13 +43,11 @@ Public MustInherit Class InterfaceSessionBase
     End Property
 
     ''' <summary> Closes the <see cref="InterfaceSessionBase">Interface Session</see>. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     Public Overridable Sub CloseSession()
         Me.IsOpen = False
     End Sub
 
     ''' <summary> Opens a <see cref="InterfaceSessionBase">Interface Session</see>. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <param name="timeout">      The timeout. </param>
     Public Overridable Sub OpenSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
@@ -60,7 +56,6 @@ Public MustInherit Class InterfaceSessionBase
     End Sub
 
     ''' <summary> Opens a <see cref="InterfaceSessionBase">Interface Session</see>. </summary>
-    ''' <remarks> David, 11/29/2015. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     Public Overridable Sub OpenSession(ByVal resourceName As String)
         Me._ResourceName = resourceName

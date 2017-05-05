@@ -70,7 +70,6 @@ Public Class NativeException
 #Region " CUSTOM CONSTRUCTORS "
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 11/25/2015. </remarks>
     ''' <param name="innerError">     The inner error. </param>
     Public Sub New(ByVal innerError As NativeErrorBase)
         Me.New("Native exception")
@@ -78,7 +77,6 @@ Public Class NativeException
     End Sub
 
     ''' <summary> Constructor. </summary>
-    ''' <remarks> David, 11/25/2015. </remarks>
     ''' <param name="innerError">     The inner error. </param>
     ''' <param name="innerException"> The inner exception. </param>
     Public Sub New(ByVal innerError As NativeErrorBase, ByVal innerException As System.Exception)
@@ -99,7 +97,6 @@ Public Class NativeException
     Public ReadOnly Property InnerError As NativeErrorBase
 
     ''' <summary> Convert this object into a string representation. </summary>
-    ''' <remarks> David, 11/25/2015. </remarks>
     ''' <returns> A String that represents this object. </returns>
     Public Overrides Function ToString() As String
         Dim builder As New System.Text.StringBuilder(MyBase.ToString)

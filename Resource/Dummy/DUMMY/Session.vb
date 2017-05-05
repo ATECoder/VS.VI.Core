@@ -1,6 +1,5 @@
 ﻿Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> A Dummy message based session. </summary>
-''' <remarks> David, 11/20/2015. </remarks>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -78,7 +77,6 @@ Public Class Session
     End Property
 
     ''' <summary> Initializes a dummy session. </summary>
-    ''' <remarks> David, 1/26/2016. </remarks>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <param name="timeout">      The open timeout. </param>
     Protected Overrides Sub CreateSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
@@ -86,7 +84,6 @@ Public Class Session
     End Sub
 
     ''' <summary> Discards session. </summary>
-    ''' <remarks> David, 1/25/2016. </remarks>
     Protected Overrides Sub DiscardSession()
         Me._LastNativeError = NativeError.Success
         Me.DisableServiceRequest()
@@ -157,7 +154,6 @@ Public Class Session
     ''' <summary>
     ''' Synchronously reads ASCII-encoded string data. 
     ''' </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
     Public Overrides Function ReadFreeLine() As String
@@ -171,7 +167,6 @@ Public Class Session
     ''' Synchronously reads ASCII-encoded string data. Reads up to the
     ''' <see cref="TerminationCharacter">termination character</see>.
     ''' </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
     Public Overrides Function ReadFiniteLine() As String
@@ -184,7 +179,6 @@ Public Class Session
     ''' Synchronously writes ASCII-encoded string data to the device or interface. Terminates the
     ''' data with the <see cref="TerminationCharacter">termination character</see>.
     ''' </summary>
-    ''' <remarks> David, 11/24/2015. </remarks>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <param name="dataToWrite"> The data to write. </param>
     Public Overrides Sub Write(ByVal dataToWrite As String)
@@ -195,7 +189,6 @@ Public Class Session
     End Sub
 
     ''' <summary> Sends a TCP/IP message to keep the socket connected. </summary>
-    ''' <remarks> David, 3/14/2016. </remarks>
     ''' <returns> <c>true</c> if success; otherwise <c>false</c> </returns>
     Public Overrides Function KeepAlive() As Boolean
         Return True
@@ -214,7 +207,6 @@ Public Class Session
 #Region " REGISTERS "
 
     ''' <summary> Reads status byte. </summary>
-    ''' <remarks> David, 11/17/2015. </remarks>
     ''' <returns> The status byte. </returns>
     Public Overrides Function ReadStatusByte() As ServiceRequests
         Me._LastNativeError = NativeError.Success
@@ -222,7 +214,6 @@ Public Class Session
     End Function
 
     ''' <summary> Clears the device. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub Clear()
         Me._LastNativeError = NativeError.Success
     End Sub
@@ -242,7 +233,6 @@ Public Class Session
     End Property
 
     ''' <summary> Enables the service request. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub EnableServiceRequest()
         If Not ServiceRequestEventEnabled Then
             Me._LastNativeError = NativeError.Success
@@ -251,7 +241,6 @@ Public Class Session
     End Sub
 
     ''' <summary> Disables the service request. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub DisableServiceRequest()
         If ServiceRequestEventEnabled Then
             Me._LastNativeError = NativeError.Success
@@ -264,7 +253,6 @@ Public Class Session
 #Region " TRIGGER "
 
     ''' <summary> Assert trigger. </summary>
-    ''' <remarks> David, 11/20/2015. </remarks>
     Public Overrides Sub AssertTrigger()
         Me._LastNativeError = NativeError.Success
     End Sub

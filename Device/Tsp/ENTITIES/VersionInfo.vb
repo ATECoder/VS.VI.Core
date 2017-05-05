@@ -19,7 +19,6 @@ Public Class VersionInfo
     End Sub
 
     ''' <summary> Clears this object to its blank/initial state. </summary>
-    ''' <remarks> David, 3/12/2016. </remarks>
     Private Sub _Clear()
         Me._FirmwareVersion = New System.Version
     End Sub

@@ -13,7 +13,6 @@ Namespace My
         End Function
 
         ''' <summary> Applies the default trace level. </summary>
-        ''' <remarks> David, 10/28/2016. </remarks>
         Friend Sub ApplyTraceLevel()
             MyLog.ApplyTraceLevel(My.MySettings.Default.TraceLevel)
         End Sub
@@ -75,7 +74,6 @@ Namespace My
         End Sub
 
         ''' <summary> Applies the given value. </summary>
-        ''' <remarks> David, 3/16/2016. </remarks>
         ''' <param name="value"> The value. </param>
         Public Sub Apply(ByVal value As MyLog)
             Me._MyLog = value

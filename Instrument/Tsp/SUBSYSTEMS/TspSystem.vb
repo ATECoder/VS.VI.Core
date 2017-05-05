@@ -185,7 +185,6 @@ Public Class TspSystem
     End Sub
 
     ''' <summary> Event handler. Called upon device opening. </summary>
-    ''' <remarks> David, 12/10/2015. </remarks>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     Private Sub DeviceOpening(ByVal sender As Object, ByVal e As ComponentModel.CancelEventArgs) Handles _Device.Opening
@@ -227,7 +226,6 @@ Public Class TspSystem
     Public Event ConnectionChanged As EventHandler(Of EventArgs)
 
     ''' <summary> Removes event handler. </summary>
-    ''' <remarks> David, 12/17/2015. </remarks>
     ''' <param name="value"> The handler. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RemoveConnectionChangedEventHandler(ByVal value As EventHandler(Of EventArgs))

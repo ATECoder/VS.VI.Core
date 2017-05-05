@@ -120,7 +120,6 @@
         Public Const ShowPromptsSetterCommand As String = "_G.localnode.prompts={0:'1';'1';'0'}"
 
         ''' <summary> The reset to known state command (Same as '*RST'). </summary>
-        ''' <remarks> </remarks>
         Public Const ResetKnownStateCommand As String = "_G.reset()"
 
         ''' <summary> The wait command. </summary>
