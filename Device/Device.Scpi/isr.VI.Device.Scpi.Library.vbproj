@@ -22,7 +22,7 @@
     <DocumentationFile>isr.VI.Device.Scpi.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <BaseAddress>961556992</BaseAddress>
-    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -150,15 +150,15 @@
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj">
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj">
       <Project>{6a80136f-c0eb-4798-8bcf-569e249dd76a}</Project>
       <Name>Arebis.StandardUnits.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
       <Project>{d2c9a599-79dd-4cfa-8614-be3c444eb347}</Project>
       <Name>Arebis.TypedUnits.Library</Name>
     </ProjectReference>

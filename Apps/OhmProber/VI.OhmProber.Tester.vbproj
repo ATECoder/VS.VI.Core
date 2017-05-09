@@ -24,7 +24,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>VI.OhmProber.Tester.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
     <DefineConstants>SPLASH,Blue_Splash</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -76,14 +76,14 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\..\Share\Core\ShareBlueSplashScreen.vb">
+    <Compile Include="..\..\..\..\Share\Core\ShareBlueSplashScreen.vb">
       <Link>My\BlueSplashScreen.vb</Link>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="..\..\..\..\..\Share\Core\ShareCommandLineInfo.vb">
+    <Compile Include="..\..\..\..\Share\Core\ShareCommandLineInfo.vb">
       <Link>My\CommandLineInfo.vb</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\Share\Pith\ShareMyApplicationEvents.vb">
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplicationEvents.vb">
       <Link>My\MyApplicationEvents.vb</Link>
     </Compile>
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
@@ -145,19 +145,19 @@
     <Content Include="My\readme.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
       <Project>{f9d9ed3d-4cbd-49e2-b162-7c15e051f636}</Project>
       <Name>isr.Core.Controls.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Forms\isr.Core.Forms.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Forms\isr.Core.Forms.Library.vbproj">
       <Project>{b501f643-ebc5-4096-86f6-43a2173066ca}</Project>
       <Name>isr.Core.Forms.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\MessageBox\isr.Core.MessageBox.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\MessageBox\isr.Core.MessageBox.Library.vbproj">
       <Project>{209724b9-9f9c-43dd-a089-d3bfb6ad9f2b}</Project>
       <Name>isr.Core.MessageBox.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
     </ProjectReference>

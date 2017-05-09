@@ -52,7 +52,7 @@
     <DefineConstants>
     </DefineConstants>
     <RegisterForComInterop>true</RegisterForComInterop>
-    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -140,11 +140,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\MessageBox\isr.Core.MessageBox.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\MessageBox\isr.Core.MessageBox.Library.vbproj">
       <Project>{209724b9-9f9c-43dd-a089-d3bfb6ad9f2b}</Project>
       <Name>isr.Core.MessageBox.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
     </ProjectReference>

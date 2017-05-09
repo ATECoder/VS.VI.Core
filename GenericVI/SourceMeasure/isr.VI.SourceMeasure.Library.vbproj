@@ -24,7 +24,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>isr.VI.SourceMeasure.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
     <BaseAddress>961577216</BaseAddress>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -123,15 +123,15 @@
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj">
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj">
       <Project>{6A80136F-C0EB-4798-8BCF-569E249DD76A}</Project>
       <Name>Arebis.StandardUnits.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
       <Project>{D2C9A599-79DD-4CFA-8614-BE3C444EB347}</Project>
       <Name>Arebis.TypedUnits.Library</Name>
     </ProjectReference>

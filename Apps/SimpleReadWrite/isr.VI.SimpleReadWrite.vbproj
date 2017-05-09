@@ -21,7 +21,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>isr.VI.SimpleReadWrite.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -136,11 +136,11 @@
     <CodeAnalysisDictionary Include="TOOLS\CustomDictionary.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Core\Core\Diagnosis\isr.Core.Diagnosis.Library.vbproj">
+    <ProjectReference Include="..\..\..\Core\Core\Diagnosis\isr.Core.Diagnosis.Library.vbproj">
       <Project>{90e01089-7256-4336-9b10-28fca47c52f2}</Project>
       <Name>isr.Core.Diagnosis.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Core\Core\Forms\isr.Core.Forms.Library.vbproj">
+    <ProjectReference Include="..\..\..\Core\Core\Forms\isr.Core.Forms.Library.vbproj">
       <Project>{b501f643-ebc5-4096-86f6-43a2173066ca}</Project>
       <Name>isr.Core.Forms.Library</Name>
     </ProjectReference>

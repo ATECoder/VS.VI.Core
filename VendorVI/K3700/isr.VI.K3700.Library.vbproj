@@ -21,7 +21,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>isr.VI.K3700.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
     <BaseAddress>961611520</BaseAddress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -158,23 +158,23 @@
     <Content Include="My\isr.VI.K3700.History.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
       <Project>{f9d9ed3d-4cbd-49e2-b162-7c15e051f636}</Project>
       <Name>isr.Core.Controls.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Engineering\isr.Core.Engineering.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Engineering\isr.Core.Engineering.Library.vbproj">
       <Project>{cd6d3fe6-add3-42b9-b315-ea60c23243ed}</Project>
       <Name>isr.Core.Engineering.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj">
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj">
       <Project>{6a80136f-c0eb-4798-8bcf-569e249dd76a}</Project>
       <Name>Arebis.StandardUnits.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
       <Project>{d2c9a599-79dd-4cfa-8614-be3c444eb347}</Project>
       <Name>Arebis.TypedUnits.Library</Name>
     </ProjectReference>

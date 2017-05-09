@@ -38,30 +38,30 @@
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\..\..\Share\WiX\DirectoryTree\ProductMenuFolder.wxs">
+    <Compile Include="..\..\..\..\..\Share\WiX\DirectoryTree\ProductMenuFolder.wxs">
       <Link>Shared\ProductMenuFolder.wxs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\..\Share\WiX\DirectoryTree\ProductProgramFolder.wxs">
+    <Compile Include="..\..\..\..\..\Share\WiX\DirectoryTree\ProductProgramFolder.wxs">
       <Link>Shared\ProductProgramFolder.wxs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\..\Share\WiX\DotNet\CheckFramework461.wxs">
+    <Compile Include="..\..\..\..\..\Share\WiX\DotNet\CheckFramework461.wxs">
       <Link>Shared\CheckFramework461.wxs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\..\Share\WiX\ManufacturerInfo\IntegratedScientificResourcesInfo.wxs">
+    <Compile Include="..\..\..\..\..\Share\WiX\ManufacturerInfo\IntegratedScientificResourcesInfo.wxs">
       <Link>Shared\IntegratedScientificResourcesInfo.wxs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\..\Share\WiX\Fragments\MsiPublishAssemblies.wxs">
+    <Compile Include="..\..\..\..\..\Share\WiX\Fragments\MsiPublishAssemblies.wxs">
       <Link>Shared\MsiPublishAssemblies.wxs</Link>
     </Compile>
-    <Compile Include="..\..\..\..\..\..\Share\WiX\MStudio\MStudioCommon.45.GAC.wxs">
+    <Compile Include="..\..\..\..\..\Share\WiX\MStudio\MStudioCommon.45.GAC.wxs">
       <Link>MStudio\MStudioCommon.45.GAC.wxs</Link>
     </Compile>
     <Compile Include="DirectoryTree.wxs" />
     <Compile Include="MyAssembly.wxs" />
-    <Content Include="..\..\..\..\..\..\Share\WiX\DirectoryTree\MyProgramFolders.wxi">
+    <Content Include="..\..\..\..\..\Share\WiX\DirectoryTree\MyProgramFolders.wxi">
       <Link>Shared\MyProgramFolders.wxi</Link>
     </Content>
-    <Content Include="..\..\..\..\..\..\Share\WiX\DirectoryTree\ProductFoldersPreprocessor.wxi">
+    <Content Include="..\..\..\..\..\Share\WiX\DirectoryTree\ProductFoldersPreprocessor.wxi">
       <Link>Shared\ProductFoldersPreprocessor.wxi</Link>
     </Content>
     <Compile Include="Product.wxs" />

@@ -12,17 +12,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "`Libraries", "`Libraries", "{4FAE9527-DD67-43C4-9081-F6792BF42C76}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.Forms.Library", "..\..\..\Core\Core\Forms\isr.Core.Forms.Library.vbproj", "{B501F643-EBC5-4096-86F6-43A2173066CA}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.Forms.Library", "..\..\Core\Core\Forms\isr.Core.Forms.Library.vbproj", "{B501F643-EBC5-4096-86F6-43A2173066CA}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.Controls.Library", "..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj", "{F9D9ED3D-4CBD-49E2-B162-7C15E051F636}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.Controls.Library", "..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj", "{F9D9ED3D-4CBD-49E2-B162-7C15E051F636}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arebis.TypedUnits.Library", "..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj", "{D2C9A599-79DD-4CFA-8614-BE3C444EB347}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arebis.TypedUnits.Library", "..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj", "{D2C9A599-79DD-4CFA-8614-BE3C444EB347}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arebis.StandardUnits.Library", "..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj", "{6A80136F-C0EB-4798-8BCF-569E249DD76A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arebis.StandardUnits.Library", "..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj", "{6A80136F-C0EB-4798-8BCF-569E249DD76A}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.Pith.Library", "..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj", "{1E7C1B27-638A-410E-8B8E-C24C6BCE2A70}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.Pith.Library", "..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj", "{1E7C1B27-638A-410E-8B8E-C24C6BCE2A70}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.MessageBox.Library", "..\..\..\Core\Core\MessageBox\isr.Core.MessageBox.Library.vbproj", "{209724B9-9F9C-43DD-A089-D3BFB6AD9F2B}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.MessageBox.Library", "..\..\Core\Core\MessageBox\isr.Core.MessageBox.Library.vbproj", "{209724B9-9F9C-43DD-A089-D3BFB6AD9F2B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RESOURCE", "RESOURCE", "{059387A2-66DA-413A-93E3-3BF08E89D1EC}"
 EndProject
@@ -56,7 +56,7 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Device.Scpi.Library"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Device.Tsp.Library", "Device\Tsp\isr.VI.Device.Tsp.Library.vbproj", "{1BAE3977-D99F-4E2D-9A52-6E4E11A93E40}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.Engineering.Library", "..\..\..\Core\Core\Engineering\isr.Core.Engineering.Library.vbproj", "{CD6D3FE6-ADD3-42B9-B315-EA60C23243ED}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.Engineering.Library", "..\..\Core\Core\Engineering\isr.Core.Engineering.Library.vbproj", "{CD6D3FE6-ADD3-42B9-B315-EA60C23243ED}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Device.Tsp.Script.Library", "Device\Tsp.Script\isr.VI.Device.Tsp.Script.Library.vbproj", "{DE6FF239-FA77-4998-9201-15656DDECD9D}"
 EndProject
@@ -130,7 +130,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WiXProducts", "WiXProducts"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Ttm.Library", "VendorVI\Ttm\isr.VI.Ttm.Library.vbproj", "{25B976FE-24BA-470A-8834-EE713314DBDE}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Algorithms.Optima.Library", "..\..\..\Algorithms\Optima\Library\isr.Algorithms.Optima.Library.vbproj", "{A87A7AAA-C175-4770-8963-B4CBDA27E85E}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Algorithms.Optima.Library", "..\..\Algorithms\Optima\Library\isr.Algorithms.Optima.Library.vbproj", "{A87A7AAA-C175-4770-8963-B4CBDA27E85E}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VI.Ttm.Console", "Apps\Ttm.Console\VI.Ttm.Console.vbproj", "{D1691F30-034F-4F70-9EB9-4BCF7D7FFC91}"
 EndProject

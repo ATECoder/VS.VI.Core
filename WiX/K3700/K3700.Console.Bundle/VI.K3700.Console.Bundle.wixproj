@@ -49,7 +49,7 @@
     </WixExtension>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\..\..\..\..\..\Share\WiX\DirectoryTree\TargetProgramFilesFolder.wxi">
+    <Content Include="..\..\..\..\..\Share\WiX\DirectoryTree\TargetProgramFilesFolder.wxi">
       <Link>TargetProgramFilesFolder.wxi</Link>
     </Content>
     <Content Include="..\K3700.Console.WiX\ProductPreprocessor.wxi">

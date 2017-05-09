@@ -21,7 +21,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>isr.VI.R2D2.Instrument.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <CodeAnalysisRuleSet>..\..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
     <BaseAddress>961569280</BaseAddress>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -128,11 +128,11 @@
     <Content Include="My\isr.VI.Instrument.R2D2.History.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
       <Project>{f9d9ed3d-4cbd-49e2-b162-7c15e051f636}</Project>
       <Name>isr.Core.Controls.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
     </ProjectReference>
