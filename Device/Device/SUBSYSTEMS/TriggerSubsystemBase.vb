@@ -916,6 +916,7 @@ Public MustInherit Class TriggerSubsystemBase
     End Function
 
 #End Region
+
 End Class
 
 ''' <summary> Enumerates the trigger or arm layer bypass mode. </summary>
