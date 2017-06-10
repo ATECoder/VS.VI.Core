@@ -118,11 +118,13 @@ Public Class Device
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     Protected Overrides Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
+        ' this must occur before closing the session.
+        If Me.TriggerSubsystem.IsTriggerStateActive Then Me.TriggerSubsystem.Abort()
         MyBase.OnClosing(e)
         If e?.Cancel Then Return
         If Me._FormatSubsystem IsNot Nothing Then RemoveHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
         If Me._StatusSubsystem IsNot Nothing Then RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
-        If Me._SenseSubsystem IsNot Nothing Then AddHandler Me.SenseSubsystem.PropertyChanged, AddressOf Me.SenseSubsystemPropertyChanged
+        If Me._SenseSubsystem IsNot Nothing Then RemoveHandler Me.SenseSubsystem.PropertyChanged, AddressOf Me.SenseSubsystemPropertyChanged
         Me.Subsystems.DisposeItems()
     End Sub
 
