@@ -184,25 +184,3 @@ Public MustInherit Class DisplaySubsystemBase
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    Private _IsDisplayExists As Boolean?
-
-    ''' <summary> Gets or sets (Protected) the display existence indicator.
-    '''           Some TSP instruments (e.g., 3706) may have no display. </summary>
-    ''' <value> The is display exists. </value>
-    Public Property IsDisplayExists() As Boolean?
-        Get
-            Return Me._isDisplayExists
-        End Get
-        Protected Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(value, Me.IsDisplayExists) Then
-                Me._isDisplayExists = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.IsDisplayExists))
-            End If
-        End Set
-    End Property
-
-
-#End If
-#End Region

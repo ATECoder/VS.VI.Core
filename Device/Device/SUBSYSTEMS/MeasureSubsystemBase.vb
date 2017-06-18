@@ -108,19 +108,3 @@ Public MustInherit Class MeasureSubsystemBase
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-
-    ''' <summary> Gets the initiate command. </summary>
-    ''' <value> The initiate command. </value>
-    ''' <remarks> SCPI: :INIT'. </remarks>
-    Protected Overridable ReadOnly Property InitiateCommand As String
-
-    ''' <summary> Initiates operation. </summary>
-    ''' <remarks> issues the ':INIT' command. </remarks>
-    Public Sub Initiate()
-        Me.Session.Execute(Me.InitiateCommand)
-    End Sub
-
-#End If
-#End Region

@@ -528,13 +528,3 @@ Public MustInherit Class ArmLayerSubsystemBase
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    ''' <summary> Builds a command. </summary>
-    ''' <param name="baseCommand"> The base command. </param>
-    ''' <returns> A String. </returns>
-    Protected Function BuildCommand(ByVal baseCommand As String) As String
-        Return String.Format(Globalization.CultureInfo.InvariantCulture, baseCommand, Me.LayerNumber)
-    End Function
-#End If
-#End Region
