@@ -44,11 +44,11 @@ Public Class BufferReading
     Public Sub New(ByVal reading As BufferReading, ByVal firstReading As BufferReading)
         Me.New()
         If reading IsNot Nothing Then
-            Me._LocalTime = reading.LocalTime
+            Me._UniversalTime = reading.UniversalTime
             Me._Reading = reading.Reading
             Me.ParseStatus(reading.StatusReading)
             Me.ParseTimestamp(reading.TimestampReading)
-            Me._adjustRelativeTimespan(firstReading)
+            Me._AdjustRelativeTimespan(firstReading)
             Me.ParseUnit(reading.UnitReading)
         End If
     End Sub
@@ -59,7 +59,7 @@ Public Class BufferReading
         Me._TimestampReading = ""
         Me._StatusReading = ""
         Me._Timestamp = DateTime.MinValue
-        Me._LocalTime = DateTime.MinValue
+        Me._UniversalTime = DateTime.MinValue
         Me._FractionalSecond = 0
         Me._FractionalTimestamp = TimeSpan.Zero
         Me.RelativeTimespan = TimeSpan.Zero
@@ -85,7 +85,7 @@ Public Class BufferReading
     Private Sub _Parse(ByVal data As Queue(Of String))
         If data Is Nothing Then Throw New ArgumentNullException(NameOf(data))
         Me._Clear()
-        Me._LocalTime = DateTime.Now
+        Me._UniversalTime = DateTime.UtcNow
         If data.Any Then
             Me._Reading = data.Dequeue
         End If
@@ -106,7 +106,7 @@ Public Class BufferReading
     Private Sub _Parse(ByVal data As Queue(Of String), ByVal firstReading As BufferReading)
         Me._Parse(data)
         If Not String.IsNullOrWhiteSpace(Me._TimestampReading) Then
-            Me._adjustRelativeTimespan(firstReading)
+            Me._AdjustRelativeTimespan(firstReading)
         End If
     End Sub
 
@@ -187,7 +187,7 @@ Public Class BufferReading
 
     ''' <summary> Gets the local time. </summary>
     ''' <value> The local time. </value>
-    Public ReadOnly Property LocalTime As DateTime
+    Public ReadOnly Property UniversalTime As DateTime
 
     ''' <summary> Gets or sets the meter time. </summary>
     ''' <value> The meter time. </value>

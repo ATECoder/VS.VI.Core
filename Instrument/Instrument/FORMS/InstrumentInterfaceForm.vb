@@ -519,7 +519,7 @@ Public Class InstrumentInterfaceForm
     ''' <param name="message"> Specifies the message to append. </param>
     ''' <returns> The time stamped message. </returns>
     Friend Shared Function BuildTimeStampLine(ByVal message As String) As String
-        Return String.Format(Globalization.CultureInfo.CurrentCulture, "{0:HH:mm:ss.fff} {1}{2}", DateTime.Now, message, Environment.NewLine)
+        Return String.Format(Globalization.CultureInfo.CurrentCulture, "{0:HH:mm:ss.fff}Z {1}{2}", DateTime.UtcNow, message, Environment.NewLine)
     End Function
 
     ''' <summary> Receives this object. </summary>

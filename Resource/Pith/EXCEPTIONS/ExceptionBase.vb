@@ -187,8 +187,7 @@ Public MustInherit Class ExceptionBase
     Private Sub ObtainEnvironmentInformation()
 
         Const unknown As String = "N/A"
-        Me._createdDateTime = DateTime.Now
-        Me._createdDateTime = DateTime.Now
+        Me._CreatedDateTime = DateTime.UtcNow
 
         Me._machineName = Environment.MachineName
         If Me._machineName.Length = 0 Then
@@ -217,7 +216,7 @@ Public MustInherit Class ExceptionBase
 
         Me._AdditionalInformation = New System.Collections.Specialized.NameValueCollection From {
             {AdditionalInfoItem.MachineName.ToString, My.Computer.Name},
-            {AdditionalInfoItem.Timestamp.ToString, Date.Now.ToString(System.Globalization.CultureInfo.CurrentCulture)},
+            {AdditionalInfoItem.Timestamp.ToString, DateTime.UtcNow.ToString(System.Globalization.CultureInfo.CurrentCulture)},
             {AdditionalInfoItem.FullName.ToString, Reflection.Assembly.GetExecutingAssembly().FullName},
             {AdditionalInfoItem.AppDomainName.ToString, AppDomain.CurrentDomain.FriendlyName},
             {AdditionalInfoItem.ThreadIdentity.ToString, My.User.Name} ' Thread.CurrentPrincipal.Identity.Name

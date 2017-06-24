@@ -331,7 +331,7 @@ Public Class Session
         Finally
             ' must clear the reply after each reading otherwise could get cross information.
             Me.EmulatedReply = ""
-            Me.LastInputOutputTime = DateTime.Now
+            Me.LastInputOutputTime = DateTime.UtcNow
         End Try
     End Function
 
@@ -369,7 +369,7 @@ Public Class Session
             End If
             Throw New NativeException(Me._LastNativeError, ex)
         Finally
-            Me.LastInputOutputTime = DateTime.Now
+            Me.LastInputOutputTime = DateTime.UtcNow
         End Try
     End Function
 
@@ -395,7 +395,7 @@ Public Class Session
                 End If
                 Throw New NativeException(Me._LastNativeError, ex)
             Finally
-                Me.LastInputOutputTime = DateTime.Now
+                Me.LastInputOutputTime = DateTime.UtcNow
             End Try
         End If
     End Sub
@@ -453,7 +453,7 @@ Public Class Session
             End If
             Throw New NativeException(Me._LastNativeError, ex)
         Finally
-            Me.LastInputOutputTime = DateTime.Now
+            Me.LastInputOutputTime = DateTime.UtcNow
         End Try
     End Function
 
@@ -470,7 +470,7 @@ Public Class Session
             End If
             Throw New NativeException(Me._LastNativeError, ex)
         Finally
-            Me.LastInputOutputTime = DateTime.Now
+            Me.LastInputOutputTime = DateTime.UtcNow
         End Try
     End Sub
 
@@ -583,7 +583,7 @@ Public Class Session
             End If
             Throw New NativeException(Me._LastNativeError, ex)
         Finally
-            Me.LastInputOutputTime = DateTime.Now
+            Me.LastInputOutputTime = DateTime.UtcNow
         End Try
     End Sub
 

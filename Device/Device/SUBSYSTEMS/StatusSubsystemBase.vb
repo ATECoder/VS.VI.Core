@@ -735,10 +735,10 @@ Public MustInherit Class StatusSubsystemBase
 
         ' check if time out is negative
         If timeout.TotalMilliseconds > 0 Then
-            endTime = DateTime.Now.Add(timeout)
+            endTime = DateTime.UtcNow.Add(timeout)
         Else
             ' if negative, set to 'infinite' value.
-            endTime = DateTime.Now.AddMinutes(2)
+            endTime = DateTime.UtcNow.AddMinutes(2)
         End If
 
         ' Clear the SRQ flag
@@ -746,9 +746,9 @@ Public MustInherit Class StatusSubsystemBase
         ' Me.ReadServiceRequestStatus()
 
         ' Loop until SRQ or Time out
-        Do Until ((Me.ReadServiceRequestStatus And statusByteBits) > 0) OrElse (DateTime.Now.CompareTo(endTime) > 0)
-            Dim endPoll As DateTime = DateTime.Now.Add(pollDelay)
-            Do Until DateTime.Now.CompareTo(endPoll) > 0
+        Do Until ((Me.ReadServiceRequestStatus And statusByteBits) > 0) OrElse (DateTime.UtcNow.CompareTo(endTime) > 0)
+            Dim endPoll As DateTime = DateTime.UtcNow.Add(pollDelay)
+            Do Until DateTime.UtcNow.CompareTo(endPoll) > 0
                 Windows.Forms.Application.DoEvents()
             Loop
         Loop

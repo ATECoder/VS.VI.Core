@@ -244,11 +244,11 @@ Public Class MovingWindowMeter
     End Sub
 
     Private Function NotifyTaskComplete(timeout As TimeSpan) As Boolean
-        Dim endTime As DateTime = DateTime.Now.Add(timeout)
+        Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
         Me.NotifyTaskComplete()
         Do
             System.Windows.Forms.Application.DoEvents()
-        Loop Until ((Me.TaskComplete And NotificationSemaphores.Acknowledged) <> 0) OrElse DateTime.Now > endTime
+        Loop Until ((Me.TaskComplete And NotificationSemaphores.Acknowledged) <> 0) OrElse DateTime.UtcNow > endTime
         Return (Me.TaskComplete And NotificationSemaphores.Acknowledged) <> 0
     End Function
 
@@ -285,11 +285,11 @@ Public Class MovingWindowMeter
     End Sub
 
     Private Function NotifyTaskStart(timeout As TimeSpan) As Boolean
-        Dim endTime As DateTime = DateTime.Now.Add(timeout)
+        Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
         Me.NotifyTaskStart()
         Do
             System.Windows.Forms.Application.DoEvents()
-        Loop Until ((Me.TaskStart And NotificationSemaphores.Acknowledged) <> 0) OrElse DateTime.Now > endTime
+        Loop Until ((Me.TaskStart And NotificationSemaphores.Acknowledged) <> 0) OrElse DateTime.UtcNow > endTime
         Return (Me.TaskStart And NotificationSemaphores.Acknowledged) <> 0
     End Function
 
@@ -632,17 +632,17 @@ Public Class MovingWindowMeter
     Private Function StopAsyncTask(ByVal timeout As TimeSpan) As Boolean
         If Not Me.IsStopped AndAlso Not Me.IsCancellationRequested Then
             ' wait for previous operation to complete.
-            Dim endTime As DateTime = DateTime.Now.Add(timeout)
+            Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for previous task to complete")
-            Do Until Me.IsStopped OrElse DateTime.Now > endTime
+            Do Until Me.IsStopped OrElse DateTime.UtcNow > endTime
                 Windows.Forms.Application.DoEvents()
             Loop
             If Not Me.IsStopped AndAlso Not Me.IsCancellationRequested Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Requesting cancellation of previous tasks")
                 Me.RequestCancellation()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for previous task to stop")
-                endTime = DateTime.Now.Add(timeout)
-                Do Until Me.IsStopped OrElse DateTime.Now > endTime
+                endTime = DateTime.UtcNow.Add(timeout)
+                Do Until Me.IsStopped OrElse DateTime.UtcNow > endTime
                     Windows.Forms.Application.DoEvents()
                 Loop
             End If

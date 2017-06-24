@@ -68,9 +68,9 @@ Partial Public Class SessionBase
     ''' <param name="timeout">              Specifies the time to wait for message available. </param>
     ''' <returns> <c>True</c> if the message available bit is on; otherwise, <c>False</c>. </returns>
     Public Function IsMessageAvailable(ByVal messageAvailableBits As Integer, ByVal pollInterval As TimeSpan, ByVal timeout As TimeSpan) As Boolean
-        Dim endTime As DateTime = DateTime.Now.Add(timeout)
+        Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
         Dim messageAvailable As Boolean = Me.IsMessageAvailable(messageAvailableBits)
-        Do Until endTime < DateTime.Now OrElse messageAvailable
+        Do Until endTime < DateTime.UtcNow OrElse messageAvailable
             Threading.Thread.Sleep(pollInterval)
             Application.DoEvents()
             messageAvailable = Me.IsMessageAvailable(messageAvailableBits)

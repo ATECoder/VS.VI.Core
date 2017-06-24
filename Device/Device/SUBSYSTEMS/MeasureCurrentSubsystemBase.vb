@@ -38,11 +38,11 @@ Public MustInherit Class MeasureCurrentSubsystemBase
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> <c>True</c> if level was reached before the <paramref name="timeout">timeout</paramref> expired; <c>False</c> otherwise. </returns>
     Public Function AwaitMinimumLevel(ByVal limen As Double, ByVal timeout As TimeSpan) As Boolean
-        Dim endTime As DateTime = DateTime.Now.Add(timeout)
+        Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
         Do
             Threading.Thread.Sleep(1)
             Me.Measure()
-        Loop Until (Me.Level.HasValue AndAlso limen <= Me.Level.Value) OrElse DateTime.Now > endTime
+        Loop Until (Me.Level.HasValue AndAlso limen <= Me.Level.Value) OrElse DateTime.UtcNow > endTime
         Return Me.Level.HasValue AndAlso limen <= Me.Level.Value
     End Function
 
@@ -52,13 +52,13 @@ Public MustInherit Class MeasureCurrentSubsystemBase
     ''' <param name="timeout"> The timeout. </param>
     ''' <returns> <c>True</c> if level was reached before the <paramref name="timeout">timeout</paramref> expired; <c>False</c> otherwise. </returns>
     Public Function AwaitLevel(ByVal targetLevel As Double, ByVal delta As Double, ByVal timeout As TimeSpan) As Boolean
-        Dim endTime As DateTime = DateTime.Now.Add(timeout)
+        Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
         Dim hasValue As Boolean = False
         Do
             Threading.Thread.Sleep(1)
             Me.Measure()
             hasValue = Me.Level.HasValue AndAlso Math.Abs(targetLevel - Me.Level.Value) <= delta
-        Loop Until hasValue OrElse DateTime.Now > endTime
+        Loop Until hasValue OrElse DateTime.UtcNow > endTime
         Return hasValue
     End Function
 

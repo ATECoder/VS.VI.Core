@@ -173,16 +173,16 @@ Partial Public Class MovingWindowMeter
         Dim stopped As Boolean = Me.worker Is Nothing OrElse Not Me.worker.IsBusy
         If Not stopped Then
             ' wait for previous operation to complete.
-            Dim endTime As DateTime = DateTime.Now.Add(timeout)
+            Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for worker to complete previous task")
-            Do Until Me.IsDisposed OrElse Not worker.IsBusy OrElse DateTime.Now > endTime
+            Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.UtcNow > endTime
                 Windows.Forms.Application.DoEvents()
             Loop
             If worker.IsBusy Then
                 worker.CancelAsync()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting for worker to cancel previous task")
-                endTime = DateTime.Now.Add(timeout)
-                Do Until Me.IsDisposed OrElse Not worker.IsBusy OrElse DateTime.Now > endTime
+                endTime = DateTime.UtcNow.Add(timeout)
+                Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.UtcNow > endTime
                     Windows.Forms.Application.DoEvents()
                 Loop
             End If

@@ -339,9 +339,9 @@ Public MustInherit Class SessionBase
     Private Sub KeepAliveTimerElapsed(sender As Object, e As ElapsedEventArgs) Handles _KeepAliveTimer.Elapsed
         Try
             Dim tmr As Timers.Timer = TryCast(sender, Timers.Timer)
-            If tmr IsNot Nothing AndAlso tmr.Interval < DateTime.Now.Subtract(Me.LastInputOutputTime).TotalMilliseconds Then
+            If tmr IsNot Nothing AndAlso tmr.Interval < DateTime.UtcNow.Subtract(Me.LastInputOutputTime).TotalMilliseconds Then
                 Me.KeepAlive()
-                Me.LastInputOutputTime = DateTime.Now
+                Me.LastInputOutputTime = DateTime.UtcNow
             End If
         Catch
         Finally
@@ -938,16 +938,16 @@ Public MustInherit Class SessionBase
 
         Dim listBuilder As New System.Text.StringBuilder
 
-        Dim endTime As Date = DateTime.Now.Add(timeout)
+        Dim endTime As Date = DateTime.UtcNow.Add(timeout)
         Dim timedOut As Boolean = False
         Do While Not timedOut
 
             ' allow message available time to materialize
             Me.ReadServiceRequestStatus()
             Do Until Me.MeasurementAvailable OrElse timedOut
-                timedOut = DateTime.Now > endTime
-                Dim t1 As DateTime = DateTime.Now.Add(pollDelay)
-                Do Until DateTime.Now > t1
+                timedOut = DateTime.UtcNow > endTime
+                Dim t1 As DateTime = DateTime.UtcNow.Add(pollDelay)
+                Do Until DateTime.UtcNow > t1
                     System.Windows.Forms.Application.DoEvents()
                     Threading.Thread.Sleep(2)
                     System.Windows.Forms.Application.DoEvents()
@@ -957,7 +957,7 @@ Public MustInherit Class SessionBase
 
             If Me.MeasurementAvailable Then
                 timedOut = False
-                endTime = DateTime.Now.Add(timeout)
+                endTime = DateTime.UtcNow.Add(timeout)
                 If trimSpaces Then
                     listBuilder.AppendLine(Me.ReadLine().Trim())
                 ElseIf trimEnd Then
@@ -1041,10 +1041,10 @@ Public MustInherit Class SessionBase
         Me._DiscardedData = New System.Text.StringBuilder
         Do
 
-            Dim endTime As Date = DateTime.Now.Add(timeout)
+            Dim endTime As Date = DateTime.UtcNow.Add(timeout)
 
             ' allow message available time to materialize
-            Do Until Me.IsMessageAvailable(Me.MessageAvailableBits) OrElse DateTime.Now > endTime
+            Do Until Me.IsMessageAvailable(Me.MessageAvailableBits) OrElse DateTime.UtcNow > endTime
                 Threading.Thread.Sleep(pollDelay)
             Loop
 

@@ -24,7 +24,7 @@ Public Class NativeException
     ''' <param name="message"> The message. </param>
     Public Sub New(ByVal message As String)
         MyBase.New(message)
-        Me._Timestamp = DateTime.Now
+        Me._Timestamp = DateTime.UtcNow
     End Sub
 
     ''' <summary> Initializes a new instance of the <see cref="VI.NativeException" /> class. </summary>

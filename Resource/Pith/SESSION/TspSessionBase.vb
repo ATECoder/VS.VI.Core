@@ -797,9 +797,9 @@ Partial Public Class SessionBase
     Public Function WaitNotNil(ByVal nodeNumber As Integer, ByVal name As String, ByVal timeout As TimeSpan) As Boolean
 
         ' verify that the script exists. 
-        Dim endTime As DateTime = DateTime.Now.Add(timeout)
+        Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
         Dim detected As Boolean = Not Me.IsNil(nodeNumber, name)
-        Do Until detected OrElse DateTime.Now > endTime
+        Do Until detected OrElse DateTime.UtcNow > endTime
             Windows.Forms.Application.DoEvents()
             Threading.Thread.Sleep(10)
             detected = Not Me.IsNil(nodeNumber, name)

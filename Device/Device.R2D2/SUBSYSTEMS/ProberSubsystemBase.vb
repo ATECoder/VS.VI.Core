@@ -269,14 +269,14 @@ Public MustInherit Class ProberSubsystemBase
             Dim payload As WorkerPayLoad = TryCast(e.Argument, WorkerPayLoad)
             payload.TrialNumber = 0
             Do
-                Dim endTime As DateTime = DateTime.Now.Add(payload.TimeoutInterval)
+                Dim endTime As DateTime = DateTime.UtcNow.Add(payload.TimeoutInterval)
                 payload.TrialNumber += 1
                 If payload.ResendOnRetry OrElse payload.TrialNumber = 1 Then Me.Send(payload.Message)
-                Do Until DateTime.Now > endTime OrElse Me.MessageCompleted OrElse Me.MessageFailed
-                    Dim pauseTime As DateTime = DateTime.Now.Add(payload.PollInterval)
+                Do Until DateTime.UtcNow > endTime OrElse Me.MessageCompleted OrElse Me.MessageFailed
+                    Dim pauseTime As DateTime = DateTime.UtcNow.Add(payload.PollInterval)
                     Do
                         Windows.Forms.Application.DoEvents()
-                    Loop While DateTime.Now < pauseTime
+                    Loop While DateTime.UtcNow < pauseTime
                 Loop
             Loop Until Me.MessageCompleted OrElse Me.MessageFailed OrElse (payload.TrialNumber >= payload.TrialCount)
         End If
@@ -315,15 +315,15 @@ Public MustInherit Class ProberSubsystemBase
     Public Function TrySendAsync(ByVal value As String, ByVal trialCount As Integer,
                                  ByVal pollInterval As TimeSpan, ByVal timeout As TimeSpan) As Boolean
         ' wait for previous operation to complete.
-        Dim endTime As DateTime = DateTime.Now.Add(timeout)
-        Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.Now > endTime
+        Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
+        Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.UtcNow > endTime
             Windows.Forms.Application.DoEvents()
         Loop
         If Worker.IsBusy Then
             Worker.CancelAsync()
         End If
-        endTime = DateTime.Now.Add(timeout)
-        Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.Now > endTime
+        endTime = DateTime.UtcNow.Add(timeout)
+        Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.UtcNow > endTime
             Windows.Forms.Application.DoEvents()
         Loop
         If Worker.IsBusy Then
@@ -338,14 +338,14 @@ Public MustInherit Class ProberSubsystemBase
             .ResendOnRetry = False}
 
         If Not (Me.IsDisposed OrElse Me.Worker.IsBusy) Then
-            endTime = DateTime.Now.Add(payload.TimeoutInterval)
+            endTime = DateTime.UtcNow.Add(payload.TimeoutInterval)
             Me.Worker.RunWorkerAsync(payload)
             ' wait for worker to get busy.
             Do While Not (Me.IsDisposed OrElse Worker.IsBusy)
                 Windows.Forms.Application.DoEvents()
             Loop
             ' wait till worker is done
-            Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.Now > endTime
+            Do Until Me.IsDisposed OrElse Not Worker.IsBusy OrElse DateTime.UtcNow > endTime
                 Windows.Forms.Application.DoEvents()
             Loop
             Do Until Me.IsDisposed OrElse Not Worker.IsBusy

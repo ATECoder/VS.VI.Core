@@ -283,7 +283,7 @@ Public Class Session
             End If
             Throw New NativeException(Me._LastNativeError, ex)
         Finally
-            Me.LastInputOutputTime = DateTime.Now
+            Me.LastInputOutputTime = DateTime.UtcNow
         End Try
     End Function
 
@@ -310,7 +310,7 @@ Public Class Session
             End If
             Throw New NativeException(Me._LastNativeError, ex)
         Finally
-            Me.LastInputOutputTime = DateTime.Now
+            Me.LastInputOutputTime = DateTime.UtcNow
         End Try
     End Function
 
@@ -336,7 +336,7 @@ Public Class Session
                 End If
                 Throw New NativeException(Me._LastNativeError, ex)
             Finally
-                Me.LastInputOutputTime = DateTime.Now
+                Me.LastInputOutputTime = DateTime.UtcNow
             End Try
         End If
     End Sub
@@ -393,7 +393,7 @@ Public Class Session
             End If
             Throw New NativeException(Me._LastNativeError, ex)
         Finally
-            Me.LastInputOutputTime = DateTime.Now
+            Me.LastInputOutputTime = DateTime.UtcNow
         End Try
     End Function
 
@@ -410,7 +410,7 @@ Public Class Session
             End If
             Throw New NativeException(Me._LastNativeError, ex)
         Finally
-            Me.LastInputOutputTime = DateTime.Now
+            Me.LastInputOutputTime = DateTime.UtcNow
         End Try
     End Sub
 
@@ -505,7 +505,7 @@ Public Class Session
             End If
             Throw New NativeException(Me._LastNativeError, ex)
         Finally
-            Me.LastInputOutputTime = DateTime.Now
+            Me.LastInputOutputTime = DateTime.UtcNow
         End Try
     End Sub
 

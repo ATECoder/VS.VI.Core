@@ -14,7 +14,7 @@ Public Class RandomNumberGenerator
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
-        generator = New Random(CInt(Date.Now.Ticks Mod Integer.MaxValue))
+        Generator = New Random(CInt(DateTime.UtcNow.Ticks Mod Integer.MaxValue))
         Me.Min = 0
         Me.Max = 1
     End Sub
