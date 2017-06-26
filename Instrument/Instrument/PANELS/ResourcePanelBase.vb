@@ -698,8 +698,13 @@ Public Class ResourcePanelBase
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.SelectedResourceName)
-                Me.ResourceName = sender.SelectedResourceName
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Selected {0};. ", sender.SelectedResourceName)
+                If String.IsNullOrWhiteSpace(sender.SelectedResourceName) OrElse
+                    String.Equals(sender.SelectedResourceName, VI.DeviceBase.ResourceNameClosed) Then
+                    Me.ResourceName = ""
+                Else
+                    Me.ResourceName = sender.SelectedResourceName
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceName} selected;. ")
+                End If
         End Select
     End Sub
 

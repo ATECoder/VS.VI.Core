@@ -331,9 +331,13 @@ Public Class InterfacePanel
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.SelectedResourceName)
-                Me.InterfaceResourceName = sender.SelectedResourceName
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Interface selected--connect;. Selected interface {0}", sender.SelectedResourceName)
+                If String.IsNullOrWhiteSpace(sender.SelectedResourceName) OrElse
+                    String.Equals(sender.SelectedResourceName, VI.DeviceBase.ResourceNameClosed) Then
+                    Me.InterfaceResourceName = ""
+                Else
+                    Me.InterfaceResourceName = sender.SelectedResourceName
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Interface selected--connect;. {Me.InterfaceResourceName} selected;. ")
+                End If
             Case NameOf(sender.SelectedResourceExists)
             Case NameOf(sender.ResourcesFilter)
             Case NameOf(sender.IsConnected)

@@ -386,7 +386,10 @@ Public Class InstrumentInterfaceForm
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.InterfaceResourceName)
-                Me._StatusLabel.Text = $"Selected {sender.InterfaceResourceName}"
+                If Not String.IsNullOrWhiteSpace(sender.InterfaceResourceName) AndAlso
+                    Not String.Equals(sender.InterfaceResourceName, VI.DeviceBase.ResourceNameClosed) Then
+                    Me._StatusLabel.Text = $"Resource {sender.InterfaceResourceName} selected"
+                End If
             Case NameOf(sender.IsInterfaceOpen)
                 If sender.IsInterfaceOpen Then
                     Me._StatusLabel.Text = "Select Instrument Resource"
