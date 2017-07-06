@@ -1579,7 +1579,7 @@ Public Class K7500Panel
                     activity = "initiating next measurement(s)"
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                     Me.InterfaceStopWatch.Restart()
-                    ' !@# Me.Device.TraceSubsystem.ClearBuffer
+                    Me.Device.TraceSubsystem.ClearBuffer() ' ?@3 removed 7/6/17
                     Me.Device.TriggerSubsystem.Initiate()
                 End If
             Else
@@ -1754,7 +1754,7 @@ Public Class K7500Panel
                         activity = "initiating next measurement(s)"
                         Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                         Me.InterfaceStopWatch.Restart()
-                        ' !@# Me.Device.TraceSubsystem.ClearBuffer
+                        Me.Device.TraceSubsystem.ClearBuffer() ' ?@# removed 7/6/17
                         Me.Device.TriggerSubsystem.Initiate()
                     End If
                 Else

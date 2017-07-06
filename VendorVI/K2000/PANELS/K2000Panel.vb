@@ -984,7 +984,7 @@ Public Class K2000Panel
                     activity = "initiating next measurement(s)"
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                     Me.InterfaceStopWatch.Restart()
-                    ' !@# Me.Device.TraceSubsystem.ClearBuffer
+                    Me.Device.TraceSubsystem.ClearBuffer() ' ?@#  7/6/17
                     Me.Device.TriggerSubsystem.Initiate()
                 End If
             Else
