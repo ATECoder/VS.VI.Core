@@ -1,3 +1,4 @@
+Imports System.Threading
 ''' <summary> Defines the contract that must be implemented by a Trace Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -302,7 +303,7 @@ Public MustInherit Class TraceSubsystemBase
 
     ''' <summary> Gets a queue of new buffer readings. </summary>
     ''' <value> A thread safe Queue of buffer readings. </value>
-    Public ReadOnly Property NewBufferReadingsQueue As isr.Core.Pith.ThreadSafeQueue(Of BufferReading)
+    Public ReadOnly Property NewBufferReadingsQueue As System.Collections.Concurrent.ConcurrentQueue(Of BufferReading)
 
     ''' <summary> Gets the number of buffer readings. </summary>
     ''' <value> The number of buffer readings. </value>
@@ -320,6 +321,39 @@ Public MustInherit Class TraceSubsystemBase
         End Get
     End Property
 
+    ''' <summary> Gets the items locker. </summary>
+    ''' <value> The items locker. </value>
+    Protected ReadOnly Property ItemsLocker As New ReaderWriterLockSlim()
+
+    ''' <summary> Enqueue range. </summary>
+    ''' <param name="items"> The items. </param>
+    Public Sub EnqueueRange(ByVal items As IEnumerable(Of BufferReading))
+        Me.ItemsLocker.EnterWriteLock()
+        Try
+            For Each item As BufferReading In items
+                Me.NewBufferReadingsQueue.Enqueue(item)
+            Next item
+        Finally
+            Me.ItemsLocker.ExitWriteLock()
+        End Try
+    End Sub
+
+    ''' <summary> Enumerates dequeue range in this collection. </summary>
+    ''' <returns>
+    ''' An enumerator that allows for each to be used to process dequeue range in this collection.
+    ''' </returns>
+    Public Function DequeueRange() As IEnumerable(Of BufferReading)
+        Dim result As New List(Of BufferReading)
+        Dim value As BufferReading = Nothing
+        Do While Me.NewBufferReadingsQueue.Any
+            If Me.NewBufferReadingsQueue.TryDequeue(value) Then
+                result.Add(value)
+            End If
+        Loop
+        Return result
+    End Function
+
+
     ''' <summary> Stream buffer. </summary>
     ''' <param name="triggerSubsystem"> The trigger subsystem. </param>
     ''' <param name="pollPeriod">       The poll period. </param>
@@ -329,7 +363,7 @@ Public MustInherit Class TraceSubsystemBase
         Dim first As Integer = 0
         Dim last As Integer = 0
         Me._BufferReadings = New BufferReadingCollection
-        Me._NewBufferReadingsQueue = New isr.Core.Pith.ThreadSafeQueue(Of BufferReading)
+        Me._NewBufferReadingsQueue = New Concurrent.ConcurrentQueue(Of BufferReading)
         triggerSubsystem.QueryTriggerState()
         Do While triggerSubsystem.IsTriggerStateActive
             If first = 0 Then first = Me.QueryFirstPointNumber().GetValueOrDefault(0)
@@ -338,7 +372,7 @@ Public MustInherit Class TraceSubsystemBase
                 If (last - first + 1) > Me.BufferReadings.Count Then
                     Dim newReadings As IEnumerable(Of BufferReading) = Me.QueryBufferReadings(Me.BufferReadings.Count + 1, last)
                     Me.BufferReadings.Add(newReadings)
-                    Me.NewBufferReadingsQueue.EnqueueRange(newReadings)
+                    Me.EnqueueRange(newReadings)
                     Me.SafePostPropertyChanged(NameOf(BufferReadingsCount))
                 End If
             End If
