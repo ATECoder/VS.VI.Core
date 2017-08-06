@@ -763,7 +763,7 @@ Public Class MeterThermalTransient
     ''' <summary> Measures the Thermal Transient. </summary>
     ''' <param name="thermalTransient"> The Thermal Transient element. </param>
     Public Overloads Sub Measure(ByVal thermalTransient As ResistanceMeasureBase)
-        If thermalTransient Is Nothing Then            Throw New ArgumentNullException(NameOf(thermalTransient))
+        If thermalTransient Is Nothing Then Throw New ArgumentNullException(NameOf(thermalTransient))
         If Me.Session.IsSessionOpen Then
             MyBase.Measure(thermalTransient)
             Me.ReadThermalTransient(thermalTransient)

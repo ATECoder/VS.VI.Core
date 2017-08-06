@@ -2076,7 +2076,7 @@ Public Class K2400Panel
         Me.Device.SourceVoltageSubsystem.ApplyLevel(hipotSettings.VoltageLevel)
         hipotSettings.VoltageLevel = Me.Device.SourceVoltageSubsystem.Level.GetValueOrDefault(0)
 
-        Me.Device.SenseCurrentSubsystem.ApplyRange(Me.ActiveInsulationResistance.CurrentRange)
+        Me.Device.SenseCurrentSubsystem.ApplyRange(hipotSettings.CurrentRange)
 
         Me.Device.SenseCurrentSubsystem.ApplyProtectionLevel(hipotSettings.CurrentLimit)
         hipotSettings.CurrentLimit = Me.Device.SenseCurrentSubsystem.ProtectionLevel.GetValueOrDefault(0)
@@ -2098,7 +2098,110 @@ Public Class K2400Panel
         Me.Device.FormatSubsystem.ApplyElements(ReadingTypes.Voltage Or ReadingTypes.Current Or
                                                 ReadingTypes.Resistance Or ReadingTypes.Status)
 
-        Me.Device.MeasureSubsystem.Readings.ResistanceReading.LowLimit = 1000000.0 * Me._ResistanceRangeNumeric.Value
+        ' Me.Device.MeasureSubsystem.Readings.ResistanceReading.LowLimit = 1000000.0 * Me._ResistanceRangeNumeric.Value
+        Me.Device.MeasureSubsystem.Readings.ResistanceReading.LowLimit = hipotSettings.ResistanceLowLimit
+
+        ' update the timeout to reflect the dwell time.
+        If Me.Device.SourceSubsystem.Delay.HasValue Then
+            Dim totalTestTime As TimeSpan = Me.Device.SourceSubsystem.Delay.Value
+            totalTestTime = totalTestTime.Add(Me.Device.SenseResistanceSubsystem.IntegrationPeriod.GetValueOrDefault(TimeSpan.Zero))
+            totalTestTime = totalTestTime.Add(Me.Device.TriggerSubsystem.Delay.GetValueOrDefault(TimeSpan.Zero))
+            ' set this as the minimum timeout
+            totalTestTime = totalTestTime.Add(TimeSpan.FromSeconds(2))
+            If totalTestTime > Me.Device.Session.Timeout Then
+                Me.Device.Session.Timeout = totalTestTime
+            End If
+        End If
+    End Sub
+
+    ''' <summary> Configure hipot change. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="hipotSettings"> The hipot settings. </param>
+    Public Sub ConfigureHipotChange(ByVal hipotSettings As InsulationResistance)
+        If hipotSettings Is Nothing Then Throw New ArgumentNullException(NameOf(hipotSettings))
+
+        ' make sure the 2400 output is off
+        Me.Device.OutputSubsystem.ApplyOutputOnState(False)
+
+        If Not Nullable.Equals(Me.Device.RouteSubsystem.TerminalsMode, OutputTerminalsMode.Rear) Then
+            Me.Device.RouteSubsystem.ApplyTerminalsMode(VI.RouteTerminalsMode.Rear)
+        End If
+        If Not Nullable.Equals(Me.Device.SenseSubsystem.FunctionMode, Scpi.SenseFunctionModes.Resistance) Then
+            Me.Device.SenseSubsystem.ApplyFunctionModes(Scpi.SenseFunctionModes.Resistance)
+        End If
+
+        ' set to manual mode to require manually setting the measurement as voltage source
+        If Not Nullable.Equals(Me.Device.SenseResistanceSubsystem.ConfigurationMode, ConfigurationMode.Manual) Then
+            Me.Device.SenseResistanceSubsystem.ApplyConfigurationMode(ConfigurationMode.Manual)
+        End If
+
+
+        ' the source must be set first.
+        If Not Nullable.Equals(Me.Device.SourceSubsystem.AutoClearEnabled, True) Then
+            Me.Device.SourceSubsystem.ApplyAutoClearEnabled(True)
+        End If
+
+        If Not Nullable.Equals(Me.Device.SourceSubsystem.Delay, hipotSettings.DwellTime) Then
+            Me.Device.SourceSubsystem.ApplyDelay(hipotSettings.DwellTime)
+            hipotSettings.DwellTime = Me.Device.SourceSubsystem.Delay.GetValueOrDefault(TimeSpan.Zero)
+        End If
+
+        If Not Nullable.Equals(Me.Device.SourceSubsystem.FunctionMode, SourceFunctionModes.Voltage) Then
+            Me.Device.SourceSubsystem.ApplyFunctionMode(SourceFunctionModes.Voltage)
+        End If
+
+        If Not Nullable.Equals(Me.Device.SourceVoltageSubsystem.Range, hipotSettings.VoltageLevel) Then
+            Me.Device.SourceVoltageSubsystem.ApplyRange(hipotSettings.VoltageLevel)
+        End If
+
+        If Not Nullable.Equals(Me.Device.SourceVoltageSubsystem.Level, hipotSettings.VoltageLevel) Then
+            Me.Device.SourceVoltageSubsystem.ApplyLevel(hipotSettings.VoltageLevel)
+            hipotSettings.VoltageLevel = Me.Device.SourceVoltageSubsystem.Level.GetValueOrDefault(0)
+        End If
+
+        If Not Nullable.Equals(Me.Device.SenseCurrentSubsystem.Range, hipotSettings.CurrentRange) Then
+            Me.Device.SenseCurrentSubsystem.ApplyRange(hipotSettings.CurrentRange)
+        End If
+
+        If Not Nullable.Equals(Me.Device.SenseCurrentSubsystem.ProtectionLevel, hipotSettings.CurrentRange) Then
+            Me.Device.SenseCurrentSubsystem.ApplyProtectionLevel(hipotSettings.CurrentLimit)
+            hipotSettings.CurrentLimit = Me.Device.SenseCurrentSubsystem.ProtectionLevel.GetValueOrDefault(0)
+        End If
+
+        If Not Nullable.Equals(Me.Device.SenseResistanceSubsystem.PowerLineCycles, hipotSettings.PowerLineCycles) Then
+            Me.Device.SenseResistanceSubsystem.ApplyPowerLineCycles(hipotSettings.PowerLineCycles)
+            hipotSettings.PowerLineCycles = Me.Device.SenseResistanceSubsystem.PowerLineCycles.GetValueOrDefault(0)
+        End If
+
+        ' Enable four wire connection
+        If Not Nullable.Equals(Me.Device.SystemSubsystem.FourWireSenseEnabled, True) Then
+            Me.Device.SystemSubsystem.ApplyFourWireSenseEnabled(True)
+        End If
+
+        ' force immediate update of auto zero
+        If Not Nullable.Equals(Me.Device.SystemSubsystem.AutoZeroEnabled, True) Then
+            Me.Device.SystemSubsystem.ApplyAutoZeroEnabled(True)
+        End If
+
+        If Not Nullable.Equals(Me.Device.SystemSubsystem.ContactCheckEnabled, hipotSettings.ContactCheckEnabled) Then
+            Me.Device.SystemSubsystem.ApplyContactCheckEnabled(hipotSettings.ContactCheckEnabled)
+            hipotSettings.ContactCheckEnabled = Me.Device.SystemSubsystem.ContactCheckEnabled.GetValueOrDefault(False)
+        End If
+
+        If Not Nullable.Equals(Me.Device.ContactCheckLimit.Enabled, hipotSettings.ContactCheckEnabled) Then
+            Me.Device.ContactCheckLimit.ApplyEnabled(hipotSettings.ContactCheckEnabled)
+            hipotSettings.ContactCheckEnabled = Me.Device.ContactCheckLimit.Enabled.GetValueOrDefault(False)
+        End If
+
+        Dim elements As ReadingTypes = ReadingTypes.Voltage Or ReadingTypes.Current Or
+                                                ReadingTypes.Resistance Or ReadingTypes.Status
+        If Not Nullable.Equals(Me.Device.FormatSubsystem.Elements, elements) Then
+            Me.Device.FormatSubsystem.ApplyElements(elements)
+        End If
+
+        If Not Nullable.Equals(Me.Device.MeasureSubsystem.Readings.ResistanceReading.LowLimit, hipotSettings.ResistanceLowLimit) Then
+            Me.Device.MeasureSubsystem.Readings.ResistanceReading.LowLimit = hipotSettings.ResistanceLowLimit
+        End If
 
         ' update the timeout to reflect the dwell time.
         If Me.Device.SourceSubsystem.Delay.HasValue Then
