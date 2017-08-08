@@ -802,6 +802,37 @@ Public Class E4990Panel
         End Try
     End Sub
 
+    Public Sub ReadMarker(ByVal e As CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If Me.Device.ChannelMarkerSubsystem.Enabled Then
+            Dim activity As String = "reading a marker"
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Device.ClearExecutionState()
+            ' clear the device display from warnings
+            ' Me.Device.Session.Write(":DISP:CCL")
+            Me.Device.DisplaySubsystem.ClearCautionMessages()
+            If Me.Device.CalculateChannelSubsystem.AveragingEnabled.GetValueOrDefault(False) Then
+                Me.Device.StatusSubsystem.EnableMeasurementAvailable()
+                Me.Device.ChannelMarkerSubsystem.InitializeMarkerAverage(Me.Device)
+            Else
+                ' Me.Device.Session.WriteLine(":TRIG")
+                Me.Device.TriggerSubsystem.Initiate()
+            End If
+            If Me.Device.StatusSubsystem.TryAwaitServiceRequest(ServiceRequests.RequestingService, TimeSpan.FromSeconds(10),
+                                                                TimeSpan.FromMilliseconds(100)) Then
+                ' auto scale after measurement completes
+                Me.Device.PrimaryChannelTraceSubsystem.AutoScale()
+                Me.Device.SecondaryChannelTraceSubsystem.AutoScale()
+                Me.Device.PrimaryChannelTraceSubsystem.Select()
+                Me.Device.ChannelMarkerSubsystem.FetchLatestData()
+            Else
+                e.RegisterCancellation("timeout")
+            End If
+        Else
+            e.RegisterCancellation("Marker not defined")
+        End If
+    End Sub
+
     ''' <summary> Event handler. Called by _ReadButton for click events. Query the Device for a
     ''' reading. </summary>
     ''' <param name="sender"> Source of the event. </param>
@@ -812,6 +843,12 @@ Public Class E4990Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
+            Dim args As New CancelDetailsEventArgs
+            Me.ReadMarker(args)
+            If args.Cancel Then
+                Me.ErrorProvider.Annunciate(sender, args.Details)
+            End If
+
             If Me.Device.ChannelMarkerSubsystem.Enabled Then
                 Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 Me.Device.ClearExecutionState()
