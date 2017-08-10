@@ -29,6 +29,8 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Me.AutoZeroEnabled = True
         Me.AutoRangeEnabled = True
         Me.PowerLineCycles = 1
+        Me.PowerLineCyclesRange = isr.Core.Pith.RangeR.Full
+        Me.ValueRange = isr.Core.Pith.RangeR.Full
     End Sub
 
 #End Region
@@ -553,7 +555,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
 #Region " RANGE "
 
     ''' <summary> The Range of function values. </summary>
-    Public Property ValueRange1 As Core.Pith.RangeR
+    Public Property ValueRange As Core.Pith.RangeR
 
     ''' <summary> The range. </summary>
     Private _Range As Double?

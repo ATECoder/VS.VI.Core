@@ -32,7 +32,18 @@ Public Class SenseFourWireResistanceSubsystem
         Else
             Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.0005, 12)
         End If
-        Me.ValueRange1 = New isr.Core.Pith.RangeR(1, 1000000000.0)
+        Me.ValueRange = New isr.Core.Pith.RangeR(1, 1000000000.0)
+    End Sub
+
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        If Me.StatusSubsystem.LineFrequency.GetValueOrDefault(60) = 60 Then
+            Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.0005, 15)
+        Else
+            Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.0005, 12)
+        End If
+        Me.ValueRange = New isr.Core.Pith.RangeR(1, 1000000000.0)
     End Sub
 
 #End Region
