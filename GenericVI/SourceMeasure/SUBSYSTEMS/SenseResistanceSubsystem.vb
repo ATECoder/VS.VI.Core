@@ -24,6 +24,13 @@ Public Class SenseResistanceSubsystem
 
 #Region " I PRESETTABLE "
 
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.01, 10)
+        Me.ValueRange = New isr.Core.Pith.RangeR(0, 21000000.0)
+    End Sub
+
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
@@ -31,17 +38,17 @@ Public Class SenseResistanceSubsystem
         Dim model As String = Me.StatusSubsystem.VersionInfo.Model
         Select Case True
             Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 210000000.0)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 210000000.0)
             Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 210000000.0)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 210000000.0)
             Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 21000000.0)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 21000000.0)
             Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 21000000.0)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 21000000.0)
             Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 21000000.0)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 21000000.0)
             Case Else
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 21000000.0)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 21000000.0)
         End Select
     End Sub
 

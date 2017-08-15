@@ -24,25 +24,32 @@ Public Class SenseVoltageSubsystem
 
 #Region " I PRESETTABLE "
 
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.01, 10)
+        Me.ValueRange = New isr.Core.Pith.RangeR(0, 210)
+    End Sub
+
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.01, 10)
-        Me.ValueRange1 = New isr.Core.Pith.RangeR(0.001, 10)
+        Me.ValueRange = New isr.Core.Pith.RangeR(0.001, 10)
         Dim model As String = Me.StatusSubsystem.VersionInfo.Model
         Select Case True
             Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 210)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 210)
             Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 1100)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 1100)
             Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 63)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 63)
             Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 63)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 63)
             Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 42)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 42)
             Case Else
-                Me.ValueRange1 = New isr.Core.Pith.RangeR(0, 210)
+                Me.ValueRange = New isr.Core.Pith.RangeR(0, 210)
         End Select
     End Sub
 

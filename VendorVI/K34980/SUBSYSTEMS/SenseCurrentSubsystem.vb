@@ -24,6 +24,12 @@ Public Class SenseCurrentSubsystem
 
 #Region " I PRESETTABLE "
 
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.ValueRange = New isr.Core.Pith.RangeR(0.01, 1)
+        Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.02, 200)
+    End Sub
+
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
@@ -32,7 +38,7 @@ Public Class SenseCurrentSubsystem
         Else
             Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.02, 200)
         End If
-        Me.ValueRange1 = New isr.Core.Pith.RangeR(0.01, 1)
+        Me.ValueRange = New isr.Core.Pith.RangeR(0.01, 1)
     End Sub
 
 #End Region

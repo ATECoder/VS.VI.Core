@@ -364,9 +364,9 @@ Public Class K34980Panel
 
     Private Sub OnFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
         With Me._SenseRangeNumeric
-            .Minimum = CDec(value.ValueRange1.Min)
-            .Maximum = CDec(value.ValueRange1.Max)
-            .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.ValueRange1.Min)))
+            .Minimum = CDec(value.ValueRange.Min)
+            .Maximum = CDec(value.ValueRange.Max)
+            .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.ValueRange.Min)))
         End With
         With Me._PowerLineCyclesNumeric
             .Minimum = CDec(value.PowerLineCyclesRange.Min)
