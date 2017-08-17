@@ -35,6 +35,7 @@ Partial Class K7500Panel
         Me._FirstPointNumberLabel = New System.Windows.Forms.ToolStripLabel()
         Me._BufferNameLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
+        Me._BufferSizeNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._ReadingToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ReadButton = New System.Windows.Forms.ToolStripButton()
         Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
@@ -182,9 +183,9 @@ Partial Class K7500Panel
         '
         Me._BufferDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me._BufferDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._BufferDataGridView.Location = New System.Drawing.Point(0, 50)
+        Me._BufferDataGridView.Location = New System.Drawing.Point(0, 53)
         Me._BufferDataGridView.Name = "_BufferDataGridView"
-        Me._BufferDataGridView.Size = New System.Drawing.Size(356, 187)
+        Me._BufferDataGridView.Size = New System.Drawing.Size(356, 184)
         Me._BufferDataGridView.TabIndex = 9
         Me.TipsTooltip.SetToolTip(Me._BufferDataGridView, "Buffer data")
         '
@@ -297,10 +298,10 @@ Partial Class K7500Panel
         '
         '_BufferToolStrip
         '
-        Me._BufferToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadBufferButton, Me._BufferCountLabel, Me._LastPointNumberLabel, Me._FirstPointNumberLabel, Me._BufferNameLabel, Me._ClearBufferDisplayButton})
+        Me._BufferToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadBufferButton, Me._BufferCountLabel, Me._LastPointNumberLabel, Me._FirstPointNumberLabel, Me._BufferNameLabel, Me._ClearBufferDisplayButton, Me._BufferSizeNumeric})
         Me._BufferToolStrip.Location = New System.Drawing.Point(0, 25)
         Me._BufferToolStrip.Name = "_BufferToolStrip"
-        Me._BufferToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._BufferToolStrip.Size = New System.Drawing.Size(356, 28)
         Me._BufferToolStrip.TabIndex = 8
         Me._BufferToolStrip.Text = "Buffer"
         '
@@ -310,14 +311,14 @@ Partial Class K7500Panel
         Me._ReadBufferButton.Image = CType(resources.GetObject("_ReadBufferButton.Image"), System.Drawing.Image)
         Me._ReadBufferButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ReadBufferButton.Name = "_ReadBufferButton"
-        Me._ReadBufferButton.Size = New System.Drawing.Size(72, 22)
+        Me._ReadBufferButton.Size = New System.Drawing.Size(72, 25)
         Me._ReadBufferButton.Text = "Read Buffer"
         '
         '_BufferCountLabel
         '
         Me._BufferCountLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._BufferCountLabel.Name = "_BufferCountLabel"
-        Me._BufferCountLabel.Size = New System.Drawing.Size(13, 22)
+        Me._BufferCountLabel.Size = New System.Drawing.Size(13, 25)
         Me._BufferCountLabel.Text = "0"
         Me._BufferCountLabel.ToolTipText = "Buffer count"
         '
@@ -325,7 +326,7 @@ Partial Class K7500Panel
         '
         Me._LastPointNumberLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._LastPointNumberLabel.Name = "_LastPointNumberLabel"
-        Me._LastPointNumberLabel.Size = New System.Drawing.Size(13, 22)
+        Me._LastPointNumberLabel.Size = New System.Drawing.Size(13, 25)
         Me._LastPointNumberLabel.Text = "2"
         Me._LastPointNumberLabel.ToolTipText = "Number of last buffer reading"
         '
@@ -333,7 +334,7 @@ Partial Class K7500Panel
         '
         Me._FirstPointNumberLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._FirstPointNumberLabel.Name = "_FirstPointNumberLabel"
-        Me._FirstPointNumberLabel.Size = New System.Drawing.Size(13, 22)
+        Me._FirstPointNumberLabel.Size = New System.Drawing.Size(13, 25)
         Me._FirstPointNumberLabel.Text = "1"
         Me._FirstPointNumberLabel.ToolTipText = "Number of the first buffer reading"
         '
@@ -341,7 +342,7 @@ Partial Class K7500Panel
         '
         Me._BufferNameLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me._BufferNameLabel.Name = "_BufferNameLabel"
-        Me._BufferNameLabel.Size = New System.Drawing.Size(62, 22)
+        Me._BufferNameLabel.Size = New System.Drawing.Size(62, 25)
         Me._BufferNameLabel.Text = "defbuffer1"
         '
         '_ClearBufferDisplayButton
@@ -350,9 +351,17 @@ Partial Class K7500Panel
         Me._ClearBufferDisplayButton.Image = CType(resources.GetObject("_ClearBufferDisplayButton.Image"), System.Drawing.Image)
         Me._ClearBufferDisplayButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ClearBufferDisplayButton.Name = "_ClearBufferDisplayButton"
-        Me._ClearBufferDisplayButton.Size = New System.Drawing.Size(38, 22)
+        Me._ClearBufferDisplayButton.Size = New System.Drawing.Size(38, 25)
         Me._ClearBufferDisplayButton.Text = "Clear"
         Me._ClearBufferDisplayButton.ToolTipText = "Clears the display"
+        '
+        '_BufferSizeNumeric
+        '
+        Me._BufferSizeNumeric.AutoSize = False
+        Me._BufferSizeNumeric.Name = "_BufferSizeNumeric"
+        Me._BufferSizeNumeric.Size = New System.Drawing.Size(71, 25)
+        Me._BufferSizeNumeric.Text = "0"
+        Me._BufferSizeNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         '_ReadingToolStrip
         '
@@ -1226,4 +1235,5 @@ Partial Class K7500Panel
     Private WithEvents _RepeatMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _MeterCompleterFirstGradingBinningMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _StreamBufferMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _BufferSizeNumeric As Core.Controls.ToolStripNumericUpDown
 End Class

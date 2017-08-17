@@ -59,7 +59,7 @@ Public Class TraceSubsystem
 
     ''' <summary> Gets the points count command format. </summary>
     ''' <value> The points count command format. </value>
-    Protected Overrides ReadOnly Property PointsCountCommandFormat As String = ":TRAC:POIN {0}"
+    Protected Overrides ReadOnly Property PointsCountCommandFormat As String = ":TRAC:POIN 10; *WAI; :TRAC:POIN {0}"
 
     ''' <summary> Gets or sets the ActualPoint count query command. </summary>
     ''' <value> The ActualPoint count query command. </value>

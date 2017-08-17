@@ -105,6 +105,11 @@ Public Class K7500Panel
             .Minimum = 0
             .Value = 0
         End With
+        With Me._BufferSizeNumeric.NumericUpDownControl
+            .CausesValidation = True
+            .Minimum = 0
+            .Maximum = 27500000
+        End With
         Me._InterfaceStopWatch = New Stopwatch
     End Sub
 
@@ -773,6 +778,27 @@ Public Class K7500Panel
 
 #Region " TRACE "
 
+    ''' <summary> Buffer size text box validating. </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Cancel event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031: DoNotCatchGeneralExceptionTypes")>
+    Private Sub _BufferSizeNumeric_Validating(sender As Object, e As CancelEventArgs) Handles _BufferSizeNumeric.Validating
+        Try
+            If Me.Device.IsDeviceOpen Then
+                Dim value As Integer = CInt(Me._BufferSizeNumeric.Value)
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Setting {Me.Device.ResourceTitle} default buffer 1 to {value}")
+                Me._BufferSizeNumeric.Value = Me._BufferSizeNumeric.NumericUpDownControl.Minimum
+                Me.Device.TraceSubsystem.ApplyPointsCount(CInt(value))
+            End If
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.Device.ResourceTitle} exception updating {NameOf(TraceSubsystem)}.{NameOf(TraceSubsystem.PointsCount)};. {ex.ToFullBlownString}")
+
+        End Try
+
+    End Sub
+
     ''' <summary> Handle the Trace subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
@@ -780,6 +806,8 @@ Public Class K7500Panel
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.PointsCount)
+                Me._BufferSizeNumeric.Value = subsystem.PointsCount.GetValueOrDefault(0)
+                Me._BufferSizeNumeric.Invalidate()
             Case NameOf(subsystem.ActualPointCount)
                 Me._BufferCountLabel.Text = CStr(subsystem.ActualPointCount.GetValueOrDefault(0))
                 Me._BufferCountLabel.Invalidate()
@@ -1380,16 +1408,16 @@ Public Class K7500Panel
 
     Private Sub HandleTriggerPlanStateChange(ByVal triggerState As VI.TriggerState)
         If triggerState = TriggerState.Running OrElse triggerState = TriggerState.Waiting Then
-            localTriggerPlanState = TriggerPlanState.Started
-        ElseIf triggerState = TriggerState.Idle AndAlso localTriggerPlanState = TriggerPlanState.Started Then
-            localTriggerPlanState = TriggerPlanState.Completed
+            LocalTriggerPlanState = TriggerPlanState.Started
+        ElseIf triggerState = TriggerState.Idle AndAlso LocalTriggerPlanState = TriggerPlanState.Started Then
+            LocalTriggerPlanState = TriggerPlanState.Completed
             Me.TryReadBuffer()
             Me.TryDisplayBuffer()
             If Me._RepeatMenuItem.Checked Then
                 Me.InitiateMonitorTriggerPlan(True)
             End If
         Else
-            localTriggerPlanState = TriggerPlanState.None
+            LocalTriggerPlanState = TriggerPlanState.None
         End If
         Me._TbdToolStripStatusLabel.SafeTextSetter(Me.InterfaceStopWatch.Elapsed.ToString("s\.ffff"))
     End Sub
@@ -2110,7 +2138,7 @@ Public Class K7500Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Me.ApplyFunctionMode(Me.selectedFunctionMode)
+            Me.ApplyFunctionMode(Me.SelectedFunctionMode)
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
@@ -2164,7 +2192,7 @@ Public Class K7500Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Me.applySenseSettings()
+            Me.ApplySenseSettings()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
@@ -2467,6 +2495,7 @@ Public Class K7500Panel
         MyBase.AddListeners(log)
         My.MyLibrary.Identify(Me.Talker)
     End Sub
+
 
 #End Region
 
