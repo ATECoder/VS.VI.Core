@@ -39,9 +39,9 @@ Public Class K7500Panel
         Me.IsDeviceOwner = True
     End Sub
 
-    ''' <summary> Specialized constructor for use only by derived class. </summary>
+    ''' <summary> Constructor. </summary>
     ''' <param name="device"> The device. </param>
-    Protected Sub New(ByVal device As Device)
+    Public Sub New(ByVal device As Device)
         MyBase.New(device)
         Me._InitializingComponents = True
         Me.InitializeComponent()
@@ -146,7 +146,7 @@ Public Class K7500Panel
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
         Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
-        Me.AddListeners()
+        ' Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub
 
@@ -478,7 +478,7 @@ Public Class K7500Panel
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
                 Me._SenseFunctionComboBox.SafeSelectItem(value, value.Description)
             End If
-            Me.onFunctionModesChanged(Me.Device.SelectSenseSubsystem(subsystem))
+            Me.OnFunctionModesChanged(Me.Device.SelectSenseSubsystem(subsystem))
         End If
     End Sub
 
@@ -493,9 +493,9 @@ Public Class K7500Panel
             Case NameOf(subsystem.MeasurementAvailable)
                 Me.DisplayActiveReading()
             Case NameOf(subsystem.SupportedFunctionModes)
-                Me.onSupportedFunctionModesChanged(subsystem)
+                Me.OnSupportedFunctionModesChanged(subsystem)
             Case NameOf(subsystem.FunctionMode)
-                Me.onFunctionModesChanged(subsystem)
+                Me.OnFunctionModesChanged(subsystem)
                 Me.DisplayActiveReading()
         End Select
     End Sub
@@ -710,9 +710,9 @@ Public Class K7500Panel
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
             Case NameOf(subsystem.DeviceErrors)
-                onLastError(subsystem.LastDeviceError)
+                OnLastError(subsystem.LastDeviceError)
             Case NameOf(subsystem.LastDeviceError)
-                onLastError(subsystem.LastDeviceError)
+                OnLastError(subsystem.LastDeviceError)
             Case NameOf(subsystem.ErrorAvailable)
                 If subsystem.ErrorAvailable AndAlso Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
@@ -2474,10 +2474,22 @@ Public Class K7500Panel
 
 #Region " TALKER "
 
+    Public Overrides Sub AssignTalker(talker As ITraceMessageTalker)
+        MyBase.AssignTalker(talker)
+        Me._SimpleReadWriteControl.AssignTalker(Me.Talker)
+        My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
+#End Region
+
+End Class
+
+#Region " UNUSED "
+#If False Then
     ''' <summary> Adds listeners such as current level trace message box and log. </summary>
     Protected Overrides Sub AddListeners()
         MyBase.AddListeners()
-        Me._SimpleReadWriteControl.AddListeners(Me.Talker.Listeners)
+        Me._SimpleReadWriteControl.AssignTalker(Me.Talker)
     End Sub
 
     ''' <summary> Adds listeners such as top level trace message box and log. </summary>
@@ -2495,9 +2507,5 @@ Public Class K7500Panel
         MyBase.AddListeners(log)
         My.MyLibrary.Identify(Me.Talker)
     End Sub
-
-
+#End If
 #End Region
-
-End Class
-

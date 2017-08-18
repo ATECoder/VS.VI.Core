@@ -328,6 +328,7 @@ Public MustInherit Class TraceSubsystemBase
     ''' <summary> Enqueue range. </summary>
     ''' <param name="items"> The items. </param>
     Public Sub EnqueueRange(ByVal items As IEnumerable(Of BufferReading))
+        If items Is Nothing OrElse Not items.Any Then Return
         Me.ItemsLocker.EnterWriteLock()
         Try
             For Each item As BufferReading In items

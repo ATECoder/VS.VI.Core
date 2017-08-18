@@ -157,6 +157,7 @@ Public Class InstrumentPanelForm
     Public Sub AddInstrumentPanel(ByVal title As String, ByVal value As Instrument.ResourcePanelBase, ByVal disposeEnabled As Boolean)
         Me._InstrumentPanel = value
         Me._TalkerControl = value
+        Me.Talker.UpdateTraceLevels(Me._TalkerControl.Talker)
         Me.AddListeners()
         Me._InstrumentPanelDisposeEnabled = disposeEnabled
         With Me._InstrumentPanel

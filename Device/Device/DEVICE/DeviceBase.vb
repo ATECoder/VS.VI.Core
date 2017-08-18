@@ -1078,6 +1078,14 @@ Public MustInherit Class DeviceBase
         Me.Talker.AddListeners(talker)
     End Sub
 
+    ''' <summary> Updates the trace log and show level described by the talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Sub UpdateTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.UpdateTraceLevels
+        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
+        Me.UpdateTraceLogLevel(talker.TraceLogLevel)
+        Me.UpdateTraceShowLevel(talker.TraceShowLevel)
+    End Sub
+
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
@@ -1094,6 +1102,8 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Adds subsystem listeners. </summary>
     Public Overridable Sub AddSubsystemListeners()
+        Me.Subsystems.UpdateTraceLogLevel(Me.Talker.TraceLogLevel)
+        Me.Subsystems.UpdateTraceShowLevel(Me.Talker.TraceShowLevel)
         Me.Subsystems.AddListeners(Me.Talker.Listeners)
     End Sub
 

@@ -541,7 +541,7 @@ Public Class ResourcePanelBase
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub Connector_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles Connector.Connect
-        Me.openSession(Me.Connector.SelectedResourceName, Me.ResourceTitle)
+        Me.OpenSession(Me.Connector.SelectedResourceName, Me.ResourceTitle)
         ' cancel if failed to open
         If Not Me.IsDeviceOpen Then e.Cancel = True
     End Sub
@@ -617,7 +617,7 @@ Public Class ResourcePanelBase
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub Connector_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles Connector.Disconnect
-        Me.closeSession()
+        Me.CloseSession()
         ' Cancel if failed to closed
         If Me.IsDeviceOpen Then e.Cancel = True
     End Sub
@@ -716,7 +716,7 @@ Public Class ResourcePanelBase
     Private Sub Connector_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles Connector.PropertyChanged
         Try
             If Me.InvokeRequired Then
-                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.connector_PropertyChanged), New Object() {sender, e})
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.Connector_PropertyChanged), New Object() {sender, e})
             Else
                 Me.OnPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
             End If
@@ -730,25 +730,13 @@ Public Class ResourcePanelBase
 
 #Region " TALKER "
 
-    ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overridable Overloads Sub AddListeners()
-        Me.Talker.Listeners.Add(Me.TraceMessagesBox)
-        Me.Connector.AddListeners(Me.Talker.Listeners)
-        Me.Device.AddListeners(Me.Talker.Listeners)
-    End Sub
-
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
-        MyBase.AddListeners(listeners)
-        Me.Connector.AddListeners(listeners)
-        Me.Device.AddListeners(listeners)
-    End Sub
-
-    ''' <summary> Adds the log listener. </summary>
-    ''' <param name="log"> The log. </param>
-    Public Overridable Overloads Sub AddListeners(ByVal log As MyLog)
-        Me.AddListeners(New ITraceMessageListener() {log})
+    ''' <summary> Assigns talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub AssignTalker(talker As ITraceMessageTalker)
+        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
+        MyBase.AssignTalker(talker)
+        talker.Listeners.Add(Me.TraceMessagesBox)
+        Me.Connector.AssignTalker(talker)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
@@ -784,3 +772,27 @@ Public Class ResourcePanelBase
 
 End Class
 
+#Region " UNUSED "
+#If False Then
+    ''' <summary> Adds the listeners such as the current trace messages box. </summary>
+    Protected Overridable Overloads Sub AddListeners()
+        Me.Talker.Listeners.Add(Me.TraceMessagesBox)
+        Me.Connector.AssignTalker(Device.Talker)
+        Me.Device.AddListeners(Me.Talker.Listeners)
+    End Sub
+
+    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
+    ''' <param name="listeners"> The listeners. </param>
+    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
+        MyBase.AddListeners(listeners)
+        Me.Connector.AddListeners(listeners)
+        Me.Device.AddListeners(listeners)
+    End Sub
+
+    ''' <summary> Adds the log listener. </summary>
+    ''' <param name="log"> The log. </param>
+    Public Overridable Overloads Sub AddListeners(ByVal log As MyLog)
+        Me.AddListeners(New ITraceMessageListener() {log})
+    End Sub
+#End If
+#End Region

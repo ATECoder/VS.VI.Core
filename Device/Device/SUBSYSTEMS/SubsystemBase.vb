@@ -342,6 +342,14 @@ Public MustInherit Class SubsystemBase
         Me.Talker.UpdateTraceShowLevel(traceLevel)
     End Sub
 
+    ''' <summary> Updates the trace log and show level described by the talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Sub UpdateTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.UpdateTraceLevels
+        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
+        Me.UpdateTraceLogLevel(talker.TraceLogLevel)
+        Me.UpdateTraceShowLevel(talker.TraceShowLevel)
+    End Sub
+
 #End Region
 
 End Class
@@ -504,6 +512,15 @@ Public Class SubsystemCollection
             element.UpdateTraceShowLevel(traceLevel)
         Next
     End Sub
+
+    ''' <summary> Updates the trace log and show level described by the talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Sub UpdateTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.UpdateTraceLevels
+        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
+        Me.UpdateTraceLogLevel(talker.TraceLogLevel)
+        Me.UpdateTraceShowLevel(talker.TraceShowLevel)
+    End Sub
+
 #End Region
 
 End Class

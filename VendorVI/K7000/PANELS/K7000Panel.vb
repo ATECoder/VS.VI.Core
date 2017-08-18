@@ -32,9 +32,9 @@ Public Class K7000Panel
         Me.IsDeviceOwner = True
     End Sub
 
-    ''' <summary> Specialized constructor for use only by derived class. </summary>
+    ''' <summary> Constructor. </summary>
     ''' <param name="device"> The device. </param>
-    Protected Sub New(ByVal device As Device)
+    Public Sub New(ByVal device As Device)
         MyBase.New(device)
         Me._InitializingComponents = True
         Me.InitializeComponent()
@@ -112,7 +112,7 @@ Public Class K7000Panel
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
         Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
-        Me.AddListeners()
+        ' Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub
 
@@ -1177,10 +1177,22 @@ Public Class K7000Panel
 
 #Region " TALKER "
 
+    Public Overrides Sub AssignTalker(talker As ITraceMessageTalker)
+        MyBase.AssignTalker(talker)
+        Me._SimpleReadWriteControl.AssignTalker(Me.Talker)
+        My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
+#End Region
+
+End Class
+
+#Region " UNUSED "
+#If False Then
     ''' <summary> Adds listeners such as current level trace message box and log. </summary>
     Protected Overrides Sub AddListeners()
         MyBase.AddListeners()
-        Me._SimpleReadWriteControl.AddListeners(Me.Talker.Listeners)
+        Me._SimpleReadWriteControl.AssignTalker(Me.Talker)
     End Sub
 
     ''' <summary> Adds listeners such as top level trace message box and log. </summary>
@@ -1198,7 +1210,5 @@ Public Class K7000Panel
         MyBase.AddListeners(log)
         My.MyLibrary.Identify(Me.Talker)
     End Sub
-
+#End If
 #End Region
-
-End Class
