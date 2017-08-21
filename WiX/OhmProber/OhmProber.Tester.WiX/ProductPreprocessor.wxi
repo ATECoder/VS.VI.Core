@@ -2,8 +2,8 @@
 <Include>
     <!-- Preprocessor variables used within this product -->
     <?ifndef ProductName ?>
-        <?define ProductName         = 'VI.OhmProber.Tester.2016' ?>
-        <?define ProductDescription  = 'OhmProber Virtual Instruments Tester 2016' ?>
+        <?define ProductName         = 'VI.OhmProber.Tester.2017' ?>
+        <?define ProductDescription  = 'OhmProber Virtual Instruments Tester 2017' ?>
         <?define ProductManufacturer = 'Integrated.Scientific.Resources' ?>
         <?define ProductVendor       = 'Integrated.Scientific.Resources' ?>
         <?define ProductCopyright    = '(c) 2016 by Integrated Scientific Resources, Inc. All rights reserved.' ?>

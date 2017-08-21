@@ -40,7 +40,7 @@ Public Class TestPanel
             .Connectable = True
         End With
         Me._TraceMessagesBox.ContainerPanel = Me._messagesTabPage
-        Me.AddListeners()
+        Me.AssignTalker()
     End Sub
 
     ''' <summary>
@@ -160,6 +160,8 @@ Public Class TestPanel
             ' set the form caption
             Me.Text = My.Application.Info.ProductName & " release " & My.Application.Info.Version.ToString
 
+			me.AssignTalker()
+			
             ' default to center screen.
             Me.CenterToScreen()
 
@@ -1570,11 +1572,22 @@ Public Class TestPanel
 
 #Region " TALKER "
 
-    ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overloads Sub AddListeners()
-        Me.Talker.Listeners.Add(Me._TraceMessagesBox)
-        'Me._InstrumentPanel.AddListeners(Me.Talker.Listeners)
+    ''' <summary> Assigns talker. </summary>
+    Public Overloads Sub AssignTalker()
+        Me.Talker.AddListener(Me._TraceMessagesBox)
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
+
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
+        If listenerType = Me._TraceMessagesBox.ListenerType Then
+            Me._TraceMessagesBox.ApplyTraceLevel(value)
+        End If
+    End Sub
+
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>

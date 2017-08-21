@@ -101,7 +101,6 @@ Partial Class ResourcePanelBase
         Me.TraceMessagesBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
         Me.TraceMessagesBox.Size = New System.Drawing.Size(150, 150)
         Me.TraceMessagesBox.TabIndex = 0
-        Me.TraceMessagesBox.TraceLevel = System.Diagnostics.TraceEventType.Verbose
         '
         'ResourcePanelBase
         '

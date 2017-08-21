@@ -309,45 +309,55 @@ Public MustInherit Class SubsystemBase
 
 #End Region
 
-#Region " TALKER "
+#Region " I TALKER IMPLEMENTATION "
 
     ''' <summary> Gets the trace message talker. </summary>
     ''' <value> The trace message talker. </value>
     Public ReadOnly Property Talker As ITraceMessageTalker
 
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
+    ''' <summary> Adds a listener. </summary>
+    ''' <param name="listener"> The listener. </param>
+    Public Overridable Sub AddListener(ByVal listener As IMessageListener) Implements ITalker.AddListener
+        Me._Talker.AddListener(listener)
+    End Sub
+
+    ''' <summary> Adds the listeners. </summary>
     ''' <param name="listeners"> The listeners. </param>
-    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
-        Me.Talker.AddListeners(listeners)
+    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.AddListeners
+        Me._Talker.AddListeners(listeners)
+    End Sub
+
+    ''' <summary> Adds the listeners. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
+        Me._Talker.AddListeners(talker)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    Public Sub ClearListeners() Implements ITalker.ClearListeners
+    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
         Me.Talker.Listeners.Clear()
     End Sub
 
-    Public Sub AddListeners(talker As ITraceMessageTalker) Implements ITalker.AddListeners
-        Me.Talker.AddListeners(talker)
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyListenerTraceLevel
+        Me.Talker.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
-    ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
-        Me.Talker.UpdateTraceLogLevel(traceLevel)
+    ''' <summary> Applies the trace level type to all talkers. </summary>
+    ''' <param name="listenerType"> Type of the trace level. </param>
+    ''' <param name="value">        The value. </param>
+    Public Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyTalkerTraceLevel
+        Me.Talker.ApplyTalkerTraceLevel(listenerType, value)
     End Sub
 
-    ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
-        Me.Talker.UpdateTraceShowLevel(traceLevel)
-    End Sub
-
-    ''' <summary> Updates the trace log and show level described by the talker. </summary>
+    ''' <summary> Applies the talker trace levels described by talker. </summary>
     ''' <param name="talker"> The talker. </param>
-    Public Sub UpdateTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.UpdateTraceLevels
+    Public Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.ApplyTalkerTraceLevels
         If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
-        Me.UpdateTraceLogLevel(talker.TraceLogLevel)
-        Me.UpdateTraceShowLevel(talker.TraceShowLevel)
+        Me.ApplyTalkerTraceLevel(ListenerType.Logger, talker.TraceLogLevel)
+        Me.ApplyTalkerTraceLevel(ListenerType.Display, talker.TraceShowLevel)
     End Sub
 
 #End Region
@@ -472,45 +482,85 @@ Public Class SubsystemCollection
 
 #End Region
 
-#Region " TALKER "
+#Region " I TALKER IMPLEMENTATION "
+
+    ''' <summary> Gets the trace message talker. </summary>
+    ''' <value> The trace message talker. </value>
+    Public ReadOnly Property Talker As ITraceMessageTalker
+
+    ''' <summary> Adds a listener. </summary>
+    ''' <param name="listener"> The listener. </param>
+    Public Overridable Sub AddListener(ByVal listener As IMessageListener) Implements ITalker.AddListener
+        For Each element As SubsystemBase In Me.Items
+            element.Talker.AddListener(listener)
+        Next
+    End Sub
 
     ''' <summary> Adds the listeners. </summary>
     ''' <param name="listeners"> The listeners. </param>
-    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
+    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.AddListeners
         For Each element As ITalker In Me.Items
             element.AddListeners(listeners)
         Next
     End Sub
 
-    ''' <summary> Clears the listeners. </summary>
-    Public Sub ClearListeners() Implements ITalker.ClearListeners
-        For Each element As ITalker In Me.Items
-            element.ClearListeners()
-        Next
-    End Sub
-
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
+    ''' <summary> Adds the listeners. </summary>
     ''' <param name="talker"> The talker. </param>
-    Public Sub AddListeners(talker As ITraceMessageTalker) Implements ITalker.AddListeners
+    Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
         For Each element As ITalker In Me.Items
             element.AddListeners(talker)
         Next
     End Sub
 
+    ''' <summary> Clears the listeners. </summary>
+    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
+        For Each element As ITalker In Me.Items
+            element.ClearListeners()
+        Next
+    End Sub
+
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyListenerTraceLevel
+        For Each element As ITalker In Me.Items
+            element.ApplyListenerTraceLevel(listenerType, value)
+        Next
+    End Sub
+
+    ''' <summary> Applies the trace level type to all talkers. </summary>
+    ''' <param name="listenerType"> Type of the trace level. </param>
+    ''' <param name="value">        The value. </param>
+    Public Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyTalkerTraceLevel
+        For Each element As ITalker In Me.Items
+            element.ApplyTalkerTraceLevel(listenerType, value)
+        Next
+    End Sub
+
+    ''' <summary> Applies the talker trace levels described by talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.ApplyTalkerTraceLevels
+        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
+        Me.ApplyTalkerTraceLevel(ListenerType.Logger, talker.TraceLogLevel)
+        Me.ApplyTalkerTraceLevel(ListenerType.Display, talker.TraceShowLevel)
+    End Sub
+
+#End Region
+
+End Class
+
+#Region " UNUSED "
+#If False Then
     ''' <summary> Updates the trace log level described by traceLevel. </summary>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
-        For Each element As ITalker In Me.Items
-            element.UpdateTraceLogLevel(traceLevel)
-        Next
+        Me.Talker.UpdateTraceLogLevel(traceLevel)
     End Sub
 
     ''' <summary> Updates the trace show level described by traceLevel. </summary>
     ''' <param name="traceLevel"> The trace level. </param>
     Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
-        For Each element As ITalker In Me.Items
-            element.UpdateTraceShowLevel(traceLevel)
-        Next
+        Me.Talker.UpdateTraceShowLevel(traceLevel)
     End Sub
 
     ''' <summary> Updates the trace log and show level described by the talker. </summary>
@@ -521,7 +571,30 @@ Public Class SubsystemCollection
         Me.UpdateTraceShowLevel(talker.TraceShowLevel)
     End Sub
 
+#End If
 #End Region
 
-End Class
+#Region " UNUSED "
+#If False Then
+    ''' <summary> Updates the trace log level described by traceLevel. </summary>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
+        Me.Talker.UpdateTraceLogLevel(traceLevel)
+    End Sub
 
+    ''' <summary> Updates the trace show level described by traceLevel. </summary>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
+        Me.Talker.UpdateTraceShowLevel(traceLevel)
+    End Sub
+
+    ''' <summary> Updates the trace log and show level described by the talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Sub UpdateTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.UpdateTraceLevels
+        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
+        Me.UpdateTraceLogLevel(talker.TraceLogLevel)
+        Me.UpdateTraceShowLevel(talker.TraceShowLevel)
+    End Sub
+
+#End If
+#End Region

@@ -131,39 +131,37 @@ Public Class MovingWindowForm
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
     Protected Overloads Sub AddListeners()
         MyBase.AddListener(Me._TraceMessagesBox)
-        Me._InstrumentPanel?.AddListeners(Me.Talker.Listeners)
-        Me._MovingWindowMeter.AddListeners(Me.Talker.Listeners)
+        Me._InstrumentPanel.AssignTalker(Me.Talker)
+        Me._MovingWindowMeter.AssignTalker(Me.Talker)
+         My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
+
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        ' this should apply only to the listeners associated with this form
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
+        Me._InstrumentPanel.ApplyListenerTraceLevel(listenerType, value)
+        Me._MovingWindowMeter.ApplyListenerTraceLevel(listenerType, value)
+    End Sub
+
+    Public Overrides Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker)
+        ' this should apply only to the listeners associated with this form
+        MyBase.ApplyTalkerTraceLevels(talker)
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    Public Overrides Sub AddListener(ByVal item As ITraceMessageListener)
-        MyBase.AddListener(item)
-        Me._InstrumentPanel.AddListener(item)
-        Me._MovingWindowMeter.AddListener(item)
-        If TypeOf (item) Is MyLog Then My.MyLibrary.Identify(Me.Talker)
+    ''' <param name="listener"> The listener. </param>
+    Public Overrides Sub AddListener(ByVal listener As IMessageListener)
+        MyBase.AddListener(listener)
+        If TypeOf (listener) Is MyLog Then My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
     Public Overrides Sub ClearListeners()
         MyBase.ClearListeners()
-        Me._InstrumentPanel.ClearListeners()
-        Me._MovingWindowMeter.ClearListeners()
-    End Sub
-
-    ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overrides Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType)
-        MyBase.UpdateTraceLogLevel(traceLevel)
-        Me._InstrumentPanel.UpdateTraceLogLevel(traceLevel)
-        Me._MovingWindowMeter.UpdateTraceLogLevel(traceLevel)
-    End Sub
-
-    ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overrides Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType)
-        MyBase.UpdateTraceShowLevel(traceLevel)
-        Me._InstrumentPanel.UpdateTraceShowLevel(traceLevel)
-        Me._MovingWindowMeter.UpdateTraceShowLevel(traceLevel)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
@@ -198,3 +196,24 @@ Public Class MovingWindowForm
 #End Region
 
 End Class
+
+#Region " UNUSED "
+#If False Then
+    ''' <summary> Updates the trace log level described by traceLevel. </summary>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overrides Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType)
+        MyBase.UpdateTraceLogLevel(traceLevel)
+        Me._InstrumentPanel.UpdateTraceLogLevel(traceLevel)
+        Me._MovingWindowMeter.UpdateTraceLogLevel(traceLevel)
+    End Sub
+
+    ''' <summary> Updates the trace show level described by traceLevel. </summary>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overrides Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType)
+        MyBase.UpdateTraceShowLevel(traceLevel)
+        Me._InstrumentPanel.UpdateTraceShowLevel(traceLevel)
+        Me._MovingWindowMeter.UpdateTraceShowLevel(traceLevel)
+    End Sub
+
+#End If
+#End Region

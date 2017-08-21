@@ -316,7 +316,7 @@ Public Class InstrumentInterfaceForm
 
                 ' allow connecting the resource.
                 Me._instrumentChooser = _InterfacePanel.InstrumentChooser
-                Me._instrumentChooser.AddListeners(Me.Talker.Listeners)
+                Me._instrumentChooser.AddListeners(Me.Talker)
                 Me._InterfacePanel.InstrumentChooser.Connectable = True
 
                 ' allow form rendering time to complete: process all messages currently in the queue.
@@ -778,34 +778,40 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
     Protected Overloads Sub AddListeners()
         MyBase.AddListener(Me._TraceMessagesBox)
-        Me._InterfacePanel.AddListeners(Me.Talker.Listeners)
+        Me._InterfacePanel.AddListeners(Me.Talker)
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    Public Overrides Sub AddListener(ByVal item As ITraceMessageListener)
-        MyBase.AddListener(item)
-        Me._InterfacePanel.AddListener(item)
-        If TypeOf (item) Is MyLog Then My.MyLibrary.Identify(Me.Talker)
+    ''' <param name="listener"> The listener. </param>
+    Public Overrides Sub AddListener(ByVal listener As IMessageListener)
+        MyBase.AddListener(listener)
+        Me._InterfacePanel.AddListener(listener)
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
     Public Overrides Sub ClearListeners()
         MyBase.ClearListeners()
+
         Me._InterfacePanel.ClearListeners()
     End Sub
 
-    ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overrides Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType)
-        MyBase.UpdateTraceLogLevel(traceLevel)
-        Me._InterfacePanel.UpdateTraceLogLevel(traceLevel)
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        ' this should apply only to the listeners associated with this form
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
+        If listenerType = Me._TraceMessagesBox.ListenerType Then Me._TraceMessagesBox.ApplyTraceLevel(value)
+        Me._InterfacePanel.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
-    ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overrides Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType)
-        MyBase.UpdateTraceShowLevel(traceLevel)
-        Me._InterfacePanel.UpdateTraceShowLevel(traceLevel)
+    ''' <summary> Applies the trace level type to all talkers. </summary>
+    ''' <param name="listenerType"> Type of the trace level. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        MyBase.ApplyTalkerTraceLevel(listenerType, value)
+        Me._InterfacePanel.ApplyTalkerTraceLevel(listenerType, value)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
@@ -840,3 +846,22 @@ Public Class InstrumentInterfaceForm
 #End Region
 
 End Class
+
+#Region " UNUUSED "
+#If False Then
+    ''' <summary> Updates the trace log level described by traceLevel. </summary>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overrides Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType)
+        MyBase.UpdateTraceLogLevel(traceLevel)
+        Me._InterfacePanel.UpdateTraceLogLevel(traceLevel)
+    End Sub
+
+    ''' <summary> Updates the trace show level described by traceLevel. </summary>
+    ''' <param name="traceLevel"> The trace level. </param>
+    Public Overrides Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType)
+        MyBase.UpdateTraceShowLevel(traceLevel)
+        Me._InterfacePanel.UpdateTraceShowLevel(traceLevel)
+    End Sub
+
+#End If
+#End Region

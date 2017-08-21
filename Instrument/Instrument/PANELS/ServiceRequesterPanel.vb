@@ -301,6 +301,17 @@ Public Class ServiceRequesterPanel
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
     Protected Overloads Sub AddListeners()
         Me.Talker.Listeners.Add(Me._TraceMessagesBox)
+        My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        ' this should apply only to the listeners associated with this form
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
+        If listenerType = Me._TraceMessagesBox.ListenerType Then Me._TraceMessagesBox.ApplyTraceLevel(value)
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
@@ -331,8 +342,6 @@ Public Class ServiceRequesterPanel
                                $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub
-
-	
 	
 #End Region
 

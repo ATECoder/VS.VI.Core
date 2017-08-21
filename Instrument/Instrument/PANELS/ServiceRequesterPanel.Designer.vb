@@ -458,7 +458,6 @@ Partial Class ServiceRequesterPanel
         Me._TraceMessagesBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
         Me._TraceMessagesBox.Size = New System.Drawing.Size(330, 341)
         Me._TraceMessagesBox.TabIndex = 0
-        Me._TraceMessagesBox.TraceLevel = System.Diagnostics.TraceEventType.Verbose
         '
         '_StatusStrip
         '

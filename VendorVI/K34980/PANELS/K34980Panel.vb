@@ -38,9 +38,9 @@ Public Class K34980Panel
         Me.IsDeviceOwner = True
     End Sub
 
-    ''' <summary> Specialized constructor for use only by derived class. </summary>
+    ''' <summary> Constructor. </summary>
     ''' <param name="device"> The device. </param>
-    Protected Sub New(ByVal device As Device)
+    Public Sub New(ByVal device As Device)
         MyBase.New(device)
         Me._InitializingComponents = True
         Me.InitializeComponent()
@@ -94,7 +94,6 @@ Public Class K34980Panel
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
         Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
-        Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub
 
@@ -1393,26 +1392,21 @@ Public Class K34980Panel
 
 #Region " TALKER "
 
-    ''' <summary> Adds listeners such as current level trace message box and log. </summary>
-    Protected Overrides Sub AddListeners()
-        MyBase.AddListeners()
-        Me._SimpleReadWriteControl.AddListeners(Me.Talker.Listeners)
+    ''' <summary> Assigns talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub AssignTalker(talker As ITraceMessageTalker)
+        MyBase.AssignTalker(talker)
+        Me._SimpleReadWriteControl.AssignTalker(talker)
+         My.MyLibrary.Identify(talker)
     End Sub
 
-    ''' <summary> Adds listeners such as top level trace message box and log. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
-        MyBase.AddListeners(listeners)
-        Me._SimpleReadWriteControl.AddListeners(listeners)
-    End Sub
-
-    ''' <summary> Adds the log listener. </summary>
-    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <param name="log"> The log. </param>
-    Public Overrides Sub AddListeners(ByVal log As MyLog)
-        If log Is Nothing Then Throw New ArgumentNullException(NameOf(log))
-        MyBase.AddListeners(log)
-        My.MyLibrary.Identify(Me.Talker)
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        ' this should apply only to the listeners associated with this form
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
+        Me._SimpleReadWriteControl.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
 #End Region

@@ -255,7 +255,7 @@ Public Class Console
             Me.ApplyShuntResistanceButtonCaption = Me._ApplyShuntResistanceConfigurationButton.Text
             Me.ApplyNewShuntResistanceButtonCaption = Me._ApplyNewShuntResistanceConfigurationButton.Text
             Me.Meter = New Meter
-            Me.Meter.AddListeners(Me.Talker.Listeners)
+            Me.Meter.AddListeners(Me.Talker)
 
             Me.Part = New DeviceUnderTest
             AddHandler Me._Part.ShuntResistance.PropertyChanged, AddressOf Me.ShuntResistancePropertyChanged
@@ -1374,21 +1374,37 @@ Public Class Console
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
     Protected Overloads Sub AddListeners()
         Me.Talker.Listeners.Add(Me._TraceMessagesBox)
-        Me._PartsPanel.AddListeners(Me.Talker.Listeners)
-        Me._TTMConfigurationPanel.AddListeners(Me.Talker.Listeners)
+        Me._AssignTalker(Me.Talker)
     End Sub
 
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    Public Overrides Sub AddListener(ByVal item As ITraceMessageListener)
-        If item Is Nothing Then Throw New ArgumentNullException(NameOf(item))
-        MyBase.AddListener(item)
-        If TypeOf (item) Is MyLog Then
-            Me._PartsPanel.AddListeners(Me.Talker.Listeners)
-            Me._TTMConfigurationPanel.AddListeners(Me.Talker.Listeners)
-            My.MyLibrary.Identify(Me.Talker)
-        End If
+    ''' <summary> Assign talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId:="talker")>
+    Private Sub _AssignTalker(ByVal talker As ITraceMessageTalker)
+        Me._PartsPanel.AssignTalker(Me.Talker)
+        Me._TTMConfigurationPanel.AssignTalker(Me.Talker)
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
 
+    ''' <summary> Assign talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub AssignTalker(ByVal talker As ITraceMessageTalker)
+        MyBase.AssignTalker(talker)
+        Me.Talker.Listeners.Add(Me._TraceMessagesBox)
+        Me._AssignTalker(Me.Talker)
+    End Sub
+
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        ' this should apply only to the listeners associated with this form
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
+        If listenerType = Me._TraceMessagesBox.ListenerType Then Me._TraceMessagesBox.ApplyTraceLevel(value)
+        Me._PartsPanel.ApplyListenerTraceLevel(listenerType, value)
+        Me._TTMConfigurationPanel.ApplyListenerTraceLevel(listenerType, value)
+    End Sub
+	
     ''' <summary> Executes the trace messages box property changed action. </summary>
     ''' <param name="sender">       The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>

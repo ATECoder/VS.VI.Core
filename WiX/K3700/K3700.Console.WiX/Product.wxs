@@ -11,7 +11,7 @@
              Manufacturer='$(var.ProductManufacturer)'
              UpgradeCode='{151d6101-8db5-475c-b0ca-f7a99b7bd4c9}'>
                 <Package InstallerVersion='300' Manufacturer='$(var.ProductVendor)'
-                 Description='Visa Core Tester 2016'
+                 Description='Visa Core Tester 2017'
                  Compressed='yes' InstallScope='perMachine' />
 
         <!-- Icon id must end with .ico or .exe -->

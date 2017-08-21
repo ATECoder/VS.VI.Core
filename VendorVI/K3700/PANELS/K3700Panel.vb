@@ -35,9 +35,9 @@ Public Class K3700Panel
         Me.IsDeviceOwner = True
     End Sub
 
-    ''' <summary> Specialized constructor for use only by derived class. </summary>
+    ''' <summary> Constructor. </summary>
     ''' <param name="device"> The device. </param>
-    Protected Sub New(ByVal device As Device)
+    Public Sub New(ByVal device As Device)
         MyBase.New(device)
         Me._InitializingComponents = True
         Me.InitializeComponent()
@@ -106,7 +106,6 @@ Public Class K3700Panel
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
         Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
-        Me.AddListeners()
         Me.OnDeviceOpenChanged(value)
     End Sub
 
@@ -288,12 +287,12 @@ Public Class K3700Panel
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As MultimeterSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.AutoDelayMode)
                 If subsystem.AutoDelayMode.HasValue Then Me.AutoDelayMode = subsystem.AutoDelayMode.Value
             Case NameOf(subsystem.AutoRangeEnabled)
-                    If subsystem.AutoRangeEnabled.HasValue Then Me._AutoRangeCheckBox.Checked = subsystem.AutoRangeEnabled.Value
+                If subsystem.AutoRangeEnabled.HasValue Then Me._AutoRangeCheckBox.Checked = subsystem.AutoRangeEnabled.Value
             Case NameOf(subsystem.AutoZeroEnabled)
                 If subsystem.AutoZeroEnabled.HasValue Then Me._AutoZeroCheckBox.Checked = subsystem.AutoZeroEnabled.Value
             Case NameOf(subsystem.FilterCount)
@@ -349,7 +348,7 @@ Public Class K3700Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As ChannelSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.ClosedChannels)
                 Me.ClosedChannels = subsystem.ClosedChannels
@@ -1330,17 +1329,51 @@ Public Class K3700Panel
 
 #Region " TALKER "
 
+    ''' <summary> Assigns talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub AssignTalker(talker As ITraceMessageTalker)
+        MyBase.AssignTalker(talker)
+        Me._SimpleReadWriteControl.AssignTalker(talker)
+         My.MyLibrary.Identify(talker)
+    End Sub
+
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        ' this should apply only to the listeners associated with this form
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
+        Me._SimpleReadWriteControl?.ApplyListenerTraceLevel(listenerType, value)
+    End Sub
+
+#End Region
+
+End Class
+
+
+#Region " UNUSED "
+#If False Then
+
+#Region " TALKER "
+
     ''' <summary> Adds listeners such as current level trace message box and log. </summary>
     Protected Overrides Sub AddListeners()
         MyBase.AddListeners()
-        Me._SimpleReadWriteControl.AddListeners(Me.Talker.Listeners)
+        Me._SimpleReadWriteControl.AddListeners(Me.Talker)
     End Sub
 
     ''' <summary> Adds listeners such as top level trace message box and log. </summary>
     ''' <param name="listeners"> The listeners. </param>
-    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
+    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener))
         MyBase.AddListeners(listeners)
         Me._SimpleReadWriteControl.AddListeners(listeners)
+    End Sub
+
+    ''' <summary> Adds the listeners. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub AddListeners(ByVal talker As ITraceMessageTalker)
+        MyBase.AddListeners(talker)
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Adds the log listener. </summary>
@@ -1353,7 +1386,5 @@ Public Class K3700Panel
     End Sub
 
 #End Region
-
-
-End Class
-
+#End If
+#End Region

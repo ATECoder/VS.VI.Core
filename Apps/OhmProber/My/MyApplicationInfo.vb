@@ -9,14 +9,22 @@
         Public Const AssemblyDescription As String = "Ohm Prober Virtual Instruments Tester"
         Public Const AssemblyProduct As String = "VI.OhmProber.Tester.2017"
 
+        ''' <summary> Gets or sets the identified sentinel. </summary>
+        ''' <value> The identified sentinel. </value>
+        Public Shared Property Identified As Boolean
+
         ''' <summary> Identifies this talker. </summary>
         ''' <param name="talker"> The talker. </param>
         Public Shared Sub Identify(ByVal talker As isr.Core.Pith.ITraceMessageTalker)
-            talker?.Publish(TraceEventType.Information, MyApplication.TraceEventId, $"{MyApplication.AssemblyProduct} ID = {MyApplication.TraceEventId:X}")
-            isr.VI.K2000.My.MyLibrary.Identify(talker)
-            isr.VI.EG2000.My.MyLibrary.Identify(talker)
-            isr.VI.Tegam.My.MyLibrary.Identify(talker)
+            If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
+            If Not My.MyLibrary.Identified AndAlso talker.Listeners.ContainsListener(isr.Core.Pith.ListenerType.Logger) Then
+                talker.Publish(TraceEventType.Information, MyApplication.TraceEventId, $"{MyApplication.AssemblyProduct} ID = {MyApplication.TraceEventId:X}")
+                My.MyLibrary.Identified = True
+            End If
         End Sub
+
+        
+
 
 
     End Class

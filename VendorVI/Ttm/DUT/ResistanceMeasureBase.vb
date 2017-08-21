@@ -635,21 +635,23 @@ Public MustInherit Class ResistanceMeasureBase
     Public ReadOnly Property Talker As ITraceMessageTalker
 
     ''' <summary> Adds a listener. </summary>
-    ''' <param name="item"> The item. </param>
-    Public Overridable Sub AddListener(ByVal item As ITraceMessageListener)
-        Me._Talker.AddListener(item)
+    ''' <param name="listener"> The listener. </param>
+    Public Overridable Sub AddListener(ByVal listener As IMessageListener) Implements ITalker.AddListener
+        Me._Talker.AddListener(listener)
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
     ''' <param name="listeners"> The listeners. </param>
-    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
+    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.AddListeners
         Me._Talker.AddListeners(listeners)
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
     ''' <param name="talker"> The talker. </param>
     Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
         Me._Talker.AddListeners(talker)
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
@@ -657,16 +659,25 @@ Public MustInherit Class ResistanceMeasureBase
         Me.Talker.Listeners.Clear()
     End Sub
 
-    ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
-        Me.Talker.UpdateTraceLogLevel(traceLevel)
+    ''' <summary> Applies the trace level to all listeners of the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyListenerTraceLevel
+        ' this should apply only to the listeners associated with this form
+        Me.Talker.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
-    ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
-        Me.Talker.UpdateTraceShowLevel(traceLevel)
+    ''' <summary> Applies the trace level type to all talkers. </summary>
+    ''' <param name="listenerType"> Type of listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyTalkerTraceLevel
+        Me.Talker.ApplyTalkerTraceLevel(listenerType, value)
+    End Sub
+
+    ''' <summary> Applies the talker trace levels described by talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.ApplyTalkerTraceLevels
+        Me.Talker.ApplyTalkerTraceLevels(talker)
     End Sub
 
 #End Region
@@ -778,14 +789,14 @@ Public Class ResistanceMeasureCollection
     Public ReadOnly Property Talker As ITraceMessageTalker
 
     ''' <summary> Adds a listener. </summary>
-    ''' <param name="item"> The item. </param>
-    Public Overridable Sub AddListener(ByVal item As ITraceMessageListener)
-        Me._Talker.AddListener(item)
+    ''' <param name="listener"> The listener. </param>
+    Public Overridable Sub AddListener(ByVal listener As IMessageListener) Implements ITalker.AddListener
+        Me._Talker.AddListener(listener)
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
     ''' <param name="listeners"> The listeners. </param>
-    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener)) Implements ITalker.AddListeners
+    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.AddListeners
         Me._Talker.AddListeners(listeners)
         For Each element As ITalker In Me.Items
             element.AddListeners(listeners)
@@ -806,16 +817,25 @@ Public Class ResistanceMeasureCollection
         Next
     End Sub
 
-    ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
-        Me.Talker.UpdateTraceLogLevel(traceLevel)
+    ''' <summary> Applies the trace level to all listeners of the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyListenerTraceLevel
+        ' this should apply only to the listeners associated with this form
+        Me.Talker.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
-    ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
-        Me.Talker.UpdateTraceShowLevel(traceLevel)
+    ''' <summary> Applies the trace level type to all talkers. </summary>
+    ''' <param name="listenerType"> Type of listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyTalkerTraceLevel
+        Me.Talker.ApplyTalkerTraceLevel(listenerType, value)
+    End Sub
+
+    ''' <summary> Applies the talker trace levels described by talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.ApplyTalkerTraceLevels
+        Me.Talker.ApplyTalkerTraceLevels(talker)
     End Sub
 
 #End Region

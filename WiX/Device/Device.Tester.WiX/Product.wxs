@@ -11,7 +11,7 @@
              Manufacturer='$(var.ProductManufacturer)'
              UpgradeCode='{E22BE509-E820-4F07-936A-8E37BC355114}'>
                 <Package InstallerVersion='300' Manufacturer='$(var.ProductVendor)'
-                 Description='Visa Core Tester 2016'
+                 Description='Visa Core Tester 2017'
                  Compressed='yes' InstallScope='perMachine' />
 
         <!-- Sets the SAM id. -->

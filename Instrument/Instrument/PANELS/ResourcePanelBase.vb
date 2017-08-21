@@ -737,6 +737,17 @@ Public Class ResourcePanelBase
         MyBase.AssignTalker(talker)
         talker.Listeners.Add(Me.TraceMessagesBox)
         Me.Connector.AssignTalker(talker)
+        My.MyLibrary.Identify(talker)
+    End Sub
+
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        ' this should apply only to the listeners associated with this form
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
+        If listenerType = Me._TraceMessagesBox.ListenerType Then Me._TraceMessagesBox.ApplyTraceLevel(value)
+        Me.Connector.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
@@ -778,16 +789,27 @@ End Class
     Protected Overridable Overloads Sub AddListeners()
         Me.Talker.Listeners.Add(Me.TraceMessagesBox)
         Me.Connector.AssignTalker(Device.Talker)
-        Me.Device.AddListeners(Me.Talker.Listeners)
+        Me.Device.AddListeners(Me.Talker)
+         My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
     ''' <param name="listeners"> The listeners. </param>
-    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
+    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener))
         MyBase.AddListeners(listeners)
         Me.Connector.AddListeners(listeners)
         Me.Device.AddListeners(listeners)
     End Sub
+
+    ''' <summary> Adds the listeners. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub AddListeners(ByVal talker As ITraceMessageTalker)
+        MyBase.AddListeners(talker)
+        Me.Connector.AddListeners(talker)
+        Me.Device.AddListeners(talker)
+         My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
 
     ''' <summary> Adds the log listener. </summary>
     ''' <param name="log"> The log. </param>

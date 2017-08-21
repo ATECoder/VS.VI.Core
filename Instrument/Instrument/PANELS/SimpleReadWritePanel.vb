@@ -286,17 +286,30 @@ Public Class SimpleReadWritePanel
 
 #Region " TALKER "
 
-    ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overloads Sub AddListeners()
-        Me.Talker.Listeners.Add(Me._TraceMessagesBox)
-        Me._SimpleReadWriteControl.Talker.Listeners.Add(Me._TraceMessagesBox)
+    Private Overloads Sub AddListeners()
+        Me.Talker.AddListener(Me._TraceMessagesBox)
+        Me._SimpleReadWriteControl.AssignTalker(Me.Talker)
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
 
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
-        MyBase.AddListeners(listeners)
-        Me._SimpleReadWriteControl.AddListeners(listeners)
+    ''' <summary> Assigns talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub AssignTalker(talker As ITraceMessageTalker)
+        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
+        MyBase.AssignTalker(talker)
+        talker.AddListener(Me._TraceMessagesBox)
+        Me._SimpleReadWriteControl.AssignTalker(talker)
+        My.MyLibrary.Identify(talker)
+    End Sub
+
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        ' this should apply only to the listeners associated with this form
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
+        If listenerType = Me._TraceMessagesBox.ListenerType Then Me._TraceMessagesBox.ApplyTraceLevel(value)
+        Me._SimpleReadWriteControl?.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>

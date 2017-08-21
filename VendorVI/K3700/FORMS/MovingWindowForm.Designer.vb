@@ -116,7 +116,6 @@ Partial Class MovingWindowForm
         Me._TraceMessagesBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me._TraceMessagesBox.Size = New System.Drawing.Size(391, 454)
         Me._TraceMessagesBox.TabIndex = 15
-        Me._TraceMessagesBox.TraceLevel = System.Diagnostics.TraceEventType.Verbose
         '
         '_StatusStrip
         '

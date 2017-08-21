@@ -6,7 +6,7 @@
     <ProductVersion>3.8</ProductVersion>
     <ProjectGuid>{d8f14337-efb2-4d46-a447-569e83509ff3}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>VI.OhmProber.Tester.2016.Setup</OutputName>
+    <OutputName>VI.OhmProber.Tester.2017.Setup</OutputName>
     <OutputType>Bundle</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
@@ -95,7 +95,7 @@
     <CreateProperty Value="$(AssyVersion.Split('.')[0]).$(AssyVersion.Split('.')[1]).$(AssyVersion.Split('.')[2])">
       <Output TaskParameter="Value" PropertyName="AssyShortVersion" />
     </CreateProperty>
-    <Copy SourceFiles="$(TargetPath)" DestinationFiles="C:\My\BUILDS\OHM.PROBER\Ohm.Prober.2016\$(OutputName)-$(AssyShortVersion).exe" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="C:\My\BUILDS\OHM.PROBER\Ohm.Prober.2017\$(OutputName)-$(AssyShortVersion).exe" />
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.

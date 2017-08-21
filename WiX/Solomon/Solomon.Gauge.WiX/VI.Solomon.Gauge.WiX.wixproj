@@ -6,7 +6,7 @@
     <ProductVersion>3.8</ProductVersion>
     <ProjectGuid>{71376415-2932-4a3e-afb6-5d596937e590}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>VI.Solomon.Gauge.2016.Setup</OutputName>
+    <OutputName>VI.Solomon.Gauge.2017.Setup</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>

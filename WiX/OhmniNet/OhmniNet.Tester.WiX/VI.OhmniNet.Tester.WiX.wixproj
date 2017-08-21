@@ -6,7 +6,7 @@
     <ProductVersion>3.8</ProductVersion>
     <ProjectGuid>{19060fb4-46b7-47ce-a5c6-0619d093877f}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>VI.OhmniNet.Tester.2016.Setup</OutputName>
+    <OutputName>VI.OhmniNet.Tester.2017.Setup</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>

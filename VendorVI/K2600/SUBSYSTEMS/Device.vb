@@ -28,7 +28,9 @@ Public Class Device
     ''' <summary> Creates a new Device. </summary>
     ''' <returns> A Device. </returns>
     Public Shared Function Create() As Device
+
         Dim device As Device = Nothing
+
         Try
             device = New Device
         Catch
@@ -435,6 +437,32 @@ Public Class Device
     End Sub
 
 #End Region
+
+#Region " TALKER "
+
+    ''' <summary> Adds a listener. </summary>
+    ''' <param name="listener"> The listener. </param>
+    Public Overrides Sub AddListener(ByVal listener As isr.Core.Pith.IMessageListener)
+        MyBase.AddListener(listener)
+        My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
+    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
+    ''' <param name="listeners"> The listeners. </param>
+    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of isr.Core.Pith.IMessageListener))
+        MyBase.AddListeners(listeners)
+        My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
+    ''' <summary> Adds the listeners. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub AddListeners(ByVal talker As isr.Core.Pith.ITraceMessageTalker)
+        MyBase.AddListeners(talker)
+        My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
+#End Region
+
 
 End Class
 
