@@ -31,7 +31,7 @@ Public Class K7500Panel
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private _InitializingComponents As Boolean
+    Private InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
@@ -43,9 +43,9 @@ Public Class K7500Panel
     ''' <param name="device"> The device. </param>
     Public Sub New(ByVal device As Device)
         MyBase.New(device)
-        Me._InitializingComponents = True
+        Me.InitializingComponents = True
         Me.InitializeComponent()
-        Me._InitializingComponents = False
+        Me.InitializingComponents = False
         Me._AssignDevice(device)
         ' note that the caption is not set if this is run inside the On Load function.
         With Me.TraceMessagesBox
@@ -110,6 +110,7 @@ Public Class K7500Panel
             .Minimum = 0
             .Maximum = 27500000
         End With
+        Me.EnableTraceLevelControls
         Me._InterfaceStopWatch = New Stopwatch
     End Sub
 
@@ -1111,6 +1112,67 @@ Public Class K7500Panel
         End Try
     End Sub
 
+#Region " TRACE LEVEL "
+
+    ''' <summary> Enables the trace level controls. </summary>
+    Private Sub EnableTraceLevelControls()
+
+        TalkerControlBase.ListTraceEventLevels(Me._LogTraceLevelComboBox.ComboBox)
+        AddHandler Me._LogTraceLevelComboBox.ComboBox.SelectedValueChanged, AddressOf Me._LogTraceLevelComboBox_SelectedValueChanged
+
+        TalkerControlBase.ListTraceEventLevels(Me._DisplayTraceLevelComboBox.ComboBox)
+        AddHandler Me._DisplayTraceLevelComboBox.ComboBox.SelectedValueChanged, AddressOf Me._DisplayTraceLevelComboBox_SelectedValueChanged
+
+        TalkerControlBase.SelectItem(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel)
+        TalkerControlBase.SelectItem(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel)
+
+    End Sub
+
+    ''' <summary>
+    ''' Event handler. Called by _LogTraceLevelComboBox for selected value changed events.
+    ''' </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _LogTraceLevelComboBox_SelectedValueChanged(sender As Object, e As EventArgs)
+        Dim activity As String = "selecting log trace level on this instrument only"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.ApplyTalkerTraceLevel(ListenerType.Logger,
+                                            TalkerControlBase.SelectedValue(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel))
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' Event handler. Called by _DisplayTraceLevelComboBox for selected value changed events.
+    ''' </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _DisplayTraceLevelComboBox_SelectedValueChanged(sender As Object, e As EventArgs)
+        Dim activity As String = "selecting Display trace level on this instrument only"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.ApplyTalkerTraceLevel(ListenerType.Display,
+                                            TalkerControlBase.SelectedValue(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel))
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+#End Region
 
 #End Region
 
@@ -1121,7 +1183,7 @@ Public Class K7500Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SessionTraceEnabledMenuItem_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "toggling instrument message tracing"
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         If menuItem IsNot Nothing Then
@@ -1146,7 +1208,7 @@ Public Class K7500Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SessionServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "Toggle session service request handling"
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
@@ -1180,7 +1242,7 @@ Public Class K7500Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _DeviceServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _DeviceServiceRequestHandlerEnabledMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "Toggle device service request handling"
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
@@ -1209,7 +1271,7 @@ Public Class K7500Panel
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ReadTerminalStateButton_Click(sender As Object, e As EventArgs) Handles _ReadTerminalStateButton.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "Reading terminals state"
         Dim button As ToolStripButton = CType(sender, ToolStripButton)
         Try
@@ -1234,7 +1296,7 @@ Public Class K7500Panel
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Private Sub _ReadTerminalStateButton_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ReadTerminalStateButton.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim button As ToolStripButton = TryCast(sender, ToolStripButton)
         If button IsNot Nothing Then
             If button.CheckState = Windows.Forms.CheckState.Indeterminate Then
@@ -1281,7 +1343,7 @@ Public Class K7500Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ReadingComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles _ReadingComboBox.SelectedIndexChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "selecting a reading to display"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -1332,7 +1394,7 @@ Public Class K7500Panel
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _AutoInitiateMenuItem_Click(sender As Object, e As EventArgs)
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "toggling re-trigger mode"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -1358,7 +1420,7 @@ Public Class K7500Panel
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _StreamBufferMenuItem_CheckStateChanged(sender As Object, e As EventArgs) Handles _StreamBufferMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "start buffer streaming"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -1509,7 +1571,7 @@ Public Class K7500Panel
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _MonitorActiveTriggerPlanMenuItem_Click(sender As Object, e As EventArgs) Handles _MonitorActiveTriggerPlanMenuItem.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "start monitoring trigger plan"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -1698,7 +1760,7 @@ Public Class K7500Panel
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _HandleMeasurementEventMenuItem_CheckStateChanged(sender As Object, e As EventArgs)
 
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         If menuItem Is Nothing Then Return
         Dim activity As String = ""
@@ -1884,7 +1946,7 @@ Public Class K7500Panel
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _HandleBufferEventMenuItem_CheckStateChanged(sender As Object, e As EventArgs)
 
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         If menuItem Is Nothing Then Return
         Dim activity As String = ""
@@ -1985,7 +2047,7 @@ Public Class K7500Panel
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _AbortStartTriggerPlanMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _AbortStartTriggerPlanMenuItem.Click
 
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = ""
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -2008,7 +2070,7 @@ Public Class K7500Panel
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InitiateTriggerPlanMenuItem_Click(sender As Object, e As EventArgs) Handles _InitiateTriggerPlanMenuItem.Click
 
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = ""
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -2028,7 +2090,7 @@ Public Class K7500Panel
 
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _AbortButton_Click(sender As Object, e As EventArgs) Handles _AbortButton.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "aborting trigger plan"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -2078,7 +2140,7 @@ Public Class K7500Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ReadBufferButton_Click(sender As Object, e As EventArgs) Handles _ReadBufferButton.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "reading buffer"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -2106,7 +2168,7 @@ Public Class K7500Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ClearBufferDisplayButton_Click(sender As Object, e As EventArgs) Handles _ClearBufferDisplayButton.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "clearing buffer display"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -2223,7 +2285,7 @@ Public Class K7500Panel
     End Sub
 
     Private Sub _Limit1DecimalsNumeric_ValueChanged(sender As Object, e As EventArgs) Handles _Limit1DecimalsNumeric.ValueChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Me._LowerLimit1Numeric.NumericUpDownControl.DecimalPlaces = CInt(Me._Limit1DecimalsNumeric.Value)
         Me._UpperLimit1Numeric.NumericUpDownControl.DecimalPlaces = CInt(Me._Limit1DecimalsNumeric.Value)
     End Sub
@@ -2290,7 +2352,7 @@ Public Class K7500Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _LoadGradeBinTriggerModelButton_Click(sender As Object, e As EventArgs) Handles _LoadGradeBinTriggerModelMenuItem.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "loading grade binning trigger model"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -2320,7 +2382,7 @@ Public Class K7500Panel
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _LoadSimpleLoopModelButton_Click(sender As Object, e As EventArgs)
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "loading simple loop trigger model"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -2342,7 +2404,7 @@ Public Class K7500Panel
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _RunSimpleLoopTriggerModelButton_Click(sender As Object, e As EventArgs) Handles _RunSimpleLoopMenuItem.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "Initiating simple loop trigger model"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -2367,7 +2429,7 @@ Public Class K7500Panel
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ClearTriggerModelMenuItem_Click(sender As Object, e As EventArgs) Handles _ClearTriggerModelMenuItem.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "clearing the trigger model"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -2389,7 +2451,7 @@ Public Class K7500Panel
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ReadTriggerStateMenuItem_Click(sender As Object, e As EventArgs) Handles _ReadTriggerStateMenuItem.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "reading trigger state"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -2408,7 +2470,7 @@ Public Class K7500Panel
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _MeterCompleterFirstGradingBinningMenuItem_Click(sender As Object, e As EventArgs) Handles _MeterCompleterFirstGradingBinningMenuItem.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim activity As String = "loading meter complete first grade binning trigger model"
         Try
             Me.Cursor = Cursors.WaitCursor

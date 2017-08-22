@@ -1,4 +1,5 @@
-﻿Imports isr.Core.Pith.ExceptionExtensions
+﻿Imports isr.Core.Pith
+Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Implements a Keithley 2000 instrument device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
@@ -23,6 +24,7 @@ Public Class Device
         Me.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter(HardwareInterfaceType.Gpib,
                                                                            HardwareInterfaceType.Tcpip,
                                                                            HardwareInterfaceType.Usb)
+        AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 
     ''' <summary> Creates a new Device. </summary>
@@ -94,6 +96,7 @@ Public Class Device
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+        Me.ApplySettings()
     End Sub
 
 #End Region
@@ -243,7 +246,7 @@ Public Class Device
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
                 Me.MeasureSubsystem.Readings.Initialize(subsystem.Elements)
@@ -321,6 +324,54 @@ Public Class Device
 
 #End Region
 
+#Region " MY SETTINGS "
+
+    ''' <summary> Opens the settings editor. </summary>
+    Public Shared Sub OpenSettingsEditor()
+        Using f As ConfigurationEditor = ConfigurationEditor.Get
+            f.Text = "K2000 Settings Editor"
+            f.ShowDialog(isr.VI.K2000.Settings.Default)
+        End Using
+    End Sub
+
+    ''' <summary> Applies the settings. </summary>
+    Private Sub ApplySettings()
+        Dim settings As isr.VI.K2000.Settings = isr.VI.K2000.My.Settings
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))
+    End Sub
+
+    ''' <summary> Handle the Platform property changed event. </summary>
+    ''' <param name="sender">       Source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnSettingsPropertyChanged(ByVal sender As isr.VI.K2000.Settings, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.TraceLogLevel)
+                Me.ApplyTalkerTraceLevel(ListenerType.Logger, sender.TraceLogLevel)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace log level changed to {sender.TraceLogLevel}")
+            Case NameOf(sender.TraceShowLevel)
+                Me.ApplyTalkerTraceLevel(ListenerType.Display, sender.TraceShowLevel)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
+        End Select
+    End Sub
+
+    ''' <summary> My settings property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _Settings_PropertyChanged(sender As Object, e As ComponentModel.PropertyChangedEventArgs)
+        Dim settings As isr.VI.K2000.Settings = TryCast(sender, isr.VI.K2000.Settings)
+        If settings Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnSettingsPropertyChanged(settings, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling Settings.{e.PropertyName} property;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
+
 #Region " TALKER "
 
     ''' <summary> Adds a listener. </summary>
@@ -345,6 +396,5 @@ Public Class Device
     End Sub
 
 #End Region
-
 
 End Class
