@@ -1224,7 +1224,6 @@ Public Class Meter
 
 #End Region
 
-
 #Region " TALKER "
 
     ''' <summary> Adds subsystem listeners. </summary>
@@ -1284,6 +1283,8 @@ Public Class Meter
     Public Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyListenerTraceLevel
         ' this should apply only to the listeners associated with this form
         Me.Talker.ApplyListenerTraceLevel(listenerType, value)
+        Me.ShuntResistance.ApplyListenerTraceLevel(listenerType, value)
+        Me.MasterDevice.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
     ''' <summary> Applies the trace level type to all talkers. </summary>
@@ -1291,12 +1292,16 @@ Public Class Meter
     ''' <param name="value">        The value. </param>
     Public Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyTalkerTraceLevel
         Me.Talker.ApplyTalkerTraceLevel(listenerType, value)
+        Me.ShuntResistance.ApplyTalkerTraceLevel(listenerType, value)
+        Me.MasterDevice.ApplyTalkerTraceLevel(listenerType, value)
     End Sub
 
     ''' <summary> Applies the talker trace levels described by talker. </summary>
     ''' <param name="talker"> The talker. </param>
     Public Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.ApplyTalkerTraceLevels
         Me.Talker.ApplyTalkerTraceLevels(talker)
+        Me.ShuntResistance.ApplyTalkerTraceLevels(talker)
+        Me.MasterDevice.ApplyTalkerTraceLevels(talker)
     End Sub
 
 #End Region
