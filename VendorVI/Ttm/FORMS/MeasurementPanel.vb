@@ -43,6 +43,7 @@ Public Class MeasurementPanel
         Set(value As Meter)
             Me._Meter = value
             If value IsNot Nothing Then
+                Me.MasterDevice = Meter.MasterDevice
                 Me.TriggerSequencer = value.TriggerSequencer
                 Me.MeasureSequencer = value.MeasureSequencer
                 MyBase.OnStateChanged()

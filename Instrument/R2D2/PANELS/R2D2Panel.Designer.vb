@@ -18,6 +18,8 @@ Partial Class R2D2Panel
         Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -131,7 +133,7 @@ Partial Class R2D2Panel
         '_ResetSplitButton
         '
         Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem, Me._LogTraceLevelComboBox, Me._DisplayTraceLevelComboBox})
         Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
         Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetSplitButton.Name = "_ResetSplitButton"
@@ -597,6 +599,20 @@ Partial Class R2D2Panel
         Me._AbortButton.Text = "Abort"
         Me._AbortButton.ToolTipText = "Aborts active trigger"
         '
+        '_LogTraceLevelComboBox
+        '
+        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
+        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._LogTraceLevelComboBox.Text = "Verbose"
+        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
+        '
+        '_DisplayTraceLevelComboBox
+        '
+        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
+        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._DisplayTraceLevelComboBox.Text = "Warning"
+        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
+        '
         'R2D2Panel
         '
         Me.Controls.Add(Me._Tabs)
@@ -680,4 +696,6 @@ Partial Class R2D2Panel
     Private WithEvents _ReadingsCountLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
     Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
+    Private WithEvents _LogTraceLevelComboBox As Core.Controls.ToolStripComboBox
+    Private WithEvents _DisplayTraceLevelComboBox As Core.Controls.ToolStripComboBox
 End Class

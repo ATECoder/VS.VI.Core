@@ -59,7 +59,6 @@ Public Class K7000Panel
             .Value = 0
         End With
         Me.EnableTraceLevelControls()
-
     End Sub
 
     ''' <summary>

@@ -89,6 +89,11 @@
     </Compile>
     <Compile Include="ENTITIES\BufferElement.vb" />
     <Compile Include="ENTITIES\DeviceError.vb" />
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="SUBSYSTEMS\SlotSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SlotsSubsystemBase.vb" />
@@ -161,6 +166,11 @@
   <ItemGroup>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup />

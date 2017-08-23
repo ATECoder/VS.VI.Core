@@ -1,8 +1,10 @@
 ﻿Imports System.Windows.Forms
 Imports System.ComponentModel
 Imports System.Drawing
+Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.ExceptionExtensions
+Imports isr.Core.Pith.ErrorProviderExtensions
 ''' <summary> Measurement panel base. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -41,7 +43,6 @@ Public Class MeasurementPanelBase
             MyBase.Dispose(disposing)
         End Try
     End Sub
-
 
 #End Region
 
@@ -723,6 +724,91 @@ Public Class MeasurementPanelBase
                 Me._TriggerSequencer.Enqueue(TriggerSequenceSignal.Stop)
             End If
         End If
+    End Sub
+
+#End Region
+
+#Region " TRACE LEVEL "
+
+    Private _MasterDevice As isr.VI.Tsp.K2600.Device
+    <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
+    Public Property MasterDevice As isr.VI.Tsp.K2600.Device
+        Get
+            Return Me._MasterDevice
+        End Get
+        Set(value As isr.VI.Tsp.K2600.Device)
+            Me._MasterDevice = value
+            If value Is Nothing Then
+                Me.DisableTraceLevelControls()
+            Else
+                Me.EnableTraceLevelControls()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Disables the trace level controls. </summary>
+    Private Sub DisableTraceLevelControls()
+        RemoveHandler Me._LogTraceLevelComboBox.ComboBox.SelectedValueChanged, AddressOf Me._LogTraceLevelComboBox_SelectedValueChanged
+        RemoveHandler Me._DisplayTraceLevelComboBox.ComboBox.SelectedValueChanged, AddressOf Me._DisplayTraceLevelComboBox_SelectedValueChanged
+    End Sub
+
+
+    ''' <summary> Enables the trace level controls. </summary>
+    Private Sub EnableTraceLevelControls()
+
+        TalkerControlBase.ListTraceEventLevels(Me._LogTraceLevelComboBox.ComboBox)
+        AddHandler Me._LogTraceLevelComboBox.ComboBox.SelectedValueChanged, AddressOf Me._LogTraceLevelComboBox_SelectedValueChanged
+
+        TalkerControlBase.ListTraceEventLevels(Me._DisplayTraceLevelComboBox.ComboBox)
+        AddHandler Me._DisplayTraceLevelComboBox.ComboBox.SelectedValueChanged, AddressOf Me._DisplayTraceLevelComboBox_SelectedValueChanged
+
+        TalkerControlBase.SelectItem(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel)
+        TalkerControlBase.SelectItem(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel)
+
+    End Sub
+
+    ''' <summary>
+    ''' Event handler. Called by _LogTraceLevelComboBox for selected value changed events.
+    ''' </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _LogTraceLevelComboBox_SelectedValueChanged(sender As Object, e As EventArgs)
+        Dim activity As String = "selecting log trace level on this instrument only"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me._ErrorProvider.Clear()
+            Me.MasterDevice.ApplyTalkerTraceLevel(ListenerType.Logger,
+                                            TalkerControlBase.SelectedValue(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel))
+        Catch ex As Exception
+            Me._ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.MasterDevice.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' Event handler. Called by _DisplayTraceLevelComboBox for selected value changed events.
+    ''' </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _DisplayTraceLevelComboBox_SelectedValueChanged(sender As Object, e As EventArgs)
+        Dim activity As String = "selecting Display trace level on this instrument only"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me._ErrorProvider.Clear()
+            Me.MasterDevice.ApplyTalkerTraceLevel(ListenerType.Display,
+                                            TalkerControlBase.SelectedValue(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel))
+        Catch ex As Exception
+            Me._ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.MasterDevice.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
     End Sub
 
 #End Region

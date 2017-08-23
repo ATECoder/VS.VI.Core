@@ -65,6 +65,8 @@ Partial Class K2700Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
@@ -211,7 +213,7 @@ Partial Class K2700Panel
         '_ResetSplitButton
         '
         Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem, Me._LogTraceLevelComboBox, Me._DisplayTraceLevelComboBox})
         Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
         Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetSplitButton.Name = "_ResetSplitButton"
@@ -684,6 +686,20 @@ Partial Class K2700Panel
         Me._ClearBufferDisplayButton.Text = """"
         Me._ClearBufferDisplayButton.ToolTipText = "Clears the buffer display"
         '
+        '_LogTraceLevelComboBox
+        '
+        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
+        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._LogTraceLevelComboBox.Text = "Verbose"
+        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
+        '
+        '_DisplayTraceLevelComboBox
+        '
+        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
+        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._DisplayTraceLevelComboBox.Text = "Warning"
+        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
+        '
         'K2700Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -775,4 +791,6 @@ Partial Class K2700Panel
     Private WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
     Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
     Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
+    Private WithEvents _LogTraceLevelComboBox As Core.Controls.ToolStripComboBox
+    Private WithEvents _DisplayTraceLevelComboBox As Core.Controls.ToolStripComboBox
 End Class

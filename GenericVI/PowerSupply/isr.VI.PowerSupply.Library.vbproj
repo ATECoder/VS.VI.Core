@@ -59,6 +59,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -71,6 +72,11 @@
   <ItemGroup>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -94,9 +100,14 @@
       <Link>My\keyPair.snk</Link>
     </None>
     <Content Include="My\isr.VI.PowerSupply.History.rtf" />
+    <None Include="app.config" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

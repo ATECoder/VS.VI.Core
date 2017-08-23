@@ -68,7 +68,6 @@
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="GlobalSuppressions.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

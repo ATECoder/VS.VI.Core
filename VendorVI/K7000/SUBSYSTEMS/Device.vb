@@ -1,5 +1,4 @@
-﻿Imports isr.Core.Pith
-Imports isr.Core.Pith.ExceptionExtensions
+﻿Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Implements a generic switch device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
@@ -276,7 +275,7 @@ Public Class Device
 
     ''' <summary> Opens the settings editor. </summary>
     Public Shared Sub OpenSettingsEditor()
-        Using f As ConfigurationEditor = ConfigurationEditor.Get
+        Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
             f.Text = "K7000 Settings Editor"
             f.ShowDialog(My.MySettings.Default)
         End Using
@@ -296,10 +295,10 @@ Public Class Device
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.TraceLogLevel)
-                Me.ApplyTalkerTraceLevel(ListenerType.Logger, sender.TraceLogLevel)
+                Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Logger, sender.TraceLogLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace log level changed to {sender.TraceLogLevel}")
             Case NameOf(sender.TraceShowLevel)
-                Me.ApplyTalkerTraceLevel(ListenerType.Display, sender.TraceShowLevel)
+                Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
         End Select
     End Sub

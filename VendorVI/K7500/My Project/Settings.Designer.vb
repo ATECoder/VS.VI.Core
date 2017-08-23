@@ -11,16 +11,16 @@
 Option Strict On
 Option Explicit On
 
+Namespace My
 
+    <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0"),
+     Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
+    Partial Public NotInheritable Class MySettings
+        Inherits Global.System.Configuration.ApplicationSettingsBase
 
-<Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
- Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0"),  _
- Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
-Partial Friend NotInheritable Class Settings
-    Inherits Global.System.Configuration.ApplicationSettingsBase
-    
-    Private Shared defaultInstance As Settings = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New Settings()),Settings)
-    
+        Private Shared defaultInstance As MySettings = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New MySettings()), MySettings)
+
 #Region "My.Settings Auto-Save Functionality"
 #If _MyType = "WindowsForms" Then
     Private Shared addedHandler As Boolean
@@ -35,10 +35,10 @@ Partial Friend NotInheritable Class Settings
     End Sub
 #End If
 #End Region
-    
-    Public Shared ReadOnly Property [Default]() As Settings
-        Get
-            
+
+        Public Shared ReadOnly Property [Default]() As MySettings
+            Get
+
 #If _MyType = "WindowsForms" Then
                If Not addedHandler Then
                     SyncLock addedHandlerLockObject
@@ -49,46 +49,155 @@ Partial Friend NotInheritable Class Settings
                     End SyncLock
                 End If
 #End If
-            Return defaultInstance
-        End Get
-    End Property
-    
-    <Global.System.Configuration.UserScopedSettingAttribute(),  _
-     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("Warning")>  _
-    Public Property TraceLogLevel() As Global.System.Diagnostics.TraceEventType
-        Get
-            Return CType(Me("TraceLogLevel"),Global.System.Diagnostics.TraceEventType)
-        End Get
-        Set
-            Me("TraceLogLevel") = value
-        End Set
-    End Property
-    
-    <Global.System.Configuration.UserScopedSettingAttribute(),  _
-     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Configuration.DefaultSettingValueAttribute("Warning")>  _
-    Public Property TraceShowLevel() As Global.System.Diagnostics.TraceEventType
-        Get
-            Return CType(Me("TraceShowLevel"),Global.System.Diagnostics.TraceEventType)
-        End Get
-        Set
-            Me("TraceShowLevel") = value
-        End Set
-    End Property
-End Class
+                Return defaultInstance
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("10")>
+        Public Property LoadResistance() As Decimal
+            Get
+                Return CType(Me("LoadResistance"), Decimal)
+            End Get
+            Set
+                Me("LoadResistance") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("5")>
+        Public Property YardstickResistance() As Decimal
+            Get
+                Return CType(Me("YardstickResistance"), Decimal)
+            End Get
+            Set
+                Me("YardstickResistance") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("0.01")>
+        Public Property YardstickResistanceTolerance() As Decimal
+            Get
+                Return CType(Me("YardstickResistanceTolerance"), Decimal)
+            End Get
+            Set
+                Me("YardstickResistanceTolerance") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("0.000001")>
+        Public Property YardstickInductanceLimit() As Decimal
+            Get
+                Return CType(Me("YardstickInductanceLimit"), Decimal)
+            End Get
+            Set
+                Me("YardstickInductanceLimit") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public Property OpenCompensationReading() As String
+            Get
+                Return CType(Me("OpenCompensationReading"), String)
+            End Get
+            Set
+                Me("OpenCompensationReading") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public Property ShortCompensationReading() As String
+            Get
+                Return CType(Me("ShortCompensationReading"), String)
+            End Get
+            Set
+                Me("ShortCompensationReading") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public Property LoadCompensationReading() As String
+            Get
+                Return CType(Me("LoadCompensationReading"), String)
+            End Get
+            Set
+                Me("LoadCompensationReading") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public Property FrequencyArrayReading() As String
+            Get
+                Return CType(Me("FrequencyArrayReading"), String)
+            End Get
+            Set
+                Me("FrequencyArrayReading") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public Property AdapterType() As String
+            Get
+                Return CType(Me("AdapterType"), String)
+            End Get
+            Set
+                Me("AdapterType") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("Warning")>
+        Public Property TraceLogLevel() As Global.System.Diagnostics.TraceEventType
+            Get
+                Return CType(Me("TraceLogLevel"), Global.System.Diagnostics.TraceEventType)
+            End Get
+            Set
+                Me("TraceLogLevel") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("Warning")>
+        Public Property TraceShowLevel() As Global.System.Diagnostics.TraceEventType
+            Get
+                Return CType(Me("TraceShowLevel"), Global.System.Diagnostics.TraceEventType)
+            End Get
+            Set
+                Me("TraceShowLevel") = Value
+            End Set
+        End Property
+    End Class
+End Namespace
 
 Namespace My
-    
-    <Global.Microsoft.VisualBasic.HideModuleNameAttribute(),  _
-     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-     Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>  _
+
+    <Global.Microsoft.VisualBasic.HideModuleNameAttribute(),
+     Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+     Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>
     Friend Module MySettingsProperty
-        
-        <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>  _
-        Friend ReadOnly Property Settings() As Global.isr.VI.K7500.Settings
+
+        <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>
+        Friend ReadOnly Property Settings() As Global.isr.VI.K7500.My.MySettings
             Get
-                Return Global.isr.VI.K7500.Settings.Default
+                Return Global.isr.VI.K7500.My.MySettings.Default
             End Get
         End Property
     End Module

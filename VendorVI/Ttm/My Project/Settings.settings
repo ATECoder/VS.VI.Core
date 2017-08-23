@@ -272,5 +272,14 @@
     <Setting Name="TraceLevel" Type="System.Diagnostics.TraceEventType" Scope="User">
       <Value Profile="(Default)">Verbose</Value>
     </Setting>
+    <Setting Name="TraceLogLevel" Type="System.Diagnostics.TraceEventType" Scope="User">
+      <Value Profile="(Default)">Warning</Value>
+    </Setting>
+    <Setting Name="TraceShowLevel" Type="System.Diagnostics.TraceEventType" Scope="User">
+      <Value Profile="(Default)">Warning</Value>
+    </Setting>
+    <Setting Name="Setting" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

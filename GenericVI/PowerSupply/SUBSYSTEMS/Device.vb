@@ -23,6 +23,7 @@ Public Class Device
         Me.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter(HardwareInterfaceType.Gpib,
                                                                            HardwareInterfaceType.Tcpip,
                                                                            HardwareInterfaceType.Usb)
+        AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 
 #Region " IDisposable Support "
@@ -73,6 +74,7 @@ Public Class Device
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+        Me.ApplySettings()
     End Sub
 
 #End Region
@@ -268,6 +270,54 @@ Public Class Device
         End If
         If Me.StatusSubsystem.MeasurementAvailable Then
         End If
+    End Sub
+
+#End Region
+
+#Region " MY SETTINGS "
+
+    ''' <summary> Opens the settings editor. </summary>
+    Public Shared Sub OpenSettingsEditor()
+        Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
+            f.Text = "Power Supply Settings Editor"
+            f.ShowDialog(My.MySettings.Default)
+        End Using
+    End Sub
+
+    ''' <summary> Applies the settings. </summary>
+    Private Sub ApplySettings()
+        Dim settings As My.MySettings = My.MySettings.Default
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))
+    End Sub
+
+    ''' <summary> Handle the Platform property changed event. </summary>
+    ''' <param name="sender">       Source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnSettingsPropertyChanged(ByVal sender As My.MySettings, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.TraceLogLevel)
+                Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Logger, sender.TraceLogLevel)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace log level changed to {sender.TraceLogLevel}")
+            Case NameOf(sender.TraceShowLevel)
+                Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
+        End Select
+    End Sub
+
+    ''' <summary> My settings property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _Settings_PropertyChanged(sender As Object, e As ComponentModel.PropertyChangedEventArgs)
+        Dim settings As My.MySettings = TryCast(sender, My.MySettings)
+        If settings Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnSettingsPropertyChanged(settings, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling Settings.{e.PropertyName} property;. {ex.ToFullBlownString}")
+        End Try
     End Sub
 
 #End Region

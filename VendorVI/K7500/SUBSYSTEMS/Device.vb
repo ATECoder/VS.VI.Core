@@ -1,5 +1,4 @@
-﻿Imports isr.Core.Pith
-Imports isr.Core.Pith.ExceptionExtensions
+﻿Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Implements a Keithley 7500 Meter device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
@@ -433,15 +432,15 @@ Public Class Device
 
     ''' <summary> Opens the settings editor. </summary>
     Public Shared Sub OpenSettingsEditor()
-        Using f As ConfigurationEditor = ConfigurationEditor.Get
+        Using f As isr.Core.Pith.ConfigurationEditor = isr.Core.Pith.ConfigurationEditor.Get
             f.Text = "K7500 Settings Editor"
-            f.ShowDialog(isr.VI.K7500.Settings.Default)
+            f.ShowDialog(My.MySettings.Default)
         End Using
     End Sub
 
     ''' <summary> Applies the settings. </summary>
     Private Sub ApplySettings()
-        Dim settings As isr.VI.K7500.Settings = isr.VI.K7500.My.Settings
+        Dim settings As My.MySettings = My.MySettings.Default
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))
     End Sub
@@ -449,14 +448,14 @@ Public Class Device
     ''' <summary> Handle the Platform property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSettingsPropertyChanged(ByVal sender As isr.VI.K7500.Settings, ByVal propertyName As String)
+    Private Sub OnSettingsPropertyChanged(ByVal sender As My.MySettings, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.TraceLogLevel)
-                Me.ApplyTalkerTraceLevel(ListenerType.Logger, sender.TraceLogLevel)
+                Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Logger, sender.TraceLogLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace log level changed to {sender.TraceLogLevel}")
             Case NameOf(sender.TraceShowLevel)
-                Me.ApplyTalkerTraceLevel(ListenerType.Display, sender.TraceShowLevel)
+                Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
         End Select
     End Sub
@@ -466,7 +465,7 @@ Public Class Device
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Settings_PropertyChanged(sender As Object, e As ComponentModel.PropertyChangedEventArgs)
-        Dim settings As isr.VI.K7500.Settings = TryCast(sender, isr.VI.K7500.Settings)
+        Dim settings As My.MySettings = TryCast(sender, My.MySettings)
         If settings Is Nothing OrElse e Is Nothing Then Return
         Try
             Me.OnSettingsPropertyChanged(settings, e.PropertyName)
@@ -501,6 +500,5 @@ Public Class Device
     End Sub
 
 #End Region
-
 
 End Class

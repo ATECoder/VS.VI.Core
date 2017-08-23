@@ -112,6 +112,8 @@ Partial Class E4990Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
+        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
@@ -289,7 +291,7 @@ Partial Class E4990Panel
         '_ResetsDropDownButton
         '
         Me._ResetsDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetsDropDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._InitKnowStateMenuItem})
+        Me._ResetsDropDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._InitKnowStateMenuItem, Me._LogTraceLevelComboBox, Me._DisplayTraceLevelComboBox})
         Me._ResetsDropDownButton.Image = CType(resources.GetObject("_ResetsDropDownButton.Image"), System.Drawing.Image)
         Me._ResetsDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetsDropDownButton.Name = "_ResetsDropDownButton"
@@ -1264,6 +1266,20 @@ Partial Class E4990Panel
         Me._TitleLabel.Text = "KE4990"
         Me._TitleLabel.UseMnemonic = False
         '
+        '_LogTraceLevelComboBox
+        '
+        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
+        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._LogTraceLevelComboBox.Text = "Verbose"
+        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
+        '
+        '_DisplayTraceLevelComboBox
+        '
+        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
+        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._DisplayTraceLevelComboBox.Text = "Warning"
+        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
+        '
         '_ClearBufferDisplayButton
         '
         Me._ClearBufferDisplayButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
@@ -1439,4 +1455,6 @@ Partial Class E4990Panel
     Private WithEvents _ReadingComboBox As Windows.Forms.ToolStripComboBox
     Private WithEvents _AbortButton As Windows.Forms.ToolStripButton
     Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
+    Private WithEvents _LogTraceLevelComboBox As Core.Controls.ToolStripComboBox
+    Private WithEvents _DisplayTraceLevelComboBox As Core.Controls.ToolStripComboBox
 End Class

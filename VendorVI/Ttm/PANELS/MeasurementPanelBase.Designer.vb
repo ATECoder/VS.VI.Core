@@ -33,6 +33,8 @@ Partial Class MeasurementPanelBase
         Me._SaveTraceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearTraceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadTraceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._Chart = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me._ErrorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me._MeterTimer = New System.Windows.Forms.Timer(Me.components)
@@ -85,7 +87,7 @@ Partial Class MeasurementPanelBase
         '
         Me._MeasureToolStripDropDownButton.AutoToolTip = False
         Me._MeasureToolStripDropDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._MeasureToolStripDropDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._AbortSequenceToolStripMenuItem, Me._MeasureAllToolStripMenuItem, Me._FinalResistanceToolStripMenuItem, Me._ThermalTransientToolStripMenuItem, Me._InitialResistanceToolStripMenuItem, Me._ClearToolStripMenuItem})
+        Me._MeasureToolStripDropDownButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._AbortSequenceToolStripMenuItem, Me._MeasureAllToolStripMenuItem, Me._FinalResistanceToolStripMenuItem, Me._ThermalTransientToolStripMenuItem, Me._InitialResistanceToolStripMenuItem, Me._ClearToolStripMenuItem, Me._LogTraceLevelComboBox, Me._DisplayTraceLevelComboBox})
         Me._MeasureToolStripDropDownButton.Image = CType(resources.GetObject("_MeasureToolStripDropDownButton.Image"), System.Drawing.Image)
         Me._MeasureToolStripDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._MeasureToolStripDropDownButton.Name = "_MeasureToolStripDropDownButton"
@@ -302,6 +304,20 @@ Partial Class MeasurementPanelBase
         Me._SplitContainer.SplitterDistance = 330
         Me._SplitContainer.TabIndex = 2
         '
+        '_LogTraceLevelComboBox
+        '
+        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
+        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._LogTraceLevelComboBox.Text = "Verbose"
+        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
+        '
+        '_DisplayTraceLevelComboBox
+        '
+        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
+        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._DisplayTraceLevelComboBox.Text = "Warning"
+        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
+        '
         'MeasurementPanelBase
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 17.0!)
@@ -354,5 +370,6 @@ Partial Class MeasurementPanelBase
     Private WithEvents _AbortToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Private WithEvents _TraceDataGridView As System.Windows.Forms.DataGridView
     Private WithEvents _SplitContainer As System.Windows.Forms.SplitContainer
-
+    Private WithEvents _LogTraceLevelComboBox As Core.Controls.ToolStripComboBox
+    Private WithEvents _DisplayTraceLevelComboBox As Core.Controls.ToolStripComboBox
 End Class

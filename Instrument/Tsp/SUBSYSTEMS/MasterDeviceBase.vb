@@ -23,6 +23,7 @@ Public MustInherit Class MasterDeviceBase
         Me.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter(HardwareInterfaceType.Gpib,
                                                                            HardwareInterfaceType.Tcpip,
                                                                            HardwareInterfaceType.Usb)
+        AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 
 #Region " I Disposable Support"
@@ -65,6 +66,7 @@ Public MustInherit Class MasterDeviceBase
     ''' <summary> Sets the subsystem to its initial post reset state. </summary>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
+        Me.ApplySettings()
         ' establish the current node as the controller node. 
         ' moved to tsp subsystem base with setting the conditional to true when creating the subsystem: 
         ' Me.StatusSubsystem.InitiateControllerNode()
@@ -236,6 +238,79 @@ Public MustInherit Class MasterDeviceBase
         If Me.StatusSubsystem.ErrorAvailable Then
             Me.StatusSubsystem.QueryDeviceErrors()
         End If
+    End Sub
+
+#End Region
+
+#Region " MY SETTINGS "
+
+    ''' <summary> Opens the settings editor. </summary>
+    Public Shared Sub OpenSettingsEditor()
+        Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
+            f.Text = "TSP Settings Editor"
+            f.ShowDialog(My.MySettings.Default)
+        End Using
+    End Sub
+
+    ''' <summary> Applies the settings. </summary>
+    Private Sub ApplySettings()
+        Dim settings As My.MySettings = My.MySettings.Default
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))
+    End Sub
+
+    ''' <summary> Handle the Platform property changed event. </summary>
+    ''' <param name="sender">       Source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnSettingsPropertyChanged(ByVal sender As My.MySettings, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.TraceLogLevel)
+                Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Logger, sender.TraceLogLevel)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace log level changed to {sender.TraceLogLevel}")
+            Case NameOf(sender.TraceShowLevel)
+                Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
+        End Select
+    End Sub
+
+    ''' <summary> My settings property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _Settings_PropertyChanged(sender As Object, e As ComponentModel.PropertyChangedEventArgs)
+        Dim settings As My.MySettings = TryCast(sender, My.MySettings)
+        If settings Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnSettingsPropertyChanged(settings, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling Settings.{e.PropertyName} property;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
+
+#Region " TALKER "
+
+    ''' <summary> Adds a listener. </summary>
+    ''' <param name="listener"> The listener. </param>
+    Public Overrides Sub AddListener(ByVal listener As isr.Core.Pith.IMessageListener)
+        MyBase.AddListener(listener)
+        My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
+    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
+    ''' <param name="listeners"> The listeners. </param>
+    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of isr.Core.Pith.IMessageListener))
+        MyBase.AddListeners(listeners)
+        My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
+    ''' <summary> Adds the listeners. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub AddListeners(ByVal talker As isr.Core.Pith.ITraceMessageTalker)
+        MyBase.AddListeners(talker)
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
 
 #End Region

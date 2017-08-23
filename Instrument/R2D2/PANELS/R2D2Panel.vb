@@ -31,9 +31,8 @@ Public Class R2D2Panel
         Me.IsDeviceOwner = True
     End Sub
 
-    ''' <summary> Specialized constructor for use only by derived class. </summary>
     ''' <param name="device"> The device. </param>
-    Protected Sub New(ByVal device As Device)
+    Public Sub New(ByVal device As Device)
         MyBase.New(device)
         Me._InitializingComponents = True
         Me.InitializeComponent()
@@ -43,10 +42,11 @@ Public Class R2D2Panel
             .Hexadecimal = True
             .Maximum = 255
             .Minimum = 0
-            .value = 0
+            .Value = 0
         End With
         Me._ReadingToolStrip.Visible = False
         Me._ReadingsDataGridView.Visible = False
+        Me.EnableTraceLevelControls()
     End Sub
 
     ''' <summary>
@@ -380,6 +380,68 @@ Public Class R2D2Panel
             Me.Cursor = Cursors.Default
         End Try
     End Sub
+
+#Region " TRACE LEVEL "
+
+    ''' <summary> Enables the trace level controls. </summary>
+    Private Sub EnableTraceLevelControls()
+
+        TalkerControlBase.ListTraceEventLevels(Me._LogTraceLevelComboBox.ComboBox)
+        AddHandler Me._LogTraceLevelComboBox.ComboBox.SelectedValueChanged, AddressOf Me._LogTraceLevelComboBox_SelectedValueChanged
+
+        TalkerControlBase.ListTraceEventLevels(Me._DisplayTraceLevelComboBox.ComboBox)
+        AddHandler Me._DisplayTraceLevelComboBox.ComboBox.SelectedValueChanged, AddressOf Me._DisplayTraceLevelComboBox_SelectedValueChanged
+
+        TalkerControlBase.SelectItem(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel)
+        TalkerControlBase.SelectItem(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel)
+
+    End Sub
+
+    ''' <summary>
+    ''' Event handler. Called by _LogTraceLevelComboBox for selected value changed events.
+    ''' </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _LogTraceLevelComboBox_SelectedValueChanged(sender As Object, e As EventArgs)
+        Dim activity As String = "selecting log trace level on this instrument only"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.ApplyTalkerTraceLevel(ListenerType.Logger,
+                                            TalkerControlBase.SelectedValue(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel))
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' Event handler. Called by _DisplayTraceLevelComboBox for selected value changed events.
+    ''' </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _DisplayTraceLevelComboBox_SelectedValueChanged(sender As Object, e As EventArgs)
+        Dim activity As String = "selecting Display trace level on this instrument only"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            Me.Device.ApplyTalkerTraceLevel(ListenerType.Display,
+                                            TalkerControlBase.SelectedValue(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel))
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+#End Region
 
 #End Region
 

@@ -8,3 +8,7 @@
 
 #End Region
 
+<Assembly: CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Scope:="member", Target:="isr.VI.E4990.E4990Panel.#OnPropertyChanged(isr.VI.E4990.CompensateChannelSubsystem,System.String)")>
+
+
+
