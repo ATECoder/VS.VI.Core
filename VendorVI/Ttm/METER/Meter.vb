@@ -1241,12 +1241,6 @@ Public Class Meter
 
 #Region " I TALKER IMPLEMENTATION "
 
-    ''' <summary> Dispose talker. </summary>
-    Private Sub DisposeTalker()
-        Me.Talker?.Listeners.Clear()
-        Me._Talker = Nothing
-    End Sub
-
     ''' <summary> Gets the trace message talker. </summary>
     ''' <value> The trace message talker. </value>
     Public ReadOnly Property Talker As ITraceMessageTalker
@@ -1268,13 +1262,6 @@ Public Class Meter
     Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
         Me._Talker.AddListeners(talker)
          My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Clears the listeners. </summary>
-    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker.Listeners.Clear()
-        Me.ShuntResistance.ClearListeners()
-        Me.MasterDevice.ClearListeners()
     End Sub
 
     ''' <summary> Applies the trace level to all listeners of the specified type. </summary>
@@ -1300,8 +1287,21 @@ Public Class Meter
     ''' <param name="talker"> The talker. </param>
     Public Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.ApplyTalkerTraceLevels
         Me.Talker.ApplyTalkerTraceLevels(talker)
-        Me.ShuntResistance.ApplyTalkerTraceLevels(talker)
         Me.MasterDevice.ApplyTalkerTraceLevels(talker)
+        Me.ShuntResistance?.ApplyTalkerTraceLevels(talker)
+    End Sub
+
+    ''' <summary> Clears the listeners. </summary>
+    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
+        Me.Talker?.Listeners?.Clear()
+        Me.MasterDevice?.ClearListeners()
+        Me.ShuntResistance?.ClearListeners()
+    End Sub
+
+    ''' <summary> Dispose talker. </summary>
+    Private Sub DisposeTalker()
+        Me.ClearListeners()
+        Me._Talker = Nothing
     End Sub
 
 #End Region

@@ -32,8 +32,7 @@ Public MustInherit Class SubsystemBase
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                Me.Talker?.Listeners.Clear()
-                Me._Talker = Nothing
+                Me.DisposeTalker()
                 Me._Session = Nothing
             End If
         Finally
@@ -333,11 +332,6 @@ Public MustInherit Class SubsystemBase
         Me._Talker.AddListeners(talker)
     End Sub
 
-    ''' <summary> Clears the listeners. </summary>
-    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker.Listeners.Clear()
-    End Sub
-
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
     ''' <param name="listenerType"> Type of the listener. </param>
     ''' <param name="value">        The value. </param>
@@ -358,6 +352,17 @@ Public MustInherit Class SubsystemBase
         If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
         Me.ApplyTalkerTraceLevel(ListenerType.Logger, talker.TraceLogLevel)
         Me.ApplyTalkerTraceLevel(ListenerType.Display, talker.TraceShowLevel)
+    End Sub
+
+    ''' <summary> Clears the listeners. </summary>
+    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
+        Me.Talker?.Listeners?.Clear()
+    End Sub
+
+    ''' <summary> Dispose talker. </summary>
+    Private Sub DisposeTalker()
+        Me.ClearListeners()
+        Me._Talker = Nothing
     End Sub
 
 #End Region
@@ -430,7 +435,7 @@ Public Class SubsystemCollection
     ''' <summary> Dispose items. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub DisposeItems()
-        Me.ClearListeners()
+        Me.DisposeTalker()
         For Each element As IDisposable In Me.Items
             Try
                 element.Dispose()
@@ -512,13 +517,6 @@ Public Class SubsystemCollection
         Next
     End Sub
 
-    ''' <summary> Clears the listeners. </summary>
-    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        For Each element As ITalker In Me.Items
-            element.ClearListeners()
-        Next
-    End Sub
-
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
     ''' <param name="listenerType"> Type of the listener. </param>
     ''' <param name="value">        The value. </param>
@@ -543,6 +541,19 @@ Public Class SubsystemCollection
         If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
         Me.ApplyTalkerTraceLevel(ListenerType.Logger, talker.TraceLogLevel)
         Me.ApplyTalkerTraceLevel(ListenerType.Display, talker.TraceShowLevel)
+    End Sub
+
+    ''' <summary> Clears the listeners. </summary>
+    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
+        For Each element As ITalker In Me.Items
+            element.ClearListeners()
+        Next
+    End Sub
+
+    ''' <summary> Dispose talker. </summary>
+    Private Sub DisposeTalker()
+        Me.ClearListeners()
+        Me._Talker = Nothing
     End Sub
 
 #End Region

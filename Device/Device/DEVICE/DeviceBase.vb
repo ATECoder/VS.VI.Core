@@ -1081,12 +1081,6 @@ Public MustInherit Class DeviceBase
         My.MyLibrary.Identify(Me.Talker)
     End Sub
 
-    ''' <summary> Clears the listeners. </summary>
-    Public Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker.Listeners?.Clear()
-        Me.Subsystems.ClearListeners()
-    End Sub
-
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
     ''' <param name="listenerType"> Type of the listener. </param>
     ''' <param name="value">        The value. </param>
@@ -1118,9 +1112,21 @@ Public MustInherit Class DeviceBase
         Me.Subsystems.AddListeners(Me.Talker)
     End Sub
 
+    ''' <summary> Clears the listeners. </summary>
+    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
+        Me.Talker?.Listeners?.Clear()
+        Me.Subsystems.ClearListeners()
+    End Sub
+
+    ''' <summary> Dispose talker. </summary>
+    Private Sub DisposeTalker()
+        Me.ClearListeners()
+        Me._Talker = Nothing
+    End Sub
+
     ''' <summary> Clears the subsystem listeners. </summary>
     Public Overridable Sub ClearSubsystemListeners()
-        Me.Subsystems.ClearListeners()
+        Me.Subsystems?.ClearListeners()
     End Sub
 
 #End Region

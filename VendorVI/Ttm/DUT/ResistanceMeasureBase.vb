@@ -626,7 +626,7 @@ Public MustInherit Class ResistanceMeasureBase
 
     ''' <summary> Dispose talker. </summary>
     Private Sub DisposeTalker()
-        Me.Talker?.Listeners.Clear()
+        Me.ClearListeners()
         Me._Talker = Nothing
     End Sub
 
@@ -656,7 +656,7 @@ Public MustInherit Class ResistanceMeasureBase
 
     ''' <summary> Clears the listeners. </summary>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker.Listeners.Clear()
+        Me.Talker?.Listeners?.Clear()
     End Sub
 
     ''' <summary> Applies the trace level to all listeners of the specified type. </summary>
