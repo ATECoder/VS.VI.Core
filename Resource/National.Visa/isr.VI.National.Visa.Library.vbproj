@@ -54,12 +54,8 @@
     <AssemblyOriginatorKeyFile>..\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ivi.Visa">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\IVI Foundation\VISA\Microsoft.NET\Framework32\v2.0.50727\VISA.NET Shared Components 5.6.0\Ivi.Visa.dll</HintPath>
-    </Reference>
-    <Reference Include="NationalInstruments.Visa">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\IVI Foundation\VISA\Framework32\v4.0\NI VISA.NET 15.0.0\NationalInstruments.Visa.dll</HintPath>
-    </Reference>
+    <Reference Include="Ivi.Visa, Version=5.8.0.0, Culture=neutral, PublicKeyToken=a128c98f1d7717c1, processorArchitecture=MSIL" />
+    <Reference Include="NationalInstruments.Visa, Version=17.0.0.0, Culture=neutral, PublicKeyToken=2eaa5af0834e221d, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
