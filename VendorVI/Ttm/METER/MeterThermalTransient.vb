@@ -1006,7 +1006,7 @@ Public Class MeterThermalTransient
             .Points.SuspendUpdates()
             .Points.Clear()
             .Color = Drawing.Color.Chocolate
-            For i As Integer = 0 To Me.Model.FunctionValues.Length - 1
+            For i As Integer = 0 To Me.Model.FunctionValues.Count - 1
                 Dim x As Double = Me.LastTimeSeries(i).X
                 Dim y As Double = Me.Model.FunctionValues(i)
                 If x > 0 AndAlso y > 0 Then

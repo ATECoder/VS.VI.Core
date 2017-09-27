@@ -75,7 +75,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="System" />
