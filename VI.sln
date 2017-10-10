@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0F61F251-CE7D-4CAC-923C-520143E85F83}"
 	ProjectSection(SolutionItems) = preProject
@@ -159,6 +159,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "`NI", "`NI", "{A5A24D08-7A3E-44E3-9563-6E9529590F06}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SimpleReadWrite", "NI\SimpleReadWrite\SimpleReadWrite.vbproj", "{B8E8C039-E317-4A83-94BA-BC85DA03F880}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K3458.Library", "VendorVI\K3458\isr.VI.K3458.Library.vbproj", "{67C48570-97E9-4438-8A3A-BBD6CDB9934F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1163,6 +1165,22 @@ Global
 		{B8E8C039-E317-4A83-94BA-BC85DA03F880}.Release|x64.Build.0 = Release|Any CPU
 		{B8E8C039-E317-4A83-94BA-BC85DA03F880}.Release|x86.ActiveCfg = Release|Any CPU
 		{B8E8C039-E317-4A83-94BA-BC85DA03F880}.Release|x86.Build.0 = Release|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Debug|x64.Build.0 = Debug|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Debug|x86.Build.0 = Debug|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Release|x64.ActiveCfg = Release|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Release|x64.Build.0 = Release|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Release|x86.ActiveCfg = Release|Any CPU
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1232,6 +1250,10 @@ Global
 		{B76A1D03-A4BC-437B-BDA5-4DA180725D26} = {38B40B9B-F77A-4F77-AF3C-AF44EEC41E6E}
 		{236C5EDE-C3E7-48CF-B651-3A5415958FCB} = {38B40B9B-F77A-4F77-AF3C-AF44EEC41E6E}
 		{B8E8C039-E317-4A83-94BA-BC85DA03F880} = {A5A24D08-7A3E-44E3-9563-6E9529590F06}
+		{67C48570-97E9-4438-8A3A-BBD6CDB9934F} = {38B40B9B-F77A-4F77-AF3C-AF44EEC41E6E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7DDB320A-00F3-404A-A58C-7BBF5A085BE0}
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = isr.IO.Visa.vsmdi

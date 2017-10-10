@@ -15,21 +15,28 @@
         Public Const AssemblyDescription As String = "K2700 Meter Scanner Virtual Instrument Library"
         Public Const AssemblyProduct As String = "VI.K2700.Meter.Scanner.2017"
 
-        ''' <summary> Gets or sets the identified sentinel. </summary>
-        ''' <value> The identified sentinel. </value>
-        Public Shared Property Identified As Boolean
+        ''' <summary> Gets the identify date. </summary>
+        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+        ''' <value> The identify date. </value>
+        Public Shared Property IdentifyDate As Date
 
         ''' <summary> Identifies this talker. </summary>
         ''' <param name="talker"> The talker. </param>
         Public Shared Sub Identify(ByVal talker As isr.Core.Pith.ITraceMessageTalker)
             If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
-            If Not My.MyLibrary.Identified AndAlso talker.Listeners.ContainsListener(isr.Core.Pith.ListenerType.Logger) Then
-                talker.Publish(TraceEventType.Information, MyLibrary.TraceEventId, $"{MyLibrary.AssemblyProduct} ID = {MyLibrary.TraceEventId:X}")
-                My.MyLibrary.Identified = True
+            If DateTime.Now.Date > My.MyLibrary.IdentifyDate AndAlso talker.Listeners.ContainsListener(isr.Core.Pith.ListenerType.Logger) Then
+                talker.Publish(TraceEventType.Information, MyLibrary.TraceEventId, My.MyLibrary.Identity)
+                My.MyLibrary.IdentifyDate = DateTime.Now.Date
             End If
         End Sub
 
-
+        ''' <summary> Gets the identity. </summary>
+        ''' <value> The identity. </value>
+        Public Shared ReadOnly Property Identity() As String
+            Get
+                Return $"{MyLibrary.AssemblyProduct} ID = {MyLibrary.TraceEventId:X}"
+            End Get
+        End Property
 
     End Class
 

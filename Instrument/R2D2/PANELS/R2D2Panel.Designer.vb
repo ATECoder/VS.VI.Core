@@ -13,18 +13,26 @@ Partial Class R2D2Panel
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(R2D2Panel))
         Me._Tabs = New System.Windows.Forms.TabControl()
         Me._ReadingTabPage = New System.Windows.Forms.TabPage()
+        Me._ReadingsDataGridView = New System.Windows.Forms.DataGridView()
+        Me._ReadingToolStrip = New System.Windows.Forms.ToolStrip()
+        Me._ReadButton = New System.Windows.Forms.ToolStripButton()
+        Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
+        Me._TraceButton = New System.Windows.Forms.ToolStripButton()
+        Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
+        Me._AbortButton = New System.Windows.Forms.ToolStripButton()
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
-        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
         Me._ServiceRequestEnableNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ServiceRequestEnableNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
@@ -56,25 +64,17 @@ Partial Class R2D2Panel
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
         Me._ReadingTextBox = New System.Windows.Forms.TextBox()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._ReadingsDataGridView = New System.Windows.Forms.DataGridView()
-        Me._ReadingToolStrip = New System.Windows.Forms.ToolStrip()
-        Me._ReadButton = New System.Windows.Forms.ToolStripButton()
-        Me._InitiateButton = New System.Windows.Forms.ToolStripButton()
-        Me._TraceButton = New System.Windows.Forms.ToolStripButton()
-        Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
-        Me._AbortButton = New System.Windows.Forms.ToolStripButton()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
+        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._ReadingToolStrip.SuspendLayout()
         Me._SystemToolStrip.SuspendLayout()
         Me._InterfaceTabPage.SuspendLayout()
         Me._ChannelTabPage.SuspendLayout()
         Me._SenseTabPage.SuspendLayout()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
-        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me._ReadingToolStrip.SuspendLayout()
         Me.SuspendLayout()
         '
         'Connector
@@ -118,6 +118,77 @@ Partial Class R2D2Panel
         Me._ReadingTabPage.TabIndex = 0
         Me._ReadingTabPage.Text = "Reading"
         Me._ReadingTabPage.UseVisualStyleBackColor = True
+        '
+        '_ReadingsDataGridView
+        '
+        Me._ReadingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me._ReadingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 25)
+        Me._ReadingsDataGridView.Name = "_ReadingsDataGridView"
+        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 228)
+        Me._ReadingsDataGridView.TabIndex = 24
+        Me.TipsTooltip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
+        '
+        '_ReadingToolStrip
+        '
+        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._TraceButton, Me._ReadingsCountLabel, Me._ReadingComboBox, Me._AbortButton})
+        Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
+        Me._ReadingToolStrip.Name = "_ReadingToolStrip"
+        Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
+        Me._ReadingToolStrip.TabIndex = 23
+        Me._ReadingToolStrip.Text = "ToolStrip1"
+        '
+        '_ReadButton
+        '
+        Me._ReadButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ReadButton.Image = CType(resources.GetObject("_ReadButton.Image"), System.Drawing.Image)
+        Me._ReadButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ReadButton.Name = "_ReadButton"
+        Me._ReadButton.Size = New System.Drawing.Size(37, 22)
+        Me._ReadButton.Text = "Read"
+        Me._ReadButton.ToolTipText = "Read single reading"
+        '
+        '_InitiateButton
+        '
+        Me._InitiateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._InitiateButton.Image = CType(resources.GetObject("_InitiateButton.Image"), System.Drawing.Image)
+        Me._InitiateButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._InitiateButton.Name = "_InitiateButton"
+        Me._InitiateButton.Size = New System.Drawing.Size(47, 22)
+        Me._InitiateButton.Text = "Initiate"
+        '
+        '_TraceButton
+        '
+        Me._TraceButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._TraceButton.Image = CType(resources.GetObject("_TraceButton.Image"), System.Drawing.Image)
+        Me._TraceButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._TraceButton.Name = "_TraceButton"
+        Me._TraceButton.Size = New System.Drawing.Size(39, 22)
+        Me._TraceButton.Text = "Trace"
+        Me._TraceButton.ToolTipText = "Reads the buffer"
+        '
+        '_ReadingsCountLabel
+        '
+        Me._ReadingsCountLabel.Name = "_ReadingsCountLabel"
+        Me._ReadingsCountLabel.Size = New System.Drawing.Size(13, 22)
+        Me._ReadingsCountLabel.Text = "0"
+        Me._ReadingsCountLabel.ToolTipText = "Buffer count"
+        '
+        '_ReadingComboBox
+        '
+        Me._ReadingComboBox.Name = "_ReadingComboBox"
+        Me._ReadingComboBox.Size = New System.Drawing.Size(121, 25)
+        Me._ReadingComboBox.ToolTipText = "Select reading type"
+        '
+        '_AbortButton
+        '
+        Me._AbortButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._AbortButton.Image = CType(resources.GetObject("_AbortButton.Image"), System.Drawing.Image)
+        Me._AbortButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._AbortButton.Name = "_AbortButton"
+        Me._AbortButton.Size = New System.Drawing.Size(41, 22)
+        Me._AbortButton.Text = "Abort"
+        Me._AbortButton.ToolTipText = "Aborts active trigger"
         '
         '_SystemToolStrip
         '
@@ -193,6 +264,20 @@ Partial Class R2D2Panel
         Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
         Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
+        '
+        '_LogTraceLevelComboBox
+        '
+        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
+        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._LogTraceLevelComboBox.Text = "Verbose"
+        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
+        '
+        '_DisplayTraceLevelComboBox
+        '
+        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
+        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._DisplayTraceLevelComboBox.Text = "Warning"
+        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
         '
         '_ReadTerminalStateButton
         '
@@ -528,91 +613,6 @@ Partial Class R2D2Panel
         Me._TitleLabel.Text = "R2D2"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_ReadingsDataGridView
-        '
-        Me._ReadingsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me._ReadingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 25)
-        Me._ReadingsDataGridView.Name = "_ReadingsDataGridView"
-        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 228)
-        Me._ReadingsDataGridView.TabIndex = 24
-        Me.TipsTooltip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
-        '
-        '_ReadingToolStrip
-        '
-        Me._ReadingToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ReadButton, Me._InitiateButton, Me._TraceButton, Me._ReadingsCountLabel, Me._ReadingComboBox, Me._AbortButton})
-        Me._ReadingToolStrip.Location = New System.Drawing.Point(0, 0)
-        Me._ReadingToolStrip.Name = "_ReadingToolStrip"
-        Me._ReadingToolStrip.Size = New System.Drawing.Size(356, 25)
-        Me._ReadingToolStrip.TabIndex = 23
-        Me._ReadingToolStrip.Text = "ToolStrip1"
-        '
-        '_ReadButton
-        '
-        Me._ReadButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ReadButton.Image = CType(resources.GetObject("_ReadButton.Image"), System.Drawing.Image)
-        Me._ReadButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._ReadButton.Name = "_ReadButton"
-        Me._ReadButton.Size = New System.Drawing.Size(37, 22)
-        Me._ReadButton.Text = "Read"
-        Me._ReadButton.ToolTipText = "Read single reading"
-        '
-        '_InitiateButton
-        '
-        Me._InitiateButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._InitiateButton.Image = CType(resources.GetObject("_InitiateButton.Image"), System.Drawing.Image)
-        Me._InitiateButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._InitiateButton.Name = "_InitiateButton"
-        Me._InitiateButton.Size = New System.Drawing.Size(47, 22)
-        Me._InitiateButton.Text = "Initiate"
-        '
-        '_TraceButton
-        '
-        Me._TraceButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._TraceButton.Image = CType(resources.GetObject("_TraceButton.Image"), System.Drawing.Image)
-        Me._TraceButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._TraceButton.Name = "_TraceButton"
-        Me._TraceButton.Size = New System.Drawing.Size(39, 22)
-        Me._TraceButton.Text = "Trace"
-        Me._TraceButton.ToolTipText = "Reads the buffer"
-        '
-        '_ReadingsCountLabel
-        '
-        Me._ReadingsCountLabel.Name = "_ReadingsCountLabel"
-        Me._ReadingsCountLabel.Size = New System.Drawing.Size(13, 22)
-        Me._ReadingsCountLabel.Text = "0"
-        Me._ReadingsCountLabel.ToolTipText = "Buffer count"
-        '
-        '_ReadingComboBox
-        '
-        Me._ReadingComboBox.Name = "_ReadingComboBox"
-        Me._ReadingComboBox.Size = New System.Drawing.Size(121, 25)
-        Me._ReadingComboBox.ToolTipText = "Select reading type"
-        '
-        '_AbortButton
-        '
-        Me._AbortButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._AbortButton.Image = CType(resources.GetObject("_AbortButton.Image"), System.Drawing.Image)
-        Me._AbortButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._AbortButton.Name = "_AbortButton"
-        Me._AbortButton.Size = New System.Drawing.Size(41, 22)
-        Me._AbortButton.Text = "Abort"
-        Me._AbortButton.ToolTipText = "Aborts active trigger"
-        '
-        '_LogTraceLevelComboBox
-        '
-        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
-        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._LogTraceLevelComboBox.Text = "Verbose"
-        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
-        '
-        '_DisplayTraceLevelComboBox
-        '
-        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
-        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._DisplayTraceLevelComboBox.Text = "Warning"
-        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
-        '
         'R2D2Panel
         '
         Me.Controls.Add(Me._Tabs)
@@ -628,6 +628,9 @@ Partial Class R2D2Panel
         Me._Tabs.ResumeLayout(False)
         Me._ReadingTabPage.ResumeLayout(False)
         Me._ReadingTabPage.PerformLayout()
+        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._ReadingToolStrip.ResumeLayout(False)
+        Me._ReadingToolStrip.PerformLayout()
         Me._SystemToolStrip.ResumeLayout(False)
         Me._SystemToolStrip.PerformLayout()
         Me._InterfaceTabPage.ResumeLayout(False)
@@ -638,9 +641,6 @@ Partial Class R2D2Panel
         Me._ReadWriteTabPage.ResumeLayout(False)
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
-        CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).EndInit()
-        Me._ReadingToolStrip.ResumeLayout(False)
-        Me._ReadingToolStrip.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

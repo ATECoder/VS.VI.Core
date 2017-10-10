@@ -59,6 +59,28 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <BaseAddress>961568768</BaseAddress>
+    <DocumentationFile>isr.VI.Instrument.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DocumentationFile>isr.VI.Instrument.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -116,6 +138,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
+    <Compile Include="PANELS\ResourceControlBase.Designer.vb">
+      <DependentUpon>ResourceControlBase.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\ResourceControlBase.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PANELS\ResourcePanelBase.Designer.vb">
       <DependentUpon>ResourcePanelBase.vb</DependentUpon>
     </Compile>
@@ -168,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <EmbeddedResource Include="PANELS\ResourceControlBase.bmp" />
     <Content Include="RESOURCES\Disconnect-22x22.png" />
     <Content Include="RESOURCES\Connect-22x22.png" />
     <Content Include="RESOURCES\Clear-22x22.png" />
@@ -193,6 +222,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="PANELS\InterfacePane.bmp" />
+    <EmbeddedResource Include="PANELS\ResourceControlBase.resx">
+      <DependentUpon>ResourceControlBase.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PANELS\ResourcePanelBase.resx">
       <DependentUpon>ResourcePanelBase.vb</DependentUpon>
     </EmbeddedResource>
@@ -220,6 +252,10 @@
     <None Include="PANELS\ResourceSelectorConnector.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
+      <Project>{f9d9ed3d-4cbd-49e2-b162-7c15e051f636}</Project>
+      <Name>isr.Core.Controls.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>

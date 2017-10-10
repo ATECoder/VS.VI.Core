@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>
+    </SchemaVersion>
+    <ProjectGuid>{67C48570-97E9-4438-8A3A-BBD6CDB9934F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>isr.VI.K3458</RootNamespace>
+    <AssemblyName>isr.VI.K3458</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>Windows</MyType>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>isr.VI.K3458.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <BaseAddress>961612544</BaseAddress>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>isr.VI.K3458.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>On</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>Off</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
+      <Link>My\SolutionInfo.vb</Link>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="SUBSYSTEMS\Device.vb" />
+    <Compile Include="SUBSYSTEMS\DeviceError.vb" />
+    <Compile Include="SUBSYSTEMS\MeasureSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\StatusSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\SystemSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\VersionInfo.vb" />
+    <Compile Include="My\MySuppressions.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="My\isr.VI.K3458.History.rtf" />
+    <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <None Include="..\..\Resource\Pith\My\keyPair.snk">
+      <Link>My\keyPair.snk</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Core\Core\Controls\isr.Core.Controls.Library.vbproj">
+      <Project>{F9D9ED3D-4CBD-49E2-B162-7C15E051F636}</Project>
+      <Name>isr.Core.Controls.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+      <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
+      <Name>isr.Core.Pith.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
+      <Project>{0C14C4A7-D574-4F9B-A2D9-989B71CC7DE4}</Project>
+      <Name>isr.VI.Device.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Device\Device.R2D2\isr.VI.Device.R2D2.Library.vbproj">
+      <Project>{876f93ee-0292-4f25-b599-7113ee47a1ca}</Project>
+      <Name>isr.VI.Device.R2D2.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Resource\Pith\isr.VI.Pith.Library.vbproj">
+      <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
+      <Name>isr.VI.Pith.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Instrument\Instrument\isr.VI.Instrument.Library.vbproj">
+      <Project>{C3B279E2-F2F4-4387-BD05-82B8D3976AC5}</Project>
+      <Name>isr.VI.Instrument.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{94E38DFF-614B-4CBD-B67C-F211BB35CE8B}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

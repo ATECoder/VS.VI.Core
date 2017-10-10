@@ -1,3 +1,4 @@
+Imports isr.VI.Instrument
 Imports System.ComponentModel
 Imports isr.Core.Pith
 Imports isr.Core.Pith.ExceptionExtensions
