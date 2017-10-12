@@ -687,6 +687,22 @@ Public Class ResourceControlBase
         End Set
     End Property
 
+    ''' <summary> Connects. </summary>
+    ''' <param name="e"> The e to connect. </param>
+    Public Sub TryConnect(ByVal e As System.ComponentModel.CancelEventArgs)
+        Me.Connect(Me.Connector, e)
+    End Sub
+
+    ''' <summary> Connects. </summary>
+    ''' <param name="e"> The e to connect. </param>
+    Public Sub Connect(ByVal e As System.ComponentModel.CancelEventArgs)
+        If Me.InvokeRequired Then
+            Me.Invoke(New Action(Of Object, System.ComponentModel.CancelEventArgs)(AddressOf Me.Connect), New Object() {e})
+        Else
+            Me.OnConnect(e)
+        End If
+    End Sub
+
     ''' <summary> Connects the instrument by calling a propagating connect command. </summary>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Protected Overridable Sub OnConnect(ByVal e As System.ComponentModel.CancelEventArgs)
@@ -704,7 +720,7 @@ Public Class ResourceControlBase
         Dim action As String = "Connecting"
         Try
             If Me.InvokeRequired Then
-                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.ConnectorPropertyChanged), New Object() {sender, e})
+                Me.Invoke(New Action(Of Object, System.ComponentModel.CancelEventArgs)(AddressOf Me.Connect), New Object() {sender, e})
             Else
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{action};. {Me.Connector.SelectedResourceName}")
                 Me.OnConnect(e)
@@ -717,8 +733,25 @@ Public Class ResourceControlBase
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            e.Cancel = True
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
+    End Sub
+
+    ''' <summary> Disconnects the instrument by calling a propagating disconnect command. </summary>
+    ''' <param name="e"> The e to disconnect. </param>
+    Public Sub TryDisconnect(ByVal e As System.ComponentModel.CancelEventArgs)
+        Me.Disconnect(Me.Connector, e)
+    End Sub
+
+    ''' <summary> Disconnects the instrument by calling a propagating disconnect command. </summary>
+    ''' <param name="e"> The e to disconnect. </param>
+    Public Sub Disconnect(ByVal e As System.ComponentModel.CancelEventArgs)
+        If Me.InvokeRequired Then
+            Me.Invoke(New Action(Of Object, System.ComponentModel.CancelEventArgs)(AddressOf Me.Disconnect), New Object() {e})
+        Else
+            Me.OnDisconnect(e)
+        End If
     End Sub
 
     ''' <summary> Raises the system. component model. cancel event. </summary>
@@ -737,7 +770,7 @@ Public Class ResourceControlBase
         Dim action As String = "Disconnecting"
         Try
             If Me.InvokeRequired Then
-                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.ConnectorPropertyChanged), New Object() {sender, e})
+                Me.Invoke(New Action(Of Object, System.ComponentModel.CancelEventArgs)(AddressOf Me.Disconnect), New Object() {sender, e})
             Else
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{action};. {Me.Connector.SelectedResourceName}")
                 Me.OnDisconnect(e)
@@ -750,7 +783,8 @@ Public Class ResourceControlBase
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            e.Cancel = True
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -775,7 +809,7 @@ Public Class ResourceControlBase
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{action};. {Me.Connector.SelectedResourceName}")
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -790,6 +824,22 @@ Public Class ResourceControlBase
         Me.Connector.DisplayResourceNames()
     End Sub
 
+    ''' <summary> Gets a list of names of the has resources. </summary>
+    ''' <value> A list of names of the has resources. </value>
+    Public ReadOnly Property HasResourceNames As Boolean
+        Get
+            Return Me.Connector.HasResources
+        End Get
+    End Property
+
+    ''' <summary> Gets the selected resource exists. </summary>
+    ''' <value> The selected resource exists. </value>
+    Public ReadOnly Property SelectedResourceExists As Boolean
+        Get
+            Return Me.Connector.SelectedResourceExists
+        End Get
+    End Property
+
     ''' <summary> Displays available instrument names. </summary>
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
@@ -803,7 +853,7 @@ Public Class ResourceControlBase
                 Me.DisplayNames()
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -838,7 +888,7 @@ Public Class ResourceControlBase
                 Me.OnConnectorPropertyChanged(TryCast(sender, ResourceSelectorConnector), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling Connector.{e.PropertyName} change Event;. {ex.ToFullBlownString}")
         End Try
     End Sub

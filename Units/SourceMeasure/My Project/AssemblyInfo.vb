@@ -1,38 +1,8 @@
 ﻿Imports System
 Imports System.Reflection
 Imports System.Runtime.InteropServices
-
-' General Information about an assembly is controlled through the following 
-' set of attributes. Change these attribute values to modify the information
-' associated with an assembly.
-
-' Review the values of the assembly attributes
-
-<Assembly: AssemblyTitle("isr.VI.SourceMeasure.Units")> 
-<Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("isr.VI.SourceMeasure.Units.2017")> 
-<Assembly: AssemblyCopyright("Copyright ©  2013")> 
-<Assembly: AssemblyTrademark("")> 
-
-<Assembly: CLSCompliant(True)> 
-
-
+<Assembly: AssemblyTitle("Source Measure VI Units")>
+<Assembly: AssemblyDescription("Source Measure Virtual Instrument Unit Tests Library")>
+<Assembly: AssemblyProduct("isr.VI.SourceMeasure.Units.2017")>
+<Assembly: CLSCompliant(True)>
 <Assembly: ComVisible(False)>
-
-'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("dc7ee7a2-2459-41d9-b7f2-f647db782e2c")> 
-
-' Version information for an assembly consists of the following four values:
-'
-'      Major Version
-'      Minor Version 
-'      Build Number
-'      Revision
-'
-' You can specify all the values or you can default the Build and Revision Numbers 
-' by using the '*' as shown below:
-' <Assembly: AssemblyVersion("1.0.*")> 
-
-<Assembly: AssemblyVersion("1.0.0.0")> 
-<Assembly: AssemblyFileVersion("1.0.0.0")> 

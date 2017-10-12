@@ -184,7 +184,7 @@
       <Name>isr.VI.K7500.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\VendorVI\Ttm\isr.VI.Ttm.Library.vbproj">
-      <Project>{25b976fe-24ba-470a-8834-ee713314dbde}</Project>
+      <Project>{642d06cc-632b-4f47-8568-cef445672c37}</Project>
       <Name>isr.VI.Ttm.Library</Name>
     </ProjectReference>
   </ItemGroup>

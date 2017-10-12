@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{25B976FE-24BA-470A-8834-EE713314DBDE}</ProjectGuid>
+    <ProjectGuid>{642D06CC-632B-4F47-8568-CEF445672C37}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>isr.VI.Ttm</RootNamespace>
     <AssemblyName>isr.VI.Ttm</AssemblyName>
@@ -47,7 +47,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>isr.VI.Ttm.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
-    <BaseAddress>178262016</BaseAddress>
+    <BaseAddress>961573120</BaseAddress>
     <DefineConstants>
     </DefineConstants>
     <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>

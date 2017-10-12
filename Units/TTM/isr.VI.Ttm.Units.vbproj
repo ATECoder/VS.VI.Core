@@ -7,10 +7,10 @@
     </ProductVersion>
     <SchemaVersion>
     </SchemaVersion>
-    <ProjectGuid>{9EECCD62-65E6-4793-8A91-960B4E2BB445}</ProjectGuid>
+    <ProjectGuid>{BD01E062-9C12-433F-94AF-BCE0B7414428}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>isr.VI.SourceMeasure.Units</RootNamespace>
-    <AssemblyName>isr.VI.SourceMeasure.Units</AssemblyName>
+    <RootNamespace>isr.VI.Ttm.Units</RootNamespace>
+    <AssemblyName>isr.VI.Ttm.Units</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -24,11 +24,13 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>isr.VI.SourceMeasure.Units.xml</DocumentationFile>
-    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DocumentationFile>isr.VI.Ttm.Units.xml</DocumentationFile>
+    <NoWarn>
+    </NoWarn>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
-    <BaseAddress>961578496</BaseAddress>
     <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <BaseAddress>961573376</BaseAddress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,8 +38,10 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>isr.VI.SourceMeasure.Units.xml</DocumentationFile>
-    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DocumentationFile>isr.VI.Ttm.Units.xml</DocumentationFile>
+    <NoWarn>
+    </NoWarn>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
@@ -50,7 +54,7 @@
     <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup>
-    <OptionInfer>Off</OptionInfer>
+    <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -83,26 +87,18 @@
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="TESTS\DeviceTest.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="TESTS\TtmCommandsTests.vb" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Device\Device.Scpi\isr.VI.Device.Scpi.Library.vbproj">
-      <Project>{f6e68ae1-a1b8-43ce-bf8b-d1b8df65c366}</Project>
-      <Name>isr.VI.Device.Scpi.Library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
       <Project>{0C14C4A7-D574-4F9B-A2D9-989B71CC7DE4}</Project>
       <Name>isr.VI.Device.Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\GenericVI\SourceMeasure\isr.VI.SourceMeasure.Library.vbproj">
-      <Project>{58E8C155-61B6-4527-AB20-F3984AD9BEA6}</Project>
-      <Name>isr.VI.SourceMeasure.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Resource\Pith\isr.VI.Pith.Library.vbproj">
       <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
@@ -110,13 +106,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>
     </None>
-    <None Include="My\isr.VI.SourceMeasure.Units.History.rtf" />
-  </ItemGroup>
-  <ItemGroup>
-    <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <None Include="My\isr.VI.Ttm.Units.History.rtf" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

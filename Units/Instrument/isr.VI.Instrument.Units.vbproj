@@ -27,6 +27,7 @@
     <DocumentationFile>isr.VI.Instrument.Units.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
+    <BaseAddress>961569792</BaseAddress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,6 +51,12 @@
   <PropertyGroup>
     <OptionInfer>Off</OptionInfer>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -72,7 +79,11 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeviceTest.vb" />
+    <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
+      <Link>My\SolutionInfo.vb</Link>
+    </Compile>
+    <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="TESTS\ScpiDeviceTest.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
   <ItemGroup>
@@ -92,6 +103,15 @@
       <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
       <Name>isr.VI.Pith.Library</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Pith\My\keyPair.snk">
+      <Link>My\keyPair.snk</Link>
+    </None>
+    <None Include="My\isr.VI.Instrument.Units.History.rtf" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

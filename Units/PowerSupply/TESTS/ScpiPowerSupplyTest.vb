@@ -50,6 +50,7 @@ Public Class ScpiPowerSupplyTest
     ''' <summary> Select resource name. </summary>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> . </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     Friend Function SelectResourceName(ByVal interfaceType As HardwareInterfaceType) As String
         Select Case interfaceType
             Case HardwareInterfaceType.Gpib
@@ -68,10 +69,8 @@ Public Class ScpiPowerSupplyTest
     '''</summary>
     <TestMethod()>
     Public Sub OpenSessionTest()
-        Dim expectedHardwareInterfaceType As HardwareInterfaceType = 0
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
-        Dim expectedShort As Short = 0
         Dim usingInterfaceType As HardwareInterfaceType = HardwareInterfaceType.Usb
         Using target As PowerSupply.Device = New PowerSupply.Device()
             Dim e As New isr.Core.Pith.CancelDetailsEventArgs
@@ -102,7 +101,7 @@ Public Class ScpiPowerSupplyTest
             Assert.AreEqual(expectedBoolean, actualBoolean, "Output State")
             expectedString = "no error"
             actualString = target.StatusSubsystem.QueryLastError.ErrorMessage
-            Assert.AreEqual(expectedString, actualString, True)
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
         End Using
     End Sub
 
@@ -144,7 +143,7 @@ Public Class ScpiPowerSupplyTest
             End If
             expectedString = "no error"
             actualString = target.StatusSubsystem.QueryLastError.ErrorMessage
-            Assert.AreEqual(expectedString, actualString, True)
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
         End Using
     End Sub
 
@@ -191,7 +190,7 @@ Public Class ScpiPowerSupplyTest
             Assert.AreEqual(expectedBoolean, actualBoolean, "Output State;")
             expectedString = "no error"
             actualString = target.StatusSubsystem.QueryLastError.ErrorMessage
-            Assert.AreEqual(expectedString, actualString, True)
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
         End Using
     End Sub
 

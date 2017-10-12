@@ -1,10 +1,16 @@
-﻿'''<summary>
-'''This is a test class for SessionTest and is intended
-'''to contain all SessionTest Unit Tests
-'''</summary>
-<TestClass()> _
-Public Class SessionTest
-
+﻿''' <summary> A session tests. </summary>
+''' <license>
+''' (c) 2017 Integrated Scientific Resources, Inc. All rights reserved.<para>
+''' Licensed under The MIT License.</para><para>
+''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+''' </license>
+''' <history date="10/11/2017" by="David" revision=""> Created. </history>
+<TestClass()>
+Public Class SessionTests
 
     Private testContextInstance As TestContext
 
@@ -17,7 +23,7 @@ Public Class SessionTest
             Return testContextInstance
         End Get
         Set(value As TestContext)
-            testContextInstance = Value
+            testContextInstance = value
         End Set
     End Property
 
@@ -50,7 +56,7 @@ Public Class SessionTest
     '''<summary>
     '''A test for Initial Termination
     '''</summary>
-    <TestMethod()> _
+    <TestMethod()>
     Public Sub InitialTerminationTest()
         Dim resourceName As String = "GPIB0::22::INSTR"
         Dim target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
@@ -62,9 +68,8 @@ Public Class SessionTest
     '''<summary>
     '''A test for New Termination
     '''</summary>
-    <TestMethod()> _
+    <TestMethod()>
     Public Sub NewTerminationTest()
-        Dim resourceName As String = "GPIB0::22::INSTR"
         Dim target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
         Dim values() As Char = Environment.NewLine.ToCharArray
         target.NewTermination(values)
@@ -77,15 +82,15 @@ Public Class SessionTest
     '''<summary>
     '''A test for ParseEnumValue
     '''</summary>
-    Public Sub ParseEnumValueTestHelper(Of T As Structure)(ByVal value As String, ByVal expected As Nullable(Of T))
+    Public Shared Sub ParseEnumValueTestHelper(Of T As Structure)(ByVal value As String, ByVal expected As Nullable(Of T))
         Dim actual As Nullable(Of T)
         actual = SessionBase.ParseEnumValue(Of T)(value)
         Assert.AreEqual(expected, actual)
     End Sub
 
-    <TestMethod()> _
+    <TestMethod()>
     Public Sub ParseEnumValueTest()
-        Me.ParseEnumValueTestHelper(Of Diagnostics.TraceEventType)("2", TraceEventType.Error)
+        SessionTests.ParseEnumValueTestHelper(Of Diagnostics.TraceEventType)("2", TraceEventType.Error)
     End Sub
 
 End Class

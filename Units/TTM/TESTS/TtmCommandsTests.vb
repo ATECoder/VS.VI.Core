@@ -4,7 +4,7 @@
 '''to contain all Measure Unit Tests
 '''</summary>
 <TestClass()>
-Public Class MeasureTest
+Public Class TtmCommandsTests
 
     Private testContextInstance As TestContext
 
@@ -84,6 +84,7 @@ Public Class MeasureTest
         Assert.AreEqual(True, target.IsDeviceOpen)
     End Sub
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     Public Function OpenSession(ByVal resourceName As String) As SessionBase
         Dim target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
         target.OpenSession(resourceName, Threading.SynchronizationContext.Current)
@@ -96,9 +97,11 @@ Public Class MeasureTest
     '''<summary>
     '''A test for measure current.
     '''</summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     Public Function MeasureCurrent(ByVal session As SessionBase) As String
+        If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         session.Write("_G.status.reset()")
-        Dim i As Integer = session.ReadStatusByte
+        session.ReadStatusByte()
         session.Write("print(smua.measure.i())")
         Dim value As String = session.ReadLineTrimEnd
         Return value
@@ -128,6 +131,7 @@ Public Class MeasureTest
         End Using
     End Sub
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     Sub LogIT(ByVal value As String)
         My.Application.Log.WriteEntry(value)
     End Sub

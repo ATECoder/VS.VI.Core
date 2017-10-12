@@ -1,9 +1,16 @@
-﻿'''<summary>
-'''This is a test class for SCPI InstrumentTest and is intended
-'''to contain all SCPI InstrumentTest Unit Tests
-'''</summary>
+﻿''' <summary> A resource tests. </summary>
+''' <license>
+''' (c) 2017 Integrated Scientific Resources, Inc. All rights reserved.<para>
+''' Licensed under The MIT License.</para><para>
+''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+''' </license>
+''' <history date="10/11/2017" by="David" revision=""> Created. </history>
 <TestClass()>
-Public Class BasicTests
+Public Class ResourceTests
 
 
     Private testContextInstance As TestContext
@@ -17,7 +24,7 @@ Public Class BasicTests
             Return testContextInstance
         End Get
         Set(value As TestContext)
-            testContextInstance = Value
+            testContextInstance = value
         End Set
     End Property
 

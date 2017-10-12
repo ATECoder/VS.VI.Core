@@ -3,8 +3,8 @@
 '''This is a test class for DeviceTest and is intended
 '''to contain all DeviceTest Unit Tests
 '''</summary>
-<TestClass()> _
-Public Class DeviceTest
+<TestClass()>
+Public Class ScpiDeviceTest
 
 
     Private testContextInstance As TestContext

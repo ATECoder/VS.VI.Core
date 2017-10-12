@@ -49,6 +49,7 @@ Public Class DeviceTest
     ''' <summary> Select resource name. </summary>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> . </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     Friend Function SelectResourceName(ByVal interfaceType As HardwareInterfaceType) As String
         Select Case interfaceType
             Case HardwareInterfaceType.Gpib
@@ -65,16 +66,13 @@ Public Class DeviceTest
     ''' <summary> A test for Open Session. </summary>
     <TestMethod()>
     Public Sub OpenSessionTest()
-        Dim expectedHardwareInterfaceType As HardwareInterfaceType = 0
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
-        Dim expectedShort As Short = 0
         Dim usingInterfaceType As HardwareInterfaceType = HardwareInterfaceType.Gpib
         Using target As SourceMeasure.Device = New SourceMeasure.Device()
             Dim e As New isr.Core.Pith.CancelDetailsEventArgs
             actualBoolean = target.TryOpenSession(SelectResourceName(usingInterfaceType), "Source Measure", e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
-            expectedShort = 0
             target.Session.Clear()
             target.CloseSession()
         End Using
@@ -115,7 +113,7 @@ Public Class DeviceTest
 
             expectedString = "no error"
             actualString = target.StatusSubsystem.QueryLastError.ErrorMessage
-            Assert.AreEqual(expectedString, actualString, True)
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
         End Using
 
     End Sub
@@ -132,7 +130,6 @@ Public Class DeviceTest
         Dim expectedString As String = ""
         Dim actualString As String = ""
         Dim expectedDouble As Double = 0
-        Dim actualDouble As Double = 0
         Using target As SourceMeasure.Device = New SourceMeasure.Device()
             Dim e As New isr.Core.Pith.CancelDetailsEventArgs
             actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Source Measure", e)
@@ -150,7 +147,7 @@ Public Class DeviceTest
             Assert.IsFalse(String.IsNullOrWhiteSpace(actualString), "Identity is empty")
 
             actualString = actualString.Substring(0, Len(expectedString))
-            Assert.AreEqual(expectedString, actualString, True)
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
 
             expectedBoolean = True
             target.OutputOn(voltage, currentLimit, voltageLimit)
@@ -178,7 +175,7 @@ Public Class DeviceTest
 
             expectedString = "no error"
             actualString = target.StatusSubsystem.QueryLastError.ErrorMessage
-            Assert.AreEqual(expectedString, actualString, True)
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
         End Using
     End Sub
 

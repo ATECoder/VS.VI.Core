@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D1691F30-034F-4F70-9EB9-4BCF7D7FFC91}</ProjectGuid>
+    <ProjectGuid>{35e3acdc-0150-4391-8574-7056c544e740}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <StartupObject>isr.VI.Ttm.My.MyApplication</StartupObject>
     <RootNamespace>isr.VI.Ttm</RootNamespace>
@@ -169,7 +169,7 @@
       <Name>isr.VI.K2600.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\VendorVI\Ttm\isr.VI.Ttm.Library.vbproj">
-      <Project>{25B976FE-24BA-470A-8834-EE713314DBDE}</Project>
+      <Project>{642d06cc-632b-4f47-8568-cef445672c37}</Project>
       <Name>isr.VI.Ttm.Library</Name>
     </ProjectReference>
   </ItemGroup>
