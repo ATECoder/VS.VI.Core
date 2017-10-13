@@ -358,7 +358,6 @@ Public Class ResourceControlBase
     Private Sub _AssignDevice(ByVal value As VI.DeviceBase)
         Me._ReleaseDevice()
         Me._ElapsedTimeStopwatch = New Stopwatch
-        Me._AssignDevice(Device)
         If Me.Connector IsNot Nothing Then
             Me.Connector.Clearable = True
             Me.Connector.Connectable = True
@@ -772,7 +771,7 @@ Public Class ResourceControlBase
     Protected Overridable Sub OnDisconnect(ByVal e As System.ComponentModel.CancelEventArgs)
         Me.CloseSession()
         ' Cancel if failed to close
-        If e IsNot Nothing AndAlso Not Me.IsDeviceOpen Then e.Cancel = True
+        If e IsNot Nothing AndAlso Me.IsDeviceOpen Then e.Cancel = True
     End Sub
 
     ''' <summary> Disconnects the instrument by calling a propagating disconnect command. </summary>

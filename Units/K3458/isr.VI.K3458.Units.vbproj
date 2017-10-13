@@ -84,6 +84,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -121,11 +122,13 @@
     <Compile Include="Tests\DeviceConfigureUnitTests.vb" />
     <Compile Include="Tests\SessionUnitTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="Tests\TestInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>
     </None>
+    <None Include="App.config" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -139,6 +142,10 @@
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Device\Device.R2D2\isr.VI.Device.R2D2.Library.vbproj">
+      <Project>{876f93ee-0292-4f25-b599-7113ee47a1ca}</Project>
+      <Name>isr.VI.Device.R2D2.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
       <Project>{0c14c4a7-d574-4f9b-a2d9-989b71cc7de4}</Project>

@@ -53,22 +53,31 @@ Public Class ResourceControlUnitTests
     '
 #End Region
 
+#Region " CONFIGURATION VERIFICATION "
+
+    ''' <summary> (Unit Test Method) tests domain configuration exists. </summary>
+    <TestMethod()>
+    Public Sub DomainConfigurationExistsTest()
+        Assert.IsTrue(TestInfo.Exists, "App.Config not found")
+    End Sub
+
+#End Region
+
 #Region " DEVICE OPEN TEST "
 
-    ''' <summary> (Unit Test Method) tests selected name. </summary>
+    ''' <summary> (Unit Test Method) tests selected resource name. </summary>
     <TestMethod()>
-    Public Sub SelectedNameTest()
+    Public Sub SelectedResourceNameTest()
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean = True
-        Dim usingInterfaceType As HardwareInterfaceType = SessionUnitTests.HardwareInterfaceType
         Using control As isr.VI.Instrument.ResourceControlBase = New isr.VI.Instrument.ResourceControlBase
-            control.ResourceTitle = SessionUnitTests.ResourceTitle
+            control.ResourceTitle = TestInfo.ResourceTitle
             control.DisplayNames()
-            control.ResourceName = SessionUnitTests.SelectResourceName(usingInterfaceType)
             actualBoolean = control.HasResourceNames
             expectedBoolean = True
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Has Resources {control.ResourceName}")
 
+            control.ResourceName = TestInfo.ResourceName
             actualBoolean = control.SelectedResourceExists
             expectedBoolean = True
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Resource exits {control.ResourceName}")
@@ -83,13 +92,12 @@ Public Class ResourceControlUnitTests
     Public Sub OpenSessionTest()
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
-        Dim usingInterfaceType As HardwareInterfaceType = SessionUnitTests.HardwareInterfaceType
         Using control As isr.VI.Instrument.ResourceControlBase = New isr.VI.Instrument.ResourceControlBase
             Using target As Device = New Device()
-                target.ResourceTitle = SessionUnitTests.ResourceTitle
+                target.ResourceTitle = TestInfo.ResourceTitle
                 Dim e As New System.ComponentModel.CancelEventArgs
                 control.AssignDevice(target)
-                control.ResourceName = SessionUnitTests.SelectResourceName(usingInterfaceType)
+                control.ResourceName = TestInfo.ResourceName
 
                 control.Connect(e)
                 actualBoolean = e.Cancel
@@ -100,6 +108,10 @@ Public Class ResourceControlUnitTests
                 expectedBoolean = True
                 Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect open {control.ResourceName}")
 
+                ' check the MODEL
+                Assert.AreEqual(TestInfo.ResourceModel, target.StatusSubsystem.VersionInfo.Model,
+                                $"Disconnect open {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
+
                 control.Disconnect(e)
                 actualBoolean = e.Cancel
                 expectedBoolean = False
@@ -108,8 +120,6 @@ Public Class ResourceControlUnitTests
                 actualBoolean = target.IsDeviceOpen
                 expectedBoolean = False
                 Assert.AreEqual(expectedBoolean, actualBoolean, $"Disconnect open {control.ResourceName}")
-
-                ' check the identity
 
             End Using
         End Using

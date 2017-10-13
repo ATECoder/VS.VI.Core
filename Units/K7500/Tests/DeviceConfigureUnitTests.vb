@@ -39,19 +39,18 @@ Public Class DeviceConfigureUnitTests
     ''' <summary> My class initialize. </summary>
     ''' <param name="testContext"> Gets or sets the test context which provides information about
     '''                            and functionality for the current test run. </param>
-    ''' <remarks> Use ClassInitialize to run code before running the first test in the class </remarks>
+    ''' <remarks> Use <see cref="MyClassInitialize(TestContext)"/> to run code before running the first test in the class </remarks>
     <ClassInitialize()> Public Shared Sub MyClassInitialize(ByVal testContext As TestContext)
-        Dim usingInterfaceType As HardwareInterfaceType = SessionUnitTests.HardwareInterfaceType
         Dim e As New isr.Core.Pith.CancelDetailsEventArgs
         DeviceConfigureUnitTests.Device = New Device()
         With DeviceConfigureUnitTests.Device
-            .ResourceTitle = SessionUnitTests.ResourceTitle
-            .TryOpenSession(SessionUnitTests.SelectResourceName(usingInterfaceType), SessionUnitTests.ResourceTitle, e)
+            .ResourceTitle = TestInfo.ResourceTitle
+            .TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
         End With
     End Sub
 
     ''' <summary> My class cleanup. </summary>
-    ''' <remarks> Use ClassCleanup to run code after all tests in a class have run</remarks>
+    ''' <remarks> Use <see cref="MyClassCleanup()"/> to run code after all tests in a class have run</remarks>
     <ClassCleanup()> Public Shared Sub MyClassCleanup()
         If DeviceConfigureUnitTests.Device IsNot Nothing Then
             If DeviceConfigureUnitTests.Device.IsDeviceOpen Then

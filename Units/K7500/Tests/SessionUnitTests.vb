@@ -70,33 +70,14 @@ Public Class SessionUnitTests
 
 #End Region
 
-#Region " COMMON RESOURCE DATA "
+#Region " CONFIGURATION VERIFICATION "
 
-    ''' <summary> Select resource name. </summary>
-    ''' <param name="interfaceType"> Type of the interface. </param>
-    ''' <returns> . </returns>
-    Public Shared Function SelectResourceName(ByVal interfaceType As HardwareInterfaceType) As String
-        Select Case interfaceType
-            Case HardwareInterfaceType.Gpib
-                Return "GPIB0::24::INSTR"
-            Case HardwareInterfaceType.Tcpip
-                Return "TCPIP0::192.168.0.144::inst0::INSTR"
-            Case HardwareInterfaceType.Usb
-                Return "USB0::0x0957::0x0807::N5767A-US11K4381H::0::INSTR"
-            Case Else
-                Return "GPIB0::24::INSTR"
-        End Select
-    End Function
+    ''' <summary> (Unit Test Method) tests domain configuration exists. </summary>
+    <TestMethod()>
+    Public Sub DomainConfigurationExistsTest()
+        Assert.IsTrue(TestInfo.Exists, "App.Config not found")
+    End Sub
 
-    ''' <summary> Gets or sets the expected identity. </summary>
-    ''' <value> The expected identity. </value>
-    Public Shared Property ExpectedIdentity As String = ""
-
-    ''' <summary> Gets or sets the default type of the hardware interface. </summary>
-    ''' <value> The type of the hardware interface. </value>
-    Public Shared Property HardwareInterfaceType As HardwareInterfaceType = HardwareInterfaceType.Tcpip
-
-    Public Shared Property ResourceTitle As String = "DMM7510"
 #End Region
 
 #Region " SESSION TEST "
@@ -108,11 +89,10 @@ Public Class SessionUnitTests
     Public Sub OpenSessionTest()
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
-        Dim usingInterfaceType As HardwareInterfaceType = SessionUnitTests.HardwareInterfaceType
         Using target As Device = New Device()
             Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-            actualBoolean = target.TryOpenSession(SessionUnitTests.SelectResourceName(usingInterfaceType), SessionUnitTests.ResourceTitle, e)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; details: {e.Details}")
+            actualBoolean = target.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Failed to open session: {e.Details}")
             target.Session.Clear()
             target.CloseSession()
         End Using

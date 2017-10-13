@@ -41,12 +41,11 @@ Public Class DeviceConfigureUnitTests
     '''                            and functionality for the current test run. </param>
     ''' <remarks> Use ClassInitialize to run code before running the first test in the class </remarks>
     <ClassInitialize()> Public Shared Sub MyClassInitialize(ByVal testContext As TestContext)
-        Dim usingInterfaceType As HardwareInterfaceType = SessionUnitTests.HardwareInterfaceType
         Dim e As New isr.Core.Pith.CancelDetailsEventArgs
         DeviceConfigureUnitTests.Device = New Device()
         With DeviceConfigureUnitTests.Device
-            .ResourceTitle = SessionUnitTests.ResourceTitle
-            .TryOpenSession(SessionUnitTests.SelectResourceName(usingInterfaceType), SessionUnitTests.ResourceTitle, e)
+            .ResourceTitle = TestInfo.ResourceTitle
+            .TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
         End With
     End Sub
 
