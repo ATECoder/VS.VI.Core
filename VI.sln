@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "`Libraries", "`Libraries", "{4FAE9527-DD67-43C4-9081-F6792BF42C76}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "`Core", "`Core", "{4FAE9527-DD67-43C4-9081-F6792BF42C76}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.Core.Forms.Library", "..\..\Core\Core\Forms\isr.Core.Forms.Library.vbproj", "{B501F643-EBC5-4096-86F6-43A2173066CA}"
 EndProject

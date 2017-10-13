@@ -122,7 +122,8 @@
     <Compile Include="Tests\DeviceConfigureUnitTests.vb" />
     <Compile Include="Tests\SessionUnitTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="Tests\TestInfo.vb" />
+    <Compile Include="Tests\TestContextInfo.vb" />
+    <Compile Include="Tests\TestConfigInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
