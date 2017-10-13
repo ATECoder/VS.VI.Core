@@ -353,7 +353,8 @@ Public Class ResourceSelectorConnector
         <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification:="OK")>
         Set(ByVal Value As String)
             If String.IsNullOrWhiteSpace(Value) Then Value = ""
-            If Not String.Equals(Value, Me.SelectedResourceName, StringComparison.OrdinalIgnoreCase) Then
+            If Not String.Equals(Value, Me.SelectedResourceName, StringComparison.OrdinalIgnoreCase) OrElse
+                Not Me.SelectedResourceExists OrElse Not Me._ToggleConnectionButton.Enabled Then
                 If Not String.IsNullOrWhiteSpace(Value) Then
                     Me._SelectedResourceName = Value
                     Me.SafePostPropertyChanged()

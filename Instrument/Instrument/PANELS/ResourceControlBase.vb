@@ -23,8 +23,15 @@ Public Class ResourceControlBase
 
     ''' <summary> Specialized default constructor for use only by derived classes. </summary>
     Public Sub New()
+        Me.New(New ResourceSelectorConnector)
+    End Sub
+
+    ''' <summary> Specialized default constructor for use only by derived classes. </summary>
+    ''' <param name="connector"> The connector. </param>
+    Public Sub New(ByVal connector As ResourceSelectorConnector)
         MyBase.New()
         Me.InitializeComponent()
+        Me.AssignConnector(connector)
     End Sub
 
     ''' <summary>
@@ -251,7 +258,7 @@ Public Class ResourceControlBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.ResourceName) Then
+            If Not String.Equals(value, Me.ResourceName, StringComparison.OrdinalIgnoreCase) Then
                 Me._ResourceName = value
                 Me.Identity = Me.ResourceName
                 Me.SafePostPropertyChanged()
@@ -661,6 +668,26 @@ Public Class ResourceControlBase
 
     Private _Connector As ResourceSelectorConnector
 
+    ''' <summary> Assign connector. </summary>
+    ''' <param name="value"> The connector value. </param>
+    Private Sub AssignConnector(ByVal value As ResourceSelectorConnector)
+        If Me._Connector IsNot Nothing Then
+            RemoveHandler Me._Connector.Connect, AddressOf Me.Connect
+            RemoveHandler Me._Connector.Disconnect, AddressOf Me.Disconnect
+            RemoveHandler Me._Connector.Clear, AddressOf Me.ClearDevice
+            RemoveHandler Me._Connector.FindNames, AddressOf Me.FindResourceNames
+            RemoveHandler Me._Connector.PropertyChanged, AddressOf Me.ConnectorPropertyChanged
+        End If
+        Me._Connector = value
+        If Me._Connector IsNot Nothing Then
+            AddHandler Me._Connector.Connect, AddressOf Me.Connect
+            AddHandler Me._Connector.Disconnect, AddressOf Me.Disconnect
+            AddHandler Me._Connector.Clear, AddressOf Me.ClearDevice
+            AddHandler Me._Connector.FindNames, AddressOf Me.FindResourceNames
+            AddHandler Me._Connector.PropertyChanged, AddressOf Me.ConnectorPropertyChanged
+        End If
+    End Sub
+
     ''' <summary> Gets or sets the connector. </summary>
     ''' <value> The connector. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
@@ -669,21 +696,7 @@ Public Class ResourceControlBase
             Return Me._Connector
         End Get
         Set(value As ResourceSelectorConnector)
-            If Me._Connector IsNot Nothing Then
-                RemoveHandler Me._Connector.Connect, AddressOf Me.Connect
-                RemoveHandler Me._Connector.Disconnect, AddressOf Me.Disconnect
-                RemoveHandler Me._Connector.Clear, AddressOf Me.ClearDevice
-                RemoveHandler Me._Connector.FindNames, AddressOf Me.FindResourceNames
-                RemoveHandler Me._Connector.PropertyChanged, AddressOf Me.ConnectorPropertyChanged
-            End If
-            Me._Connector = value
-            If Me._Connector IsNot Nothing Then
-                AddHandler Me._Connector.Connect, AddressOf Me.Connect
-                AddHandler Me._Connector.Disconnect, AddressOf Me.Disconnect
-                AddHandler Me._Connector.Clear, AddressOf Me.ClearDevice
-                AddHandler Me._Connector.FindNames, AddressOf Me.FindResourceNames
-                AddHandler Me._Connector.PropertyChanged, AddressOf Me.ConnectorPropertyChanged
-            End If
+            Me.AssignConnector(value)
         End Set
     End Property
 
@@ -819,8 +832,10 @@ Public Class ResourceControlBase
         If Me.Device IsNot Nothing AndAlso Me.Device.ResourcesFilter IsNot Nothing Then
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Using resource filter {Me.Device.ResourcesFilter}")
             Me.Connector.ResourcesFilter = Me.Device.ResourcesFilter
+        ElseIf String.IsNullOrWhiteSpace(Me.Connector.ResourcesFilter) Then
+            Me.Connector.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter
         End If
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Displaying resource using filter {Me.Connector.ResourcesFilter }")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Displaying {Me.Connector.ResourcesFilter} resources")
         Me.Connector.DisplayResourceNames()
     End Sub
 

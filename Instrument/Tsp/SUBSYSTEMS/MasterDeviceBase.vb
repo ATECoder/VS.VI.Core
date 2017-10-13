@@ -20,9 +20,6 @@ Public MustInherit Class MasterDeviceBase
     Protected Sub New()
         MyBase.New()
         Me.InitializeTimeout = TimeSpan.FromMilliseconds(30000)
-        Me.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter(HardwareInterfaceType.Gpib,
-                                                                           HardwareInterfaceType.Tcpip,
-                                                                           HardwareInterfaceType.Usb)
         AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 

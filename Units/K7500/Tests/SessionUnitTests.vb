@@ -1,8 +1,7 @@
 ﻿Imports System.Data.Common
 Imports System.Text
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
-
-''' <summary> K3458 Device Session unit tests. </summary>
+''' <summary> k7500 Device Session unit tests. </summary>
 ''' <license>
 ''' (c) 2017 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -81,7 +80,7 @@ Public Class SessionUnitTests
             Case HardwareInterfaceType.Gpib
                 Return "GPIB0::24::INSTR"
             Case HardwareInterfaceType.Tcpip
-                Return "tcpip0::192.168.0.255::gpib0,24::INSTR"
+                Return "TCPIP0::192.168.0.144::inst0::INSTR"
             Case HardwareInterfaceType.Usb
                 Return "USB0::0x0957::0x0807::N5767A-US11K4381H::0::INSTR"
             Case Else
@@ -97,7 +96,7 @@ Public Class SessionUnitTests
     ''' <value> The type of the hardware interface. </value>
     Public Shared Property HardwareInterfaceType As HardwareInterfaceType = HardwareInterfaceType.Tcpip
 
-    Public Shared Property ResourceTitle As String = "K3458"
+    Public Shared Property ResourceTitle As String = "DMM7510"
 #End Region
 
 #Region " SESSION TEST "

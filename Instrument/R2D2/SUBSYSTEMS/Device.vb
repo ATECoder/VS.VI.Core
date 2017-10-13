@@ -22,9 +22,6 @@ Public Class Device
     Public Sub New()
         MyBase.New()
         Me.InitializeTimeout = TimeSpan.FromMilliseconds(5000)
-        Me.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter(HardwareInterfaceType.Gpib,
-                                                                           HardwareInterfaceType.Tcpip,
-                                                                           HardwareInterfaceType.Usb)
         AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 

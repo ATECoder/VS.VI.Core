@@ -393,9 +393,45 @@ Public MustInherit Class DeviceBase
 
 #Region " RESOURCE NAME PATTERN "
 
+    ''' <summary> Builds minimal resources filter. </summary>
+    ''' <returns> A String. </returns>
+    Public Shared Function BuildMinimalResourcesFilter() As String
+        Return VI.ResourceNamesManager.BuildInstrumentFilter(HardwareInterfaceType.Gpib,
+                                                             HardwareInterfaceType.Tcpip,
+                                                             HardwareInterfaceType.Usb)
+    End Function
+
+    Private Shared _DefaultResourcesFilter As String
+
+    ''' <summary> Gets or sets the default resource filter. </summary>
+    ''' <value> The default resource filter. </value>
+    Public Shared Property DefaultResourcesFilter As String
+        Get
+            If String.IsNullOrWhiteSpace(DeviceBase._DefaultResourcesFilter) Then
+                DeviceBase._DefaultResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter
+
+            End If
+            Return DeviceBase._DefaultResourcesFilter
+        End Get
+        Set(value As String)
+            DeviceBase._DefaultResourcesFilter = value
+        End Set
+    End Property
+
+    Private _ResourcesFilter As String
     ''' <summary> Gets or sets the resources search pattern. </summary>
     ''' <value> The resources search pattern. </value>
     Public Property ResourcesFilter As String
+        Get
+            Return Me._ResourcesFilter
+        End Get
+        Set(value As String)
+            If Not String.Equals(value, Me.ResourcesFilter) Then
+                Me._ResourcesFilter = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
 #End Region
 

@@ -242,7 +242,7 @@ Public Class ResourcePanelBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.ResourceName) Then
+            If Not String.Equals(value, Me.ResourceName, StringComparison.OrdinalIgnoreCase) Then
                 Me._ResourceName = value
                 ResourcePanelBase.SafeTextSetter(Me.IdentityLabel, Me.ResourceName)
                 ResourcePanelBase.SafeToolTipTextSetter(Me.IdentityLabel, Me.ResourceName)
@@ -670,6 +670,8 @@ Public Class ResourcePanelBase
         ' get the list of available resources
         If Me.Device IsNot Nothing AndAlso Me.Device.ResourcesFilter IsNot Nothing Then
             Me.Connector.ResourcesFilter = Me.Device.ResourcesFilter
+        ElseIf String.IsNullOrWhiteSpace(Me.Connector.ResourcesFilter) Then
+            Me.Connector.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter
         End If
         Me.Connector.DisplayResourceNames()
     End Sub
