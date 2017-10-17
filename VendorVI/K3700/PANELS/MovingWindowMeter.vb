@@ -2,7 +2,6 @@
 Imports System.Threading
 Imports System.Windows.Forms
 Imports isr.Core.Pith
-Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.Core.Controls.ProgressBarExtensions
 ''' <summary> A moving window averaging meter. </summary>
 ''' <license>

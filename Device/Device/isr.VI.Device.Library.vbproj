@@ -83,6 +83,7 @@
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="DEVICE\DeviceError.vb" />
+    <Compile Include="DEVICE\ExceptionExtensions.vb" />
     <Compile Include="DEVICE\SessionFactoryNational.vb" />
     <Compile Include="DEVICE\SessionFactoryNS.vb" />
     <Compile Include="LIMITS\ContactCheckLimitBase.vb" />

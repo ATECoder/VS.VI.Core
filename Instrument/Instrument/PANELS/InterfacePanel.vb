@@ -1,6 +1,5 @@
 Imports System.ComponentModel
 Imports isr.Core.Pith
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Provides a user interface for a
 ''' <see cref="VisaInterface">Visa interface</see>
 ''' such as a VISA Interface. </summary>

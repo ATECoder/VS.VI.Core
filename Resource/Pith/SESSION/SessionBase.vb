@@ -1,6 +1,5 @@
 ﻿Imports System.Timers
 Imports isr.Core.Pith.EventHandlerExtensions
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Base class for SessionBase. </summary>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>

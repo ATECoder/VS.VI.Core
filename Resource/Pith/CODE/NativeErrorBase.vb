@@ -84,6 +84,27 @@ Public MustInherit Class NativeErrorBase
 
 #Region " ERROR OR STATUS DETAILS "
 
+    ''' <summary> Adds an exception data. </summary>
+    ''' <param name="exception"> The exception receiving the added data.. </param>
+    Public Sub AddExceptionData(ByVal exception As System.Exception)
+        If exception IsNot Nothing AndAlso Me.ErrorCode <> 0 Then
+            Dim count As Integer = exception.Data.Count
+            If Me.ErrorCode > 0 Then
+                exception.Data.Add($"{count}-Warning", $"0x{Me.ErrorCode:X}")
+            Else
+                exception.Data.Add($"{count}-Error", $"-0x{-Me.ErrorCode:X}")
+            End If
+            If Not String.IsNullOrWhiteSpace(Me.ErrorCodeName) Then exception.Data.Add($"{count}-Name", $"{Me.ErrorCodeName}")
+            If Not String.Equals(Me.ErrorCodeName, Me.ErrorCodeDescription, StringComparison.OrdinalIgnoreCase) Then
+                If Not String.IsNullOrWhiteSpace(Me.ErrorCodeDescription) Then exception.Data.Add($"{count}-Description", $"{Me.ErrorCodeDescription}")
+            End If
+            If Not String.IsNullOrWhiteSpace(Me.ResourceName) Then exception.Data.Add($"{count}-Resource", $"{Me.ResourceName}")
+            If Me.NodeNumber.HasValue Then exception.Data.Add($"{count}-Node", $"{Me.NodeNumber}")
+            If Not String.IsNullOrWhiteSpace(Me.LastAction) Then exception.Data.Add($"{count}-LastAction", $"{Me.LastAction}")
+            If Not String.IsNullOrWhiteSpace(Me.LastMessageSent) Then exception.Data.Add($"{count}-LastMessageSent", $"{Me.LastMessageSent}")
+        End If
+    End Sub
+
     ''' <summary> Builds an error code or status message. </summary>
     ''' <param name="lastAction"> The last visa action. </param>
     Public Function BuildErrorCodeDetails(ByVal lastAction As String) As String

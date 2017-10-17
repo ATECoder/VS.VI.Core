@@ -1,5 +1,4 @@
 ﻿Imports isr.Core.Pith
-Imports isr.Core.Pith.ExceptionExtensions
 Namespace My
 
     Partial Friend Class MyApplication

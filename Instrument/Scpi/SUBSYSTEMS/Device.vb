@@ -1,5 +1,4 @@
-﻿Imports isr.Core.Pith.ExceptionExtensions
-''' <summary> Implements a generic SCPI instrument device. </summary>
+﻿''' <summary> Implements a generic SCPI instrument device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>

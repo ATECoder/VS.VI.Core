@@ -1,5 +1,4 @@
 ﻿Imports isr.VI.National.VisaNS.GpibInterfaceExtensions
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> A gpib interface session. </summary>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>

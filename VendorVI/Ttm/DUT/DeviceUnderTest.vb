@@ -1,6 +1,5 @@
 Imports System.Collections.Specialized
 Imports isr.Core.Pith
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Defines the device under test element including measurement and configuration. </summary>
 ''' <license> (c) 2009 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

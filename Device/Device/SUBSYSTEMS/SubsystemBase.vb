@@ -1,5 +1,5 @@
 Imports isr.Core.Pith
-Imports isr.Core.Pith.ExceptionExtensions
+Imports isr.VI.National.Visa
 ''' <summary> Defines the contract that must be implemented by Subsystems. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

@@ -1,6 +1,5 @@
 ﻿Imports System.ComponentModel
 Imports isr.Core.Pith
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Triggered Measurement sequencer. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

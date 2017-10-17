@@ -1,5 +1,4 @@
-﻿Imports isr.Core.Pith.ExceptionExtensions
-''' <summary> A GPIB interface session. </summary>
+﻿''' <summary> A GPIB interface session. </summary>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

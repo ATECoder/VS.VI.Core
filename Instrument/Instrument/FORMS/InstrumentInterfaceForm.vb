@@ -2,7 +2,6 @@
 Imports System.ComponentModel
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EscapeSequencesExtensions
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Instrument Interface Panel. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

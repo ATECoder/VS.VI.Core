@@ -1,4 +1,3 @@
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary>
 ''' Defines a SCPI System Subsystem for a generic Source Measure instrument such as the Keithley 2400.
 ''' </summary>

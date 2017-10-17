@@ -1,5 +1,4 @@
 ﻿Imports isr.VI.National.Visa.ResourceManagerExtensions
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Local visa resources manager. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

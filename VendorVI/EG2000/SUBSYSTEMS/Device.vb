@@ -1,5 +1,4 @@
 ﻿Imports isr.Core.Pith
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Implements a EG2000 Prober device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>

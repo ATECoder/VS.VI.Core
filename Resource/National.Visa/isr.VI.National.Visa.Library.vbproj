@@ -72,6 +72,7 @@
     <Compile Include="..\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
+    <Compile Include="CODE\ExceptionExtensions.vb" />
     <Compile Include="CODE\SessionFactory.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">

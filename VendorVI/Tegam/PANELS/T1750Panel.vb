@@ -5,7 +5,6 @@ Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Provides a user interface for the a Tegam 1750 Resistance Measuring System. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

@@ -1,5 +1,4 @@
 Imports System.ComponentModel
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Selects a resource. </summary>
 ''' <license> (c) 2006 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

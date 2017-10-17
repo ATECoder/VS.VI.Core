@@ -1,5 +1,4 @@
 ﻿Imports System.Windows.Forms
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Selects a VISA resource. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

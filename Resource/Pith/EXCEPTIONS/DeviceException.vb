@@ -121,6 +121,23 @@
         builder.AppendLine($"errors: {Me.DeviceErrors}")
         Return builder.ToString
     End Function
+
+    ''' <summary> Adds an exception data. </summary>
+    ''' <param name="exception"> The exception receiving the added data.. </param>
+    Public Sub AddExceptionData(ByVal exception As Exception)
+        If exception Is Nothing Then Return
+        Dim count As Integer = exception.Data.Count
+        If Not String.IsNullOrWhiteSpace(Me.ResourceName) Then exception.Data.Add($"{count}-ResourceName", Me.ResourceName)
+        If Me.NodeNumber.HasValue Then exception.Data.Add($"{count}-Node", Me.NodeNumber)
+        If Not String.IsNullOrWhiteSpace(Me.LastAction) Then exception.Data.Add($"{count}-LastAction", Me.LastAction)
+        If Me.DeviceErrors.Any Then
+            Dim errorIndex As Integer = 0
+            For Each s As String In Me.DeviceErrors
+                If Not String.IsNullOrWhiteSpace(s) Then exception.Data.Add($"{count}-DeviceError({errorIndex})", s)
+                errorIndex += 1
+            Next
+        End If
+    End Sub
 #End Region
 
 End Class

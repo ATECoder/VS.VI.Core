@@ -1,5 +1,4 @@
-﻿Imports isr.Core.Pith.ExceptionExtensions
-''' <summary> Defines the contract that must be implemented by SCPI Status Subsystem. </summary>
+﻿''' <summary> Defines the contract that must be implemented by SCPI Status Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
 ''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING

@@ -3,7 +3,6 @@ Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.NumericExtensions
 Imports isr.Core.Pith.EnumExtensions
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Thermal Transient Meter Tester Console. </summary>
 ''' <license> (c) 2009 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

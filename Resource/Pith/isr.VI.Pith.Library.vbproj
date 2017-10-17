@@ -75,6 +75,7 @@
     <Compile Include="DUMMY\Session.vb" />
     <Compile Include="DUMMY\SessionFactory.vb" />
     <Compile Include="My\SolutionInfo.vb" />
+    <Compile Include="SESSION\ExceptionExtensions.vb" />
     <Compile Include="SESSION\TspSessionBase.vb" />
     <Compile Include="SESSION\Parsers.vb" />
     <Compile Include="CODE\ResourceParseResult.vb" />

@@ -1,5 +1,4 @@
-﻿Imports isr.Core.Pith.ExceptionExtensions
-''' <summary> Implements a Power Supply device. </summary>
+﻿''' <summary> Implements a Power Supply device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>

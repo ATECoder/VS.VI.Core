@@ -2,7 +2,6 @@
 Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EscapeSequencesExtensions
-Imports isr.Core.Pith.ExceptionExtensions
 Imports isr.Core.Pith.StopwatchExtensions
 ''' <summary> A simple read write control. </summary>
 ''' <license>

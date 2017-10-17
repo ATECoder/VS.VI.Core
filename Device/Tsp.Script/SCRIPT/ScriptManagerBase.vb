@@ -1,5 +1,4 @@
 Imports isr.Core.Pith.StackTraceExtensions
-Imports isr.Core.Pith.ExceptionExtensions
 ''' <summary> Loads and runs TSP scripts. </summary>
 ''' <license> (c) 2007 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

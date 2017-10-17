@@ -109,6 +109,13 @@ Public Class NativeException
         Return builder.ToString()
     End Function
 
+    ''' <summary> Adds an exception data. </summary>
+    ''' <param name="exception"> The exception receiving the added data.. </param>
+    Public Sub AddExceptionData(ByVal exception As Exception)
+        If exception Is Nothing Then Return
+        Me.InnerError.AddExceptionData(exception)
+    End Sub
+
 #End Region
 
 End Class
