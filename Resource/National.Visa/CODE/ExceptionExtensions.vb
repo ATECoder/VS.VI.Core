@@ -54,36 +54,13 @@ Public Module Methods
         Return exception IsNot Nothing
     End Function
 
-    ''' <summary> Adds an exception data to 'exception'. </summary>
-    ''' <param name="value">     The value. </param>
-    ''' <param name="exception"> The exception. </param>
-    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Private Function AddExceptionData(ByVal value As System.Exception, ByVal exception As ArgumentOutOfRangeException) As Boolean
-        If exception IsNot Nothing Then
-            value.Data.Add($"{value.Data.Count}-Name+Value", $"{exception.ParamName}={exception.ActualValue}")
-        End If
-        Return exception IsNot Nothing
-    End Function
-
-    ''' <summary> Adds an exception data to 'exception'. </summary>
-    ''' <param name="value">     The value. </param>
-    ''' <param name="exception"> The exception. </param>
-    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Private Function AddExceptionData(ByVal value As System.Exception, ByVal exception As ArgumentException) As Boolean
-        If exception IsNot Nothing Then
-            value.Data.Add($"{value.Data.Count}-Name", exception.ParamName)
-        End If
-        Return exception IsNot Nothing
-    End Function
-
     ''' <summary> Adds an exception data to 'Exception'. </summary>
     ''' <param name="exception"> The exception. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     <Extension>
     Public Function AddExceptionData(ByVal exception As System.Exception) As Boolean
         Dim affirmative As Boolean = False
-        affirmative = affirmative OrElse Methods.AddExceptionData(exception, TryCast(exception, ArgumentOutOfRangeException))
-        affirmative = affirmative OrElse Methods.AddExceptionData(exception, TryCast(exception, ArgumentException))
+        affirmative = affirmative OrElse isr.Core.Pith.ExceptionExtensions.AddExceptionData(exception)
         affirmative = affirmative OrElse Methods.AddExceptionData(exception, TryCast(exception, Ivi.Visa.NativeVisaException))
         affirmative = affirmative OrElse Methods.AddExceptionData(exception, TryCast(exception, NativeException))
         affirmative = affirmative OrElse Methods.AddExceptionData(exception, TryCast(exception, DeviceException))
