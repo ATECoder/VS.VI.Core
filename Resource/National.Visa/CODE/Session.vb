@@ -120,8 +120,8 @@ Public Class Session
                                             NationalInstruments.Visa.MessageBasedSession)
                 End Using
             End If
-            If result <> Ivi.Visa.ResourceOpenStatus.Success OrElse
-               Not Me.KeepAlive OrElse Not Me.IsAlive Then Throw New OperationFailedException($"Resource not found;. {resourceName}")
+            If result <> Ivi.Visa.ResourceOpenStatus.Success Then Throw New OperationFailedException($"Resource not found;. {resourceName}")
+            If Not Me.KeepAlive OrElse Not Me.IsAlive Then Throw New OperationFailedException($"Keep alive functionality failed;. {resourceName}")
         Catch ex As Ivi.Visa.NativeVisaException
             Me.DisposeSession()
             Me._LastNativeError = New NativeError(ex.ErrorCode, resourceName, "@opening", "opening session")
@@ -237,6 +237,55 @@ Public Class Session
         End If
     End Function
 
+    Private Function ReadAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal defaultValue As Boolean) As Boolean
+        Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
+        If s IsNot Nothing Then
+            Return s.GetAttributeBoolean(attribute)
+        Else
+            Return defaultValue
+        End If
+    End Function
+
+    Private Sub WriteAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal value As Boolean)
+        Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
+        If s IsNot Nothing Then
+            s.SetAttributeBoolean(attribute, value)
+        End If
+    End Sub
+
+
+    Private Function ReadAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal defaultValue As Byte) As Byte
+        Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
+        If s IsNot Nothing Then
+            Return s.GetAttributeByte(attribute)
+        Else
+            Return defaultValue
+        End If
+    End Function
+
+    Private Sub WriteAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal value As Byte)
+        Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
+        If s IsNot Nothing Then
+            s.SetAttributeByte(attribute, value)
+        End If
+    End Sub
+
+    Private Function ReadAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal defaultValue As Integer) As Integer
+        Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
+        If s IsNot Nothing Then
+            Return s.GetAttributeInt32(attribute)
+        Else
+            Return defaultValue
+        End If
+    End Function
+
+    Private Sub WriteAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal value As Integer)
+        Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
+        If s IsNot Nothing Then
+            s.SetAttributeInt32(attribute, value)
+        End If
+    End Sub
+
 #End Region
 
 #Region " READ/WRITE "
@@ -256,6 +305,27 @@ Public Class Session
                 If Me.IsSessionOpen Then
                     Me.VisaSession.TerminationCharacter = value
                 End If
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the termination character enabled. </summary>
+    ''' <value> The termination character enabled. </value>
+    Public Overrides Property TerminationCharacterEnabled As Boolean
+        Get
+            If Me.IsSessionOpen Then
+                MyBase.TerminationCharacterEnabled = Me.VisaSession.TerminationCharacterEnabled
+            End If
+            Return MyBase.TerminationCharacterEnabled
+        End Get
+        Set(value As Boolean)
+            If value <> Me.TerminationCharacterEnabled Then
+                MyBase.TerminationCharacterEnabled = value
+                If Me.IsSessionOpen Then
+                    Me.VisaSession.TerminationCharacterEnabled = value
+                End If
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -275,6 +345,7 @@ Public Class Session
                 If Me.IsSessionOpen Then
                     Me.VisaSession.TimeoutMilliseconds = CInt(value.TotalMilliseconds)
                 End If
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

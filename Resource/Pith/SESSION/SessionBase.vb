@@ -395,6 +395,10 @@ Public MustInherit Class SessionBase
     ''' <value> The termination character. </value>
     Public Overridable Property TerminationCharacter As Byte
 
+    ''' <summary> Gets or sets the termination character enabled. </summary>
+    ''' <value> The termination character enabled. </value>
+    Public Overridable Property TerminationCharacterEnabled As Boolean
+
     ''' <summary> Gets or sets the timeout. </summary>
     ''' <value> The timeout. </value>
     Public Overridable Property Timeout As TimeSpan
@@ -663,7 +667,6 @@ Public MustInherit Class SessionBase
             Return _Termination
         End Get
     End Property
-
 
     ''' <summary> Use default termination. </summary>
     Private Sub _UseDefaultTermination()

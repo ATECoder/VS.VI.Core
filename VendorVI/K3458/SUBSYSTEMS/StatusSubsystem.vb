@@ -77,7 +77,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the identity query command. </summary>
     ''' <value> The identity query command. </value>
-    Protected Overrides ReadOnly Property IdentityQueryCommand As String = "*IDN?"
+    Protected Overrides ReadOnly Property IdentityQueryCommand As String = "ID?"
 
     ''' <summary> Gets the bits that would be set for detecting if an Measurement is available. </summary>
     ''' <value> The Measurement available bits. </value>
@@ -114,7 +114,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the service request enable command format. </summary>
     ''' <value> The service request enable command format. </value>
-    Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = "M{0:00}x"
+    Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = "" '  "M{0:00}x"
 
 #End Region
 
@@ -151,7 +151,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the last error query command. </summary>
     ''' <value> The last error query command. </value>
-    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = "U1x"
+    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = ""
 
     ''' <summary> Queue device error. </summary>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>

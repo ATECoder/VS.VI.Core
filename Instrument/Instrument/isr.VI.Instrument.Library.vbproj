@@ -82,6 +82,7 @@
     <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>

@@ -120,25 +120,9 @@
   <metadata name="_ToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="_TimeoutSelector.SelectorIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
-        dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAANdEVYdFNvdXJjZQBOdXZvbGGsTzXxAAACrklEQVQ4
-        T6XTW0wSABTG8SMmCSiSoqACCkkghmFmJUm2QknNUMuloobmJUmQkAQZYZi5tNW0qXPWS7e1plsP1nSr
-        OVtaVqbk8rHVsjWdXTadOp15YtpD62rr4f/6286+HUDE/woodn8g2/yBauKCj0EETE0keB+TgIdeCB4G
-        Hrib2ECwMcDlFA0IZygA54gAdRBKu+rRT7tJ/fxvQI0TqHVRCzoCxkpeyTG4g/Vx1QBUeflCLeWSomcT
-        Xp9RobQz7AucJe4Hsp3JJZ1kMn4LVLAALL5bKQ3MUd3L3dizWIjxXVsQbJQilzp3AFYzf9avYf0wqTwo
-        kP4DQNFz3aCcqeFc3jDbMp6JI1iCCd3bEcx0G6HKCwj1JABRq2Qi3yFHeg2/z0sn9F4GSiVA1gqE7mZu
-        e/wdKXZO6dCBBjxwLxZdTwRdIJqYQLBTVwCaUVBtcWRh1ehhpJmFvX5HI12oxeFxjJqwt9pnqfho3o5P
-        lyyY0ytHkkF4i6znuRErvwOomo2CzY07554stmL549wlik70LrwpeqZ1rBQH5xvxwZwVCx4mIVUn6aJo
-        Qj3JRi6ssfgBnHYuct45KaNwm+u6koi26qFSfLFwBSueZ+ON92YcmG7G7ikrageU6F8W7aCro1h0TYTz
-        PDHQ9AKgGnngWckBCMyTgU9mzN6Ypj1Ldz/VYf90C3ZP1uPtD5VoGExBdtmu1wHZshB2oRTYR3Y4iwFO
-        vgw4eTuXg6CMBOAcTFzLLZbftwyrsH3citfGtWgcSkWhQTHJTldEsdUyYBVGA6tA+lMgSEtZjpecdjyu
-        LREvTmSgcWQfisuTpnnJqYrgDAX8ERApD62UlOkjKUp/k9UXi9FW5XxIvCqXn5IKfwXEyTnfygaJUl0b
-        UaBaECvyTcKELOCnrQL41YuuPoSv5Ll90MZ1RLEAAAAASUVORK5CYII=
-</value>
-  </data>
+  <metadata name="_ToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>132, 17</value>
+  </metadata>
   <metadata name="_StatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

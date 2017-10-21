@@ -1,4 +1,3 @@
-Imports isr.VI.Instrument
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class ResourcePanelBase
 
@@ -19,8 +18,6 @@ Partial Class ResourcePanelBase
         Me.StandardRegisterLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.TipsTooltip = New System.Windows.Forms.ToolTip(Me.components)
         Me.ErrorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me.TipsTooltip = New System.Windows.Forms.ToolTip()
-        Me.ErrorProvider = New System.Windows.Forms.ErrorProvider()
         Me.TraceMessagesBox = New isr.Core.Pith.TraceMessagesBox()
         Me.StatusStrip.SuspendLayout()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -112,7 +109,7 @@ Partial Class ResourcePanelBase
         Me.Size = New System.Drawing.Size(364, 72)
         Me.StatusStrip.ResumeLayout(False)
         Me.StatusStrip.PerformLayout()
-        'CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

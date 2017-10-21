@@ -30,7 +30,6 @@ Public Class SystemSubsystem
     '''           </para></remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me.Session.Execute("Y3x")
     End Sub
 
 #End Region

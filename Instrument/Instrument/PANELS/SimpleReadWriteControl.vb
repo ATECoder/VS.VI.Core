@@ -237,9 +237,14 @@ Public Class SimpleReadWriteControl
         End Try
     End Sub
 
+    ''' <summary> Gets or sets the automatic append termination. </summary>
+    ''' <value> The automatic append termination. </value>
+    Public Property AutoAppendTermination As String
+
     ''' <summary> Builds write message. Add Return and New Line in this order as required. </summary>
     Private Function BuildWriteMessage() As String
         Dim message As New System.Text.StringBuilder(_WriteComboBox.Text.Trim)
+        If Not String.IsNullOrWhiteSpace(Me.AutoAppendTermination) Then message.Append(Me.AutoAppendTermination)
         Return message.ToString
     End Function
 

@@ -19,15 +19,15 @@ Public Class SimpleReadWritePanel
 
 #Region " CONSTRUCTORS AND DESTRUCTORS "
 
-    Private _InitializingComponents As Boolean
+    Private Property InitializingComponents As Boolean
     ''' <summary> Constructor that prevents a default instance of this class from being created. </summary>
     Public Sub New()
         MyBase.New()
 
-        Me._InitializingComponents = True
+        Me.InitializingComponents = True
         ' This call is required by the designer.
         InitializeComponent()
-        Me._InitializingComponents = False
+        Me.InitializingComponents = False
 
         ' Add any initialization after the InitializeComponent() call.
         Me._ServiceRequestStatusLabel.Text = "0x.."
@@ -47,15 +47,8 @@ Public Class SimpleReadWritePanel
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                If Me._session IsNot Nothing Then
-                    Me._session.Dispose()
-                    Try
-                        ' Trying to null the session raises an ObjectDisposedException 
-                        ' if session service request handler was not released. 
-                        Me._session = Nothing
-                    Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
-                    End Try
+                If Me.Session IsNot Nothing Then
+                    Me.Session = Nothing
                 End If
                 ' unable to use null conditional because it is not seen by code analysis
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
@@ -71,6 +64,70 @@ Public Class SimpleReadWritePanel
 
     Private _Session As VI.SessionBase
 
+    ''' <summary> Gets or sets the session. </summary>
+    ''' <value> The session. </value>
+    Private Property Session As SessionBase
+        Get
+            Return Me._Session
+        End Get
+        Set(value As SessionBase)
+            If Me._Session IsNot Nothing Then
+                RemoveHandler Me._Session.PropertyChanged, AddressOf Me._Session_PropertyChanged
+                Me._Session.Dispose()
+            End If
+            Try
+                ' Trying to null the session raises an ObjectDisposedException 
+                ' if session service request handler was not released. 
+                Me._Session = value
+            Catch ex As Exception
+                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
+            End Try
+            If Me._Session IsNot Nothing Then
+                AddHandler Me._Session.PropertyChanged, AddressOf Me._Session_PropertyChanged
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Executes the property changed action. </summary>
+    ''' <param name="sender">       Source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Overloads Sub OnPropertyChanged(ByVal sender As VI.SessionBase, ByVal propertyName As String)
+        If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
+            Select Case propertyName
+                Case NameOf(sender.TerminationCharacter)
+                    Me.UpdateTermination(sender)
+                Case NameOf(sender.TerminationCharacterEnabled)
+                    Me.UpdateTermination(sender)
+                Case NameOf(sender.IsSessionOpen)
+                    If sender.IsSessionOpen Then
+                        Me.UpdateTermination(sender)
+                    End If
+            End Select
+        End If
+    End Sub
+
+    ''' <summary> Event handler. Called by <see crefname="_SimpleReadWriteControl"/> for property changed
+    ''' events. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _Session_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs)
+        Try
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._SimpleReadWriteControl_PropertyChanged), New Object() {sender, e})
+            Else
+                Me.OnPropertyChanged(TryCast(sender, VI.SessionBase), e?.PropertyName)
+            End If
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"Exception handling {NameOf(SessionBase)}.{e?.PropertyName} change;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+    ''' <summary> Gets or sets the supports keep alive. </summary>
+    ''' <value> The supports keep alive. </value>
+    Public Property SupportsAliveCommands As Boolean
+
     ''' <summary> Selects a resource and open a message based session with this resource. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
@@ -85,18 +142,22 @@ Public Class SimpleReadWritePanel
                     resource = selector.ResourceName
                     Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opening;. session to {0}", resource)
                     Windows.Forms.Cursor.Current = Cursors.WaitCursor
-                    Me._session = isr.VI.SessionFactory.Get.Factory.CreateSession()
-                    If Me._session IsNot Nothing Then
-                        Me._session.OpenSession(selector.ResourceName, Threading.SynchronizationContext.Current)
+                    Me.Session = isr.VI.SessionFactory.Get.Factory.CreateSession()
+                    If Me.Session IsNot Nothing Then
+                        If Not Me.SupportsAliveCommands Then
+                            Me.Session.IsAliveCommand = ""
+                            Me.Session.IsAliveQueryCommand = ""
+                        End If
+                        Me.Session.OpenSession(selector.ResourceName, Threading.SynchronizationContext.Current)
                         If Me.IsSessionOpen Then
-                            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Session open;. to {0}", Me._session.ResourceName)
-                            Me._SessionInfoTextBox.Text = Me._session.ResourceName
+                            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Session open;. to {0}", Me.Session.ResourceName)
+                            Me._SessionInfoTextBox.Text = Me.Session.ResourceName
                         Else
                             Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed opening;. session to {0}", resource)
                             Me._SessionInfoTextBox.Text = "Session not open. Check resource."
                         End If
-                        Me._TimeoutSelector.Value = CDec(Me._session.Timeout.TotalMilliseconds)
-                        Me._SimpleReadWriteControl.Connect(Me._session)
+                        Me._TimeoutSelector.Value = CDec(Me.Session.Timeout.TotalMilliseconds)
+                        Me._SimpleReadWriteControl.Connect(Me.Session)
                         Me._SimpleReadWriteControl.ReadEnabled = Me._AutoReadCheckBox.Checked
                     Else
                         Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed creating;. session to {0}", resource)
@@ -120,20 +181,12 @@ Public Class SimpleReadWritePanel
     Private Sub _CloseSessionButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _CloseSessionButton.Click
         Dim resource As String = ""
         If Me.IsSessionOpen Then
-            resource = Me._session.ResourceName
+            resource = Me.Session.ResourceName
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closing;. session to {0}", resource)
         End If
-        If Me._session IsNot Nothing Then
-            Me._session.Dispose()
-            Try
-                ' Trying to null the session raises an ObjectDisposedException 
-                ' if session service request handler was not released. 
-                Me._session = Nothing
-                Me._SimpleReadWriteControl.Disconnect()
-            Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
-            Finally
-            End Try
+        If Me.Session IsNot Nothing Then
+            Me._Session.Dispose()
+            Me.Session = Nothing
         End If
         If Not Me.IsSessionOpen Then
             Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closed;. session to {0}", resource)
@@ -181,7 +234,7 @@ Public Class SimpleReadWritePanel
     End Sub
 
     Private Function IsSessionOpen() As Boolean
-        Return Me._session IsNot Nothing AndAlso Me._session.IsSessionOpen
+        Return Me.Session IsNot Nothing AndAlso Me.Session.IsSessionOpen
     End Function
 
     ''' <summary> Updates the controls state. </summary>
@@ -227,11 +280,11 @@ Public Class SimpleReadWritePanel
     ''' <summary> Reads and displays the status byte. </summary>
     Private Function DisplayStatusByte() As Integer
         Dim statusByte As Integer = -1
-        If Me._session Is Nothing Then
+        If Me.Session Is Nothing Then
             Me._ServiceRequestStatusLabel.Text = "0x.."
             Me._ServiceRequestStatusLabel.ToolTipText = "Status byte. Double click to update"
         Else
-            statusByte = Me._session.ReadServiceRequestStatus
+            statusByte = Me.Session.ReadServiceRequestStatus
             Me._ServiceRequestStatusLabel.Text = $"0x{statusByte:X2}"
             Me._ServiceRequestStatusLabel.ToolTipText = VI.StatusSubsystemBase.BuildReport(CType(statusByte, VI.ServiceRequests), ";")
         End If
@@ -254,7 +307,7 @@ Public Class SimpleReadWritePanel
     Private Sub _PollTimer_Tick(ByVal sender As Object, ByVal e As System.EventArgs) Handles _PollTimer.Tick
         Try
             _PollTimer.Enabled = False
-            If Me._session Is Nothing Then
+            If Me.Session Is Nothing Then
                 Me._ServiceRequestStatusLabel.Text = "0x.."
             Else
                 Dim statusbyte As Integer = displayStatusByte()
@@ -271,14 +324,102 @@ Public Class SimpleReadWritePanel
     End Sub
 
     Private Sub ApplySelectedTimeout()
-        If Me._session IsNot Nothing Then
-            Me._session.StoreTimeout(TimeSpan.FromMilliseconds(Me._TimeoutSelector.Value))
-            Me._TimeoutSelector.Value = CDec(Me._session.Timeout.TotalMilliseconds)
+        If Me.Session IsNot Nothing Then
+            Me.Session.StoreTimeout(TimeSpan.FromMilliseconds(Me._TimeoutSelector.Value))
+            Me._TimeoutSelector.Value = CDec(Me.Session.Timeout.TotalMilliseconds)
         End If
     End Sub
 
     Private Sub _TimeoutSelector_ValueSelected(sender As Object, e As EventArgs) Handles _TimeoutSelector.Validated
         Me.ApplySelectedTimeout()
+    End Sub
+
+#End Region
+
+#Region " ATRRIBUTE SETTINGS "
+
+    ''' <summary> Zero-based index of the no termination. </summary>
+    Const NoTerminationIndex As Integer = 0
+    ''' <summary> The new line termination index. </summary>
+    Const NewLineTerminationIndex As Integer = 1
+    ''' <summary> Zero-based index of the return termination. </summary>
+    Const ReturnTerminationIndex As Integer = 2
+
+    ''' <summary> Updates the termination described by session. </summary>
+    ''' <param name="session"> The session. </param>
+    Private Sub UpdateTermination(ByVal session As VI.SessionBase)
+        If Me.Session.TerminationCharacterEnabled Then
+            If Me.Session.TerminationCharacter = isr.Core.Pith.EscapeSequencesExtensions.NewLineValue Then
+                Me._ReadTerminationComboBox.SelectedIndex = NewLineTerminationIndex
+            Else
+                Me._ReadTerminationComboBox.SelectedIndex = ReturnTerminationIndex
+            End If
+        Else
+            Me._ReadTerminationComboBox.SelectedIndex = NoTerminationIndex
+        End If
+    End Sub
+
+    Private Sub _ReadTerminationComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles _ReadTerminationComboBox.SelectedIndexChanged
+        If Me._InitializingComponents Then Return
+        Dim action As String = "applying return termination"
+        Try
+            Select Case Me._ReadTerminationComboBox.SelectedIndex
+                Case NoTerminationIndex
+                    Me.Session.TerminationCharacterEnabled = False
+                Case NewLineTerminationIndex
+                    Me.Session.TerminationCharacterEnabled = True
+                    Me.Session.TerminationCharacter = isr.Core.Pith.EscapeSequencesExtensions.NewLineValue
+                Case ReturnTerminationIndex
+                    Me.Session.TerminationCharacterEnabled = True
+                    Me.Session.TerminationCharacter = isr.Core.Pith.EscapeSequencesExtensions.ReturnValue
+            End Select
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+        Finally
+            Me.ReadServiceRequestStatus()
+            Windows.Forms.Cursor.Current = Cursors.Default
+        End Try
+    End Sub
+
+    Private Function BuildAutoTermination() As String
+        Dim message As New System.Text.StringBuilder()
+        If Me._AppendNewLineCheckBox.Checked Then message.Append(isr.Core.Pith.EscapeSequencesExtensions.NewLineEscape)
+        If Me._AppendReturnCheckBox.Checked Then message.Append(isr.Core.Pith.EscapeSequencesExtensions.ReturnEscape)
+        Return message.ToString
+    End Function
+
+    Private Sub _AppendReturnCheckBox_CheckedChanged(sender As Object, e As EventArgs) Handles _AppendReturnCheckBox.CheckedChanged
+        Dim action As String = "applying return termination"
+        Try
+            Me._SimpleReadWriteControl.AutoAppendTermination = Me.BuildAutoTermination
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+    Private Sub _AppendNewLineCheckBox_CheckedChanged(sender As Object, e As EventArgs) Handles _AppendNewLineCheckBox.CheckedChanged
+        Dim action As String = "applying new line termination"
+        Try
+            Me._SimpleReadWriteControl.AutoAppendTermination = Me.BuildAutoTermination
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+    Private Sub ReadServiceRequestStatus()
+        Dim action As String = "reading service request status"
+        Try
+            Me._SimpleReadWriteControl.ReadServiceRequestStatus()
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+    ''' <summary> Service request status label click. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    Private Sub _ServiceRequestStatusLabel_Click(sender As Object, e As EventArgs) Handles _ServiceRequestStatusLabel.Click
+        Me.ReadServiceRequestStatus()
     End Sub
 
 #End Region

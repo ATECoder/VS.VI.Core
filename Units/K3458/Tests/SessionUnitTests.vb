@@ -91,9 +91,39 @@ Public Class SessionUnitTests
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
         Using target As Device = New Device()
+            target.Session.IsAliveCommand = ""
+            target.Session.IsAliveQueryCommand = ""
             Dim e As New isr.Core.Pith.CancelDetailsEventArgs
             actualBoolean = target.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Failed to open session: {e.Details}")
+
+            Dim expectedServiceRequest As Integer = 24
+            Dim actualServiceRequest As Integer = target.Session.ReadServiceRequestStatus
+            Assert.AreEqual(expectedServiceRequest, actualServiceRequest, $"Service request status on open")
+
+            Dim expectedReadTerminationEnabled As Boolean = False
+            Dim actualReadTerminationEnabled As Boolean
+            actualReadTerminationEnabled = target.Session.TerminationCharacterEnabled
+            Assert.AreEqual(expectedReadTerminationEnabled, actualReadTerminationEnabled, $"Initial read termination enabled")
+
+            expectedReadTerminationEnabled = True
+            target.Session.TerminationCharacterEnabled = expectedReadTerminationEnabled
+            actualReadTerminationEnabled = target.Session.TerminationCharacterEnabled
+            Assert.AreEqual(expectedReadTerminationEnabled, actualReadTerminationEnabled, $"Requested read termination enabled")
+
+            Dim expectedTermination As Integer = 10
+            Dim actualTermination As Integer
+            actualTermination = target.Session.TerminationCharacter
+            Assert.AreEqual(expectedTermination, actualTermination, $"Initial read termination character value")
+
+            expectedServiceRequest = 24
+            actualServiceRequest = target.Session.ReadServiceRequestStatus
+            Assert.AreEqual(expectedServiceRequest, actualServiceRequest, $"Service request status after native termination configuration")
+
+            Dim expectedIdentity As String = "HP3458A"
+            Dim actualIdentity As String = target.Session.Query("ID?").Trim
+            Assert.AreEqual(expectedIdentity, actualIdentity, $"Reading identity using {target.Session.LastMessageSent}")
+
             target.Session.Clear()
             target.CloseSession()
         End Using

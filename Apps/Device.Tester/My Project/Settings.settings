@@ -17,5 +17,8 @@
     <Setting Name="TraceLevel" Roaming="true" Type="System.Diagnostics.TraceEventType" Scope="User">
       <Value Profile="(Default)">Verbose</Value>
     </Setting>
+    <Setting Name="SupportsKeepAlive" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

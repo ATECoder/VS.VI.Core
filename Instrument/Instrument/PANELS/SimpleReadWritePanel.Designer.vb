@@ -1,4 +1,4 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class SimpleReadWritePanel
 
     'Required by the Windows Form Designer
@@ -12,6 +12,7 @@ Partial Class SimpleReadWritePanel
         Me.components = New System.ComponentModel.Container()
         Me._Tabs = New System.Windows.Forms.TabControl()
         Me._ResourcesTabPage = New System.Windows.Forms.TabPage()
+        Me._SessionInfoTextBox = New System.Windows.Forms.TextBox()
         Me._CloseSessionButton = New System.Windows.Forms.Button()
         Me._OpenSessionButton = New System.Windows.Forms.Button()
         Me._ReadWriteTabPage = New System.Windows.Forms.TabPage()
@@ -19,7 +20,7 @@ Partial Class SimpleReadWritePanel
         Me._SettingsTabPage = New System.Windows.Forms.TabPage()
         Me._SettingsLayout = New System.Windows.Forms.TableLayoutPanel()
         Me._SettingsPanel = New System.Windows.Forms.Panel()
-        Me._WriteSettingsGroupBox = New System.Windows.Forms.GroupBox()
+        Me._TerminationGroupBox = New System.Windows.Forms.GroupBox()
         Me._AppendNewLineCheckBox = New System.Windows.Forms.CheckBox()
         Me._AppendReturnCheckBox = New System.Windows.Forms.CheckBox()
         Me._PollSettingsGroupBox = New System.Windows.Forms.GroupBox()
@@ -39,17 +40,19 @@ Partial Class SimpleReadWritePanel
         Me._ServiceRequestStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._PollTimer = New System.Windows.Forms.Timer(Me.components)
         Me._ErrorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
-        Me._SessionInfoTextBox = New System.Windows.Forms.TextBox()
+        Me._ReadTerminationComboBox = New System.Windows.Forms.ComboBox()
+        Me._ReadTerminationComboBoxLabel = New System.Windows.Forms.Label()
         Me._Tabs.SuspendLayout()
         Me._ResourcesTabPage.SuspendLayout()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._SettingsTabPage.SuspendLayout()
         Me._SettingsLayout.SuspendLayout()
         Me._SettingsPanel.SuspendLayout()
-        Me._WriteSettingsGroupBox.SuspendLayout()
+        Me._TerminationGroupBox.SuspendLayout()
         Me._PollSettingsGroupBox.SuspendLayout()
         CType(Me._MessageStatusBitValueNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._PollMillisecondsNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me._TimeoutSelector, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._MessagesTabPage.SuspendLayout()
         Me._StatusStrip.SuspendLayout()
         CType(Me._ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -81,6 +84,17 @@ Partial Class SimpleReadWritePanel
         Me._ResourcesTabPage.TabIndex = 0
         Me._ResourcesTabPage.Text = "Resources"
         Me._ResourcesTabPage.UseVisualStyleBackColor = True
+        '
+        '_SessionInfoTextBox
+        '
+        Me._SessionInfoTextBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me._SessionInfoTextBox.Location = New System.Drawing.Point(9, 45)
+        Me._SessionInfoTextBox.Multiline = True
+        Me._SessionInfoTextBox.Name = "_SessionInfoTextBox"
+        Me._SessionInfoTextBox.Size = New System.Drawing.Size(312, 289)
+        Me._SessionInfoTextBox.TabIndex = 41
         '
         '_CloseSessionButton
         '
@@ -153,7 +167,7 @@ Partial Class SimpleReadWritePanel
         '
         '_SettingsPanel
         '
-        Me._SettingsPanel.Controls.Add(Me._WriteSettingsGroupBox)
+        Me._SettingsPanel.Controls.Add(Me._TerminationGroupBox)
         Me._SettingsPanel.Controls.Add(Me._PollSettingsGroupBox)
         Me._SettingsPanel.Controls.Add(Me._TimeoutSelectorLabel)
         Me._SettingsPanel.Controls.Add(Me._TimeoutSelector)
@@ -162,37 +176,39 @@ Partial Class SimpleReadWritePanel
         Me._SettingsPanel.Size = New System.Drawing.Size(296, 307)
         Me._SettingsPanel.TabIndex = 23
         '
-        '_WriteSettingsGroupBox
+        '_TerminationGroupBox
         '
-        Me._WriteSettingsGroupBox.Controls.Add(Me._AppendNewLineCheckBox)
-        Me._WriteSettingsGroupBox.Controls.Add(Me._AppendReturnCheckBox)
-        Me._WriteSettingsGroupBox.Location = New System.Drawing.Point(3, 41)
-        Me._WriteSettingsGroupBox.Name = "_WriteSettingsGroupBox"
-        Me._WriteSettingsGroupBox.Size = New System.Drawing.Size(289, 100)
-        Me._WriteSettingsGroupBox.TabIndex = 18
-        Me._WriteSettingsGroupBox.TabStop = False
-        Me._WriteSettingsGroupBox.Text = "Write Settings"
+        Me._TerminationGroupBox.Controls.Add(Me._ReadTerminationComboBoxLabel)
+        Me._TerminationGroupBox.Controls.Add(Me._ReadTerminationComboBox)
+        Me._TerminationGroupBox.Controls.Add(Me._AppendNewLineCheckBox)
+        Me._TerminationGroupBox.Controls.Add(Me._AppendReturnCheckBox)
+        Me._TerminationGroupBox.Location = New System.Drawing.Point(3, 41)
+        Me._TerminationGroupBox.Name = "_TerminationGroupBox"
+        Me._TerminationGroupBox.Size = New System.Drawing.Size(289, 100)
+        Me._TerminationGroupBox.TabIndex = 18
+        Me._TerminationGroupBox.TabStop = False
+        Me._TerminationGroupBox.Text = "Termination"
         '
         '_AppendNewLineCheckBox
         '
         Me._AppendNewLineCheckBox.AutoSize = True
         Me._AppendNewLineCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me._AppendNewLineCheckBox.Location = New System.Drawing.Point(19, 64)
+        Me._AppendNewLineCheckBox.Location = New System.Drawing.Point(8, 64)
         Me._AppendNewLineCheckBox.Name = "_AppendNewLineCheckBox"
-        Me._AppendNewLineCheckBox.Size = New System.Drawing.Size(248, 21)
+        Me._AppendNewLineCheckBox.Size = New System.Drawing.Size(138, 21)
         Me._AppendNewLineCheckBox.TabIndex = 1
-        Me._AppendNewLineCheckBox.Text = "Auto Append New Line Character [\n]:"
+        Me._AppendNewLineCheckBox.Text = "Auto New Line [\n]:"
         Me._AppendNewLineCheckBox.UseVisualStyleBackColor = True
         '
         '_AppendReturnCheckBox
         '
         Me._AppendReturnCheckBox.AutoSize = True
         Me._AppendReturnCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me._AppendReturnCheckBox.Location = New System.Drawing.Point(36, 32)
+        Me._AppendReturnCheckBox.Location = New System.Drawing.Point(25, 32)
         Me._AppendReturnCheckBox.Name = "_AppendReturnCheckBox"
-        Me._AppendReturnCheckBox.Size = New System.Drawing.Size(231, 21)
+        Me._AppendReturnCheckBox.Size = New System.Drawing.Size(121, 21)
         Me._AppendReturnCheckBox.TabIndex = 0
-        Me._AppendReturnCheckBox.Text = "Auto Append Return Character [\r]:"
+        Me._AppendReturnCheckBox.Text = "Auto Return [\r]:"
         Me._AppendReturnCheckBox.UseVisualStyleBackColor = True
         '
         '_PollSettingsGroupBox
@@ -291,7 +307,6 @@ Partial Class SimpleReadWritePanel
         Me._TimeoutSelector.Location = New System.Drawing.Point(98, 7)
         Me._TimeoutSelector.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._TimeoutSelector.Maximum = New Decimal(New Integer() {100000, 0, 0, 0})
-        Me._TimeoutSelector.Minimum = New Decimal(New Integer() {0, 0, 0, 0})
         Me._TimeoutSelector.Name = "_TimeoutSelector"
         Me._TimeoutSelector.Size = New System.Drawing.Size(103, 25)
         Me._TimeoutSelector.TabIndex = 20
@@ -311,6 +326,7 @@ Partial Class SimpleReadWritePanel
         '
         Me._TraceMessagesBox.AlertLevel = System.Diagnostics.TraceEventType.Warning
         Me._TraceMessagesBox.BackColor = System.Drawing.SystemColors.Info
+        Me._TraceMessagesBox.CaptionFormat = "{0} ≡"
         Me._TraceMessagesBox.CausesValidation = False
         Me._TraceMessagesBox.Dock = System.Windows.Forms.DockStyle.Fill
         Me._TraceMessagesBox.Font = New System.Drawing.Font("Consolas", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -360,16 +376,24 @@ Partial Class SimpleReadWritePanel
         '
         Me._ErrorProvider.ContainerControl = Me
         '
-        '_SessionInfoTextBox
+        '_ReadTerminationComboBox
         '
-        Me._SessionInfoTextBox.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._SessionInfoTextBox.Location = New System.Drawing.Point(9, 45)
-        Me._SessionInfoTextBox.Multiline = True
-        Me._SessionInfoTextBox.Name = "_SessionInfoTextBox"
-        Me._SessionInfoTextBox.Size = New System.Drawing.Size(312, 289)
-        Me._SessionInfoTextBox.TabIndex = 41
+        Me._ReadTerminationComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me._ReadTerminationComboBox.FormattingEnabled = True
+        Me._ReadTerminationComboBox.Items.AddRange(New Object() {"None", "Line Feed", "Return"})
+        Me._ReadTerminationComboBox.Location = New System.Drawing.Point(158, 53)
+        Me._ReadTerminationComboBox.Name = "_ReadTerminationComboBox"
+        Me._ReadTerminationComboBox.Size = New System.Drawing.Size(121, 25)
+        Me._ReadTerminationComboBox.TabIndex = 3
+        '
+        '_ReadTerminationComboBoxLabel
+        '
+        Me._ReadTerminationComboBoxLabel.AutoSize = True
+        Me._ReadTerminationComboBoxLabel.Location = New System.Drawing.Point(161, 33)
+        Me._ReadTerminationComboBoxLabel.Name = "_ReadTerminationComboBoxLabel"
+        Me._ReadTerminationComboBoxLabel.Size = New System.Drawing.Size(113, 17)
+        Me._ReadTerminationComboBoxLabel.TabIndex = 2
+        Me._ReadTerminationComboBoxLabel.Text = "Read Termination:"
         '
         'SimpleReadWritePanel
         '
@@ -386,12 +410,13 @@ Partial Class SimpleReadWritePanel
         Me._SettingsLayout.ResumeLayout(False)
         Me._SettingsPanel.ResumeLayout(False)
         Me._SettingsPanel.PerformLayout()
-        Me._WriteSettingsGroupBox.ResumeLayout(False)
-        Me._WriteSettingsGroupBox.PerformLayout()
+        Me._TerminationGroupBox.ResumeLayout(False)
+        Me._TerminationGroupBox.PerformLayout()
         Me._PollSettingsGroupBox.ResumeLayout(False)
         Me._PollSettingsGroupBox.PerformLayout()
         CType(Me._MessageStatusBitValueNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._PollMillisecondsNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me._TimeoutSelector, System.ComponentModel.ISupportInitialize).EndInit()
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
         Me._StatusStrip.ResumeLayout(False)
@@ -411,7 +436,7 @@ Partial Class SimpleReadWritePanel
     Private WithEvents _SettingsTabPage As Windows.Forms.TabPage
     Private WithEvents _SettingsLayout As Windows.Forms.TableLayoutPanel
     Private WithEvents _SettingsPanel As Windows.Forms.Panel
-    Private WithEvents _WriteSettingsGroupBox As Windows.Forms.GroupBox
+    Private WithEvents _TerminationGroupBox As Windows.Forms.GroupBox
     Private WithEvents _AppendNewLineCheckBox As Windows.Forms.CheckBox
     Private WithEvents _AppendReturnCheckBox As Windows.Forms.CheckBox
     Private WithEvents _PollSettingsGroupBox As Windows.Forms.GroupBox
@@ -431,4 +456,6 @@ Partial Class SimpleReadWritePanel
     Private WithEvents _SimpleReadWriteControl As SimpleReadWriteControl
     Private WithEvents _ErrorProvider As Windows.Forms.ErrorProvider
     Private WithEvents _SessionInfoTextBox As Windows.Forms.TextBox
+    Private WithEvents _ReadTerminationComboBoxLabel As Windows.Forms.Label
+    Private WithEvents _ReadTerminationComboBox As Windows.Forms.ComboBox
 End Class
