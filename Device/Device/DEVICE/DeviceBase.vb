@@ -373,6 +373,26 @@ Public MustInherit Class DeviceBase
         End Set
     End Property
 
+#Region " SESSION INITIALIZATION PROPERTIES "
+
+    ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
+    ''' <value> The error available bits. </value>
+    Protected Overridable ReadOnly Property ErrorAvailableBits() As ServiceRequests = ServiceRequests.ErrorAvailable
+
+    ''' <summary> Gets or sets the keep alive interval. </summary>
+    ''' <value> The keep alive interval. </value>
+    Protected Overridable ReadOnly Property KeepAliveInterval As TimeSpan = TimeSpan.FromSeconds(58)
+
+    ''' <summary> Gets the is alive command. </summary>
+    ''' <value> The is alive command. </value>
+    Protected Overridable ReadOnly Property IsAliveCommand As String = "*OPC"
+
+    ''' <summary> Gets the is alive query command. </summary>
+    ''' <value> The is alive query command. </value>
+    Protected Overridable ReadOnly Property IsAliveQueryCommand As String = "*OPC?"
+
+#End Region
+
 #End Region
 
 #Region " PUBLISHER "
@@ -488,6 +508,13 @@ Public MustInherit Class DeviceBase
         End Get
     End Property
 
+    ''' <summary> Initializes the session prior to opening access to the instrument. </summary>
+    Protected Overridable Sub OnCreated()
+        Me.Session.KeepAliveInterval = Me.KeepAliveInterval
+        Me.Session.IsAliveCommand = Me.IsAliveCommand
+        Me.Session.IsAliveQueryCommand = Me.IsAliveQueryCommand
+    End Sub
+
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     ''' <remarks> This override should occur as the first call of the overriding method. </remarks>
@@ -555,6 +582,7 @@ Public MustInherit Class DeviceBase
         Try
             If Me.Enabled Then Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Opening session to {resourceName};. ")
             Me.Session.ResourceTitle = resourceTitle
+            Me.OnCreated()
             Me.Session.OpenSession(resourceName, resourceTitle, Me.CapturedSyncContext)
             If Me.Session.IsSessionOpen Then
                 Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Session open to {resourceName};. ")
@@ -607,10 +635,11 @@ Public MustInherit Class DeviceBase
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overridable Function TryOpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal e As CancelDetailsEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        Dim action As String = $"opening {resourceTitle}:{resourceName}"
         Try
             Me.OpenSession(resourceName, resourceTitle)
-        Catch ex As OperationFailedException
-            e.RegisterCancellation($"Exception opening {resourceTitle}:{resourceName};. {ex.ToFullBlownString}")
+        Catch ex As Exception
+            e.RegisterCancellation($"Exception {action};. {ex.ToFullBlownString}")
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, e.Details)
         End Try
         Return Not e.Cancel AndAlso Me.IsDeviceOpen
@@ -826,28 +855,87 @@ Public MustInherit Class DeviceBase
         End Get
     End Property
 
-    ''' <summary> Handles the Status subsystem property changed event. </summary>
+#Region " STATUS "
+
+    Private _StatusSubsystemBase As StatusSubsystemBase
+
+    ''' <summary> Gets or sets the status subsystem. </summary>
+    ''' <value> The status subsystem. </value>
+    Public Property StatusSubsystemBase As StatusSubsystemBase
+        Get
+            Return Me._StatusSubsystemBase
+        End Get
+        Set(value As StatusSubsystemBase)
+            If Me._StatusSubsystemBase IsNot Nothing Then
+                RemoveHandler Me._StatusSubsystemBase.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+            End If
+            Me._StatusSubsystemBase = value
+            If Me._StatusSubsystemBase IsNot Nothing Then
+                AddHandler Me._StatusSubsystemBase.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Executes the subsystem property changed action. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
     Protected Overridable Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
+            Case NameOf(subsystem.ErrorAvailable)
+                If Not subsystem.ReadingDeviceErrors AndAlso subsystem.ErrorAvailable Then
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Error available;. ")
+                    subsystem.QueryDeviceErrors()
+                End If
+            Case NameOf(subsystem.MessageAvailable)
+                If subsystem.MessageAvailable Then
+                    Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
+                End If
+            Case NameOf(subsystem.MeasurementAvailable)
+                If subsystem.MeasurementAvailable Then
+                    Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
+                End If
+            Case NameOf(subsystem.ReadingDeviceErrors)
+                If subsystem.ReadingDeviceErrors Then
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
+                End If
+
             Case NameOf(subsystem.Identity)
                 If Not String.IsNullOrWhiteSpace(subsystem.Identity) Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "{0} identified;. as {1}", Me.ResourceName, subsystem.Identity)
+                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceName} identified;. as {subsystem.Identity}")
                     If Not String.IsNullOrWhiteSpace(subsystem.VersionInfo?.Model) Then Me.ResourceTitle = subsystem.VersionInfo.Model
                 End If
+
             Case NameOf(subsystem.DeviceErrors)
                 If Not String.IsNullOrWhiteSpace(subsystem.DeviceErrors) Then
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "{0} errors;. {1}", Me.ResourceName, subsystem.DeviceErrors)
+                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{Me.ResourceName} errors;. {subsystem.DeviceErrors}")
                 End If
+
             Case NameOf(subsystem.LastDeviceError)
                 If subsystem.LastDeviceError?.IsError Then
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "{0} last error;. {1}", Me.ResourceName,
-                                       subsystem.LastDeviceError.CompoundErrorMessage)
+                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                                       $"{Me.ResourceName} last error;. {subsystem.LastDeviceError.CompoundErrorMessage}")
                 End If
+
         End Select
     End Sub
+
+    ''' <summary> Status subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If e Is Nothing Then Return
+        Dim action As String = $"handling property {NameOf(VI.StatusSubsystemBase)}.{e.PropertyName} changed event"
+        Try
+            Me.OnPropertyChanged(TryCast(sender, StatusSubsystemBase), e.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. { ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
 
 #End Region
 

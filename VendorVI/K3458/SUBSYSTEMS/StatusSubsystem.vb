@@ -52,6 +52,18 @@ Public Class StatusSubsystem
 
 #Region " COMMAND SYNTAX "
 
+#Region " ATTRIBUTES "
+
+    ''' <summary> Gets the termination character enabled. </summary>
+    ''' <value> The termination character enabled. </value>
+    Protected Overrides ReadOnly Property TerminationCharacterEnabled As Boolean = True
+
+    ''' <summary> Gets the termination character. </summary>
+    ''' <value> The termination character. </value>
+    Protected Overrides ReadOnly Property TerminationCharacter As Byte = isr.Core.Pith.EscapeSequencesExtensions.NewLineValue
+
+#End Region
+
 #Region " EXECUTION STATE "
 
     ''' <summary> Gets the clear execution state command. </summary>
@@ -69,7 +81,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets line frequency query command. </summary>
     ''' <value> The line frequency query command. </value>
-    Protected Overrides ReadOnly Property LineFrequencyQueryCommand As String = ""
+    Protected Overrides ReadOnly Property LineFrequencyQueryCommand As String = "LINE?"
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>
@@ -114,7 +126,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the service request enable command format. </summary>
     ''' <value> The service request enable command format. </value>
-    Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = "" '  "M{0:00}x"
+    Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = "RQS {0}"
 
 #End Region
 
@@ -128,6 +140,7 @@ Public Class StatusSubsystem
         ' K3458 uses a special version info string.
         Me._VersionInfo = New VersionInfo
         Me.VersionInfo.Parse(value)
+
         ' this is designed to prevent failures due to non-standard Identity strings.
         MyBase.ParseVersionInfo(Me.VersionInfo.BuildIdentity)
     End Sub
@@ -147,11 +160,11 @@ Public Class StatusSubsystem
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
     ''' <remarks> Last error supported </remarks>
-    Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = ""
+    Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = "ERRSTR?"
 
     ''' <summary> Gets the last error query command. </summary>
     ''' <value> The last error query command. </value>
-    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = ""
+    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = "ERRSTR?"
 
     ''' <summary> Queue device error. </summary>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>

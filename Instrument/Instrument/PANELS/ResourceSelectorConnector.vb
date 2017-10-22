@@ -34,6 +34,19 @@ Public Class ResourceSelectorConnector
         Me._FindButton.Enabled = True
     End Sub
 
+    ''' <summary> Creates a new ResourceSelectorConnector. </summary>
+    ''' <returns> A ResourceSelectorConnector. </returns>
+    Public Shared Function Create() As ResourceSelectorConnector
+        Dim connector As ResourceSelectorConnector = Nothing
+        Try
+            connector = New ResourceSelectorConnector
+            Return connector
+        Catch
+            connector.Dispose()
+            Throw
+        End Try
+    End Function
+
     ''' <summary>
     ''' Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control" />
     ''' and its child controls and optionally releases the managed resources.

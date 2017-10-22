@@ -21,8 +21,9 @@ Public Class ResourceControlBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Specialized default constructor for use only by derived classes. </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
-        Me.New(New ResourceSelectorConnector)
+        Me.New(ResourceSelectorConnector.Create)
     End Sub
 
     ''' <summary> Specialized default constructor for use only by derived classes. </summary>
@@ -45,10 +46,10 @@ Public Class ResourceControlBase
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                If Me.Device IsNot Nothing Then
+                If Me.DeviceBase IsNot Nothing Then
                     Try
                         ' this is required to release the device event handlers associated with this panel. 
-                        If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
+                        If Me.DeviceBase IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                     Catch ex As Exception
                         Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
                     End Try
@@ -61,9 +62,9 @@ Public Class ResourceControlBase
                     Try
                         If Me.IsDeviceOwner Then
                             ' this also closes the session. 
-                            Me._Device.Dispose()
+                            Me._DeviceBase.Dispose()
                         End If
-                        Me._Device = Nothing
+                        Me._DeviceBase = Nothing
                     Catch ex As Exception
                         Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing the device", $"Exception {ex.ToFullBlownString}")
                     End Try
@@ -332,81 +333,82 @@ Public Class ResourceControlBase
     Public Property IsDeviceOwner As Boolean
 
     ''' <summary> Releases the device. </summary>
-    Private Sub _ReleaseDevice()
-        If Me.Device IsNot Nothing Then
-            Me.Device.Talker.Listeners.Clear()
-            RemoveHandler Me.Device.PropertyChanged, AddressOf Me.DevicePropertyChanged
-            RemoveHandler Me.Device.Opening, AddressOf Me.DeviceOpening
-            RemoveHandler Me.Device.Opened, AddressOf Me.DeviceOpened
-            RemoveHandler Me.Device.Closing, AddressOf Me.DeviceClosing
-            RemoveHandler Me.Device.Closed, AddressOf Me.DeviceClosed
-            RemoveHandler Me.Device.Initialized, AddressOf Me.DeviceInitialized
-            RemoveHandler Me.Device.Initializing, AddressOf Me.DeviceInitializing
-            Me.Connector.ResourcesFilter = ""
-            ' note that service request is released when device closes.
-        End If
-    End Sub
-
-    ''' <summary> Releases the device. </summary>
     Protected Overridable Sub ReleaseDevice()
-        Me._ReleaseDevice()
-    End Sub
-
-    ''' <summary> Assign device. </summary>
-    ''' <param name="value"> True to show or False to hide the control. </param>
-    Private Sub _AssignDevice(ByVal value As VI.DeviceBase)
-        Me._ReleaseDevice()
-        Me._ElapsedTimeStopwatch = New Stopwatch
-        If Me.Connector IsNot Nothing Then
-            Me.Connector.Clearable = True
-            Me.Connector.Connectable = True
-            Me.Connector.Searchable = True
-        End If
-        Me._StatusRegisterStatus = ResourceControlBase.UnknownRegisterValue
-        Me._StandardRegisterStatus = ResourceControlBase.UnknownRegisterValue
-        Me._Device = value
-        If value IsNot Nothing Then
-            Me.Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
-            AddHandler Me.Device.PropertyChanged, AddressOf Me.DevicePropertyChanged
-            AddHandler Me.Device.Opening, AddressOf Me.DeviceOpening
-            AddHandler Me.Device.Opened, AddressOf Me.DeviceOpened
-            AddHandler Me.Device.Closing, AddressOf Me.DeviceClosing
-            AddHandler Me.Device.Closed, AddressOf Me.DeviceClosed
-            AddHandler Me.Device.Initialized, AddressOf Me.DeviceInitialized
-            AddHandler Me.Device.Initializing, AddressOf Me.DeviceInitializing
-            If Me.Device.ResourcesFilter IsNot Nothing Then
-                Me.Connector.ResourcesFilter = Me.Device.ResourcesFilter
-            End If
-            Me.ResourceName = Me.Device.ResourceName
-        End If
+        Me.DeviceBase = Nothing
     End Sub
 
     ''' <summary> Assign device. </summary>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Public Overridable Sub AssignDevice(ByVal value As VI.DeviceBase)
-        Me._AssignDevice(value)
+        Me.DeviceBase = value
     End Sub
 
     ''' <summary> Gets the is device assigned. </summary>
     ''' <value> The is device assigned. </value>
     Public Overridable ReadOnly Property IsDeviceAssigned As Boolean
         Get
-            Return Me.Device IsNot Nothing AndAlso Not Me.Device.IsDisposed
+            Return Me.DeviceBase IsNot Nothing AndAlso Not Me.DeviceBase.IsDisposed
         End Get
     End Property
 
+    Private _DeviceBase As VI.DeviceBase
     ''' <summary> Gets or sets reference to the VISA <see cref="VI.DeviceBase">device</see>
     ''' interfaces. </summary>
     ''' <value> The connectable resource. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Protected ReadOnly Property Device() As VI.DeviceBase
+    Protected Property DeviceBase() As VI.DeviceBase
+        Get
+            Return Me._DeviceBase
+        End Get
+        Set(value As VI.DeviceBase)
+            If Me.DeviceBase IsNot Nothing Then
+                Me.DeviceBase.Talker.Listeners.Clear()
+                RemoveHandler Me.DeviceBase.PropertyChanged, AddressOf Me.DevicePropertyChanged
+                RemoveHandler Me.DeviceBase.Opening, AddressOf Me.DeviceOpening
+                RemoveHandler Me.DeviceBase.Opened, AddressOf Me.DeviceOpened
+                RemoveHandler Me.DeviceBase.Closing, AddressOf Me.DeviceClosing
+                RemoveHandler Me.DeviceBase.Closed, AddressOf Me.DeviceClosed
+                RemoveHandler Me.DeviceBase.Initialized, AddressOf Me.DeviceInitialized
+                RemoveHandler Me.DeviceBase.Initializing, AddressOf Me.DeviceInitializing
+                Me.Connector.ResourcesFilter = ""
+                ' note that service request is released when device closes.
+                Me.StatusSubsystem = Nothing
+            End If
+            Me._ElapsedTimeStopwatch = New Stopwatch
+            If Me.Connector IsNot Nothing Then
+                Me.Connector.Clearable = True
+                Me.Connector.Connectable = True
+                Me.Connector.Searchable = True
+            End If
+            Me._StatusRegisterStatus = ResourceControlBase.UnknownRegisterValue
+            Me._StandardRegisterStatus = ResourceControlBase.UnknownRegisterValue
+            Me._DeviceBase = value
+            If Me.DeviceBase IsNot Nothing Then
+                If Me._DeviceBase IsNot Nothing Then
+                    Me.DeviceBase.CaptureSyncContext(Threading.SynchronizationContext.Current)
+                    AddHandler Me.DeviceBase.PropertyChanged, AddressOf Me.DevicePropertyChanged
+                    AddHandler Me.DeviceBase.Opening, AddressOf Me.DeviceOpening
+                    AddHandler Me.DeviceBase.Opened, AddressOf Me.DeviceOpened
+                    AddHandler Me.DeviceBase.Closing, AddressOf Me.DeviceClosing
+                    AddHandler Me.DeviceBase.Closed, AddressOf Me.DeviceClosed
+                    AddHandler Me.DeviceBase.Initialized, AddressOf Me.DeviceInitialized
+                    AddHandler Me.DeviceBase.Initializing, AddressOf Me.DeviceInitializing
+                    If Me.DeviceBase.ResourcesFilter IsNot Nothing Then
+                        Me.Connector.ResourcesFilter = Me.DeviceBase.ResourcesFilter
+                    End If
+                    Me.ResourceName = Me.DeviceBase.ResourceName
+                    Me.StatusSubsystem = Me.DeviceBase.StatusSubsystemBase
+                End If
+            End If
+        End Set
+    End Property
 
     ''' <summary> Gets the sentinel indicating if the device is open. </summary>
     ''' <value> The is device open. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected ReadOnly Property IsDeviceOpen As Boolean
         Get
-            Return Me.Device IsNot Nothing AndAlso Me.Device.IsDeviceOpen
+            Return Me.DeviceBase IsNot Nothing AndAlso Me.DeviceBase.IsDeviceOpen
         End Get
     End Property
 
@@ -435,11 +437,11 @@ Public Class ResourceControlBase
     ''' </remarks>
     Public Overridable Sub AddServiceRequestEventHandler()
         If Not Me.PanelServiceRequestHandlerAdded Then
-            AddHandler Me.Device.ServiceRequested, AddressOf Me.DeviceServiceRequested
+            AddHandler Me.DeviceBase.ServiceRequested, AddressOf Me.DeviceServiceRequested
             If Me.IsDeviceOwner Then
-                Me.Device.AddServiceRequestEventHandler()
-            ElseIf Not Me.Device.DeviceServiceRequestHandlerAdded Then
-                Me.Device.AddServiceRequestEventHandler()
+                Me.DeviceBase.AddServiceRequestEventHandler()
+            ElseIf Not Me.DeviceBase.DeviceServiceRequestHandlerAdded Then
+                Me.DeviceBase.AddServiceRequestEventHandler()
                 Me._PanelDeviceServiceRequestHandlerAdded = True
             End If
             Me._PanelServiceRequestHandlerAdded = True
@@ -449,8 +451,8 @@ Public Class ResourceControlBase
     ''' <summary> Removes the service request event. </summary>
     Public Overridable Sub RemoveServiceRequestEventHandler()
         If Me.PanelServiceRequestHandlerAdded Then
-            RemoveHandler Me.Device.ServiceRequested, AddressOf Me.DeviceServiceRequested
-            If Me.IsDeviceOwner OrElse Me._PanelDeviceServiceRequestHandlerAdded Then Me.Device.RemoveServiceRequestEventHandler()
+            RemoveHandler Me.DeviceBase.ServiceRequested, AddressOf Me.DeviceServiceRequested
+            If Me.IsDeviceOwner OrElse Me._PanelDeviceServiceRequestHandlerAdded Then Me.DeviceBase.RemoveServiceRequestEventHandler()
             Me._PanelServiceRequestHandlerAdded = False
             Me._PanelDeviceServiceRequestHandlerAdded = False
         End If
@@ -506,35 +508,6 @@ Public Class ResourceControlBase
         End Try
     End Sub
 
-    ''' <summary> Executes the subsystem property changed action. </summary>
-    ''' <param name="subsystem">    The subsystem. </param>
-    ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overridable Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        Select Case propertyName
-            Case NameOf(subsystem.ErrorAvailable)
-                If Not subsystem.ReadingDeviceErrors AndAlso subsystem.ErrorAvailable Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Error available;. ")
-                End If
-            Case NameOf(subsystem.MessageAvailable)
-                If subsystem.MessageAvailable Then
-                    Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
-                End If
-            Case NameOf(subsystem.MeasurementAvailable)
-                If subsystem.MeasurementAvailable Then
-                    Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
-                End If
-            Case NameOf(subsystem.ReadingDeviceErrors)
-                If subsystem.ReadingDeviceErrors Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
-                End If
-            Case NameOf(subsystem.ServiceRequestStatus)
-                Me.StatusRegisterStatus = subsystem.ServiceRequestStatus
-            Case NameOf(subsystem.StandardEventStatus)
-                Me.StandardRegisterStatus = subsystem.StandardEventStatus
-        End Select
-    End Sub
-
 #End Region
 
 #Region " OPENING / OPEN "
@@ -545,8 +518,8 @@ Public Class ResourceControlBase
         Try
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opening {0};. ", resourceName)
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
-            Me.Device.OpenSession(resourceName, resourceTitle)
-            If Me.Device.IsDeviceOpen Then
+            Me.DeviceBase.OpenSession(resourceName, resourceTitle)
+            If Me.DeviceBase.IsDeviceOpen Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opened {0};. ", resourceName)
             Else
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Open {0} Failed;. ", resourceName)
@@ -574,16 +547,16 @@ Public Class ResourceControlBase
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Protected Overridable Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
-        Me.ResourceName = Me.Device.ResourceName
-        If Not String.IsNullOrEmpty(Me.ResourceTitle) Then Me.Device.Session.ResourceTitle = Me.ResourceTitle
+        Me.ResourceName = Me.DeviceBase.ResourceName
+        If Not String.IsNullOrEmpty(Me.ResourceTitle) Then Me.DeviceBase.Session.ResourceTitle = Me.ResourceTitle
         Dim outcome As TraceEventType = TraceEventType.Information
-        If Me.Device.Session.Enabled And Not Me.Device.Session.IsSessionOpen Then outcome = TraceEventType.Warning
+        If Me.DeviceBase.Session.Enabled And Not Me.DeviceBase.Session.IsSessionOpen Then outcome = TraceEventType.Warning
         Me.Talker.Publish(outcome, My.MyLibrary.TraceEventId,
                           "{0} {1:enabled;enabled;disabled} and {2:open;open;closed}; session {3:open;open;closed};. ",
                           Me.ResourceTitle,
-                          Me.Device?.Session.Enabled.GetHashCode,
-                          Me.Device?.Session.IsDeviceOpen.GetHashCode,
-                          Me.Device?.Session.IsSessionOpen.GetHashCode)
+                          Me.DeviceBase?.Session.Enabled.GetHashCode,
+                          Me.DeviceBase?.Session.IsDeviceOpen.GetHashCode,
+                          Me.DeviceBase?.Session.IsSessionOpen.GetHashCode)
     End Sub
 
 #End Region
@@ -617,10 +590,10 @@ Public Class ResourceControlBase
 
     ''' <summary> Disconnects the instrument by closing the open session. </summary>
     Private Sub CloseSession()
-        If Me.Device.IsDeviceOpen Then
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Releasing {0};. ", Me.Device.ResourceName)
+        If Me.DeviceBase.IsDeviceOpen Then
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Releasing {0};. ", Me.DeviceBase.ResourceName)
         End If
-        If Me.Device.TryCloseSession() Then
+        If Me.DeviceBase.TryCloseSession() Then
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Released {0};. ", Me.Connector.SelectedResourceName)
         Else
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed releasing {0};. ", Me.Connector.SelectedResourceName)
@@ -632,10 +605,10 @@ Public Class ResourceControlBase
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Protected Overridable Sub DeviceClosing(ByVal sender As Object, ByVal e As ComponentModel.CancelEventArgs)
-        If Me.Device IsNot Nothing Then
+        If Me.DeviceBase IsNot Nothing Then
             Me.RemoveServiceRequestEventHandler()
-            If Me.Device.Session IsNot Nothing Then
-                Me.Device.Session.DisableServiceRequest()
+            If Me.DeviceBase.Session IsNot Nothing Then
+                Me.DeviceBase.Session.DisableServiceRequest()
             End If
         End If
     End Sub
@@ -645,10 +618,10 @@ Public Class ResourceControlBase
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Protected Overridable Sub DeviceClosed(ByVal sender As Object, ByVal e As System.EventArgs)
-        If Me.Device IsNot Nothing Then
-            If Me.Device.Session.IsSessionOpen Then
+        If Me.DeviceBase IsNot Nothing Then
+            If Me.DeviceBase.Session.IsSessionOpen Then
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Device closed but session still open;. ")
-            ElseIf Me.Device.Session.IsDeviceOpen Then
+            ElseIf Me.DeviceBase.Session.IsDeviceOpen Then
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Device closed but emulated session still open;. ")
             Else
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Disconnected;. Device access closed.")
@@ -801,7 +774,7 @@ Public Class ResourceControlBase
 
     ''' <summary> Clears the instrument by calling a propagating clear command. </summary>
     Protected Overridable Sub ClearDevice()
-        Me.Device.ResetClearInit()
+        Me.DeviceBase.ResetClearInit()
     End Sub
 
     ''' <summary> Clears the instrument by calling a propagating clear command. </summary>
@@ -827,9 +800,9 @@ Public Class ResourceControlBase
     ''' <summary> Displays the resource names based on the device resource search pattern. </summary>
     Public Overridable Sub DisplayNames()
         ' get the list of available resources
-        If Me.Device IsNot Nothing AndAlso Me.Device.ResourcesFilter IsNot Nothing Then
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Using resource filter {Me.Device.ResourcesFilter}")
-            Me.Connector.ResourcesFilter = Me.Device.ResourcesFilter
+        If Me.DeviceBase IsNot Nothing AndAlso Me.DeviceBase.ResourcesFilter IsNot Nothing Then
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Using resource filter {Me.DeviceBase.ResourcesFilter}")
+            Me.Connector.ResourcesFilter = Me.DeviceBase.ResourcesFilter
         ElseIf String.IsNullOrWhiteSpace(Me.Connector.ResourcesFilter) Then
             Me.Connector.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter
         End If
@@ -905,6 +878,99 @@ Public Class ResourceControlBase
                                $"Exception handling Connector.{e.PropertyName} change Event;. {ex.ToFullBlownString}")
         End Try
     End Sub
+
+#End Region
+
+#Region " SUBSYSTEMS "
+
+#Region " STATUS "
+
+    Private _StatusSubsystem As StatusSubsystemBase
+
+    ''' <summary> Gets or sets the status subsystem. </summary>
+    ''' <value> The status subsystem. </value>
+    Protected Property StatusSubsystem As StatusSubsystemBase
+        Get
+            Return Me._StatusSubsystem
+        End Get
+        Set(value As StatusSubsystemBase)
+            If Me._StatusSubsystem IsNot Nothing Then
+                RemoveHandler Me._StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+            End If
+            Me._StatusSubsystem = value
+            If Me._StatusSubsystem IsNot Nothing Then
+                AddHandler Me._StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Reports the last error. </summary>
+    Protected Overridable Sub OnLastError(ByVal lastError As DeviceError)
+#If False Then
+        If lastError?.IsError Then
+            Me._LastErrorTextBox.ForeColor = Drawing.Color.OrangeRed
+        Else
+            Me._LastErrorTextBox.ForeColor = Drawing.Color.Aquamarine
+        End If
+        Me._LastErrorTextBox.Text = lastError.CompoundErrorMessage
+#End If
+    End Sub
+
+    ''' <summary> Executes the subsystem property changed action. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
+    Protected Overridable Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.ErrorAvailable)
+                If Not subsystem.ReadingDeviceErrors AndAlso subsystem.ErrorAvailable Then
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Error available;. ")
+                    subsystem.QueryDeviceErrors()
+                End If
+            Case NameOf(subsystem.MessageAvailable)
+                If subsystem.MessageAvailable Then
+                    Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
+                End If
+            Case NameOf(subsystem.MeasurementAvailable)
+                If subsystem.MeasurementAvailable Then
+                    Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
+                End If
+            Case NameOf(subsystem.ReadingDeviceErrors)
+                If subsystem.ReadingDeviceErrors Then
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
+                End If
+
+            Case NameOf(subsystem.DeviceErrors)
+                Me.OnLastError(subsystem.LastDeviceError)
+
+            Case NameOf(subsystem.LastDeviceError)
+                OnLastError(subsystem.LastDeviceError)
+
+            Case NameOf(subsystem.ServiceRequestStatus)
+                Me.StatusRegisterStatus = subsystem.ServiceRequestStatus
+
+            Case NameOf(subsystem.StandardEventStatus)
+                Me.StandardRegisterStatus = subsystem.StandardEventStatus
+
+        End Select
+    End Sub
+
+    ''' <summary> Status subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If e Is Nothing Then Return
+        Dim action As String = $"handling property {NameOf(StatusSubsystemBase)}.{e.PropertyName} changed event"
+        Try
+            Me.OnPropertyChanged(TryCast(sender, StatusSubsystemBase), e.PropertyName)
+        Catch ex As Exception
+            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. { ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
 
 #End Region
 

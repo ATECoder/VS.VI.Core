@@ -21,33 +21,27 @@ Public Class VersionInfo
         MyBase.Clear()
     End Sub
 
-    ''' <summary> Parses the instrument firmware revision. </summary>
-    ''' <remarks>
-    ''' KEYSIGHT, Model 34980, xxxxxxx,m.mm–b.bb–f.ff–d.dd <para>
-    ''' where</para><para>xxxxxxx is the serial number.</para>
-    ''' </remarks>
-    ''' <exception cref="ArgumentNullException" guarantee="strong"> . </exception>
-    ''' <param name="revision"> Specifies the instrument <see cref="FirmwareRevisionElements">revisions</see>
-    ''' e.g., <c>m.mm–b.bb–f.ff–d.dd</c> where <para>
-    ''' m.mm - Mainframe version number; </para>. </param><para>
-    ''' b.bb - Boot code revision number; </para><para>
-    ''' f.ff - front panel revision number; and </para><para>
-    ''' d.dd - DMM revision number.</para>
-    Protected Overrides Sub ParseFirmwareRevision(ByVal revision As String)
+    ''' <summary> Parses the instrument identity string. </summary>
+    ''' <param name="value"> Specifies the instrument identity string, which includes at a minimum the
+    ''' following information:
+    ''' <see cref="ManufacturerName">manufacturer</see>, <see cref="Model">model</see>,
+    ''' <see cref="SerialNumber">serial number</see>, e.g., <para>
+    ''' <c>H3458A</c>.</para> </param>
+    Public Overrides Sub Parse(ByVal value As String)
 
-        If revision Is Nothing Then
-            Throw New ArgumentNullException(NameOf(revision))
-        ElseIf String.IsNullOrWhiteSpace(revision) Then
-            MyBase.ParseFirmwareRevision(revision)
+        If String.IsNullOrEmpty(value) Then
+            Me.Clear()
         Else
-            MyBase.ParseFirmwareRevision(revision)
 
-            ' get the revision sections
-            Dim revSections As Queue(Of String) = New Queue(Of String)(revision.Split("-"c))
-            If revSections.Count > 0 Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.Mainframe.ToString, revSections.Dequeue.Trim)
-            If revSections.Count > 0 Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.BootCode.ToString, revSections.Dequeue.Trim)
-            If revSections.Count > 0 Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.FrontPanel.ToString, revSections.Dequeue.Trim)
-            If revSections.Count > 0 Then Me.FirmwareRevisionElements.Add(FirmwareRevisionElement.InternalMeter.ToString, revSections.Dequeue.Trim)
+            ' save the identity.
+            Me.Identity = value
+
+            ' Parse the id to get the revision number
+            Dim idItems As Queue(Of String) = New Queue(Of String)(value.Split(","c))
+
+            Me.ManufacturerName = "KEYSIGHT"
+
+            Me.Model = idItems.Dequeue
 
         End If
 

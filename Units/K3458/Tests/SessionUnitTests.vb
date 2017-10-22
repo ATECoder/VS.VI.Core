@@ -93,13 +93,21 @@ Public Class SessionUnitTests
         Using target As Device = New Device()
             target.Session.IsAliveCommand = ""
             target.Session.IsAliveQueryCommand = ""
+            ' bit 5 in this instrument
+            target.Session.ErrorAvailableBits = ServiceRequests.StandardEvent
             Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-            actualBoolean = target.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
+            target.Session.ResourceTitle = TestInfo.ResourceTitle
+            target.Session.OpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, target.CapturedSyncContext)
+            actualBoolean = target.Session.IsSessionOpen
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Failed to open session: {e.Details}")
 
-            Dim expectedServiceRequest As Integer = 24
+            Dim expectedServiceRequest As Integer = 152
             Dim actualServiceRequest As Integer = target.Session.ReadServiceRequestStatus
             Assert.AreEqual(expectedServiceRequest, actualServiceRequest, $"Service request status on open")
+
+            expectedBoolean = False
+            actualBoolean = target.Session.ErrorAvailable
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Error available {target.Session.ServiceRequestStatus:X}")
 
             Dim expectedReadTerminationEnabled As Boolean = False
             Dim actualReadTerminationEnabled As Boolean
@@ -116,7 +124,7 @@ Public Class SessionUnitTests
             actualTermination = target.Session.TerminationCharacter
             Assert.AreEqual(expectedTermination, actualTermination, $"Initial read termination character value")
 
-            expectedServiceRequest = 24
+            expectedServiceRequest = 152
             actualServiceRequest = target.Session.ReadServiceRequestStatus
             Assert.AreEqual(expectedServiceRequest, actualServiceRequest, $"Service request status after native termination configuration")
 
@@ -127,6 +135,22 @@ Public Class SessionUnitTests
             target.Session.Clear()
             target.CloseSession()
         End Using
+    End Sub
+
+
+    <TestMethod()>
+    Public Sub OpenDeviceTest()
+        Dim expectedBoolean As Boolean = True
+        Dim actualBoolean As Boolean
+        Using target As Device = New Device()
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            target.Session.ResourceTitle = TestInfo.ResourceTitle
+            actualBoolean = target.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Failed to open device: {e.Details}")
+            target.Session.Clear()
+            target.CloseSession()
+        End Using
+
     End Sub
 
 #End Region

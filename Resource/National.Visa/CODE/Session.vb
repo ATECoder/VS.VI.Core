@@ -237,6 +237,7 @@ Public Class Session
         End If
     End Function
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     Private Function ReadAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal defaultValue As Boolean) As Boolean
         Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
         If s IsNot Nothing Then
@@ -246,6 +247,7 @@ Public Class Session
         End If
     End Function
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     Private Sub WriteAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal value As Boolean)
         Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
         If s IsNot Nothing Then
@@ -254,6 +256,7 @@ Public Class Session
     End Sub
 
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     Private Function ReadAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal defaultValue As Byte) As Byte
         Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
         If s IsNot Nothing Then
@@ -263,6 +266,7 @@ Public Class Session
         End If
     End Function
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     Private Sub WriteAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal value As Byte)
         Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
         If s IsNot Nothing Then
@@ -270,6 +274,7 @@ Public Class Session
         End If
     End Sub
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     Private Function ReadAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal defaultValue As Integer) As Integer
         Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
         If s IsNot Nothing Then
@@ -279,6 +284,7 @@ Public Class Session
         End If
     End Function
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     Private Sub WriteAttribute(ByVal attribute As Ivi.Visa.NativeVisaAttribute, ByVal value As Integer)
         Dim s As Ivi.Visa.INativeVisaSession = TryCast(Me.VisaSession, Ivi.Visa.INativeVisaSession)
         If s IsNot Nothing Then

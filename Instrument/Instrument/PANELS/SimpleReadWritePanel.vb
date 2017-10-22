@@ -66,6 +66,7 @@ Public Class SimpleReadWritePanel
 
     ''' <summary> Gets or sets the session. </summary>
     ''' <value> The session. </value>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Property Session As SessionBase
         Get
             Return Me._Session
@@ -253,7 +254,7 @@ Public Class SimpleReadWritePanel
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     Private Sub _AutoReadCheckBox_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _AutoReadCheckBox.CheckedChanged
-        If Not Me._InitializingComponents Then
+        If Not Me.InitializingComponents Then
             Me._SimpleReadWriteControl.ReadEnabled = Me._AutoReadCheckBox.Checked
         End If
     End Sub
@@ -296,7 +297,7 @@ Public Class SimpleReadWritePanel
     ''' <param name="e">      Event information. </param>
     Private Sub _PolledStatusToolStripLabel_DoubleClick(sender As System.Object, ByVal e As System.EventArgs) Handles _ServiceRequestStatusLabel.DoubleClick
         If Not Me._PollEnableCheckBox.Checked Then
-            Me.displayStatusByte()
+            Me.DisplayStatusByte()
         End If
     End Sub
 
@@ -310,7 +311,7 @@ Public Class SimpleReadWritePanel
             If Me.Session Is Nothing Then
                 Me._ServiceRequestStatusLabel.Text = "0x.."
             Else
-                Dim statusbyte As Integer = displayStatusByte()
+                Dim statusbyte As Integer = DisplayStatusByte()
                 If ((statusbyte And CInt(Me._MessageStatusBitValueNumeric.Value)) = Me._MessageStatusBitValueNumeric.Value) AndAlso
                     Me._AutoReadCheckBox.Checked Then
                     Threading.Thread.Sleep(10)
@@ -348,8 +349,8 @@ Public Class SimpleReadWritePanel
     ''' <summary> Updates the termination described by session. </summary>
     ''' <param name="session"> The session. </param>
     Private Sub UpdateTermination(ByVal session As VI.SessionBase)
-        If Me.Session.TerminationCharacterEnabled Then
-            If Me.Session.TerminationCharacter = isr.Core.Pith.EscapeSequencesExtensions.NewLineValue Then
+        If session.TerminationCharacterEnabled Then
+            If session.TerminationCharacter = isr.Core.Pith.EscapeSequencesExtensions.NewLineValue Then
                 Me._ReadTerminationComboBox.SelectedIndex = NewLineTerminationIndex
             Else
                 Me._ReadTerminationComboBox.SelectedIndex = ReturnTerminationIndex
@@ -359,8 +360,9 @@ Public Class SimpleReadWritePanel
         End If
     End Sub
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ReadTerminationComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles _ReadTerminationComboBox.SelectedIndexChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents Then Return
         Dim action As String = "applying return termination"
         Try
             Select Case Me._ReadTerminationComboBox.SelectedIndex
@@ -388,6 +390,7 @@ Public Class SimpleReadWritePanel
         Return message.ToString
     End Function
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _AppendReturnCheckBox_CheckedChanged(sender As Object, e As EventArgs) Handles _AppendReturnCheckBox.CheckedChanged
         Dim action As String = "applying return termination"
         Try
@@ -397,6 +400,7 @@ Public Class SimpleReadWritePanel
         End Try
     End Sub
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _AppendNewLineCheckBox_CheckedChanged(sender As Object, e As EventArgs) Handles _AppendNewLineCheckBox.CheckedChanged
         Dim action As String = "applying new line termination"
         Try
@@ -406,6 +410,7 @@ Public Class SimpleReadWritePanel
         End Try
     End Sub
 
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ReadServiceRequestStatus()
         Dim action As String = "reading service request status"
         Try

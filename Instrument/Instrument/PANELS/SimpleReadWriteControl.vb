@@ -125,7 +125,7 @@ Public Class SimpleReadWriteControl
         End Get
         Protected Set(value As Integer)
             Me._ServiceRequestValue = value
-            Me.SafePostPropertyChanged(NameOf(Me.ServiceRequestValue))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -223,7 +223,9 @@ Public Class SimpleReadWriteControl
                 Windows.Forms.Application.DoEvents()
                 Stopwatch.StartNew.Wait(TimeSpan.FromMilliseconds(10))
                 If Me.IsSessionOpen Then
-                    Me.ServiceRequestValue = CInt(Me._Session.ReadStatusByte)
+                    If Not Me.ServiceRequestRegistered Then
+                        Me.ServiceRequestValue = CInt(Me._Session.ReadServiceRequestStatus)
+                    End If
                 Else
                     Me.ServiceRequestValue = 0
                 End If

@@ -143,16 +143,32 @@ Public MustInherit Class StatusSubsystemBase
         Me.Session.MeasurementAvailableBits = Me.MeasurementAvailableBits
         Me.Session.MessageAvailableBits = Me.MessageAvailableBits
         Me.Session.StandardEventAvailableBits = Me.StandardEventAvailableBits
+        Me.Session.TerminationCharacterEnabled = Me.TerminationCharacterEnabled
+        If Me.TerminationCharacterEnabled Then
+            Me.Session.TerminationCharacter = Me.TerminationCharacter
+            Me.Session.ReadServiceRequestStatus()
+        End If
         Me.Session.Execute(Me.ResetKnownStateCommand)
         Me.QueryOperationCompleted()
         Me.QueryLineFrequency()
         Me.ReadServiceRequestStatus()
     End Sub
 
-
 #End Region
 
 #Region " SESSION "
+
+#Region " ATTRIBUTES "
+
+    ''' <summary> Gets the termination character enabled. </summary>
+    ''' <value> The termination character enabled. </value>
+    Protected Overridable ReadOnly Property TerminationCharacterEnabled As Boolean = False
+
+    ''' <summary> Gets the termination character. </summary>
+    ''' <value> The termination character. </value>
+    Protected Overridable ReadOnly Property TerminationCharacter As Byte = isr.Core.Pith.EscapeSequencesExtensions.NewLineValue
+
+#End Region
 
     ''' <summary> Executes the session property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
@@ -860,7 +876,6 @@ Public MustInherit Class StatusSubsystemBase
     End Property
 
 #End Region
-
 
 #Region " STATUS REGISTER EVENTS: STANDARD EVENT "
 

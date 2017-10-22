@@ -87,6 +87,26 @@ Public Class Device
 
 #Region " SESSION "
 
+#Region " SESSION INITIALIZATION PROPERTIES  "
+
+    ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
+    ''' <value> The error available bits. </value>
+    Protected Overrides ReadOnly Property ErrorAvailableBits() As ServiceRequests = ServiceRequests.StandardEvent
+
+    ''' <summary> Gets or sets the keep alive interval. </summary>
+    ''' <value> The keep alive interval. </value>
+    Protected Overrides ReadOnly Property KeepAliveInterval As TimeSpan = TimeSpan.Zero
+
+    ''' <summary> Gets or sets the is alive command. </summary>
+    ''' <value> The is alive command. </value>
+    Protected Overrides ReadOnly Property IsAliveCommand As String = ""
+
+    ''' <summary> Gets or sets the is alive query command. </summary>
+    ''' <value> The is alive query command. </value>
+    Protected Overrides ReadOnly Property IsAliveQueryCommand As String = ""
+
+#End Region
+
     ''' <summary> Allows the derived device to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
@@ -140,11 +160,26 @@ Public Class Device
 
 #Region " STATUS "
 
+    Private _StatusSubsystem As StatusSubsystem
     ''' <summary>
     ''' Gets or sets the Status Subsystem.
     ''' </summary>
     ''' <value>The Status Subsystem.</value>
     Public Property StatusSubsystem As StatusSubsystem
+        Get
+            Return Me._StatusSubsystem
+        End Get
+        Set(value As StatusSubsystem)
+            If Me._StatusSubsystem IsNot Nothing Then
+                RemoveHandler Me._StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
+            End If
+            Me._StatusSubsystem = value
+            If Me._StatusSubsystem IsNot Nothing Then
+                AddHandler Me._StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
+            End If
+            Me.StatusSubsystemBase = value
+        End Set
+    End Property
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>

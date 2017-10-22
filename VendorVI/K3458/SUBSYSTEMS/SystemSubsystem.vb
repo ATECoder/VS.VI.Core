@@ -55,7 +55,7 @@ Public Class SystemSubsystem
 
     ''' <summary> Gets the preset command. </summary>
     ''' <value> The preset command. </value>
-    Protected Overrides ReadOnly Property PresetCommand As String = VI.Scpi.Syntax.SystemPresetCommand
+    Protected Overrides ReadOnly Property PresetCommand As String = ""
 
 #End Region
 
