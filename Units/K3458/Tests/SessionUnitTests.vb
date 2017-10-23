@@ -53,24 +53,6 @@ Public Class SessionUnitTests
     '
 #End Region
 
-#Region " TRACE "
-
-    ''' <summary> Trace message. </summary>
-    ''' <param name="format"> Describes the format to use. </param>
-    ''' <param name="args">   A variable-length parameters list containing arguments. </param>
-    Public Shared Sub TraceMessage(ByVal format As String, ByVal ParamArray args() As Object)
-        SessionUnitTests.TraceMessage(String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
-    End Sub
-
-    ''' <summary> Trace message. </summary>
-    ''' <param name="message"> The message. </param>
-    Public Shared Sub TraceMessage(ByVal message As String)
-        Debug.WriteLine(message)
-        Console.Out.WriteLine(message)
-    End Sub
-
-#End Region
-
 #Region " CONFIGURATION VERIFICATION "
 
     ''' <summary> (Unit Test Method) tests domain configuration exists. </summary>

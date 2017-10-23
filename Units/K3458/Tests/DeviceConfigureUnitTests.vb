@@ -31,8 +31,7 @@ Public Class DeviceConfigureUnitTests
         End Set
     End Property
 
-#Region "Additional test attributes"
-
+#Region " ADDITIONAL TEST ATTRIBUTES "
 
     Public Shared Property Device As Device
 
@@ -80,7 +79,47 @@ Public Class DeviceConfigureUnitTests
     Public Sub DeviceOpenTest()
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean = DeviceConfigureUnitTests.Device.IsDeviceOpen
-        Assert.AreEqual(expectedBoolean, actualBoolean, $"Open {DeviceConfigureUnitTests.Device.ResourceName}")
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"Open {TestInfo.ResourceName}")
+    End Sub
+
+    ''' <summary> (Unit Test Method) tests custom device configuration. </summary>
+    <TestMethod()>
+    Public Sub CustomDeviceConfigurationTest()
+        Dim expectedBoolean As Boolean = True
+        Dim actualBoolean As Boolean = DeviceConfigureUnitTests.Device.IsDeviceOpen
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"Open {TestInfo.ResourceName}")
+
+        ' ! AUTO ZERO ONCE RETURNS OFF
+        Dim expectedAutoZeroMode As AutoZeroMode = CType(TestInfo.AutoZero, AutoZeroMode)
+        Dim actualAutoZeroMode As AutoZeroMode? = Device.MeasureSubsystem.ApplyAutoZeroMode(expectedAutoZeroMode)
+        Assert.AreEqual(True, actualAutoZeroMode.HasValue, $"Auto zero mode has value")
+        Assert.AreEqual(expectedAutoZeroMode, actualAutoZeroMode.Value, $"Auto zero mode applied")
+
+        Dim expectedSenseFunctionMode As SenseFunctionMode = CType(TestInfo.SenseFunction, SenseFunctionMode)
+        Dim actualSenseFunctionMode As SenseFunctionMode? = Device.MeasureSubsystem.ApplySenseFunctionMode(expectedSenseFunctionMode)
+        Assert.AreEqual(True, actualSenseFunctionMode.HasValue, $"Sense function mode has value")
+        Assert.AreEqual(expectedSenseFunctionMode, actualSenseFunctionMode.Value, $"Sense function mode applied")
+
+        Dim expectedDouble As Double = TestInfo.PowerLineCycles
+        Dim actualDouble As Double? = Device.MeasureSubsystem.ApplyPowerLineCycles(expectedDouble)
+        Assert.AreEqual(True, actualDouble.HasValue, $"Power line cycles has value")
+        Assert.AreEqual(expectedDouble, actualDouble.Value, $"Power line cycles applied")
+
+        Dim expectedMathMode As MathMode = CType(TestInfo.MathMode, MathMode)
+        Dim actualMathMode As MathMode? = Device.MeasureSubsystem.ApplyMathMode(expectedMathMode)
+        Assert.AreEqual(True, actualMathMode.HasValue, $"Math mode has value")
+        Assert.AreEqual(expectedMathMode, actualMathMode.Value, $"Math mode applied")
+
+        Dim expectedStoreMathRegister As StoreMathRegister = CType(TestInfo.StoreMathRegister, StoreMathRegister)
+        expectedDouble = TestInfo.StoreMathValue
+        Dim actualStoreMathRegister As StoreMathRegister? = Device.MeasureSubsystem.WriteStoreMath(expectedStoreMathRegister, expectedDouble)
+        actualDouble = Device.MeasureSubsystem.StoreMathValue
+        Assert.AreEqual(True, actualStoreMathRegister.HasValue, $"Store math register has value")
+        Assert.AreEqual(expectedStoreMathRegister, actualStoreMathRegister.Value, $"Store Math Register applied")
+
+        Assert.AreEqual(True, actualDouble.HasValue, $"Store math value has value")
+        Assert.AreEqual(expectedDouble, actualDouble.Value, $"Store Math value applied")
+
     End Sub
 
 #End Region

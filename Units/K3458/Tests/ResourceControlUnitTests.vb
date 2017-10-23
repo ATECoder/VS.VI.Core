@@ -110,7 +110,7 @@ Public Class ResourceControlUnitTests
 
                 ' check the MODEL
                 Assert.AreEqual(TestInfo.ResourceModel, target.StatusSubsystem.VersionInfo.Model,
-                                $"Disconnect open {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
+                                $"Version Info Model {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
 
                 control.Disconnect(e)
                 actualBoolean = e.Cancel
@@ -124,7 +124,6 @@ Public Class ResourceControlUnitTests
             End Using
         End Using
     End Sub
-
 
 #End Region
 

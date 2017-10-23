@@ -119,6 +119,18 @@ Public MustInherit Class SubsystemBase
 
 #Region " ENUMERATION "
 
+    ''' <summary> Queries first value returned from the instrument. </summary>
+    ''' <param name="queryCommand"> The query command. </param>
+    ''' <param name="value">        The value. </param>
+    ''' <returns> The first value. </returns>
+    Public Function QueryFirstValue(Of T As Structure)(ByVal queryCommand As String, ByVal value As Nullable(Of T)) As Nullable(Of T)
+        If Not String.IsNullOrWhiteSpace(queryCommand) Then
+            Return Me.Session.QueryFirstEnumValue(Of T)(value, queryCommand)
+        Else
+            Return value
+        End If
+    End Function
+
     ''' <summary> Issues the query command and parses the returned enum value into an Enum. </summary>
     ''' <param name="value">        The value. </param>
     ''' <param name="queryCommand"> The query command. </param>
@@ -214,6 +226,17 @@ Public MustInherit Class SubsystemBase
 #End Region
 
 #Region " DOUBLE "
+
+    ''' <summary> Queries and parses the second value from the instrument. </summary>
+    ''' <param name="value">        The value. </param> 
+    ''' <param name="queryCommand"> The query command. </param>
+    ''' <returns> The second. </returns>
+    Public Function QuerySecond(ByVal value As Double?, ByVal queryCommand As String) As Double?
+        If Not String.IsNullOrWhiteSpace(queryCommand) Then
+            value = Me.Session.QuerySecond(value.GetValueOrDefault(0), queryCommand)
+        End If
+        Return value
+    End Function
 
     ''' <summary> Queries an <see cref="T:Double">Double</see> value. </summary>
     ''' <param name="value">        The value. </param>

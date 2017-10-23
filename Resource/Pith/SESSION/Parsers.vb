@@ -364,6 +364,16 @@ Partial Public Class SessionBase
         Return Me.Parse(dummy, Me.QueryTrimEnd(dataToWrite))
     End Function
 
+    ''' <summary> Queries and parse the second value . </summary>
+    ''' <param name="dummy">       A dummy that distinguishes this method. </param>
+    ''' <param name="dataToWrite"> The data to write. </param>
+    ''' <returns> The second. </returns>
+    Public Overloads Function QuerySecond(ByVal dummy As Double, ByVal dataToWrite As String) As Double
+        Me.MakeEmulatedReplyIfEmpty(dummy)
+        dataToWrite = Me.QueryTrimEnd(dataToWrite)
+        Return Me.Parse(dummy, dataToWrite.Split(","c)(1))
+    End Function
+
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
     ''' read. Parses the Double return value. </summary>
     ''' <param name="result">      [in,out] The result. </param>
@@ -482,6 +492,21 @@ Partial Public Class SessionBase
         End If
     End Function
 
+    ''' <summary> Queries first enum value. </summary>
+    ''' <param name="value">       The value. </param>
+    ''' <param name="dataToWrite"> The data to write. </param>
+    ''' <returns> The first enum value. </returns>
+    Public Overloads Function QueryFirstEnumValue(Of T As Structure)(ByVal value As Nullable(Of T), ByVal dataToWrite As String) As Nullable(Of T)
+        Dim currentValue As String = value.ToString
+        Me.MakeEmulatedReplyIfEmpty(currentValue)
+        If Not String.IsNullOrWhiteSpace(dataToWrite) Then
+            Me.WriteLine(dataToWrite)
+            currentValue = Me.ReadLineTrimEnd()
+            currentValue = currentValue.Split(","c)(0).Trim
+        End If
+        Return SessionBase.ParseEnumValue(Of T)(currentValue)
+    End Function
+
     ''' <summary> Issues the query command and parses the returned values into an Enum using the enum value. </summary>
     ''' <param name="value">        The value. </param>
     ''' <param name="dataToWrite"> The data to write. </param>
@@ -509,6 +534,8 @@ Partial Public Class SessionBase
         End If
         If String.IsNullOrWhiteSpace(currentValue) Then
             Return New Nullable(Of T)
+        ElseIf isr.Core.Pith.ParseExtensions.IsNumber(currentValue) Then
+            Return CType(CObj(Integer.Parse(currentValue)), T)
         Else
             Dim se As New StringEnumerator(Of T)
             Return se.ParseContained(currentValue.BuildDelimitedValue)

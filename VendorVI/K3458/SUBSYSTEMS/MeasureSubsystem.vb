@@ -64,8 +64,6 @@ Public Class MeasureSubsystem
 
 #End Region
 
-#Region " COMMAND SYNTAX "
-
 #Region "  INIT, READ, FETCH "
 
     ''' <summary> Gets the fetch command. </summary>
@@ -79,6 +77,67 @@ Public Class MeasureSubsystem
     Protected Overrides ReadOnly Property ReadCommand As String = ""
 
 #End Region
+
+#Region " AVERAGE ENABLED "
+
+    ''' <summary> Gets the Average enabled command Format. </summary>
+    ''' <value> The Average enabled query command. </value>
+    Protected Overridable ReadOnly Property AverageEnabledCommandFormat As String = ":SENS:RES:AVER:STAT {0:'ON';'ON';'OFF'}"
+
+    ''' <summary> Gets the Average enabled query command. </summary>
+    ''' <value> The Average enabled query command. </value>
+    Protected Overridable ReadOnly Property AverageEnabledQueryCommand As String = ":SENS:RES:AVER:STAT?"
+
+#End Region
+
+#Region " AUTO ZERO MODE "
+
+    ''' <summary> Gets the auto zero command Format. </summary>
+    ''' <value> The auto zero enabled query command. </value>
+    Protected Overridable ReadOnly Property AutoZeroModeCommandFormat As String = "AZERO {0}"
+
+    ''' <summary> Gets the auto zero query command. </summary>
+    ''' <value> The auto Zero enabled query command. </value>
+    Protected Overridable ReadOnly Property AutoZeroModeQueryCommand As String = "AZERO?"
+
+    Private _AutoZeroMode As AutoZeroMode?
+    ''' <summary> Gets or sets the cached Auto Zero Mode. </summary>
+    ''' <value> The <see cref="AutoZeroMode">Auto Zero Mode</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property AutoZeroMode As AutoZeroMode?
+        Get
+            Return Me._AutoZeroMode
+        End Get
+        Protected Set(ByVal value As AutoZeroMode?)
+            If Not Me.AutoZeroMode.Equals(value) Then
+                Me._AutoZeroMode = value
+                Me.SafePostPropertyChanged(NameOf(Me.AutoZeroMode))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Auto Zero Mode. </summary>
+    ''' <param name="value"> The  Auto Zero Mode. </param>
+    ''' <returns> The <see cref="AutoZeroMode">Auto Zero Mode</see> or none if unknown. </returns>
+    Public Function ApplyAutoZeroMode(ByVal value As AutoZeroMode) As AutoZeroMode?
+        Me.WriteAutoZeroMode(value)
+        Return Me.QueryAutoZeroMode()
+    End Function
+
+    ''' <summary> Queries the auto Zero Mode. </summary>
+    ''' <returns> The <see cref="AutoZeroMode">auto Zero Mode</see> or none if unknown. </returns>
+    Public Function QueryAutoZeroMode() As AutoZeroMode?
+        Me.AutoZeroMode = Me.QueryValue(Of AutoZeroMode)(Me.AutoZeroModeQueryCommand, Me.AutoZeroMode)
+        Return Me.AutoZeroMode
+    End Function
+
+    ''' <summary> Writes the auto Zero Mode without reading back the value from the device. </summary>
+    ''' <param name="value"> The autoZeroMode. </param>
+    ''' <returns> The <see cref="AutoZeroMode">autoZeroMode</see> or none if unknown. </returns>
+    Public Function WriteAutoZeroMode(ByVal value As AutoZeroMode) As AutoZeroMode?
+        Me.AutoZeroMode = Me.WriteValue(Of AutoZeroMode)(Me.AutoZeroModeCommandFormat, value)
+        Return Me.AutoZeroMode
+    End Function
 
 #End Region
 
@@ -118,4 +177,331 @@ Public Class MeasureSubsystem
 
 #End Region
 
+#Region " MATH MODE "
+
+    ''' <summary> Gets the Math command Format. </summary>
+    ''' <value> The Math enabled query command. </value>
+    Protected Overridable ReadOnly Property MathModeCommandFormat As String = "MATH {0}"
+
+    ''' <summary> Gets the Math query command. </summary>
+    ''' <value> The Math enabled query command. </value>
+    Protected Overridable ReadOnly Property MathModeQueryCommand As String = "MATH?"
+
+    Private _MathMode As MathMode?
+    ''' <summary> Gets or sets the cached Math Mode. </summary>
+    ''' <value> The <see cref="MathMode">Math Mode</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property MathMode As MathMode?
+        Get
+            Return Me._MathMode
+        End Get
+        Protected Set(ByVal value As MathMode?)
+            If Not Me.MathMode.Equals(value) Then
+                Me._MathMode = value
+                Me.SafePostPropertyChanged(NameOf(Me.MathMode))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Math Mode. </summary>
+    ''' <param name="value"> The  Math Mode. </param>
+    ''' <returns> The <see cref="MathMode">Math Mode</see> or none if unknown. </returns>
+    Public Function ApplyMathMode(ByVal value As MathMode) As MathMode?
+        Me.WriteMathMode(value)
+        Return Me.QueryMathMode()
+    End Function
+
+    ''' <summary> Queries the Math Mode. </summary>
+    ''' <returns> The <see cref="MathMode">Math Mode</see> or none if unknown. </returns>
+    Public Function QueryMathMode() As MathMode?
+        Me.MathMode = Me.QueryFirstValue(Of MathMode)(Me.MathModeQueryCommand, Me.MathMode)
+        Return Me.MathMode
+    End Function
+
+    ''' <summary> Writes the Math Mode without reading back the value from the device. </summary>
+    ''' <param name="value"> The MathMode. </param>
+    ''' <returns> The <see cref="MathMode">MathMode</see> or none if unknown. </returns>
+    Public Function WriteMathMode(ByVal value As MathMode) As MathMode?
+        Me.MathMode = Me.WriteValue(Of MathMode)(Me.MathModeCommandFormat, value)
+        Return Me.MathMode
+    End Function
+
+#End Region
+
+#Region " SENSE FUNCTION MODE "
+
+    ''' <summary> Gets the Sense function command Format. </summary>
+    ''' <value> The auto Range enabled query command. </value>
+    Protected Overridable ReadOnly Property SenseFunctionModeCommandFormat As String = "FUNC {0}"
+
+    ''' <summary> Gets the Sense function query command. </summary>
+    ''' <value> The auto Range enabled query command. </value>
+    Protected Overridable ReadOnly Property SenseFunctionModeQueryCommand As String = "FUNC?"
+
+    Private _SenseFunctionMode As SenseFunctionMode?
+    ''' <summary> Gets or sets the cached Sense function Mode. </summary>
+    ''' <value> The <see cref="SenseFunctionMode">Sense function Mode</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property SenseFunctionMode As SenseFunctionMode?
+        Get
+            Return Me._SenseFunctionMode
+        End Get
+        Protected Set(ByVal value As SenseFunctionMode?)
+            If Not Me.SenseFunctionMode.Equals(value) Then
+                Me._SenseFunctionMode = value
+                Me.SafePostPropertyChanged(NameOf(Me.SenseFunctionMode))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Sense function Mode. </summary>
+    ''' <param name="value"> The  Sense function Mode. </param>
+    ''' <returns> The <see cref="SenseFunctionMode">Sense function Mode</see> or none if unknown. </returns>
+    Public Function ApplySenseFunctionMode(ByVal value As SenseFunctionMode) As SenseFunctionMode?
+        Me.WriteSenseFunctionMode(value)
+        Return Me.QuerySenseFunctionMode()
+    End Function
+
+    ''' <summary> Queries the Sense Function Mode. </summary>
+    ''' <returns> The <see cref="SenseFunctionMode">Sense Function Mode</see> or none if unknown. </returns>
+    Public Function QuerySenseFunctionMode() As SenseFunctionMode?
+        Me.SenseFunctionMode = Me.QueryFirstValue(Of SenseFunctionMode)(Me.SenseFunctionModeQueryCommand, Me.SenseFunctionMode)
+        Return Me.SenseFunctionMode
+    End Function
+
+    ''' <summary> Writes the Sense Function Mode without reading back the value from the device. </summary>
+    ''' <param name="value"> The Sense Function Mode. </param>
+    ''' <returns> The <see cref="SenseFunctionMode">Sense Function Mode</see> or none if unknown. </returns>
+    Public Function WriteSenseFunctionMode(ByVal value As SenseFunctionMode) As SenseFunctionMode?
+        Me.SenseFunctionMode = Me.WriteValue(Of SenseFunctionMode)(Me.SenseFunctionModeCommandFormat, value)
+        Return Me.SenseFunctionMode
+    End Function
+
+#End Region
+
+#Region " AUTO RANGE ENABLED "
+
+    ''' <summary> Auto Range enabled. </summary>
+    Private _AutoRangeEnabled As Boolean?
+
+    ''' <summary> Gets or sets the cached Auto Range Enabled sentinel. </summary>
+    ''' <value> <c>null</c> if Auto Range Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property AutoRangeEnabled As Boolean?
+        Get
+            Return Me._AutoRangeEnabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.AutoRangeEnabled, value) Then
+                Me._AutoRangeEnabled = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Auto Range Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyAutoRangeEnabled(ByVal value As Boolean) As Boolean?
+        Me.WriteAutoRangeEnabled(value)
+        Return Me.QueryAutoRangeEnabled()
+    End Function
+
+    ''' <summary> Gets the automatic Range enabled query command. </summary>
+    ''' <value> The automatic Range enabled query command. </value>
+    Protected Overridable ReadOnly Property AutoRangeEnabledQueryCommand As String = "ARANG?"
+
+    ''' <summary> Queries the Auto Range Enabled sentinel. Also sets the
+    ''' <see cref="AutoRangeEnabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryAutoRangeEnabled() As Boolean?
+        Me.AutoRangeEnabled = Me.Query(Me.AutoRangeEnabled, Me.AutoRangeEnabledQueryCommand)
+        Return Me.AutoRangeEnabled
+    End Function
+
+    ''' <summary> Gets the automatic Range enabled command Format. </summary>
+    ''' <value> The automatic Range enabled query command. </value>
+    Protected Overridable ReadOnly Property AutoRangeEnabledCommandFormat As String = "ARANGE {0:'ON';'ON';'OFF'}"
+
+    ''' <summary> Writes the Auto Range Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteAutoRangeEnabled(ByVal value As Boolean) As Boolean?
+        Me.AutoRangeEnabled = Me.Write(value, Me.AutoRangeEnabledCommandFormat)
+        Return Me.AutoRangeEnabled
+    End Function
+
+#End Region
+
+#Region " POWER LINE CYCLES "
+
+    Private _PowerLineCycles As Double?
+    ''' <summary> Gets or sets the cached Power Line Cycles. </summary>
+    Public Overloads Property PowerLineCycles As Double?
+        Get
+            Return Me._PowerLineCycles
+        End Get
+        Protected Set(ByVal value As Double?)
+            If Not Nullable.Equals(Me.PowerLineCycles, value) Then
+                Me._PowerLineCycles = value
+                Me.SafePostPropertyChanged(NameOf(Me.PowerLineCycles))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Power Line Cycles. </summary>
+    ''' <param name="value"> The current Power Line Cycles. </param>
+    ''' <returns> The Power Line Cycles or none if unknown. </returns>
+    Public Function ApplyPowerLineCycles(ByVal value As Double) As Double?
+        Me.WritePowerLineCycles(value)
+        Return Me.QueryPowerLineCycles()
+    End Function
+
+    ''' <summary> Gets The Power Line Cycles query command. </summary>
+    ''' <value> The Power Line Cycles query command. </value>
+    Protected Overridable ReadOnly Property PowerLineCyclesQueryCommand As String = "NPLC?"
+
+
+    ''' <summary> Queries the PowerLineCycles. </summary>
+    ''' <returns> The Power Line Cycles or none if unknown. </returns>
+    Public Function QueryPowerLineCycles() As Double?
+        Me.PowerLineCycles = Me.Query(Me.PowerLineCycles, Me.PowerLineCyclesQueryCommand)
+        Return Me.PowerLineCycles
+    End Function
+
+    ''' <summary> Gets The Power Line Cycles command format. </summary>
+    ''' <value> The Power Line Cycles command format. </value>
+    Protected Overridable ReadOnly Property PowerLineCyclesCommandFormat As String = "NPLC {0}"
+
+    ''' <summary> Writes the Power Line Cycles without reading back the value from the device. </summary>
+    ''' <param name="value"> The current PowerLineCycles. </param>
+    ''' <returns> The Power Line Cycles or none if unknown. </returns>
+    Public Function WritePowerLineCycles(ByVal value As Double) As Double?
+        Me.PowerLineCycles = Me.Write(value, Me.PowerLineCyclesCommandFormat)
+        Return Me.PowerLineCycles
+    End Function
+
+#End Region
+
+#Region " STORE MATH "
+
+    Private _StoreMathValue As Double?
+    ''' <summary> Gets or sets the cached Store Math Value. </summary>
+    ''' <value> The cached Store Math Value or none if not set or unknown. </value>
+    Public Overloads Property StoreMathValue As Double?
+        Get
+            Return Me._StoreMathValue
+        End Get
+        Protected Set(ByVal value As Double?)
+            If Not Nullable.Equals(Me.StoreMathValue, value) Then
+                Me._StoreMathValue = value
+                Me.SafePostPropertyChanged(NameOf(Me.StoreMathValue))
+            End If
+        End Set
+    End Property
+
+    Private _StoreMathRegister As StoreMathRegister?
+    ''' <summary> Gets or sets the cached Store Math Register. </summary>
+    ''' <value> The <see cref="StoreMathRegister">Store Math Register</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property StoreMathRegister As StoreMathRegister?
+        Get
+            Return Me._StoreMathRegister
+        End Get
+        Protected Set(ByVal value As StoreMathRegister?)
+            If Not Me.StoreMathRegister.Equals(value) Then
+                Me._StoreMathRegister = value
+                Me.SafePostPropertyChanged(NameOf(Me.StoreMathRegister))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Store Math Register. </summary>
+    ''' <returns> The <see cref="StoreMathRegister">Store Math Register</see> or none if unknown. </returns>
+    <Obsolete("Apply does not work with store math because reading back returns the measured value and the register cannot be read")>
+    Public Function ApplyStoreMath(ByVal register As StoreMathRegister, ByVal value As Double) As StoreMathRegister?
+        Me.WriteStoreMath(register, value)
+        Me.QueryStoreMathValue()
+        Return Me.StoreMathRegister
+    End Function
+
+    ''' <summary> Gets the auto zero query command. </summary>
+    ''' <value> The auto Zero enabled query command. </value>
+    Protected Overridable ReadOnly Property StoreMathQueryCommand As String = "SMATH?"
+
+    ''' <summary> Queries the Store Math Register. </summary>
+    ''' <returns> The <see cref="StoreMathRegister">Store Math Register</see> or none if unknown. </returns>
+    <Obsolete("Reading the register is not available")>
+    Public Function QueryStoreMathRegister() As StoreMathRegister?
+        Me.StoreMathRegister = Me.QueryFirstValue(Of StoreMathRegister)(Me.StoreMathQueryCommand, Me.StoreMathRegister)
+        Return Me.StoreMathRegister
+    End Function
+
+    ''' <summary> Queries store mathematics value. </summary>
+    ''' <returns> The store mathematics value. </returns>
+    <Obsolete("Reading back from the stored math reads the measured value")>
+    Public Function QueryStoreMathValue() As Double?
+        Me.StoreMathValue = Me.Query(Me.StoreMathValue, Me.StoreMathQueryCommand)
+        Return Me.StoreMathValue
+    End Function
+
+    ''' <summary> Gets or sets the store mathematics command format. </summary>
+    ''' <value> The store mathematics command format. </value>
+    Protected Overridable ReadOnly Property StoreMathCommandFormat As String = "SMATH {0},{1}"
+
+    ''' <summary> Writes the Store Math Register and value without reading back the value from the device. </summary>
+    ''' <returns> The <see cref="StoreMathRegister">StoreMathRegister</see> or none if unknown. </returns>
+    Public Function WriteStoreMath(ByVal register As StoreMathRegister, ByVal value As Double) As StoreMathRegister?
+        Me.StoreMathValue = value
+        Me.StoreMathRegister = register
+        Me.Session.Execute(String.Format(Me.StoreMathCommandFormat, register.ExtractBetween(), value))
+        Return Me.StoreMathRegister
+    End Function
+
+#End Region
+
 End Class
+
+''' <summary> Enumerates the auto zero mode. </summary>
+Public Enum AutoZeroMode
+    ''' <summary> Zero measurement Is updated once, Then only after a
+    ''' Function, range, aperture, NPLC, Or resolution change. </summary>
+    <ComponentModel.Description("Off (OFF)")> [Off] = 0
+    ''' <summary> Zero measurement Is updated after every measurement. </summary>
+    <ComponentModel.Description("On (ON)")> [On] = 1
+    ''' <summary> Zero measurement is updated once, then only after a
+    ''' Function, range, aperture, NPLC, Or resolution change. </summary>
+    <ComponentModel.Description("Once (ONCE)")> [Once] = 2
+End Enum
+
+''' <summary> Values that represent sense function modes. </summary>
+Public Enum SenseFunctionMode
+    <ComponentModel.Description("Not selected`")> None = 0
+    ''' <summary> DCV 1 Selects DC voltage measurements. </summary>
+    <ComponentModel.Description("DC Volts (DCV)")> VoltageDirect = 1
+    ''' <summary> Selects AC voltage measurements (the mode is set by the SETACV command). </summary>
+    <ComponentModel.Description("AC Volts (ACV)")> VoltagAlternating = 2
+    ''' <summary> ACDCV 3 Selects AC+DC voltage measurements (the mode is set by the SETACV command). </summary>
+    <ComponentModel.Description("Once (ACDCV)")> VoltageDirectAlternating = 3
+    ''' <summary> OHM 4 Selects 2-wire ohms measurements. </summary>
+    <ComponentModel.Description("Ohms (OHM)")> Resistance = 4
+    ''' <summary> OHMF 5 Selects 4-wire ohms measurements. </summary>
+    <ComponentModel.Description("Four Wire Ohms (OHMF)")> ResistanceFourWire = 5
+    ''' <summary> Selects DC current measurements. </summary>
+    <ComponentModel.Description("DC Current (DCI)")> CurrentDirect = 6
+    ''' <summary> ACI 7 Selects AC current measurements. </summary>
+    <ComponentModel.Description("AC Current (ACI)")> CurrentAlternating = 7
+    ''' <summary> ACDCI 8 Selects AC+DC current measurements. </summary>
+    <ComponentModel.Description("AC DC Current (ACDCI)")> CurrentDirectAlerternating = 8
+End Enum
+
+Public Enum MathMode
+    <ComponentModel.Description("OFF (OFF)")> None = 0
+    <ComponentModel.Description("Percent (PERC)")> Percent = 10
+End Enum
+
+Public Enum StoreMathRegister
+    <ComponentModel.Description("Not specified")> None = 0
+    <ComponentModel.Description("Offset (OFFSET)")> Offset = 7
+    <ComponentModel.Description("Percent (PERC)")> Percent = 8
+End Enum

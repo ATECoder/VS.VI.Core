@@ -362,7 +362,7 @@ Public Class ResourceControlBase
         End Get
         Set(value As VI.DeviceBase)
             If Me.DeviceBase IsNot Nothing Then
-                Me.DeviceBase.Talker.Listeners.Clear()
+                If Me.DeviceBase.Talker IsNot Nothing Then Me.DeviceBase.Talker.Listeners?.Clear()
                 RemoveHandler Me.DeviceBase.PropertyChanged, AddressOf Me.DevicePropertyChanged
                 RemoveHandler Me.DeviceBase.Opening, AddressOf Me.DeviceOpening
                 RemoveHandler Me.DeviceBase.Opened, AddressOf Me.DeviceOpened
