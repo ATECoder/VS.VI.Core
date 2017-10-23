@@ -95,10 +95,10 @@ Public Class ResourceControlUnitTests
         Using control As isr.VI.Instrument.ResourceControlBase = New isr.VI.Instrument.ResourceControlBase
             Using target As Device = New Device()
                 target.ResourceTitle = TestInfo.ResourceTitle
-                Dim e As New System.ComponentModel.CancelEventArgs
-                control.AssignDevice(target)
+                control.DeviceBase = target
                 control.ResourceName = TestInfo.ResourceName
 
+                Dim e As New System.ComponentModel.CancelEventArgs
                 control.Connect(e)
                 actualBoolean = e.Cancel
                 expectedBoolean = False
@@ -121,6 +121,47 @@ Public Class ResourceControlUnitTests
                 expectedBoolean = False
                 Assert.AreEqual(expectedBoolean, actualBoolean, $"Disconnect open {control.ResourceName}")
 
+            End Using
+
+        End Using
+
+    End Sub
+
+    '''<summary>
+    '''A test for dual Open
+    '''</summary>
+    <TestMethod()>
+    Public Sub OpenSessionTwiceTest()
+        Dim expectedBoolean As Boolean = True
+        Dim actualBoolean As Boolean
+        Using control As isr.VI.Instrument.ResourceControlBase = New isr.VI.Instrument.ResourceControlBase
+            Using target As Device = New Device()
+                control.DeviceBase = target
+                control.ResourceName = TestInfo.ResourceName
+
+                Dim e As New System.ComponentModel.CancelEventArgs
+                control.Connect(e)
+                actualBoolean = target.IsDeviceOpen
+                expectedBoolean = True
+                Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect open once {control.ResourceName}")
+
+                ' check the MODEL
+                Assert.AreEqual(TestInfo.ResourceModel, target.StatusSubsystem.VersionInfo.Model,
+                                $"Version Info Model {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
+            End Using
+            Using target As Device = New Device()
+                control.DeviceBase = target
+                control.ResourceName = TestInfo.ResourceName
+
+                Dim e As New System.ComponentModel.CancelEventArgs
+                control.Connect(e)
+                actualBoolean = target.IsDeviceOpen
+                expectedBoolean = True
+                Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect open twice {control.ResourceName}")
+
+                ' check the MODEL
+                Assert.AreEqual(TestInfo.ResourceModel, target.StatusSubsystem.VersionInfo.Model,
+                                $"Version Info Model {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
             End Using
         End Using
     End Sub

@@ -65,7 +65,6 @@ Public Class Device
     ''' <summary> Initializes the Device. Used after reset to set a desired initial state. </summary>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me.StatusSubsystem.InitKnownState()
         Me.StatusSubsystem.EnableServiceRequest(Me.StatusSubsystem.ServiceRequestEnableBitmask.Value)
         Me.ApplySettings()
     End Sub

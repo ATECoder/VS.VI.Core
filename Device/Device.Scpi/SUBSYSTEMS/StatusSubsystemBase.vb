@@ -48,19 +48,21 @@ Public MustInherit Class StatusSubsystemBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
+        Dim action As String = "enabling wait completion"
         Try
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Enabling wait completion;. ")
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
             Me.EnableWaitComplete()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               $"Exception enabling wait completion;. {ex.ToFullBlownString}")
+            ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
         Try
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading identity;. ")
+            action = "querying identity"
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
             Me.QueryIdentity()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               $"Exception reading identity;. {ex.ToFullBlownString}")
+            ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
     End Sub
 

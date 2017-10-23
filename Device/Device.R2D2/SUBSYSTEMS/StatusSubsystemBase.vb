@@ -22,6 +22,47 @@ Public MustInherit Class StatusSubsystemBase
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Sets the subsystem to its initial post reset state. </summary>
+    ''' <remarks> Additional Actions: <para>
+    '''           Clears Error Queue.
+    '''           </para></remarks>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Overrides Sub InitKnownState()
+        MyBase.InitKnownState()
+        Dim action As String = "enabling wait completion"
+        Try
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            Me.EnableWaitComplete()
+        Catch ex As Exception
+            ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+        End Try
+        Try
+            Action = "querying identity"
+            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            Me.QueryIdentity()
+        Catch ex As Exception
+            ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+    ''' <summary> Sets the subsystem to its preset state. </summary>
+    Public Overrides Sub PresetKnownState()
+        MyBase.PresetKnownState()
+    End Sub
+
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.StandardEventStatus = 0
+        Me.StandardEventEnableBitmask = 0
+    End Sub
+
+#End Region
+
 #Region " TALKER "
 
     ''' <summary> Adds a listener. </summary>

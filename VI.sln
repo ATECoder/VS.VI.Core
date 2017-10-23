@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0F61F251-CE7D-4CAC-923C-520143E85F83}"
 	ProjectSection(SolutionItems) = preProject
@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VENDORvi", "VENDORvi", "{38
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APPS", "APPS", "{5A67A281-8142-4FB8-8AFF-3EC87B02355F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "`Units", "`Units", "{D787833B-1C85-43C1-BEFC-74C9DF4C5B89}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UNITS", "UNITS", "{D787833B-1C85-43C1-BEFC-74C9DF4C5B89}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Pith.Library", "Resource\Pith\isr.VI.Pith.Library.vbproj", "{AC4FDBF7-8AAB-4FD5-92D7-EF49DBAF3604}"
 EndProject
@@ -156,7 +156,7 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K7500.Library", "Ven
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K34980.Library", "VendorVI\K34980\isr.VI.K34980.Library.vbproj", "{236C5EDE-C3E7-48CF-B651-3A5415958FCB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "`NI", "`NI", "{A5A24D08-7A3E-44E3-9563-6E9529590F06}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NI", "NI", "{A5A24D08-7A3E-44E3-9563-6E9529590F06}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SimpleReadWrite", "NI\SimpleReadWrite\SimpleReadWrite.vbproj", "{B8E8C039-E317-4A83-94BA-BC85DA03F880}"
 EndProject

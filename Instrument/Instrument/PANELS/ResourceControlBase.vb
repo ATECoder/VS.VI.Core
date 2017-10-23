@@ -55,18 +55,9 @@ Public Class ResourceControlBase
                     End Try
                     Try
                         ' this also releases the device event handlers associated with this panel. 
-                        Me.ReleaseDevice()
+                        Me.DeviceBase = Nothing
                     Catch ex As Exception
                         Debug.Assert(Not Debugger.IsAttached, "Exception occurred releasing the device", $"Exception {ex.ToFullBlownString}")
-                    End Try
-                    Try
-                        If Me.IsDeviceOwner Then
-                            ' this also closes the session. 
-                            Me._DeviceBase.Dispose()
-                        End If
-                        Me._DeviceBase = Nothing
-                    Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing the device", $"Exception {ex.ToFullBlownString}")
                     End Try
                 End If
                 Me._ElapsedTimeStopwatch = Nothing
@@ -320,7 +311,7 @@ Public Class ResourceControlBase
 
 #End Region
 
-#Region " DEVICE And CONNECTOR "
+#Region " DEVICE "
 
     ''' <summary> Gets or sets the elapsed time stop watch. </summary>
     ''' <value> The elapsed time stop watch. </value>
@@ -331,17 +322,6 @@ Public Class ResourceControlBase
     ''' <value> The is device owner. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Public Property IsDeviceOwner As Boolean
-
-    ''' <summary> Releases the device. </summary>
-    Protected Overridable Sub ReleaseDevice()
-        Me.DeviceBase = Nothing
-    End Sub
-
-    ''' <summary> Assign device. </summary>
-    ''' <param name="value"> True to show or False to hide the control. </param>
-    Public Overridable Sub AssignDevice(ByVal value As VI.DeviceBase)
-        Me.DeviceBase = value
-    End Sub
 
     ''' <summary> Gets the is device assigned. </summary>
     ''' <value> The is device assigned. </value>
@@ -356,52 +336,61 @@ Public Class ResourceControlBase
     ''' interfaces. </summary>
     ''' <value> The connectable resource. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Protected Property DeviceBase() As VI.DeviceBase
+    Public Property DeviceBase() As VI.DeviceBase
         Get
             Return Me._DeviceBase
         End Get
         Set(value As VI.DeviceBase)
-            If Me.DeviceBase IsNot Nothing Then
-                If Me.DeviceBase.Talker IsNot Nothing Then Me.DeviceBase.Talker.Listeners?.Clear()
-                RemoveHandler Me.DeviceBase.PropertyChanged, AddressOf Me.DevicePropertyChanged
-                RemoveHandler Me.DeviceBase.Opening, AddressOf Me.DeviceOpening
-                RemoveHandler Me.DeviceBase.Opened, AddressOf Me.DeviceOpened
-                RemoveHandler Me.DeviceBase.Closing, AddressOf Me.DeviceClosing
-                RemoveHandler Me.DeviceBase.Closed, AddressOf Me.DeviceClosed
-                RemoveHandler Me.DeviceBase.Initialized, AddressOf Me.DeviceInitialized
-                RemoveHandler Me.DeviceBase.Initializing, AddressOf Me.DeviceInitializing
-                Me.Connector.ResourcesFilter = ""
-                ' note that service request is released when device closes.
-                Me.StatusSubsystem = Nothing
-            End If
-            Me._ElapsedTimeStopwatch = New Stopwatch
-            If Me.Connector IsNot Nothing Then
-                Me.Connector.Clearable = True
-                Me.Connector.Connectable = True
-                Me.Connector.Searchable = True
-            End If
-            Me._StatusRegisterStatus = ResourceControlBase.UnknownRegisterValue
-            Me._StandardRegisterStatus = ResourceControlBase.UnknownRegisterValue
-            Me._DeviceBase = value
-            If Me.DeviceBase IsNot Nothing Then
-                If Me._DeviceBase IsNot Nothing Then
-                    Me.DeviceBase.CaptureSyncContext(Threading.SynchronizationContext.Current)
-                    AddHandler Me.DeviceBase.PropertyChanged, AddressOf Me.DevicePropertyChanged
-                    AddHandler Me.DeviceBase.Opening, AddressOf Me.DeviceOpening
-                    AddHandler Me.DeviceBase.Opened, AddressOf Me.DeviceOpened
-                    AddHandler Me.DeviceBase.Closing, AddressOf Me.DeviceClosing
-                    AddHandler Me.DeviceBase.Closed, AddressOf Me.DeviceClosed
-                    AddHandler Me.DeviceBase.Initialized, AddressOf Me.DeviceInitialized
-                    AddHandler Me.DeviceBase.Initializing, AddressOf Me.DeviceInitializing
-                    If Me.DeviceBase.ResourcesFilter IsNot Nothing Then
-                        Me.Connector.ResourcesFilter = Me.DeviceBase.ResourcesFilter
-                    End If
-                    Me.ResourceName = Me.DeviceBase.ResourceName
-                    Me.StatusSubsystem = Me.DeviceBase.StatusSubsystemBase
-                End If
-            End If
+            Me.AssignDevice(value)
         End Set
     End Property
+
+    ''' <summary> Assign device. </summary>
+    ''' <param name="value"> True to show or False to hide the control. </param>
+    Private Sub AssignDevice(ByVal value As DeviceBase)
+        If Me.DeviceBase IsNot Nothing Then
+            If Me.DeviceBase.Talker IsNot Nothing Then Me.DeviceBase.Talker.Listeners?.Clear()
+            RemoveHandler Me.DeviceBase.PropertyChanged, AddressOf Me.DevicePropertyChanged
+            RemoveHandler Me.DeviceBase.Opening, AddressOf Me.DeviceOpening
+            RemoveHandler Me.DeviceBase.Opened, AddressOf Me.DeviceOpened
+            RemoveHandler Me.DeviceBase.Closing, AddressOf Me.DeviceClosing
+            RemoveHandler Me.DeviceBase.Closed, AddressOf Me.DeviceClosed
+            RemoveHandler Me.DeviceBase.Initialized, AddressOf Me.DeviceInitialized
+            RemoveHandler Me.DeviceBase.Initializing, AddressOf Me.DeviceInitializing
+            Me.Connector.ResourcesFilter = ""
+            ' note that service request is released when device closes.
+            Me.StatusSubsystem = Nothing
+            ' this also closes the session. 
+            If value Is Nothing AndAlso Me.IsDeviceOwner Then Me._DeviceBase.Dispose()
+        End If
+        Me._ElapsedTimeStopwatch = New Stopwatch
+        If Me.Connector IsNot Nothing Then
+            Me.Connector.Clearable = True
+            Me.Connector.Connectable = True
+            Me.Connector.Searchable = True
+        End If
+        Me._StatusRegisterStatus = ResourceControlBase.UnknownRegisterValue
+        Me._StandardRegisterStatus = ResourceControlBase.UnknownRegisterValue
+        Me._DeviceBase = value
+        If Me.DeviceBase IsNot Nothing Then
+            If Me._DeviceBase IsNot Nothing Then
+                Me.DeviceBase.CaptureSyncContext(Threading.SynchronizationContext.Current)
+                AddHandler Me.DeviceBase.PropertyChanged, AddressOf Me.DevicePropertyChanged
+                AddHandler Me.DeviceBase.Opening, AddressOf Me.DeviceOpening
+                AddHandler Me.DeviceBase.Opened, AddressOf Me.DeviceOpened
+                AddHandler Me.DeviceBase.Closing, AddressOf Me.DeviceClosing
+                AddHandler Me.DeviceBase.Closed, AddressOf Me.DeviceClosed
+                AddHandler Me.DeviceBase.Initialized, AddressOf Me.DeviceInitialized
+                AddHandler Me.DeviceBase.Initializing, AddressOf Me.DeviceInitializing
+                If Me.DeviceBase.ResourcesFilter IsNot Nothing Then
+                    Me.Connector.ResourcesFilter = Me.DeviceBase.ResourcesFilter
+                End If
+                Me.ResourceName = Me.DeviceBase.ResourceName
+                Me.StatusSubsystem = Me.DeviceBase.StatusSubsystemBase
+            End If
+        End If
+    End Sub
+
 
     ''' <summary> Gets the sentinel indicating if the device is open. </summary>
     ''' <value> The is device open. </value>
@@ -639,6 +628,18 @@ Public Class ResourceControlBase
 
     Private _Connector As ResourceSelectorConnector
 
+    ''' <summary> Gets or sets the connector. </summary>
+    ''' <value> The connector. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overridable Property Connector As ResourceSelectorConnector
+        Get
+            Return Me._Connector
+        End Get
+        Set(value As ResourceSelectorConnector)
+            Me.AssignConnector(value)
+        End Set
+    End Property
+
     ''' <summary> Assign connector. </summary>
     ''' <param name="value"> The connector value. </param>
     Private Sub AssignConnector(ByVal value As ResourceSelectorConnector)
@@ -659,17 +660,6 @@ Public Class ResourceControlBase
         End If
     End Sub
 
-    ''' <summary> Gets or sets the connector. </summary>
-    ''' <value> The connector. </value>
-    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Protected Overridable Property Connector As ResourceSelectorConnector
-        Get
-            Return Me._Connector
-        End Get
-        Set(value As ResourceSelectorConnector)
-            Me.AssignConnector(value)
-        End Set
-    End Property
 
     ''' <summary> Connects. </summary>
     ''' <param name="e"> The e to connect. </param>
