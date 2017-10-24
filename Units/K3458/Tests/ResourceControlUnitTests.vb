@@ -135,32 +135,32 @@ Public Class ResourceControlUnitTests
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
         Using control As isr.VI.Instrument.ResourceControlBase = New isr.VI.Instrument.ResourceControlBase
-            Using target As Device = New Device()
-                control.DeviceBase = target
+            Using device As Device = New Device()
+                control.DeviceBase = device
                 control.ResourceName = TestInfo.ResourceName
 
                 Dim e As New System.ComponentModel.CancelEventArgs
                 control.Connect(e)
-                actualBoolean = target.IsDeviceOpen
+                actualBoolean = device.IsDeviceOpen
                 expectedBoolean = True
                 Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect open once {control.ResourceName}")
 
                 ' check the MODEL
-                Assert.AreEqual(TestInfo.ResourceModel, target.StatusSubsystem.VersionInfo.Model,
+                Assert.AreEqual(TestInfo.ResourceModel, device.StatusSubsystem.VersionInfo.Model,
                                 $"Version Info Model {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
             End Using
-            Using target As Device = New Device()
-                control.DeviceBase = target
+            Using device As Device = New Device()
+                control.DeviceBase = device
                 control.ResourceName = TestInfo.ResourceName
 
                 Dim e As New System.ComponentModel.CancelEventArgs
                 control.Connect(e)
-                actualBoolean = target.IsDeviceOpen
+                actualBoolean = device.IsDeviceOpen
                 expectedBoolean = True
                 Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect open twice {control.ResourceName}")
 
                 ' check the MODEL
-                Assert.AreEqual(TestInfo.ResourceModel, target.StatusSubsystem.VersionInfo.Model,
+                Assert.AreEqual(TestInfo.ResourceModel, device.StatusSubsystem.VersionInfo.Model,
                                 $"Version Info Model {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
             End Using
         End Using
