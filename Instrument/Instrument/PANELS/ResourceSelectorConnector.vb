@@ -146,15 +146,20 @@ Public Class ResourceSelectorConnector
     ''' <summary> Gets or sets the connected status and enables the clear button. </summary>
     ''' <value> The is connected. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public ReadOnly Property IsConnected() As Boolean
+    Public Property IsConnected() As Boolean
         Get
             Return Me._IsConnected
         End Get
+        Set(value As Boolean)
+            If value <> Me.IsConnected Then
+                Me._ApplyConnectionState(value)
+            End If
+        End Set
     End Property
 
     ''' <summary> Toggle connection. </summary>
     ''' <param name="affirmative"> The value. </param>
-    Private Sub UpdateConnectionState(ByVal affirmative As Boolean)
+    Private Sub _ApplyConnectionState(ByVal affirmative As Boolean)
         ' enable or disable based on the connection status.
         Me._ResourceNamesComboBox.Enabled = Not affirmative
         Me._ClearButton.Enabled = Me.Clearable AndAlso affirmative
@@ -215,7 +220,7 @@ Public Class ResourceSelectorConnector
         Dim evt As EventHandler(Of System.ComponentModel.CancelEventArgs) = Me.ConnectEvent
         evt?.Invoke(Me, e)
         Me._ConnectionChanging = False
-        If e IsNot Nothing AndAlso Not e.Cancel Then Me.UpdateConnectionState(True)
+        If e Is Nothing OrElse Not e.Cancel Then Me.IsConnected = True
     End Sub
 
     ''' <summary> Occurs when the connect button is release. </summary>
@@ -241,7 +246,7 @@ Public Class ResourceSelectorConnector
         Dim evt As EventHandler(Of System.ComponentModel.CancelEventArgs) = Me.DisconnectEvent
         evt?.Invoke(Me, e)
         Me._ConnectionChanging = False
-        If e IsNot Nothing AndAlso Not e.Cancel Then Me.UpdateConnectionState(False)
+        If e Is Nothing OrElse Not e.Cancel Then Me.IsConnected = False
     End Sub
 
     Private _ConnectionChanging As Boolean

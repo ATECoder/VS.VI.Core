@@ -683,6 +683,7 @@ Public Class ResourceControlBase
         Me.OpenSession(Me.Connector.SelectedResourceName, Me.ResourceTitle)
         ' cancel if failed to open
         If e IsNot Nothing AndAlso Not Me.IsDeviceOpen Then e.Cancel = True
+        Me.Connector.IsConnected = Me.IsDeviceOpen
     End Sub
 
     ''' <summary> Connects. </summary>
@@ -734,6 +735,7 @@ Public Class ResourceControlBase
         Me.CloseSession()
         ' Cancel if failed to close
         If e IsNot Nothing AndAlso Me.IsDeviceOpen Then e.Cancel = True
+        Me.Connector.IsConnected = Me.IsDeviceOpen
     End Sub
 
     ''' <summary> Disconnects the instrument by calling a propagating disconnect command. </summary>
