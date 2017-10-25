@@ -680,11 +680,12 @@ Public MustInherit Class DeviceBase
             Me.Session.CloseSession()
             Me.OnClosed()
         Catch ex As NativeException
-            Throw New OperationFailedException("Native Exception occurred closing the session.", ex)
+            Throw New OperationFailedException("Failed closing the VISA session.", ex)
         Catch ex As Exception
             Throw New OperationFailedException("Exception occurred closing the session.", ex)
         End Try
     End Sub
+
 
     ''' <summary> Try close session. </summary>
     ''' <returns> <c>True</c> if session closed; otherwise <c>False</c>. </returns>

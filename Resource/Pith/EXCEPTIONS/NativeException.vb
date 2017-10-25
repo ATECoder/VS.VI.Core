@@ -17,12 +17,13 @@ Public Class NativeException
 
     ''' <summary> Initializes a new instance of the <see cref="VI.NativeException"/> class. </summary>
     Public Sub New()
-        Me.New("Native Exception")
+        Me.New("Native VISA exception")
     End Sub
 
     ''' <summary> Initializes a new instance of the <see cref="VI.NativeException" /> class. </summary>
     ''' <param name="message"> The message. </param>
     Public Sub New(ByVal message As String)
+
         MyBase.New(message)
         Me._Timestamp = DateTime.UtcNow
     End Sub
@@ -72,17 +73,19 @@ Public Class NativeException
     ''' <summary> Constructor. </summary>
     ''' <param name="innerError">     The inner error. </param>
     Public Sub New(ByVal innerError As NativeErrorBase)
-        Me.New("Native exception")
+        Me.New("Native VISA exception")
         Me._InnerError = innerError
     End Sub
 
     ''' <summary> Constructor. </summary>
+
     ''' <param name="innerError">     The inner error. </param>
     ''' <param name="innerException"> The inner exception. </param>
     Public Sub New(ByVal innerError As NativeErrorBase, ByVal innerException As System.Exception)
-        Me.New("Native exception", innerException)
+        Me.New("Native VISA exception", innerException)
         Me._InnerError = innerError
     End Sub
+
 
 #End Region
 
