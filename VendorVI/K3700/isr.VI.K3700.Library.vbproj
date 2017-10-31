@@ -52,6 +52,7 @@
     <AssemblyOriginatorKeyFile>..\..\resource\pith\my\keyPair.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
@@ -91,6 +92,12 @@
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="PANELS\K3700Control.Designer.vb">
+      <DependentUpon>K3700Control.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\K3700Control.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PANELS\K3700Panel.Designer.vb">
       <DependentUpon>K3700Panel.vb</DependentUpon>
     </Compile>
@@ -126,6 +133,10 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\K3700Control.resx">
+      <DependentUpon>K3700Control.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="PANELS\K3700Panel.resx">
       <DependentUpon>K3700Panel.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -139,6 +150,7 @@
     <CodeAnalysisDictionary Include="My\MyDictionary.xml">
       <SubType>Designer</SubType>
     </CodeAnalysisDictionary>
+    <EmbeddedResource Include="PANELS\K3700Control.bmp" />
     <EmbeddedResource Include="PANELS\MovingWindowMeter.bmp" />
     <EmbeddedResource Include="PANELS\K3700Panel.bmp" />
     <None Include="..\..\resource\pith\my\keyPair.snk">

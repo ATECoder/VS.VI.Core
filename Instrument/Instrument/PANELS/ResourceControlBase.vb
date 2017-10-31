@@ -254,7 +254,9 @@ Public Class ResourceControlBase
                 Me.Identity = Me.ResourceName
                 Me.SafePostPropertyChanged()
             End If
-            Me.Connector.SelectedResourceName = value
+            If Not String.Equals(Me.ResourceName, Me.Connector.SelectedResourceName, StringComparison.OrdinalIgnoreCase) Then
+                Me.Connector.SelectedResourceName = value
+            End If
         End Set
     End Property
 
@@ -842,8 +844,7 @@ Public Class ResourceControlBase
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.SelectedResourceName)
-                If String.IsNullOrWhiteSpace(sender.SelectedResourceName) OrElse
-                    String.Equals(sender.SelectedResourceName, VI.DeviceBase.ResourceNameClosed) Then
+                If String.IsNullOrWhiteSpace(sender.SelectedResourceName) OrElse String.Equals(sender.SelectedResourceName, VI.DeviceBase.ResourceNameClosed) Then
                     Me.ResourceName = ""
                 Else
                     Me.ResourceName = sender.SelectedResourceName
@@ -898,14 +899,6 @@ Public Class ResourceControlBase
 
     ''' <summary> Reports the last error. </summary>
     Protected Overridable Sub OnLastError(ByVal lastError As DeviceError)
-#If False Then
-        If lastError?.IsError Then
-            Me._LastErrorTextBox.ForeColor = Drawing.Color.OrangeRed
-        Else
-            Me._LastErrorTextBox.ForeColor = Drawing.Color.Aquamarine
-        End If
-        Me._LastErrorTextBox.Text = lastError.CompoundErrorMessage
-#End If
     End Sub
 
     ''' <summary> Executes the subsystem property changed action. </summary>

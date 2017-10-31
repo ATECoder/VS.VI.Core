@@ -54,6 +54,7 @@
     <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
@@ -97,6 +98,12 @@
     <Compile Include="SUBSYSTEMS\ArmLayer1Subsystem.vb" />
     <Compile Include="SUBSYSTEMS\ContantsEnums.vb" />
     <Compile Include="SUBSYSTEMS\Device.vb" />
+    <Compile Include="PANELS\K7000Control.Designer.vb">
+      <DependentUpon>K7000Control.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\K7000Control.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SUBSYSTEMS\RouteSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\StatusSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SystemSubsystem.vb" />
@@ -113,6 +120,9 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\K7000Control.resx">
+      <DependentUpon>K7000Control.vb</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
@@ -128,6 +138,7 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <Content Include="PANELS\K7000Control.bmp" />
     <Content Include="PANELS\K7000Panel.bmp" />
     <Content Include="My\isr.VI.K7000.History.rtf" />
   </ItemGroup>

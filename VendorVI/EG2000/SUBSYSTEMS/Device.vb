@@ -32,7 +32,8 @@ Public Class Device
         Try
             device = New Device
         Catch
-            device.Dispose()
+            If device IsNot Nothing Then device.Dispose()
+            device = Nothing
             Throw
         End Try
         Return device

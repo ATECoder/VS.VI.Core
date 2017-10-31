@@ -60,6 +60,7 @@
     <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
@@ -82,6 +83,12 @@
     </Compile>
     <Compile Include="SUBSYSTEMS\ConstantsEnums.vb" />
     <Compile Include="SUBSYSTEMS\InstrumentSubsystem.vb" />
+    <Compile Include="PANELS\K34980Control.Designer.vb">
+      <DependentUpon>K34980Control.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\K34980Control.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SUBSYSTEMS\SenseResistanceSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SenseFourWireResistanceSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SenseCurrentSubsystem.vb" />
@@ -113,9 +120,14 @@
   <ItemGroup>
     <Content Include="My\isr.VI.K34980.History.rtf" />
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <EmbeddedResource Include="PANELS\K34980Control.bmp" />
     <EmbeddedResource Include="PANELS\K34980Panel.bmp" />
     <EmbeddedResource Include="PANELS\K34980Panel.resx">
       <DependentUpon>K34980Panel.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\K34980Control.resx">
+      <DependentUpon>K34980Control.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">

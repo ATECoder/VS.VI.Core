@@ -26,11 +26,11 @@ Public Class Device
     ''' <returns> A Device. </returns>
     Public Shared Function Create() As Device
         Dim device As Device = Nothing
-
         Try
             device = New Device
         Catch
-            device.Dispose()
+            If device IsNot Nothing Then device.Dispose()
+            device = Nothing
             Throw
         End Try
         Return device

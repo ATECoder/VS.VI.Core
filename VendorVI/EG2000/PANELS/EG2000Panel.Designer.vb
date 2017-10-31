@@ -22,7 +22,11 @@ Partial Class EG2000Panel
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
+        Me._ServiceRequestEnableBitmaskNumericLabel = New System.Windows.Forms.ToolStripLabel()
+        Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._SentGroupBox = New System.Windows.Forms.GroupBox()
         Me._SendMessageLabel = New System.Windows.Forms.Label()
         Me._UnhandledSendLabel = New System.Windows.Forms.Label()
@@ -47,11 +51,7 @@ Partial Class EG2000Panel
         Me._ReadingTextBox = New System.Windows.Forms.TextBox()
         Me._Panel = New System.Windows.Forms.Panel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
-        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
-        Me._ServiceRequestEnableBitmaskNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -186,6 +186,20 @@ Partial Class EG2000Panel
         Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
         '
+        '_LogTraceLevelComboBox
+        '
+        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
+        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._LogTraceLevelComboBox.Text = "Verbose"
+        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
+        '
+        '_DisplayTraceLevelComboBox
+        '
+        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
+        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._DisplayTraceLevelComboBox.Text = "Warning"
+        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
+        '
         '_ReadTerminalStateButton
         '
         Me._ReadTerminalStateButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
@@ -197,6 +211,20 @@ Partial Class EG2000Panel
         Me._ReadTerminalStateButton.Text = "Front"
         Me._ReadTerminalStateButton.ToolTipText = "Reads terminal state"
         Me._ReadTerminalStateButton.Visible = False
+        '
+        '_ServiceRequestEnableBitmaskNumericLabel
+        '
+        Me._ServiceRequestEnableBitmaskNumericLabel.Name = "_ServiceRequestEnableBitmaskNumericLabel"
+        Me._ServiceRequestEnableBitmaskNumericLabel.Size = New System.Drawing.Size(29, 25)
+        Me._ServiceRequestEnableBitmaskNumericLabel.Text = "SRE:"
+        '
+        '_ServiceRequestEnableBitmaskNumeric
+        '
+        Me._ServiceRequestEnableBitmaskNumeric.Name = "_ServiceRequestEnableBitmaskNumeric"
+        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ServiceRequestEnableBitmaskNumeric.Text = "0"
+        Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enable bitmask"
+        Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         '_SentGroupBox
         '
@@ -405,6 +433,7 @@ Partial Class EG2000Panel
         '
         '_SimpleReadWriteControl
         '
+        Me._SimpleReadWriteControl.AutoAppendTermination = Nothing
         Me._SimpleReadWriteControl.Dock = System.Windows.Forms.DockStyle.Fill
         Me._SimpleReadWriteControl.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._SimpleReadWriteControl.Location = New System.Drawing.Point(0, 0)
@@ -465,20 +494,6 @@ Partial Class EG2000Panel
         Me._TitleLabel.Text = "EG2000"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_LogTraceLevelComboBox
-        '
-        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
-        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._LogTraceLevelComboBox.Text = "Verbose"
-        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
-        '
-        '_DisplayTraceLevelComboBox
-        '
-        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
-        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._DisplayTraceLevelComboBox.Text = "Warning"
-        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
-        '
         '_Layout
         '
         Me._Layout.ColumnCount = 1
@@ -493,20 +508,6 @@ Partial Class EG2000Panel
         Me._Layout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
         Me._Layout.Size = New System.Drawing.Size(364, 388)
         Me._Layout.TabIndex = 18
-        '
-        '_ServiceRequestEnableBitmaskNumericLabel
-        '
-        Me._ServiceRequestEnableBitmaskNumericLabel.Name = "_ServiceRequestEnableBitmaskNumericLabel"
-        Me._ServiceRequestEnableBitmaskNumericLabel.Size = New System.Drawing.Size(29, 25)
-        Me._ServiceRequestEnableBitmaskNumericLabel.Text = "SRE:"
-        '
-        '_ServiceRequestEnableBitmaskNumeric
-        '
-        Me._ServiceRequestEnableBitmaskNumeric.Name = "_ServiceRequestEnableBitmaskNumeric"
-        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._ServiceRequestEnableBitmaskNumeric.Text = "0"
-        Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enable bitmask"
-        Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})
         '
         'EG2000Panel
         '

@@ -28,11 +28,12 @@ Public Class Device
         Dim device As Device = Nothing
         Try
             device = New Device
-            Return device
         Catch
-            device.Dispose()
+            If device IsNot Nothing Then device.Dispose()
+            device = Nothing
             Throw
         End Try
+        Return device
     End Function
 
 #Region "IDisposable Support"

@@ -78,14 +78,12 @@ Public Class NativeException
     End Sub
 
     ''' <summary> Constructor. </summary>
-
     ''' <param name="innerError">     The inner error. </param>
     ''' <param name="innerException"> The inner exception. </param>
     Public Sub New(ByVal innerError As NativeErrorBase, ByVal innerException As System.Exception)
         Me.New("Native VISA exception", innerException)
         Me._InnerError = innerError
     End Sub
-
 
 #End Region
 

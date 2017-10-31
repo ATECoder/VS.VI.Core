@@ -9,6 +9,7 @@ Partial Class E4990Panel
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(E4990Panel))
         Me._Tabs = New System.Windows.Forms.TabControl()
         Me._ReadingTabPage = New System.Windows.Forms.TabPage()
@@ -20,6 +21,7 @@ Partial Class E4990Panel
         Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._AbortButton = New System.Windows.Forms.ToolStripButton()
+        Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
         Me._ToolStripPanel = New System.Windows.Forms.ToolStripPanel()
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetsDropDownButton = New System.Windows.Forms.ToolStripDropDownButton()
@@ -28,6 +30,8 @@ Partial Class E4990Panel
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitKnowStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._SessionOptionsDownButton = New System.Windows.Forms.ToolStripDropDownButton()
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -107,15 +111,19 @@ Partial Class E4990Panel
         Me._ReadingStatusStrip = New System.Windows.Forms.StatusStrip()
         Me._FailureCodeToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._ReadingToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me._TbdToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._LastReadingTextBox = New System.Windows.Forms.TextBox()
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
-        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
-        Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
-        CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._ResourceSelectorConnector = New isr.VI.Instrument.ResourceSelectorConnector()
+        Me._TraceMessagesBox = New isr.Core.Pith.TraceMessagesBox()
+        Me._StatusStrip = New System.Windows.Forms.StatusStrip()
+        Me._StatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me._IdentityLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me._StatusRegisterLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me._StandardRegisterLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me._TipsToolTip = New System.Windows.Forms.ToolTip(Me.components)
+        Me._InfoProvider = New isr.Core.Controls.InfoProvider(Me.components)
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
         CType(Me._ReadingsDataGridView, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -149,24 +157,12 @@ Partial Class E4990Panel
         Me._CompensationGroupBox.SuspendLayout()
         Me._ReadWriteTabPage.SuspendLayout()
         Me._MessagesTabPage.SuspendLayout()
+        Me._StatusStrip.SuspendLayout()
         Me._ReadingStatusStrip.SuspendLayout()
         Me._Panel.SuspendLayout()
         Me._Layout.SuspendLayout()
+        CType(Me._InfoProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
-        '
-        'Connector
-        '
-        Me.Connector.Location = New System.Drawing.Point(0, 388)
-        Me.Connector.Searchable = True
-        Me.Connector.TabIndex = 4
-        '
-        'TraceMessagesBox
-        '
-        Me.TraceMessagesBox.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TraceMessagesBox.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.TraceMessagesBox.PresetCount = 50
-        Me.TraceMessagesBox.ResetCount = 100
-        Me.TraceMessagesBox.Size = New System.Drawing.Size(356, 270)
         '
         '_Tabs
         '
@@ -182,7 +178,7 @@ Partial Class E4990Panel
         Me._Tabs.Name = "_Tabs"
         Me._Tabs.Padding = New System.Drawing.Point(3, 3)
         Me._Tabs.SelectedIndex = 0
-        Me._Tabs.Size = New System.Drawing.Size(364, 300)
+        Me._Tabs.Size = New System.Drawing.Size(364, 340)
         Me._Tabs.TabIndex = 3
         '
         '_ReadingTabPage
@@ -190,9 +186,10 @@ Partial Class E4990Panel
         Me._ReadingTabPage.Controls.Add(Me._ReadingsDataGridView)
         Me._ReadingTabPage.Controls.Add(Me._ReadingToolStrip)
         Me._ReadingTabPage.Controls.Add(Me._ToolStripPanel)
+        Me._ReadingTabPage.Controls.Add(Me._ResourceSelectorConnector)
         Me._ReadingTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ReadingTabPage.Name = "_ReadingTabPage"
-        Me._ReadingTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._ReadingTabPage.Size = New System.Drawing.Size(356, 310)
         Me._ReadingTabPage.TabIndex = 0
         Me._ReadingTabPage.Text = "Read"
         Me._ReadingTabPage.UseVisualStyleBackColor = True
@@ -203,9 +200,9 @@ Partial Class E4990Panel
         Me._ReadingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
         Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 25)
         Me._ReadingsDataGridView.Name = "_ReadingsDataGridView"
-        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 219)
+        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 230)
         Me._ReadingsDataGridView.TabIndex = 21
-        Me.TipsTooltip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
+        Me._TipsToolTip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
         '
         '_ReadingToolStrip
         '
@@ -268,11 +265,22 @@ Partial Class E4990Panel
         Me._AbortButton.Text = "Abort"
         Me._AbortButton.ToolTipText = "Aborts active trigger"
         '
+        '_ClearBufferDisplayButton
+        '
+        Me._ClearBufferDisplayButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ClearBufferDisplayButton.Font = New System.Drawing.Font("Wingdings", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(2, Byte))
+        Me._ClearBufferDisplayButton.Image = CType(resources.GetObject("_ClearBufferDisplayButton.Image"), System.Drawing.Image)
+        Me._ClearBufferDisplayButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ClearBufferDisplayButton.Name = "_ClearBufferDisplayButton"
+        Me._ClearBufferDisplayButton.Size = New System.Drawing.Size(25, 22)
+        Me._ClearBufferDisplayButton.Text = """"
+        Me._ClearBufferDisplayButton.ToolTipText = "Clears the buffer display"
+        '
         '_ToolStripPanel
         '
         Me._ToolStripPanel.Controls.Add(Me._SystemToolStrip)
         Me._ToolStripPanel.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._ToolStripPanel.Location = New System.Drawing.Point(0, 244)
+        Me._ToolStripPanel.Location = New System.Drawing.Point(0, 255)
         Me._ToolStripPanel.Name = "_ToolStripPanel"
         Me._ToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal
         Me._ToolStripPanel.RowMargin = New System.Windows.Forms.Padding(3, 0, 0, 0)
@@ -337,6 +345,20 @@ Partial Class E4990Panel
         Me._InitKnowStateMenuItem.Size = New System.Drawing.Size(224, 22)
         Me._InitKnowStateMenuItem.Text = "Initialize Known State"
         Me._InitKnowStateMenuItem.ToolTipText = "Issues *RST, CLear and initialize to custom known state"
+        '
+        '_LogTraceLevelComboBox
+        '
+        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
+        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._LogTraceLevelComboBox.Text = "Verbose"
+        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
+        '
+        '_DisplayTraceLevelComboBox
+        '
+        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
+        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._DisplayTraceLevelComboBox.Text = "Warning"
+        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
         '
         '_SessionOptionsDownButton
         '
@@ -439,12 +461,24 @@ Partial Class E4990Panel
         Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enable bitmask"
         Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {99, 0, 0, 0})
         '
+        '_ResourceSelectorConnector
+        '
+        Me._ResourceSelectorConnector.BackColor = System.Drawing.Color.Transparent
+        Me._ResourceSelectorConnector.ClearToolTipText = "Clear device state"
+        Me._ResourceSelectorConnector.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me._ResourceSelectorConnector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._ResourceSelectorConnector.Location = New System.Drawing.Point(0, 281)
+        Me._ResourceSelectorConnector.Margin = New System.Windows.Forms.Padding(0)
+        Me._ResourceSelectorConnector.Name = "_ResourceSelectorConnector"
+        Me._ResourceSelectorConnector.Size = New System.Drawing.Size(356, 29)
+        Me._ResourceSelectorConnector.TabIndex = 0
+        '
         '_SourceTabPage
         '
         Me._SourceTabPage.Controls.Add(Me._SourceLayout)
         Me._SourceTabPage.Location = New System.Drawing.Point(4, 26)
         Me._SourceTabPage.Name = "_SourceTabPage"
-        Me._SourceTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._SourceTabPage.Size = New System.Drawing.Size(356, 310)
         Me._SourceTabPage.TabIndex = 1
         Me._SourceTabPage.Text = "Source"
         Me._SourceTabPage.UseVisualStyleBackColor = True
@@ -463,7 +497,7 @@ Partial Class E4990Panel
         Me._SourceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._SourceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._SourceLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._SourceLayout.Size = New System.Drawing.Size(356, 270)
+        Me._SourceLayout.Size = New System.Drawing.Size(356, 310)
         Me._SourceLayout.TabIndex = 26
         '
         '_SourcePanel
@@ -474,7 +508,7 @@ Partial Class E4990Panel
         Me._SourcePanel.Controls.Add(Me._SourceFunctionComboBox)
         Me._SourcePanel.Controls.Add(Me._LevelNumeric)
         Me._SourcePanel.Controls.Add(Me._ApplySourceFunctionButton)
-        Me._SourcePanel.Location = New System.Drawing.Point(28, 73)
+        Me._SourcePanel.Location = New System.Drawing.Point(28, 93)
         Me._SourcePanel.Name = "_SourcePanel"
         Me._SourcePanel.Size = New System.Drawing.Size(299, 124)
         Me._SourcePanel.TabIndex = 27
@@ -538,7 +572,7 @@ Partial Class E4990Panel
         Me._ApplySourceFunctionButton.Size = New System.Drawing.Size(53, 30)
         Me._ApplySourceFunctionButton.TabIndex = 20
         Me._ApplySourceFunctionButton.Text = "Apply"
-        Me.TipsTooltip.SetToolTip(Me._ApplySourceFunctionButton, "Apply selected source function")
+        Me._TipsToolTip.SetToolTip(Me._ApplySourceFunctionButton, "Apply selected source function")
         Me._ApplySourceFunctionButton.UseVisualStyleBackColor = True
         '
         '_SenseTabPage
@@ -546,7 +580,7 @@ Partial Class E4990Panel
         Me._SenseTabPage.Controls.Add(Me._SenseTabControl)
         Me._SenseTabPage.Location = New System.Drawing.Point(4, 26)
         Me._SenseTabPage.Name = "_SenseTabPage"
-        Me._SenseTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._SenseTabPage.Size = New System.Drawing.Size(356, 310)
         Me._SenseTabPage.TabIndex = 4
         Me._SenseTabPage.Text = "Sense"
         Me._SenseTabPage.UseVisualStyleBackColor = True
@@ -561,7 +595,7 @@ Partial Class E4990Panel
         Me._SenseTabControl.Location = New System.Drawing.Point(0, 0)
         Me._SenseTabControl.Name = "_SenseTabControl"
         Me._SenseTabControl.SelectedIndex = 0
-        Me._SenseTabControl.Size = New System.Drawing.Size(356, 270)
+        Me._SenseTabControl.Size = New System.Drawing.Size(356, 310)
         Me._SenseTabControl.TabIndex = 17
         '
         '_AverageTabPage
@@ -570,7 +604,7 @@ Partial Class E4990Panel
         Me._AverageTabPage.Location = New System.Drawing.Point(4, 26)
         Me._AverageTabPage.Name = "_AverageTabPage"
         Me._AverageTabPage.Padding = New System.Windows.Forms.Padding(3)
-        Me._AverageTabPage.Size = New System.Drawing.Size(348, 240)
+        Me._AverageTabPage.Size = New System.Drawing.Size(348, 280)
         Me._AverageTabPage.TabIndex = 0
         Me._AverageTabPage.Text = "Average"
         Me._AverageTabPage.UseVisualStyleBackColor = True
@@ -589,7 +623,7 @@ Partial Class E4990Panel
         Me._AveragingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._AveragingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._AveragingLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._AveragingLayout.Size = New System.Drawing.Size(342, 234)
+        Me._AveragingLayout.Size = New System.Drawing.Size(342, 274)
         Me._AveragingLayout.TabIndex = 2
         '
         '_AveragingGroupBox
@@ -601,7 +635,7 @@ Partial Class E4990Panel
         Me._AveragingGroupBox.Controls.Add(Me._RestartAveragingButton)
         Me._AveragingGroupBox.Controls.Add(Me._AveragingCountNumericLabel)
         Me._AveragingGroupBox.Controls.Add(Me._AveragingCountNumeric)
-        Me._AveragingGroupBox.Location = New System.Drawing.Point(85, 36)
+        Me._AveragingGroupBox.Location = New System.Drawing.Point(85, 56)
         Me._AveragingGroupBox.Name = "_AveragingGroupBox"
         Me._AveragingGroupBox.Size = New System.Drawing.Size(171, 161)
         Me._AveragingGroupBox.TabIndex = 1
@@ -654,7 +688,7 @@ Partial Class E4990Panel
         Me._RestartAveragingButton.Size = New System.Drawing.Size(63, 28)
         Me._RestartAveragingButton.TabIndex = 5
         Me._RestartAveragingButton.Text = "Restart"
-        Me.TipsTooltip.SetToolTip(Me._RestartAveragingButton, "Restarts the moving average")
+        Me._TipsToolTip.SetToolTip(Me._RestartAveragingButton, "Restarts the moving average")
         Me._RestartAveragingButton.UseVisualStyleBackColor = True
         '
         '_AveragingCountNumericLabel
@@ -681,7 +715,7 @@ Partial Class E4990Panel
         Me._SweepTabPage.Location = New System.Drawing.Point(4, 22)
         Me._SweepTabPage.Name = "_SweepTabPage"
         Me._SweepTabPage.Padding = New System.Windows.Forms.Padding(3)
-        Me._SweepTabPage.Size = New System.Drawing.Size(348, 244)
+        Me._SweepTabPage.Size = New System.Drawing.Size(348, 284)
         Me._SweepTabPage.TabIndex = 1
         Me._SweepTabPage.Text = "Sweep"
         Me._SweepTabPage.UseVisualStyleBackColor = True
@@ -700,7 +734,7 @@ Partial Class E4990Panel
         Me._SweepLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._SweepLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._SweepLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._SweepLayout.Size = New System.Drawing.Size(342, 238)
+        Me._SweepLayout.Size = New System.Drawing.Size(342, 278)
         Me._SweepLayout.TabIndex = 18
         '
         '_SweepGroupBox
@@ -710,7 +744,7 @@ Partial Class E4990Panel
         Me._SweepGroupBox.Controls.Add(Me._HighFrequencyNumeric)
         Me._SweepGroupBox.Controls.Add(Me._LowFrequencyNumeric)
         Me._SweepGroupBox.Controls.Add(Me._HighFrequencyNumericLabel)
-        Me._SweepGroupBox.Location = New System.Drawing.Point(44, 50)
+        Me._SweepGroupBox.Location = New System.Drawing.Point(44, 70)
         Me._SweepGroupBox.Name = "_SweepGroupBox"
         Me._SweepGroupBox.Size = New System.Drawing.Size(253, 138)
         Me._SweepGroupBox.TabIndex = 17
@@ -733,7 +767,7 @@ Partial Class E4990Panel
         Me._ApplySweepSettingsButton.Size = New System.Drawing.Size(75, 28)
         Me._ApplySweepSettingsButton.TabIndex = 16
         Me._ApplySweepSettingsButton.Text = "Apply"
-        Me.TipsTooltip.SetToolTip(Me._ApplySweepSettingsButton, "Configures an impedance measurement")
+        Me._TipsToolTip.SetToolTip(Me._ApplySweepSettingsButton, "Configures an impedance measurement")
         Me._ApplySweepSettingsButton.UseVisualStyleBackColor = True
         '
         '_HighFrequencyNumeric
@@ -776,7 +810,7 @@ Partial Class E4990Panel
         Me._TraceTabPage.Controls.Add(Me._TraceLayout)
         Me._TraceTabPage.Location = New System.Drawing.Point(4, 22)
         Me._TraceTabPage.Name = "_TraceTabPage"
-        Me._TraceTabPage.Size = New System.Drawing.Size(348, 244)
+        Me._TraceTabPage.Size = New System.Drawing.Size(348, 284)
         Me._TraceTabPage.TabIndex = 3
         Me._TraceTabPage.Text = "Trace"
         Me._TraceTabPage.UseVisualStyleBackColor = True
@@ -829,7 +863,7 @@ Partial Class E4990Panel
         Me._PrimaryTraceParameterComboBox.Name = "_PrimaryTraceParameterComboBox"
         Me._PrimaryTraceParameterComboBox.Size = New System.Drawing.Size(206, 25)
         Me._PrimaryTraceParameterComboBox.TabIndex = 4
-        Me.TipsTooltip.SetToolTip(Me._PrimaryTraceParameterComboBox, "Parameter of the primary trace")
+        Me._TipsToolTip.SetToolTip(Me._PrimaryTraceParameterComboBox, "Parameter of the primary trace")
         '
         '_PrimaryTraceParameterComboBoxLabel
         '
@@ -860,14 +894,14 @@ Partial Class E4990Panel
         Me._SecondaryTraceParameterComboBox.Name = "_SecondaryTraceParameterComboBox"
         Me._SecondaryTraceParameterComboBox.Size = New System.Drawing.Size(206, 25)
         Me._SecondaryTraceParameterComboBox.TabIndex = 5
-        Me.TipsTooltip.SetToolTip(Me._SecondaryTraceParameterComboBox, "Parameter of the secondary trace")
+        Me._TipsToolTip.SetToolTip(Me._SecondaryTraceParameterComboBox, "Parameter of the secondary trace")
         '
         '_MarkersTabPage
         '
         Me._MarkersTabPage.Controls.Add(Me._MarkersLayout)
         Me._MarkersTabPage.Location = New System.Drawing.Point(4, 22)
         Me._MarkersTabPage.Name = "_MarkersTabPage"
-        Me._MarkersTabPage.Size = New System.Drawing.Size(348, 244)
+        Me._MarkersTabPage.Size = New System.Drawing.Size(348, 284)
         Me._MarkersTabPage.TabIndex = 2
         Me._MarkersTabPage.Text = "Markers"
         Me._MarkersTabPage.UseVisualStyleBackColor = True
@@ -886,7 +920,7 @@ Partial Class E4990Panel
         Me._MarkersLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._MarkersLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._MarkersLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._MarkersLayout.Size = New System.Drawing.Size(348, 244)
+        Me._MarkersLayout.Size = New System.Drawing.Size(348, 284)
         Me._MarkersLayout.TabIndex = 3
         '
         '_MarkersGroupBox
@@ -894,7 +928,7 @@ Partial Class E4990Panel
         Me._MarkersGroupBox.Controls.Add(Me._MarkerFrequencyComboBox)
         Me._MarkersGroupBox.Controls.Add(Me._MarkerFrequencyComboBoxLabel)
         Me._MarkersGroupBox.Controls.Add(Me._ApplyMarkerSettingsButton)
-        Me._MarkersGroupBox.Location = New System.Drawing.Point(34, 70)
+        Me._MarkersGroupBox.Location = New System.Drawing.Point(34, 90)
         Me._MarkersGroupBox.Name = "_MarkersGroupBox"
         Me._MarkersGroupBox.Size = New System.Drawing.Size(279, 103)
         Me._MarkersGroupBox.TabIndex = 4
@@ -932,7 +966,7 @@ Partial Class E4990Panel
         Me._CompensationTabPage.Controls.Add(Me._CalLayout)
         Me._CompensationTabPage.Location = New System.Drawing.Point(4, 26)
         Me._CompensationTabPage.Name = "_CompensationTabPage"
-        Me._CompensationTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._CompensationTabPage.Size = New System.Drawing.Size(356, 310)
         Me._CompensationTabPage.TabIndex = 6
         Me._CompensationTabPage.Text = "Cal"
         Me._CompensationTabPage.UseVisualStyleBackColor = True
@@ -952,7 +986,7 @@ Partial Class E4990Panel
         Me._CalLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._CalLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._CalLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me._CalLayout.Size = New System.Drawing.Size(356, 270)
+        Me._CalLayout.Size = New System.Drawing.Size(356, 310)
         Me._CalLayout.TabIndex = 3
         '
         '_CompensationGroupBox
@@ -971,7 +1005,7 @@ Partial Class E4990Panel
         Me._CompensationGroupBox.Controls.Add(Me._ApplyLoadButton)
         Me._CompensationGroupBox.Controls.Add(Me._ApplyShortButton)
         Me._CompensationGroupBox.Controls.Add(Me._ApplyOpenButton)
-        Me._CompensationGroupBox.Location = New System.Drawing.Point(36, 16)
+        Me._CompensationGroupBox.Location = New System.Drawing.Point(36, 36)
         Me._CompensationGroupBox.Name = "_CompensationGroupBox"
         Me._CompensationGroupBox.Size = New System.Drawing.Size(283, 237)
         Me._CompensationGroupBox.TabIndex = 0
@@ -1001,7 +1035,7 @@ Partial Class E4990Panel
         Me._AcquireCompensationButton.Size = New System.Drawing.Size(55, 26)
         Me._AcquireCompensationButton.TabIndex = 8
         Me._AcquireCompensationButton.Text = "New"
-        Me.TipsTooltip.SetToolTip(Me._AcquireCompensationButton, "Acquire a new compensation of validate existing compensation")
+        Me._TipsToolTip.SetToolTip(Me._AcquireCompensationButton, "Acquire a new compensation of validate existing compensation")
         Me._AcquireCompensationButton.UseVisualStyleBackColor = True
         '
         '_LoadCompensationTextBoxLabel
@@ -1040,7 +1074,7 @@ Partial Class E4990Panel
         Me._FrequencyStimulusTextBox.Size = New System.Drawing.Size(211, 25)
         Me._FrequencyStimulusTextBox.TabIndex = 1
         Me._FrequencyStimulusTextBox.Text = Global.isr.VI.E4990.My.MySettings.Default.FrequencyArrayReading
-        Me.TipsTooltip.SetToolTip(Me._FrequencyStimulusTextBox, "Compensation frequencies")
+        Me._TipsToolTip.SetToolTip(Me._FrequencyStimulusTextBox, "Compensation frequencies")
         '
         '_FrequencyStimulusTextBoxLabel
         '
@@ -1061,7 +1095,7 @@ Partial Class E4990Panel
         Me._LoadCompensationTextBox.Size = New System.Drawing.Size(212, 45)
         Me._LoadCompensationTextBox.TabIndex = 3
         Me._LoadCompensationTextBox.Text = Global.isr.VI.E4990.My.MySettings.Default.LoadCompensationReading
-        Me.TipsTooltip.SetToolTip(Me._LoadCompensationTextBox, "Load compensation values")
+        Me._TipsToolTip.SetToolTip(Me._LoadCompensationTextBox, "Load compensation values")
         '
         '_ShortCompensationTextBox
         '
@@ -1073,7 +1107,7 @@ Partial Class E4990Panel
         Me._ShortCompensationTextBox.Size = New System.Drawing.Size(212, 45)
         Me._ShortCompensationTextBox.TabIndex = 3
         Me._ShortCompensationTextBox.Text = Global.isr.VI.E4990.My.MySettings.Default.ShortCompensationReading
-        Me.TipsTooltip.SetToolTip(Me._ShortCompensationTextBox, "Short compensation values")
+        Me._TipsToolTip.SetToolTip(Me._ShortCompensationTextBox, "Short compensation values")
         '
         '_OpenCompensationTextBox
         '
@@ -1085,7 +1119,7 @@ Partial Class E4990Panel
         Me._OpenCompensationTextBox.Size = New System.Drawing.Size(212, 45)
         Me._OpenCompensationTextBox.TabIndex = 2
         Me._OpenCompensationTextBox.Text = Global.isr.VI.E4990.My.MySettings.Default.OpenCompensationReading
-        Me.TipsTooltip.SetToolTip(Me._OpenCompensationTextBox, "Open compensation data")
+        Me._TipsToolTip.SetToolTip(Me._OpenCompensationTextBox, "Open compensation data")
         '
         '_ApplyLoadButton
         '
@@ -1103,7 +1137,7 @@ Partial Class E4990Panel
         Me._ApplyShortButton.Size = New System.Drawing.Size(55, 26)
         Me._ApplyShortButton.TabIndex = 4
         Me._ApplyShortButton.Text = "Apply"
-        Me.TipsTooltip.SetToolTip(Me._ApplyShortButton, "Sense the short compensation values to the instrument")
+        Me._TipsToolTip.SetToolTip(Me._ApplyShortButton, "Sense the short compensation values to the instrument")
         Me._ApplyShortButton.UseVisualStyleBackColor = True
         '
         '_ApplyOpenButton
@@ -1113,7 +1147,7 @@ Partial Class E4990Panel
         Me._ApplyOpenButton.Size = New System.Drawing.Size(55, 26)
         Me._ApplyOpenButton.TabIndex = 2
         Me._ApplyOpenButton.Text = "Apply"
-        Me.TipsTooltip.SetToolTip(Me._ApplyOpenButton, "Sense the open compensation values to the instrument")
+        Me._TipsToolTip.SetToolTip(Me._ApplyOpenButton, "Sense the open compensation values to the instrument")
         Me._ApplyOpenButton.UseVisualStyleBackColor = True
         '
         '_ReadWriteTabPage
@@ -1121,31 +1155,103 @@ Partial Class E4990Panel
         Me._ReadWriteTabPage.Controls.Add(Me._SimpleReadWriteControl)
         Me._ReadWriteTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ReadWriteTabPage.Name = "_ReadWriteTabPage"
-        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 310)
         Me._ReadWriteTabPage.TabIndex = 5
         Me._ReadWriteTabPage.Text = "R/W"
         Me._ReadWriteTabPage.UseVisualStyleBackColor = True
         '
         '_SimpleReadWriteControl
         '
+        Me._SimpleReadWriteControl.AutoAppendTermination = Nothing
         Me._SimpleReadWriteControl.Dock = System.Windows.Forms.DockStyle.Fill
         Me._SimpleReadWriteControl.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._SimpleReadWriteControl.Location = New System.Drawing.Point(0, 0)
         Me._SimpleReadWriteControl.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._SimpleReadWriteControl.Name = "_SimpleReadWriteControl"
         Me._SimpleReadWriteControl.ReadEnabled = False
-        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 270)
+        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 310)
         Me._SimpleReadWriteControl.TabIndex = 0
         '
         '_MessagesTabPage
         '
-        Me._MessagesTabPage.Controls.Add(Me.TraceMessagesBox)
+        Me._MessagesTabPage.Controls.Add(Me._TraceMessagesBox)
         Me._MessagesTabPage.Location = New System.Drawing.Point(4, 26)
         Me._MessagesTabPage.Name = "_MessagesTabPage"
-        Me._MessagesTabPage.Size = New System.Drawing.Size(356, 270)
+        Me._MessagesTabPage.Size = New System.Drawing.Size(356, 310)
         Me._MessagesTabPage.TabIndex = 3
         Me._MessagesTabPage.Text = "Log"
         Me._MessagesTabPage.UseVisualStyleBackColor = True
+        '
+        '_TraceMessagesBox
+        '
+        Me._TraceMessagesBox.AlertLevel = System.Diagnostics.TraceEventType.Warning
+        Me._TraceMessagesBox.BackColor = System.Drawing.SystemColors.Info
+        Me._TraceMessagesBox.CaptionFormat = "{0} ≡"
+        Me._TraceMessagesBox.CausesValidation = False
+        Me._TraceMessagesBox.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._TraceMessagesBox.Font = New System.Drawing.Font("Consolas", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._TraceMessagesBox.Location = New System.Drawing.Point(0, 0)
+        Me._TraceMessagesBox.Multiline = True
+        Me._TraceMessagesBox.Name = "_TraceMessagesBox"
+        Me._TraceMessagesBox.PresetCount = 500
+        Me._TraceMessagesBox.ReadOnly = True
+        Me._TraceMessagesBox.ResetCount = 1000
+        Me._TraceMessagesBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
+        Me._TraceMessagesBox.Size = New System.Drawing.Size(356, 310)
+        Me._TraceMessagesBox.TabIndex = 1
+        '
+        '_StatusStrip
+        '
+        Me._StatusStrip.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._StatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._StatusLabel, Me._IdentityLabel})
+        Me._StatusStrip.Location = New System.Drawing.Point(0, 411)
+        Me._StatusStrip.Name = "_StatusStrip"
+        Me._StatusStrip.Padding = New System.Windows.Forms.Padding(1, 0, 16, 0)
+        Me._StatusStrip.ShowItemToolTips = True
+        Me._StatusStrip.Size = New System.Drawing.Size(364, 22)
+        Me._StatusStrip.TabIndex = 15
+        Me._StatusStrip.Text = "StatusStrip1"
+        '
+        '_StatusLabel
+        '
+        Me._StatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._StatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._StatusLabel.Name = "_StatusLabel"
+        Me._StatusLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
+        Me._StatusLabel.Size = New System.Drawing.Size(317, 17)
+        Me._StatusLabel.Spring = True
+        Me._StatusLabel.Text = "<Status>"
+        Me._StatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me._StatusLabel.ToolTipText = "Status"
+        '
+        '_IdentityLabel
+        '
+        Me._IdentityLabel.Name = "_IdentityLabel"
+        Me._IdentityLabel.Size = New System.Drawing.Size(30, 17)
+        Me._IdentityLabel.Text = "<I>"
+        Me._IdentityLabel.ToolTipText = "Identity"
+        '
+        '_StatusRegisterLabel
+        '
+        Me._StatusRegisterLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._StatusRegisterLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._StatusRegisterLabel.ForeColor = System.Drawing.Color.LightSkyBlue
+        Me._StatusRegisterLabel.Margin = New System.Windows.Forms.Padding(0)
+        Me._StatusRegisterLabel.Name = "_StatusRegisterLabel"
+        Me._StatusRegisterLabel.Size = New System.Drawing.Size(36, 37)
+        Me._StatusRegisterLabel.Text = "0x00"
+        Me._StatusRegisterLabel.ToolTipText = "Status Register Value"
+        '
+        '_StandardRegisterLabel
+        '
+        Me._StandardRegisterLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._StandardRegisterLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._StandardRegisterLabel.ForeColor = System.Drawing.Color.LightSkyBlue
+        Me._StandardRegisterLabel.Margin = New System.Windows.Forms.Padding(0)
+        Me._StandardRegisterLabel.Name = "_StandardRegisterLabel"
+        Me._StandardRegisterLabel.Size = New System.Drawing.Size(36, 37)
+        Me._StandardRegisterLabel.Text = "0x00"
+        Me._StandardRegisterLabel.ToolTipText = "Standard Register Value"
         '
         '_LastErrorTextBox
         '
@@ -1166,7 +1272,7 @@ Partial Class E4990Panel
         Me._ReadingStatusStrip.Dock = System.Windows.Forms.DockStyle.Top
         Me._ReadingStatusStrip.Font = New System.Drawing.Font("Segoe UI", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ReadingStatusStrip.GripMargin = New System.Windows.Forms.Padding(0)
-        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._FailureCodeToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._TbdToolStripStatusLabel})
+        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._FailureCodeToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._StatusRegisterLabel, Me._StandardRegisterLabel})
         Me._ReadingStatusStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingStatusStrip.Name = "_ReadingStatusStrip"
         Me._ReadingStatusStrip.Size = New System.Drawing.Size(364, 37)
@@ -1192,21 +1298,10 @@ Partial Class E4990Panel
         Me._ReadingToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
         Me._ReadingToolStripStatusLabel.Name = "_ReadingToolStripStatusLabel"
         Me._ReadingToolStripStatusLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
-        Me._ReadingToolStripStatusLabel.Size = New System.Drawing.Size(313, 37)
+        Me._ReadingToolStripStatusLabel.Size = New System.Drawing.Size(230, 37)
         Me._ReadingToolStripStatusLabel.Spring = True
         Me._ReadingToolStripStatusLabel.Text = "0.0000000 mV"
         Me._ReadingToolStripStatusLabel.ToolTipText = "Reading"
-        '
-        '_TbdToolStripStatusLabel
-        '
-        Me._TbdToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._TbdToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._TbdToolStripStatusLabel.ForeColor = System.Drawing.Color.Aquamarine
-        Me._TbdToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
-        Me._TbdToolStripStatusLabel.Name = "_TbdToolStripStatusLabel"
-        Me._TbdToolStripStatusLabel.Size = New System.Drawing.Size(20, 37)
-        Me._TbdToolStripStatusLabel.Text = " T"
-        Me._TbdToolStripStatusLabel.ToolTipText = "To be defined"
         '
         '_LastReadingTextBox
         '
@@ -1228,11 +1323,12 @@ Partial Class E4990Panel
         Me._Panel.Controls.Add(Me._LastErrorTextBox)
         Me._Panel.Controls.Add(Me._LastReadingTextBox)
         Me._Panel.Controls.Add(Me._ReadingStatusStrip)
+        Me._Panel.Controls.Add(Me._StatusStrip)
         Me._Panel.Dock = System.Windows.Forms.DockStyle.Fill
         Me._Panel.Location = New System.Drawing.Point(0, 17)
         Me._Panel.Margin = New System.Windows.Forms.Padding(0)
         Me._Panel.Name = "_Panel"
-        Me._Panel.Size = New System.Drawing.Size(364, 371)
+        Me._Panel.Size = New System.Drawing.Size(364, 433)
         Me._Panel.TabIndex = 16
         '
         '_Layout
@@ -1248,7 +1344,7 @@ Partial Class E4990Panel
         Me._Layout.RowCount = 2
         Me._Layout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._Layout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me._Layout.Size = New System.Drawing.Size(364, 388)
+        Me._Layout.Size = New System.Drawing.Size(364, 450)
         Me._Layout.TabIndex = 17
         '
         '_TitleLabel
@@ -1266,39 +1362,15 @@ Partial Class E4990Panel
         Me._TitleLabel.Text = "KE4990"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_LogTraceLevelComboBox
+        '_InfoProvider
         '
-        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
-        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._LogTraceLevelComboBox.Text = "Verbose"
-        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
-        '
-        '_DisplayTraceLevelComboBox
-        '
-        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
-        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._DisplayTraceLevelComboBox.Text = "Warning"
-        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
-        '
-        '_ClearBufferDisplayButton
-        '
-        Me._ClearBufferDisplayButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ClearBufferDisplayButton.Font = New System.Drawing.Font("Wingdings", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(2, Byte))
-        Me._ClearBufferDisplayButton.Image = CType(resources.GetObject("_ClearBufferDisplayButton.Image"), System.Drawing.Image)
-        Me._ClearBufferDisplayButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._ClearBufferDisplayButton.Name = "_ClearBufferDisplayButton"
-        Me._ClearBufferDisplayButton.Size = New System.Drawing.Size(25, 22)
-        Me._ClearBufferDisplayButton.Text = """"
-        Me._ClearBufferDisplayButton.ToolTipText = "Clears the buffer display"
+        Me._InfoProvider.ContainerControl = Me
         '
         'E4990Panel
         '
         Me.Controls.Add(Me._Layout)
         Me.Name = "E4990Panel"
         Me.Size = New System.Drawing.Size(364, 450)
-        Me.Controls.SetChildIndex(Me.Connector, 0)
-        Me.Controls.SetChildIndex(Me._Layout, 0)
-        CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me._Tabs.ResumeLayout(False)
         Me._ReadingTabPage.ResumeLayout(False)
         Me._ReadingTabPage.PerformLayout()
@@ -1343,13 +1415,15 @@ Partial Class E4990Panel
         Me._ReadWriteTabPage.ResumeLayout(False)
         Me._MessagesTabPage.ResumeLayout(False)
         Me._MessagesTabPage.PerformLayout()
+        Me._StatusStrip.ResumeLayout(False)
+        Me._StatusStrip.PerformLayout()
         Me._ReadingStatusStrip.ResumeLayout(False)
         Me._ReadingStatusStrip.PerformLayout()
         Me._Panel.ResumeLayout(False)
         Me._Panel.PerformLayout()
         Me._Layout.ResumeLayout(False)
+        CType(Me._InfoProvider, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
     Private WithEvents _ReadingTabPage As System.Windows.Forms.TabPage
@@ -1361,7 +1435,6 @@ Partial Class E4990Panel
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
     Private WithEvents _FailureCodeToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
-    Private WithEvents _TbdToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _LastReadingTextBox As System.Windows.Forms.TextBox
     Private WithEvents _Panel As System.Windows.Forms.Panel
     Private WithEvents _Layout As System.Windows.Forms.TableLayoutPanel
@@ -1457,4 +1530,13 @@ Partial Class E4990Panel
     Private WithEvents _ClearBufferDisplayButton As Windows.Forms.ToolStripButton
     Private WithEvents _LogTraceLevelComboBox As Core.Controls.ToolStripComboBox
     Private WithEvents _DisplayTraceLevelComboBox As Core.Controls.ToolStripComboBox
+    Private WithEvents _ResourceSelectorConnector As VI.Instrument.ResourceSelectorConnector
+    Private WithEvents _TraceMessagesBox As isr.Core.Pith.TraceMessagesBox
+    Private WithEvents _InfoProvider As isr.Core.Controls.InfoProvider
+    Private WithEvents _TipsToolTip As Windows.Forms.ToolTip
+    Private WithEvents _StatusStrip As System.Windows.Forms.StatusStrip
+    Private WithEvents _StatusLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _IdentityLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _StatusRegisterLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _StandardRegisterLabel As System.Windows.Forms.ToolStripStatusLabel
 End Class

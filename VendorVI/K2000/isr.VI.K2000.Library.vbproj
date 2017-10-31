@@ -82,6 +82,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PANELS\K2000Control.Designer.vb">
+      <DependentUpon>K2000Control.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\K2000Control.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SUBSYSTEMS\ArmLayer2Subsystem.vb" />
     <Compile Include="SUBSYSTEMS\ArmLayer1Subsystem.vb" />
     <Compile Include="SUBSYSTEMS\ConstantsEnums.vb" />
@@ -123,7 +129,11 @@
   <ItemGroup>
     <Content Include="My\isr.VI.K2000.History.rtf" />
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <Content Include="PANELS\K2000Control.bmp" />
     <Content Include="PANELS\K2000Panel.bmp" />
+    <EmbeddedResource Include="PANELS\K2000Control.resx">
+      <DependentUpon>K2000Control.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PANELS\K2000Panel.resx">
       <DependentUpon>K2000Panel.vb</DependentUpon>
     </EmbeddedResource>

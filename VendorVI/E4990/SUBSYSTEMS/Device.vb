@@ -30,9 +30,9 @@ Public Class Device
         Dim device As Device = Nothing
         Try
             device = New Device
-
         Catch
-            device.Dispose()
+            If device IsNot Nothing Then device.Dispose()
+            device = Nothing
             Throw
         End Try
         Return device

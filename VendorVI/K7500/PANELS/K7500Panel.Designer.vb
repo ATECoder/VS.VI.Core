@@ -25,6 +25,8 @@ Partial Class K7500Panel
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadStatusByteMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
         Me._ServiceRequestEnableNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
@@ -112,8 +114,6 @@ Partial Class K7500Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
-        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -272,6 +272,20 @@ Partial Class K7500Panel
         Me._ReadStatusByteMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._ReadStatusByteMenuItem.Text = "Read Status Byte"
         Me._ReadStatusByteMenuItem.ToolTipText = "Reads the status byte"
+        '
+        '_LogTraceLevelComboBox
+        '
+        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
+        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._LogTraceLevelComboBox.Text = "Verbose"
+        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
+        '
+        '_DisplayTraceLevelComboBox
+        '
+        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
+        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._DisplayTraceLevelComboBox.Text = "Warning"
+        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
         '
         '_ReadTerminalStateButton
         '
@@ -939,6 +953,7 @@ Partial Class K7500Panel
         '
         '_SimpleReadWriteControl
         '
+        Me._SimpleReadWriteControl.AutoAppendTermination = Nothing
         Me._SimpleReadWriteControl.Dock = System.Windows.Forms.DockStyle.Fill
         Me._SimpleReadWriteControl.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._SimpleReadWriteControl.Location = New System.Drawing.Point(0, 0)
@@ -1087,20 +1102,6 @@ Partial Class K7500Panel
         Me._TitleLabel.TabIndex = 17
         Me._TitleLabel.Text = "K7500"
         Me._TitleLabel.UseMnemonic = False
-        '
-        '_LogTraceLevelComboBox
-        '
-        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
-        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._LogTraceLevelComboBox.Text = "Verbose"
-        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
-        '
-        '_DisplayTraceLevelComboBox
-        '
-        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
-        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._DisplayTraceLevelComboBox.Text = "Warning"
-        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
         '
         'K7500Panel
         '

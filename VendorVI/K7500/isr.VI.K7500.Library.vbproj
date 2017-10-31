@@ -82,6 +82,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PANELS\K7500Control.Designer.vb">
+      <DependentUpon>K7500Control.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\K7500Control.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SUBSYSTEMS\ConstantsEnums.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystem.vb" />
     <Compile Include="SUBSYSTEMS\Calculate2FourWireResistanceSubsystem.vb" />
@@ -123,7 +129,11 @@
   <ItemGroup>
     <Content Include="My\isr.VI.K7500.History.rtf" />
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <Content Include="PANELS\K7500Control.bmp" />
     <Content Include="PANELS\K7500Panel.bmp" />
+    <EmbeddedResource Include="PANELS\K7500Control.resx">
+      <DependentUpon>K7500Control.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PANELS\K7500Panel.resx">
       <DependentUpon>K7500Panel.vb</DependentUpon>
     </EmbeddedResource>

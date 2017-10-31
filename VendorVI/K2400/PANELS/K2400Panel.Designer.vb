@@ -20,6 +20,7 @@ Partial Class K2400Panel
         Me._ReadingsCountLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ReadingComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me._AbortButton = New System.Windows.Forms.ToolStripButton()
+        Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
         Me._ToolStripPanel = New System.Windows.Forms.ToolStripPanel()
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetsDropDownButton = New System.Windows.Forms.ToolStripDropDownButton()
@@ -28,6 +29,8 @@ Partial Class K2400Panel
         Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitKnowStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._SessionOptionsDownButton = New System.Windows.Forms.ToolStripDropDownButton()
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -46,7 +49,7 @@ Partial Class K2400Panel
         Me._SourceLevelNumeric = New System.Windows.Forms.NumericUpDown()
         Me._SourceRangeNumeric = New System.Windows.Forms.NumericUpDown()
         Me._SourceDelayNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._sourceDelayTextBoxLabel = New System.Windows.Forms.Label()
+        Me._SourceDelayTextBoxLabel = New System.Windows.Forms.Label()
         Me._SourceLevelNumericLabel = New System.Windows.Forms.Label()
         Me._ApplySourceSettingButton = New System.Windows.Forms.Button()
         Me._SourceRangeNumericLabel = New System.Windows.Forms.Label()
@@ -77,11 +80,11 @@ Partial Class K2400Panel
         Me._VoltageLevelNumericLabel = New System.Windows.Forms.Label()
         Me._VoltageLevelNumeric = New System.Windows.Forms.NumericUpDown()
         Me._ResistanceRangeNumericLabel = New System.Windows.Forms.Label()
-        Me._resistanceLowLimitNumericLabel = New System.Windows.Forms.Label()
+        Me._ResistanceLowLimitNumericLabel = New System.Windows.Forms.Label()
         Me._ResistanceRangeNumeric = New System.Windows.Forms.NumericUpDown()
         Me._ResistanceLowLimitNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._dwellTimeNumericLabel = New System.Windows.Forms.Label()
-        Me._dwellTimeNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._DwellTimeNumericLabel = New System.Windows.Forms.Label()
+        Me._DwellTimeNumeric = New System.Windows.Forms.NumericUpDown()
         Me._ApertureNumeric = New System.Windows.Forms.NumericUpDown()
         Me._ApertureNumericLabel = New System.Windows.Forms.Label()
         Me._SotTabPage = New System.Windows.Forms.TabPage()
@@ -116,9 +119,6 @@ Partial Class K2400Panel
         Me._Panel = New System.Windows.Forms.Panel()
         Me._Layout = New System.Windows.Forms.TableLayoutPanel()
         Me._TitleLabel = New System.Windows.Forms.Label()
-        Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
-        Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
-        Me._ClearBufferDisplayButton = New System.Windows.Forms.ToolStripButton()
         CType(Me.ErrorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
@@ -142,7 +142,7 @@ Partial Class K2400Panel
         CType(Me._VoltageLevelNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._ResistanceRangeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._ResistanceLowLimitNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._dwellTimeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me._DwellTimeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._ApertureNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._SotTabPage.SuspendLayout()
         Me._BinningLayout.SuspendLayout()
@@ -274,6 +274,17 @@ Partial Class K2400Panel
         Me._AbortButton.Text = "Abort"
         Me._AbortButton.ToolTipText = "Aborts active trigger"
         '
+        '_ClearBufferDisplayButton
+        '
+        Me._ClearBufferDisplayButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._ClearBufferDisplayButton.Font = New System.Drawing.Font("Wingdings", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(2, Byte))
+        Me._ClearBufferDisplayButton.Image = CType(resources.GetObject("_ClearBufferDisplayButton.Image"), System.Drawing.Image)
+        Me._ClearBufferDisplayButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._ClearBufferDisplayButton.Name = "_ClearBufferDisplayButton"
+        Me._ClearBufferDisplayButton.Size = New System.Drawing.Size(25, 22)
+        Me._ClearBufferDisplayButton.Text = """"
+        Me._ClearBufferDisplayButton.ToolTipText = "Clears the buffer display"
+        '
         '_ToolStripPanel
         '
         Me._ToolStripPanel.Controls.Add(Me._SystemToolStrip)
@@ -343,6 +354,20 @@ Partial Class K2400Panel
         Me._InitKnowStateMenuItem.Size = New System.Drawing.Size(224, 22)
         Me._InitKnowStateMenuItem.Text = "Initialize Known State"
         Me._InitKnowStateMenuItem.ToolTipText = "Issues *RST, CLear and initialize to custom known state"
+        '
+        '_LogTraceLevelComboBox
+        '
+        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
+        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._LogTraceLevelComboBox.Text = "Verbose"
+        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
+        '
+        '_DisplayTraceLevelComboBox
+        '
+        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
+        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._DisplayTraceLevelComboBox.Text = "Warning"
+        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
         '
         '_SessionOptionsDownButton
         '
@@ -443,7 +468,7 @@ Partial Class K2400Panel
         Me._SourceTabPage.Controls.Add(Me._SourceLevelNumeric)
         Me._SourceTabPage.Controls.Add(Me._SourceRangeNumeric)
         Me._SourceTabPage.Controls.Add(Me._SourceDelayNumeric)
-        Me._SourceTabPage.Controls.Add(Me._sourceDelayTextBoxLabel)
+        Me._SourceTabPage.Controls.Add(Me._SourceDelayTextBoxLabel)
         Me._SourceTabPage.Controls.Add(Me._SourceLevelNumericLabel)
         Me._SourceTabPage.Controls.Add(Me._ApplySourceSettingButton)
         Me._SourceTabPage.Controls.Add(Me._SourceRangeNumericLabel)
@@ -525,15 +550,15 @@ Partial Class K2400Panel
         Me._SourceDelayNumeric.TabIndex = 17
         Me.TipsTooltip.SetToolTip(Me._SourceDelayNumeric, "Source delay in milliseconds")
         '
-        '_sourceDelayTextBoxLabel
+        '_SourceDelayTextBoxLabel
         '
-        Me._sourceDelayTextBoxLabel.AutoSize = True
-        Me._sourceDelayTextBoxLabel.Location = New System.Drawing.Point(41, 41)
-        Me._sourceDelayTextBoxLabel.Name = "_sourceDelayTextBoxLabel"
-        Me._sourceDelayTextBoxLabel.Size = New System.Drawing.Size(72, 17)
-        Me._sourceDelayTextBoxLabel.TabIndex = 16
-        Me._sourceDelayTextBoxLabel.Text = "Delay [ms]:"
-        Me._sourceDelayTextBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._SourceDelayTextBoxLabel.AutoSize = True
+        Me._SourceDelayTextBoxLabel.Location = New System.Drawing.Point(41, 41)
+        Me._SourceDelayTextBoxLabel.Name = "_SourceDelayTextBoxLabel"
+        Me._SourceDelayTextBoxLabel.Size = New System.Drawing.Size(72, 17)
+        Me._SourceDelayTextBoxLabel.TabIndex = 16
+        Me._SourceDelayTextBoxLabel.Text = "Delay [ms]:"
+        Me._SourceDelayTextBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         '_SourceLevelNumericLabel
         '
@@ -801,11 +826,11 @@ Partial Class K2400Panel
         Me._HipotGroupBox.Controls.Add(Me._VoltageLevelNumericLabel)
         Me._HipotGroupBox.Controls.Add(Me._VoltageLevelNumeric)
         Me._HipotGroupBox.Controls.Add(Me._ResistanceRangeNumericLabel)
-        Me._HipotGroupBox.Controls.Add(Me._resistanceLowLimitNumericLabel)
+        Me._HipotGroupBox.Controls.Add(Me._ResistanceLowLimitNumericLabel)
         Me._HipotGroupBox.Controls.Add(Me._ResistanceRangeNumeric)
         Me._HipotGroupBox.Controls.Add(Me._ResistanceLowLimitNumeric)
-        Me._HipotGroupBox.Controls.Add(Me._dwellTimeNumericLabel)
-        Me._HipotGroupBox.Controls.Add(Me._dwellTimeNumeric)
+        Me._HipotGroupBox.Controls.Add(Me._DwellTimeNumericLabel)
+        Me._HipotGroupBox.Controls.Add(Me._DwellTimeNumeric)
         Me._HipotGroupBox.Controls.Add(Me._ApertureNumeric)
         Me._HipotGroupBox.Controls.Add(Me._ApertureNumericLabel)
         Me._HipotGroupBox.Location = New System.Drawing.Point(36, 26)
@@ -888,14 +913,14 @@ Partial Class K2400Panel
         Me._ResistanceRangeNumericLabel.TabIndex = 10
         Me._ResistanceRangeNumericLabel.Text = "Resistance Range [M Ohm]:"
         '
-        '_resistanceLowLimitNumericLabel
+        '_ResistanceLowLimitNumericLabel
         '
-        Me._resistanceLowLimitNumericLabel.AutoSize = True
-        Me._resistanceLowLimitNumericLabel.Location = New System.Drawing.Point(5, 133)
-        Me._resistanceLowLimitNumericLabel.Name = "_resistanceLowLimitNumericLabel"
-        Me._resistanceLowLimitNumericLabel.Size = New System.Drawing.Size(183, 17)
-        Me._resistanceLowLimitNumericLabel.TabIndex = 8
-        Me._resistanceLowLimitNumericLabel.Text = "Resistance low Limit [M Ohm]:"
+        Me._ResistanceLowLimitNumericLabel.AutoSize = True
+        Me._ResistanceLowLimitNumericLabel.Location = New System.Drawing.Point(5, 133)
+        Me._ResistanceLowLimitNumericLabel.Name = "_ResistanceLowLimitNumericLabel"
+        Me._ResistanceLowLimitNumericLabel.Size = New System.Drawing.Size(183, 17)
+        Me._ResistanceLowLimitNumericLabel.TabIndex = 8
+        Me._ResistanceLowLimitNumericLabel.Text = "Resistance low Limit [M Ohm]:"
         '
         '_ResistanceRangeNumeric
         '
@@ -923,26 +948,26 @@ Partial Class K2400Panel
         Me._ResistanceLowLimitNumeric.ThousandsSeparator = True
         Me._ResistanceLowLimitNumeric.Value = New Decimal(New Integer() {100, 0, 0, 0})
         '
-        '_dwellTimeNumericLabel
+        '_DwellTimeNumericLabel
         '
-        Me._dwellTimeNumericLabel.AutoSize = True
-        Me._dwellTimeNumericLabel.Location = New System.Drawing.Point(98, 52)
-        Me._dwellTimeNumericLabel.Name = "_dwellTimeNumericLabel"
-        Me._dwellTimeNumericLabel.Size = New System.Drawing.Size(90, 17)
-        Me._dwellTimeNumericLabel.TabIndex = 2
-        Me._dwellTimeNumericLabel.Text = "Dwell time [S]:"
+        Me._DwellTimeNumericLabel.AutoSize = True
+        Me._DwellTimeNumericLabel.Location = New System.Drawing.Point(98, 52)
+        Me._DwellTimeNumericLabel.Name = "_DwellTimeNumericLabel"
+        Me._DwellTimeNumericLabel.Size = New System.Drawing.Size(90, 17)
+        Me._DwellTimeNumericLabel.TabIndex = 2
+        Me._DwellTimeNumericLabel.Text = "Dwell time [S]:"
         '
-        '_dwellTimeNumeric
+        '_DwellTimeNumeric
         '
-        Me._dwellTimeNumeric.DecimalPlaces = 2
-        Me._dwellTimeNumeric.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
-        Me._dwellTimeNumeric.Location = New System.Drawing.Point(191, 48)
-        Me._dwellTimeNumeric.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
-        Me._dwellTimeNumeric.Name = "_dwellTimeNumeric"
-        Me._dwellTimeNumeric.Size = New System.Drawing.Size(79, 25)
-        Me._dwellTimeNumeric.TabIndex = 3
-        Me._dwellTimeNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me._dwellTimeNumeric.Value = New Decimal(New Integer() {2, 0, 0, 0})
+        Me._DwellTimeNumeric.DecimalPlaces = 2
+        Me._DwellTimeNumeric.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
+        Me._DwellTimeNumeric.Location = New System.Drawing.Point(191, 48)
+        Me._DwellTimeNumeric.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
+        Me._DwellTimeNumeric.Name = "_DwellTimeNumeric"
+        Me._DwellTimeNumeric.Size = New System.Drawing.Size(79, 25)
+        Me._DwellTimeNumeric.TabIndex = 3
+        Me._DwellTimeNumeric.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me._DwellTimeNumeric.Value = New Decimal(New Integer() {2, 0, 0, 0})
         '
         '_ApertureNumeric
         '
@@ -1195,6 +1220,7 @@ Partial Class K2400Panel
         '
         '_SimpleReadWriteControl
         '
+        Me._SimpleReadWriteControl.AutoAppendTermination = Nothing
         Me._SimpleReadWriteControl.Dock = System.Windows.Forms.DockStyle.Fill
         Me._SimpleReadWriteControl.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._SimpleReadWriteControl.Location = New System.Drawing.Point(0, 0)
@@ -1333,31 +1359,6 @@ Partial Class K2400Panel
         Me._TitleLabel.Text = "K2400"
         Me._TitleLabel.UseMnemonic = False
         '
-        '_ClearBufferDisplayButton
-        '
-        Me._ClearBufferDisplayButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ClearBufferDisplayButton.Font = New System.Drawing.Font("Wingdings", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(2, Byte))
-        Me._ClearBufferDisplayButton.Image = CType(resources.GetObject("_ClearBufferDisplayButton.Image"), System.Drawing.Image)
-        Me._ClearBufferDisplayButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._ClearBufferDisplayButton.Name = "_ClearBufferDisplayButton"
-        Me._ClearBufferDisplayButton.Size = New System.Drawing.Size(25, 22)
-        Me._ClearBufferDisplayButton.Text = """"
-        Me._ClearBufferDisplayButton.ToolTipText = "Clears the buffer display"
-        '
-        '_LogTraceLevelComboBox
-        '
-        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
-        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._LogTraceLevelComboBox.Text = "Verbose"
-        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
-        '
-        '_DisplayTraceLevelComboBox
-        '
-        Me._DisplayTraceLevelComboBox.Name = "_DisplayTraceLevelComboBox"
-        Me._DisplayTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._DisplayTraceLevelComboBox.Text = "Warning"
-        Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
-        '
         'K2400Panel
         '
         Me.Controls.Add(Me._Layout)
@@ -1395,7 +1396,7 @@ Partial Class K2400Panel
         CType(Me._VoltageLevelNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._ResistanceRangeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._ResistanceLowLimitNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._dwellTimeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me._DwellTimeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._ApertureNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         Me._SotTabPage.ResumeLayout(False)
         Me._BinningLayout.ResumeLayout(False)
