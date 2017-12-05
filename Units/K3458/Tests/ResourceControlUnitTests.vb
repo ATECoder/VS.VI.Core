@@ -72,7 +72,7 @@ Public Class ResourceControlUnitTests
         Dim actualBoolean As Boolean = True
         Using control As isr.VI.Instrument.ResourceControlBase = New isr.VI.Instrument.ResourceControlBase
             control.ResourceTitle = TestInfo.ResourceTitle
-            control.DisplayNames()
+            control.DisplayResourceNames()
             actualBoolean = control.HasResourceNames
             expectedBoolean = True
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Has Resources {control.ResourceName}")

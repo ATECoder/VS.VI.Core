@@ -238,6 +238,18 @@ Public Class ResourceControlBase
 
 #Region " RESOURCE NAME "
 
+    ''' <summary> Gets or sets the name of the entered resource. </summary>
+    ''' <value> The name of the entered resource. </value>
+    Public Property EnteredResourceName As String
+        Get
+            Return Me.Connector.EnteredResourceName
+        End Get
+        Set(value As String)
+            Me.Connector.EnteredResourceName = value
+            Me.SafePostPropertyChanged()
+        End Set
+    End Property
+
     Private _ResourceName As String
 
     ''' <summary> Gets or sets the name of the resource. </summary>
@@ -792,7 +804,7 @@ Public Class ResourceControlBase
     End Sub
 
     ''' <summary> Displays the resource names based on the device resource search pattern. </summary>
-    Public Overridable Sub DisplayNames()
+    Public Overridable Sub DisplayResourceNames()
         ' get the list of available resources
         If Me.DeviceBase IsNot Nothing AndAlso Me.DeviceBase.ResourcesFilter IsNot Nothing Then
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Using resource filter {Me.DeviceBase.ResourcesFilter}")
@@ -830,7 +842,7 @@ Public Class ResourceControlBase
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.ConnectorPropertyChanged), New Object() {sender, e})
             Else
-                Me.DisplayNames()
+                Me.DisplayResourceNames()
             End If
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
@@ -843,6 +855,8 @@ Public Class ResourceControlBase
     Protected Overridable Sub OnConnectorPropertyChanged(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
+            Case NameOf(sender.EnteredResourceName)
+                Me.SafePostPropertyChanged(NameOf(Me.EnteredResourceName))
             Case NameOf(sender.SelectedResourceName)
                 If String.IsNullOrWhiteSpace(sender.SelectedResourceName) OrElse String.Equals(sender.SelectedResourceName, VI.DeviceBase.ResourceNameClosed) Then
                     Me.ResourceName = ""

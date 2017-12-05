@@ -353,10 +353,14 @@ Public Class ResourceSelectorConnector
 
     ''' <summary> Gets the name of the entered resource. </summary>
     ''' <value> The name of the entered resource. </value>
-    Private ReadOnly Property EnteredResourceName As String
+    Public Property EnteredResourceName As String
         Get
             Return Me._ResourceNamesComboBox.Text.Trim
         End Get
+        Set(value As String)
+            Me._ResourceNamesComboBox.Text = value
+            Me.SafePostPropertyChanged()
+        End Set
     End Property
 
     Private _SelectedResourceName As String
@@ -387,7 +391,7 @@ Public Class ResourceSelectorConnector
                     Finally
                         Me.Cursor = System.Windows.Forms.Cursors.Default
                     End Try
-                    If Not Value.Equals(Me.EnteredResourceName) Then Me._ResourceNamesComboBox.Text = Value
+                    If Not Value.Equals(Me.EnteredResourceName) Then Me.EnteredResourceName = Value
                 End If
             End If
         End Set
