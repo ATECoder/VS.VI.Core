@@ -185,6 +185,71 @@ Public MustInherit Class ResourcesManagerBase
 
 #End Region
 
+#Region " REVISION MANANGEMENT "
+
+    ''' <summary> Gets or sets the full pathname of the vendor version file. </summary>
+    ''' <value> The full pathname of the vendor version file. </value>
+    Public Shared Property VendorVersionPath As String = "SOFTWARE\National Instruments\NI-VISA\"
+
+    ''' <summary> Gets or sets the name of the vendor version key. </summary>
+    ''' <value> The name of the vendor version key. </value>
+    Public Shared Property VendorVersionKeyName As String = "CurrentVersion"
+
+    ''' <summary> Reads vendor version. </summary>
+    ''' <returns> The vendor version. </returns>
+    Public Shared Function ReadVendorVersion() As Version
+        Dim version As String = isr.Core.Pith.MachineInfo.ReadRegistry(Microsoft.Win32.RegistryHive.LocalMachine, VendorVersionPath, VendorVersionKeyName, "0.0.0")
+        Return New Version(version)
+    End Function
+
+    Public Shared Function ValidateVendorVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        Dim actualVersion As String = ResourcesManagerBase.ReadVendorVersion.ToString
+        If Not String.Equals(actualVersion, expectedVersion) Then
+            e.RegisterCancellation($"Vendor version {actualVersion} different from expected {expectedVersion}")
+        End If
+        Return Not e.Cancel
+    End Function
+
+    ''' <summary> Gets or sets the filename of the foundation file. </summary>
+    ''' <value> The filename of the foundation file. </value>
+    Public Shared ReadOnly Property FoundationFileName As String = "visa32.dll"
+
+    ''' <summary> Gets the name of the foundation file full. </summary>
+    ''' <value> The name of the foundation file full. </value>
+    Public Shared ReadOnly Property FoundationFileFullName As String
+        Get
+            Return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), ResourcesManagerBase.FoundationFileName)
+        End Get
+    End Property
+
+    ''' <summary> Reads foundation file version. </summary>
+    ''' <returns> The foundation file version. </returns>
+    Public Shared Function ReadFoundationFileVersion() As FileVersionInfo
+        Return FileVersionInfo.GetVersionInfo(ResourcesManagerBase.FoundationFileFullName)
+    End Function
+
+    ''' <summary> Reads foundation version. </summary>
+    ''' <returns> The foundation version. </returns>
+    Public Shared Function ReadFoundationVersion() As Version
+        With ReadFoundationFileVersion()
+            Return New Version(.FileMajorPart, .FileMinorPart, .FileBuildPart)
+        End With
+    End Function
+
+    ''' <summary> Validates the foundation file version. </summary>
+    ''' <param name="expectedVersion"> The expected version. </param>
+    ''' <param name="e">               Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Shared Function ValidateFoundationVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        Dim actualVersion As String = ResourcesManagerBase.ReadFoundationVersion.ToString
+        If Not String.Equals(actualVersion, expectedVersion) Then
+            e.RegisterCancellation($"IVI Foundation file version {actualVersion} different from expected {expectedVersion}")
+        End If
+        Return Not e.Cancel
+    End Function
+
+#End Region
+
 #Region " Disposable Support"
 
     ''' <summary> Gets or sets the disposed sentinel. </summary>

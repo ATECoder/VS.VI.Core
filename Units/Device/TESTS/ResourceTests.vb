@@ -1,4 +1,5 @@
-﻿''' <summary> A resource tests. </summary>
+﻿Imports Microsoft.Win32
+''' <summary> A resource tests. </summary>
 ''' <license>
 ''' (c) 2017 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -12,47 +13,51 @@
 <TestClass()>
 Public Class ResourceTests
 
+#Region " CONSTRUCTION AND CLEANUP "
 
-    Private testContextInstance As TestContext
+    ''' <summary> My class initialize. </summary>
+    ''' <param name="testContext"> Gets or sets the test context which provides information about
+    '''                            and functionality for the current test run. </param>
+    ''' <remarks>Use ClassInitialize to run code before running the first test in the class</remarks>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    <ClassInitialize()>
+    Public Shared Sub MyClassInitialize(ByVal testContext As TestContext)
+        Try
+            TestInfo.InitializeTraceListener()
+        Catch
+            ' cleanup to meet strong guarantees
+            Try
+                MyClassCleanup()
+            Finally
+            End Try
+            Throw
+        End Try
+    End Sub
+
+    ''' <summary> My class cleanup. </summary>
+    ''' <remarks> Use ClassCleanup to run code after all tests in a class have run. </remarks>
+    <ClassCleanup()>
+    Public Shared Sub MyClassCleanup()
+    End Sub
+
+    ''' <summary> Initializes before each test runs. </summary>
+    <TestInitialize()> Public Sub MyTestInitialize()
+        Assert.IsTrue(TestInfo.Exists, "App.Config not found")
+    End Sub
+
+    ''' <summary> Cleans up after each test has run. </summary>
+    <TestCleanup()> Public Sub MyTestCleanup()
+    End Sub
 
     '''<summary>
     '''Gets or sets the test context which provides
     '''information about and functionality for the current test run.
     '''</summary>
     Public Property TestContext() As TestContext
-        Get
-            Return testContextInstance
-        End Get
-        Set(value As TestContext)
-            testContextInstance = value
-        End Set
-    End Property
 
-#Region "Additional test attributes"
-    '
-    'You can use the following additional attributes as you write your tests:
-    '
-    'Use ClassInitialize to run code before running the first test in the class
-    '<ClassInitialize()>  
-    'Public Shared Sub MyClassInitialize(ByVal testContext As TestContext)
-    'End Sub
-    '
-    'Use ClassCleanup to run code after all tests in a class have run
-    '<ClassCleanup()>  
-    'Public Shared Sub MyClassCleanup()
-    'End Sub
-    '
-    'Use TestInitialize to run code before running each test
-    '<TestInitialize()>  
-    'Public Sub MyTestInitialize()
-    'End Sub
-    '
-    'Use TestCleanup to run code after each test has run
-    '<TestCleanup()>  
-    'Public Sub MyTestCleanup()
-    'End Sub
-    '
 #End Region
+
+#Region " NULLABLE TESTS "
 
     '''<summary>
     '''A test for Nullable equality.
@@ -114,5 +119,59 @@ Public Class ResourceTests
         Assert.AreEqual(expectedResult, actualResult, "Value set to {0}", actualResult)
         Assert.AreEqual(True, successParsing, "Success set to {0}", actualResult)
     End Sub
+
+#End Region
+
+#Region " VERSION TESTS "
+
+    <TestMethod()>
+    Public Sub VisaVersionTest()
+        Dim value As String = ""
+        Dim rv As RegistryView = RegistryView.Registry32
+        If Environment.Is64BitOperatingSystem Then
+            rv = RegistryView.Registry64
+        Else
+            rv = RegistryView.Registry32
+        End If
+        Dim readValue As Object = Nothing
+        Dim defaultValue As String = "0.0.0"
+#If True Then
+        Using regKeyBase As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, rv)
+            Using regKey As RegistryKey = regKeyBase.OpenSubKey("SOFTWARE\National Instruments\NI-VISA\", RegistryKeyPermissionCheck.ReadSubTree)
+                readValue = regKey.GetValue("CurrentVersion", CObj(defaultValue))
+            End Using
+        End Using
+#Else
+        Using regKeyBase As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, rv)
+            Using regKey As RegistryKey = regKeyBase.OpenSubKey("SOFTWARE\Microsoft\Cryptography", RegistryKeyPermissionCheck.ReadSubTree)
+                readValue = regKey.GetValue("MachineGuid", CObj(defaultValue))
+            End Using
+        End Using
+#End If
+        If readValue IsNot Nothing AndAlso readValue.ToString() <> "defaultValue" Then
+            value = readValue.ToString()
+            Assert.AreEqual(TestInfo.NationalInstrumentVisaVersion, value, $"Value set to {value}")
+        End If
+#If False Then
+        Dim varsionString As Object = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\National Instruments\NI-VISA\", "CurrentVersion", "0.0.0.0")
+        Assert.AreEqual("17.0.0", varsionString, $"Value set to {varsionString}")
+#End If
+        Dim version As Version = VI.ResourcesManagerBase.ReadVendorVersion
+        Dim expectedVersion As Version = New Version(TestInfo.NationalInstrumentVisaVersion)
+        Assert.IsTrue(version.Equals(expectedVersion), $"Vendor version {version.ToString} equals to {expectedVersion}")
+
+        Dim fileVersionInfo As FileVersionInfo = VI.ResourcesManagerBase.ReadFoundationFileVersion
+        If Environment.Is64BitOperatingSystem Then
+            expectedVersion = New Version(TestInfo.FoundationVisaFileVersion64)
+        Else
+            expectedVersion = New Version(TestInfo.FoundationVisaFileVersion32)
+        End If
+        Assert.AreEqual(expectedVersion.ToString, $"{fileVersionInfo.FileMajorPart}.{fileVersionInfo.FileMinorPart}.{fileVersionInfo.FileBuildPart}",
+                        $"Foundation file {VI.ResourcesManagerBase.FoundationFileFullName} version set to {fileVersionInfo.FileVersion}")
+
+    End Sub
+#End Region
+
+
 
 End Class
