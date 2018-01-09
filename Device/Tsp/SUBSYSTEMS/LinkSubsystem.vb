@@ -124,7 +124,7 @@ Public MustInherit Class LinkSubsystem
         If Me.QueryErrorQueueCount(node) > 0 Then
             If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
             Dim message As String = ""
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Querying queued device errors;. ")
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Querying queued device errors;. ")
             If node.IsController Then
                 Me.Session.LastNodeNumber = node.ControllerNodeNumber
                 message = Me.Session.QueryPrintStringFormatTrimEnd($"%d,%s,%d,node{node.Number}", "_G.errorqueue.next()")
@@ -193,12 +193,12 @@ Public MustInherit Class LinkSubsystem
     ''' determines how errors are fetched. </param>
     Public Sub WaitComplete(ByVal nodeNumber As Integer, ByVal timeout As TimeSpan, ByVal isQuery As Boolean)
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Enabling wait complete;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Enabling wait complete;. ")
         Me.Session.LastNodeNumber = nodeNumber
         Me.EnableWaitComplete(0)
         Me.CheckThrowDeviceException(Not isQuery, "enabled wait complete group '{0}';. ", 0)
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "waiting completion;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "waiting completion;. ")
         Me.StatusSubsystem.AwaitOperationCompleted(timeout)
         Me.CheckThrowDeviceException(Not isQuery, "waiting completion;. ")
         Me.Session.LastNodeNumber = New Integer?
@@ -285,7 +285,7 @@ Public MustInherit Class LinkSubsystem
         If Me.NodeExists(node.Number) Then
             If reportQueueNotEmpty Then
                 If Me.QueryDataQueueCount(node) > 0 Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Data queue not empty on node {0};. ", node.Number)
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Data queue not empty on node {0};. ", node.Number)
                 End If
             End If
             Me.Session.WriteLine("node[{0}].dataqueue.clear() waitcomplete({0})", node.Number)
@@ -463,7 +463,7 @@ Public MustInherit Class LinkSubsystem
         Try
             Me.ResetNodes(timeout)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' timed out resetting nodes;. Ignored.", Me.Session.ResourceName)
             Return False
         End Try
@@ -521,7 +521,7 @@ Public MustInherit Class LinkSubsystem
             Me.ControllerNode = New NodeEntity(Me.ControllerNodeNumber.Value, Me.ControllerNodeNumber.Value)
             Me.ControllerNode.InitializeKnownState(Me.Session)
             Me.SafePostPropertyChanged(NameOf(Me.ControllerNodeModel))
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Initiated controller node #{3};. Instrument model {0} S/N={1} Firmware={2} enumerated on node.",
                                Me.ControllerNode.ModelNumber, Me.ControllerNode.SerialNumber,
                                Me.ControllerNode.FirmwareVersion, Me.ControllerNode.Number)
@@ -566,9 +566,9 @@ Public MustInherit Class LinkSubsystem
         Try
             Me.QueryControllerNodeNumber()
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, ex.ToString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, ex.ToString)
         Catch ex As InvalidCastException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, ex.ToString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, ex.ToString)
         End Try
         Return Me.ControllerNodeNumber
     End Function
@@ -610,7 +610,7 @@ Public MustInherit Class LinkSubsystem
             Dim node As Tsp.NodeEntity = New NodeEntity(nodeNumber, Me.ControllerNodeNumber.Value)
             node.InitializeKnownState(Me.Session)
             Me._NodeEntities.Add(node)
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Added node #{3};. Instrument model {0} S/N={1} Firmware={2} enumerated on node.",
                                node.ModelNumber, node.SerialNumber, node.FirmwareVersion, node.Number)
         End If
@@ -758,7 +758,7 @@ Public MustInherit Class LinkSubsystem
             Me.Session.StoreTimeout(timeout)
 
             If Not String.IsNullOrWhiteSpace(Me.TspLinkResetCommand) Then
-                Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "resetting TSP Link;. ")
+                Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "resetting TSP Link;. ")
                 Me.Session.LastNodeNumber = New Integer?
                 ' do not condition the reset upon a previous reset.
                 Me.StatusSubsystem.EnableWaitComplete()
@@ -840,7 +840,7 @@ Public MustInherit Class LinkSubsystem
     ''' <exception cref="VI.NativeException"> Thrown when a Visa error condition occurs. </exception>
     ''' <exception cref="VI.DeviceException"> Thrown when a device error condition occurs. </exception>
     Public Function QueryTspLinkState() As String
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading TSP Link state;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading TSP Link state;. ")
         Me.Session.LastNodeNumber = New Integer?
         Me.TspLinkState = Me.Session.QueryPrintStringFormatTrimEnd("tsplink.state")
         Me.CheckThrowDeviceException(False, "getting tsp link state;. using {0}.", Me.Session.LastMessageSent)
@@ -934,7 +934,7 @@ Public MustInherit Class LinkSubsystem
                 affirmative = False
             End Try
         Else
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' failed resetting TSP Link;. {1}{2}",
                                Me.ResourceName, Environment.NewLine, New StackFrame(True).UserCallStack())
         End If
@@ -989,10 +989,10 @@ Public MustInherit Class LinkSubsystem
             success = Me.QueryErrorQueueCount(Me.ControllerNode) = 0
             Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
             If success Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Instrument {0} node {1} done {2}", Me.ResourceName, nodeNumber, details)
             Else
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument {0} node {1} encountered errors {2}Details: {3}{4}{5}",
                                    Me.ResourceName, nodeNumber, Me.StatusSubsystem.DeviceErrors, details,
                                    Environment.NewLine, New StackFrame(True).UserCallStack())

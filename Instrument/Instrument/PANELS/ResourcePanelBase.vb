@@ -450,13 +450,13 @@ Public Class ResourcePanelBase
             Case NameOf(device.IsDeviceOpen)
                 Me.OnDeviceOpenChanged(device)
             Case NameOf(device.Enabled)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    $"{device.ResourceTitle} {device.Enabled.GetHashCode:enabled;enabled;disabled};. ")
             Case NameOf(device.ResourcesFilter)
                 Me.Connector.ResourcesFilter = device.ResourcesFilter
             Case NameOf(device.ServiceRequestFailureMessage)
                 If Not String.IsNullOrWhiteSpace(device.ServiceRequestFailureMessage) Then
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, device.ServiceRequestFailureMessage)
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, device.ServiceRequestFailureMessage)
                 End If
             Case NameOf(device.ResourceTitle)
                 Me.ResourceTitle = device.ResourceTitle
@@ -478,7 +478,7 @@ Public Class ResourcePanelBase
                 Me.OnDevicePropertyChanged(TryCast(sender, DeviceBase), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling Device.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -491,19 +491,19 @@ Public Class ResourcePanelBase
         Select Case propertyName
             Case NameOf(subsystem.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors AndAlso subsystem.ErrorAvailable Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Error available;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Error available;. ")
                 End If
             Case NameOf(subsystem.MessageAvailable)
                 If subsystem.MessageAvailable Then
-                    Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
+                    Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
                 End If
             Case NameOf(subsystem.MeasurementAvailable)
                 If subsystem.MeasurementAvailable Then
-                    Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
+                    Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
                 End If
             Case NameOf(subsystem.ReadingDeviceErrors)
                 If subsystem.ReadingDeviceErrors Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
                 End If
             Case NameOf(subsystem.ServiceRequestStatus)
                 Me.DisplayStatusRegisterStatus(subsystem.ServiceRequestStatus)
@@ -520,18 +520,18 @@ Public Class ResourcePanelBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:   DoNotCatchGeneralExceptionTypes")>
     Private Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
         Try
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opening {0};. ", resourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opening {0};. ", resourceName)
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
             Me.Device.OpenSession(resourceName, resourceTitle)
             If Me.Device.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opened {0};. ", resourceName)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opened {0};. ", resourceName)
             Else
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Open {0} Failed;. ", resourceName)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Open {0} Failed;. ", resourceName)
             End If
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed opening {resourceName};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed opening {resourceName};. {ex.ToFullBlownString}")
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening {resourceName};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening {resourceName};. {ex.ToFullBlownString}")
         Finally
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
         End Try
@@ -564,7 +564,7 @@ Public Class ResourcePanelBase
         If Not String.IsNullOrEmpty(Me.ResourceTitle) Then Me.Device.Session.ResourceTitle = Me.ResourceTitle
         Dim outcome As TraceEventType = TraceEventType.Information
         If Me.Device.Session.Enabled And Not Me.Device.Session.IsSessionOpen Then outcome = TraceEventType.Warning
-        Me.Talker?.Publish(outcome, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(outcome, My.MyLibrary.TraceEventId,
                            "{0} {1:enabled;enabled;disabled} and {2:open;open;closed}; session {3:open;open;closed};. ",
                            Me.ResourceTitle,
                            Me.Device?.Session.Enabled.GetHashCode,
@@ -604,12 +604,12 @@ Public Class ResourcePanelBase
     ''' <summary> Disconnects the instrument by closing the open session. </summary>
     Private Sub CloseSession()
         If Me.Device.IsDeviceOpen Then
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Releasing {0};. ", Me.Device.ResourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Releasing {0};. ", Me.Device.ResourceName)
         End If
         If Me.Device.TryCloseSession() Then
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Released {0};. ", Me.Connector.SelectedResourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Released {0};. ", Me.Connector.SelectedResourceName)
         Else
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed releasing {0};. ", Me.Connector.SelectedResourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed releasing {0};. ", Me.Connector.SelectedResourceName)
         End If
     End Sub
 
@@ -647,14 +647,14 @@ Public Class ResourcePanelBase
         Me.StatusRegisterVisibleSetter(False)
         If Me.Device IsNot Nothing Then
             If Me.Device.Session.IsSessionOpen Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Device closed but session still open;. ")
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Device closed but session still open;. ")
             ElseIf Me.Device.Session.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Device closed but emulated session still open;. ")
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Device closed but emulated session still open;. ")
             Else
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Disconnected;. Device access closed.")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Disconnected;. Device access closed.")
             End If
         Else
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Disconnected;. Device disposed.")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Disconnected;. Device disposed.")
         End If
     End Sub
 
@@ -679,10 +679,10 @@ Public Class ResourcePanelBase
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub Connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles Connector.Clear
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                            "Resetting, clearing and initializing resource to know state;. {0}", Me.Connector.SelectedResourceName)
         Me.Device.ResetClearInit()
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                            "Resource reset, cleared and initialized;. {0}", Me.Connector.SelectedResourceName)
     End Sub
 
@@ -705,7 +705,7 @@ Public Class ResourcePanelBase
                     Me.ResourceName = ""
                 Else
                     Me.ResourceName = sender.SelectedResourceName
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceName} selected;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceName} selected;. ")
                 End If
         End Select
     End Sub
@@ -723,7 +723,7 @@ Public Class ResourcePanelBase
                 Me.OnPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling Connector.{e?.PropertyName} change Event;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -757,10 +757,10 @@ Public Class ResourcePanelBase
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-            If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
-                Me._StatusLabel.Text = sender.StatusPrompt
-                Me._StatusLabel.ToolTipText = sender.StatusPrompt
-            End If
+        If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
+            Me._StatusLabel.Text = sender.StatusPrompt
+            Me._StatusLabel.ToolTipText = sender.StatusPrompt
+        End If
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>
@@ -776,7 +776,7 @@ Public Class ResourcePanelBase
                 Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub

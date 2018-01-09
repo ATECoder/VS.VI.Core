@@ -65,6 +65,20 @@ Public Class DeviceUnderTest
         Return New DeviceUnderTest(Me)
     End Function
 
+    ''' <summary> Creates a new Device. </summary>
+    ''' <returns> A Device. </returns>
+    Public Shared Function Create() As DeviceUnderTest
+        Dim device As DeviceUnderTest = Nothing
+        Try
+            device = New DeviceUnderTest
+        Catch
+            If device IsNot Nothing Then device.Dispose()
+            device = Nothing
+            Throw
+        End Try
+        Return device
+    End Function
+
     ''' <summary> Copies the device under test information except the serial number. </summary>
     ''' <param name="value"> The other device under test. </param>
     Public Overridable Sub CopyInfo(ByVal value As DeviceUnderTest)

@@ -64,7 +64,7 @@ Public MustInherit Class DeviceBase
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                Me.Talker?.Listeners.Clear()
+                Me.Talker.Listeners.Clear()
                 Me._Talker = Nothing
                 Me.SessionMessagesTraceEnabled = False
                 Me.Session?.DisableServiceRequest()
@@ -135,6 +135,8 @@ Public MustInherit Class DeviceBase
     Public Overridable Sub ClearExecutionState() Implements IPresettable.ClearExecutionState
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceName} Clearing execution state")
         Me.Subsystems.ClearExecutionState()
+        ' 20180105: report any errors
+        Me.publishErrorEvent(TraceEventType.Warning)
     End Sub
 
     ''' <summary> Initializes the Device. Used after reset to set a desired initial state. </summary>
@@ -143,6 +145,8 @@ Public MustInherit Class DeviceBase
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceName} Initializing known state")
         Me.Subsystems.InitKnownState()
         Me.IsInitialized = True
+        ' 20180105: report any errors
+        Me.publishErrorEvent(TraceEventType.Warning)
     End Sub
 
     ''' <summary> Resets the Device to its known state. </summary>
@@ -150,6 +154,8 @@ Public MustInherit Class DeviceBase
     Public Overridable Sub PresetKnownState() Implements IPresettable.PresetKnownState
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceName} Presetting known state")
         Me.Subsystems.PresetKnownState()
+        ' 20180105: report any errors
+        Me.publishErrorEvent(TraceEventType.Warning)
     End Sub
 
     ''' <summary> Resets the Device to its known state. </summary>
@@ -157,6 +163,8 @@ Public MustInherit Class DeviceBase
     Public Overridable Sub ResetKnownState() Implements IPresettable.ResetKnownState
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceName} Resetting known state")
         Me.Subsystems.ResetKnownState()
+        ' 20180105: report any errors
+        Me.publishErrorEvent(TraceEventType.Warning)
     End Sub
 
     Private _DeviceClearRefractoryPeriod As TimeSpan
@@ -320,7 +328,7 @@ Public MustInherit Class DeviceBase
         Try
             Me.OnPropertyChanged(TryCast(sender, SessionBase), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling property Session.{e.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -453,6 +461,21 @@ Public MustInherit Class DeviceBase
         End Set
     End Property
 
+    ''' <summary> Checks if the specified resource name exists. Use for checking if the instrument is open. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="resourceName"> Name of the resource. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Function Find(ByVal resourceName As String) As Boolean
+        If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
+        Using rm As ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
+            If String.IsNullOrWhiteSpace(Me.ResourcesFilter) Then
+                Return rm.FindResources().ToArray.Contains(resourceName)
+            Else
+                Return rm.FindResources(Me.ResourcesFilter).ToArray.Contains(resourceName)
+            End If
+        End Using
+    End Function
+
 #End Region
 
 #Region " OPEN / CLOSE "
@@ -471,7 +494,7 @@ Public MustInherit Class DeviceBase
                 Me._IsInitialized = value
                 Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    $"{Me.ResourceTitle} {IIf(Me.IsInitialized, "initialized", "not ready")};. ")
                 Windows.Forms.Application.DoEvents()
             End If
@@ -490,7 +513,7 @@ Public MustInherit Class DeviceBase
                 Me.Session.Enabled = value
                 Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    $"{Me.ResourceTitle} {IIf(Me.Enabled, "enabled", "disabled")};. ")
                 Windows.Forms.Application.DoEvents()
             End If
@@ -522,7 +545,7 @@ Public MustInherit Class DeviceBase
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Me.Subsystems?.Any Then
             e.Cancel = True
-            Dim msg As String = Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Dim msg As String = Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                                    $"Aborting attempt to add subsystems on top of existing subsystems for resource '{ResourceName}';. ")
             Debug.Assert(Not Debugger.IsAttached, msg)
         Else
@@ -580,12 +603,12 @@ Public MustInherit Class DeviceBase
     Public Overridable Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
         Dim success As Boolean = False
         Try
-            If Me.Enabled Then Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Opening session to {resourceName};. ")
+            If Me.Enabled Then Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Opening session to {resourceName};. ")
             Me.Session.ResourceTitle = resourceTitle
             Me.OnCreated()
             Me.Session.OpenSession(resourceName, resourceTitle, Me.CapturedSyncContext)
             If Me.Session.IsSessionOpen Then
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Session open to {resourceName};. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Session open to {resourceName};. ")
             ElseIf Me.Session.Enabled Then
                 Throw New OperationFailedException($"Unable to open session to {resourceName};. ")
             ElseIf Not Me.IsDeviceOpen Then
@@ -640,7 +663,7 @@ Public MustInherit Class DeviceBase
             Me.OpenSession(resourceName, resourceTitle)
         Catch ex As Exception
             e.RegisterCancellation($"Exception {action};. {ex.ToFullBlownString}")
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, e.Details)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, e.Details)
         End Try
         Return Not e.Cancel AndAlso Me.IsDeviceOpen
     End Function
@@ -671,7 +694,7 @@ Public MustInherit Class DeviceBase
     Public Overridable Sub CloseSession()
         Try
             ' check if already closed.
-            If Me.IsDisposed OrElse Not Me.IsDeviceOpen Then  Return
+            If Me.IsDisposed OrElse Not Me.IsDeviceOpen Then Return
             Dim e As New ComponentModel.CancelEventArgs
             Me.OnClosing(e)
             If e.Cancel Then Return
@@ -693,7 +716,7 @@ Public MustInherit Class DeviceBase
         Try
             Me.CloseSession()
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred closing session;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred closing session;. {ex.ToFullBlownString}")
             Return False
         End Try
         Return Not Me.IsDeviceOpen
@@ -740,13 +763,13 @@ Public MustInherit Class DeviceBase
                 Case NameOf(sender.LastMessageReceived)
                     Dim value As String = sender.LastMessageReceived
                     If Not String.IsNullOrWhiteSpace(value) Then
-                        Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                "{0} sent: '{1}'.", Me.ResourceName, value.InsertCommonEscapeSequences)
                     End If
                 Case NameOf(sender.LastMessageSent)
                     Dim value As String = sender.LastMessageSent
                     If Not String.IsNullOrWhiteSpace(value) Then
-                        Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                "{0} received: '{1}'.", Me.ResourceName, value)
                     End If
             End Select
@@ -856,6 +879,12 @@ Public MustInherit Class DeviceBase
         End Get
     End Property
 
+    ''' <summary> Removes the subsystem described by value. </summary>
+    ''' <param name="value"> The value. </param>
+    Public Sub RemoveSubsystem(ByVal value As SubsystemBase)
+        Me.Subsystems.Remove(value)
+    End Sub
+
 #Region " STATUS "
 
     Private _StatusSubsystemBase As StatusSubsystemBase
@@ -904,18 +933,18 @@ Public MustInherit Class DeviceBase
 
             Case NameOf(subsystem.Identity)
                 If Not String.IsNullOrWhiteSpace(subsystem.Identity) Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceName} identified;. as {subsystem.Identity}")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceName} identified;. as {subsystem.Identity}")
                     If Not String.IsNullOrWhiteSpace(subsystem.VersionInfo?.Model) Then Me.ResourceTitle = subsystem.VersionInfo.Model
                 End If
 
             Case NameOf(subsystem.DeviceErrors)
                 If Not String.IsNullOrWhiteSpace(subsystem.DeviceErrors) Then
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{Me.ResourceName} errors;. {subsystem.DeviceErrors}")
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{Me.ResourceName} errors;. {subsystem.DeviceErrors}")
                 End If
 
             Case NameOf(subsystem.LastDeviceError)
                 If subsystem.LastDeviceError?.IsError Then
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                        $"{Me.ResourceName} last error;. {subsystem.LastDeviceError.CompoundErrorMessage}")
                 End If
 
@@ -932,7 +961,7 @@ Public MustInherit Class DeviceBase
         Try
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystemBase), e.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. { ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. { ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -940,7 +969,60 @@ Public MustInherit Class DeviceBase
 
 #End Region
 
-#Region " EVENTS: SERVICE REQUESTED "
+#Region " EVENTS: READ EVENT REGISTERS "
+
+    ''' <summary> Queries device errors. </summary>
+    Protected Overridable Sub QueryDeviceErrors()
+        If Me.StatusSubsystemBase.ErrorAvailable Then
+            If Me.StatusSubsystemBase.MessageAvailable Then
+                ' if the device has message with an error state, the message must be fetched before the device
+                ' errors can be fetched. The system requesting the message must:
+                ' (1) fetch the message;
+                ' (2) fetch the device errors.
+                Me.ServiceRequestFailureMessage = Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                   $"{Me.ResourceName} as a message available in the presence of a device error; the message needs to be fetched before fetching the device errors")
+            Else
+                Me.StatusSubsystemBase.QueryDeviceErrors()
+                Me.StatusSubsystemBase.QueryLastError()
+            End If
+        End If
+    End Sub
+
+    ''' <summary> Publish last error. </summary>
+    ''' <param name="eventType"> Type of the event. </param>
+    Protected Overridable Sub PublishLastError(ByVal eventType As TraceEventType)
+        If Me.StatusSubsystemBase.DeviceErrorQueue.Any Then
+            Me.Talker.Publish(eventType, My.MyLibrary.TraceEventId,
+                              $"{Me.ResourceName} last Error {Me.StatusSubsystemBase.LastDeviceError}")
+        End If
+    End Sub
+
+    ''' <summary> Publish error event. </summary>
+    ''' <param name="eventType"> Type of the event. </param>
+    Private Sub publishErrorEvent(ByVal eventType As TraceEventType)
+        Me.ProcessErrorEvent()
+        Me.PublishLastError(eventType)
+    End Sub
+
+    ''' <summary> Read service request and query device errors if errors. </summary>
+    Protected Overridable Sub ProcessErrorEvent()
+        Me.ReadServiceRequestRegister()
+        Me.QueryDeviceErrors()
+    End Sub
+
+    ''' <summary> Reads service request register. </summary>
+    Protected Overridable Sub ReadServiceRequestRegister()
+        Me.StatusSubsystemBase.ReadServiceRequestStatus()
+    End Sub
+
+    ''' <summary> Reads event registers. </summary>
+    Protected Overridable Sub ReadEventRegisters()
+        Me.StatusSubsystemBase.ReadEventRegisters()
+    End Sub
+
+#End Region
+
+#Region " EVENTS: PROCESS SERVICE REQUEST "
 
     Private _ServiceRequestFailureMessage As String
 
@@ -954,13 +1036,16 @@ Public MustInherit Class DeviceBase
             If String.IsNullOrEmpty(value) Then value = ""
             Me._ServiceRequestFailureMessage = value
             If Not String.IsNullOrWhiteSpace(Me.ServiceRequestFailureMessage) Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, Me.ServiceRequestFailureMessage)
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, Me.ServiceRequestFailureMessage)
             End If
         End Set
     End Property
 
     ''' <summary> Reads the event registers after receiving a service request. </summary>
-    Protected MustOverride Sub ProcessServiceRequest()
+    Protected Overridable Sub ProcessServiceRequest()
+        Me.ReadEventRegisters()
+        Me.QueryDeviceErrors()
+    End Sub
 
     ''' <summary> Reads the event registers after receiving a service request. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -969,12 +1054,16 @@ Public MustInherit Class DeviceBase
         Try
             Me.ProcessServiceRequest()
         Catch ex As Exception
-            Me.ServiceRequestFailureMessage = Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                                                 $"{ex.Message} occurred processing service request;. {ex.ToFullBlownString}")
+            Me.ServiceRequestFailureMessage = Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                                                                $"{ex.Message} occurred processing service request;. {ex.ToFullBlownString}")
             result = False
         End Try
         Return result
     End Function
+
+#End Region
+
+#Region " EVENTS: SERVICE REQUESTED "
 
     ''' <summary> Occurs when service is requested. </summary>
     Public Event ServiceRequested As EventHandler(Of EventArgs)
@@ -1201,7 +1290,7 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Adds the listeners. </summary>
     ''' <param name="talker"> The talker. </param>
-    Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker)  Implements ITalker.AddListeners
+    Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
         Me.Talker.AddListeners(talker)
         My.MyLibrary.Identify(Me.Talker)
     End Sub
@@ -1239,7 +1328,7 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Clears the listeners. </summary>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker?.Listeners?.Clear()
+        Me.Talker.Listeners?.Clear()
         Me.Subsystems.ClearListeners()
     End Sub
 

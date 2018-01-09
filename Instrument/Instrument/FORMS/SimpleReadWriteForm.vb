@@ -79,7 +79,7 @@ Public Class SimpleReadWriteForm
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception loading the simple read and write form;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception loading the simple read and write form;. {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -108,12 +108,12 @@ Public Class SimpleReadWriteForm
                 ' allow form rendering time to complete: process all messages currently in the queue.
                 Application.DoEvents()
 
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                    "Ready to open Visa Session;. ")
             End If
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the simple read and write form;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the simple read and write form;. {ex.ToFullBlownString}")
             If Windows.Forms.DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                                   MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                                   MessageBoxOptions.DefaultDesktopOnly) Then
@@ -194,7 +194,7 @@ Public Class SimpleReadWriteForm
                 Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub

@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MyType>Windows</MyType>
+    <ProjectGuid>{F3FE3897-0F6B-4A55-A0D4-5873742FEAD6}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyName>isr.VI.Device.Tsp2</AssemblyName>
+    <OutputType>Library</OutputType>
+    <AssemblyCompanyName>Integrated Scientific Resources, Inc.</AssemblyCompanyName>
+    <RootNamespace>isr.VI.Tsp2</RootNamespace>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OptionStrict>On</OptionStrict>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\debug\</OutputPath>
+    <DocumentationFile>isr.VI.Device.Tsp2.xml</DocumentationFile>
+    <DebugSymbols>True</DebugSymbols>
+    <DefineDebug>True</DefineDebug>
+    <DefineTrace>True</DefineTrace>
+    <DefineConstants>
+    </DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <NoWarn>42353,42354,42355</NoWarn>
+    <DebugType>full</DebugType>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <BaseAddress>961564672</BaseAddress>
+    <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisIgnoreGeneratedCode>true</CodeAnalysisIgnoreGeneratedCode>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\release\</OutputPath>
+    <DocumentationFile>isr.VI.Device.Tsp2.xml</DocumentationFile>
+    <DebugSymbols>False</DebugSymbols>
+    <DefineDebug>False</DefineDebug>
+    <DefineTrace>True</DefineTrace>
+    <DefineConstants>DebugBuildCompile = -1 : Win32=True</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
+    <NoWarn>42353,42354,42355</NoWarn>
+    <DebugType>none</DebugType>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
+      <Link>My\SolutionInfo.vb</Link>
+    </Compile>
+    <Compile Include="ENTITIES\BufferElement.vb" />
+    <Compile Include="ENTITIES\DeviceError.vb" />
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="SUBSYSTEMS\SlotSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SlotsSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\MultimeterSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\ChannelSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\LocalNodeSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\MeasureSubsystemBase.vb" />
+    <Compile Include="ENTITIES\TspMessage.vb" />
+    <Compile Include="ENTITIES\VersionInfo.vb" />
+    <Compile Include="SUBSYSTEMS\DisplaySubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SourceSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SourceMeasureUnitBase.vb" />
+    <Compile Include="SUBSYSTEMS\LinkSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\StatusSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SystemSubsystemBase.vb" />
+    <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="ENTITIES\NodeEntity.vb" />
+    <Compile Include="ENTITIES\NodeEntityBase.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="SYNTAX\TspNodeSyntax.vb" />
+    <Compile Include="SYNTAX\TspSyntax.vb" />
+    <Content Include="My\isr.VI.Device.Tsp2.Library.rtf" />
+    <EmbeddedResource Include="RESOURCES\BinaryScripts.tsp" />
+    <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
+      <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
+      <Name>isr.Core.Pith.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj">
+      <Project>{6a80136f-c0eb-4798-8bcf-569e249dd76a}</Project>
+      <Name>Arebis.StandardUnits.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
+      <Project>{d2c9a599-79dd-4cfa-8614-be3c444eb347}</Project>
+      <Name>Arebis.TypedUnits.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Device.Scpi\isr.VI.Device.Scpi.Library.vbproj">
+      <Project>{f6e68ae1-a1b8-43ce-bf8b-d1b8df65c366}</Project>
+      <Name>isr.VI.Device.Scpi.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Device\isr.VI.Device.Library.vbproj">
+      <Project>{0C14C4A7-D574-4F9B-A2D9-989B71CC7DE4}</Project>
+      <Name>isr.VI.Device.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Resource\Pith\isr.VI.Pith.Library.vbproj">
+      <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
+      <Name>isr.VI.Pith.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Resource\Pith\My\keyPair.snk">
+      <Link>My\keyPair.snk</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

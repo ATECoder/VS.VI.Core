@@ -656,7 +656,7 @@ Public MustInherit Class ResistanceMeasureBase
 
     ''' <summary> Clears the listeners. </summary>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker?.Listeners?.Clear()
+        Me.Talker.Listeners?.Clear()
     End Sub
 
     ''' <summary> Applies the trace level to all listeners of the specified type. </summary>
@@ -811,7 +811,7 @@ Public Class ResistanceMeasureCollection
 
     ''' <summary> Clears the listeners. </summary>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker?.Listeners?.Clear()
+        Me.Talker.Listeners?.Clear()
         For Each element As ITalker In Me.Items
             element.ClearListeners()
         Next

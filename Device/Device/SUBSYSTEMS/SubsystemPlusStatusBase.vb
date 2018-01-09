@@ -55,7 +55,7 @@ Public MustInherit Class SubsystemPlusStatusBase
 
     ''' <summary> Reads the registers. </summary>
     Public Sub ReadRegisters()
-        Me.StatusSubsystem.ReadRegisters()
+        Me.StatusSubsystem.ReadEventRegisters()
     End Sub
 
 #End Region

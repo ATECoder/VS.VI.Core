@@ -190,7 +190,7 @@ Public Class ResourceSelectorConnector
             End If
         Catch ex As Exception
             Me._ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception connecting resource '{Me.SelectedResourceName}';. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
@@ -312,7 +312,7 @@ Public Class ResourceSelectorConnector
                 Me._ResourceNamesComboBox.ToolTipText = isr.VI.My.Resources.LocalResourceNotFoundSynopsis
                 Dim message As String = $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}."
                 Me._ErrorProvider.Annunciate(Me._FindButton, message)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, message)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, message)
             Else
                 Me._ResourceNamesComboBox.ComboBox.DataSource = Nothing
                 Me._ResourceNamesComboBox.Items.Clear()
@@ -323,7 +323,7 @@ Public Class ResourceSelectorConnector
         Catch ex As Exception
             Me.HasResources = False
             Me._ErrorProvider.Annunciate(Me._FindButton, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{Environment.NewLine}{ex.ToFullBlownString}")
         Finally
             Me._ToolStrip.Invalidate()
@@ -387,7 +387,7 @@ Public Class ResourceSelectorConnector
                         End Using
                     Catch ex As Exception
                         Me._ErrorProvider.Annunciate(Me._ResourceNamesComboBox, ex.Message)
-                        Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception setting selected resource;. Details:{0}", ex.ToFullBlownString)
+                        Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception setting selected resource;. Details:{0}", ex.ToFullBlownString)
                     Finally
                         Me.Cursor = System.Windows.Forms.Cursors.Default
                     End Try
@@ -477,7 +477,7 @@ Public Class ResourceSelectorConnector
             If c IsNot Nothing Then
                 Me._ErrorProvider.Annunciate(c, ex.Message)
             End If
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception finding resources;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception finding resources;. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -512,7 +512,7 @@ Public Class ResourceSelectorConnector
             If c IsNot Nothing Then
                 Me._ErrorProvider.Annunciate(c, ex.Message)
             End If
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception clearing resource '{Me.SelectedResourceName}';. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default

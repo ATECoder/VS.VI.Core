@@ -48,8 +48,8 @@ Namespace Scpi
 
 #Region " STATUS "
 
-            ''' <summary> Gets the error queue query command. </summary>
-            Public Const ErrorQueueQueryCommand As String = ":STAT:QUE?"
+            ''' <summary> Gets the 'Next Error' query command. </summary>
+            Public Const NextErrorQueryCommand As String = ":STAT:QUE?"
 
             ''' <summary> Gets the error queue clear command. </summary>
             Public Const ClearErrorQueueCommand As String = ":STAT:QUE:CLEAR"

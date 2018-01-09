@@ -120,7 +120,7 @@ Public Class SimpleReadWritePanel
                 Me.OnPropertyChanged(TryCast(sender, VI.SessionBase), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling {NameOf(SessionBase)}.{e?.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -137,11 +137,11 @@ Public Class SimpleReadWritePanel
         Dim resource As String = ""
         Try
             Me._SessionInfoTextBox.Text = "Opening session..."
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opening;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opening;. ")
             Using selector As New Instrument.ResourceSelectorDialog()
                 If selector.ShowDialog(Me) = Windows.Forms.DialogResult.OK Then
                     resource = selector.ResourceName
-                    Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opening;. session to {0}", resource)
+                    Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opening;. session to {0}", resource)
                     Windows.Forms.Cursor.Current = Cursors.WaitCursor
                     Me.Session = isr.VI.SessionFactory.Get.Factory.CreateSession()
                     If Me.Session IsNot Nothing Then
@@ -151,23 +151,23 @@ Public Class SimpleReadWritePanel
                         End If
                         Me.Session.OpenSession(selector.ResourceName, Threading.SynchronizationContext.Current)
                         If Me.IsSessionOpen Then
-                            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Session open;. to {0}", Me.Session.ResourceName)
+                            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Session open;. to {0}", Me.Session.ResourceName)
                             Me._SessionInfoTextBox.Text = Me.Session.ResourceName
                         Else
-                            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed opening;. session to {0}", resource)
+                            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed opening;. session to {0}", resource)
                             Me._SessionInfoTextBox.Text = "Session not open. Check resource."
                         End If
                         Me._TimeoutSelector.Value = CDec(Me.Session.Timeout.TotalMilliseconds)
                         Me._SimpleReadWriteControl.Connect(Me.Session)
                         Me._SimpleReadWriteControl.ReadEnabled = Me._AutoReadCheckBox.Checked
                     Else
-                        Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed creating;. session to {0}", resource)
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed creating;. session to {0}", resource)
                     End If
                     Me.UpdateControlsState()
                 End If
             End Using
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening;. session to {resource}. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening;. session to {resource}. {ex.ToFullBlownString}")
             Me._SessionInfoTextBox.Text = ex.ToFullBlownString
         Finally
             Windows.Forms.Cursor.Current = Cursors.Default
@@ -183,14 +183,14 @@ Public Class SimpleReadWritePanel
         Dim resource As String = ""
         If Me.IsSessionOpen Then
             resource = Me.Session.ResourceName
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closing;. session to {0}", resource)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closing;. session to {0}", resource)
         End If
         If Me.Session IsNot Nothing Then
             Me._Session.Dispose()
             Me.Session = Nothing
         End If
         If Not Me.IsSessionOpen Then
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closed;. session to {0}", resource)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closed;. session to {0}", resource)
         End If
         Me.UpdateControlsState()
     End Sub
@@ -229,7 +229,7 @@ Public Class SimpleReadWritePanel
                 Me.OnPropertyChanged(TryCast(sender, Instrument.SimpleReadWriteControl), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling SimpleReadWrite.{e?.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -376,7 +376,7 @@ Public Class SimpleReadWritePanel
                     Me.Session.TerminationCharacter = isr.Core.Pith.EscapeSequencesExtensions.ReturnValue
             End Select
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default
@@ -396,7 +396,7 @@ Public Class SimpleReadWritePanel
         Try
             Me._SimpleReadWriteControl.AutoAppendTermination = Me.BuildAutoTermination
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -406,7 +406,7 @@ Public Class SimpleReadWritePanel
         Try
             Me._SimpleReadWriteControl.AutoAppendTermination = Me.BuildAutoTermination
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -416,7 +416,7 @@ Public Class SimpleReadWritePanel
         Try
             Me._SimpleReadWriteControl.ReadServiceRequestStatus()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -481,7 +481,7 @@ Public Class SimpleReadWritePanel
                 Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub

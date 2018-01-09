@@ -213,7 +213,7 @@ Public Class Console
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception loading the driver console form;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception loading the driver console form;. {0}", ex.ToFullBlownString)
             If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -271,7 +271,7 @@ Public Class Console
             Application.DoEvents()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception showing the driver console form;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception showing the driver console form;. {0}", ex.ToFullBlownString)
             If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -431,10 +431,10 @@ Public Class Console
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub Connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceSelectorConnector.Clear
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                            "Resetting, clearing and initializing resource;. {0}", Me.ResourceName)
         Me.Meter.MasterDevice.ResetClearInit()
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                            "Resource reset, initialized and cleared;. {0}", Me.ResourceName)
     End Sub
 
@@ -446,23 +446,23 @@ Public Class Console
         Dim action As String = $"opening VISA Session to {Me.ResourceName}"
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Connecting;. {action}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Connecting;. {action}")
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
             ' Me.Meter.MasterDevice.RegisterNotifier(Me._ResourceSelectorConnector.Talker)
             Me.Meter.CaptureSyncContext(Threading.SynchronizationContext.Current)
             Me._IdentityTextBox.Text = $"Connecting {Me.ResourceName}"
             Me.Meter.MasterDevice.OpenSession(Me.ResourceName, "TTM")
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Connected;. Opened VISA Session to {Me.ResourceName}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Connected;. Opened VISA Session to {Me.ResourceName}")
 
             ' allow events to take shape before completion of actions -- there is an issue with the 
             ' meter elements not established 
             Application.DoEvents()
         Catch ex As OperationFailedException
             Me._ErrorProvider.SetError(Me._IdentityTextBox, "Connection failed")
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed connecting;. Failed {action}.{ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed connecting;. Failed {action}.{ex.ToFullBlownString}")
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._IdentityTextBox, "Connection failed")
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed connecting;. Exception {action}.{ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed connecting;. Exception {action}.{ex.ToFullBlownString}")
         Finally
             Try
                 action = $"preparing {Me.ResourceName}"
@@ -502,16 +502,16 @@ Public Class Console
 
         Catch ex As OperationFailedException
             Me._ErrorProvider.SetError(Me._IdentityTextBox, $"{action} failed")
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._IdentityTextBox, $"{action} failed")
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         Finally
             If Me.Meter.MasterDevice.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Still open--{action}failed;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Still open--{action}failed;. ")
                 Me._IdentityTextBox.Text = $"Still open; Failed {action}"
             Else
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Disconnected;. Ended access To {0}", Me.ResourceName)
                 Me._IdentityTextBox.Text = $"Disconnected from {Me.ResourceName}"
             End If
@@ -546,7 +546,7 @@ Public Class Console
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(sender.SelectedResourceName)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Selected {sender.SelectedResourceName};. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Selected {sender.SelectedResourceName};. ")
             Case NameOf(sender.SelectedResourceExists)
                 If sender.SelectedResourceExists Then
                     If Me.Meter.IsDeviceOpen Then
@@ -577,7 +577,7 @@ Public Class Console
                 Me.OnPropertyChanged(TryCast(sender, Instrument.ResourceSelectorConnector), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -865,7 +865,7 @@ Public Class Console
         Try
             Me.OnPropertyChanged(TryCast(sender, ShuntResistance), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. {1}",
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. {1}",
                                e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -907,7 +907,7 @@ Public Class Console
                 Me.OnPropertyChanged(TryCast(sender, ConfigurationPanel), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. {1}",
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. {1}",
                                e.PropertyName, ex.ToFullBlownString)
 
         End Try
@@ -994,7 +994,7 @@ Public Class Console
                 Me.OnPropertyChanged(TryCast(sender, Meter), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. {1}",
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception handling property '{0}';. {1}",
                                e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -1039,7 +1039,7 @@ Public Class Console
                 Me.OnPropertyChanged(TryCast(sender, MeasureSequencer), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -1128,7 +1128,7 @@ Public Class Console
                 Me.OnPropertyChanged(TryCast(sender, TriggerSequencer), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -1426,7 +1426,7 @@ Public Class Console
                 Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Failed reporting Trace Message {0} Property Change;. {1}", e?.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -1484,7 +1484,7 @@ End Class
                 Me._ErrorProvider.SetIconPadding(comboBox, -15)
                 Dim message As String = $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}."
                 Me._ErrorProvider.SetError(comboBox, message)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, message)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, message)
             Else
                 If Console.TryFindInstrumentResource(My.Settings.ResourceName) Then
                     comboBox.Text = My.Settings.ResourceName
@@ -1496,7 +1496,7 @@ End Class
         Catch ex As Exception
             Me._ErrorProvider.SetIconPadding(comboBox, -15)
             Me._ErrorProvider.SetError(comboBox, ex.Message)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default

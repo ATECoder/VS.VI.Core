@@ -127,7 +127,7 @@ Public MustInherit Class MasterDeviceBase
             Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Failed initiating controller node--closing this session;. {0}", ex.ToFullBlownString)
             Me.CloseSession()
         End Try
@@ -140,20 +140,60 @@ Public MustInherit Class MasterDeviceBase
 
 #Region " STATUS "
 
-    ''' <summary> Gets or sets the Status Subsystem. </summary>
-    ''' <value> The Status Subsystem. </value>
-    Public Property StatusSubsystem As StatusSubsystemBase
+    Private _StatusSubsystem As StatusSubsystem
+    ''' <summary>
+    ''' Gets or sets the Status Subsystem.
+    ''' </summary>
+    ''' <value>The Status Subsystem.</value>
+    Public Property StatusSubsystem As StatusSubsystem
+        Get
+            Return Me._StatusSubsystem
+        End Get
+        Set(value As StatusSubsystem)
+            If Me._StatusSubsystem IsNot Nothing Then
+                RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.StatusSubsystem)
+                Me.StatusSubsystem.Dispose()
+                Me._StatusSubsystem = Nothing
+            End If
+            Me._StatusSubsystem = value
+            If Me._StatusSubsystem IsNot Nothing Then
+                AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+                Me.AddSubsystem(Me.StatusSubsystem)
+            End If
+            Me.StatusSubsystemBase = value
+        End Set
+    End Property
+
+    ''' <summary> Executes the subsystem property changed action. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Protected Overrides Sub OnPropertyChanged(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
+        Me.OnPropertyChanged(CType(subsystem, StatusSubsystem), propertyName)
+    End Sub
+
+    ''' <summary> Executes the subsystem property changed action. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As StatusSubsystem, ByVal propertyName As String)
+        MyBase.OnPropertyChanged(subsystem, propertyName)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+        End Select
+    End Sub
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+    Protected Overloads Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.ResourceName} exception handling {NameOf(StatusSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -228,13 +268,16 @@ Public MustInherit Class MasterDeviceBase
 
 #Region " SERVICE REQUEST "
 
+#If False Then
     ''' <summary> Reads the event registers after receiving a service request. </summary>
+    ''' <remarks> Handled by the <see cref="DeviceBase"/></remarks>
     Protected Overrides Sub ProcessServiceRequest()
-        Me.StatusSubsystem.ReadRegisters()
+        Me.StatusSubsystem.ReadEventRegisters()
         If Me.StatusSubsystem.ErrorAvailable Then
             Me.StatusSubsystem.QueryDeviceErrors()
         End If
     End Sub
+#End If
 
 #End Region
 

@@ -235,7 +235,7 @@ Public Class SimpleReadWriteControl
         Catch ex As Exception
             Me.StatusMessage = "Error reading service request"
             Me._ReadTextBox.Text = ex.ToFullBlownString
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading service request;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading service request;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -273,7 +273,7 @@ Public Class SimpleReadWriteControl
         Catch ex As Exception
             Me.StatusMessage = "Error Querying."
             Me._ReadTextBox.Text = ex.ToFullBlownString
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception Querying;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception Querying;. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default
@@ -292,7 +292,7 @@ Public Class SimpleReadWriteControl
         Try
             If Me._Session.IsServiceRequestEnabled(ServiceRequests.MessageAvailable) And Not Me.ServiceRequestRegistered Then
                 Me.StatusMessage = "Establishing service request handling."
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Establishing service request handling")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Establishing service request handling")
                 ' checks if service requests are enabled for the MAV bit is enabled on the service request register.
                 Me.ServiceRequestRegistered = True
                 AddHandler Me._Session.ServiceRequested, AddressOf Me.OnServiceRequested
@@ -303,18 +303,18 @@ Public Class SimpleReadWriteControl
                 Me.Session.ReadStatusByte()
             End If
             Me.StatusMessage = "Writing."
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Writing: '{0}'", textToWrite)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Writing: '{0}'", textToWrite)
             textToWrite = textToWrite.ReplaceCommonEscapeSequences
             Me.SentMessage = textToWrite
             Me.StopWatch.Restart()
             Me._Session.WriteLine(textToWrite)
             Me.ElapsedTime = StopWatch.Elapsed
             Me.StatusMessage = "Done Writing."
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Writing completed;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Writing completed;. ")
         Catch ex As Exception
             Me.StatusMessage = "Error Writing."
             Me._ReadTextBox.Text = ex.ToFullBlownString
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception writing;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception writing;. {ex.ToFullBlownString}")
         Finally
             If Not Me.ServiceRequestRegistered Then Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default
@@ -327,19 +327,19 @@ Public Class SimpleReadWriteControl
         Windows.Forms.Cursor.Current = Cursors.WaitCursor
         Try
             Me.StatusMessage = "Reading"
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading;. ")
             If Not Me.StopWatch.IsRunning Then Me.StopWatch.Restart()
             Dim responseString As String = Me._Session.ReadLine()
             Me.ElapsedTime = StopWatch.Elapsed
             Dim message As String = responseString.InsertCommonEscapeSequences
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading completed;. ")
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Received: '{0}'", message)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading completed;. ")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Received: '{0}'", message)
             Me.updateReadMessage(message)
             Me.StatusMessage = "Done Reading."
         Catch ex As Exception
             Me.StatusMessage = "Error Reading."
             Me._ReadTextBox.Text = ex.ToFullBlownString
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading;. {ex.ToFullBlownString}")
         Finally
             If Me._Session.ServiceRequestEventEnabled AndAlso Me.ServiceRequestRegistered Then
                 Me.ServiceRequestRegistered = False
@@ -362,15 +362,15 @@ Public Class SimpleReadWriteControl
         Try
             If Me._Session IsNot Nothing Then
                 Me.StatusMessage = "Clearing the session..."
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing the session;. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing the session;. ")
                 Me._Session.Clear()
                 Me.StatusMessage = "Cleared"
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Session cleared;. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Session cleared;. ")
             End If
         Catch ex As Exception
             Me.StatusMessage = "Error clearing the session."
             Me._ReadTextBox.Text = ex.ToFullBlownString
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception clearing session;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception clearing session;. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default

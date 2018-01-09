@@ -230,31 +230,31 @@ Public MustInherit Class SourceMeasureUnit
         Me.ContactResistances = "-1,-1"
         If Not threshold.Equals(Me.ContactCheckThreshold) Then
             Me.Session.LastNodeNumber = New Integer?
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                        "writing contact check limit {0};. ", threshold)
             Me.WriteContactCheckThreshold(threshold)
             Me.CheckThrowDeviceException(False, "setting up contact check threshold;. using '{0}'", Me.Session.LastMessageSent)
         End If
 
         If Not Me.ContactCheckSpeedMode.Equals(Tsp.ContactCheckSpeedMode.Fast) Then
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                        "writing contact mode {0};. ", Tsp.ContactCheckSpeedMode.Fast)
             Me.WriteContactCheckSpeedMode(Tsp.ContactCheckSpeedMode.Fast)
             Me.CheckThrowDeviceException(False, "setting up contact check speed;. using '{0}'", Me.Session.LastMessageSent)
         End If
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "querying contact check;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "querying contact check;. ")
         Me.QueryContactCheckOkay()
         Me.CheckThrowDeviceException(True, "checking contact;. using '{0}'", Me.Session.LastMessageSent)
         If Me.ContactCheckOkay.HasValue AndAlso Not Me.ContactCheckOkay.Value Then
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "reading contact check resistance;. ")
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "reading contact check resistance;. ")
             Me.QueryContactResistances()
             Me.CheckThrowDeviceException(True, "reading contacts;. using '{0}'", Me.Session.LastMessageSent)
             If String.IsNullOrWhiteSpace(Me._contactResistances) Then
-                Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                        "Contact check failed;. Failed fetching contact resistances using  '{0}'", Me.Session.LastMessageSent)
             Else
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                        "Contact check failed;. Contact resistance {0} exceeded the limit {1}",
                                        Me.ContactResistances, Me.ContactCheckThreshold)
             End If

@@ -115,7 +115,7 @@ Public Class K2000MeasureControl
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, TriggerSubsystem), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling property '{e?.PropertyName}' change;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -142,7 +142,7 @@ Public Class K2000MeasureControl
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, SenseFourWireResistanceSubsystem), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling property '{e?.PropertyName}' change;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -151,7 +151,7 @@ Public Class K2000MeasureControl
     Public Sub ApplyMeterRangeMode()
         If Me.SenseResistanceSubsystem IsNot Nothing AndAlso
                 Not Nullable.Equals(Me.SenseResistanceSubsystem.Range, Me.MeterRange) Then
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Applying meter range settings;. range={0}; current={1}",
                                Me._MeterCurrentNumeric.Value, Me._MeterRangeNumeric.Value)
             Me.SenseResistanceSubsystem.ApplyRange(Me.MeterRange)
@@ -163,7 +163,7 @@ Public Class K2000MeasureControl
     Public Sub ApplyTriggerDelay()
         If Me.SenseResistanceSubsystem IsNot Nothing AndAlso
                 Not Nullable.Equals(Me.TriggerSubsystem.Delay, Me.TriggerDelay) Then
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Applying trigger delay {0};. ", Me.TriggerDelay)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Applying trigger delay {0};. ", Me.TriggerDelay)
             Me.TriggerSubsystem.ApplyDelay(Me.TriggerDelay)
             Me.SenseResistanceSubsystem.ReadRegisters()
         End If

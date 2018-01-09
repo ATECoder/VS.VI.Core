@@ -73,7 +73,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = VI.Scpi.Syntax.ErrorQueueQueryCommand
+    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = VI.Scpi.Syntax.NextErrorQueryCommand
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>

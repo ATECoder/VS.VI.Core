@@ -97,7 +97,7 @@ Public Class InstrumentPanelForm
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception loading the form;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception loading the form;. {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -124,10 +124,10 @@ Public Class InstrumentPanelForm
 
             If Not Me.DesignMode Then
             End If
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Ready to open Visa Session;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Ready to open Visa Session;. ")
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the form;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the form;. {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -199,7 +199,7 @@ Public Class InstrumentPanelForm
                 Me.OnPropertyChange(TryCast(sender, Instrument.ResourcePanelBase), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling IntstrumentPanel.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
 
 
@@ -268,7 +268,7 @@ Public Class InstrumentPanelForm
                 Me.OnPropertyChange(TryCast(sender, PropertyNotifyControlBase), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling PropertyNotifyControl.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
 
         End Try
@@ -336,7 +336,7 @@ Public Class InstrumentPanelForm
                 Me.OnPropertyChange(TryCast(sender, TalkerControlBase), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling TalkerControl.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
 
         End Try
@@ -411,7 +411,7 @@ Public Class InstrumentPanelForm
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception handling property {0} change", e?.PropertyName)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub

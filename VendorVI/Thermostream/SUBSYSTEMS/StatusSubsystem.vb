@@ -163,7 +163,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = ""
+    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = ""
 
     ''' <summary> Clears the error queue and waits. </summary>
     ''' <remarks> Uses 'CLER' and wait 4 seconds after the error is cleared. </remarks>

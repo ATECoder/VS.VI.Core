@@ -326,9 +326,9 @@ Public Class ThermostreamSubsystem
     ''' <summary> Applies the operator screen. </summary>
     Public Sub ApplyCyclesScreen()
         Me.ResetCycleScreen()
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Awaiting reset to Cycles (manual mode) screen;. ")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Awaiting reset to Cycles (manual mode) screen;. ")
         Diagnostics.Stopwatch.StartNew.Wait(Me.ResetCycleScreenRefractoryTimeSpan)
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Querying system screen;. ")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Querying system screen;. ")
         Me.QuerySystemScreen()
     End Sub
 
@@ -373,9 +373,9 @@ Public Class ThermostreamSubsystem
     ''' <summary> Applies the operator screen. </summary>
     Public Sub ApplyOperatorScreen()
         Me.ResetOperatorScreen()
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Awaiting reset to Operator screen;. ")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Awaiting reset to Operator screen;. ")
         Diagnostics.Stopwatch.StartNew.Wait(Me.ResetOperatorScreenRefractoryTimeSpan)
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Querying system screen;. ")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Querying system screen;. ")
         Me.QuerySystemScreen()
     End Sub
 

@@ -144,7 +144,7 @@ Partial Class K3700Control
         Me._ReadingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
         Me._ReadingsDataGridView.Location = New System.Drawing.Point(0, 25)
         Me._ReadingsDataGridView.Name = "_ReadingsDataGridView"
-        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 240)
+        Me._ReadingsDataGridView.Size = New System.Drawing.Size(356, 212)
         Me._ReadingsDataGridView.TabIndex = 23
         Me._TipsToolTip.SetToolTip(Me._ReadingsDataGridView, "Buffer data")
         '
@@ -213,19 +213,19 @@ Partial Class K3700Control
         '
         Me._ToolStripPanel.Controls.Add(Me._SystemToolStrip)
         Me._ToolStripPanel.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._ToolStripPanel.Location = New System.Drawing.Point(0, 265)
+        Me._ToolStripPanel.Location = New System.Drawing.Point(0, 237)
         Me._ToolStripPanel.Name = "_ToolStripPanel"
         Me._ToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal
         Me._ToolStripPanel.RowMargin = New System.Windows.Forms.Padding(3, 0, 0, 0)
-        Me._ToolStripPanel.Size = New System.Drawing.Size(356, 0)
+        Me._ToolStripPanel.Size = New System.Drawing.Size(356, 28)
         '
         '_SystemToolStrip
         '
         Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.None
         Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableBitmaskNumericLabel, Me._ServiceRequestEnableBitmaskNumeric})
-        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 226)
+        Me._SystemToolStrip.Location = New System.Drawing.Point(3, 0)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
-        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 28)
+        Me._SystemToolStrip.Size = New System.Drawing.Size(133, 28)
         Me._SystemToolStrip.TabIndex = 21
         Me._SystemToolStrip.Text = "System Tools"
         Me._TipsToolTip.SetToolTip(Me._SystemToolStrip, "System operations")
@@ -339,6 +339,7 @@ Partial Class K3700Control
         Me._ResourceSelectorConnector.BackColor = System.Drawing.Color.Transparent
         Me._ResourceSelectorConnector.ClearToolTipText = "Clear device state"
         Me._ResourceSelectorConnector.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me._ResourceSelectorConnector.EnteredResourceName = ""
         Me._ResourceSelectorConnector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ResourceSelectorConnector.Location = New System.Drawing.Point(0, 265)
         Me._ResourceSelectorConnector.Margin = New System.Windows.Forms.Padding(0)
@@ -364,7 +365,7 @@ Partial Class K3700Control
         Me._SenseTabPage.Controls.Add(Me._ApplySenseSettingsButton)
         Me._SenseTabPage.Location = New System.Drawing.Point(4, 26)
         Me._SenseTabPage.Name = "_SenseTabPage"
-        Me._SenseTabPage.Size = New System.Drawing.Size(356, 232)
+        Me._SenseTabPage.Size = New System.Drawing.Size(356, 294)
         Me._SenseTabPage.TabIndex = 4
         Me._SenseTabPage.Text = "Sense"
         Me._SenseTabPage.UseVisualStyleBackColor = True
@@ -427,7 +428,7 @@ Partial Class K3700Control
         Me._FilterGroupBox.Controls.Add(Me._MovingAverageRadioButton)
         Me._FilterGroupBox.Controls.Add(Me._FilterCountNumeric)
         Me._FilterGroupBox.Controls.Add(Me._FilterCountNumericLabel)
-        Me._FilterGroupBox.Location = New System.Drawing.Point(11, 147)
+        Me._FilterGroupBox.Location = New System.Drawing.Point(11, 209)
         Me._FilterGroupBox.Name = "_FilterGroupBox"
         Me._FilterGroupBox.Size = New System.Drawing.Size(258, 75)
         Me._FilterGroupBox.TabIndex = 10
@@ -594,7 +595,7 @@ Partial Class K3700Control
         '
         Me._ApplySenseSettingsButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._ApplySenseSettingsButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ApplySenseSettingsButton.Location = New System.Drawing.Point(290, 190)
+        Me._ApplySenseSettingsButton.Location = New System.Drawing.Point(290, 252)
         Me._ApplySenseSettingsButton.Name = "_ApplySenseSettingsButton"
         Me._ApplySenseSettingsButton.Size = New System.Drawing.Size(58, 30)
         Me._ApplySenseSettingsButton.TabIndex = 11
@@ -614,7 +615,7 @@ Partial Class K3700Control
         Me._ChannelTabPage.Controls.Add(Me._ChannelListComboBoxLabel)
         Me._ChannelTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ChannelTabPage.Name = "_ChannelTabPage"
-        Me._ChannelTabPage.Size = New System.Drawing.Size(356, 232)
+        Me._ChannelTabPage.Size = New System.Drawing.Size(356, 294)
         Me._ChannelTabPage.TabIndex = 1
         Me._ChannelTabPage.Text = "Channel"
         Me._ChannelTabPage.UseVisualStyleBackColor = True
@@ -638,7 +639,7 @@ Partial Class K3700Control
         Me._ClosedChannelsTextBox.Name = "_ClosedChannelsTextBox"
         Me._ClosedChannelsTextBox.ReadOnly = True
         Me._ClosedChannelsTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me._ClosedChannelsTextBox.Size = New System.Drawing.Size(340, 89)
+        Me._ClosedChannelsTextBox.Size = New System.Drawing.Size(340, 151)
         Me._ClosedChannelsTextBox.TabIndex = 7
         '
         '_OpenAllButton
@@ -711,7 +712,7 @@ Partial Class K3700Control
         Me._ReadWriteTabPage.Controls.Add(Me._SimpleReadWriteControl)
         Me._ReadWriteTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ReadWriteTabPage.Name = "_ReadWriteTabPage"
-        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 232)
+        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 294)
         Me._ReadWriteTabPage.TabIndex = 5
         Me._ReadWriteTabPage.Text = "R/W"
         Me._ReadWriteTabPage.UseVisualStyleBackColor = True
@@ -725,7 +726,7 @@ Partial Class K3700Control
         Me._SimpleReadWriteControl.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._SimpleReadWriteControl.Name = "_SimpleReadWriteControl"
         Me._SimpleReadWriteControl.ReadEnabled = False
-        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 232)
+        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 294)
         Me._SimpleReadWriteControl.TabIndex = 0
         '
         '_MessagesTabPage
@@ -733,7 +734,7 @@ Partial Class K3700Control
         Me._MessagesTabPage.Controls.Add(Me._TraceMessagesBox)
         Me._MessagesTabPage.Location = New System.Drawing.Point(4, 26)
         Me._MessagesTabPage.Name = "_MessagesTabPage"
-        Me._MessagesTabPage.Size = New System.Drawing.Size(356, 232)
+        Me._MessagesTabPage.Size = New System.Drawing.Size(356, 294)
         Me._MessagesTabPage.TabIndex = 3
         Me._MessagesTabPage.Text = "Log"
         Me._MessagesTabPage.UseVisualStyleBackColor = True
@@ -753,7 +754,7 @@ Partial Class K3700Control
         Me._TraceMessagesBox.ReadOnly = True
         Me._TraceMessagesBox.ResetCount = 1000
         Me._TraceMessagesBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me._TraceMessagesBox.Size = New System.Drawing.Size(356, 232)
+        Me._TraceMessagesBox.Size = New System.Drawing.Size(356, 294)
         Me._TraceMessagesBox.TabIndex = 1
         '
         '_LastErrorTextBox

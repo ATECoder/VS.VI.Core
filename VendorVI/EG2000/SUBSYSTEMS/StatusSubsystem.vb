@@ -158,7 +158,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = ""
+    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = ""
 
     ''' <summary> Gets the last error query command. </summary>
     ''' <value> The last error query command. </value>

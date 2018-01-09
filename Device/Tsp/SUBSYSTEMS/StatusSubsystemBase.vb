@@ -66,11 +66,11 @@ Public MustInherit Class StatusSubsystemBase
             ' flush the input buffer in case the instrument has some leftovers.
             Me.Session.DiscardUnreadData()
             If Not String.IsNullOrWhiteSpace(Me.Session.DiscardedData) Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Data discarded after turning prompts and errors off;. Data: {0}.", Me.Session.DiscardedData)
             End If
         Catch ex As NativeException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
@@ -78,11 +78,11 @@ Public MustInherit Class StatusSubsystemBase
             ' flush write may cause the instrument to send off a new data.
             Me.Session.DiscardUnreadData()
             If Not String.IsNullOrWhiteSpace(Me.Session.DiscardedData) Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Unread data discarded after discarding unset data;. Data: {0}.", Me.Session.DiscardedData)
             End If
         Catch ex As NativeException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
@@ -252,7 +252,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the clear error queue command. </summary>
     ''' <value> The clear error queue command. </value>
-    Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = TspSyntax.ErrorQueueQueryCommand
+    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = TspSyntax.ErrorQueueQueryCommand
 
     ''' <summary> Queue device error. </summary>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>

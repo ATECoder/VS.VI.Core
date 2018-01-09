@@ -87,7 +87,7 @@ Public Class ServiceRequesterPanel
         Try
             If Me.IsSessionOpen Then
                 resource = Me._Session.ResourceName
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closing;. session to {0}", resource)
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closing;. session to {0}", resource)
                 Me._Session.Dispose()
                 Try
                     ' Trying to null the session raises an ObjectDisposedException 
@@ -97,15 +97,15 @@ Public Class ServiceRequesterPanel
                     Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                 Finally
                     If Me.IsSessionOpen Then
-                        Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed closing;. session to {0}", resource)
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Failed closing;. session to {0}", resource)
                     Else
-                        Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closed;. session to {0}", resource)
+                        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closed;. session to {0}", resource)
                     End If
                 End Try
             Else
                 If Me._Session IsNot Nothing Then Me._Session.Dispose()
                 resource = Me._ResourceNamesComboBox.Text
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opening session;. to {0}", resource)
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opening session;. to {0}", resource)
                 '  gpibSession = CType(ResourceManager.GetLocalManager().Open(resourceNameTextBox.Text), gpibSession)
                 Me._Session = isr.VI.SessionFactory.Get.Factory.CreateSession()
                 Me._Session.OpenSession(Me._ResourceNamesComboBox.Text, TimeSpan.FromMilliseconds(Me._TimeoutSelector.Value), Threading.SynchronizationContext.Current)
@@ -134,7 +134,7 @@ Public Class ServiceRequesterPanel
     Private Sub OnOpenChanged()
         Me._OpenSessionButton.Text = CStr(IIf(Me.IsSessionOpen, "CLOSE", "OPEN"))
         If Me.IsSessionOpen Then
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opened;. session to {0}", Me._Session.ResourceName)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Opened;. session to {0}", Me._Session.ResourceName)
             Me._SyncCallBacksCheckBox.Checked = Me._Session.SynchronizeCallbacks
             Me._TimeoutSelector.Value = CDec(Me._Session.Timeout.TotalMilliseconds)
             Me.ApplySelectedTimeout()
@@ -145,7 +145,7 @@ Public Class ServiceRequesterPanel
             End With
             Me._WriteButton.Enabled = Me._Session.ServiceRequestEventEnabled
         Else
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closed;. session to {0}", Me._ResourceNamesComboBox.Text)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Closed;. session to {0}", Me._ResourceNamesComboBox.Text)
             Me._EnableServiceRequestButton.Enabled = False
             Me._WriteButton.Enabled = False
         End If
@@ -224,7 +224,7 @@ Public Class ServiceRequesterPanel
     <CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")>
     Private Sub WriteToSession(ByVal value As String)
         Try
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Writing...;. {0}", value)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Writing...;. {0}", value)
             value = ReplaceCommonEscapeSequences(value)
             StopWatch.Restart()
             Me._Session.WriteLine(value)
@@ -286,7 +286,7 @@ Public Class ServiceRequesterPanel
     Private Sub _FindButton_Click(sender As Object, e As EventArgs) Handles _FindButton.Click
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Listing resources...;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Listing resources...;. ")
             Me.ListResources()
         Finally
             Me.Cursor = Cursors.Default
@@ -337,7 +337,7 @@ Public Class ServiceRequesterPanel
                 Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub

@@ -54,7 +54,7 @@ Public Class Device
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 'listeners must clear, otherwise closing could raise an exception.
-                Me.Talker?.Listeners.Clear()
+                Me.Talker.Listeners.Clear()
                 If Me.IsDeviceOpen Then Me.OnClosing(New System.ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
@@ -83,11 +83,11 @@ Public Class Device
         Me.ApplySettings()
         Try
             Me.Session.StoreTimeout(Me.InitializeTimeout)
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing error queue;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing error queue;. ")
             ' clear the error queue on the controller node only.
             Me.StatusSubsystem.ClearErrorQueue()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing error queue;. {0}", ex.ToFullBlownString)
         Finally
             Me.Session.RestoreTimeout()
@@ -97,11 +97,11 @@ Public Class Device
             ' flush the input buffer in case the instrument has some leftovers.
             Me.Session.DiscardUnreadData()
             If Not String.IsNullOrWhiteSpace(Me.Session.DiscardedData) Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Data discarded after clearing read buffer;. Data: {0}.", Me.Session.DiscardedData)
             End If
         Catch ex As NativeException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
@@ -109,11 +109,11 @@ Public Class Device
             ' flush write may cause the instrument to send off a new data.
             Me.Session.DiscardUnreadData()
             If Not String.IsNullOrWhiteSpace(Me.Session.DiscardedData) Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Unread data discarded after discarding unset data;. Data: {0}.", Me.Session.DiscardedData)
             End If
         Catch ex As NativeException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
@@ -152,9 +152,8 @@ Public Class Device
         MyBase.OnClosing(e)
         If e?.Cancel Then Return
 
-        If Me._StatusSubsystem IsNot Nothing Then
-            RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
-        End If
+        If Me._StatusSubsystem IsNot Nothing Then RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+        Me.StatusSubsystem = Nothing
 
         If Me.DisplaySubsystem IsNot Nothing Then
             Me.DisplaySubsystem.RestoreDisplay(Me.InitializeTimeout)
@@ -189,8 +188,8 @@ Public Class Device
         If e?.Cancel Then Return
         ' STATUS must be the first subsystem.
         Me.StatusSubsystem = New StatusSubsystem(Me.Session)
-        Me.AddSubsystem(Me.StatusSubsystem)
-        AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+        'Me.AddSubsystem(Me.StatusSubsystem)
+        'AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
 
         Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
         Me.AddSubsystem(Me.SystemSubsystem)
@@ -223,7 +222,7 @@ Public Class Device
             Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
             Me.CaptureSyncContext(Me.CapturedSyncContext)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Failed initiating controller node--closing this session;. {0}", ex.ToFullBlownString)
             Me.CloseSession()
         End Try
@@ -235,20 +234,60 @@ Public Class Device
 
 #Region " STATUS "
 
-    ''' <summary> Gets or sets the Status Subsystem. </summary>
-    ''' <value> The Status Subsystem. </value>
+    Private _StatusSubsystem As StatusSubsystem
+    ''' <summary>
+    ''' Gets or sets the Status Subsystem.
+    ''' </summary>
+    ''' <value>The Status Subsystem.</value>
     Public Property StatusSubsystem As StatusSubsystem
+        Get
+            Return Me._StatusSubsystem
+        End Get
+        Set(value As StatusSubsystem)
+            If Me._StatusSubsystem IsNot Nothing Then
+                RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.StatusSubsystem)
+                Me.StatusSubsystem.Dispose()
+                Me._StatusSubsystem = Nothing
+            End If
+            Me._StatusSubsystem = value
+            If Me._StatusSubsystem IsNot Nothing Then
+                AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+                Me.AddSubsystem(Me.StatusSubsystem)
+            End If
+            Me.StatusSubsystemBase = value
+        End Set
+    End Property
+
+    ''' <summary> Executes the subsystem property changed action. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Protected Overrides Sub OnPropertyChanged(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
+        Me.OnPropertyChanged(CType(subsystem, StatusSubsystem), propertyName)
+    End Sub
+
+    ''' <summary> Executes the subsystem property changed action. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As StatusSubsystem, ByVal propertyName As String)
+        MyBase.OnPropertyChanged(subsystem, propertyName)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+        End Select
+    End Sub
 
     ''' <summary> Status subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+    Protected Overloads Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.ResourceName} exception handling {NameOf(StatusSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -278,7 +317,7 @@ Public Class Device
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, DisplaySubsystem), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -315,7 +354,7 @@ Public Class Device
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling System Subsystem property changed Event;. Failed property {0}. {1}",
                                e.PropertyName, ex.ToFullBlownString)
         End Try
@@ -347,7 +386,7 @@ Public Class Device
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.SourceMeasureUnitBase), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -367,7 +406,7 @@ Public Class Device
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.Level)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "{0} current source level set at {1};. ", Me.ResourceName, subsystem.Level)
         End Select
     End Sub
@@ -380,7 +419,7 @@ Public Class Device
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.SourceMeasureUnitCurrentSource), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -400,7 +439,7 @@ Public Class Device
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.AutoRangeVoltageEnabled)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "{0} Measure auto voltage range enabled set to {1};. ",
                                    Me.ResourceName, subsystem.AutoRangeVoltageEnabled)
         End Select
@@ -414,7 +453,7 @@ Public Class Device
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.SourceMeasureUnitMeasure), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -425,13 +464,16 @@ Public Class Device
 
 #Region " SERVICE REQUEST "
 
+#If False Then
     ''' <summary> Reads the event registers after receiving a service request. </summary>
+    ''' <remarks> Handled by the <see cref="DeviceBase"/></remarks>
     Protected Overrides Sub ProcessServiceRequest()
-        Me.StatusSubsystem.ReadRegisters()
+        Me.StatusSubsystem.ReadEventRegisters()
         If Me.StatusSubsystem.ErrorAvailable Then
             Me.StatusSubsystem.QueryDeviceErrors()
         End If
     End Sub
+#End If
 
 #End Region
 

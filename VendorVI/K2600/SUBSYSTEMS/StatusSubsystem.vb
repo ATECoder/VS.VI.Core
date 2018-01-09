@@ -63,7 +63,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = TspSyntax.ErrorQueueQueryCommand
+    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = TspSyntax.ErrorQueueQueryCommand
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>

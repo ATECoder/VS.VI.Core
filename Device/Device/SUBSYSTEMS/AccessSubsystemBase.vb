@@ -80,7 +80,7 @@ Public MustInherit Class AccessSubsystemBase
         Try
             Return Me.Certify(value).GetValueOrDefault(False)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                       $"{ex.Message} occurred certifying access;. {ex.ToFullBlownString}")
             Return False
         End Try

@@ -108,7 +108,7 @@ Public Class T1750MeasureControl
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, MeasureSubsystem), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -117,12 +117,12 @@ Public Class T1750MeasureControl
     Public Sub ApplyMeterTriggerMode()
         If Me.MeasureSubsystem IsNot Nothing AndAlso
                 Not Nullable.Equals(Me.MeasureSubsystem.TriggerMode, Me.SelectedMeterTrigger) Then
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Applying meter trigger {0};. ", Me.SelectedMeterTrigger)
             Me.MeasureSubsystem.ApplyTriggerMode(Me.SelectedMeterTrigger)
             Me.MeasureSubsystem.ReadRegisters()
             ' a delay is required between the two settings
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Waiting {0}ms for meter trigger to settle;. ",
                                MeasureSubsystem.RangeSettlingTimeMilliseconds)
             Threading.Thread.Sleep(MeasureSubsystem.RangeSettlingTimeMilliseconds)
@@ -134,12 +134,12 @@ Public Class T1750MeasureControl
     Public Sub ApplyMeterRangeMode()
         If Me.MeasureSubsystem IsNot Nothing AndAlso
                 Not Nullable.Equals(Me.MeasureSubsystem.RangeMode, Me.SelectedMeterRange) Then
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Applying meter range settings;. range={0}; current={1}, mode='{2}'",
                                Me._MeterCurrentNumeric.Value, Me._MeterRangeNumeric.Value, Me.SelectedMeterRange)
             Me.MeasureSubsystem.ApplyRangeMode(Me.SelectedMeterRange)
             Me.MeasureSubsystem.ReadRegisters()
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Waiting {0}ms for meter range to settle;. ", MeasureSubsystem.RangeSettlingTimeMilliseconds)
             ' at this point, 1/31/2014, the first reading comes in too quickly. Trying to detect operation completion using bit 16 of the
             ' service register does not work. So we are resorting to a brute force delay.
@@ -151,11 +151,11 @@ Public Class T1750MeasureControl
     Public Sub ApplyTriggerDelay()
         If Me.MeasureSubsystem IsNot Nothing AndAlso
                 Not Nullable.Equals(Me.MeasureSubsystem.TriggerDelay, Me.TriggerDelay) Then
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Applying trigger delay {0} ms;. ", Me.TriggerDelay.TotalMilliseconds)
             Me.MeasureSubsystem.ApplyTriggerDelay(Me.TriggerDelay)
             Me.MeasureSubsystem.ReadRegisters()
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Waiting {0}ms for meter range to settle;. ", MeasureSubsystem.RangeSettlingTimeMilliseconds)
             ' at this point, 1/31/2014, the first reading comes in too quickly. Trying to detect operation completion using bit 16 of the
             ' service register does not work. So we are resorting to a brute force delay.
@@ -169,16 +169,16 @@ Public Class T1750MeasureControl
         Me.ApplyMeterRangeMode()
         Me.ApplyTriggerDelay()
         If Me.MeasureSubsystem IsNot Nothing Then
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Setting initial delay to {0}ms;. ", Me.InitialDelay.TotalMilliseconds)
             Me.MeasureSubsystem.InitialDelay = Me.InitialDelay
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Setting measurement delay to {0}ms;. ", Me.MeasurementDelay.TotalMilliseconds)
             Me.MeasureSubsystem.MeasurementDelay = Me.MeasurementDelay
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Setting maximum trial count to {0};. ", Me.MaximumTrialsCount)
             Me.MeasureSubsystem.MaximumTrialsCount = Me.MaximumTrialsCount
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Setting maximum difference to {0}%;. ", 100 * Me.MaximumDifference)
             Me.MeasureSubsystem.MaximumDifference = Me.MaximumDifference
         End If

@@ -116,10 +116,10 @@ Public MustInherit Class StatusSubsystemBase
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Try
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing error queue;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing error queue;. ")
             Me.ClearErrorQueue()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                $"Exception ignored clearing error queue;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -201,7 +201,7 @@ Public MustInherit Class StatusSubsystemBase
         Try
             Me.OnSessionPropertyChanged(TryCast(sender, SessionBase), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling property Session.{e.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -312,11 +312,11 @@ Public MustInherit Class StatusSubsystemBase
         End Get
     End Property
 
-    ''' <summary> Gets the error queue query command. </summary>
+    ''' <summary> Gets the 'Next Error' query command. </summary>
     ''' <remarks> SCPI: ":STAT:QUE?".
-    ''' <see cref="Scpi.Syntax.ErrorQueueQueryCommand"> </see> </remarks>
+    ''' <see cref="Scpi.Syntax.NextErrorQueryCommand"> </see> </remarks>
     ''' <value> The error queue query command. </value>
-    Protected Overridable ReadOnly Property ErrorQueueQueryCommand As String
+    Protected Overridable ReadOnly Property NextErrorQueryCommand As String
 
     ''' <summary> Enqueues device error. </summary>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
@@ -360,11 +360,11 @@ Public MustInherit Class StatusSubsystemBase
             Me._MessageReceivedBeforeError = Me.Session.LastMessageReceived
             Me.ReadingDeviceErrors = True
             Me.ClearErrorCache()
-            If Not String.IsNullOrWhiteSpace(Me.ErrorQueueQueryCommand) AndAlso Me.IsErrorBitSet() Then
+            If Not String.IsNullOrWhiteSpace(Me.NextErrorQueryCommand) AndAlso Me.IsErrorBitSet() Then
                 Dim builder As New System.Text.StringBuilder
                 Dim de As DeviceError = DeviceError.NoError
                 Do
-                    de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.ErrorQueueQueryCommand))
+                    de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.NextErrorQueryCommand))
                     If de.IsError Then
                         notifyLastError = True
                         If builder.Length > 0 Then builder.AppendLine()
@@ -454,7 +454,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <returns> The <see cref="DeviceError">Device Error structure.</see> </returns>
     Public Function QueryLastError() As DeviceError
         Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
-        If String.IsNullOrWhiteSpace(Me.ErrorQueueQueryCommand) Then Me.ClearErrorCache()
+        If String.IsNullOrWhiteSpace(Me.NextErrorQueryCommand) Then Me.ClearErrorCache()
         If Not String.IsNullOrWhiteSpace(Me.LastErrorQueryCommand) Then
             de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.LastErrorQueryCommand))
             If de.IsError Then
@@ -477,7 +477,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <returns> A DeviceError. </returns>
     Public Function EnqueueLastError(ByVal compoundErrorMessage As String) As DeviceError
         Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
-        If String.IsNullOrWhiteSpace(Me.ErrorQueueQueryCommand) Then Me.ClearErrorCache()
+        If String.IsNullOrWhiteSpace(Me.NextErrorQueryCommand) Then Me.ClearErrorCache()
         de = Me.EnqueueDeviceError(compoundErrorMessage)
         If de.IsError Then
             Me.AppendLastDeviceErrorMessage($"{Me.ResourceName} Last Error:
@@ -511,7 +511,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Reads the service request register. Also reads the standard event register if 
     '''           the service request register indicates the existence of a standard event. </summary>
-    Public Overridable Sub ReadRegisters()
+    Public Overridable Sub ReadEventRegisters()
         Me.ReadServiceRequestStatus()
     End Sub
 
@@ -585,12 +585,12 @@ Public MustInherit Class StatusSubsystemBase
     ''' <value> The serial number reading. </value>
     Public Property SerialNumberReading As String
         Get
-            Return Me._serialNumberReading
+            Return Me._SerialNumberReading
         End Get
         Set(ByVal value As String)
             If String.IsNullOrEmpty(value) Then value = ""
             If Not String.Equals(value, Me.SerialNumberReading) Then
-                Me._serialNumberReading = value
+                Me._SerialNumberReading = value
                 Me.SafePostPropertyChanged()
                 If String.IsNullOrWhiteSpace(value) Then
                     Me.SerialNumber = New Long?
@@ -614,7 +614,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <exception cref="VI.DeviceException"> Thrown when a device error condition occurs. </exception>
     Public Function QuerySerialNumber() As String
         If Not String.IsNullOrWhiteSpace(Me.SerialNumberQueryCommand) Then
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading serial number;. ")
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading serial number;. ")
             Me.Session.LastNodeNumber = New Integer?
             Dim value As String = Me.Session.QueryTrimEnd(Me.SerialNumberQueryCommand)
             Me.CheckThrowDeviceException(False, "getting serial number;. using {0}.", Me.Session.LastMessageSent)
@@ -631,11 +631,11 @@ Public MustInherit Class StatusSubsystemBase
     ''' </summary>
     Public Property SerialNumber() As Long?
         Get
-            Return Me._serialNumber
+            Return Me._SerialNumber
         End Get
         Set(ByVal value As Long?)
             If Not Nullable.Equals(Me.SerialNumber, value) Then
-                Me._serialNumber = value
+                Me._SerialNumber = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -1201,13 +1201,13 @@ Public MustInherit Class StatusSubsystemBase
         success = Not Me.ErrorAvailable
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
         If success Then
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                       "{0} node {1} done {2}", Me.ResourceName, nodeNumber, details)
         Else
             If flushReadFirst Then Me.Session.DiscardUnreadData()
             Me.QueryStandardEventStatus()
             Me.QueryDeviceErrors()
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                       "{0} node {1} had errors {2}. Details: {3}{4}{5}",
                                       Me.ResourceName, nodeNumber, Me.DeviceErrors, details,
                                       Environment.NewLine, New StackFrame(True).UserCallStack)
@@ -1228,13 +1228,13 @@ Public MustInherit Class StatusSubsystemBase
         Dim success As Boolean = Not Me.ErrorAvailable
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
         If success Then
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                       "{0} done {1}", Me.ResourceName, details)
         Else
             If flushReadFirst Then Me.Session.DiscardUnreadData()
             Me.QueryStandardEventStatus()
             Me.QueryDeviceErrors()
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                       "{0} had errors {1}. Details: {2}{3}{4}",
                                       Me.ResourceName, Me.DeviceErrors, details,
                                       Environment.NewLine, New StackFrame(True).UserCallStack)
@@ -1247,7 +1247,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="args">     A variable-length parameters list containing arguments. </param>
     Public Sub TraceVisaOperation(ByVal format As String, ByVal ParamArray args() As Object)
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
-        Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                   "{0} done {1}", Me.ResourceName, details)
     End Sub
 
@@ -1258,7 +1258,7 @@ Public MustInherit Class StatusSubsystemBase
     Public Sub TraceVisaOperation(ByVal ex As NativeException, ByVal format As String, ByVal ParamArray args() As Object)
         If ex Is Nothing Then Throw New ArgumentNullException(NameOf(ex))
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
-        Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                   "{0} had a VISA error {1}. Details: {2}{3}{4}",
                                   Me.ResourceName, ex.InnerError.BuildErrorCodeDetails(), details,
                                   Environment.NewLine, New StackFrame(True).UserCallStack)
@@ -1271,7 +1271,7 @@ Public MustInherit Class StatusSubsystemBase
     Public Sub TraceOperation(ByVal ex As Exception, ByVal format As String, ByVal ParamArray args() As Object)
         If ex Is Nothing Then Throw New ArgumentNullException(NameOf(ex))
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
-        Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                   "{0} had an exception {1}. Details: {2}{3}{4}",
                                   Me.ResourceName, ex.Message(), details,
                                   Environment.NewLine, New StackFrame(True).UserCallStack)
@@ -1283,7 +1283,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="args">       A variable-length parameters list containing arguments. </param>
     Public Sub TraceVisaOperation(ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
-        Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                   "{0} node {1} done {2}", Me.ResourceName, nodeNumber, details)
     End Sub
 
@@ -1294,7 +1294,7 @@ Public MustInherit Class StatusSubsystemBase
     Public Sub TraceVisaOperation(ByVal ex As NativeException, ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
         If ex Is Nothing Then Throw New ArgumentNullException(NameOf(ex))
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
-        Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                   "{0} node {1} had a VISA error {2}. Details: {3}{4}{5}",
                                   Me.ResourceName, nodeNumber, ex.InnerError.BuildErrorCodeDetails(), details,
                                   Environment.NewLine, New StackFrame(True).UserCallStack)
@@ -1307,7 +1307,7 @@ Public MustInherit Class StatusSubsystemBase
     Public Sub TraceOperation(ByVal ex As Exception, ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
         If ex Is Nothing Then Throw New ArgumentNullException(NameOf(ex))
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
-        Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                   "{0} node {1} had a VISA error {2}. Details: {3}{4}{5}",
                                   Me.ResourceName, nodeNumber, ex.Message(), details,
                                   Environment.NewLine, New StackFrame(True).UserCallStack)
@@ -1347,7 +1347,7 @@ Public MustInherit Class StatusSubsystemBase
 
         Dim affirmative As Boolean = True
         Try
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                        "Collecting garbage after {0};. ",
                                                        String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
             Me.Session.LastNodeNumber = New Integer?
@@ -1429,19 +1429,53 @@ Public MustInherit Class StatusSubsystemBase
         Return Me.LineFrequency
     End Function
 
-    ''' <summary> Returns the Integration period. </summary>
+    ''' <summary> Converts power line cycles to time span. </summary>
     ''' <param name="powerLineCycles"> The power line cycles. </param>
     ''' <returns> The integration period corresponding to the specified number of power line . </returns>
-    Public Shared Function IntegrationPeriod(ByVal powerLineCycles As Double) As TimeSpan
-        Return TimeSpan.FromTicks(CLng(TimeSpan.TicksPerSecond * powerLineCycles / StatusSubsystemBase.StationLineFrequency.GetValueOrDefault(60)))
+    Public Shared Function FromPowerLineCycles(ByVal powerLineCycles As Double) As TimeSpan
+        Return StatusSubsystemBase.FromPowerLineCycles(powerLineCycles, StatusSubsystemBase.StationLineFrequency.GetValueOrDefault(60))
     End Function
 
-    ''' <summary> Returns the Power line cycles. </summary>
+    ''' <summary> Converts integration period to Power line cycles. </summary>
     ''' <param name="integrationPeriod"> The integration period. </param>
     ''' <returns> The number of power line cycles corresponding to the integration period. </returns>
-    Public Shared Function PowerLineCycles(ByVal integrationPeriod As TimeSpan) As Double
-        Return integrationPeriod.TotalSeconds * StatusSubsystemBase.StationLineFrequency.GetValueOrDefault(60)
+    Public Shared Function ToPowerLineCycles(ByVal integrationPeriod As TimeSpan) As Double
+        Return StatusSubsystemBase.ToPowerLineCycles(integrationPeriod, StatusSubsystemBase.StationLineFrequency.GetValueOrDefault(60))
     End Function
+
+    ''' <summary> Converts power line cycles to time span. </summary>
+    ''' <param name="powerLineCycles"> The power line cycles. </param>
+    ''' <param name="frequency">       The frequency. </param>
+    ''' <returns>
+    ''' The integration period corresponding to the specified number of power line .
+    ''' </returns>
+    Public Shared Function FromPowerLineCycles(ByVal powerLineCycles As Double, ByVal frequency As Double) As TimeSpan
+        Return StatusSubsystemBase.FromSecondsPrecise(powerLineCycles / frequency)
+    End Function
+
+    ''' <summary> Converts integration period to Power line cycles. </summary>
+    ''' <param name="integrationPeriod"> The integration period. </param>
+    ''' <param name="frequency">         The frequency. </param>
+    ''' <returns> The number of power line cycles corresponding to the integration period. </returns>
+    Public Shared Function ToPowerLineCycles(ByVal integrationPeriod As TimeSpan, ByVal frequency As Double) As Double
+        Return StatusSubsystemBase.TotalSecondsPrecise(integrationPeriod) * frequency
+    End Function
+
+    ''' <summary> Total seconds precise. </summary>
+    ''' <param name="timespan"> The timespan. </param>
+    ''' <returns> The total number of seconds precise. </returns>
+    Public Shared Function TotalSecondsPrecise(ByVal timespan As TimeSpan) As Double
+        Return timespan.Ticks / TimeSpan.TicksPerSecond
+    End Function
+
+    ''' <summary> Converts seconds to time span with tick timespan accuracy. </summary>
+    ''' <param name="seconds"> The seconds. </param>
+    ''' <returns> A TimeSpan. </returns>
+    Public Shared Function FromSecondsPrecise(ByVal seconds As Double) As TimeSpan
+        Return TimeSpan.FromTicks(CLng(TimeSpan.TicksPerSecond * seconds))
+    End Function
+
+
 
 #End Region
 

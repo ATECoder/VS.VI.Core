@@ -263,7 +263,7 @@ Public Class Meter
         Try
             Me.OnPropertyChanged(TryCast(sender, Device), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "", "Exception handling property '{0}'. {1}",
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "", "Exception handling property '{0}'. {1}",
                                e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -907,7 +907,7 @@ Public Class Meter
         Try
             Me.OnPropertyChanged(TryCast(sender, MeasureSequencer), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -1068,7 +1068,7 @@ Public Class Meter
         Try
             Me.OnPropertyChanged(TryCast(sender, TriggerSequencer), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -1292,7 +1292,7 @@ Public Class Meter
 
     ''' <summary> Clears the listeners. </summary>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker?.Listeners?.Clear()
+        Me.Talker.Listeners?.Clear()
         Me.MasterDevice?.ClearListeners()
         Me.ShuntResistance?.ClearListeners()
     End Sub

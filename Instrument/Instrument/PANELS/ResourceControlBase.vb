@@ -1,5 +1,6 @@
 Imports isr.VI.Instrument
 Imports isr.Core.Controls
+Imports isr.Core.Controls.ControlExtensions
 Imports System.ComponentModel
 Imports isr.Core.Pith
 ''' <summary> Provides a base user interface for a <see cref="isr.VI.DeviceBase">Visa Device</see>. </summary>
@@ -464,6 +465,19 @@ Public Class ResourceControlBase
 #End Region
 
 #Region " PROPERTY CHANGE "
+
+    ''' <summary> Recursively enable. </summary>
+    ''' <param name="controls"> The controls. </param>
+    ''' <param name="value">    The value. </param>
+    Public Sub RecursivelyEnable(ByVal controls As System.Windows.Forms.Control.ControlCollection, ByVal value As Boolean)
+        If controls IsNot Nothing Then
+            For Each c As System.Windows.Forms.Control In controls
+                If c IsNot Me.Connector Then
+                    c.RecursivelyEnable(value)
+                End If
+            Next
+        End If
+    End Sub
 
     ''' <summary> Executes the device open changed action. </summary>
     Protected Overridable Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
@@ -965,7 +979,7 @@ Public Class ResourceControlBase
         Try
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystemBase), e.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. { ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. { ex.ToFullBlownString}")
         End Try
     End Sub
 

@@ -103,7 +103,7 @@ Public Class ConfigurationPanelBase
                 Me.OnPropertyChanged(TryCast(sender, DeviceUnderTest), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling {0} property change;. {1}",
                                e?.PropertyName, ex.ToFullBlownString)
         End Try

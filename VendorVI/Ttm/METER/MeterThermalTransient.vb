@@ -937,7 +937,7 @@ Public Class MeterThermalTransient
         Dim objectivePrecision As Double = objectivePrecisionFactor * expectedMaximumSSQ
 
         Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Instantiating Simplex")
-        Me._simplex = New isr.Algorithms.Optima.Simplex(dimension,
+        Me._Simplex = New isr.Algorithms.Optima.Simplex("Exponent", dimension,
                                                         New Double() {voltageRange(0), negativeInverseTauRange(0)},
                                                         New Double() {voltageRange(1), negativeInverseTauRange(1)}, maximumIterations,
                                                         New Double() {voltagePresision, inverseTauPrecision},

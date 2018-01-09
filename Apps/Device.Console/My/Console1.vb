@@ -1,6 +1,8 @@
 ﻿Public Class Console1
 #If TTM Then
     Inherits isr.VI.Ttm.Console
+#ElseIf K2450 Then
+    Inherits isr.VI.Instrument.InstrumentPanelForm
 #Else
     Inherits isr.VI.Instrument.InstrumentPanelForm
 #End If
@@ -13,6 +15,11 @@
         enabled = true
 #ElseIf K2000 Then
         Me.AddInstrumentPanel("Meter", New VI.K2000.K2000Panel, True)
+        enabled = true
+#ElseIf K2450 Then
+        Me.AddTalkerControl("SourceMeter", New VI.Tsp2.K2450.K2450Control With {
+            .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}", .ResourceTitle = "2450"
+                                    }, True)
         enabled = true
 #ElseIf K2400 Then
         Me.AddInstrumentPanel("SourceMeter", New VI.K2400.K2400Panel, True)

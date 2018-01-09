@@ -87,7 +87,7 @@ Public MustInherit Class InteractiveSubsystem
             ' turn prompts off. This may not be necessary.
             Me.TurnPromptsErrorsOff()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Exception ignored turning off prompts;. {0}", ex.ToFullBlownString)
         Finally
             Me.Session.RestoreTimeout()
@@ -97,11 +97,11 @@ Public MustInherit Class InteractiveSubsystem
             ' flush the input buffer in case the instrument has some leftovers.
             Me.Session.DiscardUnreadData()
             If Not String.IsNullOrWhiteSpace(Me.Session.DiscardedData) Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Data discarded after turning prompts and errors off;. Data: {0}.", Me.Session.DiscardedData)
             End If
         Catch ex As NativeException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
@@ -109,11 +109,11 @@ Public MustInherit Class InteractiveSubsystem
             ' flush write may cause the instrument to send off a new data.
             Me.Session.DiscardUnreadData()
             If Not String.IsNullOrWhiteSpace(Me.Session.DiscardedData) Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Unread data discarded after discarding unset data;. Data: {0}.", Me.Session.DiscardedData)
             End If
         Catch ex As NativeException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
@@ -347,7 +347,7 @@ Public MustInherit Class InteractiveSubsystem
     ''' <param name="value"> true to value. </param>
     ''' <returns> <c>True</c> to show errors; otherwise <c>False</c>. </returns>
     Public Function WriteShowErrors(ByVal value As Boolean) As Boolean?
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "showing errors;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "showing errors;. ")
         Me.Session.LastNodeNumber = New Integer?
         Me.Session.WriteLine(TspSyntax.ShowErrorsSetterCommand, CType(value, Integer))
         Me.ShowErrors = value
@@ -387,8 +387,8 @@ Public MustInherit Class InteractiveSubsystem
             Return Me._showPrompts
         End Get
         Protected Set(ByVal value As Boolean?)
-            If Not Nullable.Equals(value, Me.ShowErrors) Then
-                Me._showPrompts = value
+            If Not Nullable.Equals(value, Me.ShowPrompts) Then
+                Me._ShowPrompts = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -419,7 +419,7 @@ Public MustInherit Class InteractiveSubsystem
     ''' <param name="value"> true to value. </param>
     ''' <returns> <c>True</c> to show prompts; otherwise <c>False</c>. </returns>
     Public Function WriteShowPrompts(ByVal value As Boolean) As Boolean?
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "showing prompts;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "showing prompts;. ")
         Me.Session.LastNodeNumber = New Integer?
         Me.Session.WriteLine(TspSyntax.ShowPromptsSetterCommand, CType(value, Integer))
         Me.ShowPrompts = value
@@ -450,7 +450,7 @@ Public MustInherit Class InteractiveSubsystem
         ' flush again in case turning off prompts added stuff to the buffer.
         Me.Session.DiscardUnreadData()
         If Not String.IsNullOrWhiteSpace(Me.Session.DiscardedData) Then
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Unread data discarded after turning prompts off;. Data: {0}.", Me.Session.DiscardedData)
         End If
 
@@ -465,7 +465,7 @@ Public MustInherit Class InteractiveSubsystem
         ' flush again in case turning off errors added stuff to the buffer.
         Me.Session.DiscardUnreadData()
         If Not String.IsNullOrWhiteSpace(Me.Session.DiscardedData) Then
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Unread data discarded after turning errors off;. Data: {0}.", Me.Session.DiscardedData)
         End If
 

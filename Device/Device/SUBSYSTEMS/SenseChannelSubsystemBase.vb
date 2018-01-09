@@ -188,7 +188,7 @@ Public MustInherit Class SenseChannelSubsystemBase
     Public ReadOnly Property IntegrationPeriod As TimeSpan?
         Get
             If Me.Aperture.HasValue Then
-                Return VI.StatusSubsystemBase.IntegrationPeriod(Me.Aperture.Value)
+                Return VI.StatusSubsystemBase.FromPowerLineCycles(Me.Aperture.Value)
             Else
                 Return New TimeSpan?
             End If

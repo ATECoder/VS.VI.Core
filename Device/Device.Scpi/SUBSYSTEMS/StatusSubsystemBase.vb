@@ -50,19 +50,19 @@ Public MustInherit Class StatusSubsystemBase
         MyBase.InitKnownState()
         Dim action As String = "enabling wait completion"
         Try
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
             Me.EnableWaitComplete()
         Catch ex As Exception
             ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
         Try
             action = "querying identity"
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
             Me.QueryIdentity()
         Catch ex As Exception
             ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -176,7 +176,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property ErrorQueueQueryCommand As String = "" ' = VI.Scpi.Syntax.ErrorQueueQueryCommand
+    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = "" ' = VI.Scpi.Syntax.ErrorQueueQueryCommand
 
 #End Region
 
@@ -191,9 +191,9 @@ Public MustInherit Class StatusSubsystemBase
 
 #Region " DEVICE REGISTERS "
 
-    ''' <summary> Reads the standard registers based on the service request register status. </summary>
-    Public Overrides Sub ReadRegisters()
-        MyBase.ReadRegisters()
+    ''' <summary> Reads the event registers based on the service request register status. </summary>
+    Public Overrides Sub ReadEventRegisters()
+        MyBase.ReadEventRegisters()
         If Me.StandardEventAvailable Then
             Me.QueryStandardEventStatus()
         End If
@@ -957,6 +957,5 @@ Public MustInherit Class StatusSubsystemBase
     End Sub
 
 #End Region
-
 
 End Class

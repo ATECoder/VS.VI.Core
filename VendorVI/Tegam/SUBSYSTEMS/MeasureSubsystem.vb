@@ -790,7 +790,7 @@ Public Class MeasureSubsystem
         Dim delayTime As TimeSpan = Me.InitialDelay
         Do
             Me.Session.EmulatedStatusByte = VI.ServiceRequests.MeasurementEvent
-            Me.StatusSubsystem.ReadRegisters()
+            Me.StatusSubsystem.ReadEventRegisters()
             Windows.Forms.Application.DoEvents()
             If Not Me.StatusSubsystem.ErrorAvailable Then
                 MeasureSubsystem.wait(delayTime, TimeSpan.FromMilliseconds(10))

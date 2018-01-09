@@ -65,7 +65,7 @@ Public Class Device
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 'listeners must clear, otherwise closing could raise an exception.
-                Me.Talker?.Listeners.Clear()
+                Me.Talker.Listeners.Clear()
                 If Me.IsDeviceOpen Then Me.OnClosing(New ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
@@ -282,7 +282,7 @@ Public Class Device
         Try
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling property '{e?.PropertyName}' change;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -303,9 +303,11 @@ Public Class Device
 
 #Region " SERVICE REQUEST "
 
+#If False Then
     ''' <summary> Reads the event registers after receiving a service request. </summary>
+    ''' <remarks> Handled by the <see cref="DeviceBase"/></remarks>
     Protected Overrides Sub ProcessServiceRequest()
-        Me.StatusSubsystem.ReadRegisters()
+        Me.StatusSubsystem.ReadEventRegisters()
         If Me.StatusSubsystem.MessageAvailable Then
             ' if we have a message this needs to be processed by the subsystem requesting the message.
             ' Only thereafter the registers should be read.
@@ -316,6 +318,7 @@ Public Class Device
         If Me.StatusSubsystem.MeasurementAvailable Then
         End If
     End Sub
+#End If
 
 #End Region
 

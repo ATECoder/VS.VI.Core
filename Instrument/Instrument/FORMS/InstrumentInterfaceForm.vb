@@ -107,30 +107,30 @@ Public Class InstrumentInterfaceForm
             Me.transmitBuffer = String.Empty
 
             lastAction = "Initializing driver"
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                $"{lastAction};. ".ToString(Globalization.CultureInfo.CurrentCulture))
             Dim resourceName As String = ""
             resourceName = Me._InterfacePanel.InstrumentChooser.SelectedResourceName
 
             lastAction = $"Opening a VISA Session to {resourceName}"
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.Session = isr.VI.SessionFactory.Get.Factory.CreateSession()
             Me.Session.OpenSession(resourceName, Threading.SynchronizationContext.Current)
 
             If Me.IsOpen Then
                 lastAction = "Clearing the device"
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.Clear()
                 lastAction = $"Connected to {Me.Session.ResourceName}"
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Else
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Failed opening a session to {0};. ", resourceName)
             End If
 
         Catch ex As Exception
             ex.Data.Add("@isr", lastAction)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{lastAction};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{lastAction};. {ex.ToFullBlownString}")
             Try
                 Me.CloseInstrumentSession()
             Finally
@@ -164,7 +164,7 @@ Public Class InstrumentInterfaceForm
             If Me.IsOpen Then
 
                 lastAction = "Disconnecting Instrument"
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
 
                 If _SendDisconnectCommandsCheckBox.Checked Then
 
@@ -173,11 +173,11 @@ Public Class InstrumentInterfaceForm
                             command = command.Trim
                             If Not String.IsNullOrWhiteSpace(command) Then
                                 lastAction = $"Sending '{command}'"
-                                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+                                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                                 Try
                                     Me.Session.WriteLine(command)
                                 Catch ex As NativeException
-                                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                                        $"{lastAction} failed;. {ex.ToFullBlownString}")
                                 End Try
                             End If
@@ -186,15 +186,15 @@ Public Class InstrumentInterfaceForm
                 End If
 
                 lastAction = "Clearing the device"
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.Clear()
 
                 lastAction = "Disabling service request events if any"
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.DisableServiceRequestEventHandler()
 
                 lastAction = "Ending the VISA session"
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.Dispose()
                 Try
                     ' Trying to null the session raises an ObjectDisposedException 
@@ -205,7 +205,7 @@ Public Class InstrumentInterfaceForm
                 End Try
 
                 lastAction = "Session closed"
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
 
             End If
 
@@ -286,7 +286,7 @@ Public Class InstrumentInterfaceForm
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception loading the instrument interface form;. {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
@@ -321,16 +321,16 @@ Public Class InstrumentInterfaceForm
                 ' allow form rendering time to complete: process all messages currently in the queue.
                 Application.DoEvents()
 
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Displaying interface names;. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Displaying interface names;. ")
                 Me._InterfacePanel.DisplayInterfaceNames()
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Ready to open Visa Session;. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Ready to open Visa Session;. ")
                 ' select the first item
                 If Me._CommandsComboBox.Items.Count > 0 Then
                     Me._CommandsComboBox.SelectedIndex = 0
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the instrument interface form;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the instrument interface form;. {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -356,10 +356,10 @@ Public Class InstrumentInterfaceForm
         Dim lastAction As String = "N/A"
         Try
             lastAction = "Clearing the device"
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.Session.Clear()
         Catch ex As NativeException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{lastAction} failed;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -410,7 +410,7 @@ Public Class InstrumentInterfaceForm
                 Me.OnPropertyChanged(TryCast(sender, InterfacePanel), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling InterfacePanel.{e.PropertyName} change event;. {ex.ToFullBlownString}")
 
         End Try
@@ -501,11 +501,11 @@ Public Class InstrumentInterfaceForm
 
             lastAction = "Reading SRQ"
             Me._StatusRegisterLabel.Text = ""
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.ServiceRequestBits = Me.Session.ReadServiceRequestStatus
         Catch ex As Exception
             ex.Data.Add("@isr", lastAction)
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -531,7 +531,7 @@ Public Class InstrumentInterfaceForm
         Dim lastAction As String = "N/A"
         Try
             lastAction = "Receiving data"
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
 
             receiveBuffer = Me.Session.ReadLine()
 
@@ -547,16 +547,16 @@ Public Class InstrumentInterfaceForm
                     .SelectionStart = .Text.Length
                 End With
                 Me._ReceiveButton.Enabled = False
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Received '{0}'.", receiveBuffer)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Received '{0}'.", receiveBuffer)
             End If
 
             ' update the status register information
             lastAction = "Reading status register"
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.readStatusRegister()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -580,12 +580,12 @@ Public Class InstrumentInterfaceForm
                 transmitBuffer = value.ReplaceCommonEscapeSequences
                 If Not String.IsNullOrWhiteSpace(transmitBuffer) Then
                     lastAction = $"Sending '{transmitBuffer}'"
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction };. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction };. ")
                     Me.Session.WriteLine(transmitBuffer)
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -608,11 +608,11 @@ Public Class InstrumentInterfaceForm
             transmitBuffer = Me._CommandsComboBox.Text.Trim
             If Not String.IsNullOrWhiteSpace(transmitBuffer) Then
                 lastAction = $"Sending '{transmitBuffer}'"
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction};. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.WriteLine(transmitBuffer)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -634,7 +634,7 @@ Public Class InstrumentInterfaceForm
             End If
             stopPollTimer()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. failed: {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. failed: {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -663,7 +663,7 @@ Public Class InstrumentInterfaceForm
             AddHandler Me._pollTimer.Tick, AddressOf Me.onPollTimerTick
             Me._pollTimer.Enabled = True
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -694,10 +694,10 @@ Public Class InstrumentInterfaceForm
                 End If
             Catch ex As Exception
                 ex.Data.Add("@isr", "failed service request")
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
             End Try
         Else
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Sender is not a message-based session")
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Sender is not a message-based session")
         End If
     End Sub
 
@@ -754,7 +754,7 @@ Public Class InstrumentInterfaceForm
                 Me._ReadStatusRegisterButton.Enabled = False
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
         End Try
 
     End Sub
@@ -837,7 +837,7 @@ Public Class InstrumentInterfaceForm
                 Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub

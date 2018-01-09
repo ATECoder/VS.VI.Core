@@ -83,13 +83,36 @@ Public Class SourceMeasureUnitMeasure
         Return Me.QueryAutoRangeVoltageEnabled()
     End Function
 
+    ''' <summary> Gets the automatic range voltage enabled query command. </summary>
+    ''' <value> The automatic range voltage enabled query command. </value>
+    Protected Overridable ReadOnly Property AutoRangeVoltageEnabledQueryCommand As String
+        Get
+            Return String.Format(Me.AutoRangeVoltageEnabledQueryCommandFormat, Me.SourceMeasureUnitReference)
+        End Get
+    End Property
+
+    Protected Overridable ReadOnly Property AutoRangeVoltageEnabledQueryCommandFormat As String = "print({0}.measure.autorangev)"
+
     ''' <summary> Queries the current AutoRangeVoltage state. </summary>
     ''' <returns> <c>True</c> <see cref="AutoRangeVoltageEnabled">enabled</see>;
     '''           <c>False</c> otherwise. </returns>
     Public Function QueryAutoRangeVoltageEnabled() As Boolean?
-        Me.AutoRangeVoltageEnabled = Me.Session.Query(Me.AutoRangeVoltageEnabled.GetValueOrDefault(True), "print({0}.measure.autorangev)", Me.SourceMeasureUnitReference)
+        Me.AutoRangeVoltageEnabled = Me.Session.Query(Me.AutoRangeVoltageEnabled.GetValueOrDefault(True), Me.AutoRangeVoltageEnabledQueryCommand)
+        ' Me.AutoRangeVoltageEnabled = Me.Session.Query(Me.AutoRangeVoltageEnabled.GetValueOrDefault(True), "print({0}.measure.autorangev)", Me.SourceMeasureUnitReference)
         Return Me.AutoRangeVoltageEnabled
     End Function
+
+    ''' <summary> Gets the automatic range voltage enabled command format. </summary>
+    ''' <value> The automatic range voltage enabled command format. </value>
+    Protected Overridable ReadOnly Property AutoRangeVoltageEnabledCommandFormat As String = "{0}.measure.autorangev = {{0:'1';'1';'0'}} "
+
+    ''' <summary> Gets the automatic range voltage enabled command. </summary>
+    ''' <value> The automatic range voltage enabled command. </value>
+    Protected Overridable ReadOnly Property AutoRangeVoltageEnabledCommand As String
+        Get
+            Return String.Format(AutoRangeVoltageEnabledCommandFormat, Me.SourceMeasureUnitReference)
+        End Get
+    End Property
 
     ''' <summary> Writes the enabled state of the current Auto Range Voltage without reading back the value from
     ''' the device. </summary>
@@ -102,9 +125,8 @@ Public Class SourceMeasureUnitMeasure
     ''' <returns> <c>True</c> <see cref="AutoRangeVoltageEnabled">enabled</see>;
     '''           <c>False</c> otherwise. </returns>
     Public Function WriteAutoRangeVoltageEnabled(ByVal value As Boolean) As Boolean?
-        Me.Session.WriteLine(String.Format(Globalization.CultureInfo.InvariantCulture,
-                                           "{0}.measure.autorangev = {{0:'1';'1';'0'}} ", Me.SourceMeasureUnitReference),
-                                       CType(value, Integer))
+        ' Me.Session.WriteLine(String.Format(Globalization.CultureInfo.InvariantCulture, "{0}.measure.autorangev = {{0:'1';'1';'0'}} ", Me.SourceMeasureUnitReference), CType(value, Integer))
+        Me.Session.WriteLine(Me.AutoRangeVoltageEnabledCommand, CType(value, Integer))
         Me.AutoRangeVoltageEnabled = value
         Return Me.AutoRangeVoltageEnabled
     End Function

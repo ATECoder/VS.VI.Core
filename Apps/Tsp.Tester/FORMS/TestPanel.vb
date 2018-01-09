@@ -105,7 +105,7 @@ Public Class TestPanel
         Try
             Me.Cursor = Cursors.WaitCursor
 
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Unloading..;. ")
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Unloading..;. ")
 
             ' stop the timer
             Me.StopRefreshTimer()
@@ -122,11 +122,11 @@ Public Class TestPanel
                 Me.TspSystem = Nothing
             End If
 
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Saving settings..;. ")
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Saving settings..;. ")
             System.Windows.Forms.Application.DoEvents()
 
             ' terminate all the singleton objects.
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Closing. Please wait..;. ")
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Closing. Please wait..;. ")
 
             ' delay a bit longer
             Dim timer As System.Diagnostics.Stopwatch = Diagnostics.Stopwatch.StartNew
@@ -165,7 +165,7 @@ Public Class TestPanel
             Me.CenterToScreen()
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception loading the form;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception loading the form;. {0}", ex.ToFullBlownString)
             If DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
@@ -212,10 +212,10 @@ Public Class TestPanel
                 Me._ResourceSelectorConnector.Enabled = True
 
             End If
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Ready to open Visa Session;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Ready to open Visa Session;. ")
 
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception showing the form;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception showing the form;. {0}", ex.ToFullBlownString)
             If Windows.Forms.DialogResult.Abort = MessageBox.Show(ex.ToString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                                   MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                                   MessageBoxOptions.DefaultDesktopOnly) Then
@@ -277,10 +277,10 @@ Public Class TestPanel
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub Connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceSelectorConnector.Clear
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
                            "Resetting, clearing and initializing resource;. {0}", Me._ResourceSelectorConnector.SelectedResourceName)
         Me.TspSystem.Device.ResetClearInit()
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
                            "Resource reset, initialized and cleared;. {0}", Me._ResourceSelectorConnector.SelectedResourceName)
     End Sub
 
@@ -291,20 +291,20 @@ Public Class TestPanel
     Private Sub Connector_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ResourceSelectorConnector.Connect
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                "Connecting;. Opening VISA Session to {0}", Me._ResourceSelectorConnector.SelectedResourceName)
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
             ' Me.TspSystem.Device.RegisterNotifier(Me._ResourceSelectorConnector.Talker)
             Me.TspSystem.Device.OpenSession(Me._ResourceSelectorConnector.SelectedResourceName, "TSP")
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                "Connected;. Opened VISA Session to {0}", Me._ResourceSelectorConnector.SelectedResourceName)
             Me._clearInterfaceButton.Enabled = Me.TspSystem.IsDeviceOpen
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                "Failed connecting;. Failed opening VISA Session to {0}.{1}",
                                Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception occurred connecting;. {0}.{1}",
                                Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
         Finally
@@ -322,25 +322,25 @@ Public Class TestPanel
     Private Sub Connector_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ResourceSelectorConnector.Disconnect
         Try
             If Me.TspSystem.Device.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                    "Disconnecting;. Ending access to {0}", Me._ResourceSelectorConnector.SelectedResourceName)
             End If
             Me.TspSystem.Device.CloseSession()
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                "Failed disconnecting;. Failed closing VISA Session to {0}.{1}",
                                Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception occurred disconnecting;. {0}.{1}",
                                Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
         Finally
             If Me.TspSystem.Device.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                    "Failed disconnecting;. Failed ending access to {0}",
                                    Me._ResourceSelectorConnector.SelectedResourceName)
             Else
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                    "Disconnected;. Ended access to {0}", Me._ResourceSelectorConnector.SelectedResourceName)
             End If
             Me._clearInterfaceButton.Enabled = Me.TspSystem.IsDeviceOpen
@@ -367,7 +367,7 @@ Public Class TestPanel
         Select Case propertyName
             Case NameOf(sender.SelectedResourceName)
                 Me.ResourceName = sender.SelectedResourceName
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Selected {0};. ", sender.SelectedResourceName)
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Selected {0};. ", sender.SelectedResourceName)
         End Select
     End Sub
 
@@ -384,7 +384,7 @@ Public Class TestPanel
                 Me.OnPropertyChanged(TryCast(sender, Instrument.ResourceSelectorConnector), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -396,7 +396,7 @@ Public Class TestPanel
     ''' <summary> Updates the connection change described by isOpen. </summary>
     ''' <param name="isOpen"> true if this object is open. </param>
     Private Sub UpdateConnectionChange(ByVal isOpen As Boolean)
-        Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, $"{IIf(isOpen, "Connected;. ", "Not connected;. ")}")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, $"{IIf(isOpen, "Connected;. ", "Not connected;. ")}")
         Me._inputTextBox.Enabled = isOpen
         Me._outputTextBox.Enabled = isOpen
         Me._scriptsPanel1.Enabled = isOpen
@@ -426,7 +426,7 @@ Public Class TestPanel
 
             ' Turn on the form hourglass
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
                                $"{IIf(value, "Connection changed--connecting;. ", "Connection changed--disconnecting;. ")}")
             If value Then
 
@@ -447,7 +447,7 @@ Public Class TestPanel
                         Me.receive(True)
                     End If
 
-                    Me.Talker?.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Resetting, clearing and initializing the device;. ")
+                    Me.Talker.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Resetting, clearing and initializing the device;. ")
                     Me.TspSystem.Device.ResetClearInit()
 
                     ' set the error and prompt check boxes.
@@ -458,11 +458,11 @@ Public Class TestPanel
                     End If
 
                     ' list any user scripts.
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Listing user scripts;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Listing user scripts;. ")
                     Try
                         Me.listUserScripts()
                     Catch ex As Exception
-                        Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
+                        Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                            "Exception occurred {0};. {1}", Me._statusLabel.Text, ex.ToFullBlownString)
                     End Try
 
@@ -483,7 +483,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception occurred {0};. {1}", Me._statusLabel.Text, ex.ToFullBlownString)
 
         Finally
@@ -528,15 +528,15 @@ Public Class TestPanel
         Select Case propertyName
             Case NameOf(subsystem.Identity)
                 If Not String.IsNullOrWhiteSpace(subsystem.Identity) Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "{0} is {1};. ", Me.ResourceName, subsystem.Identity)
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "{0} is {1};. ", Me.ResourceName, subsystem.Identity)
                 End If
             Case NameOf(subsystem.DeviceErrors)
                 If Not String.IsNullOrWhiteSpace(subsystem.DeviceErrors) Then
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId, "{0} error {1};. ", Me.ResourceName, subsystem.DeviceErrors)
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId, "{0} error {1};. ", Me.ResourceName, subsystem.DeviceErrors)
                 End If
             Case NameOf(subsystem.LastDeviceError)
                 If subsystem.LastDeviceError?.IsError Then
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                        "{0} error {1};. ", Me.ResourceName, subsystem.LastDeviceError.CompoundErrorMessage)
                 End If
         End Select
@@ -550,7 +550,7 @@ Public Class TestPanel
         Try
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -582,7 +582,7 @@ Public Class TestPanel
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, Tsp.InteractiveSubsystem), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -609,7 +609,7 @@ Public Class TestPanel
         Try
             Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
         End Try
     End Sub
@@ -681,12 +681,12 @@ Public Class TestPanel
 
             If Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.IsDeviceOpen Then
                 If Me.TspSystem.IsSessionOpen Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Flushing the read buffer...;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Flushing the read buffer...;. ")
                     Me.TspSystem.Device.Session.DiscardUnreadData()
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Fetching script names...;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Fetching script names...;. ")
                     Dim scriptCount As Integer = Me.TspSystem.ScriptManager.FetchUserScriptNames()
                     If scriptCount > 0 Then
-                        Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Listing script names...;. ")
+                        Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Listing script names...;. ")
                         Me._userScriptsList.DataSource = Nothing
                         Me._userScriptsList.Items.Clear()
                         Me._userScriptsList.DataSource = Me.TspSystem.ScriptManager.UserScriptNames
@@ -694,7 +694,7 @@ Public Class TestPanel
                             Me._userScriptsList.SelectedIndex = 0
                         End If
                     Else
-                        Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "No Scripts;. ")
+                        Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "No Scripts;. ")
                         Me._userScriptsList.DataSource = Nothing
                         Me._userScriptsList.Items.Clear()
                     End If
@@ -703,7 +703,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred listing scripts;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred listing scripts;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -736,13 +736,13 @@ Public Class TestPanel
                     ' Turn on the form hourglass
                     Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
 
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Reading..;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Reading..;. ")
 
                     If Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.IsSessionOpen Then
                         receiveBuffer = Me.TspSystem.Device.Session.ReadLine()
                     End If
 
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Done Reading;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Done Reading;. ")
 
                     Me._outputTextBox.SelectionStart = Me._outputTextBox.Text.Length
                     Me._outputTextBox.SelectionLength = 0
@@ -757,7 +757,7 @@ Public Class TestPanel
 
             Catch ex As Exception
 
-                Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred receiving;. {0}", ex.ToFullBlownString)
+                Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred receiving;. {0}", ex.ToFullBlownString)
 
             Finally
 
@@ -784,7 +784,7 @@ Public Class TestPanel
             If Not String.IsNullOrWhiteSpace(sendBuffer) Then
                 Me._refreshTimer.Enabled = False
 
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Sending query/command..;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Sending query/command..;. ")
 
                 ' start the timing timer
                 Me.TimingStopwatch = System.Diagnostics.Stopwatch.StartNew
@@ -804,7 +804,7 @@ Public Class TestPanel
         Catch ex As NativeException
             Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation(ex, "sending query/command;. '{0}'", sendBuffer)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred sending;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred sending;. {0}", ex.ToFullBlownString)
         Finally
 
             Me._refreshTimer.Enabled = True
@@ -873,7 +873,7 @@ Public Class TestPanel
         If Me._refreshTimer IsNot Nothing Then
             Me._refreshTimer.Stop()
             Me._refreshTimer.AutoReset = False
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Timer stopped;. ")
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Timer stopped;. ")
         End If
     End Sub
 
@@ -927,7 +927,7 @@ Public Class TestPanel
             ' stop the time on error
             Me.StopRefreshTimer()
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred receiving;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred receiving;. {0}", ex.ToFullBlownString)
 
 
         Finally
@@ -956,7 +956,7 @@ Public Class TestPanel
             ' stop the time on error
             Me._testingTimer.Stop()
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred timing;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred timing;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -992,11 +992,11 @@ Public Class TestPanel
             End If
 
 
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Aborted;. ")
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Aborted;. ")
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred clearing device;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred clearing device;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1027,7 +1027,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred displaying about panel;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred displaying about panel;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1068,12 +1068,12 @@ Public Class TestPanel
             ' Turn on the form hourglass
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
             Me._errorProvider.Clear()
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                "Clearing interface @'{0}';. ", Me.TspSystem.Device.Session.ResourceName)
             Me.TspSystem.Device.SystemSubsystem.ClearInterface()
         Catch ex As Exception
             Me._errorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception occurred clearing interface;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
@@ -1107,7 +1107,7 @@ Public Class TestPanel
             Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation(ex, "calling function '{0}({1})';. ", functionName, functionArgs)
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred calling function;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred calling function;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1130,14 +1130,14 @@ Public Class TestPanel
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
 
             If Me.TspSystem.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Clearing device..;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Clearing device..;. ")
                 Me.TspSystem.Device.StatusSubsystem.ClearActiveState()
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Device cleared.;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Device cleared.;. ")
             End If
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred during device clear;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred during device clear;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1168,14 +1168,14 @@ Public Class TestPanel
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
 
             If TspSystem.IsSessionOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Asserting trigger..;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Asserting trigger..;. ")
                 Me.TspSystem.Device.Session.AssertTrigger()
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Trigger asserted.;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Trigger asserted.;. ")
             End If
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred triggering device;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred triggering device;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1261,20 +1261,20 @@ Public Class TestPanel
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
 
             If Me.TspSystem.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Loading script '{0}';. from '{1}'.", scriptName, filePath)
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Loading script '{0}';. from '{1}'.", scriptName, filePath)
                 Me.TspSystem.ScriptManager.ScriptNameSetter(scriptName)
                 Me.TspSystem.ScriptManager.FilePath = filePath
                 Me.TspSystem.ScriptManager.LoadScriptFile(True, True, Me._retainCodeOutlineToggle.Checked)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Script '{0}' loaded;. from '{1}'.", scriptName, filePath)
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Script '{0}' loaded;. from '{1}'.", scriptName, filePath)
                 listUserScripts()
                 Me.TspSystem.ScriptManager.RunScript(TimeSpan.FromMilliseconds(3000))
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Script '{0}' run okay;. ", scriptName, filePath)
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Script '{0}' run okay;. ", scriptName, filePath)
 
             End If
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading or running script;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading or running script;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1308,7 +1308,7 @@ Public Class TestPanel
             Dim functionCode As String
             functionCode = Me._functionCodeTextBox.Text.Replace(vbCrLf, Space(1))
             If Me.TspSystem.IsSessionOpen AndAlso Not String.IsNullOrWhiteSpace(functionCode) Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Loading function code..;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Loading function code..;. ")
                 Me.TspSystem.Device.Session.WriteLine(functionCode)
                 Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation("loading function code;. ")
             End If
@@ -1317,7 +1317,7 @@ Public Class TestPanel
             Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation(ex, "loading function code;. ")
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading function;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading function;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1345,11 +1345,11 @@ Public Class TestPanel
             Me.TspSystem.ScriptManager.ScriptNameSetter(Me._scriptNameTextBox.Text)
             Me.TspSystem.ScriptManager.FilePath = Me._tspScriptSelector.FilePath
             If Me.TspSystem.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                    "Loading script '{0}';. from '{1}'.",
                                    Me.TspSystem.ScriptManager.Name, Me.TspSystem.ScriptManager.FilePath)
                 Me.TspSystem.ScriptManager.LoadScriptFile(True, True, Me._retainCodeOutlineToggle.Checked)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                    "Script '{0}' loaded;. from '{1}'.",
                                    Me.TspSystem.ScriptManager.Name, Me.TspSystem.ScriptManager.FilePath)
                 listUserScripts()
@@ -1357,7 +1357,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading script;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred loading script;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1391,9 +1391,9 @@ Public Class TestPanel
             If Me._userScriptsList.SelectedItems.Count > 0 Then
                 For Each scriptName As String In Me._userScriptsList.SelectedItems
                     If Me.TspSystem.IsSessionOpen Then
-                        Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Removing script '{0}'..;. ", scriptName)
+                        Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Removing script '{0}'..;. ", scriptName)
                         Me.TspSystem.ScriptManager.RemoveScript(scriptName)
-                        Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Removed script '{0}';. ", scriptName)
+                        Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Removed script '{0}';. ", scriptName)
                     End If
                 Next
                 listUserScripts()
@@ -1401,7 +1401,7 @@ Public Class TestPanel
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred removing script;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred removing script;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1425,34 +1425,34 @@ Public Class TestPanel
 
             If Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.IsDeviceOpen Then
 
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Resetting local node..;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Resetting local node..;. ")
                 send("localnode.reset() ", True)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Local node was reset;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Local node was reset;. ")
 
                 If Not Me.TspSystem.Device.InteractiveSubsystem.ProcessExecutionStateEnabled Then
                     ' read execution state explicitly, because session events are disabled.
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Updating instrument state..;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Updating instrument state..;. ")
                     Me.TspSystem.Device.InteractiveSubsystem.ReadExecutionState()
 
                 End If
 
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Clearing error queue..;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Clearing error queue..;. ")
                 send("localnode.errorqueue.clear() ", True)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Error queue cleared;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Error queue cleared;. ")
 
                 ' update the instrument state.
                 If Not Me.TspSystem.Device.InteractiveSubsystem.ProcessExecutionStateEnabled Then
                     ' read execution state explicitly, because session events are disabled.
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Updating instrument state..;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Updating instrument state..;. ")
                     Me.TspSystem.Device.InteractiveSubsystem.ReadExecutionState()
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Instrument state updated;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Instrument state updated;. ")
                 End If
 
             End If
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred setting prompts;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred setting prompts;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1475,13 +1475,13 @@ Public Class TestPanel
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
 
             Me.TspSystem.ScriptManager.ScriptNameSetter(Me._scriptNameTextBox.Text)
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Running script '{0}';. ", Me.TspSystem.ScriptManager.Name)
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Running script '{0}';. ", Me.TspSystem.ScriptManager.Name)
             Me.TspSystem.ScriptManager.RunScript(TimeSpan.FromMilliseconds(3000))
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Script '{0}' ran okay;. ", Me.TspSystem.ScriptManager.Name)
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Script '{0}' ran okay;. ", Me.TspSystem.ScriptManager.Name)
 
         Catch ex As Exception
 
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred running;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred running;. {0}", ex.ToFullBlownString)
 
         Finally
 
@@ -1503,21 +1503,21 @@ Public Class TestPanel
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
             If Me._showErrorsCheckBox.Enabled AndAlso Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.IsDeviceOpen Then
                 If Me.TspSystem.Device.InteractiveSubsystem.QueryShowErrors() <> Me._showErrorsCheckBox.Checked Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Toggling showing errors..;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Toggling showing errors..;. ")
                     Me.TspSystem.Device.InteractiveSubsystem.WriteShowErrors(Me._showErrorsCheckBox.Checked)
                     If Not Me.TspSystem.Device.InteractiveSubsystem.ShowErrors.HasValue Then
-                        Me.Talker?.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                            "Failed toggling showing errors--value not set;. ")
                     ElseIf Me.TspSystem.Device.InteractiveSubsystem.ShowErrors.Value <> Me._showErrorsCheckBox.Checked Then
-                        Me.Talker?.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                            "Failed toggling showing errors--incorrect value;. ")
                     End If
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                        "Showing errors: {0};. ", IIf(Me.TspSystem.Device.InteractiveSubsystem.ShowErrors.Value, "ON", "OFF"))
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred showing errors;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred showing errors;. {0}", ex.ToFullBlownString)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -1532,24 +1532,24 @@ Public Class TestPanel
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
             If Me._showPromptsCheckBox.Enabled AndAlso Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.IsDeviceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Toggling showing prompts..;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Toggling showing prompts..;. ")
 
                 If Me.TspSystem.Device.InteractiveSubsystem.QueryShowPrompts() <> Me._showPromptsCheckBox.Checked Then
                     Me.TspSystem.Device.InteractiveSubsystem.WriteShowPrompts(Me._showPromptsCheckBox.Checked)
 
                     If Not Me.TspSystem.Device.InteractiveSubsystem.ShowPrompts.HasValue Then
-                        Me.Talker?.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                            "Failed toggling showing Prompts--value not set;. ")
                     ElseIf Me.TspSystem.Device.InteractiveSubsystem.ShowPrompts.Value <> Me._showPromptsCheckBox.Checked Then
-                        Me.Talker?.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                            "Failed toggling showing Prompts--incorrect value;. ")
                     End If
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                        "Showing Prompts: {0};. ", IIf(Me.TspSystem.Device.InteractiveSubsystem.ShowPrompts.Value, "ON", "OFF"))
                 End If
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred showing prompts;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred showing prompts;. {0}", ex.ToFullBlownString)
         Finally
             ' Turn off the form hourglass
             Me.Cursor = System.Windows.Forms.Cursors.Default
@@ -1562,7 +1562,7 @@ Public Class TestPanel
     Private Sub _TspScriptSelector_SelectedChanged(ByVal Sender As System.Object, ByVal e As EventArgs) Handles _tspScriptSelector.SelectedChanged
         If Not String.IsNullOrWhiteSpace(Me._tspScriptSelector.FileTitle) Then
             Me._scriptNameTextBox.Text = Me._tspScriptSelector.FileTitle.Replace(".", "_")
-            Me.Talker?.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Selected Script;. '{0}'.", Me._scriptNameTextBox.Text)
+            Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Selected Script;. '{0}'.", Me._scriptNameTextBox.Text)
         End If
     End Sub
 
@@ -1615,7 +1615,7 @@ Public Class TestPanel
                 Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Failed reporting Trace Message Property Change;. {0}", ex.ToFullBlownString)
         End Try
     End Sub

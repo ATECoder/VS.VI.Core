@@ -24,6 +24,7 @@
         <System.ComponentModel.Description("Tsp Device")> TspDevice = ProjectTraceEventId.Device + &H1
         <System.ComponentModel.Description("R2D2 Device")> DeviceR2D2 = ProjectTraceEventId.Device + &H2
         <System.ComponentModel.Description("SCPI Device")> DeviceScpi = ProjectTraceEventId.Device + &H3
+        <System.ComponentModel.Description("Tsp2 Device")> Tsp2Device = ProjectTraceEventId.Device + &H4
 
         <System.ComponentModel.Description("Instrument")> Instrument = ProjectTraceEventId.Device + &H10
         <System.ComponentModel.Description("Tsp Instrument")> InstrumentTsp = ProjectTraceEventId.Instrument + &H1
@@ -48,6 +49,7 @@
         <System.ComponentModel.Description("K7500 Meter")> K7500 = ProjectTraceEventId.PowerSupply + &HF
         <System.ComponentModel.Description("K34980 Meter/Scanner")> K34980 = ProjectTraceEventId.PowerSupply + &H10
         <System.ComponentModel.Description("K3458 Meter")> K3458 = ProjectTraceEventId.PowerSupply + &H11
+        <System.ComponentModel.Description("K2450 Source Meter")> K2450 = ProjectTraceEventId.PowerSupply + &H12
 
         <System.ComponentModel.Description("Core Tester")> DeviceTester = ProjectTraceEventId.VI *
                                                                           TraceEventConstants.BaseScaleFactor +

@@ -56,7 +56,7 @@ Public MustInherit Class SourceMeasureUnitBase
 
 #End Region
 
-#Region " PROPERTIES "
+#Region " SMU NODE "
 
     ''' <summary> Queries the <see cref="SourceMeasureUnitReference">source measure unit</see> exists. </summary>
     ''' <returns> <c>True</c> if the source measure unit exists; otherwise <c>False</c> </returns>

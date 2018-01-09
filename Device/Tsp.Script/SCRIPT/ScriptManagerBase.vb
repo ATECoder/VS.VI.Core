@@ -212,7 +212,7 @@ Public MustInherit Class ScriptManagerBase
         ' run the function
         Dim delimiter As Char = ","c
         Dim callState As TspExecutionState
-        Me.StatusSubsystem.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.StatusSubsystem.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                                    "Fetching user script names")
         TspSyntax.CallFunction(Me.Session, functionName, "'" & delimiter & "'")
 
@@ -452,16 +452,16 @@ Public MustInherit Class ScriptManagerBase
         If node.InstrumentModelFamily = InstrumentModelFamily.K2600A OrElse
             node.InstrumentModelFamily = InstrumentModelFamily.K3700 Then
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Nilifying {0};. ", name)
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Nilifying {0};. ", name)
             Dim message As String = Me.Session.ExecuteCommand(node.Number, "{0}.source = nil waitcomplete()", name)
             Me.CheckThrowDeviceException(False, message)
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting completion;. ")
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting completion;. ")
             Me.LinkSubsystem.WaitComplete(node.Number, Me.SaveTimeout, False)
             Me.CheckThrowDeviceException(False, "clearing script '{0}' using '{1}';. ", name, message)
         Else
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Creating binary script{0};. ", name)
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Creating binary script{0};. ", name)
 
             ' non-A instruments require having a special function for creating the binary scripts.
             Me.LoadBinaryScriptsFunction(node)
@@ -469,14 +469,14 @@ Public MustInherit Class ScriptManagerBase
             Dim message As String = Me.Session.ExecuteCommand(node.Number, "CreateBinaryScript('{0}', {1}) waitcomplete()", name, name)
             Me.CheckThrowDeviceException(False, message)
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting completion;. ")
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Waiting completion;. ")
             Me.LinkSubsystem.WaitComplete(node.Number, Me.SaveTimeout, False)
             Me.CheckThrowDeviceException(False, "creating binary script '{0}' using '{1}';. ", name, message)
 
             Dim fullName As String = "script.user.scripts." & name
             If Me.Session.WaitNotNil(node.Number, fullName, Me._saveTimeout) Then
 
-                Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                            "assigning binary script name to '{0}';. ", name)
 
                 message = Me.Session.ExecuteCommand(node.Number, "{0} = nil waitcomplete() {0} = {1} waitcomplete()", name, fullName)
@@ -527,7 +527,7 @@ Public MustInherit Class ScriptManagerBase
         ' saving just the script name does not work if script was created and name assigned.
         Dim commandFormat As String = "script.user.scripts.{0}.save() waitcomplete()"
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                    "saving script '{0} on node {1};. ", name, node.Number)
         Me.Session.LastNodeNumber = node.Number
 
@@ -586,7 +586,7 @@ Public MustInherit Class ScriptManagerBase
 
         Me._lastFetchScriptSource = ""
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching script source;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching script source;. ")
         Me.Session.WriteLine("isr.script.list({0})", name)
 
         Threading.Thread.Sleep(500)
@@ -622,10 +622,10 @@ Public MustInherit Class ScriptManagerBase
         Me._lastFetchScriptSource = ""
 
         ' clear data queue and report if not empty.
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "clearing data queue")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "clearing data queue")
         Me.LinkSubsystem.ClearDataQueue(nodeNumber)
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "listing script source")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "listing script source")
         Me.Session.WriteLine("isr.script.list({0},{1})", name, nodeNumber)
 
         Threading.Thread.Sleep(500)
@@ -712,7 +712,7 @@ Public MustInherit Class ScriptManagerBase
             ' Turn off prompts
             Me.InteractiveSubsystem.WriteShowPrompts(False)
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "running script '{0}';. ", Name)
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "running script '{0}';. ", Name)
             Me.Session.LastNodeNumber = New Integer?
             Dim returnedValue As String = "1"
             Me.Session.WriteLine("{0}.run() waitcomplete() print('{1}') ", Me._name, returnedValue)
@@ -818,7 +818,7 @@ Public MustInherit Class ScriptManagerBase
             Return False
         End If
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                    "nilifying script '{0} on node {1};. ", name, nodeNumber)
         Me.Session.LastNodeNumber = nodeNumber
 
@@ -892,17 +892,17 @@ Public MustInherit Class ScriptManagerBase
 
         If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Enabling wait completion;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Enabling wait completion;. ")
         Me.StatusSubsystem.EnableWaitComplete()
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Deleting script;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Deleting script;. ")
         Me.Session.WriteLine("script.delete('{0}') waitcomplete()", name)
 
         ' make script nil
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Awaiting operation completion;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Awaiting operation completion;. ")
         Me.StatusSubsystem.AwaitOperationCompleted(Me.DeleteTimeout)
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Deleting script;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Deleting script;. ")
         Me.NilifyScript(name)
 
         ' make sure to re-check that script is gone.
@@ -963,14 +963,14 @@ Public MustInherit Class ScriptManagerBase
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If String.IsNullOrWhiteSpace(name) Then Return False
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Deleting script '{0}';. ", name)
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Deleting script '{0}';. ", name)
         Me.Session.LastNodeNumber = node.Number
         ' failure is handled below.
         Dim message As String = Me.Session.ExecuteCommand(node.Number, "script.delete('{0}')", name)
 
         Me.CheckThrowDeviceException(False, message)
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Wait complete;. ")
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Wait complete;. ")
         Me.LinkSubsystem.WaitComplete(node.Number, Me.DeleteTimeout, False)
         Me.CheckThrowDeviceException(False, "deleting script '{0}' using '{1}';. ", name, message)
 
@@ -979,7 +979,7 @@ Public MustInherit Class ScriptManagerBase
         If Me.NilifyScript(node.Number, name) Then
             ' make sure to re-check that script is gone.
             If Me.SavedScriptExists(node, name, True) Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' saved script {1} still exists after nil on node {2};. {3}{4}",
                                    Me.ResourceName, name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
                 affirmative = False
@@ -1043,7 +1043,7 @@ Public MustInherit Class ScriptManagerBase
         Try
             Me.Session.StoreTimeout(Me.SaveTimeout)
             Me._lastFetchedSavedScripts = ""
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching saved scripts;. ")
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching saved scripts;. ")
             Me.Session.LastNodeNumber = New Integer?
             Me.Session.WriteLine("do {0} print( names ) end ", TspSyntax.ScriptCatalogGetterCommand)
             Me._lastFetchedSavedScripts = Me.Session.ReadLineTrimEnd
@@ -1077,7 +1077,7 @@ Public MustInherit Class ScriptManagerBase
         Try
             Me.Session.StoreTimeout(Me._saveTimeout)
             Me._lastFetchedSavedRemoteScripts = ""
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching catalog;. ")
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching catalog;. ")
             Me.Session.LastNodeNumber = nodeNumber
             Me.Session.WriteLine(TspSyntax.NodeValueGetterCommandFormat2, nodeNumber, TspSyntax.ScriptCatalogGetterCommand, "names")
 
@@ -1108,7 +1108,7 @@ Public MustInherit Class ScriptManagerBase
             Try
                 Me.Session.StoreTimeout(Me._saveTimeout)
                 Me._lastFetchedSavedRemoteScripts = ""
-                Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching catalog;. ")
+                Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching catalog;. ")
                 Me.Session.LastNodeNumber = node.Number
                 Me.Session.WriteLine(TspSyntax.NodeValueGetterCommandFormat2, node.Number, TspSyntax.ScriptCatalogGetterCommand, "names")
                 Me.CheckThrowDeviceException(True, "fetching catalog using the command '{0}';. ", Me.Session.LastMessageSent)
@@ -1162,7 +1162,7 @@ Public MustInherit Class ScriptManagerBase
         If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
         Dim returnedValue As String = "1"
-        Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "running script;. ")
+        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "running script;. ")
         Me.Session.WriteLine("{0}.run() waitcomplete() print('{1}') ", name, returnedValue)
 
         ' wait till we get a reply from the instrument or timeout.
@@ -1195,7 +1195,7 @@ Public MustInherit Class ScriptManagerBase
 
         If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                    "Running script '{0}' on node {1};. ", name, nodeNumber)
         Me.Session.LastNodeNumber = nodeNumber
 
@@ -1224,7 +1224,7 @@ Public MustInherit Class ScriptManagerBase
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If String.IsNullOrWhiteSpace(script.Name) Then Throw New InvalidOperationException("script name is empty")
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                    "Running script '{0}' on node {1};. ", Name, node.Number)
         Me.Session.LastNodeNumber = node.Number
 
@@ -1268,7 +1268,7 @@ Public MustInherit Class ScriptManagerBase
             Return False
         End If
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                    "saving script '{0}';. ", name)
         Me.Session.LastNodeNumber = New Integer?
         Me.Session.WriteLine("{0}.save()", name)
@@ -1749,7 +1749,7 @@ Public MustInherit Class ScriptManagerBase
 
                 Using debugFile As System.IO.StreamWriter = New System.IO.StreamWriter(Me.FilePath & ".debug")
 
-                    Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                    Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                                "sending a 'loadscript' for script '{0}' from file '{1}'",
                                                                Me._name, Me._FilePath)
                     Me.Session.LastNodeNumber = New Integer?
@@ -1862,7 +1862,7 @@ Public MustInherit Class ScriptManagerBase
             End Using
 
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "ending loaded script '{0}';. ", Me.Name)
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "ending loaded script '{0}';. ", Me.Name)
             Me.Session.LastNodeNumber = New Integer?
 
             ' Tell TSP complete script has been downloaded.
@@ -1950,7 +1950,7 @@ Public MustInherit Class ScriptManagerBase
                     Throw New System.IO.FileNotFoundException("Failed opening script file", filePath)
                 End If
                 Dim line As String
-                Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                            "load script {0} from {1};. ", name, filePath)
                 Me.Session.LastNodeNumber = New Integer?
                 Me.Session.WriteLine("loadscript {0}", name)
@@ -2086,7 +2086,7 @@ Public MustInherit Class ScriptManagerBase
 
             ' Tell TSP complete script has been downloaded.
             commandLine = "endscript waitcomplete() print('1') "
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                        "sending an 'endscript' for script '{0}'; from file '{1}'", name, filePath)
             Me.Session.WriteLine(commandLine)
 
@@ -2137,7 +2137,7 @@ Public MustInherit Class ScriptManagerBase
 
         If Not Me.Session.IsNil(script.Name) Then
             ' script already exists
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' script {1} already exists;. ", Me.ResourceName, script.Name)
             Return
         End If
@@ -2158,12 +2158,12 @@ Public MustInherit Class ScriptManagerBase
 
         ' do a garbage collection
         If Not Me.StatusSubsystem.CollectGarbageWaitComplete(script.Timeout, "collecting garbage;. ") Then
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                "Ignoring instrument '{0}' error(s) collecting garbage after loading {1};. {2}{3}",
                                Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
         End If
 
-        Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                            "Instrument '{0}' {1} script loaded;. ", Me.ResourceName, script.Name)
 
         Me.DisplaySubsystem.DisplayLine(2, "Done loading {0} from file", script.Name)
@@ -2211,16 +2211,16 @@ Public MustInherit Class ScriptManagerBase
 
         Try
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                        "initiating load script for script '{0}';. ", Me.Name)
             Me.Session.LastNodeNumber = New Integer?
 
             Me.Session.WriteLine("loadscript " & Me.Name)
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "loading script '{0}';. ", Me.Name)
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "loading script '{0}';. ", Me.Name)
             Me.LoadString(scriptLines)
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "ending script '{0}';. ", Me.Name)
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "ending script '{0}';. ", Me.Name)
             Me.Session.WriteLine("endscript")
 
         Catch
@@ -2248,19 +2248,19 @@ Public MustInherit Class ScriptManagerBase
         ' check if we already have the load/end constructs.
         Me.Session.LastNodeNumber = New Integer?
         If firstLine.Contains(name) OrElse firstLine.Contains("loadscript") Then
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "loading script '{0}';. ", name)
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "loading script '{0}';. ", name)
             Me.Session.LastNodeNumber = New Integer?
             Me.LoadString(scriptLines)
         Else
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                        "initiating load script for script '{0}';. ", name)
             Me.Session.WriteLine("loadscript " & name)
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                        "loading script lines for script '{0}';. ", name)
             Me.LoadString(scriptLines)
 
-            Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                        "ending script for script '{0}';. ", name)
             Me.Session.WriteLine("endscript waitcomplete()")
         End If
@@ -2704,7 +2704,7 @@ Public MustInherit Class ScriptManagerBase
         If Me.Session.IsNil(node.IsController, node.Number, script.Name) Then
             ' ignore error if nil
             If Not Me.TraceVisaDeviceOperationOkay(node.Number, "looking for script '{0}'. Ignoring error;. ", script.Name) Then
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' had error(s) looking for script {1} on node {2};. nothing to do.",
                                    Me.ResourceName, script.Name, node.Number)
             End If
@@ -2715,7 +2715,7 @@ Public MustInherit Class ScriptManagerBase
 
             ' reading version requires an intact namespace. A missing name space may be missing, this might 
             ' indicate that referenced scripts were deleted or failed loading so this script should be deleted.
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' reports that some namespaces '{1}' on node {2} are nil;. script '{3}' will be deleted.",
                                Me.ResourceName, script.Namespaces, node.Number, script.Name)
             Return True
@@ -2724,7 +2724,7 @@ Public MustInherit Class ScriptManagerBase
 
             ' reading version requires a supported version function. Delete if a firmware version function is not
             ' defined.
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' firmware version function not defined;. script '{1}' will be deleted.",
                                Me.ResourceName, script.Name)
             Return True
@@ -2739,21 +2739,21 @@ Public MustInherit Class ScriptManagerBase
 
             Case FirmwareVersionStatus.None
 
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' '{1}' script firmware version on node {2} is irrelevant;. script will be deleted.",
                                    Me.ResourceName, script.Name, node.Number)
                 Return True
 
             Case FirmwareVersionStatus.Current
 
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' script {1} on node {2} is up to date;. Nothing to do.",
                                    Me.ResourceName, script.Name, node.Number)
                 Return False
 
             Case FirmwareVersionStatus.Missing
 
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' custom firmware '{1}' version on node {2} is not known;. script version function is not defined. Script will be deleted.",
                                    Me.ResourceName, script.Name, node.Number)
                 Return True
@@ -2761,12 +2761,12 @@ Public MustInherit Class ScriptManagerBase
             Case FirmwareVersionStatus.Newer
 
                 If allowDeletingNewerScripts Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                        "Instrument '{0}' existing custom firmware '{1}' on node {2} version '{3}' is newer than the specified version '{4}';. The scripts will be deleted to allow uploading the older script.",
                                        Me.ResourceName, script.Name, node.Number, script.EmbeddedFirmwareVersion, script.ReleasedFirmwareVersion)
                     Return True
                 Else
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                        "Instrument '{0}' existing custom firmware '{1}' on node {2} version '{3}' is newer than the specified version '{4}';. A newer version of the program is required. Script will not be deleted.",
                                        Me.ResourceName, script.Name, node.Number, script.EmbeddedFirmwareVersion, script.ReleasedFirmwareVersion)
                     Return False
@@ -2774,14 +2774,14 @@ Public MustInherit Class ScriptManagerBase
 
             Case FirmwareVersionStatus.Older
 
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' existing custom firmware '{1}' on node {2} version '{3}' is older than the specified version '{4}';. Script will be deleted.",
                                    Me.ResourceName, script.Name, node.Number, script.EmbeddedFirmwareVersion, script.ReleasedFirmwareVersion)
                 Return True
 
             Case FirmwareVersionStatus.ReferenceUnknown
 
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' custom firmware '{1}' released version not given;. Script will not be deleted.{2}{3}",
                                    Me.ResourceName, script.Name,
                     Environment.NewLine, New StackFrame(True).UserCallStack())
@@ -2789,14 +2789,14 @@ Public MustInherit Class ScriptManagerBase
 
             Case FirmwareVersionStatus.Unknown
 
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' firmware '{1}' on node {2} version was not read;. Script will be deleted.",
                                    Me.ResourceName, script.Name, node.Number)
                 Return True
 
             Case Else
 
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' encountered unhandled firmware version status {1} on node {2};. Nothing to do. Ignored.",
                                    Me.ResourceName, validation, node.Number)
                 Return False
@@ -2847,7 +2847,7 @@ Public MustInherit Class ScriptManagerBase
                         End If
 
                     Catch ex As Exception
-                        Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                        Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                            "Exception occurred testing if delete is required for firmware {0} from node {1};. {2}",
                                            script.Name, node.Number, ex.ToFullBlownString)
                     End Try
@@ -2904,7 +2904,7 @@ Public MustInherit Class ScriptManagerBase
         If Me.Session.IsNil(node.IsController, node.Number, script.Name) Then
             ' ignore error if nil
             If Not Me.TraceVisaDeviceOperationOkay(node.Number, "looking for script '{0}'. Ignoring error;. ", script.Name) Then
-                Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' had error(s) looking for script {1} on node;. Nothing to do.",
                                    Me.ResourceName, script.Name, node.Number)
             End If
@@ -2916,7 +2916,7 @@ Public MustInherit Class ScriptManagerBase
         If node.IsController Then
             Me.DeleteScript(script.Name, refreshScriptsCatalog)
             If Not Me.TraceVisaDeviceOperationOkay(False, "deleting {0};. ", script.Name) Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' had error(s) deleting script {1} on node {2};. ",
                                    Me.ResourceName, script.Name, node.Number)
                 Return False
@@ -2930,7 +2930,7 @@ Public MustInherit Class ScriptManagerBase
             If Me.DeleteScript(node, script.Name, refreshScriptsCatalog) Then
 
                 If Not Me.TraceVisaDeviceOperationOkay(node.Number, "deleting script {0};. ", script.Name) Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                        "Instrument '{0}' had error(s) deleting {1} on node {2};. ",
                                        Me.ResourceName, script.Name, node.Number)
                     Return False
@@ -2939,7 +2939,7 @@ Public MustInherit Class ScriptManagerBase
             Else
                 If Not Me.TraceVisaDeviceOperationOkay(node.Number, "deleting script {0};. ", script.Name, node.Number) Then
                     ' report failure if not an instrument or VISA error (handler returns Okay.)
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                        "Instrument '{0}' had error(s) deleting {1} on node {2};. {3}{4}",
                                        Me.ResourceName, script.Name, node.Number,
                                        Environment.NewLine, New StackFrame(True).UserCallStack())
@@ -3004,7 +3004,7 @@ Public MustInherit Class ScriptManagerBase
                                 ' or if a script that existed no longer exists.
                                 scriptsDeleted = True
                             Else
-                                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                    "failed deleting script '{1}' from node {2};. ",
                                                    Me.ResourceName, script.Name, node.Number)
                                 success = False
@@ -3016,11 +3016,11 @@ Public MustInherit Class ScriptManagerBase
 
                         Try
                             success = success AndAlso Me.Session.IsNil(script.Name)
-                            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                                "Exception occurred deleting firmware {0} from node {1};. {2}",
                                                script.Name, node.Number, ex.ToFullBlownString)
                         Catch
-                            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                                "Exception occurred checking existence after attempting deletion of firmware {0} from node {1};. {2}",
                                                script.Name, node.Number, ex.ToFullBlownString)
                             success = False
@@ -3293,7 +3293,7 @@ Public MustInherit Class ScriptManagerBase
         If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
 
         Me.Session.LastNodeNumber = node.Number
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "loading script '{0}';. ", script.Name)
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "loading script '{0}';. ", script.Name)
         Dim affirmative As Boolean = True
         If script.IsBinaryScript OrElse (Not Me.Session.IsNil(script.Name) AndAlso
                                          IsBinaryScript(script.Name, Me.LinkSubsystem.ControllerNode)) Then
@@ -3345,14 +3345,14 @@ Public MustInherit Class ScriptManagerBase
         If Not affirmative Then Return affirmative
 
         ' verify that the script was loaded.
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                    "Verifying script '{0}' loaded on node {1};. ", Name, node.Number)
         Me.Session.LastNodeNumber = node.Number
 
         ' check if the script short name exists.
         If Me.Session.WaitNotNil(node.Number, script.Name, script.Timeout) Then
 
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' loaded script '{1}' to node {2};. ",
                                Me.ResourceName, script.Name, node.Number)
 
@@ -3382,7 +3382,7 @@ Public MustInherit Class ScriptManagerBase
 
                 Else
 
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                        "failed referencing script '{1}' using '{2}' on node {3};. --new script not found on the remote node.{4}{5}",
                                        Me.ResourceName, script.Name, fullName, node.Number,
                                        Environment.NewLine, New StackFrame(True).UserCallStack())
@@ -3392,7 +3392,7 @@ Public MustInherit Class ScriptManagerBase
             Else
 
                 ' if both long and short names not found, report failure.
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "failed uploading script '{1}' to node {2} from script '{3}';. --new script not found on the remote node.{4}{5}",
                                    Me.ResourceName, fullName, node.Number, script.Name,
                                    Environment.NewLine, New StackFrame(True).UserCallStack())
@@ -3472,13 +3472,13 @@ Public MustInherit Class ScriptManagerBase
 
         If Not Me.Session.IsNil(node.Number, script.Name) Then
             Me.DisplaySubsystem.DisplayLine(2, "{0}:{1} exists--nothing to do", node.Number, script.Name)
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' script {1} already exists on node {2};. Nothing to do.",
                                Me.ResourceName, script.Name, node.Number)
             Return
         End If
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Uploading {0}:{1}", node.Number, script.Name)
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Uploading {0}:{1}", node.Number, script.Name)
         Me.DisplaySubsystem.DisplayLine(2, "Uploading {0}:{1}", node.Number, script.Name)
         If Not Me.UploadScript(node, script) Then
             Me.DisplaySubsystem.DisplayLine(2, "Failed uploading {0}:{1}", node.Number, script.Name)
@@ -3489,7 +3489,7 @@ Public MustInherit Class ScriptManagerBase
         If Not Me.Session.WaitNotNil(node.Number, script.Name, Me._saveTimeout) Then
 
             Me.DisplaySubsystem.DisplayLine(2, "{0}:{1} not found after loading", node.Number, script.Name)
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                "failed loading script '{1}' to node {2};. --new script not found on the remote node.{3}{4}",
                                Me.ResourceName, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             Return
@@ -3499,7 +3499,7 @@ Public MustInherit Class ScriptManagerBase
         ' do a garbage collection
         Me.DisplaySubsystem.DisplayLine(2, "Cleaning local node")
 
-        Me.Session.LastAction = Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                    "Collecting garbage after uploading {0}:{1}", node.Number, script.Name)
 
         ' do a garbage collection
@@ -3523,7 +3523,7 @@ Public MustInherit Class ScriptManagerBase
 
         If Not Me.Session.IsNil(script.Name) Then
 
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' script {1} already exists;. ", Me.ResourceName, script.Name)
             Return True
 
@@ -3535,7 +3535,7 @@ Public MustInherit Class ScriptManagerBase
             affirmative = Me.TraceVisaDeviceOperationOkay(False, "Ready to load {0};. ", script.Name)
             If Not affirmative Then
                 ' report failure if not an instrument or VISA error (handler returns Okay.)
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' had error(s) before loading {1};. {2}Problem ignored @{3}",
                                    Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
@@ -3555,7 +3555,7 @@ Public MustInherit Class ScriptManagerBase
                 affirmative = Me.TraceVisaDeviceOperationOkay(False, "loading {0};. ", script.Name)
                 If Not affirmative Then
                     ' report failure if not an instrument or VISA error (handler returns Okay.)
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                        "Instrument '{0}' had error(s) loading {1};. {2}{3}",
                                        Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
                 End If
@@ -3572,12 +3572,12 @@ Public MustInherit Class ScriptManagerBase
         If affirmative Then
             ' do a garbage collection
             If Not Me.StatusSubsystem.CollectGarbageWaitComplete(script.Timeout, "collecting garbage;. ") Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Ignoring instrument '{0}' error(s) collecting garbage after loading {1};. {2}{3}",
                                    Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
 
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' {1} script loaded;. ", Me.ResourceName, script.Name)
 
             Me.DisplaySubsystem.DisplayLine(2, "{0} Loaded", script.Name)
@@ -3611,7 +3611,7 @@ Public MustInherit Class ScriptManagerBase
         If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
 
         If Me.Session.IsNil(script.Name) Then
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                "failed running {1} because it does not exist;. {2}{3}",
                                Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
             Return False
@@ -3620,7 +3620,7 @@ Public MustInherit Class ScriptManagerBase
         ' taken out to run always.
         If Not runAlways AndAlso script.Namespaces IsNot Nothing AndAlso
             script.Namespaces.Length > 0 AndAlso Not Me.Session.IsNil(script.Namespaces) Then
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' script {1} already run. Nothing to do;. ", Me.ResourceName, script.Name)
             Return True
         End If
@@ -3633,7 +3633,7 @@ Public MustInherit Class ScriptManagerBase
             affirmative = Me.TraceVisaDeviceOperationOkay(False, "running {0};. ", script.Name)
             If Not affirmative Then
                 ' report failure if not an instrument or VISA error (handler returns Okay.)
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' had error(s) running {1};. {2}{3}",
                                    Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
@@ -3651,7 +3651,7 @@ Public MustInherit Class ScriptManagerBase
 
             If Not Me.TraceVisaDeviceOperationOkay(False, "script {0} not found after running;. ", script.Name) Then
                 ' report failure if not an instrument or VISA error (handler returns Okay.)
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' had error(s) running script {1};. {2}{3}",
                                    Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
@@ -3663,7 +3663,7 @@ Public MustInherit Class ScriptManagerBase
                 ' if not a visa error, report the specific namespaces.
                 For Each value As String In script.Namespaces
                     If Me.Session.IsNil(value) Then
-                        Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                            "Instrument '{0}' namespace {1} is nil;. {2}{3}",
                                            Me.ResourceName, value, Environment.NewLine, New StackFrame(True).UserCallStack())
                     End If
@@ -3674,7 +3674,7 @@ Public MustInherit Class ScriptManagerBase
         Else
 
             Me.DisplaySubsystem.DisplayLine(2, "Done running {0}", script.Name)
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' {1} script run okay;. ", Me.ResourceName, script.Name)
             affirmative = True
 
@@ -3708,7 +3708,7 @@ Public MustInherit Class ScriptManagerBase
         If script Is Nothing Then Throw New ArgumentNullException(NameOf(script))
 
         If Me.Session.IsNil(node.Number, script.Name) Then
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                "failed running {1} because it does not exist on node {2};. {3}{4}",
                                Me.ResourceName, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             Return False
@@ -3716,7 +3716,7 @@ Public MustInherit Class ScriptManagerBase
 
         If Not runAlways AndAlso script.Namespaces IsNot Nothing AndAlso
             script.Namespaces.Length > 0 AndAlso Not Me.Session.IsNil(node.Number, script.Namespaces) Then
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' script {1} already run on node {2};. Nothing to do.",
                                Me.ResourceName, script.Name, node.Number)
             Return True
@@ -3739,7 +3739,7 @@ Public MustInherit Class ScriptManagerBase
         If Not Me.LinkSubsystem.CollectGarbageWaitComplete(node, script.Timeout,
                                                            "collecting garbage after running script {0};. ",
                                                            script.Name) Then
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                "Ignoring instrument '{0}' error(s) collecting garbage after loading script {1} to node {2};. {3}{4}",
                                Me.ResourceName, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
         End If
@@ -3747,7 +3747,7 @@ Public MustInherit Class ScriptManagerBase
         If Me.Session.IsNil(node.Number, script.Name) Then
 
             If Not Me.TraceVisaDeviceOperationOkay(node.Number, "script {0} not found after running;. ", script.Name) Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' had error(s) loading script {1} to node {2};. {3}{4}",
                                    Me.ResourceName, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
@@ -3760,7 +3760,7 @@ Public MustInherit Class ScriptManagerBase
                 ' if not a visa error, report the specific namespaces.
                 For Each value As String In script.Namespaces
                     If Me.Session.IsNil(value) Then
-                        Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                            "Instrument '{0}' namespace {1} is nil on node {2};. {3}{4}",
                                            Me.ResourceName, value, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
                     End If
@@ -3771,7 +3771,7 @@ Public MustInherit Class ScriptManagerBase
         Else
 
             Me.DisplaySubsystem.DisplayLine(2, "Done running {0}:{1}", node.Number, script.Name)
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' {1} script run on node {2};. ", Me.ResourceName, script.Name, node.Number)
             Return True
 
@@ -3856,7 +3856,7 @@ Public MustInherit Class ScriptManagerBase
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
 
         If Me.Session.IsNil(node.IsController, node.Number, scriptName) Then
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' custom firmware {1} not saved on node {2};. --it is not loaded. Error may be ignored.{3}{4}",
                                Me.ResourceName, scriptName, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             Return False
@@ -3874,7 +3874,7 @@ Public MustInherit Class ScriptManagerBase
             If Not Me.LinkSubsystem.CollectGarbageWaitComplete(node, timeout,
                                                                "collecting garbage before saving script {0} on node {1};. ",
                                                                scriptName, node.Number) Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Ignoring instrument '{0}' error(s) collecting garbage after loading {1} on node {2};. {3}{4}",
                                    Me.ResourceName, scriptName, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
@@ -3889,14 +3889,14 @@ Public MustInherit Class ScriptManagerBase
                     node.BootScriptSaveRequired = False
                 End If
 
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' saved script {1} on node {2};. ", Me.ResourceName, scriptName, node.Number)
 
             Else
 
                 If Not Me.TraceVisaDeviceOperationOkay(node.Number, "saving script {0};. ", scriptName) Then
                     ' report failure if not an instrument or VISA error (handler returns Okay.)
-                    Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                        "Instrument '{0}' had error(s) saving script {1} on node {2};. {3}{4}",
                                        Me.ResourceName, scriptName, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
                 End If
@@ -3906,7 +3906,7 @@ Public MustInherit Class ScriptManagerBase
 
         Else
 
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                "Instrument '{0}' script {1} already saved on node {2};. ",
                                Me.ResourceName, scriptName, node.Number)
         End If
@@ -4014,12 +4014,12 @@ Public MustInherit Class ScriptManagerBase
 
             ' report any failure.
             If isSecondPass Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "{0} failed running some firmware scripts because {1};. {2}{3}",
                                    prefix, scripts.OutcomeDetails, Environment.NewLine, New StackFrame(True).UserCallStack())
                 Return False
             Else
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "{0} failed running some firmware scripts because {1}--problem ignored;. ",
                                    prefix, scripts.OutcomeDetails)
             End If
@@ -4030,13 +4030,13 @@ Public MustInherit Class ScriptManagerBase
 
             If isSecondPass Then
                 ' report any failure.
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    " failed reading some firmware versions because {1};. {2}{3}",
                                    prefix, scripts.OutcomeDetails, Environment.NewLine, New StackFrame(True).UserCallStack())
                 Return False
             Else
                 ' report any failure.
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    " failed reading some firmware versions because {1}. Problem ignored;. ",
                                    prefix, scripts.OutcomeDetails)
             End If
@@ -4044,7 +4044,7 @@ Public MustInherit Class ScriptManagerBase
 
         ' make sure program is up to date.
         If Not isSecondPass AndAlso scripts.IsProgramOutdated(node) Then
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                "{0} program out of date because {1}. System initialization aborted;. {2}{3}",
                                prefix, scripts.OutcomeDetails, Environment.NewLine, New StackFrame(True).UserCallStack())
             Return False
@@ -4052,12 +4052,12 @@ Public MustInherit Class ScriptManagerBase
 
         If scripts.VersionsUnspecified(node) Then
             If isSecondPass Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "{0} failed verifying firmware version because {1};. {2}{3}",
                                    prefix, scripts.OutcomeDetails, Environment.NewLine, New StackFrame(True).UserCallStack())
                 Return False
             Else
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "{0} failed verifying firmware version because {1}--problem ignored;. ",
                                    prefix, scripts.OutcomeDetails)
             End If
@@ -4070,11 +4070,11 @@ Public MustInherit Class ScriptManagerBase
         ElseIf isSecondPass Then
 
             If String.IsNullOrWhiteSpace(scripts.OutcomeDetails) Then
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "{0} failed updating scripts;. Check log for details.{1}{2}",
                                    prefix, Environment.NewLine, New StackFrame(True).UserCallStack())
             Else
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "{0} failed updating scripts because {1};. {2}{3}",
                                    prefix, scripts.OutcomeDetails, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
@@ -4085,10 +4085,10 @@ Public MustInherit Class ScriptManagerBase
             isSecondPass = True
 
             ' delete scripts that are out-dated or slated for deletion.
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "{0} deleting out-dated scripts;. ", prefix)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "{0} deleting out-dated scripts;. ", prefix)
 
             If Not Me.DeleteUserScripts(scripts, node, True, True) Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "{0} failed deleting out-dated scripts;. Check log for details. Problem ignored.", prefix)
             End If
 
@@ -4098,7 +4098,7 @@ Public MustInherit Class ScriptManagerBase
 
             Else
 
-                Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "{0} failed loading and/or running scripts;. Check log for details.{1}{2}",
                                    prefix, Environment.NewLine, New StackFrame(True).UserCallStack())
                 Return False

@@ -34,10 +34,10 @@ Public MustInherit Class SystemSubsystemBase
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Try
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading options;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Reading options;. ")
             Me.QueryOptions()
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Exception reading options;. {0}", ex.ToFullBlownString)
         End Try
     End Sub

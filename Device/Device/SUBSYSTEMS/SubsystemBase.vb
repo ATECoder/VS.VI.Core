@@ -379,7 +379,7 @@ Public MustInherit Class SubsystemBase
 
     ''' <summary> Clears the listeners. </summary>
     Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker?.Listeners?.Clear()
+        Me.Talker.Listeners?.Clear()
     End Sub
 
     ''' <summary> Dispose talker. </summary>

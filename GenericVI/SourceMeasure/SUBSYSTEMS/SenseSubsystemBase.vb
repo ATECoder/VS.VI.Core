@@ -127,7 +127,7 @@ Public MustInherit Class SenseSubsystemBase
     Public ReadOnly Property IntegrationPeriod As TimeSpan?
         Get
             If Me.PowerLineCycles.HasValue Then
-                Return VI.StatusSubsystemBase.IntegrationPeriod(Me.PowerLineCycles.Value)
+                Return VI.StatusSubsystemBase.FromPowerLineCycles(Me.PowerLineCycles.Value)
             Else
                 Return New TimeSpan?
             End If

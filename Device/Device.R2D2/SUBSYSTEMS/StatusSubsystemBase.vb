@@ -33,19 +33,19 @@ Public MustInherit Class StatusSubsystemBase
         MyBase.InitKnownState()
         Dim action As String = "enabling wait completion"
         Try
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
             Me.EnableWaitComplete()
         Catch ex As Exception
             ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
         Try
             Action = "querying identity"
-            Me.Talker?.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
             Me.QueryIdentity()
         Catch ex As Exception
             ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
     End Sub
 

@@ -95,7 +95,7 @@ Public Class InterfacePanel
         Try
             Me.OpenInterfaceSession(resourceName)
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{ex.Message} occurred opening interface;. {ex.ToFullBlownString}")
             Return False
         End Try
@@ -109,12 +109,12 @@ Public Class InterfacePanel
     Public Overridable Sub OpenInterfaceSession(ByVal resourceName As String)
         If Me.Enabled Then
             Try
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Opening interface to {0};. ", resourceName)
                 Me.VisaInterface = isr.VI.SessionFactory.Get.Factory.CreateGpibInterfaceSession()
                 Me.VisaInterface.OpenSession(resourceName)
                 If Me.IsInterfaceOpen Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Interface '{0}' opened;. ", resourceName)
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Interface '{0}' opened;. ", resourceName)
                     Me.displayResourceNames()
                     If Me._InterfaceChooser.HasResources Then
                         ' if has resources to display, move on. The chooser traps the errors.
@@ -173,7 +173,7 @@ Public Class InterfacePanel
         Try
             Me.CloseInterfaceSession()
         Catch ex As OperationFailedException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred closing interface;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred closing interface;. {ex.ToFullBlownString}")
             Return False
         End Try
         Return Not Me.IsInterfaceOpen
@@ -185,7 +185,7 @@ Public Class InterfacePanel
     Public Overridable Sub CloseInterfaceSession()
         If Me.Enabled Then
             If Me.VisaInterface IsNot Nothing Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Closing interface to {0};. ", Me._InterfaceChooser.SelectedResourceName)
                 Try
                     Me.VisaInterface.Dispose()
@@ -258,16 +258,16 @@ Public Class InterfacePanel
             Me._InterfaceChooser.ResourcesFilter = VI.ResourceNamesManager.BuildInterfaceFilter()
             Me._InterfaceChooser.DisplayResourceNames()
             If Me._InterfaceChooser.HasResources Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Interfaces available--select and connect;. Found interfaces.")
             Else
-                Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                    "NO INTERFACES;. No interfaces were found. Connect the interface(s) and click Find.")
             End If
             Me.displayResourceNames()
             Me.Enabled = True
         Catch ex As System.ArgumentException
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception finding interfaces;. Failed finding or listing interfaces. Connect the interface(s) and click Find. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
@@ -285,7 +285,7 @@ Public Class InterfacePanel
                 Me.VisaInterface.SendInterfaceClear()
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred clearing;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred clearing;. {ex.ToFullBlownString}")
             Me._TraceMessagesBox.AddMessage(ex)
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
@@ -297,7 +297,7 @@ Public Class InterfacePanel
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub InterfaceChooser_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _InterfaceChooser.Connect
-        Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                            "Connecting {0};. ", Me._InterfaceChooser.SelectedResourceName)
         Dim resourcename As String = Me._InterfaceChooser.SelectedResourceName
         Me.OpenInterfaceSession(resourcename)
@@ -309,7 +309,7 @@ Public Class InterfacePanel
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub InterfaceChooser_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _InterfaceChooser.Disconnect
-        Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                            "Disconnecting {0};. ", Me._InterfaceChooser.SelectedResourceName)
         Me.TryCloseInterfaceSession()
         ' cancel if failed to disconnect
@@ -335,7 +335,7 @@ Public Class InterfacePanel
                     Me.InterfaceResourceName = ""
                 Else
                     Me.InterfaceResourceName = sender.SelectedResourceName
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Interface selected--connect;. {Me.InterfaceResourceName} selected;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Interface selected--connect;. {Me.InterfaceResourceName} selected;. ")
                 End If
             Case NameOf(sender.SelectedResourceExists)
             Case NameOf(sender.ResourcesFilter)
@@ -358,7 +358,7 @@ Public Class InterfacePanel
         Try
             Me.OnPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling InterfaceChoose.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -377,14 +377,14 @@ Public Class InterfacePanel
             Try
                 Me.Cursor = Windows.Forms.Cursors.WaitCursor
                 If Me.IsInterfaceOpen Then
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                        "Clearing selected device;. Clearing '{0}'...", Me._InstrumentChooser.SelectedResourceName)
                     Me.VisaInterface.SelectiveDeviceClear(Me._InstrumentChooser.SelectedResourceName)
-                    Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                        "Cleared selected device;. Cleared '{0}'.", Me._InstrumentChooser.SelectedResourceName)
                 End If
             Catch ex As Exception
-                Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                    $"Exception clearing '{Me._InstrumentChooser.SelectedResourceName}';. {ex.ToFullBlownString}")
             Finally
                 Me.Cursor = Windows.Forms.Cursors.Default
@@ -400,14 +400,14 @@ Public Class InterfacePanel
         Try
             Me.Cursor = Windows.Forms.Cursors.WaitCursor
             If Me.IsInterfaceOpen Then
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Clearing devices;. Clearing devices at '{0}'...", Me.InterfaceResourceName)
                 Me._VisaInterface.ClearDevices()
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Cleared devices;. Cleared devices at '{0}'.", Me.InterfaceResourceName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception clearing devices at '{Me.InterfaceResourceName}';. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Windows.Forms.Cursors.Default
@@ -429,11 +429,11 @@ Public Class InterfacePanel
     ''' <summary> Displays instrument resource names. </summary>
     Private Sub DisplayResourceNames()
         If Me.VisaInterface Is Nothing Then
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Finding resources;. Finding resources {0}", VI.ResourceNamesManager.BuildInstrumentFilter())
             Me._InstrumentChooser.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter()
         Else
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Finding resources;. Finding resources for interface {0}", Me._InterfaceChooser.SelectedResourceName)
             Me._InstrumentChooser.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter(Me.VisaInterface.HardwareInterfaceType,
                                                                                                   Me.VisaInterface.HardwareInterfaceNumber)
@@ -441,10 +441,10 @@ Public Class InterfacePanel
         Me._InstrumentChooser.DisplayResourceNames()
         Me._InstrumentChooser.Enabled = Me._InstrumentChooser.HasResources
         If Me._InstrumentChooser.HasResources Then
-            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Instruments available--select and connect;. Found Instruments.")
         Else
-            Me.Talker?.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                "No Instruments;. No Instruments were found. Connect the Instrument(s) and click Find.")
         End If
     End Sub
@@ -464,7 +464,7 @@ Public Class InterfacePanel
         Select Case propertyName
             Case NameOf(sender.SelectedResourceName)
                 Me._ClearSelectedResourceButton.Enabled = Not String.IsNullOrWhiteSpace(sender.SelectedResourceName)
-                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Instrument resource selected--connect;. Selected resource {0}",
                                    sender.SelectedResourceName)
             Case NameOf(sender.SelectedResourceExists)
@@ -490,7 +490,7 @@ Public Class InterfacePanel
         Try
             Me.OnInstrumentChooserPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Exception handling InstrumentChooser.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
     End Sub
@@ -539,7 +539,7 @@ Public Class InterfacePanel
                 Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
         End Try
     End Sub
