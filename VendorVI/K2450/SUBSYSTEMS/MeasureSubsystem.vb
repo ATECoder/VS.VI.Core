@@ -47,8 +47,8 @@ Public Class MeasureSubsystem
                     Me.FunctionModeRanges(fm).SetRange(0, 200000000.0)
             End Select
         Next
-        Me.FunctionMode = MeasureFunctionMode.VoltageDC
-        Me.Range = 303 'defaults volts range
+        Me.FunctionMode = MeasureFunctionMode.CurrentDC
+        Me.Range = 0.000001
     End Sub
 
 #End Region
@@ -196,7 +196,7 @@ Public Class MeasureSubsystem
 
     ''' <summary> Gets or sets the front terminals selected query command. </summary>
     ''' <value> The front terminals selected query command. </value>
-    Protected Overrides ReadOnly Property FrontTerminalsSelectedoPrintCommand As String = "_G.print(_G.smu.measure.terminals==smu.TERMINALS_FRONT)"
+    Protected Overrides ReadOnly Property FrontTerminalsSelectedPrintCommand As String = "_G.print(_G.smu.measure.terminals==smu.TERMINALS_FRONT)"
 
 #End Region
 
@@ -250,7 +250,7 @@ Public Class MeasureSubsystem
 
     ''' <summary> Gets the Range query command. </summary>
     ''' <value> The Range query command. </value>
-    Protected Overrides ReadOnly Property RangeQueryCommand As String = "_G.print(_G.smu.measure.range)"
+    Protected Overrides ReadOnly Property RangePrintCommand As String = "_G.print(_G.smu.measure.range)"
 
     ''' <summary> Gets the Range command format. </summary>
     ''' <value> The Range command format. </value>

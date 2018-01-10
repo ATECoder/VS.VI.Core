@@ -138,6 +138,13 @@ Partial Public NotInheritable Class TestInfo
 
 #Region " MEASURE SUBSYSTEM INFORMATION "
 
+    ''' <summary> Gets the Initial auto Delay Enabled settings. </summary>
+    ''' <value> The auto Delay settings. </value>
+    Public Shared ReadOnly Property InitialAutoDelayEnabled As Boolean
+        Get
+            Return My.MyAppSettingsReader.AppSettingBoolean()
+        End Get
+    End Property
 
     ''' <summary> Gets the Initial auto Range enabled settings. </summary>
     ''' <value> The auto Range settings. </value>
@@ -175,9 +182,27 @@ Partial Public NotInheritable Class TestInfo
         End Get
     End Property
 
+    Public Shared ReadOnly Property InitialSourceFunction As MeasureFunctionMode
+        Get
+            Return CType(My.MyAppSettingsReader.AppSettingInt32(), MeasureFunctionMode)
+        End Get
+    End Property
+
+
     ''' <summary> Gets the Initial power line cycles settings. </summary>
     ''' <value> The power line cycles settings. </value>
     Public Shared ReadOnly Property InitialPowerLineCycles As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property InitialSourceLevel As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+    Public Shared ReadOnly Property InitialSourceLimit As Double
         Get
             Return My.MyAppSettingsReader.AppSettingDouble()
         End Get
@@ -212,6 +237,18 @@ Partial Public NotInheritable Class TestInfo
         End Get
     End Property
 
+    Public Shared ReadOnly Property SourceFunction As SourceFunctionMode
+        Get
+            Return CType(My.MyAppSettingsReader.AppSettingInt32(), SourceFunctionMode)
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property SourceLevel As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+
     ''' <summary> Gets the power line cycles settings. </summary>
     ''' <value> The power line cycles settings. </value>
     Public Shared ReadOnly Property PowerLineCycles As Double
@@ -223,6 +260,18 @@ Partial Public NotInheritable Class TestInfo
     Public Shared ReadOnly Property RemoteSenseSelected As Boolean
         Get
             Return My.MyAppSettingsReader.AppSettingBoolean()
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property ExpectedResistance As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property ExpectedResistanceEpsilon As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
         End Get
     End Property
 

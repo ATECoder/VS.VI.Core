@@ -158,9 +158,58 @@ Public Class MeasureUnitTests
 
 #End Region
 
+#Region " SOURCE SUBSYSTEM TEST "
+
+    ''' <summary> Check Source subsystem information. </summary>
+    ''' <param name="device"> The device. </param>
+    Private Shared Sub ReadSourceSubsystemInfo(ByVal device As Device)
+
+
+        Dim expectedBoolean As Boolean = TestInfo.InitialAutoRangeEnabled
+        Dim actualBoolean As Boolean = device.SourceSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(Not expectedBoolean)
+        Assert.IsTrue(actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.AutoRangeEnabled)} is {actualBoolean }; expected {True}")
+
+        expectedBoolean = TestInfo.InitialAutoDelayEnabled
+        actualBoolean = device.SourceSubsystem.QueryAutoDelayEnabled.GetValueOrDefault(Not expectedBoolean)
+        Assert.IsTrue(actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.AutoDelayEnabled)} is {actualBoolean }; expected {True}")
+
+        expectedBoolean = False
+        actualBoolean = device.SourceSubsystem.QueryOutputEnabled.GetValueOrDefault(Not expectedBoolean)
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.OutputEnabled)} is {actualBoolean}; expected {expectedBoolean}")
+
+        Dim functionMode As SourceFunctionMode = device.SourceSubsystem.QueryFunctionMode.GetValueOrDefault(SourceFunctionMode.None)
+        Assert.AreEqual(TestInfo.InitialSourceFunction, functionMode, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.FunctionMode)} is {functionMode} ; expected {TestInfo.InitialSourceFunction}")
+
+        expectedBoolean = False
+        actualBoolean = device.SourceSubsystem.QueryLimitTripped.GetValueOrDefault(Not expectedBoolean)
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.OutputEnabled)} is {actualBoolean}; expected {expectedBoolean}")
+
+        Dim expectedDouble As Double = TestInfo.InitialSourceLevel
+        Dim actualDouble As Double = device.SourceSubsystem.QueryLevel.GetValueOrDefault(-1)
+        Assert.AreEqual(expectedDouble, actualDouble, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.Level)} is {actualDouble}; expected {expectedDouble}")
+
+        expectedDouble = TestInfo.InitialSourceLimit
+        actualDouble = device.SourceSubsystem.QueryLimit.GetValueOrDefault(-1)
+        Assert.AreEqual(expectedDouble, actualDouble, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.Limit)} is {actualDouble}; expected {expectedDouble}")
+
+    End Sub
+
+    <TestMethod()>
+    Public Sub ReadSourceSubsystemTest()
+        Using device As Device = Device.Create
+            MeasureUnitTests.OpenSession(device)
+            MeasureUnitTests.ReadSourceSubsystemInfo(device)
+            MeasureUnitTests.CloseSession(device)
+        End Using
+    End Sub
+
+#End Region
+
 #Region " MEASURE RESISTANCE "
 
-    Private Shared Sub MeasureResistance(ByVal device As Device)
+    ''' <summary> Source current measure resistance. </summary>
+    ''' <param name="device"> The device. </param>
+    Private Shared Sub SourceCurrentMeasureResistance(ByVal device As Device)
 
         Dim expectedPowerLineCycles As Double = TestInfo.PowerLineCycles
         Dim actualPowerLineCycles As Double = device.MeasureSubsystem.ApplyPowerLineCycles(expectedPowerLineCycles).GetValueOrDefault(0)
@@ -183,8 +232,23 @@ Public Class MeasureUnitTests
         actualBoolean = device.MeasureSubsystem.ApplyRemoteSenseSelected(expectedBoolean).GetValueOrDefault(False)
         Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.RemoteSenseSelected)} is {actualBoolean }; expected {expectedBoolean }")
 
-        Dim senseFn As MeasureFunctionMode = device.MeasureSubsystem.ApplyFunctionMode(TestInfo.SenseFunction).GetValueOrDefault(MeasureFunctionMode.Resistance)
-        Assert.AreEqual(TestInfo.SenseFunction, senseFn, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.FunctionMode)} is {senseFn} ; expected {TestInfo.SenseFunction}")
+        Dim measureFunction As MeasureFunctionMode = device.MeasureSubsystem.ApplyFunctionMode(TestInfo.SenseFunction).GetValueOrDefault(MeasureFunctionMode.Resistance)
+        Assert.AreEqual(TestInfo.SenseFunction, measureFunction, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.FunctionMode)} is {measureFunction} ; expected {TestInfo.SenseFunction}")
+
+        Dim SourceFunction As SourceFunctionMode = device.SourceSubsystem.ApplyFunctionMode(TestInfo.SourceFunction).GetValueOrDefault(SourceFunctionMode.None)
+        Assert.AreEqual(TestInfo.SourceFunction, SourceFunction, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.FunctionMode)} is {SourceFunction} ; expected {TestInfo.SourceFunction}")
+
+        expectedBoolean = True
+        actualBoolean = device.SourceSubsystem.ApplyOutputEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.OutputEnabled)} is {actualBoolean }; expected {expectedBoolean }")
+
+        Dim resistance As Double = device.MeasureSubsystem.Measure.GetValueOrDefault(-1)
+        Assert.AreEqual(TestInfo.ExpectedResistance, resistance, TestInfo.ExpectedResistanceEpsilon,
+                  $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.Reading)} is {resistance}; expected {TestInfo.ExpectedResistance} within {TestInfo.ExpectedResistanceEpsilon}")
+
+        expectedBoolean = False
+        actualBoolean = device.SourceSubsystem.ApplyOutputEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.OutputEnabled)} is {actualBoolean }; expected {expectedBoolean }")
 
 #If False Then
 smu.measure.func = smu.FUNC_RESISTANCE
@@ -199,10 +263,10 @@ smu.source.output = smu.OFF
     End Sub
 
     <TestMethod()>
-    Public Sub MeasureResistanceUnitTest()
+    Public Sub SourceCurrentMeasureResistanceUnitTest()
         Using device As Device = Device.Create
             MeasureUnitTests.OpenSession(device)
-            MeasureUnitTests.MeasureResistance(device)
+            MeasureUnitTests.SourceCurrentMeasureResistance(device)
             MeasureUnitTests.CloseSession(device)
         End Using
     End Sub

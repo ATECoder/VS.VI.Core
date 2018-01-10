@@ -562,13 +562,13 @@ Public MustInherit Class MeasureSubsystemBase
 
     ''' <summary> Gets or sets the front terminals selected print query command. </summary>
     ''' <value> The front terminals selected query command. </value>
-    Protected Overridable ReadOnly Property FrontTerminalsSelectedoPrintCommand As String
+    Protected Overridable ReadOnly Property FrontTerminalsSelectedPrintCommand As String
 
     ''' <summary> Queries the Front Terminals Selected sentinel. Also sets the
     ''' <see cref="FrontTerminalsSelected">Enabled</see> sentinel. </summary>
     ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
     Public Function QueryFrontTerminalsSelected() As Boolean?
-        Me.FrontTerminalsSelected = Me.Query(Me.FrontTerminalsSelected, Me.FrontTerminalsSelectedoPrintCommand)
+        Me.FrontTerminalsSelected = Me.Query(Me.FrontTerminalsSelected, Me.FrontTerminalsSelectedPrintCommand)
         Return Me.FrontTerminalsSelected
     End Function
 
@@ -886,14 +886,14 @@ Public MustInherit Class MeasureSubsystemBase
         Return Me.QueryRange
     End Function
 
-    ''' <summary> Gets or sets The Range query command. </summary>
+    ''' <summary> Gets or sets The Range query print command. </summary>
     ''' <value> The Range query command. </value>
-    Protected Overridable ReadOnly Property RangeQueryCommand As String
+    Protected Overridable ReadOnly Property RangePrintCommand As String
 
     ''' <summary> Queries The Range. </summary>
     ''' <returns> The Range or none if unknown. </returns>
     Public Function QueryRange() As Double?
-        Me.Range = Me.Query(Me.Range, Me.RangeQueryCommand)
+        Me.Range = Me.Query(Me.Range, Me.RangePrintCommand)
         Return Me.Range
     End Function
 

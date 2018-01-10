@@ -22,6 +22,32 @@ Public Class SourceSubsystem
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.Level = 0
+        Me.Limit = 1
+        Me.Range = New Double?
+        Me.AutoRangeEnabled = True
+        Me.AutoDelayEnabled = True
+        For Each fm As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
+            Select Case fm
+                Case SourceFunctionMode.CurrentDC
+                    Me.FunctionModeRanges(fm).SetRange(-1.05, 1.05)
+                Case SourceFunctionMode.VoltageDC
+                    Me.FunctionModeRanges(fm).SetRange(-210, 210)
+            End Select
+        Next
+        Me.FunctionMode = SourceFunctionMode.VoltageDC
+        Me.Range = 0.02
+        Me.LimitTripped = False
+        Me.OutputEnabled = False
+    End Sub
+
+#End Region
+
 #Region " PUBLISHER "
 
     ''' <summary> Publishes all values by raising the property changed events. </summary>
@@ -36,6 +62,108 @@ Public Class SourceSubsystem
 #End Region
 
 #Region " COMMAND SYNTAX "
+
+#Region " AUTO DELAY ENABLED "
+
+    ''' <summary> Gets the automatic Delay enabled command Format. </summary>
+    ''' <value> The automatic Delay enabled query command. </value>
+    Protected Overrides ReadOnly Property AutoDelayEnabledCommandFormat As String = "_G.smu.source.autodelay.enable={0:'smu.ON';'smu.ON';'smu.OFF'}"
+
+    ''' <summary> Gets the automatic Delay enabled query command. </summary>
+    ''' <value> The automatic Delay enabled query command. </value>
+    Protected Overrides ReadOnly Property AutoDelayEnabledPrintCommand As String = "_G.print(_G.smu.source.autodelay.enable==smu.ON)"
+
+#End Region
+
+#Region " AUTO RANGE STATE "
+
+    ''' <summary> The Auto Range state command format. </summary>
+    ''' <value> The automatic range state command format. </value>
+    Protected Overrides ReadOnly Property AutoRangeStateCommandFormat As String = "_G.smu.source.autorange={0}"
+
+    ''' <summary> Gets or sets the Auto Range state query command. </summary>
+    ''' <value> The AutoRange state query command. </value>
+    Protected Overrides ReadOnly Property AutoRangeStateQueryCommand As String = "_G.smu.source.autorange"
+
+#End Region
+
+#Region " AUTO RANGE ENABLED "
+
+    ''' <summary> Gets the automatic Range enabled command Format. </summary>
+    ''' <value> The automatic Range enabled query command. </value>
+    Protected Overrides ReadOnly Property AutoRangeEnabledCommandFormat As String = "_G.smu.source.autorange={0:'smu.ON';'smu.ON';'smu.OFF'}"
+
+    ''' <summary> Gets the automatic Range enabled query command. </summary>
+    ''' <value> The automatic Range enabled query command. </value>
+    Protected Overrides ReadOnly Property AutoRangeEnabledPrintCommand As String = "_G.print(_G.smu.source.autorange==smu.ON)"
+
+#End Region
+
+#Region " FUNCTION MODE "
+
+    ''' <summary> Gets or sets the function mode query command. </summary>
+    ''' <value> The function mode query command. </value>
+    Protected Overrides ReadOnly Property FunctionModeQueryCommand As String = "_G.smu.source.func"
+
+    ''' <summary> Gets or sets the function mode command format. </summary>
+    ''' <value> The function mode command format. </value>
+    Protected Overrides ReadOnly Property FunctionModeCommandFormat As String = "_G.smu.source.func={0}"
+
+#End Region
+
+#Region " LEVEL "
+
+    ''' <summary> Gets the level query command. </summary>
+    ''' <value> The level query command. </value>
+    Protected Overrides ReadOnly Property LevelQueryCommand As String = "_G.smu.source.level"
+
+    ''' <summary> Gets the level command format. </summary>
+    ''' <value> The level command format. </value>
+    Protected Overrides ReadOnly Property LevelCommandFormat As String = "_G.smu.source.level={0}"
+
+#End Region
+
+#Region " LIMIT "
+
+    ''' <summary> Gets the limit query command. </summary>
+    ''' <value> The limit query command. </value>
+    Protected Overrides ReadOnly Property LimitQueryCommand As String = "_G.smu.source.{0}limit"
+
+    ''' <summary> Gets the limit command format. </summary>
+    ''' <value> The limit command format. </value>
+    Protected Overrides ReadOnly Property LimitCommandFormat As String = "_G.smu.source.{0}limit={1}"
+
+#End Region
+
+#Region " LIMIT TRIPPED "
+
+    Protected Overrides ReadOnly Property LimitTrippedPrintCommandFormat As String = "_G.print(_G.smu.source.{0}limit.tripped==smu.ON)"
+
+#End Region
+
+#Region " OUTPUT ENABLED "
+
+    ''' <summary> Gets or sets the Output enabled command Format. </summary>
+    ''' <value> The Output enabled query command. </value>
+    Protected Overrides ReadOnly Property OutputEnabledCommandFormat As String = "_G.smu.source.output={0:'smu.ON';'smu.ON';'smu.OFF'}"
+
+    ''' <summary> Gets or sets the Output enabled query print command. </summary>
+    ''' <value> The Output enabled query command. </value>
+    Protected Overrides ReadOnly Property OutputEnabledPrintCommand As String = "_G.print(_G.smu.source.output==smu.ON)"
+
+#End Region
+
+#Region " RANGE "
+
+    ''' <summary> Gets the Range query command. </summary>
+    ''' <value> The Range query command. </value>
+    Protected Overrides ReadOnly Property RangePrintCommand As String = "_G.print(_G.smu.source.range)"
+
+    ''' <summary> Gets the Range command format. </summary>
+    ''' <value> The Range command format. </value>
+    Protected Overrides ReadOnly Property RangeCommandFormat As String = "_G.smu.source.range={0}"
+
+#End Region
 
 #End Region
 
