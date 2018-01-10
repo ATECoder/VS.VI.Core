@@ -1186,7 +1186,7 @@ Public Class Meter
     End Sub
 
     ''' <summary> Applies the settings. </summary>
-    Private Sub ApplySettings()
+    Protected Overrides Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))

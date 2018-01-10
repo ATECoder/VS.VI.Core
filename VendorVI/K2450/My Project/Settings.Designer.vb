@@ -104,7 +104,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.5000000")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.2000000")>  _
         Public Property ResetRefractoryPeriod() As Global.System.TimeSpan
             Get
                 Return CType(Me("ResetRefractoryPeriod"),Global.System.TimeSpan)

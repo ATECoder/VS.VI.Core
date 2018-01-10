@@ -54,15 +54,9 @@ Public MustInherit Class MasterDeviceBase
 
 #Region " I PRESETTABLE "
 
-    ''' <summary> Clears the active state. Issues selective device clear. </summary>
-    Public Overrides Sub ClearActiveState()
-        Me.StatusSubsystem.ClearActiveState()
-    End Sub
-
     ''' <summary> Sets the subsystem to its initial post reset state. </summary>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me.ApplySettings()
         ' establish the current node as the controller node. 
         ' moved to tsp subsystem base with setting the conditional to true when creating the subsystem: 
         ' Me.StatusSubsystem.InitiateControllerNode()
@@ -292,7 +286,7 @@ Public MustInherit Class MasterDeviceBase
     End Sub
 
     ''' <summary> Applies the settings. </summary>
-    Private Sub ApplySettings()
+    Protected Overrides Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))

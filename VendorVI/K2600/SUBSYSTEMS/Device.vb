@@ -70,17 +70,10 @@ Public Class Device
 
 #Region " I PRESETTABLE "
 
-    ''' <summary> Clears the active state. Issues selective device clear. </summary>
-    Public Overrides Sub ClearActiveState()
-        MyBase.ClearActiveState()
-        Me.StatusSubsystem.ClearActiveState()
-    End Sub
-
     ''' <summary> Initializes the Device. Used after reset to set a desired initial state. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me.ApplySettings()
         Try
             Me.Session.StoreTimeout(Me.InitializeTimeout)
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing error queue;. ")
@@ -488,7 +481,7 @@ Public Class Device
     End Sub
 
     ''' <summary> Applies the settings. </summary>
-    Private Sub ApplySettings()
+    Protected Overrides Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))

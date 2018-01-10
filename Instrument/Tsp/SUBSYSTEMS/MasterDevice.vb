@@ -24,11 +24,6 @@ Public Class MasterDevice
 
 #Region " I PRESETTABLE "
 
-    ''' <summary> Clears the active state. Issues selective device clear. </summary>
-    Public Overrides Sub ClearActiveState()
-        Me.StatusSubsystem.ClearActiveState()
-    End Sub
-
     ''' <summary> Sets the subsystem to its initial post reset state. </summary>
     ''' <remarks> Additional Actions: <para>
     '''           </para></remarks>

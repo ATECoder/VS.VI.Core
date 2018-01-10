@@ -55,7 +55,6 @@ Public Class ResourceSelectorConnector
     '''                          <c>False</c> to release only unmanaged resources when called from the
     '''                          runtime finalize. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
@@ -487,6 +486,8 @@ Public Class ResourceSelectorConnector
 
 #Region " CLEAR "
 
+    ''' <summary> Gets or sets the clear tool tip text. </summary>
+    ''' <value> The clear tool tip text. </value>
     Public Property ClearToolTipText As String
         Get
             Return Me._ClearButton.ToolTipText
@@ -578,6 +579,5 @@ Public Class ResourceSelectorConnector
 
 
 #End Region
-
 
 End Class

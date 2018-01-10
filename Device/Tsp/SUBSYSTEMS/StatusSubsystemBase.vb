@@ -49,6 +49,13 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Clears the active state. Issues selective device clear. </summary>
     Public Overrides Sub ClearActiveState()
+        ' A delay is required before issuing a device clear.
+        ' First a 1ms delay was added. Without the delay, the instrument had error -286 TSP Runtime Error and User Abort error 
+        ' if the clear command was issued after turning off the status _G.status.request_enable=0
+        ' Thereafter, the instrument has a resource not found error when trying to connect after failing to connect 
+        ' because instruments were off. Stopping here in debug mode seems to have alleviated this issue.  So,
+        ' the delay was increased to 10 ms.
+        Threading.Thread.Sleep(10)
         MyBase.ClearActiveState()
         Me.QueryOperationCompleted()
     End Sub

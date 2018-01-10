@@ -161,7 +161,7 @@ Public Class DeviceUnitTests
     Private Shared Sub CheckSourceMeasureUnitInfo(ByVal device As Device)
         Dim expectedTotalPower As Double = TestInfo.MaximumOutputPower
         Dim actualTotalPower As Double = device.SourceMeasureUnit.MaximumOutputPower
-        Assert.AreEqual(expectedTotalPower, actualTotalPower, 60 / TimeSpan.TicksPerSecond,
+        Assert.AreEqual(expectedTotalPower, actualTotalPower, TestInfo.LineFrequency / TimeSpan.TicksPerSecond,
                         $"Source measure unit total power is {actualTotalPower:G5}; expected {expectedTotalPower:G5}")
     End Sub
 

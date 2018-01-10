@@ -1,4 +1,5 @@
 Imports isr.Core.Pith
+Imports isr.Core.Pith.StopwatchExtensions
 Imports isr.VI.National.Visa
 ''' <summary> Defines the contract that must be implemented by Subsystems. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
@@ -23,6 +24,7 @@ Public MustInherit Class SubsystemBase
         MyBase.New()
         Me._ApplySession(visaSession)
         Me._Talker = New TraceMessageTalker
+        Me._PresetRefractoryPeriod = TimeSpan.FromMilliseconds(100)
     End Sub
 
     ''' <summary> Cleans up unmanaged or managed and unmanaged resources. </summary>
@@ -59,13 +61,32 @@ Public MustInherit Class SubsystemBase
 
     ''' <summary> Sets the subsystem to its preset state. </summary>
     Public Overridable Sub PresetKnownState() Implements IPresettable.PresetKnownState
-        If Not String.IsNullOrWhiteSpace(Me.PresetCommand) Then Me.Write(Me.PresetCommand)
+        If Not String.IsNullOrWhiteSpace(Me.PresetCommand) Then
+            Me.Write(Me.PresetCommand)
+            If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(Me.PresetRefractoryPeriod)
+        End If
     End Sub
 
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overridable Sub ResetKnownState() Implements IPresettable.ResetKnownState
         If Me.Session Is Nothing Then Throw New InvalidOperationException("Subsystem must have a valid session instance")
     End Sub
+
+    Private _PresetRefractoryPeriod As TimeSpan
+    ''' <summary> Gets the Preset refractory period. </summary>
+    ''' <value> The Preset refractory period. </value>
+    Public Property PresetRefractoryPeriod As TimeSpan
+        Get
+            Return Me._PresetRefractoryPeriod
+        End Get
+        Set(value As TimeSpan)
+            If Not value.Equals(Me.PresetRefractoryPeriod) Then
+                Me._PresetRefractoryPeriod = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
 
 #End Region
 

@@ -83,17 +83,10 @@ Public Class Device
 
 #Region " I PRESETTABLE PUBLISHER "
 
-    ''' <summary> Clears the Device. Issues <see cref="StatusSubsystemBase.ClearActiveState">Selective
-    ''' Device Clear</see>. </summary>
-    Public Overrides Sub ClearActiveState()
-        Me.StatusSubsystem.ClearActiveState()
-    End Sub
-
     ''' <summary> Initializes the Device. Used after reset to set a desired initial state. </summary>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
-        Me.ApplySettings()
     End Sub
 
     ''' <summary> Publishes all values by raising the property changed events. </summary>
@@ -352,7 +345,7 @@ Public Class Device
     End Sub
 
     ''' <summary> Applies the settings. </summary>
-    Private Sub ApplySettings()
+    Protected Overrides Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))

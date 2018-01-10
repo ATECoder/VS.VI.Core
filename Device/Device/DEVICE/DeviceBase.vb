@@ -40,13 +40,8 @@ Public MustInherit Class DeviceBase
         End If
         Me._Subsystems = New SubsystemCollection
         Me._ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter
-        Me._InitializeTimeout = TimeSpan.FromMilliseconds(30000)
         Me._UsingSyncServiceRequestHandler = True
         Me._Talker = New TraceMessageTalker
-        Me._DeviceClearRefractoryPeriod = TimeSpan.FromMilliseconds(1000)
-        Me._ResetRefractoryPeriod = TimeSpan.FromMilliseconds(1000)
-        Me._InitRefractoryPeriod = TimeSpan.FromMilliseconds(100)
-        Me._ClearRefractoryPeriod = TimeSpan.FromMilliseconds(100)
         Me._ResourceTitle = DeviceBase.DefaultResourceTitle
         Me._ResourceName = DeviceBase.ResourceNameClosed
     End Sub
@@ -108,24 +103,12 @@ Public MustInherit Class DeviceBase
 
 #Region " I PRESETTABLE "
 
-    Private _InitializeTimeout As TimeSpan
-    ''' <summary> Gets or sets the time out for doing a reset and clear on the instrument. </summary>
-    ''' <value> The connect timeout. </value>
-    Public Property InitializeTimeout() As TimeSpan
-        Get
-            Return Me._InitializeTimeout
-        End Get
-        Set(ByVal value As TimeSpan)
-            If Not value.Equals(Me.InitializeTimeout) Then
-                Me._InitializeTimeout = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Clears the Device. Issues <see cref="StatusSubsystemBase.ClearActiveState">Selective device clear</see>. </summary>
+    ''' <summary> Applies default settings and clears the Device. Issues <see cref="StatusSubsystemBase.ClearActiveState">Selective device clear</see>. </summary>
     Public Overridable Sub ClearActiveState()
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceName} Clearing active state")
+        Me.StatusSubsystemBase.ClearActiveState()
+        ' 20180105: report any errors
+        Me.publishErrorEvent(TraceEventType.Warning)
     End Sub
 
     ''' <summary> Clears the queues and resets all registers to zero. Sets the subsystem properties to
@@ -167,105 +150,24 @@ Public MustInherit Class DeviceBase
         Me.publishErrorEvent(TraceEventType.Warning)
     End Sub
 
-    Private _DeviceClearRefractoryPeriod As TimeSpan
-    ''' <summary> Gets the device clear refractory period. </summary>
-    ''' <value> The device clear refractory period. </value>
-    Public Property DeviceClearRefractoryPeriod As TimeSpan
-        Get
-            Return Me._DeviceClearRefractoryPeriod
-        End Get
-        Set(value As TimeSpan)
-            If Not value.Equals(Me.DeviceClearRefractoryPeriod) Then
-                Me._DeviceClearRefractoryPeriod = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    Private _ResetRefractoryPeriod As TimeSpan
-    ''' <summary> Gets the reset refractory period. </summary>
-    ''' <value> The reset refractory period. </value>
-    Public Property ResetRefractoryPeriod As TimeSpan
-        Get
-            Return Me._ResetRefractoryPeriod
-        End Get
-        Set(value As TimeSpan)
-            If Not value.Equals(Me.ResetRefractoryPeriod) Then
-                Me._ResetRefractoryPeriod = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    Private _InitRefractoryPeriod As TimeSpan
-    ''' <summary> Gets the initialize refractory period. </summary>
-    ''' <value> The initialize refractory period. </value>
-    Public Property InitRefractoryPeriod As TimeSpan
-        Get
-            Return Me._InitRefractoryPeriod
-        End Get
-        Set(value As TimeSpan)
-            If Not value.Equals(Me.DeviceClearRefractoryPeriod) Then
-                Me._InitRefractoryPeriod = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    Private _ClearRefractoryPeriod As TimeSpan
-    ''' <summary> Gets the clear refractory period. </summary>
-    ''' <value> The clear refractory period. </value>
-    Public Property ClearRefractoryPeriod As TimeSpan
-        Get
-            Return Me._ClearRefractoryPeriod
-        End Get
-        Set(value As TimeSpan)
-            If Not value.Equals(Me.ClearRefractoryPeriod) Then
-                Me._ClearRefractoryPeriod = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary>
-    ''' Resets, clears and initializes the device. Starts with issuing a selective-device-clear, reset (RST),
-    ''' Clear Status (CLS, and clear error queue) and initialize.
-    ''' </summary>
-    ''' <param name="deviceClearRefractoryPeriod"> The device clear refractory period. </param>
-    ''' <param name="resetRefractoryPeriod">       The reset refractory period. </param>
-    ''' <param name="initRefractoryPeriod">        The initialize refractory period. </param>
-    ''' <param name="clearRefractoryPeriod">       The clear refractory period. </param>
-    Public Sub ResetClearInit(ByVal deviceClearRefractoryPeriod As TimeSpan,
-                              ByVal resetRefractoryPeriod As TimeSpan,
-                              ByVal initRefractoryPeriod As TimeSpan,
-                              ByVal clearRefractoryPeriod As TimeSpan)
-
-        ' issues selective device clear.
-        Me.ClearActiveState()
-        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(deviceClearRefractoryPeriod)
-
-        ' reset device
-        Me.ResetKnownState()
-        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(resetRefractoryPeriod)
-
-        ' Clear the device Status and set more defaults
-        Me.ClearExecutionState()
-        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(clearRefractoryPeriod)
-
-        ' initialize the device must be done after clear (5892)
-        Me.InitKnownState()
-        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(initRefractoryPeriod)
-
-
-    End Sub
-
     ''' <summary>
     ''' Resets, clears and initializes the device. Starts with issuing a selective-device-clear, reset (RST),
     ''' Clear Status (CLS, and clear error queue) and initialize.
     ''' </summary>
     Public Overridable Sub ResetClearInit()
-        Me.ResetClearInit(Me.DeviceClearRefractoryPeriod, Me.ResetRefractoryPeriod,
-                          Me.InitRefractoryPeriod, Me.ClearRefractoryPeriod)
+
+        ' issues selective device clear.
+        Me.ClearActiveState()
+
+        ' reset device
+        Me.ResetKnownState()
+
+        ' Clear the device Status and set more defaults
+        Me.ClearExecutionState()
+
+        ' initialize the device must be done after clear (5892)
+        Me.InitKnownState()
+
     End Sub
 
     ''' <summary>
@@ -562,6 +464,7 @@ Public MustInherit Class DeviceBase
     ''' </remarks>
     Protected Overridable Sub OnOpened()
 
+        Me.ApplySettings()
         Me.Session?.CaptureSyncContext(Me.CapturedSyncContext)
         Me.Subsystems?.CaptureSyncContext(Me.CapturedSyncContext)
 
@@ -588,6 +491,7 @@ Public MustInherit Class DeviceBase
 
     End Sub
 
+    ''' <summary> Executes the initialized action. </summary>
     Protected Overridable Sub OnInitialized()
         ' publish 
         Me.ResumePublishing()
@@ -1268,6 +1172,13 @@ Public MustInherit Class DeviceBase
 
 #End Region
 
+#Region " MY SETTINGS "
+
+    ''' <summary> Applies the settings. </summary>
+    Protected MustOverride Sub ApplySettings()
+
+#End Region
+
 #Region " TALKER "
 
     ''' <summary> Gets the trace message talker. </summary>
@@ -1300,7 +1211,7 @@ Public MustInherit Class DeviceBase
     ''' <param name="value">        The value. </param>
     Public Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyListenerTraceLevel
         Me.Talker.ApplyListenerTraceLevel(listenerType, value)
-        Me.Subsystems?.ApplyListenerTraceLevel(listenerType, value)
+        Me.Subsystems.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
     ''' <summary> Applies the trace level type to all talkers. </summary>
@@ -1308,7 +1219,7 @@ Public MustInherit Class DeviceBase
     ''' <param name="value">        The value. </param>
     Public Overridable Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyTalkerTraceLevel
         Me.Talker.ApplyTalkerTraceLevel(listenerType, value)
-        Me.Subsystems?.ApplyTalkerTraceLevel(listenerType, value)
+        Me.Subsystems.ApplyTalkerTraceLevel(listenerType, value)
     End Sub
 
     ''' <summary> Applies the talker trace levels described by talker. </summary>
@@ -1321,8 +1232,8 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Adds subsystem listeners. </summary>
     Public Overridable Sub AddSubsystemListeners()
-        Me.Subsystems?.ApplyTalkerTraceLevel(ListenerType.Logger, Me.Talker.TraceLogLevel)
-        Me.Subsystems?.ApplyTalkerTraceLevel(ListenerType.Display, Me.Talker.TraceShowLevel)
+        Me.Subsystems.ApplyTalkerTraceLevel(ListenerType.Logger, Me.Talker.TraceLogLevel)
+        Me.Subsystems.ApplyTalkerTraceLevel(ListenerType.Display, Me.Talker.TraceShowLevel)
         Me.Subsystems.AddListeners(Me.Talker)
     End Sub
 
@@ -1341,3 +1252,21 @@ Public MustInherit Class DeviceBase
 
 End Class
 
+#Region " UNUSED "
+#If False Then
+    Private _InitializeTimeout As TimeSpan
+    ''' <summary> Gets or sets the time out for doing a reset and clear on the instrument. </summary>
+    ''' <value> The connect timeout. </value>
+    Public Property InitializeTimeout() As TimeSpan
+        Get
+            Return Me._InitializeTimeout
+        End Get
+        Set(ByVal value As TimeSpan)
+            If Not value.Equals(Me.InitializeTimeout) Then
+                Me._InitializeTimeout = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+   End Property
+#End If
+#End Region

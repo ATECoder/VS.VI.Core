@@ -25,6 +25,7 @@ Public Class ResourceControlBase
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
         Me.New(ResourceSelectorConnector.Create)
+        Me._IsConnectorOwner = True
     End Sub
 
     ''' <summary> Specialized default constructor for use only by derived classes. </summary>
@@ -33,6 +34,7 @@ Public Class ResourceControlBase
         MyBase.New()
         Me.InitializeComponent()
         Me.AssignConnector(connector)
+        Me._IsConnectorOwner = False
     End Sub
 
     ''' <summary>
@@ -43,10 +45,11 @@ Public Class ResourceControlBase
     '''                          <c>False</c> to release only unmanaged resources when called from the
     '''                          runtime finalize. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                If Me.IsConnectorOwner Then Me.Connector.Dispose()
+                Me.Connector = Nothing
                 If Me.DeviceBase IsNot Nothing Then
                     Try
                         ' this is required to release the device event handlers associated with this panel. 
@@ -64,7 +67,6 @@ Public Class ResourceControlBase
                 Me._ElapsedTimeStopwatch = Nothing
                 ' unable to use null conditional because it is not seen by code analysis
                 ' If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
-
             End If
         Finally
             MyBase.Dispose(disposing)
@@ -372,7 +374,6 @@ Public Class ResourceControlBase
             RemoveHandler Me.DeviceBase.Closed, AddressOf Me.DeviceClosed
             RemoveHandler Me.DeviceBase.Initialized, AddressOf Me.DeviceInitialized
             RemoveHandler Me.DeviceBase.Initializing, AddressOf Me.DeviceInitializing
-            Me.Connector.ResourcesFilter = ""
             ' note that service request is released when device closes.
             Me.StatusSubsystem = Nothing
             ' this also closes the session. 
@@ -380,6 +381,7 @@ Public Class ResourceControlBase
         End If
         Me._ElapsedTimeStopwatch = New Stopwatch
         If Me.Connector IsNot Nothing Then
+            Me.Connector.ResourcesFilter = ""
             Me.Connector.Clearable = True
             Me.Connector.Connectable = True
             Me.Connector.Searchable = True
@@ -529,25 +531,61 @@ Public Class ResourceControlBase
 
 #Region " OPENING / OPEN "
 
-    ''' <summary> Connects the instrument by opening a visa session. </summary>
+    ''' <summary> Attempts to open a session to the device using the specified resource name. </summary>
+    ''' <param name="resourceName">  The name of the resource. </param>
+    ''' <param name="resourceTitle"> The title. </param>
+    ''' <param name="e">             Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:   DoNotCatchGeneralExceptionTypes")>
-    Private Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
-        Try
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opening {0};. ", resourceName)
+    Public Function TryOpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal e As CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If Me.InvokeRequired Then
+            Me.Invoke(New Action(Of String, String, CancelDetailsEventArgs)(AddressOf Me.TryOpenSession), New Object() {resourceName, resourceTitle, e})
+        Else
+            Try
+                Me.OpenSession(resourceName, resourceTitle)
+                If Not Me.DeviceBase.IsDeviceOpen Then
+                    e.RegisterCancellation($"failed opening {resourceName} VISA session;. ")
+                End If
+            Catch ex As Exception
+                e.RegisterCancellation($"Exception opening {resourceName} VISA session;. {ex.ToFullBlownString}")
+            Finally
+                Me.Connector.IsConnected = Me.IsDeviceOpen
+                Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+            End Try
+        End If
+        Return Not e.Cancel
+    End Function
+
+    ''' <summary> Attempts to open a session to the device using the connector resource name and title. </summary>
+    Public Function TryOpenSession(ByVal e As CancelDetailsEventArgs) As Boolean
+        Return Me.TryOpenSession(Me.Connector.SelectedResourceName, Me.ResourceTitle, e)
+    End Function
+
+    ''' <summary>
+    ''' Opens a session to the device using the specified resource name.
+    ''' </summary>
+    ''' <param name="resourceName">  The name of the resource. </param>
+    ''' <param name="resourceTitle"> The title. </param>
+    Public Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
+        If Me.InvokeRequired Then
+            Me.Invoke(New Action(Of String, String)(AddressOf Me.OpenSession), New Object() {resourceName, resourceTitle})
+        Else
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opening {0} VISA session;. ", resourceName)
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
             Me.DeviceBase.OpenSession(resourceName, resourceTitle)
             If Me.DeviceBase.IsDeviceOpen Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opened {0};. ", resourceName)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opened {0} VISA session;. ", resourceName)
             Else
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Open {0} Failed;. ", resourceName)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed opening {0} VISA session;. ", resourceName)
             End If
-        Catch ex As OperationFailedException
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed opening {resourceName};. {ex.ToFullBlownString}")
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening {resourceName};. {ex.ToFullBlownString}")
-        Finally
-            Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
-        End Try
+            Me.Connector.IsConnected = Me.IsDeviceOpen
+        End If
+    End Sub
+
+    ''' <summary> Opens a session to the instrument. </summary>
+    Public Sub OpenSession()
+        Me.OpenSession(Me.Connector.SelectedResourceName, Me.ResourceTitle)
     End Sub
 
     ''' <summary> Event handler. Called upon device opening. </summary>
@@ -605,15 +643,44 @@ Public Class ResourceControlBase
 
 #Region " CLOSING / CLOSED "
 
-    ''' <summary> Disconnects the instrument by closing the open session. </summary>
-    Private Sub CloseSession()
-        If Me.DeviceBase.IsDeviceOpen Then
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Releasing {0};. ", Me.DeviceBase.ResourceName)
-        End If
-        If Me.DeviceBase.TryCloseSession() Then
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Released {0};. ", Me.Connector.SelectedResourceName)
+    ''' <summary> Attempts to close session from the given data. </summary>
+    ''' <param name="e"> Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:   DoNotCatchGeneralExceptionTypes")>
+    Public Function TryCloseSession(ByVal e As CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If Me.InvokeRequired Then
+            Me.Invoke(New Action(Of CancelDetailsEventArgs)(AddressOf Me.TryCloseSession), New Object() {e})
         Else
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed releasing {0};. ", Me.Connector.SelectedResourceName)
+            Try
+                Me.CloseSession()
+                If Me.DeviceBase.IsDeviceOpen Then
+                    e.RegisterCancellation($"Failed closing {ResourceName} VISA session;. ")
+                End If
+            Catch ex As Exception
+                e.RegisterCancellation($"Exception closing {ResourceName} VISA session;. {ex.ToFullBlownString}")
+            Finally
+                Me.Connector.IsConnected = Me.IsDeviceOpen
+                Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
+            End Try
+        End If
+        Return Not e.Cancel
+    End Function
+
+    ''' <summary> Closes the instrument VISA session if open. </summary>
+    Public Sub CloseSession()
+        If Me.InvokeRequired Then
+            Me.Invoke(New Action(AddressOf Me.CloseSession))
+        Else
+            If Me.DeviceBase.IsDeviceOpen Then
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Closing {0} VISA session;. ", Me.DeviceBase.ResourceName)
+            End If
+            If Me.DeviceBase.TryCloseSession() Then
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Closed {0} VISA session;. ", Me.Connector.SelectedResourceName)
+            Else
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed closing {0} VISA session;. ", Me.Connector.SelectedResourceName)
+            End If
+            Me.Connector.IsConnected = Me.IsDeviceOpen
         End If
     End Sub
 
@@ -654,6 +721,10 @@ Public Class ResourceControlBase
 
 #Region " CONNECTOR SELECTOR EVENT HANDLERS "
 
+    ''' <summary> Gets or sets the is connector that owns this item. </summary>
+    ''' <value> The is connector owner. </value>
+    Public Property IsConnectorOwner As Boolean
+
     Private _Connector As ResourceSelectorConnector
 
     ''' <summary> Gets or sets the connector. </summary>
@@ -688,108 +759,37 @@ Public Class ResourceControlBase
         End If
     End Sub
 
-
-    ''' <summary> Connects. </summary>
-    ''' <param name="e"> The e to connect. </param>
-    Public Sub TryConnect(ByVal e As System.ComponentModel.CancelEventArgs)
-        Me.Connect(Me.Connector, e)
-    End Sub
-
-    ''' <summary> Connects. </summary>
-    ''' <param name="e"> The e to connect. </param>
-    Public Sub Connect(ByVal e As System.ComponentModel.CancelEventArgs)
-        If Me.InvokeRequired Then
-            Me.Invoke(New Action(Of Object, System.ComponentModel.CancelEventArgs)(AddressOf Me.Connect), New Object() {e})
-        Else
-            Me.OnConnect(e)
-        End If
-    End Sub
-
-    ''' <summary> Connects the instrument by calling a propagating connect command. </summary>
-    ''' <param name="e">      Specifies the event arguments provided with the call. </param>
-    Protected Overridable Sub OnConnect(ByVal e As System.ComponentModel.CancelEventArgs)
-        Me.OpenSession(Me.Connector.SelectedResourceName, Me.ResourceTitle)
-        ' cancel if failed to open
-        If e IsNot Nothing AndAlso Not Me.IsDeviceOpen Then e.Cancel = True
-        Me.Connector.IsConnected = Me.IsDeviceOpen
-    End Sub
-
     ''' <summary> Connects. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Cancel event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs)
-        Dim action As String = "Connecting"
-        Try
-            If Me.InvokeRequired Then
-                Me.Invoke(New Action(Of Object, System.ComponentModel.CancelEventArgs)(AddressOf Me.Connect), New Object() {sender, e})
-            Else
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{action};. {Me.Connector.SelectedResourceName}")
-                Me.OnConnect(e)
-                If e.Cancel Then
-                    action = $"connection failed;. resource {Me.Connector.SelectedResourceName} is not open"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, action)
-                Else
-                    action = $"connected;. {Me.Connector.SelectedResourceName}"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, action)
-                End If
-            End If
-        Catch ex As Exception
-            e.Cancel = True
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
-        End Try
-    End Sub
-
-    ''' <summary> Disconnects the instrument by calling a propagating disconnect command. </summary>
-    ''' <param name="e"> The e to disconnect. </param>
-    Public Sub TryDisconnect(ByVal e As System.ComponentModel.CancelEventArgs)
-        Me.Disconnect(Me.Connector, e)
-    End Sub
-
-    ''' <summary> Disconnects the instrument by calling a propagating disconnect command. </summary>
-    ''' <param name="e"> The e to disconnect. </param>
-    Public Sub Disconnect(ByVal e As System.ComponentModel.CancelEventArgs)
-        If Me.InvokeRequired Then
-            Me.Invoke(New Action(Of Object, System.ComponentModel.CancelEventArgs)(AddressOf Me.Disconnect), New Object() {e})
+    Private Sub Connect(ByVal sender As Object, ByVal e As CancelEventArgs)
+        Dim args As New CancelDetailsEventArgs
+        Me.TryOpenSession(args)
+        e.Cancel = args.Cancel
+        If e.Cancel Then
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                              $"Failed opening session to resource; {Me.Connector.SelectedResourceName}; details: {args.Details}")
         Else
-            Me.OnDisconnect(e)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"connected;. {Me.Connector.SelectedResourceName}")
         End If
     End Sub
 
-    ''' <summary> Raises the system. component model. cancel event. </summary>
-    ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overridable Sub OnDisconnect(ByVal e As System.ComponentModel.CancelEventArgs)
-        Me.CloseSession()
-        ' Cancel if failed to close
-        If e IsNot Nothing AndAlso Me.IsDeviceOpen Then e.Cancel = True
-        Me.Connector.IsConnected = Me.IsDeviceOpen
-    End Sub
-
-    ''' <summary> Disconnects the instrument by calling a propagating disconnect command. </summary>
-    ''' <param name="sender"> Specifies the object where the call originated. </param>
-    ''' <param name="e">      Specifies the event arguments provided with the call. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs)
-        Dim action As String = "Disconnecting"
-        Try
-            If Me.InvokeRequired Then
-                Me.Invoke(New Action(Of Object, System.ComponentModel.CancelEventArgs)(AddressOf Me.Disconnect), New Object() {sender, e})
-            Else
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{action};. {Me.Connector.SelectedResourceName}")
-                Me.OnDisconnect(e)
-                If e.Cancel Then
-                    action = $"disconnection failed;. resource {Me.Connector.SelectedResourceName} still open"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, action)
-                Else
-                    action = $"disconnected;. {Me.Connector.SelectedResourceName}"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, action)
-                End If
-            End If
-        Catch ex As Exception
-            e.Cancel = True
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
-        End Try
+    ''' <summary> Disconnects this object. </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Cancel event information. </param>
+    Private Sub Disconnect(ByVal sender As Object, ByVal e As CancelEventArgs)
+        Dim args As New CancelDetailsEventArgs
+        Me.TryCloseSession(args)
+        e.Cancel = args.Cancel
+        If e.Cancel Then
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                              $"Failed closing session to resource; {Me.Connector.SelectedResourceName}; details: {args.Details}")
+        Else
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Disconnected;. {Me.Connector.SelectedResourceName}")
+        End If
     End Sub
 
     ''' <summary> Clears the instrument by calling a propagating clear command. </summary>
@@ -805,7 +805,7 @@ Public Class ResourceControlBase
         Dim action As String = "Resetting, clearing and initializing resource to know state"
         Try
             If Me.InvokeRequired Then
-                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.ConnectorPropertyChanged), New Object() {sender, e})
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.ClearDevice), New Object() {sender, e})
             Else
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{action};. {Me.Connector.SelectedResourceName}")
                 Me.ClearDevice()
@@ -854,7 +854,7 @@ Public Class ResourceControlBase
         Dim action As String = "Finding resource names"
         Try
             If Me.InvokeRequired Then
-                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.ConnectorPropertyChanged), New Object() {sender, e})
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.FindResourceNames), New Object() {sender, e})
             Else
                 Me.DisplayResourceNames()
             End If
@@ -887,7 +887,8 @@ Public Class ResourceControlBase
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ConnectorPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        If e Is Nothing Then Return
+        ' the connector keeps sending events even after it is disposed and set to nothing!
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.ConnectorPropertyChanged), New Object() {sender, e})

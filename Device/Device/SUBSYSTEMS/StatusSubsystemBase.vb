@@ -1,5 +1,6 @@
 ﻿Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.StackTraceExtensions
+Imports isr.Core.Pith.StopwatchExtensions
 Imports isr.VI.National.Visa
 ''' <summary> Defines the contract that must be implemented by Status Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
@@ -39,6 +40,12 @@ Public MustInherit Class StatusSubsystemBase
 
         If visaSession IsNot Nothing Then AddHandler visaSession.PropertyChanged, AddressOf Me.SessionPropertyChanged
 
+        Me._InitializeTimeout = TimeSpan.FromMilliseconds(30000)
+        Me._DeviceClearRefractoryPeriod = TimeSpan.FromMilliseconds(1050)
+        Me._ResetRefractoryPeriod = TimeSpan.FromMilliseconds(200)
+        Me._InitRefractoryPeriod = TimeSpan.FromMilliseconds(100)
+        Me._ClearRefractoryPeriod = TimeSpan.FromMilliseconds(100)
+
     End Sub
 
     ''' <summary>
@@ -66,9 +73,10 @@ Public MustInherit Class StatusSubsystemBase
 #Region " I PRESETTABLE "
 
     ''' <summary> Clears the active state.
-    '''           Issues selective device clear. </summary>
+    '''           Issues selective device clear. Waits for the <see cref="DeviceClearRefractoryPeriod"/> before releasing control. </summary>
     Public Overridable Sub ClearActiveState()
         Me.ClearService()
+        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(Me.DeviceClearRefractoryPeriod)
     End Sub
 
     ''' <summary> Gets the clear execution state command. </summary>
@@ -82,6 +90,7 @@ Public MustInherit Class StatusSubsystemBase
     '''           '*CLS' clears the error queue. </remarks>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
+        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(Me.ClearRefractoryPeriod)
         If Not String.IsNullOrWhiteSpace(Me.ClearExecutionStateCommand) Then
             Me.QueryOperationCompleted()
             Me.Session.WriteLine(Me.ClearExecutionStateCommand)
@@ -115,6 +124,7 @@ Public MustInherit Class StatusSubsystemBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
+        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(Me.InitRefractoryPeriod)
         Try
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing error queue;. ")
             Me.ClearErrorQueue()
@@ -149,10 +159,86 @@ Public MustInherit Class StatusSubsystemBase
             Me.Session.ReadServiceRequestStatus()
         End If
         Me.Session.Execute(Me.ResetKnownStateCommand)
+        If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(Me.ResetRefractoryPeriod)
         Me.QueryOperationCompleted()
         Me.QueryLineFrequency()
         Me.ReadServiceRequestStatus()
     End Sub
+
+    Private _InitializeTimeout As TimeSpan
+    ''' <summary> Gets or sets the time out for doing a reset and clear on the instrument. </summary>
+    ''' <value> The connect timeout. </value>
+    Public Property InitializeTimeout() As TimeSpan
+        Get
+            Return Me._InitializeTimeout
+        End Get
+        Set(ByVal value As TimeSpan)
+            If Not value.Equals(Me.InitializeTimeout) Then
+                Me._InitializeTimeout = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _DeviceClearRefractoryPeriod As TimeSpan
+    ''' <summary> Gets the device clear refractory period. </summary>
+    ''' <value> The device clear refractory period. </value>
+    Public Property DeviceClearRefractoryPeriod As TimeSpan
+        Get
+            Return Me._DeviceClearRefractoryPeriod
+        End Get
+        Set(value As TimeSpan)
+            If Not value.Equals(Me.DeviceClearRefractoryPeriod) Then
+                Me._DeviceClearRefractoryPeriod = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ResetRefractoryPeriod As TimeSpan
+    ''' <summary> Gets the reset refractory period. </summary>
+    ''' <value> The reset refractory period. </value>
+    Public Property ResetRefractoryPeriod As TimeSpan
+        Get
+            Return Me._ResetRefractoryPeriod
+        End Get
+        Set(value As TimeSpan)
+            If Not value.Equals(Me.ResetRefractoryPeriod) Then
+                Me._ResetRefractoryPeriod = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _InitRefractoryPeriod As TimeSpan
+    ''' <summary> Gets the initialize refractory period. </summary>
+    ''' <value> The initialize refractory period. </value>
+    Public Property InitRefractoryPeriod As TimeSpan
+        Get
+            Return Me._InitRefractoryPeriod
+        End Get
+        Set(value As TimeSpan)
+            If Not value.Equals(Me.DeviceClearRefractoryPeriod) Then
+                Me._InitRefractoryPeriod = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ClearRefractoryPeriod As TimeSpan
+    ''' <summary> Gets the clear refractory period. </summary>
+    ''' <value> The clear refractory period. </value>
+    Public Property ClearRefractoryPeriod As TimeSpan
+        Get
+            Return Me._ClearRefractoryPeriod
+        End Get
+        Set(value As TimeSpan)
+            If Not value.Equals(Me.ClearRefractoryPeriod) Then
+                Me._ClearRefractoryPeriod = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
 #End Region
 
@@ -1411,6 +1497,10 @@ Public MustInherit Class StatusSubsystemBase
         End Set
     End Property
 
+    ''' <summary> Gets or sets the default line frequency. </summary>
+    ''' <value> The default line frequency. </value>
+    Public Shared Property DefaultLineFrequency As Double = 60
+
     ''' <summary> Gets line frequency query command. </summary>
     ''' <value> The line frequency query command. </value>
     Protected Overridable ReadOnly Property LineFrequencyQueryCommand As String
@@ -1419,11 +1509,11 @@ Public MustInherit Class StatusSubsystemBase
     ''' <returns> System.Nullable{System.Double}. </returns>
     ''' <remarks> Sends the <see cref="LineFrequencyQueryCommand"/> query. </remarks>
     Public Function QueryLineFrequency() As Double?
-        If Not StatusSubsystemBase.StationLineFrequency.HasValue Then
+        If Not Me.LineFrequency.HasValue Then
             If String.IsNullOrWhiteSpace(Me.LineFrequencyQueryCommand) Then
-                Me.LineFrequency = 60
+                Me.LineFrequency = StatusSubsystemBase.DefaultLineFrequency
             Else
-                Me.LineFrequency = Me.Session.Query(Me.LineFrequency.GetValueOrDefault(60), Me.LineFrequencyQueryCommand)
+                Me.LineFrequency = Me.Session.Query(Me.LineFrequency.GetValueOrDefault(StatusSubsystemBase.DefaultLineFrequency), Me.LineFrequencyQueryCommand)
             End If
         End If
         Return Me.LineFrequency
@@ -1433,14 +1523,14 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="powerLineCycles"> The power line cycles. </param>
     ''' <returns> The integration period corresponding to the specified number of power line . </returns>
     Public Shared Function FromPowerLineCycles(ByVal powerLineCycles As Double) As TimeSpan
-        Return StatusSubsystemBase.FromPowerLineCycles(powerLineCycles, StatusSubsystemBase.StationLineFrequency.GetValueOrDefault(60))
+        Return StatusSubsystemBase.FromPowerLineCycles(powerLineCycles, StatusSubsystemBase.StationLineFrequency.GetValueOrDefault(StatusSubsystemBase.DefaultLineFrequency))
     End Function
 
     ''' <summary> Converts integration period to Power line cycles. </summary>
     ''' <param name="integrationPeriod"> The integration period. </param>
     ''' <returns> The number of power line cycles corresponding to the integration period. </returns>
     Public Shared Function ToPowerLineCycles(ByVal integrationPeriod As TimeSpan) As Double
-        Return StatusSubsystemBase.ToPowerLineCycles(integrationPeriod, StatusSubsystemBase.StationLineFrequency.GetValueOrDefault(60))
+        Return StatusSubsystemBase.ToPowerLineCycles(integrationPeriod, StatusSubsystemBase.StationLineFrequency.GetValueOrDefault(StatusSubsystemBase.DefaultLineFrequency))
     End Function
 
     ''' <summary> Converts power line cycles to time span. </summary>

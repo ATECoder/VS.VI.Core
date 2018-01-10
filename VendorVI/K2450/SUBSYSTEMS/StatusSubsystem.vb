@@ -23,6 +23,7 @@ Public Class StatusSubsystem
 
 #Region " I PRESETTABLE "
 
+#If False Then
     ''' <summary> Clears the active state. Issues selective device clear. </summary>
     Public Overrides Sub ClearActiveState()
         ' A delay is required before issuing a device clear.
@@ -34,9 +35,8 @@ Public Class StatusSubsystem
         Threading.Thread.Sleep(10)
         MyBase.ClearActiveState()
         Me.QueryOperationCompleted()
-        ' 20180105: report any errors
-        Me.ReadServiceRequestStatus()
     End Sub
+#End If
 
 #End Region
 

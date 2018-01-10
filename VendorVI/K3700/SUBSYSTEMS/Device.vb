@@ -18,7 +18,6 @@ Public Class Device
     ''' <summary> Initializes a new instance of the <see cref="DeviceBase" /> class. </summary>
     Public Sub New()
         MyBase.New()
-        Me.InitializeTimeout = TimeSpan.FromMilliseconds(30000)
         AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 
@@ -35,7 +34,6 @@ Public Class Device
         End Try
         Return device
     End Function
-
 
 #Region " I Disposable Support"
 
@@ -73,17 +71,10 @@ Public Class Device
 
 #Region " I PRESETTABLE "
 
-    ''' <summary> Clears the active state. Issues selective device clear. </summary>
-    Public Overrides Sub ClearActiveState()
-        MyBase.ClearActiveState()
-        Me.StatusSubsystem.ClearActiveState()
-    End Sub
-
     ''' <summary> Initializes the Device. Used after reset to set a desired initial state. </summary>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
-        Me.ApplySettings()
     End Sub
 
 #End Region
@@ -452,10 +443,15 @@ Public Class Device
     End Sub
 
     ''' <summary> Applies the settings. </summary>
-    Private Sub ApplySettings()
+    Protected Overrides Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.InitializeTimeout))
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.ResetRefractoryPeriod))
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.DeviceClearRefractoryPeriod))
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.InitRefractoryPeriod))
+        Me.OnSettingsPropertyChanged(settings, NameOf(settings.ClearRefractoryPeriod))
     End Sub
 
     ''' <summary> Handle the Platform property changed event. </summary>
@@ -466,10 +462,25 @@ Public Class Device
         Select Case propertyName
             Case NameOf(sender.TraceLogLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Logger, sender.TraceLogLevel)
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace log level changed to {sender.TraceLogLevel}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.TraceLogLevel}")
             Case NameOf(sender.TraceShowLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.TraceShowLevel}")
+            Case NameOf(sender.InitializeTimeout)
+                Me.StatusSubsystemBase.InitializeTimeout = sender.InitializeTimeout
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitializeTimeout}")
+            Case NameOf(sender.ResetRefractoryPeriod)
+                Me.StatusSubsystemBase.ResetRefractoryPeriod = sender.ResetRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ResetRefractoryPeriod}")
+            Case NameOf(sender.DeviceClearRefractoryPeriod)
+                Me.StatusSubsystemBase.DeviceClearRefractoryPeriod = sender.DeviceClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.DeviceClearRefractoryPeriod}")
+            Case NameOf(sender.InitRefractoryPeriod)
+                Me.StatusSubsystemBase.InitRefractoryPeriod = sender.InitRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitRefractoryPeriod}")
+            Case NameOf(sender.ClearRefractoryPeriod)
+                Me.StatusSubsystemBase.ClearRefractoryPeriod = sender.ClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ClearRefractoryPeriod}")
         End Select
     End Sub
 
