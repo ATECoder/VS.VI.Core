@@ -7,7 +7,7 @@
 
         Public Const AssemblyTitle As String = "TTM Driver Console"
         Public Const AssemblyDescription As String = "Thermal Transient Meter Driver Console"
-        Public Const AssemblyProduct As String = "TTM.Driver.Console.2017"
+        Public Const AssemblyProduct As String = "TTM.Driver.Console.2018"
 
         ''' <summary> Gets the identify date. </summary>
         ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>

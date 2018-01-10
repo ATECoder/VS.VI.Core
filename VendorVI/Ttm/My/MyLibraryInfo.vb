@@ -13,7 +13,7 @@
 
         Public Const AssemblyTitle As String = "VI TTM Library"
         Public Const AssemblyDescription As String = "Thermal Transient Meter Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.TTM.2017"
+        Public Const AssemblyProduct As String = "VI.TTM.2018"
 
         ''' <summary> Gets the identify date. </summary>
         ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>

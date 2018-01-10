@@ -7,7 +7,7 @@
 
         Public Const AssemblyTitle As String = "Generic Device Console"
         Public Const AssemblyDescription As String = "Generic Virtual Instrument Console"
-        Public Const AssemblyProduct As String = "VI.Device.Console.2017"
+        Public Const AssemblyProduct As String = "VI.Device.Console.2018"
 
         ''' <summary> Gets the identify date. </summary>
         ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>

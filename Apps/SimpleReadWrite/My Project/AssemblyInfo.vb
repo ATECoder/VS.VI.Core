@@ -10,7 +10,7 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("TCP/IP Simple Read and Write")>
 <Assembly: AssemblyDescription("TCP/IP Simple Read and Write")>
-<Assembly: AssemblyProduct("VI.SimpleReadWrite.2017")>
+<Assembly: AssemblyProduct("VI.SimpleReadWrite.2018")>
 #If Not NonClsCompliant Then
 <Assembly: CLSCompliant(True)>
 #End If

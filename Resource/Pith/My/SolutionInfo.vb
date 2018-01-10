@@ -5,4 +5,4 @@ Imports System.Resources
 <Assembly: AssemblyTrademark("Licensed under The MIT License.")> 
 <Assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.MainAssembly)> 
 <Assembly: AssemblyCulture("")>
-<Assembly: AssemblyVersion("4.1.*")>
+<Assembly: AssemblyVersion("4.2.*")>

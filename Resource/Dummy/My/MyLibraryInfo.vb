@@ -10,7 +10,7 @@
 
         Public Const AssemblyTitle As String = "Visa Dummy Library"
         Public Const AssemblyDescription As String = "Dummy Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.Dummy.2017"
+        Public Const AssemblyProduct As String = "VI.Dummy.2018"
 
     End Class
 

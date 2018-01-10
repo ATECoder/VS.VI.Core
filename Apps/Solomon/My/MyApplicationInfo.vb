@@ -7,7 +7,7 @@
 
         Public Const AssemblyTitle As String = "Solomon Gauge Console"
         Public Const AssemblyDescription As String = "Solomon Gauge Virtual Instrument Console"
-        Public Const AssemblyProduct As String = "VI.Solomon.Gauge.2017"
+        Public Const AssemblyProduct As String = "VI.Solomon.Gauge.2018"
 
         ''' <summary> Gets the identify date. </summary>
         ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>

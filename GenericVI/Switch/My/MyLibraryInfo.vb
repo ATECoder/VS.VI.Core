@@ -13,7 +13,7 @@
 
         Public Const AssemblyTitle As String = "VI Switch Library"
         Public Const AssemblyDescription As String = "Switch Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.Switch.2017"
+        Public Const AssemblyProduct As String = "VI.Switch.2018"
 
         ''' <summary> Gets the identify date. </summary>
         ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>

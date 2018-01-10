@@ -13,7 +13,7 @@
 
         Public Const AssemblyTitle As String = "VI K2600 Source Measure Library"
         Public Const AssemblyDescription As String = "K2600 Source Measure Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.K2600.2017"
+        Public Const AssemblyProduct As String = "VI.K2600.2018"
 
         ''' <summary> Gets the identify date. </summary>
         ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>

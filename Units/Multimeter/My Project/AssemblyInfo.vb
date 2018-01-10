@@ -10,6 +10,6 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("Multimeter VI Units")>
 <Assembly: AssemblyDescription("Multimeter Virtual Instrument Unit Tests Library")>
-<Assembly: AssemblyProduct("isr.VI.Multimeter.Units.2017")>
+<Assembly: AssemblyProduct("isr.VI.Multimeter.Units.2018")>
 <Assembly: CLSCompliant(True)>
 <Assembly: ComVisible(False)>

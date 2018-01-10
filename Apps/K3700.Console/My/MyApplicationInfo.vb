@@ -7,7 +7,7 @@
 
         Public Const AssemblyTitle As String = "K3700 Driver Console"
         Public Const AssemblyDescription As String = "K3700 Switching Mainframe Virtual Instrument Console"
-        Public Const AssemblyProduct As String = "VI.K3700.Console.2017"
+        Public Const AssemblyProduct As String = "VI.K3700.Console.2018"
 
         ''' <summary> Gets the identify date. </summary>
         ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>

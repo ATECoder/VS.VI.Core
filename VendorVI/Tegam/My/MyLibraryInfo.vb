@@ -13,7 +13,7 @@
 
         Public Const AssemblyTitle As String = "VI Tegam Meter Library"
         Public Const AssemblyDescription As String = "Tegam Meter Virtual Instrument Library"
-        Public Const AssemblyProduct As String = "VI.Tegam.Meter.2017"
+        Public Const AssemblyProduct As String = "VI.Tegam.Meter.2018"
 
         ''' <summary> Gets the identify date. </summary>
         ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
