@@ -34,7 +34,7 @@ Public Class SourceSubsystemBase
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.Level = 0
-        Me.Limit = 1
+        Me.Limit = 0.000105
         Me.Range = New Double?
         Me.AutoRangeEnabled = True
         Me.AutoDelayEnabled = True
@@ -441,7 +441,7 @@ Public Class SourceSubsystemBase
 
     ''' <summary> Gets or sets the limit query command. </summary>
     ''' <value> The limit query command. </value>
-    Protected Overridable ReadOnly Property LimitQueryCommand As String
+    Protected Overridable ReadOnly Property LimitQueryCommandFormat As String
 
     Private Const currentLimitFunction As String = "i"
     Private Const voltageLimitFunction As String = "v"
@@ -456,7 +456,7 @@ Public Class SourceSubsystemBase
     ''' <returns> The Limit or none if unknown. </returns>
     Public Function QueryLimit() As Double?
         Const printFormat As Decimal = 9.6D
-        Me.Limit = Me.Session.QueryPrint(Me.Limit.GetValueOrDefault(0.099), printFormat, Me.LimitQueryCommand, Me.LimitFunctionMode)
+        Me.Limit = Me.Session.QueryPrint(Me.Limit.GetValueOrDefault(0.099), printFormat, Me.LimitQueryCommandFormat, Me.LimitFunctionMode)
         Return Me.Limit
     End Function
 

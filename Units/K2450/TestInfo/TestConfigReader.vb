@@ -182,9 +182,9 @@ Partial Public NotInheritable Class TestInfo
         End Get
     End Property
 
-    Public Shared ReadOnly Property InitialSourceFunction As MeasureFunctionMode
+    Public Shared ReadOnly Property InitialSourceFunction As SourceFunctionMode
         Get
-            Return CType(My.MyAppSettingsReader.AppSettingInt32(), MeasureFunctionMode)
+            Return CType(My.MyAppSettingsReader.AppSettingInt32(), SourceFunctionMode)
         End Get
     End Property
 

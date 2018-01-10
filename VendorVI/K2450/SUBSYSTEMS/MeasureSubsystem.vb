@@ -270,6 +270,17 @@ Public Class MeasureSubsystem
 
 #End Region
 
+#Region " UNIT "
+
+    ''' <summary> Gets or sets the unit command. </summary>
+    ''' <value> The unit query command. </value>
+    Protected Overrides ReadOnly Property UnitQueryCommand As String = "_G.smu.measure.unit"
+
+    ''' <summary> Gets or sets the unit command format. </summary>
+    ''' <value> The unit command format. </value>
+    Protected Overrides ReadOnly Property UnitCommandFormat As String = "_G.smu.measure.unit={0}"
+
+#End Region
 
 #End Region
 

@@ -28,7 +28,7 @@ Public Class SourceSubsystem
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.Level = 0
-        Me.Limit = 1
+        Me.Limit = 0.000105
         Me.Range = New Double?
         Me.AutoRangeEnabled = True
         Me.AutoDelayEnabled = True
@@ -67,11 +67,11 @@ Public Class SourceSubsystem
 
     ''' <summary> Gets the automatic Delay enabled command Format. </summary>
     ''' <value> The automatic Delay enabled query command. </value>
-    Protected Overrides ReadOnly Property AutoDelayEnabledCommandFormat As String = "_G.smu.source.autodelay.enable={0:'smu.ON';'smu.ON';'smu.OFF'}"
+    Protected Overrides ReadOnly Property AutoDelayEnabledCommandFormat As String = "_G.smu.source.autodelay={0:'smu.ON';'smu.ON';'smu.OFF'}"
 
     ''' <summary> Gets the automatic Delay enabled query command. </summary>
     ''' <value> The automatic Delay enabled query command. </value>
-    Protected Overrides ReadOnly Property AutoDelayEnabledPrintCommand As String = "_G.print(_G.smu.source.autodelay.enable==smu.ON)"
+    Protected Overrides ReadOnly Property AutoDelayEnabledPrintCommand As String = "_G.print(_G.smu.source.autodelay==smu.ON)"
 
 #End Region
 
@@ -127,11 +127,11 @@ Public Class SourceSubsystem
 
     ''' <summary> Gets the limit query command. </summary>
     ''' <value> The limit query command. </value>
-    Protected Overrides ReadOnly Property LimitQueryCommand As String = "_G.smu.source.{0}limit"
+    Protected Overrides ReadOnly Property LimitQueryCommandFormat As String = "_G.smu.source.{0}limit.level"
 
     ''' <summary> Gets the limit command format. </summary>
     ''' <value> The limit command format. </value>
-    Protected Overrides ReadOnly Property LimitCommandFormat As String = "_G.smu.source.{0}limit={1}"
+    Protected Overrides ReadOnly Property LimitCommandFormat As String = "_G.smu.source.{0}limit.level={1}"
 
 #End Region
 

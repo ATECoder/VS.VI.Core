@@ -615,7 +615,7 @@ Public MustInherit Class MeasureSubsystemBase
         ' changing the function mode changes range, auto delay mode and open detector enabled. 
         Me.QueryRange()
         Me.QueryOpenDetectorEnabled()
-        Return FunctionMode
+        Return Me.QueryFunctionMode
     End Function
 
     ''' <summary> Gets or sets the cached function mode. </summary>
@@ -967,15 +967,110 @@ Public MustInherit Class MeasureSubsystemBase
 
 #End Region
 
+#Region " UNIT "
+
+    ''' <summary> The Unit. </summary>
+    Private _Unit As MeasureUnit?
+
+    ''' <summary> Parse units. </summary>
+    ''' <param name="value"> The  Measure Unit. </param>
+    ''' <returns> An Arebis.TypedUnits.Unit. </returns>
+    Public Shared Function ParseUnits(ByVal value As MeasureUnit) As Arebis.TypedUnits.Unit
+        Select Case value
+            Case MeasureUnit.Ampere
+                Return Arebis.StandardUnits.ElectricUnits.Ampere
+            Case MeasureUnit.Volt
+                Return Arebis.StandardUnits.ElectricUnits.Volt
+            Case MeasureUnit.Ohm
+                Return Arebis.StandardUnits.ElectricUnits.Ohm
+            Case MeasureUnit.Watt
+                Return Arebis.StandardUnits.EnergyUnits.Watt
+            Case Else
+                Return Arebis.StandardUnits.ElectricUnits.Volt
+        End Select
+    End Function
+
+    ''' <summary> Writes and reads back the Measure Unit. </summary>
+    ''' <param name="value"> The  Measure Unit. </param>
+    ''' <returns> The <see cref="MeasureUnit">Measure Unit</see> or none if unknown. </returns>
+    Public Function ApplyUnit(ByVal value As MeasureUnit) As MeasureUnit?
+        Me.WriteUnit(value)
+        Return Me.QueryUnit
+    End Function
+
+    ''' <summary> Gets or sets the cached Unit. </summary>
+    ''' <value> The <see cref="MeasureUnit">Measure Unit</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property Unit As MeasureUnit?
+        Get
+            Return Me._Unit
+        End Get
+        Protected Set(ByVal value As MeasureUnit?)
+            If Not Nullable.Equals(Me.Unit, value) Then
+                Me._Unit = value
+                If value.HasValue Then
+                    Me.Amount.Unit = MeasureSubsystemBase.ParseUnits(value.Value)
+                End If
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the Unit query command. </summary>
+    ''' <value> The Unit query command. </value>
+    Protected Overridable ReadOnly Property UnitQueryCommand As String = "_G.smu.measure.unit"
+
+    ''' <summary> Queries the Measure Unit. </summary>
+    ''' <returns> The <see cref="MeasureUnit">Measure Unit</see> or none if unknown. </returns>
+    Public Overridable Function QueryUnit() As MeasureUnit?
+        Dim mode As String = Me.Unit.ToString
+        Me.Session.MakeEmulatedReplyIfEmpty(mode)
+        mode = Me.Session.QueryPrintTrimEnd(Me.UnitQueryCommand)
+        If String.IsNullOrWhiteSpace(mode) Then
+            Dim message As String = $"Failed fetching {NameOf(MeasureSubsystemBase)}.{NameOf(Unit)}"
+            Debug.Assert(Not Debugger.IsAttached, message)
+            Me.Unit = New MeasureUnit?
+        Else
+            Dim se As New StringEnumerator(Of MeasureUnit)
+            Me.Unit = se.ParseContained(mode.BuildDelimitedValue)
+        End If
+        Return Me.Unit
+    End Function
+
+    ''' <summary> Gets or sets the Unit command format. </summary>
+    ''' <value> The Unit command format. </value>
+    Protected Overridable ReadOnly Property UnitCommandFormat As String = "_G.smu.measure.unit={0}"
+
+
+    ''' <summary> Writes the Measure Unit without reading back the value from the device. </summary>
+    ''' <param name="value"> The Unit. </param>
+    ''' <returns> The <see cref="MeasureUnit">Measure Unit</see> or none if unknown. </returns>
+    Public Overridable Function WriteUnit(ByVal value As MeasureUnit) As MeasureUnit?
+        Me.Session.WriteLine(Me.UnitCommandFormat, value.ExtractBetween())
+        Me.Unit = value
+        Return Me.Unit
+    End Function
+
+#End Region
 
 End Class
+
+''' <summary> Specifies the units. </summary>
+Public Enum MeasureUnit
+    <ComponentModel.Description("None")> None
+    <ComponentModel.Description("Volt (smu.UNIT_VOLT)")> Volt
+    <ComponentModel.Description("Ohm (smu.UNIT_OHM)")> Ohm
+    <ComponentModel.Description("Ampere (smu.UNIT_AMP)")> Ampere
+    <ComponentModel.Description("Watt (smu.UNIT_WATT)")> Watt
+End Enum
+
 
 ''' <summary> Specifies the function modes. </summary>
 Public Enum MeasureFunctionMode
     <ComponentModel.Description("None")> None
     <ComponentModel.Description("DC Voltage (smu.FUNC_DC_VOLTAGE)")> VoltageDC
     <ComponentModel.Description("DC Current (smu.FUNC_DC_CURRENT)")> CurrentDC
-    <ComponentModel.Description("Resistance (smu.FUNC_RESISTANCE )")> Resistance
+    <ComponentModel.Description("Resistance (smu.FUNC_RESISTANCE)")> Resistance
 End Enum
 
 ''' <summary> Dictionary of measure function ranges. </summary>

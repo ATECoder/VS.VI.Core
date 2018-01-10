@@ -164,7 +164,6 @@ Public Class MeasureUnitTests
     ''' <param name="device"> The device. </param>
     Private Shared Sub ReadSourceSubsystemInfo(ByVal device As Device)
 
-
         Dim expectedBoolean As Boolean = TestInfo.InitialAutoRangeEnabled
         Dim actualBoolean As Boolean = device.SourceSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(Not expectedBoolean)
         Assert.IsTrue(actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.AutoRangeEnabled)} is {actualBoolean }; expected {True}")
@@ -217,26 +216,33 @@ Public Class MeasureUnitTests
                         $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
 
         Dim expectedBoolean As Boolean = TestInfo.AutoRangeEnabled
-        Dim actualBoolean As Boolean = device.MeasureSubsystem.ApplyAutoRangeEnabled(expectedBoolean).GetValueOrDefault(False)
-        Assert.IsTrue(actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.AutoRangeEnabled)} is {actualBoolean }; expected {True}")
+        Dim actualBoolean As Boolean = device.MeasureSubsystem.ApplyAutoRangeEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
+        Assert.IsTrue(actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.AutoRangeEnabled)} is {actualBoolean}; expected {expectedBoolean}")
 
         expectedBoolean = TestInfo.AutoZeroEnabled
-        actualBoolean = device.MeasureSubsystem.ApplyAutoZeroEnabled(expectedBoolean).GetValueOrDefault(False)
-        Assert.IsTrue(actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.AutoZeroEnabled)} is {actualBoolean }; expected {True}")
+        actualBoolean = device.MeasureSubsystem.ApplyAutoZeroEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
+        Assert.IsTrue(actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.AutoZeroEnabled)} is {actualBoolean}; expected {expectedBoolean}")
 
         expectedBoolean = TestInfo.FrontTerminalsSelected
-        actualBoolean = device.MeasureSubsystem.ApplyFrontTerminalsSelected(expectedBoolean).GetValueOrDefault(False)
-        Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.FrontTerminalsSelected)} is {actualBoolean }; expected {expectedBoolean }")
+        actualBoolean = device.MeasureSubsystem.ApplyFrontTerminalsSelected(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.FrontTerminalsSelected)} is {actualBoolean}; expected {expectedBoolean}")
 
-        expectedBoolean = TestInfo.RemoteSenseSelected
-        actualBoolean = device.MeasureSubsystem.ApplyRemoteSenseSelected(expectedBoolean).GetValueOrDefault(False)
-        Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.RemoteSenseSelected)} is {actualBoolean }; expected {expectedBoolean }")
+        Dim SourceFunction As SourceFunctionMode = device.SourceSubsystem.ApplyFunctionMode(TestInfo.SourceFunction).GetValueOrDefault(SourceFunctionMode.None)
+        Assert.AreEqual(TestInfo.SourceFunction, SourceFunction, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.FunctionMode)} is {SourceFunction} ; expected {TestInfo.SourceFunction}")
+
+#If False Then
+        ' USE SIMV(Ohm)
+        Dim expectedDouble As Double = TestInfo.SourceLevel
+        Dim actualDouble As Double = device.SourceSubsystem.ApplyLevel(expectedDouble).GetValueOrDefault(-expectedDouble)
+        Assert.AreEqual(expectedDouble, actualDouble, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.Level)} is {actualDouble}; expected {expectedDouble}")
+#End If
 
         Dim measureFunction As MeasureFunctionMode = device.MeasureSubsystem.ApplyFunctionMode(TestInfo.SenseFunction).GetValueOrDefault(MeasureFunctionMode.Resistance)
         Assert.AreEqual(TestInfo.SenseFunction, measureFunction, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.FunctionMode)} is {measureFunction} ; expected {TestInfo.SenseFunction}")
 
-        Dim SourceFunction As SourceFunctionMode = device.SourceSubsystem.ApplyFunctionMode(TestInfo.SourceFunction).GetValueOrDefault(SourceFunctionMode.None)
-        Assert.AreEqual(TestInfo.SourceFunction, SourceFunction, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.FunctionMode)} is {SourceFunction} ; expected {TestInfo.SourceFunction}")
+        expectedBoolean = TestInfo.RemoteSenseSelected
+        actualBoolean = device.MeasureSubsystem.ApplyRemoteSenseSelected(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.RemoteSenseSelected)} is {actualBoolean }; expected {expectedBoolean }")
 
         expectedBoolean = True
         actualBoolean = device.SourceSubsystem.ApplyOutputEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
@@ -251,13 +257,22 @@ Public Class MeasureUnitTests
         Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.OutputEnabled)} is {actualBoolean }; expected {expectedBoolean }")
 
 #If False Then
-smu.measure.func = smu.FUNC_RESISTANCE
-smu.measure.sense = smu.SENSE_4WIRE
-smu.measure.offsetcompensation = smu.Off
-smu.source.Tesrminals= front
+        SIMV(Ohms)
+smu.measure.func = smu.FUNC_DC_VOLTAGE
+smu.measure.autorange = smu.ON
+smu.measure.unit = smu.UNIT_OHM
+smu.measure.count = 5
+smu.source.func = smu.FUNC_DC_CURRENT
+smu.source.level = 5e-6
+smu.source.vlimit.level = 10
 smu.source.output = smu.ON
-print(smu.measure.read())
-smu.source.output = smu.OFF 
+smu.measure.read(defbuffer1)
+for i=1, defbuffer1.n do
+ print(defbuffer1.relativetimestamps[i], defbuffer1[i])
+end
+smu.source.output=smu.OFF 
+
+
 #End If
 
     End Sub
