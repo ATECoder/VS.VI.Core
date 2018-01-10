@@ -4,20 +4,20 @@ A library for support and extension of the [National Instruments] (https://www.n
 
 ## Getting Started
 
-Clone the project along with its requisite projects to their respecitve relative path. All projects are installed relative to a common path.
+Clone the project along with its requisite projects to their respective relative path. All projects are installed relative to a common path.
 
 ### Prerequisites
 
 The following projects are also required:
 * [Core](https://www.bitbucket.org/davidhary/vs.core) - Core Libraries
 * [Share](https://www.bitbucket.org/davidhary/vs.share) - Shared snippets
-* [Typed Units](https://www.bitbucket.org/davidhary/vs.core) - Typed Units Porject
-* [VI](https://www.bitbucket.org/davidhary/vs.vi) - VI Core Project.
+* [Typed Units](https://www.bitbucket.org/davidhary/vs.core) - Typed Units Project
+* [VI](https://www.bitbucket.org/davidhary/vs.vi.core) - VI Core Project.
 
 ```
 git clone git@bitbucket.org:davidhary/vs.share.git
 git clone git@bitbucket.org:davidhary/vs.core.git
-git clone git@bitbucket.org:davidhary/vs.vi.git
+git clone git@bitbucket.org:davidhary/vs.vi.core.git
 git clone git@bitbucket.org:davidhary/vs.typedunits.git
 ```
 
@@ -30,7 +30,7 @@ Install the projects into the following folders:
 .\Libraries\VS\Share
 .\Libraries\VS\Core\Core
 .\Libraries\VS\Core\TypedUnits
-.\Libraries\VS\VI\Core
+.\Libraries\VS\IO\VI
 ```
 
 ## Testing
@@ -67,4 +67,9 @@ This project is licensed under the MIT License - see the [LICENSE.md] file at (h
 
 ## Revision Changes
 
+* Version 4.2.6584	01/10/18	Adds K2450 driver.
+* Version 4.2.6583	01/09/18	Applies settings to set refractory periods when opening the device. Moves refractory periods to the status and system sub systems. 
+* Version 4.1.6440	08/19/17	Uses modified trace message and logger.
+* Version 4.1.6438	08/17/17	Updates trace message talkers to ensure trace levels are correctly updated.
+* Version 4.0.6123	10/06/16	Throws Format exceptions
 * Version 4.0.6123	10/06/16	Throws Format exceptions on failure to parse values with information about the instrument resource and the invalid values. 
