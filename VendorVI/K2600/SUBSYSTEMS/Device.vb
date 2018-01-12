@@ -18,7 +18,6 @@ Public Class Device
     ''' <summary> Initializes a new instance of the <see cref="DeviceBase" /> class. </summary>
     Public Sub New()
         MyBase.New()
-        Me.InitializeTimeout = TimeSpan.FromMilliseconds(30000)
         AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 
@@ -75,7 +74,7 @@ Public Class Device
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Try
-            Me.Session.StoreTimeout(Me.InitializeTimeout)
+            Me.Session.StoreTimeout(Me.StatusSubsystem.InitializeTimeout)
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing error queue;. ")
             ' clear the error queue on the controller node only.
             Me.StatusSubsystem.ClearErrorQueue()
@@ -144,33 +143,17 @@ Public Class Device
     Protected Overrides Sub OnClosing(ByVal e As System.ComponentModel.CancelEventArgs)
         MyBase.OnClosing(e)
         If e?.Cancel Then Return
-
-        If Me._StatusSubsystem IsNot Nothing Then RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+        Me.MeasureResistanceSubsystem = Nothing
+        Me.MeasureVoltageSubsystem = Nothing
+        Me.SourceSubsystem = Nothing
+        Me.SenseSubsystem = Nothing
+        Me.CurrentSourceSubsystem = Nothing
+        Me.DisplaySubsystem = Nothing
+        Me.ContactSubsystem = Nothing
+        Me.LocalNodeSubsystem = Nothing
+        Me.SourceMeasureUnit = Nothing
+        Me.SystemSubsystem = Nothing
         Me.StatusSubsystem = Nothing
-
-        If Me.DisplaySubsystem IsNot Nothing Then
-            Me.DisplaySubsystem.RestoreDisplay(Me.InitializeTimeout)
-        End If
-
-        If Me.SourceMeasureUnitCurrentSource IsNot Nothing Then
-            RemoveHandler Me.SourceMeasureUnitCurrentSource.PropertyChanged, AddressOf SourceMeasureUnitCurrentSourcePropertyChanged
-        End If
-
-        If Me.SourceMeasureUnitMeasure IsNot Nothing Then
-            RemoveHandler Me.SourceMeasureUnitMeasure.PropertyChanged, AddressOf SourceMeasureUnitMeasurePropertyChanged
-        End If
-
-        If Me.SourceMeasureUnit IsNot Nothing Then
-            RemoveHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf SourceMeasureSubsystemPropertyChanged
-        End If
-
-        If Me.DisplaySubsystem IsNot Nothing Then
-            RemoveHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
-        End If
-
-        If Me.SystemSubsystem IsNot Nothing Then
-            RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
-        End If
         Me.Subsystems.DisposeItems()
     End Sub
 
@@ -181,29 +164,16 @@ Public Class Device
         If e?.Cancel Then Return
         ' STATUS must be the first subsystem.
         Me.StatusSubsystem = New StatusSubsystem(Me.Session)
-        'Me.AddSubsystem(Me.StatusSubsystem)
-        'AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
-
         Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SystemSubsystem)
-        AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
-
+        Me.SourceMeasureUnit = New SourceMeasureUnit(Me.StatusSubsystem)
+        Me.LocalNodeSubsystem = New LocalNodeSubsystem(Me.StatusSubsystem)
         Me.DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.DisplaySubsystem)
-        AddHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
-
-        Me.SourceMeasureUnit = New SourceMeasureUnitDevice(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SourceMeasureUnit)
-        AddHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf SourceMeasureSubsystemPropertyChanged
-
-        Me.SourceMeasureUnitCurrentSource = New SourceMeasureUnitCurrentSource(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SourceMeasureUnitCurrentSource)
-        AddHandler Me.SourceMeasureUnitCurrentSource.PropertyChanged, AddressOf SourceMeasureUnitCurrentSourcePropertyChanged
-
-        Me.SourceMeasureUnitMeasure = New SourceMeasureUnitMeasure(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SourceMeasureUnitMeasure)
-        AddHandler Me.SourceMeasureUnitMeasure.PropertyChanged, AddressOf SourceMeasureUnitMeasurePropertyChanged
-
+        Me.ContactSubsystem = New ContactSubsystem(Me.StatusSubsystem)
+        Me.CurrentSourceSubsystem = New CurrentSourceSubsystem(Me.StatusSubsystem)
+        Me.SenseSubsystem = New SenseSubsystem(Me.StatusSubsystem)
+        Me.SourceSubsystem = New SourceSubsystem(Me.StatusSubsystem)
+        Me.MeasureVoltageSubsystem = New MeasureVoltageSubsystem(Me.StatusSubsystem)
+        Me.MeasureResistanceSubsystem = New MeasureResistanceSubsystem(Me.StatusSubsystem)
     End Sub
 
     ''' <summary> Allows the derived device to take actions after opening. Adds subsystems and event
@@ -262,6 +232,7 @@ Public Class Device
     ''' <summary> Executes the subsystem property changed action. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")>
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As StatusSubsystem, ByVal propertyName As String)
         MyBase.OnPropertyChanged(subsystem, propertyName)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
@@ -286,54 +257,37 @@ Public Class Device
 
 #End Region
 
-#Region " DISPLAY "
-
-    ''' <summary> Gets or sets the Display Subsystem. </summary>
-    ''' <value> Display Subsystem. </value>
-    Public Property DisplaySubsystem As DisplaySubsystem
-
-    ''' <summary> Handle the display subsystem property changed event. </summary>
-    ''' <param name="subsystem">    The subsystem. </param>
-    ''' <param name="propertyName"> Name of the property. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As DisplaySubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        Select Case propertyName
-        End Select
-    End Sub
-
-    ''' <summary> Display subsystem property changed. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property Changed event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub DisplaySubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, DisplaySubsystem), e?.PropertyName)
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
-        End Try
-    End Sub
-
-#End Region
-
-#Region " STATUS "
-
-#End Region
-
 #Region " SYSTEM "
 
+    Private _SystemSubsystem As SystemSubsystem
     ''' <summary>
     ''' Gets or sets the System Subsystem.
     ''' </summary>
     ''' <value>The System Subsystem.</value>
     Public Property SystemSubsystem As SystemSubsystem
+        Get
+            Return Me._SystemSubsystem
+        End Get
+        Set(value As SystemSubsystem)
+            If Me._SystemSubsystem IsNot Nothing Then
+                RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.SystemSubsystem)
+                Me.SystemSubsystem.Dispose()
+                Me._SystemSubsystem = Nothing
+            End If
+            Me._SystemSubsystem = value
+            If Me._SystemSubsystem IsNot Nothing Then
+                AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+                Me.AddSubsystem(Me.SystemSubsystem)
+            End If
+        End Set
+    End Property
 
     ''' <summary> Handle the System subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+    Private Overloads Sub OnPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
         End Select
@@ -344,91 +298,485 @@ Public Class Device
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As SystemSubsystem = TryCast(sender, SystemSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling System Subsystem property changed Event;. Failed property {0}. {1}",
-                               e.PropertyName, ex.ToFullBlownString)
+                               $"{Me.ResourceName} exception handling {NameOf(SystemSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
 #End Region
 
-#Region " SMU "
+#Region " CURRENT SOURCE "
 
-    ''' <summary> Gets or sets the Smu Subsystem. </summary>
-    ''' <value> Smu Subsystem. </value>
-    Public Property SourceMeasureUnit As SourceMeasureUnit
+    Private _CurrentSourceSubsystem As CurrentSourceSubsystem
+    ''' <summary>
+    ''' Gets or sets the Current Source Subsystem.
+    ''' </summary>
+    ''' <value>The CurrentSource Subsystem.</value>
+    Public Property CurrentSourceSubsystem As CurrentSourceSubsystem
+        Get
+            Return Me._CurrentSourceSubsystem
+        End Get
+        Set(value As CurrentSourceSubsystem)
+            If Me._CurrentSourceSubsystem IsNot Nothing Then
+                RemoveHandler Me.CurrentSourceSubsystem.PropertyChanged, AddressOf Me.CurrentSourceSubsystemPropertyChanged
+                Me.SourceMeasureUnit.Remove(Me.CurrentSourceSubsystem)
+                Me.RemoveSubsystem(Me.CurrentSourceSubsystem)
+                Me.CurrentSourceSubsystem.Dispose()
+                Me._CurrentSourceSubsystem = Nothing
+            End If
+            Me._CurrentSourceSubsystem = value
+            If Me._CurrentSourceSubsystem IsNot Nothing Then
+                AddHandler Me.CurrentSourceSubsystem.PropertyChanged, AddressOf CurrentSourceSubsystemPropertyChanged
+                Me.AddSubsystem(Me.CurrentSourceSubsystem)
+                Me.SourceMeasureUnit.Add(Me.CurrentSourceSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Handle the source measure unit subsystem property changed event. </summary>
-    ''' <param name="subsystem">    The subsystem. </param>
-    ''' <param name="propertyName"> Name of the property. </param>
+    ''' <summary> Current Source subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As VI.Tsp.SourceMeasureUnitBase, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+    Private Overloads Sub OnPropertyChanged(ByVal sender As CurrentSourceSubsystem, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
+            Case NameOf(sender.Level)
         End Select
     End Sub
 
-    ''' <summary> Source Measure Unit subsystem property changed. </summary>
+    ''' <summary> Current Source subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub SourceMeasureSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+    Private Sub CurrentSourceSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As CurrentSourceSubsystem = TryCast(sender, CurrentSourceSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.SourceMeasureUnitBase), e?.PropertyName)
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+                               $"{Me.ResourceName} exception handling {NameOf(CurrentSourceSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
 #End Region
 
-#Region " SMU: CURRENT SOURCE "
+#Region " CONTACT "
 
-    ''' <summary> Gets or sets source measure unit current source. </summary>
-    ''' <value> The source measure unit current source. </value>
-    Public Property SourceMeasureUnitCurrentSource As SourceMeasureUnitCurrentSource
+    Private _ContactSubsystem As ContactSubsystem
+    ''' <summary>
+    ''' Gets or sets the Contact Subsystem.
+    ''' </summary>
+    ''' <value>The Contact Subsystem.</value>
+    Public Property ContactSubsystem As ContactSubsystem
+        Get
+            Return Me._ContactSubsystem
+        End Get
+        Set(value As ContactSubsystem)
+            If Me._ContactSubsystem IsNot Nothing Then
+                RemoveHandler Me.ContactSubsystem.PropertyChanged, AddressOf Me.ContactSubsystemPropertyChanged
+                Me.SourceMeasureUnit.Remove(Me.ContactSubsystem)
+                Me.RemoveSubsystem(Me.ContactSubsystem)
+                Me.ContactSubsystem.Dispose()
+                Me._ContactSubsystem = Nothing
+            End If
+            Me._ContactSubsystem = value
+            If Me._ContactSubsystem IsNot Nothing Then
+                AddHandler Me.ContactSubsystem.PropertyChanged, AddressOf ContactSubsystemPropertyChanged
+                Me.AddSubsystem(Me.ContactSubsystem)
+                Me.SourceMeasureUnit.Add(Me.ContactSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Handles the Source Measure Unit Current Source  subsystem property changed event. </summary>
-    ''' <param name="subsystem">    The subsystem. </param>
-    ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As VI.Tsp.SourceMeasureUnitCurrentSource, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+    ''' <summary> Contact subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub OnPropertyChanged(ByVal sender As ContactSubsystem, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.Level)
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "{0} current source level set at {1};. ", Me.ResourceName, subsystem.Level)
+            Case NameOf(sender.ContactCheckSpeedMode)
         End Select
     End Sub
 
-    ''' <summary> Source Measure Unit Current Source subsystem property changed. </summary>
+    ''' <summary> Contact subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub SourceMeasureUnitCurrentSourcePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+    Private Sub ContactSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As ContactSubsystem = TryCast(sender, ContactSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.SourceMeasureUnitCurrentSource), e?.PropertyName)
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+                               $"{Me.ResourceName} exception handling {NameOf(ContactSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
 #End Region
 
-#Region " SMU: MEASURE "
+#Region " DISPLAY "
 
-    ''' <summary> Gets or sets source measure unit measure. </summary>
-    ''' <value> The source measure unit measure. </value>
-    Public Property SourceMeasureUnitMeasure As SourceMeasureUnitMeasure
+    Private _DisplaySubsystem As DisplaySubsystem
+    ''' <summary>
+    ''' Gets or sets the Display Subsystem.
+    ''' </summary>
+    ''' <value>The Display Subsystem.</value>
+    Public Property DisplaySubsystem As DisplaySubsystem
+        Get
+            Return Me._DisplaySubsystem
+        End Get
+        Set(value As DisplaySubsystem)
+            If Me._DisplaySubsystem IsNot Nothing Then
+                RemoveHandler Me.DisplaySubsystem.PropertyChanged, AddressOf Me.DisplaySubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.DisplaySubsystem)
+                Me.DisplaySubsystem.Dispose()
+                Me._DisplaySubsystem = Nothing
+            End If
+            Me._DisplaySubsystem = value
+            If Me._DisplaySubsystem IsNot Nothing Then
+                AddHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
+                Me.AddSubsystem(Me.DisplaySubsystem)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Display subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub OnPropertyChanged(ByVal sender As DisplaySubsystem, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.DisplayScreen)
+        End Select
+    End Sub
+
+    ''' <summary> Display subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub DisplaySubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As DisplaySubsystem = TryCast(sender, DisplaySubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.ResourceName} exception handling {NameOf(DisplaySubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
+
+#Region " SOURCE MEASURE UNIT "
+
+    Private _SourceMeasureUnit As SourceMeasureUnit
+    ''' <summary>
+    ''' Gets or sets the Source Measure Unit.
+    ''' </summary>
+    ''' <value>The Source Measure Unit.</value>
+    Public Property SourceMeasureUnit As SourceMeasureUnit
+        Get
+            Return Me._SourceMeasureUnit
+        End Get
+        Set(value As SourceMeasureUnit)
+            If Me._SourceMeasureUnit IsNot Nothing Then
+                RemoveHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf Me.SourceMeasureUnitPropertyChanged
+                Me.SourceMeasureUnit.Remove(Me.SourceMeasureUnit)
+                Me.RemoveSubsystem(Me.SourceMeasureUnit)
+                Me.SourceMeasureUnit.Dispose()
+                Me._SourceMeasureUnit = Nothing
+            End If
+            Me._SourceMeasureUnit = value
+            If Me._SourceMeasureUnit IsNot Nothing Then
+                AddHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf SourceMeasureUnitPropertyChanged
+                Me.AddSubsystem(Me.SourceMeasureUnit)
+                Me.SourceMeasureUnit.Add(Me.SourceMeasureUnit)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Source Measure Unit property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub OnPropertyChanged(ByVal sender As SourceMeasureUnit, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.ResourceName)
+        End Select
+    End Sub
+
+    ''' <summary> Source Measure Unit property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SourceMeasureUnitPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As SourceMeasureUnit = TryCast(sender, SourceMeasureUnit)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.ResourceName} exception handling {NameOf(SourceMeasureUnit)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
+
+#Region " LOCAL NODE "
+
+    Private _LocalNodeSubsystem As LocalNodeSubsystem
+    ''' <summary>
+    ''' Gets or sets the Local Node Subsystem.
+    ''' </summary>
+    ''' <value>The Local Node Subsystem.</value>
+    Public Property LocalNodeSubsystem As LocalNodeSubsystem
+        Get
+            Return Me._LocalNodeSubsystem
+        End Get
+        Set(value As LocalNodeSubsystem)
+            If Me._LocalNodeSubsystem IsNot Nothing Then
+                RemoveHandler Me.LocalNodeSubsystem.PropertyChanged, AddressOf Me.LocalNodeSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.LocalNodeSubsystem)
+                Me.LocalNodeSubsystem.Dispose()
+                Me._LocalNodeSubsystem = Nothing
+            End If
+            Me._LocalNodeSubsystem = value
+            If Me._LocalNodeSubsystem IsNot Nothing Then
+                AddHandler Me.LocalNodeSubsystem.PropertyChanged, AddressOf LocalNodeSubsystemPropertyChanged
+                Me.AddSubsystem(Me.LocalNodeSubsystem)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> LocalNode subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub OnPropertyChanged(ByVal sender As LocalNodeSubsystem, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.ShowPrompts)
+        End Select
+    End Sub
+
+    ''' <summary> LocalNode subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub LocalNodeSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As LocalNodeSubsystem = TryCast(sender, LocalNodeSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.ResourceName} exception handling {NameOf(LocalNodeSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
+
+#Region " SENSE "
+
+    Private _SenseSubsystem As SenseSubsystem
+    ''' <summary>
+    ''' Gets or sets the Sense Subsystem.
+    ''' </summary>
+    ''' <value>The Sense Subsystem.</value>
+    Public Property SenseSubsystem As SenseSubsystem
+        Get
+            Return Me._SenseSubsystem
+        End Get
+        Set(value As SenseSubsystem)
+            If Me._SenseSubsystem IsNot Nothing Then
+                RemoveHandler Me.SenseSubsystem.PropertyChanged, AddressOf Me.SenseSubsystemPropertyChanged
+                Me.SourceMeasureUnit.Remove(Me.SenseSubsystem)
+                Me.RemoveSubsystem(Me.SenseSubsystem)
+                Me.SenseSubsystem.Dispose()
+                Me._SenseSubsystem = Nothing
+            End If
+            Me._SenseSubsystem = value
+            If Me._SenseSubsystem IsNot Nothing Then
+                AddHandler Me.SenseSubsystem.PropertyChanged, AddressOf SenseSubsystemPropertyChanged
+                Me.AddSubsystem(Me.SenseSubsystem)
+                Me.SourceMeasureUnit.Add(Me.SenseSubsystem)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Sense subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub OnPropertyChanged(ByVal sender As SenseSubsystem, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.SenseMode)
+        End Select
+    End Sub
+
+    ''' <summary> Sense subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SenseSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As SenseSubsystem = TryCast(sender, SenseSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.ResourceName} exception handling {NameOf(SenseSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
+
+#Region " SOURCE "
+
+    Private _SourceSubsystem As SourceSubsystem
+    ''' <summary>
+    ''' Gets or sets the Source Subsystem.
+    ''' </summary>
+    ''' <value>The Source Subsystem.</value>
+    Public Property SourceSubsystem As SourceSubsystem
+        Get
+            Return Me._SourceSubsystem
+        End Get
+        Set(value As SourceSubsystem)
+            If Me._SourceSubsystem IsNot Nothing Then
+                RemoveHandler Me.SourceSubsystem.PropertyChanged, AddressOf Me.SourceSubsystemPropertyChanged
+                Me.SourceMeasureUnit.Remove(Me.SourceSubsystem)
+                Me.RemoveSubsystem(Me.SourceSubsystem)
+                Me.SourceSubsystem.Dispose()
+                Me._SourceSubsystem = Nothing
+            End If
+            Me._SourceSubsystem = value
+            If Me._SourceSubsystem IsNot Nothing Then
+                AddHandler Me.SourceSubsystem.PropertyChanged, AddressOf SourceSubsystemPropertyChanged
+                Me.AddSubsystem(Me.SourceSubsystem)
+                Me.SourceMeasureUnit.Add(Me.SourceSubsystem)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Source subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub OnPropertyChanged(ByVal sender As SourceSubsystem, ByVal propertyName As String)
+        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(sender.SourceFunction)
+        End Select
+    End Sub
+
+    ''' <summary> Source subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SourceSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As SourceSubsystem = TryCast(sender, SourceSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.ResourceName} exception handling {NameOf(SourceSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
+
+#Region " MEASURE RESISTANCE "
+
+    Private _MeasureResistanceSubsystem As MeasureResistanceSubsystem
+    ''' <summary>
+    ''' Gets or sets the Measure Resistance Subsystem.
+    ''' </summary>
+    ''' <value>The Measure Resistance Subsystem.</value>
+    Public Property MeasureResistanceSubsystem As MeasureResistanceSubsystem
+        Get
+            Return Me._MeasureResistanceSubsystem
+        End Get
+        Set(value As MeasureResistanceSubsystem)
+            If Me._MeasureResistanceSubsystem IsNot Nothing Then
+                RemoveHandler Me.MeasureResistanceSubsystem.PropertyChanged, AddressOf Me.MeasureResistanceSubsystemPropertyChanged
+                Me.SourceMeasureUnit.Remove(Me.MeasureResistanceSubsystem)
+                Me.RemoveSubsystem(Me.MeasureResistanceSubsystem)
+                Me.MeasureResistanceSubsystem.Dispose()
+                Me._MeasureResistanceSubsystem = Nothing
+            End If
+            Me._MeasureResistanceSubsystem = value
+            If Me._MeasureResistanceSubsystem IsNot Nothing Then
+                AddHandler Me.MeasureResistanceSubsystem.PropertyChanged, AddressOf MeasureResistanceSubsystemPropertyChanged
+                Me.AddSubsystem(Me.MeasureResistanceSubsystem)
+                Me.SourceMeasureUnit.Add(Me.MeasureResistanceSubsystem)
+            End If
+        End Set
+    End Property
 
     ''' <summary> Handles the Source Measure Unit Measure subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As VI.Tsp.SourceMeasureUnitMeasure, ByVal propertyName As String)
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As VI.Tsp.MeasureResistanceSubsystemBase, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(subsystem.Resistance)
+        End Select
+    End Sub
+
+    ''' <summary> Measure resistance subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub MeasureResistanceSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Try
+            Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.MeasureResistanceSubsystemBase), e?.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+        End Try
+    End Sub
+
+#End Region
+
+#Region " MEASURE VOLTAGE "
+
+    Private _MeasureVoltageSubsystem As MeasureVoltageSubsystem
+    ''' <summary>
+    ''' Gets or sets the Measure Voltage Subsystem.
+    ''' </summary>
+    ''' <value>The Measure Voltage Subsystem.</value>
+    Public Property MeasureVoltageSubsystem As MeasureVoltageSubsystem
+        Get
+            Return Me._MeasureVoltageSubsystem
+        End Get
+        Set(value As MeasureVoltageSubsystem)
+            If Me._MeasureVoltageSubsystem IsNot Nothing Then
+                RemoveHandler Me.MeasureVoltageSubsystem.PropertyChanged, AddressOf Me.MeasureVoltageSubsystemPropertyChanged
+                Me.SourceMeasureUnit.Remove(Me.MeasureVoltageSubsystem)
+                Me.RemoveSubsystem(Me.MeasureVoltageSubsystem)
+                Me.MeasureVoltageSubsystem.Dispose()
+                Me._MeasureVoltageSubsystem = Nothing
+            End If
+            Me._MeasureVoltageSubsystem = value
+            If Me._MeasureVoltageSubsystem IsNot Nothing Then
+                AddHandler Me.MeasureVoltageSubsystem.PropertyChanged, AddressOf MeasureVoltageSubsystemPropertyChanged
+                Me.AddSubsystem(Me.MeasureVoltageSubsystem)
+                Me.SourceMeasureUnit.Add(Me.MeasureVoltageSubsystem)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Handles the Source Measure Unit Measure subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As VI.Tsp.MeasureVoltageSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.AutoRangeVoltageEnabled)
@@ -438,13 +786,13 @@ Public Class Device
         End Select
     End Sub
 
-    ''' <summary> Source Measure Unit Current Source subsystem property changed. </summary>
+    ''' <summary> Measure Voltage subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub SourceMeasureUnitMeasurePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+    Private Sub MeasureVoltageSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.SourceMeasureUnitMeasure), e?.PropertyName)
+            Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.MeasureVoltageSubsystemBase), e?.PropertyName)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)

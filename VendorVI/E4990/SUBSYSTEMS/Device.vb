@@ -18,7 +18,6 @@ Public Class Device
     ''' <summary> Initializes a new instance of the <see cref="E4990.Device" /> class. </summary>
     Public Sub New()
         MyBase.New()
-        Me.InitializeTimeout = TimeSpan.FromMilliseconds(5000)
         Me.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter()
         AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub

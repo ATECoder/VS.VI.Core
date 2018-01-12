@@ -1,5 +1,5 @@
 ﻿Imports isr.VI.Tsp
-''' <summary> Source Measure Unit subsystem. </summary>
+''' <summary> Source subsystem. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
 ''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
@@ -9,27 +9,16 @@
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ''' SOFTWARE.</para> </license>
 ''' <history date="12/14/2013" by="David" revision=""> Created. </history>
-Public Class SourceMeasureUnit
-    Inherits isr.VI.Tsp.SourceMeasureUnitBase
+Public Class SourceSubsystem
+    Inherits SourceSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Initializes a new instance of the <see cref="SourceMeasureUnit" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="statusSubsystemBase">message based
+    ''' <summary> Initializes a new instance of the <see cref="SourceSubsystem" /> class. </summary>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-    End Sub
-
-    ''' <summary> Initializes a new instance of the <see cref="SourceMeasureUnit" /> class. </summary>
-    ''' <remarks> Note that the local node status clear command only clears the SMU status.  So, issue
-    ''' a CLS and RST as necessary when adding an SMU. </remarks>
-    ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystem">TSP status
-    ''' Subsystem</see>. </param>
-    ''' <param name="nodeNumber">      Specifies the node number. </param>
-    ''' <param name="smuNumber">       Specifies the SMU (either 'a' or 'b'. </param>
-    Public Sub New(ByVal statusSubsystem As StatusSubsystemBase, ByVal nodeNumber As Integer, ByVal smuNumber As String)
-        MyBase.New(statusSubsystem, nodeNumber, smuNumber)
     End Sub
 
 #End Region

@@ -80,8 +80,15 @@
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="SUBSYSTEMS\CurrentSourceSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\ContactSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\SenseSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\SourceSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\MeasureVoltageSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\MeasureResistanceSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystem.vb" />
     <Compile Include="SUBSYSTEMS\Device.vb" />
+    <Compile Include="SUBSYSTEMS\LocalNodeSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SourceMeasureUnit.vb" />
     <Compile Include="SUBSYSTEMS\StatusSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SystemSubsystem.vb" />

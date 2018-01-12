@@ -506,7 +506,6 @@ Public Class Meter
         End If
         Dim unitNumber As String = value.Substring(value.Length - 1)
         Me.MasterDevice.SourceMeasureUnit.UnitNumber = unitNumber
-        Me.MasterDevice.SourceMeasureUnitCurrentSource.UnitNumber = unitNumber
         Me.InitialResistance.WriteSourceMeasureUnit(value)
         Me.FinalResistance.WriteSourceMeasureUnit(value)
         Me.ThermalTransient.WriteSourceMeasureUnit(value)
@@ -573,25 +572,25 @@ Public Class Meter
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Configuring shunt resistance measurement;. ")
 
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to DC current source;. ", Me.MasterDevice.SourceMeasureUnit)
-        Me.MasterDevice.SourceMeasureUnit.ApplySourceFunction(Tsp.SourceFunctionMode.CurrentDC)
+        Me.MasterDevice.SourceSubsystem.ApplySourceFunction(Tsp.SourceFunctionMode.CurrentDC)
 
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to DC current range {1};. ", Me.MasterDevice.SourceMeasureUnit)
-        Me.MasterDevice.SourceMeasureUnitCurrentSource.ApplyRange(resistance.CurrentRange)
-        Me.ShuntResistance.CurrentRange = Me.MasterDevice.SourceMeasureUnitCurrentSource.Range.GetValueOrDefault(0)
+        Me.MasterDevice.CurrentSourceSubsystem.ApplyRange(resistance.CurrentRange)
+        Me.ShuntResistance.CurrentRange = Me.MasterDevice.CurrentSourceSubsystem.Range.GetValueOrDefault(0)
 
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to DC current Level {1};. ", Me.MasterDevice.SourceMeasureUnit)
-        Me.MasterDevice.SourceMeasureUnitCurrentSource.ApplyLevel(resistance.CurrentLevel)
-        Me.ShuntResistance.CurrentLevel = Me.MasterDevice.SourceMeasureUnitCurrentSource.Level.GetValueOrDefault(0)
+        Me.MasterDevice.CurrentSourceSubsystem.ApplyLevel(resistance.CurrentLevel)
+        Me.ShuntResistance.CurrentLevel = Me.MasterDevice.CurrentSourceSubsystem.Level.GetValueOrDefault(0)
 
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to DC current Voltage Limit {1};. ", Me.MasterDevice.SourceMeasureUnit)
-        Me.MasterDevice.SourceMeasureUnitCurrentSource.ApplyVoltageLimit(resistance.VoltageLimit)
-        Me.ShuntResistance.VoltageLimit = Me.MasterDevice.SourceMeasureUnitCurrentSource.VoltageLimit.GetValueOrDefault(0)
+        Me.MasterDevice.CurrentSourceSubsystem.ApplyVoltageLimit(resistance.VoltageLimit)
+        Me.ShuntResistance.VoltageLimit = Me.MasterDevice.CurrentSourceSubsystem.VoltageLimit.GetValueOrDefault(0)
 
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to four wire sense;. ", Me.MasterDevice.SourceMeasureUnit)
-        Me.MasterDevice.SourceMeasureUnit.ApplySenseMode(SenseActionMode.Remote)
+        Me.MasterDevice.SenseSubsystem.ApplySenseMode(SenseActionMode.Remote)
 
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to auto voltage range;. ", Me.MasterDevice.SourceMeasureUnit)
-        Me.MasterDevice.SourceMeasureUnitMeasure.ApplyAutoRangeVoltageEnabled(True)
+        Me.MasterDevice.MeasureVoltageSubsystem.ApplyAutoRangeVoltageEnabled(True)
 
         Me.MasterDevice.DisplaySubsystem.ClearDisplay()
         Me.MasterDevice.DisplaySubsystem.DisplayLine(2, String.Format(Globalization.CultureInfo.CurrentCulture,
@@ -611,7 +610,7 @@ Public Class Meter
         If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
 
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to DC current source;. ", Me.MasterDevice.SourceMeasureUnit)
-        Me.MasterDevice.SourceMeasureUnit.ApplySourceFunction(Tsp.SourceFunctionMode.CurrentDC)
+        Me.MasterDevice.SourceSubsystem.ApplySourceFunction(Tsp.SourceFunctionMode.CurrentDC)
 
         If Not Me.ShuntResistance.ConfigurationEquals(resistance) Then
 
@@ -619,27 +618,27 @@ Public Class Meter
 
             If Not Me.ShuntResistance.CurrentRange.Equals(resistance.CurrentRange) Then
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to DC current range {1};. ", Me.MasterDevice.SourceMeasureUnit)
-                Me.MasterDevice.SourceMeasureUnitCurrentSource.ApplyRange(resistance.CurrentRange)
-                Me.ShuntResistance.CurrentRange = Me.MasterDevice.SourceMeasureUnitCurrentSource.Range.GetValueOrDefault(0)
+                Me.MasterDevice.CurrentSourceSubsystem.ApplyRange(resistance.CurrentRange)
+                Me.ShuntResistance.CurrentRange = Me.MasterDevice.CurrentSourceSubsystem.Range.GetValueOrDefault(0)
             End If
 
             If Not Me.ShuntResistance.CurrentLevel.Equals(resistance.CurrentLevel) Then
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to DC current Level {1};. ", Me.MasterDevice.SourceMeasureUnit)
-                Me.MasterDevice.SourceMeasureUnitCurrentSource.ApplyLevel(resistance.CurrentLevel)
-                Me.ShuntResistance.CurrentLevel = Me.MasterDevice.SourceMeasureUnitCurrentSource.Level.GetValueOrDefault(0)
+                Me.MasterDevice.CurrentSourceSubsystem.ApplyLevel(resistance.CurrentLevel)
+                Me.ShuntResistance.CurrentLevel = Me.MasterDevice.CurrentSourceSubsystem.Level.GetValueOrDefault(0)
             End If
 
             If Not Me.ShuntResistance.VoltageLimit.Equals(resistance.VoltageLimit) Then
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to DC current Voltage Limit {1};. ", Me.MasterDevice.SourceMeasureUnit)
-                Me.MasterDevice.SourceMeasureUnitCurrentSource.ApplyVoltageLimit(resistance.VoltageLimit)
-                Me.ShuntResistance.VoltageLimit = Me.MasterDevice.SourceMeasureUnitCurrentSource.VoltageLimit.GetValueOrDefault(0)
+                Me.MasterDevice.CurrentSourceSubsystem.ApplyVoltageLimit(resistance.VoltageLimit)
+                Me.ShuntResistance.VoltageLimit = Me.MasterDevice.CurrentSourceSubsystem.VoltageLimit.GetValueOrDefault(0)
             End If
 
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to four wire sense;. ", Me.MasterDevice.SourceMeasureUnit)
-            Me.MasterDevice.SourceMeasureUnit.ApplySenseMode(SenseActionMode.Remote)
+            Me.MasterDevice.SenseSubsystem.ApplySenseMode(SenseActionMode.Remote)
 
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Setting {0} to auto voltage range;. ", Me.MasterDevice.SourceMeasureUnit)
-            Me.MasterDevice.SourceMeasureUnitMeasure.ApplyAutoRangeVoltageEnabled(True)
+            Me.MasterDevice.MeasureVoltageSubsystem.ApplyAutoRangeVoltageEnabled(True)
         End If
 
         Me.MasterDevice.DisplaySubsystem.ClearDisplay()
@@ -661,8 +660,8 @@ Public Class Meter
         If resistance Is Nothing Then Throw New ArgumentNullException(NameOf(resistance))
         Me.ShuntResistance.HighLimit = resistance.HighLimit
         Me.ShuntResistance.LowLimit = resistance.LowLimit
-        Me.MasterDevice.SourceMeasureUnitMeasure.MeasureResistance()
-        Dim reading As String = Me.MasterDevice.SourceMeasureUnitMeasure.Reading
+        Me.MasterDevice.MeasureResistanceSubsystem.Measure()
+        Dim reading As String = Me.MasterDevice.MeasureResistanceSubsystem.Reading
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Parsing shunt resistance reading {0};. ", reading)
         Me.MasterDevice.StatusSubsystem.CheckThrowDeviceException(False, "measuring shunt resistance;. ")
         Me.ShuntResistance.ParseReading(reading, MeasurementOutcomes.None)
@@ -768,11 +767,11 @@ Public Class Meter
 
     ''' <summary> Checks contact resistance. </summary>
     Public Sub CheckContacts(ByVal threshold As Integer)
-        Me.MasterDevice.SourceMeasureUnit.CheckContacts(threshold)
-        If Not Me.MasterDevice.SourceMeasureUnit.ContactCheckOkay.HasValue Then
+        Me.MasterDevice.ContactSubsystem.CheckContacts(threshold)
+        If Not Me.MasterDevice.ContactSubsystem.ContactCheckOkay.HasValue Then
             Throw New OperationFailedException("Failed Measuring contacts;. ")
-        ElseIf Not Me.MasterDevice.SourceMeasureUnit.ContactCheckOkay.Value Then
-            Throw New OperationFailedException("High contact resistances;. Values: '{0}'", Me.MasterDevice.SourceMeasureUnit.ContactResistances)
+        ElseIf Not Me.MasterDevice.ContactSubsystem.ContactCheckOkay.Value Then
+            Throw New OperationFailedException("High contact resistances;. Values: '{0}'", Me.MasterDevice.ContactSubsystem.ContactResistances)
         End If
     End Sub
 
@@ -782,15 +781,14 @@ Public Class Meter
     ''' <returns> <c>True</c> if contacts checked okay. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
     Public Function TryCheckContacts(ByVal threshold As Integer, ByRef details As String) As Boolean
-        Me.MasterDevice.SourceMeasureUnit.CheckContacts(threshold)
-        If Not Me.MasterDevice.SourceMeasureUnit.ContactCheckOkay.HasValue Then
+        Me.MasterDevice.ContactSubsystem.CheckContacts(threshold)
+        If Not Me.MasterDevice.ContactSubsystem.ContactCheckOkay.HasValue Then
             details = "Failed Measuring contacts;. "
             Return False
-        ElseIf Me.MasterDevice.SourceMeasureUnit.ContactCheckOkay.Value Then
+        ElseIf Me.MasterDevice.ContactSubsystem.ContactCheckOkay.Value Then
             Return True
         Else
-            details = String.Format("High contact resistances;. Values: '{0}'",
-                                    Me.MasterDevice.SourceMeasureUnit.ContactResistances)
+            details = String.Format("High contact resistances;. Values: '{0}'", Me.MasterDevice.ContactSubsystem.ContactResistances)
             Return False
         End If
     End Function
@@ -1186,7 +1184,7 @@ Public Class Meter
     End Sub
 
     ''' <summary> Applies the settings. </summary>
-    Protected Overrides Sub ApplySettings()
+    Protected Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
         Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))

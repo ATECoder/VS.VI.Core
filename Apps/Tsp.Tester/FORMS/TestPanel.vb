@@ -562,7 +562,7 @@ Public Class TestPanel
     ''' <summary> Handles the Status subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As Tsp.InteractiveSubsystem, ByVal propertyName As String)
+    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As Tsp.LocalNodeSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.ExecutionState)
@@ -580,7 +580,7 @@ Public Class TestPanel
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub InteractiveSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, Tsp.InteractiveSubsystem), e?.PropertyName)
+            Me.OnSubsystemPropertyChanged(TryCast(sender, Tsp.LocalNodeSubsystemBase), e?.PropertyName)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)

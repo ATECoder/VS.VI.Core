@@ -8,12 +8,12 @@
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ''' </para> </license>
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
-Public Class SourceMeasureUnitCurrentSource
+Public Class CurrentSourceSubsystemBase
     Inherits SourceMeasureUnitBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Initializes a new instance of the <see cref="SourceMeasureUnitCurrentSource" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="CurrentSourceSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp.StatusSubsystemBase">status subsystem</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.Tsp.StatusSubsystemBase)
         MyBase.New(statusSubsystem)

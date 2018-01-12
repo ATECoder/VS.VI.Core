@@ -8,12 +8,12 @@
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ''' </para> </license>
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
-Public Class SourceMeasureUnitMeasure
+Public Class MeasureVoltageSubsystemBase
     Inherits SourceMeasureUnitBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Initializes a new instance of the <see cref="SourceMeasureUnitMeasure" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp.StatusSubsystemBase">status subsystem</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.Tsp.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -140,12 +140,12 @@ Public Class SourceMeasureUnitMeasure
     ''' <value> The reading. </value>
     Public Property Reading() As String
         Get
-            Return Me._reading
+            Return Me._Reading
         End Get
         Protected Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.Reading) Then
-                Me._reading = value
+                Me._Reading = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -153,25 +153,25 @@ Public Class SourceMeasureUnitMeasure
 
 #End Region
 
-#Region " RESISTANCE "
+#Region " VOLTAGE "
 
-    Private _Resistance As Double?
+    Private _Voltage As Double?
     ''' <summary> Gets or sets (protected) the measured resistance. </summary>
     ''' <value> The resistance. </value>
-    Public Property Resistance() As Double?
+    Public Property Voltage() As Double?
         Get
-            Return Me._resistance
+            Return Me._Voltage
         End Get
         Protected Set(ByVal value As Double?)
-            If Not Nullable.Equals(value, Me.Resistance) Then
-                Me._resistance = value
+            If Not Nullable.Equals(value, Me.Voltage) Then
+                Me._Voltage = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
 
-    ''' <summary> Measures and reads the resistance. </summary>
-    Public Sub MeasureResistance()
+    ''' <summary> Turns on the source and measures. </summary>
+    Public Sub Measure()
 
         Dim printFormat As String = "%8.5f"
         Me.Session.WriteLine("{0}.source.output = {0}.OUTPUT_ON waitcomplete() print(string.format('{1}',{0}.measure.r())) ",
@@ -179,13 +179,13 @@ Public Class SourceMeasureUnitMeasure
         Me.Reading = Me.Session.ReadLine()
         Dim value As Double = 0
         If String.IsNullOrWhiteSpace(Me.Reading) Then
-            Me.Resistance = New Double?
+            Me.Voltage = New Double?
         Else
             If Double.TryParse(Me.Reading, Globalization.NumberStyles.Number Or Globalization.NumberStyles.AllowExponent,
                                Globalization.CultureInfo.InvariantCulture, value) Then
-                Me.Resistance = value
+                Me.Voltage = value
             Else
-                Me.Resistance = New Double?
+                Me.Voltage = New Double?
                 Throw New InvalidCastException(String.Format(Globalization.CultureInfo.InvariantCulture,
                                                               "Failed parsing {0} to number reading '{1}'", Me.Reading, Me.Session.LastMessageSent))
 

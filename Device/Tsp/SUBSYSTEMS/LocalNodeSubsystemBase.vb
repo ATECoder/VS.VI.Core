@@ -1,4 +1,4 @@
-''' <summary> Defines an Interactive Subsystem for a TSP System. </summary>
+''' <summary> Defines the local node for a TSP System. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
 ''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
@@ -8,7 +8,7 @@
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ''' </para> </license>
 ''' <history date="11/1/2016" by="David" revision=""> Based on legacy status subsystem. </history>
-Public MustInherit Class InteractiveSubsystem
+Public MustInherit Class LocalNodeSubsystemBase
     Inherits VI.SubsystemPlusStatusBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
@@ -313,11 +313,11 @@ Public MustInherit Class InteractiveSubsystem
     ''' <value> <c>True</c> to show errors; otherwise <c>False</c>. </value>
     Public Property ShowErrors() As Boolean?
         Get
-            Return Me._showErrors
+            Return Me._ShowErrors
         End Get
         Protected Set(ByVal value As Boolean?)
             If Not Nullable.Equals(value, Me.ShowErrors) Then
-                Me._showErrors = value
+                Me._ShowErrors = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -384,7 +384,7 @@ Public MustInherit Class InteractiveSubsystem
     ''' <value> The show prompts. </value>
     Public Property ShowPrompts() As Boolean?
         Get
-            Return Me._showPrompts
+            Return Me._ShowPrompts
         End Get
         Protected Set(ByVal value As Boolean?)
             If Not Nullable.Equals(value, Me.ShowPrompts) Then

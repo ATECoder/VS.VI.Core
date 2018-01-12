@@ -18,7 +18,6 @@ Public Class Device
     ''' <summary> Initializes a new instance of the <see cref="K2000.Device" /> class. </summary>
     Public Sub New()
         MyBase.New()
-        Me.InitializeTimeout = TimeSpan.FromMilliseconds(5000)
         AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 

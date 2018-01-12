@@ -46,9 +46,9 @@ Public Class Device
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_MultimeterSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_ChannelSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_DisplaySubsystem", Justification:="Disposed @Subsystems")>
-    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SourceSubsystem", Justification:="Disposed @Subsystems")>
-    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SystemSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SlotsSubsystem", Justification:="Disposed @Subsystems")>
     <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_StatusSubsystem", Justification:="Disposed @Subsystems")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId:="_SystemSubsystem", Justification:="Disposed @Subsystems")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(disposing As Boolean)
@@ -102,30 +102,12 @@ Public Class Device
     Protected Overrides Sub OnClosing(ByVal e As System.ComponentModel.CancelEventArgs)
         MyBase.OnClosing(e)
         If e?.Cancel Then Return
-
-        If Me._StatusSubsystem IsNot Nothing Then RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+        Me.MultimeterSubsystem = Nothing
+        Me.ChannelSubsystem = Nothing
+        Me.SlotsSubsystem = Nothing
+        Me.DisplaySubsystem = Nothing
+        Me.SystemSubsystem = Nothing
         Me.StatusSubsystem = Nothing
-
-        If Me.MultimeterSubsystem IsNot Nothing Then
-            RemoveHandler Me.MultimeterSubsystem.PropertyChanged, AddressOf MultimeterSubsystemPropertyChanged
-        End If
-
-        If Me.DisplaySubsystem IsNot Nothing Then
-            RemoveHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
-        End If
-
-        If Me.ChannelSubsystem IsNot Nothing Then
-            RemoveHandler Me.ChannelSubsystem.PropertyChanged, AddressOf ChannelSubsystemPropertyChanged
-        End If
-
-        If Me.SystemSubsystem IsNot Nothing Then
-            RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
-        End If
-
-        If Me.SlotsSubsystem IsNot Nothing Then
-            RemoveHandler Me.SlotsSubsystem.PropertyChanged, AddressOf SlotsSubsystemPropertyChanged
-        End If
-
         Me.Subsystems.DisposeItems()
     End Sub
 
@@ -135,30 +117,13 @@ Public Class Device
         MyBase.OnOpening(e)
         If e?.Cancel Then Return
         ' STATUS must be the first subsystem.
+        ' STATUS must be the first subsystem.
         Me.StatusSubsystem = New StatusSubsystem(Me.Session)
-        'Me.AddSubsystem(Me.StatusSubsystem)
-        'AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
-
         Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SystemSubsystem)
-        AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
-
         Me.ChannelSubsystem = New ChannelSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.ChannelSubsystem)
-        AddHandler Me.ChannelSubsystem.PropertyChanged, AddressOf ChannelSubsystemPropertyChanged
-
         Me.DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.DisplaySubsystem)
-        AddHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
-
         Me.SlotsSubsystem = New SlotsSubsystem(6, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SlotsSubsystem)
-        AddHandler Me.SlotsSubsystem.PropertyChanged, AddressOf SlotsSubsystemPropertyChanged
-
         Me.MultimeterSubsystem = New MultimeterSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.MultimeterSubsystem)
-        AddHandler Me.MultimeterSubsystem.PropertyChanged, AddressOf MultimeterSubsystemPropertyChanged
-
     End Sub
 
     ''' <summary> Allows the derived device to take actions after opening. Adds subsystems and event
@@ -166,13 +131,11 @@ Public Class Device
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Protected Overrides Sub OnOpened()
         Try
-
             MyBase.OnOpened()
             Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
-
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Failed initiating controller node--closing this session;. {0}", ex.ToFullBlownString)
+                              $"Failed opening {NameOf(Device)}--session will close;. {ex.ToFullBlownString}")
             Me.CloseSession()
         End Try
 
@@ -219,6 +182,7 @@ Public Class Device
     ''' <summary> Executes the subsystem property changed action. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")>
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As StatusSubsystem, ByVal propertyName As String)
         MyBase.OnPropertyChanged(subsystem, propertyName)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
@@ -245,17 +209,35 @@ Public Class Device
 
 #Region " SYSTEM "
 
+    Private _SystemSubsystem As SystemSubsystem
     ''' <summary>
     ''' Gets or sets the System Subsystem.
     ''' </summary>
     ''' <value>The System Subsystem.</value>
     Public Property SystemSubsystem As SystemSubsystem
+        Get
+            Return Me._SystemSubsystem
+        End Get
+        Set(value As SystemSubsystem)
+            If Me._SystemSubsystem IsNot Nothing Then
+                RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.SystemSubsystem)
+                Me.SystemSubsystem.Dispose()
+                Me._SystemSubsystem = Nothing
+            End If
+            Me._SystemSubsystem = value
+            If Me._SystemSubsystem IsNot Nothing Then
+                AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+                Me.AddSubsystem(Me.SystemSubsystem)
+            End If
+        End Set
+    End Property
 
     ''' <summary> Handle the System subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+    Private Overloads Sub OnPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
         End Select
@@ -269,11 +251,10 @@ Public Class Device
         Dim subsystem As SystemSubsystem = TryCast(sender, SystemSubsystem)
         If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling System subsystem {1} property change;. {2}",
-                               Me.ResourceName, e.PropertyName, ex.ToFullBlownString)
+                               $"{Me.ResourceName} exception handling {NameOf(SystemSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -281,9 +262,29 @@ Public Class Device
 
 #Region " CHANNEL "
 
-    ''' <summary> Gets or sets the Channel Subsystem. </summary>
-    ''' <value> Channel Subsystem. </value>
+    Private _ChannelSubsystem As ChannelSubsystem
+    ''' <summary>
+    ''' Gets or sets the Channel Subsystem.
+    ''' </summary>
+    ''' <value>The Channel Subsystem.</value>
     Public Property ChannelSubsystem As ChannelSubsystem
+        Get
+            Return Me._ChannelSubsystem
+        End Get
+        Set(value As ChannelSubsystem)
+            If Me._ChannelSubsystem IsNot Nothing Then
+                RemoveHandler Me.ChannelSubsystem.PropertyChanged, AddressOf Me.ChannelSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.ChannelSubsystem)
+                Me.ChannelSubsystem.Dispose()
+                Me._ChannelSubsystem = Nothing
+            End If
+            Me._ChannelSubsystem = value
+            If Me._ChannelSubsystem IsNot Nothing Then
+                AddHandler Me.ChannelSubsystem.PropertyChanged, AddressOf ChannelSubsystemPropertyChanged
+                Me.AddSubsystem(Me.ChannelSubsystem)
+            End If
+        End Set
+    End Property
 
     ''' <summary> Channel subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
@@ -315,9 +316,29 @@ Public Class Device
 
 #Region " DISPLAY "
 
-    ''' <summary> Gets or sets the Display Subsystem. </summary>
-    ''' <value> Display Subsystem. </value>
+    Private _DisplaySubsystem As DisplaySubsystem
+    ''' <summary>
+    ''' Gets or sets the Display Subsystem.
+    ''' </summary>
+    ''' <value>The Display Subsystem.</value>
     Public Property DisplaySubsystem As DisplaySubsystem
+        Get
+            Return Me._DisplaySubsystem
+        End Get
+        Set(value As DisplaySubsystem)
+            If Me._DisplaySubsystem IsNot Nothing Then
+                RemoveHandler Me.DisplaySubsystem.PropertyChanged, AddressOf Me.DisplaySubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.DisplaySubsystem)
+                Me.DisplaySubsystem.Dispose()
+                Me._DisplaySubsystem = Nothing
+            End If
+            Me._DisplaySubsystem = value
+            If Me._DisplaySubsystem IsNot Nothing Then
+                AddHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
+                Me.AddSubsystem(Me.DisplaySubsystem)
+            End If
+        End Set
+    End Property
 
     ''' <summary> Display subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
@@ -340,8 +361,7 @@ Public Class Device
             Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Display subsystem {1} property change;. {2}",
-                               Me.ResourceName, e.PropertyName, ex.ToFullBlownString)
+                               $"{Me.ResourceName} exception handling {NameOf(DisplaySubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -349,9 +369,29 @@ Public Class Device
 
 #Region " MULTIMETER "
 
-    ''' <summary> Gets or sets the Multimeter Subsystem. </summary>
-    ''' <value> Multimeter Subsystem. </value>
+    Private _MultimeterSubsystem As MultimeterSubsystem
+    ''' <summary>
+    ''' Gets or sets the Multimeter Subsystem.
+    ''' </summary>
+    ''' <value>The Multimeter Subsystem.</value>
     Public Property MultimeterSubsystem As MultimeterSubsystem
+        Get
+            Return Me._MultimeterSubsystem
+        End Get
+        Set(value As MultimeterSubsystem)
+            If Me._MultimeterSubsystem IsNot Nothing Then
+                RemoveHandler Me.MultimeterSubsystem.PropertyChanged, AddressOf Me.MultimeterSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.MultimeterSubsystem)
+                Me.MultimeterSubsystem.Dispose()
+                Me._MultimeterSubsystem = Nothing
+            End If
+            Me._MultimeterSubsystem = value
+            If Me._MultimeterSubsystem IsNot Nothing Then
+                AddHandler Me.MultimeterSubsystem.PropertyChanged, AddressOf MultimeterSubsystemPropertyChanged
+                Me.AddSubsystem(Me.MultimeterSubsystem)
+            End If
+        End Set
+    End Property
 
     ''' <summary> Multimeter subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
@@ -383,9 +423,29 @@ Public Class Device
 
 #Region " SLOTS "
 
-    ''' <summary> Gets or sets the Slots Subsystem. </summary>
-    ''' <value> Slots Subsystem. </value>
+    Private _SlotsSubsystem As SlotsSubsystem
+    ''' <summary>
+    ''' Gets or sets the Slots Subsystem.
+    ''' </summary>
+    ''' <value>The Slots Subsystem.</value>
     Public Property SlotsSubsystem As SlotsSubsystem
+        Get
+            Return Me._SlotsSubsystem
+        End Get
+        Set(value As SlotsSubsystem)
+            If Me._SlotsSubsystem IsNot Nothing Then
+                RemoveHandler Me.SlotsSubsystem.PropertyChanged, AddressOf Me.SlotsSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.SlotsSubsystem)
+                Me.SlotsSubsystem.Dispose()
+                Me._SlotsSubsystem = Nothing
+            End If
+            Me._SlotsSubsystem = value
+            If Me._SlotsSubsystem IsNot Nothing Then
+                AddHandler Me.SlotsSubsystem.PropertyChanged, AddressOf SlotsSubsystemPropertyChanged
+                Me.AddSubsystem(Me.SlotsSubsystem)
+            End If
+        End Set
+    End Property
 
     ''' <summary> Slots subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>

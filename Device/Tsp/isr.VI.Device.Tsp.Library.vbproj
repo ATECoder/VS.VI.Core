@@ -94,19 +94,22 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="SUBSYSTEMS\MeasureVoltageSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SenseSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SlotSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SlotsSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\MultimeterSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ChannelSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\InteractiveSubsystem.vb" />
-    <Compile Include="SUBSYSTEMS\SourceMeasureUnit.vb" />
-    <Compile Include="SUBSYSTEMS\SourceMeasureUnitMeasure.vb" />
+    <Compile Include="SUBSYSTEMS\LocalNodeSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\MeasureResistanceSubsystemBase.vb" />
     <Compile Include="ENTITIES\TspMessage.vb" />
     <Compile Include="ENTITIES\VersionInfo.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SourceMeasureUnitCurrentSource.vb" />
+    <Compile Include="SUBSYSTEMS\CurrentSourceSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SourceMeasureUnitBase.vb" />
-    <Compile Include="SUBSYSTEMS\LinkSubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\LinkSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\ContactSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SourceSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\StatusSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SystemSubsystemBase.vb" />
     <Compile Include="My\MySuppressions.vb" />

@@ -35,6 +35,10 @@ Public MustInherit Class SourceMeasureUnitBase
         MyBase.New(statusSubsystem)
         Me._nodeNumber = nodeNumber
         Me.UnitNumber = smuNumber
+        Me._SourceMeasureBasedSubsystems = New SourceMeasureUnitSubsystemCollection With {
+            .NodeNumber = (nodeNumber),
+            .UnitNumber = smuNumber
+            }
     End Sub
 
     ''' <summary>
@@ -172,6 +176,22 @@ Public MustInherit Class SourceMeasureUnitBase
         End Get
     End Property
 
+    ''' <summary> Gets or sets source measure based subsystems. </summary>
+    ''' <value> The source measure based subsystems. </value>
+    Public ReadOnly Property SourceMeasureBasedSubsystems As SourceMeasureUnitSubsystemCollection
+
+    ''' <summary> Adds a subsystem. </summary>
+    ''' <param name="item"> The item. </param>
+    Public Sub Add(ByVal item As SourceMeasureUnitBase)
+        Me.SourceMeasureBasedSubsystems.Add(item)
+    End Sub
+
+    ''' <summary> Removes the subsystem described by item. </summary>
+    ''' <param name="item"> The item. </param>
+    Public Sub Remove(ByVal item As SourceMeasureUnitBase)
+        Me.SourceMeasureBasedSubsystems.Remove(item)
+    End Sub
+
 #End Region
 
 #Region " MAXIMUM OUTPUT POWER "
@@ -241,3 +261,59 @@ Public Class SourceMeasureUnitBaseCollection(Of TItem As SourceMeasureUnitBase)
     End Function
 
 End Class
+
+''' <summary> Collection of source measure unit subsystems. </summary>
+Public Class SourceMeasureUnitSubsystemCollection
+    Inherits Collections.ObjectModel.Collection(Of SourceMeasureUnitBase)
+
+    Private _UnitNumber As String
+
+    ''' <summary> Gets or sets the unit number. </summary>
+    ''' <value> The unit number. </value>
+    Public Property UnitNumber As String
+        Get
+            Return Me._UnitNumber
+        End Get
+        Set(value As String)
+            Me._UnitNumber = value
+            For Each smu As SourceMeasureUnitBase In Me
+                smu.UnitNumber = value
+            Next
+        End Set
+    End Property
+
+    Dim _nodeNumber As Integer
+
+    ''' <summary> Gets or sets the node number. </summary>
+    ''' <value> The node number. </value>
+    Public Property NodeNumber As Integer
+        Get
+            Return Me._nodeNumber
+        End Get
+        Set(value As Integer)
+            Me._nodeNumber = value
+            For Each smu As SourceMeasureUnitBase In Me
+                smu.NodeNumber = value
+            Next
+        End Set
+    End Property
+
+    ''' <summary>
+    ''' Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
+    ''' </summary>
+    ''' <exception cref="ArgumentNullException">          Thrown when one or more required arguments
+    '''                                                   are null. </exception>
+    ''' <exception cref="T:System.NotSupportedException"> The
+    '''                                                   <see cref="T:System.Collections.Generic.ICollection`1" />
+    '''                                                   is read-only. </exception>
+    ''' <param name="item"> The object to add to the
+    '''                     <see cref="T:System.Collections.Generic.ICollection`1" />. </param>
+    Public Overloads Sub Add(item As SourceMeasureUnitBase)
+        If item Is Nothing Then Throw New ArgumentNullException(NameOf(item))
+        item.NodeNumber = Me.NodeNumber
+        item.UnitNumber = Me.UnitNumber
+        MyBase.Add(item)
+    End Sub
+
+End Class
+

@@ -72,11 +72,11 @@ Public MustInherit Class ScriptManagerBase
 
     ''' <summary> Gets or sets the link subsystem. </summary>
     ''' <value> The link subsystem. </value>
-    Public Property LinkSubsystem As LinkSubsystem
+    Public Property LinkSubsystem As LinkSubsystemBase
 
     ''' <summary> Gets the interactive subsystem. </summary>
     ''' <value> The interactive subsystem. </value>
-    Public Property InteractiveSubsystem As InteractiveSubsystem
+    Public Property InteractiveSubsystem As LocalNodeSubsystemBase
 
 #End Region
 

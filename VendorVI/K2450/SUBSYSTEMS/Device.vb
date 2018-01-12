@@ -106,8 +106,8 @@ Public Class Device
         Me.MeasureSubsystem = Nothing
         Me.SourceSubsystem = Nothing
         Me.DisplaySubsystem = Nothing
-        Me.SourceMeasureUnit = Nothing
         Me.LocalNodeSubsystem = Nothing
+        Me.SourceMeasureUnit = Nothing
         Me.SystemSubsystem = Nothing
         Me.StatusSubsystem = Nothing
         Me.Subsystems.DisposeItems()
@@ -121,8 +121,8 @@ Public Class Device
         ' STATUS must be the first subsystem.
         Me.StatusSubsystem = New StatusSubsystem(Me.Session)
         Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
-        Me.LocalNodeSubsystem = New LocalNodeSubsystem(Me.StatusSubsystem)
         Me.SourceMeasureUnit = New SourceMeasureUnit(Me.StatusSubsystem)
+        Me.LocalNodeSubsystem = New LocalNodeSubsystem(Me.StatusSubsystem)
         Me.DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
         Me.SourceSubsystem = New SourceSubsystem(Me.StatusSubsystem)
         Me.MeasureSubsystem = New MeasureSubsystem(Me.StatusSubsystem)
@@ -137,7 +137,7 @@ Public Class Device
             Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                              "Failed initiating controller node--closing this session;. {0}", ex.ToFullBlownString)
+                              $"Failed opening {NameOf(Device)}--session will close;. {ex.ToFullBlownString}")
             Me.CloseSession()
         End Try
 
@@ -436,6 +436,7 @@ Public Class Device
             If Me._MeasureSubsystem IsNot Nothing Then
                 RemoveHandler Me.MeasureSubsystem.PropertyChanged, AddressOf Me.MeasureSubsystemPropertyChanged
                 Me.RemoveSubsystem(Me.MeasureSubsystem)
+                Me.SourceMeasureUnit.Remove(Me.MeasureSubsystem)
                 Me.MeasureSubsystem.Dispose()
                 Me._MeasureSubsystem = Nothing
             End If
@@ -443,6 +444,7 @@ Public Class Device
             If Me._MeasureSubsystem IsNot Nothing Then
                 AddHandler Me.MeasureSubsystem.PropertyChanged, AddressOf MeasureSubsystemPropertyChanged
                 Me.AddSubsystem(Me.MeasureSubsystem)
+                Me.SourceMeasureUnit.Add(Me.MeasureSubsystem)
             End If
         End Set
     End Property
@@ -488,6 +490,7 @@ Public Class Device
         Set(value As SourceSubsystem)
             If Me._SourceSubsystem IsNot Nothing Then
                 RemoveHandler Me.SourceSubsystem.PropertyChanged, AddressOf Me.SourceSubsystemPropertyChanged
+                Me.SourceMeasureUnit.Remove(Me.SourceSubsystem)
                 Me.RemoveSubsystem(Me.SourceSubsystem)
                 Me.SourceSubsystem.Dispose()
                 Me._SourceSubsystem = Nothing
@@ -496,6 +499,7 @@ Public Class Device
             If Me._SourceSubsystem IsNot Nothing Then
                 AddHandler Me.SourceSubsystem.PropertyChanged, AddressOf SourceSubsystemPropertyChanged
                 Me.AddSubsystem(Me.SourceSubsystem)
+                Me.SourceMeasureUnit.Add(Me.SourceSubsystem)
             End If
         End Set
     End Property

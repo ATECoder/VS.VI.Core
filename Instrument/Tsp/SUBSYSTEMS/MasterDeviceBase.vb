@@ -209,21 +209,21 @@ Public MustInherit Class MasterDeviceBase
 
     ''' <summary> Gets or sets source measure unit current source. </summary>
     ''' <value> The source measure unit current source. </value>
-    Public Property SourceMeasureUnitCurrentSource As SourceMeasureUnitCurrentSource
+    Public Property SourceMeasureUnitCurrentSource As CurrentSourceSubsystemBase
 
     ''' <summary> Gets or sets source measure unit measure. </summary>
     ''' <value> The source measure unit measure. </value>
-    Public Property SourceMeasureUnitMeasure As SourceMeasureUnitMeasure
+    Public Property SourceMeasureUnitMeasure As MeasureResistanceSubsystemBase
 
     ''' <summary> Gets or sets the link subsystem. </summary>
     ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <value> The link subsystem. </value>
-    Public Property LinkSubsystem As LinkSubsystem
+    Public Property LinkSubsystem As LinkSubsystemBase
 
     ''' <summary> Gets or sets the interactive subsystem. </summary>
     ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <value> The interactive subsystem. </value>
-    Public Property InteractiveSubsystem As InteractiveSubsystem
+    Public Property InteractiveSubsystem As LocalNodeSubsystemBase
 
 #End Region
 

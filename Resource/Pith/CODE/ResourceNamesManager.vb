@@ -284,6 +284,30 @@ Public NotInheritable Class ResourceNamesManager
 
 #End Region
 
+#Region " PING "
+
+    ''' <summary> Converts a resourceName to a resource address. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="resourceName"> The name of the resource. </param>
+    ''' <returns> The resource TCP/IP address. </returns>
+    ''' <remarks> Works only on TCP/IP resources. </remarks>
+    Public Shared Function ToResourceAddress(ByVal resourceName As String) As String
+        If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
+        If Not resourceName.StartsWith(HardwareInterfaceType.Tcpip.ToString, StringComparison.OrdinalIgnoreCase) Then
+            Throw New InvalidOperationException($"Unable to convert resource {resourceName} to a {HardwareInterfaceType.Tcpip} resource")
+        End If
+        Return resourceName.Split(":"c)(2)
+    End Function
+
+    ''' <summary> Pings to resource name. </summary>
+    ''' <param name="resourceName"> The name of the resource. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Shared Function Ping(ByVal resourceName As String) As Boolean
+        Return My.Computer.Network.Ping(ResourceNamesManager.ToResourceAddress(resourceName))
+    End Function
+
+#End Region
+
 End Class
 
 ''' <summary> Values that represent resource types. </summary>

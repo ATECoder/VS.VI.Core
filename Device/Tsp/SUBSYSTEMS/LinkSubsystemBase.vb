@@ -9,7 +9,7 @@ Imports isr.Core.Pith.StackTraceExtensions
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ''' </para> </license>
 ''' <history date="11/1/2016" by="David" revision=""> Based on legacy status subsystem. </history>
-Public MustInherit Class LinkSubsystem
+Public MustInherit Class LinkSubsystemBase
     Inherits VI.SubsystemPlusStatusBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
@@ -359,7 +359,7 @@ Public MustInherit Class LinkSubsystem
     ''' <param name="node"> . </param>
     ''' <returns> Count. </returns>
     Public Function QueryDataQueueCount(ByVal node As NodeEntityBase) As Integer
-        If node Is Nothing Then            Throw New ArgumentNullException(NameOf(node))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Return Me.QueryDataQueueCount(node.Number)
     End Function
 
@@ -491,16 +491,16 @@ Public MustInherit Class LinkSubsystem
     ''' <value> The controller node. </value>
     Public Property ControllerNode() As NodeEntityBase
         Get
-            Return Me._controllerNode
+            Return Me._ControllerNode
         End Get
         Set(ByVal value As NodeEntityBase)
             If value Is Nothing Then
                 If Me.ControllerNode IsNot Nothing Then
-                    Me._controllerNode = value
+                    Me._ControllerNode = value
                     Me.SafePostPropertyChanged()
                 End If
             ElseIf Me.ControllerNode Is Nothing OrElse Not value.Equals(Me.ControllerNode) Then
-                Me._controllerNode = value
+                Me._ControllerNode = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -663,11 +663,11 @@ Public MustInherit Class LinkSubsystem
     ''' <value> The using tsp link. </value>
     Public Property UsingTspLink() As Boolean
         Get
-            Return Me._usingTspLink
+            Return Me._UsingTspLink
         End Get
         Set(ByVal value As Boolean)
             If value <> Me.UsingTspLink Then
-                Me._usingTspLink = value
+                Me._UsingTspLink = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -681,11 +681,11 @@ Public MustInherit Class LinkSubsystem
     ''' <value> <c>null</c> if Not known; <c>True</c> if the tsp link is on line; otherwise <c>False</c>. </value>
     Public Property IsTspLinkOnline() As Boolean?
         Get
-            Return Me._isTspLinkOnline
+            Return Me._IsTspLinkOnline
         End Get
         Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(value, Me.IsTspLinkOnline) Then
-                Me._isTspLinkOnline = value
+                Me._IsTspLinkOnline = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -715,11 +715,11 @@ Public MustInherit Class LinkSubsystem
     ''' <value> <c>null</c> if Not known; <c>True</c> if the tsp link is Off line; otherwise <c>False</c>. </value>
     Public Property IsTspLinkOffline() As Boolean?
         Get
-            Return Me._isTspLinkOffline
+            Return Me._IsTspLinkOffline
         End Get
         Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(value, Me.IsTspLinkOffline) Then
-                Me._isTspLinkOffline = value
+                Me._IsTspLinkOffline = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -829,7 +829,7 @@ Public MustInherit Class LinkSubsystem
             If Not value.Equals(Me.TspLinkState) Then
                 Me._TspLinkState = value
                 Me.SafePostPropertyChanged()
-                Me.IsTspLinkOnline = Me.TspLinkState.Equals(LinkSubsystem.OnlineState, StringComparison.OrdinalIgnoreCase)
+                Me.IsTspLinkOnline = Me.TspLinkState.Equals(LinkSubsystemBase.OnlineState, StringComparison.OrdinalIgnoreCase)
                 Me.IsTspLinkOffline = Not Me.IsTspLinkOnline.Value
             End If
         End Set

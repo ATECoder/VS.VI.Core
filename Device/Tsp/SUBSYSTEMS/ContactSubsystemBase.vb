@@ -1,8 +1,7 @@
-Imports System.ComponentModel
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
-''' <summary> Manages TSP SMU subsystem. </summary>
-''' <license> (c) 2007 Integrated Scientific Resources, Inc.<para>
+''' <summary>  Defines the contract that must be implemented by a Contact Subsystem. </summary>
+''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
 ''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
 ''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -10,32 +9,23 @@ Imports isr.Core.Pith.EnumExtensions
 ''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ''' </para> </license>
-''' <history date="11/7/2013" by="David" revision="">                  Uses new core. </history>
-''' <history date="01/28/2008" by="David" revision="2.0.2949.x">  Use .NET Framework. </history>
-''' <history date="03/12/2007" by="David" revision="1.15.2627.x"> Created. </history>
-Public MustInherit Class SourceMeasureUnit
+''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
+Public Class ContactSubsystemBase
     Inherits SourceMeasureUnitBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Initializes a new instance of the <see cref="SourceMeasureUnit" /> class. </summary>
-    ''' <remarks> Note that the local node status clear command only clears the SMU status.  So, issue
-    ''' a CLS and RST as necessary when adding an SMU. </remarks>
-    ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystem">TSP status
-    ''' Subsystem</see>. </param>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
-        Me.New(statusSubsystem, 0, TspSyntax.SourceMeasureUnitNumberA)
-    End Sub
-
-    ''' <summary> Initializes a new instance of the <see cref="SourceMeasureUnit" /> class. </summary>
-    ''' <remarks> Note that the local node status clear command only clears the SMU status.  So, issue
-    ''' a CLS and RST as necessary when adding an SMU. </remarks>
-    ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystem">TSP status
-    ''' Subsystem</see>. </param>
-    ''' <param name="nodeNumber">      Specifies the node number. </param>
-    ''' <param name="smuNumber">       Specifies the SMU (either 'a' or 'b'. </param>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase, ByVal nodeNumber As Integer, ByVal smuNumber As String)
-        MyBase.New(statusSubsystem, nodeNumber, smuNumber)
+    ''' <summary> Initializes a new instance of the <see cref="SourceSubsystemBase" /> class. </summary>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp.StatusSubsystemBase">status subsystem</see>. </param>
+    Public Sub New(ByVal statusSubsystem As VI.Tsp.StatusSubsystemBase)
+        MyBase.New(statusSubsystem)
+#If False Then
+        Me.NewAmount()
+        Me._FunctionModeRanges = New SourceFunctionRangeDictionary
+        For Each fm As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
+            Me._FunctionModeRanges.Add(fm, New Core.Pith.RangeR(0, 1))
+        Next
+#End If
     End Sub
 
 #End Region
@@ -49,6 +39,19 @@ Public MustInherit Class SourceMeasureUnit
         Me.ContactCheckThreshold = New Integer?
         Me.ContactCheckSpeedMode = New Tsp.ContactCheckSpeedMode?
         Me.ContactResistances = ""
+    End Sub
+
+#End Region
+
+#Region " PUBLISHER "
+
+    ''' <summary> Publishes all values by raising the property changed events. </summary>
+    Public Overrides Sub Publish()
+        If Me.Publishable Then
+            For Each p As Reflection.PropertyInfo In Reflection.MethodInfo.GetCurrentMethod.DeclaringType.GetProperties()
+                Me.SafePostPropertyChanged(p.Name)
+            Next
+        End If
     End Sub
 
 #End Region
@@ -165,12 +168,12 @@ Public MustInherit Class SourceMeasureUnit
     ''' <value> The contact resistances. </value>
     Public Property ContactResistances() As String
         Get
-            Return Me._contactResistances
+            Return Me._ContactResistances
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.ContactResistances) Then
-                Me._contactResistances = value
+                Me._ContactResistances = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -248,7 +251,7 @@ Public MustInherit Class SourceMeasureUnit
             Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "reading contact check resistance;. ")
             Me.QueryContactResistances()
             Me.CheckThrowDeviceException(True, "reading contacts;. using '{0}'", Me.Session.LastMessageSent)
-            If String.IsNullOrWhiteSpace(Me._contactResistances) Then
+            If String.IsNullOrWhiteSpace(Me._ContactResistances) Then
                 Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                        "Contact check failed;. Failed fetching contact resistances using  '{0}'", Me.Session.LastMessageSent)
             Else
