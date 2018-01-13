@@ -461,18 +461,25 @@ Partial Public Class SessionBase
     ''' <summary> Represents the LUA nil value. </summary>
     Public Const NilValue As String = "nil"
 
+    ''' <summary> Equals nil. </summary>
+    ''' <param name="value"> Specifies the global which to look for. </param>
+    ''' <returns> <c>true</c> if equals nil; otherwise <c>false</c> </returns>
+    Public Shared Function EqualsNil(ByVal value As String) As Boolean
+        Return String.Equals(SessionBase.NilValue, value, StringComparison.OrdinalIgnoreCase)
+    End Function
+
     ''' <summary> Returns <c>True</c> if the specified global exists. </summary>
     ''' <param name="value"> Specifies the global which to look for. </param>
     ''' <returns> <c>True</c> if the specified global exists; otherwise <c>False</c> </returns>
     Public Function IsGlobalExists(ByVal value As String) As Boolean
-        Return Not String.Equals(SessionBase.NilValue, Me.QueryPrintTrimEnd(value))
+        Return Not SessionBase.EqualsNil(Me.QueryPrintTrimEnd(value))
     End Function
 
     ''' <summary> Returns <c>True</c> if the specified global is Nil. </summary>
     ''' <param name="value"> Specifies the global which to look for. </param>
     ''' <returns> <c>True</c> if the specified global exists; otherwise <c>False</c> </returns>
     Public Function IsNil(ByVal value As String) As Boolean
-        Return String.Equals(SessionBase.NilValue, Me.QueryPrintTrimEnd(value))
+        Return SessionBase.EqualsNil(Me.QueryPrintTrimEnd(value))
     End Function
 
     ''' <summary> Returns <c>True</c> if the specified global is Nil. </summary>
@@ -480,7 +487,7 @@ Partial Public Class SessionBase
     ''' <param name="args">   The format arguments. </param>
     ''' <returns> <c>True</c> if the specified global exists; otherwise <c>False</c> </returns>
     Public Function IsNil(ByVal format As String, ByVal ParamArray args() As Object) As Boolean
-        Return String.Equals(SessionBase.NilValue, Me.QueryPrintTrimEnd(format, args))
+        Return SessionBase.EqualsNil(Me.QueryPrintTrimEnd(format, args))
     End Function
 
     ''' <summary> Checks the series of values and return <c>True</c> if any one of them is nil. </summary>
@@ -493,8 +500,6 @@ Partial Public Class SessionBase
         Else
             For Each value As String In values
                 If Not String.IsNullOrWhiteSpace(value) Then
-
-
                     If Me.IsNil(value) Then
                         Return True
                     End If

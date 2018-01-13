@@ -18,6 +18,7 @@ Public MustInherit Class ChannelSubsystemBase
     ''' Subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
         MyBase.New(statusSubsystem)
+        Me._ClosedChannels = ""
     End Sub
 
     ''' <summary>
@@ -75,7 +76,8 @@ Public MustInherit Class ChannelSubsystemBase
     ''' <summary> Queries closed channels. </summary>
     ''' <returns> The closed channels. </returns>
     Public Function QueryClosedChannels() As String
-        Me.ClosedChannels = Me.Query(Me.ClosedChannels, Me.ClosedChannelsQueryCommand)
+        Dim value As String = Me.Query(Me.ClosedChannels, Me.ClosedChannelsQueryCommand)
+        Me.ClosedChannels = If(SessionBase.EqualsNil(value), "", value)
         Return Me.ClosedChannels
     End Function
 

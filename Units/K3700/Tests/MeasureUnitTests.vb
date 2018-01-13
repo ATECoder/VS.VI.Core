@@ -138,6 +138,18 @@ Public Class MeasureUnitTests
 
     End Sub
 
+    <TestMethod()>
+    Public Sub ReadChannelSubsystemTest()
+        Using device As Device = isr.VI.tsp.K3700.Device.Create
+            MeasureUnitTests.OpenSession(device)
+            MeasureUnitTests.ReadChannelSubsystemInfo(device)
+            MeasureUnitTests.CloseSession(device)
+        End Using
+    End Sub
+
+
+
+
 #End Region
 
 #Region " MEASURE SUBSYSTEM TEST "
@@ -197,7 +209,9 @@ Public Class MeasureUnitTests
 
     End Sub
 
-    Private Shared Sub MeasureResistance(ByVal trialNumber As Integer, ByVal device As Device, ByVal expectedValue As Double, ByVal channelList As String)
+    Private Shared Sub MeasureResistance(ByVal trialNumber As Integer, ByVal device As Device,
+                                         ByVal expectedValue As Double, ByVal epsilon As Double,
+                                         ByVal channelList As String)
 
         Dim expectedChannelList As String = ""
         Dim actualChannelList As String = device.ChannelSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(2))
@@ -211,22 +225,8 @@ Public Class MeasureUnitTests
 
         Dim expectedEsistance As Double = expectedValue
         Dim resistance As Double = device.MultimeterSubsystem.Measure.GetValueOrDefault(-1)
-        Assert.AreEqual(TestInfo.ExpectedResistance, resistance, TestInfo.ExpectedResistanceEpsilon,
+        Assert.AreEqual(expectedValue, resistance, TestInfo.ExpectedResistanceEpsilon,
                   $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.Reading)} is {resistance}; expected {TestInfo.ExpectedResistance} within {TestInfo.ExpectedResistanceEpsilon}")
-
-    End Sub
-
-    Private Shared Sub MeasureResistance(ByVal device As Device)
-
-        MeasureUnitTests.PrepareMeasureResistance(device)
-
-        Dim trialNumber As Integer = 0
-        trialNumber += 1
-        MeasureResistance(trialNumber, device, 0, TestInfo.ShortChannelList)
-        trialNumber += 1
-        MeasureResistance(trialNumber, device, TestInfo.ExpectedResistance, TestInfo.ResistorChannelList)
-        trialNumber += 1
-        MeasureResistance(trialNumber, device, TestInfo.ExpectedOpen, TestInfo.OpenChannelList)
 
     End Sub
 
@@ -234,7 +234,11 @@ Public Class MeasureUnitTests
     Public Sub MeasureResistanceUnitTest()
         Using device As Device = Device.Create
             MeasureUnitTests.OpenSession(device)
-            MeasureUnitTests.MeasureResistance(device)
+            MeasureUnitTests.PrepareMeasureResistance(device)
+            Dim trialNumber As Integer = 0
+            trialNumber += 1 : MeasureResistance(trialNumber, device, 0, TestInfo.ExpectedZeroResistanceEpsilon, TestInfo.ShortChannelList)
+            trialNumber += 1 : MeasureResistance(trialNumber, device, TestInfo.ExpectedResistance, TestInfo.ExpectedResistanceEpsilon, TestInfo.ResistorChannelList)
+            trialNumber += 1 : MeasureResistance(trialNumber, device, TestInfo.ExpectedOpen, 1, TestInfo.OpenChannelList)
             MeasureUnitTests.CloseSession(device)
         End Using
     End Sub
