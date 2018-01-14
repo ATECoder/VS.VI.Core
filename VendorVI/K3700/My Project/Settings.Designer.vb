@@ -137,6 +137,66 @@ Namespace My
                 Me("ClearRefractoryPeriod") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("TCPIP0::192.168.0.148::inst0::INSTR")>  _
+        Public Property ResourceName() As String
+            Get
+                Return CType(Me("ResourceName"),String)
+            End Get
+            Set
+                Me("ResourceName") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("1001;1031;1912;1921")>  _
+        Public Property Gage1ChannelList() As String
+            Get
+                Return CType(Me("Gage1ChannelList"),String)
+            End Get
+            Set
+                Me("Gage1ChannelList") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("1002;1032;1912;1921")>  _
+        Public Property Gage2ChannelList() As String
+            Get
+                Return CType(Me("Gage2ChannelList"),String)
+            End Get
+            Set
+                Me("Gage2ChannelList") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("1003;1033;1912;1921")>  _
+        Public Property Gage3ChannelList() As String
+            Get
+                Return CType(Me("Gage3ChannelList"),String)
+            End Get
+            Set
+                Me("Gage3ChannelList") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("1004;1034;1912;1921")>  _
+        Public Property Gage4ChannelList() As String
+            Get
+                Return CType(Me("Gage4ChannelList"),String)
+            End Get
+            Set
+                Me("Gage4ChannelList") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

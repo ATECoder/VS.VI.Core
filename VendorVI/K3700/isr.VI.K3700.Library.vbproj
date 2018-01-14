@@ -104,6 +104,12 @@
     <Compile Include="PANELS\K3700Panel.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="PANELS\BridgeMeterControl.Designer.vb">
+      <DependentUpon>BridgeMeterControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\BridgeMeterControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PANELS\MovingWindowMeter.Designer.vb">
       <DependentUpon>MovingWindowMeter.vb</DependentUpon>
     </Compile>
@@ -141,6 +147,9 @@
       <DependentUpon>K3700Panel.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\BridgeMeterControl.resx">
+      <DependentUpon>BridgeMeterControl.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PANELS\MovingWindowMeter.resx">
       <DependentUpon>MovingWindowMeter.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -150,6 +159,7 @@
     <CodeAnalysisDictionary Include="My\MyDictionary.xml">
       <SubType>Designer</SubType>
     </CodeAnalysisDictionary>
+    <EmbeddedResource Include="PANELS\BridgeMeterControl.bmp" />
     <EmbeddedResource Include="PANELS\K3700Control.bmp" />
     <EmbeddedResource Include="PANELS\MovingWindowMeter.bmp" />
     <EmbeddedResource Include="PANELS\K3700Panel.bmp" />
