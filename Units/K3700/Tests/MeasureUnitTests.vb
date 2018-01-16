@@ -3,7 +3,7 @@ Imports System.Text
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
 Imports isr.VI.tsp.K3700
 
-''' <summary> K3700 Device unit tests. </summary>
+''' <summary> K3700 Device measurement unit tests. </summary>
 ''' <license>
 ''' (c) 2017 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -165,14 +165,15 @@ Public Class MeasureUnitTests
 
         Dim expectedBoolean As Boolean = TestInfo.InitialAutoRangeEnabled
         Dim actualBoolean As Boolean = device.MultimeterSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(False)
-        Assert.IsTrue(actualBoolean, $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.AutoRangeEnabled)} is {actualBoolean }; expected {True}")
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.AutoRangeEnabled)} is {actualBoolean }; expected {expectedBoolean}")
 
         expectedBoolean = TestInfo.InitialAutoZeroEnabled
         actualBoolean = device.MultimeterSubsystem.QueryAutoZeroEnabled.GetValueOrDefault(False)
-        Assert.IsTrue(actualBoolean, $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.AutoZeroEnabled)} is {actualBoolean }; expected {True}")
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.AutoZeroEnabled)} is {actualBoolean }; expected {expectedBoolean }")
 
         Dim senseFn As MultimeterFunctionMode = device.MultimeterSubsystem.QueryFunctionMode.GetValueOrDefault(MultimeterFunctionMode.ResistanceTwoWire)
-        Assert.AreEqual(TestInfo.InitialSenseFunction, senseFn, $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.FunctionMode)} is {senseFn} ; expected {TestInfo.InitialSenseFunction}")
+        Assert.AreEqual(TestInfo.InitialSenseFunction, senseFn,
+                        $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.FunctionMode)} is {senseFn} ; expected {TestInfo.InitialSenseFunction}")
 
     End Sub
 
@@ -223,10 +224,10 @@ Public Class MeasureUnitTests
         Assert.AreEqual(expectedChannelList, actualChannelList,
                         $"{NameOf(ChannelSubsystem)}.{NameOf(ChannelSubsystem.ClosedChannels)} is {actualChannelList}; expected {expectedChannelList}")
 
-        Dim expectedEsistance As Double = expectedValue
+        Dim expectedResistance As Double = expectedValue
         Dim resistance As Double = device.MultimeterSubsystem.Measure.GetValueOrDefault(-1)
-        Assert.AreEqual(expectedValue, resistance, TestInfo.ExpectedResistanceEpsilon,
-                  $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.Reading)} is {resistance}; expected {TestInfo.ExpectedResistance} within {TestInfo.ExpectedResistanceEpsilon}")
+        Assert.AreEqual(expectedValue, resistance, epsilon,
+                        $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.Reading)} is {resistance}; expected {expectedResistance } within {epsilon}")
 
     End Sub
 

@@ -98,11 +98,11 @@ Public Class ResourceControlUnitTests
                 control.DeviceBase = target
                 control.ResourceName = TestInfo.ResourceName
 
-                Dim e As New System.ComponentModel.CancelEventArgs
-                control.Connect(e)
+                Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+                control.TryOpenSession(e)
                 actualBoolean = e.Cancel
                 expectedBoolean = False
-                Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect cancel {control.ResourceName}")
+                Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect cancel {control.ResourceName} {e.Details}")
 
                 actualBoolean = target.IsDeviceOpen
                 expectedBoolean = True
@@ -112,10 +112,10 @@ Public Class ResourceControlUnitTests
                 Assert.AreEqual(TestInfo.ResourceModel, target.StatusSubsystem.VersionInfo.Model,
                                 $"Version Info Model {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
 
-                control.Disconnect(e)
+                control.TryCloseSession(e)
                 actualBoolean = e.Cancel
                 expectedBoolean = False
-                Assert.AreEqual(expectedBoolean, actualBoolean, $"Disconnect cancel {control.ResourceName}")
+                Assert.AreEqual(expectedBoolean, actualBoolean, $"Disconnect cancel {control.ResourceName} {e.Details}")
 
                 actualBoolean = target.IsDeviceOpen
                 expectedBoolean = False
@@ -139,11 +139,11 @@ Public Class ResourceControlUnitTests
                 control.DeviceBase = device
                 control.ResourceName = TestInfo.ResourceName
 
-                Dim e As New System.ComponentModel.CancelEventArgs
-                control.Connect(e)
+                Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+                control.TryOpenSession(e)
                 actualBoolean = device.IsDeviceOpen
                 expectedBoolean = True
-                Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect open once {control.ResourceName}")
+                Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect open once {control.ResourceName} {e.Details}")
 
                 ' check the MODEL
                 Assert.AreEqual(TestInfo.ResourceModel, device.StatusSubsystem.VersionInfo.Model,
@@ -153,11 +153,11 @@ Public Class ResourceControlUnitTests
                 control.DeviceBase = device
                 control.ResourceName = TestInfo.ResourceName
 
-                Dim e As New System.ComponentModel.CancelEventArgs
-                control.Connect(e)
+                Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+                control.TryCloseSession(e)
                 actualBoolean = device.IsDeviceOpen
                 expectedBoolean = True
-                Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect open twice {control.ResourceName}")
+                Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect open twice {control.ResourceName} {e.Details}")
 
                 ' check the MODEL
                 Assert.AreEqual(TestInfo.ResourceModel, device.StatusSubsystem.VersionInfo.Model,

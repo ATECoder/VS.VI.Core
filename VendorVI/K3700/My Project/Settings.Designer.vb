@@ -153,48 +153,48 @@ Namespace My
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("1001;1031;1912;1921")>  _
-        Public Property Gage1ChannelList() As String
+        Public Property R1ChannelList() As String
             Get
-                Return CType(Me("Gage1ChannelList"),String)
+                Return CType(Me("R1ChannelList"),String)
             End Get
             Set
-                Me("Gage1ChannelList") = value
+                Me("R1ChannelList") = value
             End Set
         End Property
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("1002;1032;1912;1921")>  _
-        Public Property Gage2ChannelList() As String
+        Public Property R2ChannelList() As String
             Get
-                Return CType(Me("Gage2ChannelList"),String)
+                Return CType(Me("R2ChannelList"),String)
             End Get
             Set
-                Me("Gage2ChannelList") = value
+                Me("R2ChannelList") = value
             End Set
         End Property
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("1003;1033;1912;1921")>  _
-        Public Property Gage3ChannelList() As String
+        Public Property R3ChannelList() As String
             Get
-                Return CType(Me("Gage3ChannelList"),String)
+                Return CType(Me("R3ChannelList"),String)
             End Get
             Set
-                Me("Gage3ChannelList") = value
+                Me("R3ChannelList") = value
             End Set
         End Property
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("1004;1034;1912;1921")>  _
-        Public Property Gage4ChannelList() As String
+        Public Property R4ChannelList() As String
             Get
-                Return CType(Me("Gage4ChannelList"),String)
+                Return CType(Me("R4ChannelList"),String)
             End Get
             Set
-                Me("Gage4ChannelList") = value
+                Me("R4ChannelList") = value
             End Set
         End Property
     End Class

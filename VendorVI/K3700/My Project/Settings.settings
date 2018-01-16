@@ -26,16 +26,16 @@
     <Setting Name="ResourceName" Type="System.String" Scope="User">
       <Value Profile="(Default)">TCPIP0::192.168.0.148::inst0::INSTR</Value>
     </Setting>
-    <Setting Name="Gage1ChannelList" Type="System.String" Scope="User">
+    <Setting Name="R1ChannelList" Type="System.String" Scope="User">
       <Value Profile="(Default)">1001;1031;1912;1921</Value>
     </Setting>
-    <Setting Name="Gage2ChannelList" Type="System.String" Scope="User">
+    <Setting Name="R2ChannelList" Type="System.String" Scope="User">
       <Value Profile="(Default)">1002;1032;1912;1921</Value>
     </Setting>
-    <Setting Name="Gage3ChannelList" Type="System.String" Scope="User">
+    <Setting Name="R3ChannelList" Type="System.String" Scope="User">
       <Value Profile="(Default)">1003;1033;1912;1921</Value>
     </Setting>
-    <Setting Name="Gage4ChannelList" Type="System.String" Scope="User">
+    <Setting Name="R4ChannelList" Type="System.String" Scope="User">
       <Value Profile="(Default)">1004;1034;1912;1921</Value>
     </Setting>
   </Settings>

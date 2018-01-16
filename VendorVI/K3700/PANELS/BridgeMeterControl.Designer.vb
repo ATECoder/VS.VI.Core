@@ -49,7 +49,7 @@ Partial Class BridgeMeterControl
         Me._ResourceSelectorConnector.Location = New System.Drawing.Point(3, 21)
         Me._ResourceSelectorConnector.Margin = New System.Windows.Forms.Padding(0)
         Me._ResourceSelectorConnector.Name = "_ResourceSelectorConnector"
-        Me._ResourceSelectorConnector.Size = New System.Drawing.Size(643, 29)
+        Me._ResourceSelectorConnector.Size = New System.Drawing.Size(563, 29)
         Me._ResourceSelectorConnector.TabIndex = 0
         '
         '_Layout
@@ -69,7 +69,7 @@ Partial Class BridgeMeterControl
         Me._Layout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._Layout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 6.0!))
         Me._Layout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20.0!))
-        Me._Layout.Size = New System.Drawing.Size(674, 322)
+        Me._Layout.Size = New System.Drawing.Size(609, 322)
         Me._Layout.TabIndex = 1
         '
         '_BridgeMeterLayout
@@ -81,14 +81,13 @@ Partial Class BridgeMeterControl
         Me._BridgeMeterLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._BridgeMeterLayout.Controls.Add(Me._ConfigureGroupBox, 1, 1)
         Me._BridgeMeterLayout.Controls.Add(Me._MeasureGroupBox, 2, 1)
-        Me._BridgeMeterLayout.Dock = System.Windows.Forms.DockStyle.Top
-        Me._BridgeMeterLayout.Location = New System.Drawing.Point(12, 68)
+        Me._BridgeMeterLayout.Location = New System.Drawing.Point(20, 68)
         Me._BridgeMeterLayout.Name = "_BridgeMeterLayout"
         Me._BridgeMeterLayout.RowCount = 3
         Me._BridgeMeterLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._BridgeMeterLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._BridgeMeterLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._BridgeMeterLayout.Size = New System.Drawing.Size(649, 239)
+        Me._BridgeMeterLayout.Size = New System.Drawing.Size(569, 239)
         Me._BridgeMeterLayout.TabIndex = 3
         '
         '_ConfigureGroupBox
@@ -99,7 +98,7 @@ Partial Class BridgeMeterControl
         Me._ConfigureGroupBox.Controls.Add(Me._FilterCountNumeric)
         Me._ConfigureGroupBox.Controls.Add(Me._PowerLineCyclesNumericLabel)
         Me._ConfigureGroupBox.Dock = System.Windows.Forms.DockStyle.Left
-        Me._ConfigureGroupBox.Location = New System.Drawing.Point(66, 24)
+        Me._ConfigureGroupBox.Location = New System.Drawing.Point(33, 24)
         Me._ConfigureGroupBox.Name = "_ConfigureGroupBox"
         Me._ConfigureGroupBox.Size = New System.Drawing.Size(207, 191)
         Me._ConfigureGroupBox.TabIndex = 0
@@ -159,9 +158,9 @@ Partial Class BridgeMeterControl
         '
         Me._MeasureGroupBox.Controls.Add(Me._DataGrid)
         Me._MeasureGroupBox.Controls.Add(Me._MeasureButton)
-        Me._MeasureGroupBox.Location = New System.Drawing.Point(279, 24)
+        Me._MeasureGroupBox.Location = New System.Drawing.Point(246, 24)
         Me._MeasureGroupBox.Name = "_MeasureGroupBox"
-        Me._MeasureGroupBox.Size = New System.Drawing.Size(304, 191)
+        Me._MeasureGroupBox.Size = New System.Drawing.Size(289, 191)
         Me._MeasureGroupBox.TabIndex = 1
         Me._MeasureGroupBox.TabStop = False
         Me._MeasureGroupBox.Text = "Measure"
@@ -169,15 +168,15 @@ Partial Class BridgeMeterControl
         '_DataGrid
         '
         Me._DataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me._DataGrid.Location = New System.Drawing.Point(7, 19)
+        Me._DataGrid.Location = New System.Drawing.Point(9, 19)
         Me._DataGrid.Name = "_DataGrid"
-        Me._DataGrid.Size = New System.Drawing.Size(289, 128)
+        Me._DataGrid.Size = New System.Drawing.Size(272, 128)
         Me._DataGrid.TabIndex = 8
         '
         '_MeasureButton
         '
         Me._MeasureButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._MeasureButton.Location = New System.Drawing.Point(218, 155)
+        Me._MeasureButton.Location = New System.Drawing.Point(203, 155)
         Me._MeasureButton.Name = "_MeasureButton"
         Me._MeasureButton.Size = New System.Drawing.Size(75, 28)
         Me._MeasureButton.TabIndex = 7
@@ -187,9 +186,10 @@ Partial Class BridgeMeterControl
         '_ConnectorGroupBox
         '
         Me._ConnectorGroupBox.Controls.Add(Me._ResourceSelectorConnector)
-        Me._ConnectorGroupBox.Location = New System.Drawing.Point(12, 9)
+        Me._ConnectorGroupBox.Dock = System.Windows.Forms.DockStyle.Top
+        Me._ConnectorGroupBox.Location = New System.Drawing.Point(20, 9)
         Me._ConnectorGroupBox.Name = "_ConnectorGroupBox"
-        Me._ConnectorGroupBox.Size = New System.Drawing.Size(649, 53)
+        Me._ConnectorGroupBox.Size = New System.Drawing.Size(569, 53)
         Me._ConnectorGroupBox.TabIndex = 4
         Me._ConnectorGroupBox.TabStop = False
         Me._ConnectorGroupBox.Text = "Instrument Resource Name Finder and Connector"
@@ -200,7 +200,7 @@ Partial Class BridgeMeterControl
         Me._BottomToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._GageTitleLabel, Me._ReadingLabel, Me._ChannelLabel, Me._ComplianceLabel})
         Me._BottomToolStrip.Location = New System.Drawing.Point(0, 322)
         Me._BottomToolStrip.Name = "_BottomToolStrip"
-        Me._BottomToolStrip.Size = New System.Drawing.Size(674, 25)
+        Me._BottomToolStrip.Size = New System.Drawing.Size(609, 25)
         Me._BottomToolStrip.TabIndex = 2
         Me._BottomToolStrip.Text = "Tool Strip"
         '
@@ -239,7 +239,7 @@ Partial Class BridgeMeterControl
         Me.Controls.Add(Me._Layout)
         Me.Controls.Add(Me._BottomToolStrip)
         Me.Name = "BridgeMeterControl"
-        Me.Size = New System.Drawing.Size(674, 347)
+        Me.Size = New System.Drawing.Size(609, 347)
         Me._Layout.ResumeLayout(False)
         Me._BridgeMeterLayout.ResumeLayout(False)
         Me._ConfigureGroupBox.ResumeLayout(False)

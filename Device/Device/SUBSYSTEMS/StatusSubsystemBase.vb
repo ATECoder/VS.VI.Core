@@ -40,7 +40,7 @@ Public MustInherit Class StatusSubsystemBase
 
         If visaSession IsNot Nothing Then AddHandler visaSession.PropertyChanged, AddressOf Me.SessionPropertyChanged
 
-        Me._InitializeTimeout = TimeSpan.FromMilliseconds(30000)
+        Me._InitializeTimeout = TimeSpan.FromMilliseconds(5000)
         Me._DeviceClearRefractoryPeriod = TimeSpan.FromMilliseconds(1050)
         Me._ResetRefractoryPeriod = TimeSpan.FromMilliseconds(200)
         Me._InitRefractoryPeriod = TimeSpan.FromMilliseconds(100)

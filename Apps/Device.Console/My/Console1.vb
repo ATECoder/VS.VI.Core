@@ -1,8 +1,6 @@
 ﻿Public Class Console1
 #If TTM Then
     Inherits isr.VI.Ttm.Console
-#ElseIf K2450 Then
-    Inherits isr.VI.Instrument.InstrumentPanelForm
 #Else
     Inherits isr.VI.Instrument.InstrumentPanelForm
 #End If
@@ -27,6 +25,11 @@
 #ElseIf K3700 Then
         Me.AddInstrumentPanel("DMM/Scanner", New VI.Tsp.K3700.K3700Panel, True)
         enabled = True
+#ElseIf K3700bm Then
+        Me.AddTalkerControl("BridgeMeter", New VI.Tsp.K3700.BridgeMeterControl With {
+            .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}", .ResourceTitle = "3700"
+                                    }, True)
+        enabled = true
 #ElseIf K7000 Then
         Me.AddInstrumentPanel("Scanner", New VI.K7000.K7000Panel, True)
         enabled = True

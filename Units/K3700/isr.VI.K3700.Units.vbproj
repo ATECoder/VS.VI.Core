@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0D6FDFB9-17C6-46A2-83A6-C9E601583926}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>isr.VI.tsp.K3700.Units</RootNamespace>
+    <RootNamespace>isr.VI.Tsp.K3700.Units</RootNamespace>
     <AssemblyName>isr.VI.K3700.Units</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
@@ -103,6 +103,7 @@
     <Compile Include="TestInfo\TestContextValidations.vb" />
     <Compile Include="TestInfo\TestInfo.vb" />
     <Compile Include="TestInfo\TestTrace.vb" />
+    <Compile Include="Tests\BridgeMeterUnitTests.vb" />
     <Compile Include="Tests\MeasureUnitTests.vb" />
     <Compile Include="Tests\ResourceControlUnitTests.vb" />
     <Compile Include="Tests\DeviceUnitTests.vb" />

@@ -31,15 +31,22 @@ Public Class BridgeMeterControl
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
-        Me.New(Device.Create)
+        MyBase.New()
+        Me._New(Device.Create)
         Me.IsDeviceOwner = True
     End Sub
 
     ''' <summary> Constructor. </summary>
     ''' <param name="device"> The device. </param>
-    Private Sub New(ByVal device As Device)
+    Public Sub New(ByVal device As Device)
         MyBase.New()
+        Me._New(device)
+        Me.IsDeviceOwner = False
+    End Sub
 
+    ''' <summary> Constructor. </summary>
+    ''' <param name="device"> The device. </param>
+    Private Sub _New(ByVal device As Device)
         Me.InitializingComponents = True
         ' This call is required by the designer.
         InitializeComponent()
@@ -50,8 +57,8 @@ Public Class BridgeMeterControl
 
         Me._AssignDevice(device)
 
-        Me.Gages = New GageCollection
-        Me.Gages.Display(Me._DataGrid)
+        Me._Bridge = New ResistorCollection
+        Me.Bridge.DisplayValues(Me._DataGrid)
 
     End Sub
 
@@ -140,9 +147,9 @@ Public Class BridgeMeterControl
     ''' <summary> Executes the device open changed action. </summary>
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
         Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
-        ' Me.Gages.Display()
         Me._MeasureButton.Enabled = isOpen
         If Me.IsDeviceOpen Then
+            Me.Bridge.DisplayValues(Me._DataGrid)
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Device.StatusSubsystem.VersionInfo.Model} is open")
         End If
     End Sub
@@ -466,217 +473,164 @@ Public Class BridgeMeterControl
 
 #End Region
 
-#Region " GAGE "
-
-    ''' <summary> A gage. </summary>
-    ''' <license>
-    ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
-    ''' Licensed under The MIT License.</para><para>
-    ''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
-    ''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-    ''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-    ''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
-    ''' </license>
-    ''' <history date="1/13/2018" by="David" revision=""> Created. </history>
-    Private Class Gage
-        <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
-        Public Sub New(ByVal title As String, ByVal channelList As String)
-            MyBase.New()
-            Me.Title = title
-            Me.ChannelList = channelList
-        End Sub
-        Public ReadOnly Property Title As String
-        Public ReadOnly Property ChannelList As String
-        <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
-        <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
-        Public Property Resistance As Double
-    End Class
-
-    ''' <summary> Collection of gages. </summary>
-    ''' <license>
-    ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
-    ''' Licensed under The MIT License.</para><para>
-    ''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
-    ''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-    ''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-    ''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
-    ''' </license>
-    ''' <history date="1/13/2018" by="David" revision=""> Created. </history>
-    Private Class GageCollection
-        Inherits ObjectModel.KeyedCollection(Of String, Gage)
-        Public Sub New()
-            MyBase.New
-            Me.AddNew("R1", My.Settings.Gage1ChannelList)
-            Me.AddNew("R2", My.Settings.Gage2ChannelList)
-            Me.AddNew("R3", My.Settings.Gage3ChannelList)
-            Me.AddNew("R4", My.Settings.Gage4ChannelList)
-        End Sub
-        Protected Overrides Function GetKeyForItem(item As Gage) As String
-            If item Is Nothing Then Throw New ArgumentNullException(NameOf(item))
-            Return item.Title
-        End Function
-        Public Sub AddNew(ByVal title As String, ByVal channelList As String)
-            Me.Add(New Gage(title, channelList))
-        End Sub
-
-        ''' <summary> Configure display. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <param name="grid"> The grid. </param>
-        ''' <returns> An Integer. </returns>
-        Public Function ConfigureDisplay(ByVal grid As DataGridView) As Integer
-
-            If grid Is Nothing Then Throw New ArgumentNullException("grid")
-
-            Dim wasEnabled As Boolean = grid.Enabled
-            grid.Enabled = False
-            grid.Enabled = wasEnabled
-
-            grid.Enabled = False
-            grid.DataSource = Nothing
-            grid.AlternatingRowsDefaultCellStyle.BackColor = Color.LightSalmon
-            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
-            grid.DefaultCellStyle.WrapMode = DataGridViewTriState.True
-            grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-            grid.AutoGenerateColumns = True
-            grid.RowHeadersVisible = False
-            grid.ReadOnly = True
-            grid.DataSource = Me.ToArray
-            grid.ParseHeaderText()
-            grid.Enabled = True
-            If grid.Columns IsNot Nothing AndAlso grid.Columns.Count > 0 Then
-                Return grid.Columns.Count
-            Else
-                Return 0
-            End If
-
-        End Function
-
-        ''' <summary> Displays the given grid. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <param name="grid"> The grid. </param>
-        ''' <returns> An Integer. </returns>
-        Public Function Display(ByVal grid As DataGridView) As Integer
-
-            If grid Is Nothing Then Throw New ArgumentNullException("grid")
-
-            Dim wasEnabled As Boolean = grid.Enabled
-            grid.Enabled = False
-            grid.Enabled = wasEnabled
-
-            If grid.DataSource Is Nothing Then
-                Me.ConfigureDisplay(grid)
-                Application.DoEvents()
-            End If
-
-            grid.DataSource = Me
-            Application.DoEvents()
-            Return grid.Columns.Count
-
-        End Function
-    End Class
-
-    ''' <summary> Gets or sets the gages. </summary>
-    ''' <value> The gages. </value>
-    Private ReadOnly Property Gages As GageCollection
-
-#End Region
-
 #Region " MEASURE "
 
-    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub ConfigureMeter()
-        Dim action As String = $"Configuring {My.Settings.ResourceName}"
-        Try
-            If Me.IsDeviceOpen Then
-                action = $"Configuring function mode {MultimeterFunctionMode.ResistanceFourWire}"
-                Dim expectedMeasureFunction As MultimeterFunctionMode = MultimeterFunctionMode.ResistanceFourWire
-                Dim measureFunction As MultimeterFunctionMode? = Device.MultimeterSubsystem.ApplyFunctionMode(expectedMeasureFunction).GetValueOrDefault(MultimeterFunctionMode.ResistanceTwoWire)
-                If measureFunction.HasValue Then
-                    If expectedMeasureFunction <> measureFunction.Value Then
-                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                      $"Failed {action} Expected {expectedMeasureFunction } <> Actual {measureFunction.Value}")
-                        Return
-                    End If
-                Else
-                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Failed {action}--no value set")
-                    Return
+    ''' <summary> Gets or sets the bridges. </summary>
+    ''' <value> The bridge. </value>
+    Public ReadOnly Property Bridge As ResistorCollection
+
+    ''' <summary> Configure meter. </summary>
+    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    Public Sub ConfigureMeter()
+        Dim action As String = $"Checking {My.Settings.ResourceName} is open"
+        If Me.IsDeviceOpen Then
+            action = $"Configuring function mode {MultimeterFunctionMode.ResistanceFourWire}"
+            Dim expectedMeasureFunction As MultimeterFunctionMode = MultimeterFunctionMode.ResistanceFourWire
+            Dim measureFunction As MultimeterFunctionMode? = Device.MultimeterSubsystem.ApplyFunctionMode(expectedMeasureFunction).GetValueOrDefault(MultimeterFunctionMode.ResistanceTwoWire)
+            If measureFunction.HasValue Then
+                If expectedMeasureFunction <> measureFunction.Value Then
+                    Throw New OperationFailedException($"Failed {action} Expected {expectedMeasureFunction } <> Actual {measureFunction.Value}")
                 End If
-
-                Dim expectedPowerLineCycles As Double = Me._PowerLineCyclesNumeric.Value
-                action = $"Configuring power line cycles {expectedPowerLineCycles}"
-                Dim actualPowerLineCycles As Double? = Device.MultimeterSubsystem.ApplyPowerLineCycles(expectedPowerLineCycles)
-                If actualPowerLineCycles.HasValue Then
-                    If expectedPowerLineCycles <> actualPowerLineCycles.Value Then
-                        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                      $"Failed {action} Expected {expectedPowerLineCycles} <> Actual {actualPowerLineCycles.Value}")
-                        Return
-                    End If
-                Else
-                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Failed {action}--no value set")
-                    Return
-                End If
-
-
+            Else
+                Throw New OperationFailedException($"Failed {action}--no value set")
             End If
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {Action};. {ex.ToFullBlownString}")
-        End Try
+            Dim expectedPowerLineCycles As Double = Me._PowerLineCyclesNumeric.Value
+            action = $"Configuring power line cycles {expectedPowerLineCycles}"
+            Dim actualPowerLineCycles As Double? = Device.MultimeterSubsystem.ApplyPowerLineCycles(expectedPowerLineCycles)
+            If actualPowerLineCycles.HasValue Then
+                If expectedPowerLineCycles <> actualPowerLineCycles.Value Then
+                    Throw New OperationFailedException($"Failed {action} Expected {expectedPowerLineCycles} <> Actual {actualPowerLineCycles.Value}")
+                End If
+            Else
+                Throw New OperationFailedException($"Failed {action}--no value set")
+            End If
+        Else
+            Throw New OperationFailedException($"Failed {action}; VISA session to this device is not open")
+        End If
     End Sub
+
+
+    ''' <summary> Attempts to configure meter from the given data. </summary>
+    ''' <param name="e"> Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Function TryConfigureMeter(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        Dim action As String = $"Configuring bridge meter {My.Settings.ResourceName}"
+        Try
+            Me.ConfigureMeter()
+        Catch ex As Exception
+            e.RegisterCancellation(Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}"))
+        End Try
+        Return Not e.Cancel
+    End Function
 
     ''' <summary> Measure resistance. </summary>
-    ''' <param name="gage"> The gage. </param>
-    Private Sub MeasureResistance(ByVal gage As Gage)
+    ''' <exception cref="ArgumentNullException">    Thrown when one or more required arguments are
+    '''                                             null. </exception>
+    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <param name="resistor"> The resistor. </param>
+    Public Sub MeasureResistance(ByVal resistor As Resistor)
+        If resistor Is Nothing Then Throw New ArgumentNullException(NameOf(resistor))
+        Dim action As String = $"measuring {resistor.Title}"
+        If Me.Device.IsDeviceOpen Then
+            action = $"{resistor.Title} opening channels"
+            Dim expectedChannelList As String = ""
+            Dim actualChannelList As String = Me.Device.ChannelSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(2))
+            If expectedChannelList <> actualChannelList Then
+                Throw New OperationFailedException($"Failed {action} Expected {expectedChannelList } <> Actual {actualChannelList}")
+            End If
 
-        Dim action As String = $"measuring {gage.Title}"
-        action = $"{gage.Title} opening channels"
-        Dim expectedChannelList As String = ""
-        Dim actualChannelList As String = Me.Device.ChannelSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(2))
-        If expectedChannelList <> actualChannelList Then
-            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                      $"Failed {action} Expected {expectedChannelList } <> Actual {actualChannelList}")
-            Return
-        End If
+            action = $"{resistor.Title} closing {resistor.ChannelList}"
+            expectedChannelList = resistor.ChannelList
+            actualChannelList = Device.ChannelSubsystem.ApplyClosedChannels(expectedChannelList, TimeSpan.FromSeconds(2))
+            If expectedChannelList <> actualChannelList Then
+                Throw New OperationFailedException($"Failed {action} Expected {expectedChannelList } <> Actual {actualChannelList}")
+            End If
 
-        action = $"{gage.Title} closing {gage.ChannelList}"
-        expectedChannelList = gage.ChannelList
-        actualChannelList = Device.ChannelSubsystem.ApplyClosedChannels(expectedChannelList, TimeSpan.FromSeconds(2))
-        If expectedChannelList <> actualChannelList Then
-            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                      $"Failed {action} Expected {expectedChannelList } <> Actual {actualChannelList}")
-            Return
+            action = $"measuring {resistor.Title}"
+            If Device.MultimeterSubsystem.Measure.HasValue Then
+                resistor.Resistance = Device.MultimeterSubsystem.Reading.GetValueOrDefault(-1)
+            Else
+                Throw New OperationFailedException($"Failed {action}; driver returned nothing")
+            End If
+        Else
+            Throw New OperationFailedException($"Failed {action}; VISA session to this device is not open")
         End If
-        gage.Resistance = Device.MultimeterSubsystem.Measure.GetValueOrDefault(-1)
     End Sub
 
+    ''' <summary> Attempts to measure resistance from the given data. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="resistor"> The resistor. </param>
+    ''' <param name="e">        Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Function TryMeasureResistance(ByVal resistor As Resistor, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If resistor Is Nothing Then Throw New ArgumentNullException(NameOf(resistor))
+        Dim action As String = $"measuring {resistor.Title}"
+        Try
+            Me.MeasureResistance(resistor)
+        Catch ex As Exception
+            e.RegisterCancellation(Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}"))
+        End Try
+    End Function
+
+    ''' <summary> Measure bridge. </summary>
+    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    Public Sub MeasureBridge()
+        Dim action As String = $"Measuring bridge at {My.Settings.ResourceName}"
+        If Me.IsDeviceOpen Then
+            For Each resistor As Resistor In Me.Bridge
+                action = $"Measuring {resistor.Title} at {My.Settings.ResourceName}"
+                Me.MeasureResistance(resistor)
+            Next
+            Me._DataGrid.Refresh()
+        Else
+            Throw New OperationFailedException($"Failed {action}; VISA session to this device is not open")
+        End If
+    End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub MeasureBridge()
-        Dim action As String = $"Measuring {My.Settings.ResourceName}"
+    Public Function TryMeasureBridge(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        Dim action As String = $"Measuring bridge at {My.Settings.ResourceName}"
         Try
-            If Me.IsDeviceOpen Then
-                For Each gage As Gage In Me.Gages
-                    Me.MeasureResistance(gage)
-                Next
-            End If
+            Me.MeasureBridge()
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            e.RegisterCancellation(Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}"))
         End Try
-    End Sub
+    End Function
 
 #End Region
 
 #Region " CONTROL EVENTS "
 
+    ''' <summary> Measure button click. </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
     Private Sub _MeasureButton_Click(sender As Object, e As EventArgs) Handles _MeasureButton.Click
-        Me.MeasureBridge()
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.TryMeasureBridge(New isr.Core.Pith.CancelDetailsEventArgs)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
     End Sub
 
+    ''' <summary> Configure button click. </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    '''                       <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
     Private Sub _ConfigureButton_Click(sender As Object, e As EventArgs) Handles _ConfigureButton.Click
-        Me.ConfigureMeter()
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.TryConfigureMeter(New isr.Core.Pith.CancelDetailsEventArgs)
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
     End Sub
 
 #End Region
@@ -727,3 +681,207 @@ Public Class BridgeMeterControl
 #End Region
 
 End Class
+
+''' <summary> A resistor. </summary>
+''' <license>
+''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
+''' Licensed under The MIT License.</para><para>
+''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+''' </license>
+''' <history date="1/13/2018" by="David" revision=""> Created. </history>
+Public Class Resistor
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
+    Public Sub New(ByVal title As String, ByVal channelList As String)
+        MyBase.New()
+        Me.Title = title
+        Me.ChannelList = channelList
+    End Sub
+    Public ReadOnly Property Title As String
+    Public ReadOnly Property ChannelList As String
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
+    Public Property Resistance As Double
+End Class
+
+''' <summary> Bridge: an ordered collection of resistors. </summary>
+''' <license>
+''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
+''' Licensed under The MIT License.</para><para>
+''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+''' </license>
+''' <history date="1/13/2018" by="David" revision=""> Created. </history>
+Public Class ResistorCollection
+    Inherits ObjectModel.KeyedCollection(Of String, Resistor)
+
+    ''' <summary> Default constructor. </summary>
+    Public Sub New()
+        MyBase.New
+        Me.AddResistor("R1", My.Settings.R1ChannelList)
+        Me.AddResistor("R2", My.Settings.R2ChannelList)
+        Me.AddResistor("R3", My.Settings.R3ChannelList)
+        Me.AddResistor("R4", My.Settings.R4ChannelList)
+    End Sub
+
+    ''' <summary>
+    ''' When implemented in a derived class, extracts the key from the specified element.
+    ''' </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="item"> The element from which to extract the key. </param>
+    ''' <returns> The key for the specified element. </returns>
+    Protected Overrides Function GetKeyForItem(item As Resistor) As String
+        If item Is Nothing Then Throw New ArgumentNullException(NameOf(item))
+        Return item.Title
+    End Function
+
+    ''' <summary> Adds a new resistor. </summary>
+    ''' <param name="title">       The title. </param>
+    ''' <param name="channelList"> List of channels. </param>
+    Public Sub AddResistor(ByVal title As String, ByVal channelList As String)
+        Me.Add(New Resistor(title, channelList))
+    End Sub
+
+    ''' <summary> Configure display values. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="grid"> The grid. </param>
+    ''' <returns> An Integer. </returns>
+    Public Function ConfigureDisplayValues(ByVal grid As DataGridView) As Integer
+
+        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+
+        Dim wasEnabled As Boolean = grid.Enabled
+        grid.Enabled = False
+        grid.Enabled = wasEnabled
+
+        grid.Enabled = False
+        grid.DataSource = Nothing
+        grid.AlternatingRowsDefaultCellStyle.BackColor = Color.LightSalmon
+        grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+        grid.DefaultCellStyle.WrapMode = DataGridViewTriState.True
+        grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        grid.AutoGenerateColumns = False
+        grid.RowHeadersVisible = False
+        grid.ReadOnly = True
+        grid.DataSource = Me.ToArray
+
+        grid.Columns.Clear()
+        grid.Refresh()
+        Dim displayIndex As Integer = 0
+        Dim width As Integer = 30
+        Dim column As New DataGridViewTextBoxColumn()
+        With column
+            .DataPropertyName = "Title"
+            .Name = "Title"
+            .Visible = True
+            .DisplayIndex = displayIndex
+        End With
+        grid.Columns.Add(column)
+        width += column.Width
+
+        displayIndex += 1
+        column = New DataGridViewTextBoxColumn()
+        With column
+            .DataPropertyName = "Resistance"
+            .Name = "Resistance"
+            .Visible = True
+            .DisplayIndex = displayIndex
+            .Width = grid.Width - width
+            .DefaultCellStyle.Format = "G5"
+        End With
+        grid.Columns.Add(column)
+        grid.ParseHeaderText()
+        grid.Enabled = True
+        If grid.Columns IsNot Nothing AndAlso grid.Columns.Count > 0 Then
+            Return grid.Columns.Count
+        Else
+            Return 0
+        End If
+
+    End Function
+
+    ''' <summary> Displays the values described by grid. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="grid"> The grid. </param>
+    ''' <returns> An Integer. </returns>
+    Public Function DisplayValues(ByVal grid As DataGridView) As Integer
+
+        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+
+        Dim wasEnabled As Boolean = grid.Enabled
+        grid.Enabled = False
+        grid.Enabled = wasEnabled
+
+        If grid.DataSource Is Nothing Then
+            Me.ConfigureDisplayValues(grid)
+            Application.DoEvents()
+        End If
+
+        grid.DataSource = Me
+        Application.DoEvents()
+        Return grid.Columns.Count
+
+    End Function
+
+    ''' <summary> Configure display. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="grid"> The grid. </param>
+    ''' <returns> An Integer. </returns>
+    Public Function ConfigureDisplay(ByVal grid As DataGridView) As Integer
+
+        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+
+        Dim wasEnabled As Boolean = grid.Enabled
+        grid.Enabled = False
+        grid.Enabled = wasEnabled
+
+        grid.Enabled = False
+        grid.DataSource = Nothing
+        grid.AlternatingRowsDefaultCellStyle.BackColor = Color.LightSalmon
+        grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+        grid.DefaultCellStyle.WrapMode = DataGridViewTriState.True
+        grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        grid.AutoGenerateColumns = True
+        grid.RowHeadersVisible = False
+        grid.ReadOnly = True
+        grid.DataSource = Me.ToArray
+        grid.ParseHeaderText()
+        grid.Enabled = True
+        If grid.Columns IsNot Nothing AndAlso grid.Columns.Count > 0 Then
+            Return grid.Columns.Count
+        Else
+            Return 0
+        End If
+
+    End Function
+
+    ''' <summary> Displays the given grid. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="grid"> The grid. </param>
+    ''' <returns> An Integer. </returns>
+    Public Function Display(ByVal grid As DataGridView) As Integer
+
+        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+
+        Dim wasEnabled As Boolean = grid.Enabled
+        grid.Enabled = False
+        grid.Enabled = wasEnabled
+
+        If grid.DataSource Is Nothing Then
+            Me.ConfigureDisplay(grid)
+            Application.DoEvents()
+        End If
+
+        grid.DataSource = Me
+        Application.DoEvents()
+        Return grid.Columns.Count
+
+    End Function
+End Class
+

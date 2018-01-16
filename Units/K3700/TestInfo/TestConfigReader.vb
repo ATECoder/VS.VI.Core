@@ -41,14 +41,18 @@ Partial Public NotInheritable Class TestInfo
         End Get
     End Property
 
+    Public Shared Property TestLocation As TestLocation
+
     Private Shared _resourceName As String
     Public Shared ReadOnly Property ResourceName As String
         Get
             If String.IsNullOrWhiteSpace(_resourceName) Then
                 If isr.VI.ResourceNamesManager.Ping(IsrResourceName) Then
                     _resourceName = IsrResourceName
+                    TestInfo.TestLocation = TestLocation.Isr
                 Else
                     _resourceName = MicronResourceName
+                    TestInfo.TestLocation = TestLocation.Micron
                 End If
             End If
             Return _resourceName
@@ -245,6 +249,99 @@ Partial Public NotInheritable Class TestInfo
         End Get
     End Property
 
+    Public Shared ReadOnly Property BridgeNumber As String
+        Get
+            Return If(TestInfo.TestLocation = TestLocation.Micron, TestInfo.MicronBridgeNumber, TestInfo.IsrBridgeNumber)
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property BridgeR1 As Double
+        Get
+            Return If(TestInfo.TestLocation = TestLocation.Micron, TestInfo.MicronBridgeR1, TestInfo.IsrBridgeR1)
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property BridgeR2 As Double
+        Get
+            Return If(TestInfo.TestLocation = TestLocation.Micron, TestInfo.MicronBridgeR2, TestInfo.IsrBridgeR2)
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property BridgeR3 As Double
+        Get
+            Return If(TestInfo.TestLocation = TestLocation.Micron, TestInfo.MicronBridgeR3, TestInfo.IsrBridgeR3)
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property BridgeR4 As Double
+        Get
+            Return If(TestInfo.TestLocation = TestLocation.Micron, TestInfo.MicronBridgeR4, TestInfo.IsrBridgeR4)
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property IsrBridgeNumber As String
+        Get
+            Return My.MyAppSettingsReader.AppSettingValue()
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property IsrBridgeR1 As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property IsrBridgeR2 As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+    Public Shared ReadOnly Property IsrBridgeR3 As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+    Public Shared ReadOnly Property IsrBridgeR4 As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property MicronBridgeNumber As String
+        Get
+            Return My.MyAppSettingsReader.AppSettingValue()
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property MicronBridgeR1 As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property MicronBridgeR2 As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+    Public Shared ReadOnly Property MicronBridgeR3 As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+    Public Shared ReadOnly Property MicronBridgeR4 As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+
+    Public Shared ReadOnly Property BridgeMeterEpsilon As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+
+
     Public Shared ReadOnly Property ExpectedResistance As Double
         Get
             Return My.MyAppSettingsReader.AppSettingDouble()
@@ -272,3 +369,8 @@ Partial Public NotInheritable Class TestInfo
 #End Region
 
 End Class
+
+Public Enum TestLocation
+    Micron
+    Isr
+End Enum

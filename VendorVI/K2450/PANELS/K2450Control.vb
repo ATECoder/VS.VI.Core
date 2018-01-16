@@ -30,14 +30,22 @@ Public Class K2450Control
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
-        Me.New(Device.Create)
+        MyBase.New()
+        Me._New(Device.Create)
         Me.IsDeviceOwner = True
     End Sub
 
     ''' <summary> Constructor. </summary>
     ''' <param name="device"> The device. </param>
-    Private Sub New(ByVal device As Device)
+    Public Sub New(ByVal device As Device)
         MyBase.New()
+        Me._New(device)
+        Me.IsDeviceOwner = False
+    End Sub
+
+    ''' <summary> Constructor. </summary>
+    ''' <param name="device"> The device. </param>
+    Private Sub _New(ByVal device As Device)
 
         Me.InitializingComponents = True
         ' This call is required by the designer.

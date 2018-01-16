@@ -140,6 +140,29 @@ Public Class InstrumentPanelForm
         End Try
     End Sub
 
+    ''' <summary> Resize client area. </summary>
+    ''' <param name="clientControl"> The client control. </param>
+    Public Sub ResizeClientArea(ByVal clientControl As Control)
+        Dim tabsMargins As New Drawing.Size(Me._Tabs.Width - Me._TraceMessagesBox.Width, Me._Tabs.TabPages(1).Height - Me._TraceMessagesBox.Height)
+        Dim controlMargins As New Drawing.Size(Me.ClientSize.Width - Me._Tabs.Width, Me.ClientSize.Height - Me._Tabs.Height)
+        Dim newTabWidth As Drawing.Size = New Drawing.Size(Me._Tabs.Width, Me._Tabs.Height)
+        Dim resizeRequired As Boolean = False
+        If Me._Tabs.Width - tabsMargins.Width < clientControl.Width Then
+            newTabWidth = New Drawing.Size(clientControl.Width + tabsMargins.Width, Me._Tabs.Height)
+            resizeRequired = True
+        End If
+        If Me._Tabs.Height - tabsMargins.Height < clientControl.Height Then
+            newTabWidth = New Drawing.Size(newTabWidth.Width, clientControl.Height + tabsMargins.Height)
+            resizeRequired = True
+        End If
+        If resizeRequired Then
+            Me._Tabs.Size = newTabWidth
+            Me._Tabs.Refresh()
+            Me.ClientSize = New Drawing.Size(newTabWidth.Width + controlMargins.Width, newTabWidth.Height + controlMargins.Height)
+            Me.Refresh()
+        End If
+    End Sub
+
 #End Region
 
 #Region " INSTRUMENT PANEL "
@@ -154,6 +177,7 @@ Public Class InstrumentPanelForm
     ''' <param name="value">          The value. </param>
     ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
     Public Sub AddInstrumentPanel(ByVal title As String, ByVal value As Instrument.ResourcePanelBase, ByVal disposeEnabled As Boolean)
+        Me.ResizeClientArea(value)
         Me._InstrumentPanel = value
         Me._TalkerControl = value
         Me.Talker.ApplyTalkerTraceLevels(Me._TalkerControl.Talker)
@@ -233,6 +257,7 @@ Public Class InstrumentPanelForm
     ''' <param name="value">          The value. </param>
     ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
     Public Sub AddPropertyNotifyControl(ByVal title As String, ByVal value As PropertyNotifyControlBase, ByVal disposeEnabled As Boolean)
+        Me.ResizeClientArea(value)
         Me._PropertyNotifyControl = value
         Me.AddListeners()
         Me._PropertyNotifyControlDisposeEnabled = disposeEnabled
@@ -301,6 +326,7 @@ Public Class InstrumentPanelForm
     ''' <param name="value">          The value. </param>
     ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
     Public Sub AddTalkerControl(ByVal title As String, ByVal value As TalkerControlBase, ByVal disposeEnabled As Boolean)
+        Me.ResizeClientArea(value)
         Me._TalkerControl = value
         Me.AddListeners()
         Me._TalkerControlDisposeEnabled = disposeEnabled
@@ -461,6 +487,33 @@ Public Class InstrumentPanelFormCollection
         Me.ShowNew(form, log)
     End Sub
 
+    ''' <summary> Adds and shows the form. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="form">  The form. </param>
+    ''' <param name="panel"> The panel. </param>
+    ''' <param name="log">   The log. </param>
+    Public Overloads Sub ShowNew(ByVal form As Instrument.InstrumentPanelForm,
+                                 ByVal panel As isr.Core.Pith.TalkerControlBase,
+                                 ByVal log As MyLog)
+        If form Is Nothing Then Throw New ArgumentNullException(NameOf(form))
+        form.AddTalkerControl(panel)
+        Me.ShowNew(form, log)
+    End Sub
+
+    ''' <summary> Adds and shows the form. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="title"> The title. </param>
+    ''' <param name="form">  The form. </param>
+    ''' <param name="panel"> The panel. </param>
+    ''' <param name="log">   The log. </param>
+    Public Overloads Sub ShowNew(ByVal title As String,
+                                 ByVal form As Instrument.InstrumentPanelForm,
+                                 ByVal panel As isr.Core.Pith.TalkerControlBase,
+                                 ByVal log As MyLog)
+        If form Is Nothing Then Throw New ArgumentNullException(NameOf(form))
+        form.AddTalkerControl(title, panel)
+        Me.ShowNew(form, log)
+    End Sub
 
 End Class
 
