@@ -60,6 +60,9 @@ Public Class BridgeMeterControl
         Me._Bridge = New ResistorCollection
         Me.Bridge.DisplayValues(Me._DataGrid)
 
+        Me._MeasureGroupBox.Enabled = False
+        Me._ConfigureGroupBox.Enabled = False
+
     End Sub
 
     ''' <summary>
@@ -147,7 +150,8 @@ Public Class BridgeMeterControl
     ''' <summary> Executes the device open changed action. </summary>
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
         Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
-        Me._MeasureButton.Enabled = isOpen
+        Me._ConfigureGroupBox.Enabled = isOpen
+        Me._MeasureGroupBox.Enabled = isOpen
         If Me.IsDeviceOpen Then
             Me.Bridge.DisplayValues(Me._DataGrid)
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Device.StatusSubsystem.VersionInfo.Model} is open")
@@ -225,6 +229,22 @@ Public Class BridgeMeterControl
 #Region " SUBSYSTEMS "
 
 #Region " MUTLIMETER "
+
+    ''' <summary> Gets or sets the power line cycles. </summary>
+    ''' <value> The power line cycles. </value>
+    Public Property PowerLineCycles As Double
+        Get
+            Return Me._PowerLineCyclesNumeric.Value
+        End Get
+        Set(value As Double)
+            If Me.PowerLineCycles <> value OrElse (Me.Device.IsDeviceOpen AndAlso Not Nullable.Equals(Me.Device.MultimeterSubsystem.PowerLineCycles, value)) Then
+                Me._PowerLineCyclesNumeric.Value = CDec(value)
+                If Me.Device.IsDeviceOpen AndAlso Not Nullable.Equals(Me.Device.MultimeterSubsystem.PowerLineCycles, value) Then
+                    Me.Device.MultimeterSubsystem.ApplyPowerLineCycles(value)
+                End If
+            End If
+        End Set
+    End Property
 
     ''' <summary> Gets or sets the last reading. </summary>
     ''' <value> The last reading. </value>
@@ -574,6 +594,7 @@ Public Class BridgeMeterControl
         Catch ex As Exception
             e.RegisterCancellation(Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}"))
         End Try
+        Return Not e.Cancel
     End Function
 
     ''' <summary> Measure bridge. </summary>
@@ -601,6 +622,7 @@ Public Class BridgeMeterControl
         Catch ex As Exception
             e.RegisterCancellation(Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}"))
         End Try
+        Return Not e.Cancel
     End Function
 
 #End Region

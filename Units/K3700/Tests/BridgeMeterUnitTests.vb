@@ -164,19 +164,19 @@ Public Class BridgeMeterUnitTests
 
 #End Region
 
-#Region " MEASURE GAGE "
+#Region " MEASURE BRIDGE "
 
     <TestMethod()>
-    Public Sub BridgeMeterMeasureGageTest()
-        Using control As isr.VI.tsp.K3700.BridgeMeterControl = New isr.VI.tsp.K3700.BridgeMeterControl
+    Public Sub BridgeMeterMeasureResistorTest()
+        Using control As isr.VI.Tsp.K3700.BridgeMeterControl = New isr.VI.Tsp.K3700.BridgeMeterControl
             BridgeMeterUnitTests.OpenSession(1, control)
             Dim e As New isr.Core.Pith.CancelDetailsEventArgs
             control.TryConfigureMeter(e)
             Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
-            Dim gage As Resistor = control.Bridge(0)
-            control.TryMeasureResistance(gage, e)
-            Assert.AreEqual(False, e.Cancel, $"Measuring gage {gage.Title} failed; {e.Details}")
-            Assert.AreEqual(TestInfo.BridgeR1, gage.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring gage resistance expected {TestInfo.BridgeR1:G5} actual {gage.Resistance:G5}")
+            Dim resistor As Resistor = control.Bridge(0)
+            control.TryMeasureResistance(resistor, e)
+            Assert.AreEqual(False, e.Cancel, $"Measuring resistor {resistor.Title} failed; {e.Details}")
+            Assert.AreEqual(TestInfo.BridgeR1, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor resistance expected {TestInfo.BridgeR1:G5} actual {resistor.Resistance:G5}")
             BridgeMeterUnitTests.CloseSession(1, control)
         End Using
     End Sub
@@ -190,18 +190,18 @@ Public Class BridgeMeterUnitTests
             Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
             control.TryMeasureBridge(e)
             Assert.AreEqual(False, e.Cancel, $"Measuring bridge {TestInfo.BridgeNumber} failed; {e.Details}")
-            Dim gage As Resistor = control.Bridge(0)
+            Dim resistor As Resistor = control.Bridge(0)
             Dim expectedResistance As Double = TestInfo.BridgeR1
-            Assert.AreEqual(expectedResistance, gage.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring gage {gage.Title} resistance expected {expectedResistance:G5} actual {gage.Resistance:G5}")
-            gage = control.Bridge(1)
+            Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
+            resistor = control.Bridge(1)
             expectedResistance = TestInfo.BridgeR2
-            Assert.AreEqual(expectedResistance, gage.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring gage {gage.Title} resistance expected {expectedResistance:G5} actual {gage.Resistance:G5}")
-            gage = control.Bridge(2)
+            Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
+            resistor = control.Bridge(2)
             expectedResistance = TestInfo.BridgeR3
-            Assert.AreEqual(expectedResistance, gage.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring gage {gage.Title} resistance expected {expectedResistance:G5} actual {gage.Resistance:G5}")
-            gage = control.Bridge(3)
+            Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
+            resistor = control.Bridge(3)
             expectedResistance = TestInfo.BridgeR4
-            Assert.AreEqual(expectedResistance, gage.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring gage {gage.Title} resistance expected {expectedResistance:G5} actual {gage.Resistance:G5}")
+            Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
         End Using
     End Sub
 
