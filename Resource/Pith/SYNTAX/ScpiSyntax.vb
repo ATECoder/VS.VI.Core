@@ -110,8 +110,8 @@ Namespace Scpi
 
 #Region " SYSTEM "
 
-            ''' <summary> Gets the last error queue query command. </summary>
-            Public Const LastErrorQueryCommand As String = ":SYST:ERR?"
+            ''' <summary> Gets the last system error queue query command. </summary>
+            Public Const LastSystemErrorQueryCommand As String = ":SYST:ERR?"
 
             ''' <summary> Gets clear system error queue command. </summary>
             Public Const ClearSystemErrorQueueCommand As String = ":SYST:CLE"

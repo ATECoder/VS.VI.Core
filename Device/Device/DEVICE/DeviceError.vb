@@ -161,6 +161,11 @@ Public Class DeviceError
         End Set
     End Property
 
+    ''' <summary> Returns a string that represents the current object. </summary>
+    ''' <returns> A string that represents the current object. </returns>
+    Public Overrides Function ToString() As String
+        Return Me.CompoundErrorMessage
+    End Function
 
 #End Region
 

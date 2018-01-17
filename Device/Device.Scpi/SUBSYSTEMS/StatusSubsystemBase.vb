@@ -168,11 +168,11 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the last error query command. </summary>
     ''' <value> The last error query command. </value>
-    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = VI.Scpi.Syntax.LastErrorQueryCommand
+    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = VI.Scpi.Syntax.LastSystemErrorQueryCommand
 
     ''' <summary> Gets the clear error queue command. </summary>
     ''' <value> The clear error queue command. </value>
-    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = "SYST:CLE" ' VI.Scpi.Syntax.ClearErrorQueueCommand
+    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = VI.Scpi.Syntax.ClearSystemErrorQueueCommand
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>

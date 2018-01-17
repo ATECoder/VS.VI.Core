@@ -72,6 +72,21 @@ Public MustInherit Class StatusSubsystemBase
 
 #Region " I PRESETTABLE "
 
+    ''' <summary> Executes the device open actions. </summary>
+    ''' <remarks> This was added in order to defer reading error status after clearing the device state when opening the device. </remarks>
+    Public Overridable Sub OnDeviceOpen()
+
+        ' clear the device active state
+        Me.ClearActiveState()
+
+        ' reset device
+        Me.ResetKnownState()
+
+        ' Clear the device Status and set more defaults
+        Me.ClearExecutionState()
+
+    End Sub
+
     ''' <summary> Clears the active state.
     '''           Issues selective device clear. Waits for the <see cref="DeviceClearRefractoryPeriod"/> before releasing control. </summary>
     Public Overridable Sub ClearActiveState()
@@ -161,6 +176,7 @@ Public MustInherit Class StatusSubsystemBase
         Me.Session.Execute(Me.ResetKnownStateCommand)
         If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(Me.ResetRefractoryPeriod)
         Me.QueryOperationCompleted()
+        Me.ReadServiceRequestStatus()
         Me.QueryLineFrequency()
         Me.ReadServiceRequestStatus()
     End Sub

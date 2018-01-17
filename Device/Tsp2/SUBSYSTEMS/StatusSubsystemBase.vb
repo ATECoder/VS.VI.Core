@@ -252,6 +252,10 @@ Public MustInherit Class StatusSubsystemBase
 
 #Region " DEVICE ERRORS "
 
+    ''' <summary> Gets the last error query command. </summary>
+    ''' <value> The last error query command. </value>
+    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = "" 'VI.Scpi.Syntax.LastSystemErrorQueryCommand
+
     ''' <summary> Gets or sets the clear error queue command. </summary>
     ''' <value> The clear error queue command. </value>
     Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = TspSyntax.ClearEventLogCommand

@@ -296,7 +296,7 @@ Public Class Device
             ' Only thereafter the registers should be read.
             Me.ProberSubsystem.FetchAndParse()
         End If
-        Me.QueryDeviceErrors()
+        Me.SafeQueryDeviceErrors()
     End Sub
 
 #End Region

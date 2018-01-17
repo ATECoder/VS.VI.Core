@@ -76,7 +76,7 @@ Public Class SessionUnitTests
 
 #End Region
 
-#Region " SESSION TESTs: OPEN / CLOSE ONLY "
+#Region " SESSION TESTS: OPEN / CLOSE ONLY "
 
     ''' <summary> Opens close session. </summary>
     Private Shared Sub OpenCloseSession()
@@ -88,6 +88,10 @@ Public Class SessionUnitTests
             actualBoolean = device.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Failed to open session: {e.Details}")
             device.Session.Clear()
+            device.QueryExistingDeviceErrors(e)
+            Assert.IsFalse(e.Cancel, $"Device {TestInfo.ResourceName} failed reading existing errors {e.Details}")
+            Assert.IsTrue(String.IsNullOrWhiteSpace(device.StatusSubsystem.DeviceErrors), $"Device {TestInfo.ResourceName} has errors: {device.StatusSubsystem.DeviceErrors}")
+            Assert.IsFalse(device.StatusSubsystem.LastDeviceError.IsError, $"Device {TestInfo.ResourceName} has last error: {device.StatusSubsystem.LastDeviceError?.ToString}")
             device.CloseSession()
             actualBoolean = device.IsDeviceOpen
             expectedBoolean = False

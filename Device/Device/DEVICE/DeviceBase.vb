@@ -465,8 +465,11 @@ Public MustInherit Class DeviceBase
     Protected Overridable Sub OnOpened()
 
         Me.ApplySettings()
-        Me.Session?.CaptureSyncContext(Me.CapturedSyncContext)
-        Me.Subsystems?.CaptureSyncContext(Me.CapturedSyncContext)
+        Me.Session.CaptureSyncContext(Me.CapturedSyncContext)
+        Me.Subsystems.CaptureSyncContext(Me.CapturedSyncContext)
+
+        ' reset and clear the device to remove any existing errors.
+        Me.StatusSubsystemBase.OnDeviceOpen()
 
         Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
         ' 2016/01/18: this was done before adding listeners, which was useful when using the device
@@ -875,19 +878,27 @@ Public MustInherit Class DeviceBase
 
 #Region " EVENTS: READ EVENT REGISTERS "
 
+    ''' <summary> Safe query existing device errors. </summary>
+    Public Overridable Function QueryExistingDeviceErrors(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        If Me.StatusSubsystemBase.MessageAvailable Then
+            ' if the device has message with an error state, the message must be fetched before the device
+            ' errors can be fetched. The system requesting the message must:
+            ' (1) fetch the message;
+            ' (2) fetch the device errors.
+            e.RegisterCancellation($"{Me.ResourceName} as a message available in the presence of a device error; the message needs to be fetched before fetching the device errors")
+        Else
+            Me.StatusSubsystemBase.QueryDeviceErrors()
+            Me.StatusSubsystemBase.QueryLastError()
+        End If
+        Return Not e.Cancel
+    End Function
+
     ''' <summary> Queries device errors. </summary>
-    Protected Overridable Sub QueryDeviceErrors()
+    Protected Sub SafeQueryDeviceErrors()
         If Me.StatusSubsystemBase.ErrorAvailable Then
-            If Me.StatusSubsystemBase.MessageAvailable Then
-                ' if the device has message with an error state, the message must be fetched before the device
-                ' errors can be fetched. The system requesting the message must:
-                ' (1) fetch the message;
-                ' (2) fetch the device errors.
-                Me.ServiceRequestFailureMessage = Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                   $"{Me.ResourceName} as a message available in the presence of a device error; the message needs to be fetched before fetching the device errors")
-            Else
-                Me.StatusSubsystemBase.QueryDeviceErrors()
-                Me.StatusSubsystemBase.QueryLastError()
+            Dim e As New CancelDetailsEventArgs
+            If Not Me.QueryExistingDeviceErrors(e) Then
+                Me.ServiceRequestFailureMessage = Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, e.Details)
             End If
         End If
     End Sub
@@ -903,7 +914,7 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Publish error event. </summary>
     ''' <param name="eventType"> Type of the event. </param>
-    Private Sub publishErrorEvent(ByVal eventType As TraceEventType)
+    Private Sub PublishErrorEvent(ByVal eventType As TraceEventType)
         Me.ProcessErrorEvent()
         Me.PublishLastError(eventType)
     End Sub
@@ -911,7 +922,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Read service request and query device errors if errors. </summary>
     Protected Overridable Sub ProcessErrorEvent()
         Me.ReadServiceRequestRegister()
-        Me.QueryDeviceErrors()
+        Me.SafeQueryDeviceErrors()
     End Sub
 
     ''' <summary> Reads service request register. </summary>
@@ -948,7 +959,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Reads the event registers after receiving a service request. </summary>
     Protected Overridable Sub ProcessServiceRequest()
         Me.ReadEventRegisters()
-        Me.QueryDeviceErrors()
+        Me.SafeQueryDeviceErrors()
     End Sub
 
     ''' <summary> Reads the event registers after receiving a service request. </summary>
