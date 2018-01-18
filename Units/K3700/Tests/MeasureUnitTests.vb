@@ -227,7 +227,7 @@ Public Class MeasureUnitTests
         Dim expectedResistance As Double = expectedValue
         Dim resistance As Double = device.MultimeterSubsystem.Measure.GetValueOrDefault(-1)
         Assert.AreEqual(expectedValue, resistance, epsilon,
-                        $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.Reading)} is {resistance}; expected {expectedResistance } within {epsilon}")
+                        $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.Reading)} {channelList} is {resistance}; expected {expectedResistance } within {epsilon}")
 
     End Sub
 
@@ -237,7 +237,7 @@ Public Class MeasureUnitTests
             MeasureUnitTests.OpenSession(device)
             MeasureUnitTests.PrepareMeasureResistance(device)
             Dim trialNumber As Integer = 0
-            trialNumber += 1 : MeasureResistance(trialNumber, device, 0, TestInfo.ExpectedZeroResistanceEpsilon, TestInfo.ShortChannelList)
+            trialNumber += 1 : MeasureResistance(trialNumber, device, 0, TestInfo.ExpectedShort32ResistanceEpsilon, TestInfo.ShortChannelList)
             trialNumber += 1 : MeasureResistance(trialNumber, device, TestInfo.ExpectedResistance, TestInfo.ExpectedResistanceEpsilon, TestInfo.ResistorChannelList)
             trialNumber += 1 : MeasureResistance(trialNumber, device, TestInfo.ExpectedOpen, 1, TestInfo.OpenChannelList)
             MeasureUnitTests.CloseSession(device)

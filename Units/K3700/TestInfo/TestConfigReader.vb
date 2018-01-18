@@ -366,6 +366,12 @@ Partial Public NotInheritable Class TestInfo
         End Get
     End Property
 
+    Public Shared ReadOnly Property ExpectedShort32ResistanceEpsilon As Double
+        Get
+            Return My.MyAppSettingsReader.AppSettingDouble()
+        End Get
+    End Property
+
 #End Region
 
 End Class
