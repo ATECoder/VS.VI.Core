@@ -143,6 +143,7 @@ Public Class InstrumentPanelForm
     ''' <summary> Resize client area. </summary>
     ''' <param name="clientControl"> The client control. </param>
     Public Sub ResizeClientArea(ByVal clientControl As Control)
+        If clientControl Is Nothing Then Throw New ArgumentNullException(NameOf(clientControl))
         Dim tabsMargins As New Drawing.Size(Me._Tabs.Width - Me._TraceMessagesBox.Width, Me._Tabs.TabPages(1).Height - Me._TraceMessagesBox.Height)
         Dim controlMargins As New Drawing.Size(Me.ClientSize.Width - Me._Tabs.Width, Me.ClientSize.Height - Me._Tabs.Height)
         Dim newTabWidth As Drawing.Size = New Drawing.Size(Me._Tabs.Width, Me._Tabs.Height)

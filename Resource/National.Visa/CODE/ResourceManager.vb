@@ -69,7 +69,7 @@ Public Class ResourceManager
 
 #End Region
 
-#Region " Resource Manager "
+#Region " RESOURCE MANAGER "
 
     ''' <summary> Gets or sets the manager for resource. </summary>
     ''' <value> The resource manager. </value>
@@ -83,7 +83,14 @@ Public Class ResourceManager
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
     Public Function ParseResource(ByVal resourceName As String) As VI.ResourceParseResult
-        Return Me.VisaResourceManager.ParseResource(resourceName)
+        Dim action As String = $"parsing resource {resourceName}"
+        Try
+            Return Me.VisaResourceManager.ParseResource(resourceName)
+        Catch ex As System.MissingMethodException
+            Throw New OperationFailedException($"Failed {action}; Please verify using IVI.Visa version {isr.VI.My.MySettings.Default.FoundationVisaAssemblyVersion} with NI VISA {isr.VI.My.MySettings.Default.FoundationSystemFileVersion}", ex)
+        Catch
+            Throw
+        End Try
     End Function
 
 #End Region

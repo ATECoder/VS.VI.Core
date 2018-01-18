@@ -442,7 +442,8 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    ''' <remarks> This override should occur as the first call of the overriding method. </remarks>
+    ''' <remarks> This override should occur as the first call of the overriding method.
+    '''           After this call, the parent class adds the subsystems. </remarks>
     Protected Overridable Sub OnOpening(ByVal e As ComponentModel.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Me.Subsystems?.Any Then
@@ -459,8 +460,8 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Allows the derived device to take actions after opening. </summary>
     ''' <remarks>
-    ''' This override should occur as the last call of the overriding method. Use this notification
-    ''' to add subsystems to this device.
+    ''' This override should occur as the last call of the overriding method.
+    ''' The subsystems are added as part of the <see cref="OnOpening(CancelEventArgs)"/> method.
     ''' </remarks>
     Protected Overridable Sub OnOpened()
 
@@ -477,7 +478,7 @@ Public MustInherit Class DeviceBase
         ' such as Reset and Initialize do not get reported. 
         ' The solution was to add the device Initialize event to process publishing and initialization of device
         ' and subsystems.
-        ' Use this notification to add subsystems to this device.
+
         Me.SyncNotifyOpened(System.EventArgs.Empty)
     End Sub
 

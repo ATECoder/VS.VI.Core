@@ -149,12 +149,14 @@ Public Class BridgeMeterControl
 
     ''' <summary> Executes the device open changed action. </summary>
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
-        Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
-        Me._ConfigureGroupBox.Enabled = isOpen
-        Me._MeasureGroupBox.Enabled = isOpen
+        Me._ConfigureGroupBox.Enabled = Me.IsDeviceOpen 
+        Me._MeasureGroupBox.Enabled = Me.IsDeviceOpen 
         If Me.IsDeviceOpen Then
             Me.Bridge.DisplayValues(Me._DataGrid)
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Device.StatusSubsystem.VersionInfo.Model} is open")
+
+
+
         End If
     End Sub
 

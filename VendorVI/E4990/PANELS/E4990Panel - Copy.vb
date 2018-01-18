@@ -135,8 +135,7 @@ Public Class E4990Panel
 
     ''' <summary> Executes the device open changed action. </summary>
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
-        Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
-        If isOpen Then
+        If Me.IsDeviceOpen Then
             Me._SimpleReadWriteControl.Connect(device?.Session)
             ' Me._SimpleReadWriteControl.ReadEnabled = True
         Else
@@ -146,7 +145,7 @@ Public Class E4990Panel
         ' Me._Tabs.Enabled = True
         For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
             If t IsNot Me._MessagesTabPage Then
-                For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, isOpen) : Next
+                For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, Me.IsDeviceOpen) : Next
             End If
         Next
     End Sub

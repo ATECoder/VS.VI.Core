@@ -158,8 +158,7 @@ Public Class E4990Panel
 
     ''' <summary> Executes the device open changed action. </summary>
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
-        Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
-        If isOpen Then
+        If Me.IsDeviceOpen Then
             Me._SimpleReadWriteControl.Connect(device?.Session)
             ' Me._SimpleReadWriteControl.ReadEnabled = True
         Else

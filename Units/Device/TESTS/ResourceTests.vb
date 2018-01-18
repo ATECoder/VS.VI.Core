@@ -160,18 +160,44 @@ Public Class ResourceTests
         Dim expectedVersion As Version = New Version(TestInfo.NationalInstrumentVisaVersion)
         Assert.IsTrue(version.Equals(expectedVersion), $"Vendor version {version.ToString} equals to {expectedVersion}")
 
-        Dim fileVersionInfo As FileVersionInfo = VI.ResourcesManagerBase.ReadFoundationFileVersion
+        Dim fileVersionInfo As FileVersionInfo = VI.ResourcesManagerBase.ReadFoundationSystemFileVersionInfo
         If Environment.Is64BitOperatingSystem Then
             expectedVersion = New Version(TestInfo.FoundationVisaFileVersion64)
         Else
             expectedVersion = New Version(TestInfo.FoundationVisaFileVersion32)
         End If
         Assert.AreEqual(expectedVersion.ToString, $"{fileVersionInfo.FileMajorPart}.{fileVersionInfo.FileMinorPart}.{fileVersionInfo.FileBuildPart}",
-                        $"Foundation file {VI.ResourcesManagerBase.FoundationFileFullName} version set to {fileVersionInfo.FileVersion}")
+                        $"Foundation file {VI.ResourcesManagerBase.FoundationSystemFileFullName} version set to {fileVersionInfo.FileVersion}")
 
     End Sub
+
+    ''' <summary> (Unit Test Method) validates the visa version test. </summary>
+    <TestMethod()>
+    Public Sub ValidateVisaVersionTest()
+        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        isr.VI.ResourcesManagerBase.ValidateFoundationSystemFileVersion(e)
+        Assert.IsFalse(e.Cancel, $"Invalid foundation VISA System file version: {e.Details}")
+        isr.VI.ResourcesManagerBase.ValidateFoundationVisaAssemblyVersion(e)
+        Assert.IsFalse(e.Cancel, $"Invalid foundation VISA .NET file version: {e.Details}")
+        isr.VI.ResourcesManagerBase.ValidateVendorVersion(e)
+        Assert.IsFalse(e.Cancel, $"Invalid national Instrument VISA version: {e.Details}")
+    End Sub
+
 #End Region
 
+#Region " VISA RESOURCE TEST "
 
+    ''' <summary> (Unit Test Method) tests locating visa resources. </summary>
+    <TestMethod()>
+    Public Sub VisaResourcesTest()
+        Dim resourcesFilter As String = DeviceBase.BuildMinimalResourcesFilter
+        Dim resources As String()
+        Using rm As ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
+            resources = rm.FindResources(resourcesFilter).ToArray
+        End Using
+        Assert.IsTrue(resources.Any, $"VISA Resources {If(resources.Any, "", "not")} found")
+    End Sub
+
+#End Region
 
 End Class

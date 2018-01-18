@@ -187,6 +187,42 @@ Public MustInherit Class ResourcesManagerBase
 
 #Region " REVISION MANANGEMENT "
 
+    ''' <summary> Determine if the elements of the two versions are equal. </summary>
+    ''' <param name="expectedVersion"> The expected version. </param>
+    ''' <param name="actualVersion">   The actual version. </param>
+    ''' <returns> <c>true</c> if equal; otherwise <c>false</c> </returns>
+    Private Shared Function AreEqual(ByVal expectedVersion As String, actualVersion As String) As Boolean
+        Dim delimiter As Char = "."c
+        Return ResourcesManagerBase.AreEqual(expectedVersion.Split(delimiter), actualVersion.Split(delimiter))
+    End Function
+
+    ''' <summary> Determine if the elements of the two versions are equal. </summary>
+    ''' <param name="expectedValues"> The expected values. </param>
+    ''' <param name="actualValues">   The actual values. </param>
+    ''' <returns> <c>true</c> if equal; otherwise <c>false</c> </returns>
+    Private Shared Function AreEqual(ByVal expectedValues As String(), actualValues As String()) As Boolean
+        Dim result As Boolean = True
+        For i As Integer = 0 To Math.Min(expectedValues.Count, actualValues.Count) - 1
+            result = result AndAlso String.Equals(expectedValues(i), actualValues(i), StringComparison.OrdinalIgnoreCase)
+        Next
+        Return result
+    End Function
+
+    ''' <summary> Validates the visa versions. </summary>
+    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    Public Shared Sub ValidateVisaVersions()
+        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        If Not isr.VI.ResourcesManagerBase.ValidateFoundationSystemFileVersion(e) Then
+            Throw New OperationFailedException($"Invalid foundation VISA System file version: {e.Details}")
+        ElseIf Not isr.VI.ResourcesManagerBase.ValidateFoundationVisaAssemblyVersion(e) Then
+            Throw New OperationFailedException($"Invalid foundation VISA .NET file version: {e.Details}")
+        ElseIf Not isr.VI.ResourcesManagerBase.ValidateVendorVersion(e) Then
+            Throw New OperationFailedException($"Invalid national Instrument VISA version: {e.Details}")
+        End If
+    End Sub
+
+#Region " REGISTERY VISA VERSION "
+
     ''' <summary> Gets or sets the full pathname of the vendor version file. </summary>
     ''' <value> The full pathname of the vendor version file. </value>
     Public Shared Property VendorVersionPath As String = "SOFTWARE\National Instruments\NI-VISA\"
@@ -198,55 +234,112 @@ Public MustInherit Class ResourcesManagerBase
     ''' <summary> Reads vendor version. </summary>
     ''' <returns> The vendor version. </returns>
     Public Shared Function ReadVendorVersion() As Version
-        Dim version As String = isr.Core.Pith.MachineInfo.ReadRegistry(Microsoft.Win32.RegistryHive.LocalMachine, VendorVersionPath, VendorVersionKeyName, "0.0.0")
+        Dim version As String = isr.Core.Pith.MachineInfo.ReadRegistry(Microsoft.Win32.RegistryHive.LocalMachine, VendorVersionPath, VendorVersionKeyName, "0.0.0.0")
         Return New Version(version)
     End Function
 
+    ''' <summary> Validates the vendor version. </summary>
+    ''' <param name="expectedVersion"> The expected version. </param>
+    ''' <param name="e">               Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Shared Function ValidateVendorVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
         Dim actualVersion As String = ResourcesManagerBase.ReadVendorVersion.ToString
-        If Not String.Equals(actualVersion, expectedVersion) Then
-            e.RegisterCancellation($"Vendor version {actualVersion} different from expected {expectedVersion}")
+        If Not ResourcesManagerBase.AreEqual(expectedVersion, actualVersion) Then
+            e.RegisterCancellation($"Vendor {ResourcesManagerBase.VendorVersionPath} version {actualVersion} different from expected {expectedVersion}")
         End If
         Return Not e.Cancel
     End Function
 
-    ''' <summary> Gets or sets the filename of the foundation file. </summary>
-    ''' <value> The filename of the foundation file. </value>
-    Public Shared ReadOnly Property FoundationFileName As String = "visa32.dll"
+    ''' <summary> Validates the National Instruments vendor version. </summary>
+    ''' <param name="e"> Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Shared Function ValidateVendorVersion(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        Return ResourcesManagerBase.ValidateVendorVersion(My.Settings.NatioalInsrumentVisaVersion, e)
+    End Function
 
-    ''' <summary> Gets the name of the foundation file full. </summary>
-    ''' <value> The name of the foundation file full. </value>
-    Public Shared ReadOnly Property FoundationFileFullName As String
+#End Region
+
+#Region " FOUNDATION .NET VISA FILE VERSION "
+
+    ''' <summary> Gets or sets the filename of the foundation .NET VISA file. </summary>
+    ''' <value> The filename of the foundation .NET VISA file. </value>
+    Public Shared ReadOnly Property FoundationVisaAssemblyFileName As String = "ivi.visa.dll"
+
+    ''' <summary> Gets the name of the foundation .NET visa file full. </summary>
+    ''' <value> The name of the foundation .NET visa file full. </value>
+    Public Shared ReadOnly Property FoundationVisaAssemblyFileFullName As String
         Get
-            Return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), ResourcesManagerBase.FoundationFileName)
+            Return System.IO.Path.Combine(My.Application.Info.DirectoryPath, ResourcesManagerBase.FoundationVisaAssemblyFileName)
+        End Get
+    End Property
+
+    ''' <summary> Reads foundation .NET visa file version. </summary>
+    ''' <returns> The foundation .NET visa file version. </returns>
+    Public Shared Function ReadFoundationVisaAssemblyFileVersionInfo() As FileVersionInfo
+        Return FileVersionInfo.GetVersionInfo(ResourcesManagerBase.FoundationVisaAssemblyFileFullName)
+    End Function
+
+    ''' <summary> Validates the foundation visa Assembly version. </summary>
+    ''' <param name="expectedVersion"> The expected version. </param>
+    ''' <param name="e">               Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Shared Function ValidateFoundationVisaAssemblyVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        Dim actualVersion As String = ResourcesManagerBase.ReadFoundationVisaAssemblyFileVersionInfo.FileVersion.ToString
+        If Not ResourcesManagerBase.AreEqual(expectedVersion, actualVersion) Then
+            e.RegisterCancellation($"IVI Foundation visa file {ResourcesManagerBase.FoundationVisaAssemblyFileFullName}  version {actualVersion} different from expected {expectedVersion}")
+        End If
+        Return Not e.Cancel
+    End Function
+
+    ''' <summary> Validates the foundation visa Assembly version. </summary>
+    ''' <param name="e"> Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Shared Function ValidateFoundationVisaAssemblyVersion(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        Return ResourcesManagerBase.ValidateFoundationVisaAssemblyVersion(My.Settings.FoundationVisaAssemblyVersion, e)
+    End Function
+
+#End Region
+
+#Region " FOUNDATION SYSTEM VISA DLL FILE VERSION "
+
+    ''' <summary> Gets or sets the filename of the foundation system DLL file. </summary>
+    ''' <value> The filename of the foundation system DLL file. </value>
+    Public Shared ReadOnly Property FoundationSystemFileName As String = "visa32.dll"
+
+    ''' <summary> Gets the name of the foundation system DLL file full name. </summary>
+    ''' <value> The name of the foundation system DLL file full name. </value>
+    Public Shared ReadOnly Property FoundationSystemFileFullName As String
+        Get
+            Return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), ResourcesManagerBase.FoundationSystemFileName)
         End Get
     End Property
 
     ''' <summary> Reads foundation file version. </summary>
     ''' <returns> The foundation file version. </returns>
-    Public Shared Function ReadFoundationFileVersion() As FileVersionInfo
-        Return FileVersionInfo.GetVersionInfo(ResourcesManagerBase.FoundationFileFullName)
-    End Function
-
-    ''' <summary> Reads foundation version. </summary>
-    ''' <returns> The foundation version. </returns>
-    Public Shared Function ReadFoundationVersion() As Version
-        With ReadFoundationFileVersion()
-            Return New Version(.FileMajorPart, .FileMinorPart, .FileBuildPart)
-        End With
+    Public Shared Function ReadFoundationSystemFileVersionInfo() As FileVersionInfo
+        Return FileVersionInfo.GetVersionInfo(ResourcesManagerBase.FoundationSystemFileFullName)
     End Function
 
     ''' <summary> Validates the foundation file version. </summary>
     ''' <param name="expectedVersion"> The expected version. </param>
     ''' <param name="e">               Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Shared Function ValidateFoundationVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
-        Dim actualVersion As String = ResourcesManagerBase.ReadFoundationVersion.ToString
-        If Not String.Equals(actualVersion, expectedVersion) Then
-            e.RegisterCancellation($"IVI Foundation file version {actualVersion} different from expected {expectedVersion}")
+    Public Shared Function ValidateFoundationSystemFileVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        Dim actualVersion As String = ResourcesManagerBase.ReadFoundationSystemFileVersionInfo.FileVersion.ToString
+        If Not ResourcesManagerBase.AreEqual(expectedVersion, actualVersion) Then
+            e.RegisterCancellation($"IVI Foundation file {ResourcesManagerBase.FoundationSystemFileFullName} version {actualVersion} different from expected {expectedVersion}")
         End If
         Return Not e.Cancel
     End Function
+
+    ''' <summary> Validates the foundation system file version described by e. </summary>
+    ''' <param name="e"> Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Shared Function ValidateFoundationSystemFileVersion(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        Return ResourcesManagerBase.ValidateFoundationSystemFileVersion(My.Settings.FoundationSystemFileVersion, e)
+    End Function
+
+#End Region
 
 #End Region
 

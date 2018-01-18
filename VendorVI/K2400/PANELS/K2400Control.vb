@@ -171,8 +171,7 @@ Public Class K2400Control
 
     ''' <summary> Executes the device open changed action. </summary>
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
-        Dim isOpen As Boolean = CType(device?.IsDeviceOpen, Boolean?).GetValueOrDefault(False)
-        If isOpen Then
+        If Me.IsDeviceOpen Then
             Me._SimpleReadWriteControl.Connect(device?.Session)
             ' Me._SimpleReadWriteControl.ReadEnabled = True
         Else
@@ -181,7 +180,7 @@ Public Class K2400Control
         ' enable the tabs even if the device failed to open.
         ' Me._Tabs.Enabled = True
         For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
-            If t IsNot Me._MessagesTabPage Then Me.RecursivelyEnable(t.Controls, isOpen)
+            If t IsNot Me._MessagesTabPage Then Me.RecursivelyEnable(t.Controls, Me.IsDeviceOpen)
         Next
     End Sub
 

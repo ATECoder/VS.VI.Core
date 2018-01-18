@@ -481,7 +481,8 @@ Public Class ResourceControlBase
         End If
     End Sub
 
-    ''' <summary> Executes the device open changed action. </summary>
+    ''' <summary> Executes the device open changed action. 
+    '''           The open event occurs after all subsystems are created. </summary>
     Protected Overridable Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
     End Sub
 
@@ -492,6 +493,7 @@ Public Class ResourceControlBase
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(device.IsDeviceOpen)
+                ' the open sentinel is turned on after all subsystems are set
                 Me.OnDeviceOpenChanged(device)
             Case NameOf(device.Enabled)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
@@ -588,7 +590,7 @@ Public Class ResourceControlBase
         Me.OpenSession(Me.Connector.SelectedResourceName, Me.ResourceTitle)
     End Sub
 
-    ''' <summary> Event handler. Called upon device opening. </summary>
+    ''' <summary> Event handler. Called upon device opening so as to instantiated all subsystems. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -597,7 +599,7 @@ Public Class ResourceControlBase
         Me._StandardRegisterStatus = ResourceControlBase.UnknownRegisterValue
     End Sub
 
-    ''' <summary> Event handler. Called when device opened. </summary>
+    ''' <summary> Event handler. Called after the device opened and all subsystems were defined. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
@@ -609,9 +611,9 @@ Public Class ResourceControlBase
         Me.Talker.Publish(outcome, My.MyLibrary.TraceEventId,
                           "{0} {1:enabled;enabled;disabled} and {2:open;open;closed}; session {3:open;open;closed};. ",
                           Me.ResourceTitle,
-                          Me.DeviceBase?.Session.Enabled.GetHashCode,
-                          Me.DeviceBase?.Session.IsDeviceOpen.GetHashCode,
-                          Me.DeviceBase?.Session.IsSessionOpen.GetHashCode)
+                          Me.DeviceBase.Session.Enabled.GetHashCode,
+                          Me.DeviceBase.Session.IsDeviceOpen.GetHashCode,
+                          Me.DeviceBase.Session.IsSessionOpen.GetHashCode)
     End Sub
 
 #End Region
