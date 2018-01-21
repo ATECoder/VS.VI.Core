@@ -568,28 +568,14 @@ Public Class T1750MeasureControl
 
 #Region " TALKER "
 
-    ''' <summary> Adds a listener. </summary>
-    ''' <param name="listener"> The listener. </param>
-    Public Overrides Sub AddListener(ByVal listener As isr.Core.Pith.IMessageListener)
-        MyBase.AddListener(listener)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
+    ''' <summary> Identify talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
 
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of isr.Core.Pith.IMessageListener))
-        MyBase.AddListeners(listeners)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Adds the listeners. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overrides Sub AddListeners(ByVal talker As ITraceMessageTalker)
-        MyBase.AddListeners(talker)
-        My.MyLibrary.Identify(Me.Talker)
+        My.MyLibrary.Identify(Talker)
     End Sub
 
 #End Region
 
-	
+
 End Class

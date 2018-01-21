@@ -130,19 +130,26 @@ Public Class SimpleReadWriteForm
 
 #Region " TALKER "
 
+    ''' <summary> Identify talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+
+        My.MyLibrary.Identify(Talker)
+    End Sub
+
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
     Protected Overloads Sub AddListeners()
-        MyBase.AddListener(Me._TraceMessagesBox)
         Me._InstrumentPanel?.AddListeners(Me.Talker)
-         My.MyLibrary.Identify(Me.Talker)
+        MyBase.AddListener(Me._TraceMessagesBox)
+        'My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
     ''' <param name="listener"> The listener. </param>
     Public Overrides Sub AddListener(ByVal listener As IMessageListener)
-        MyBase.AddListener(listener)
         Me._InstrumentPanel?.AddListener(listener)
-        My.MyLibrary.Identify(Me.Talker)
+        MyBase.AddListener(listener)
+        'My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
@@ -150,10 +157,10 @@ Public Class SimpleReadWriteForm
     ''' <param name="value">        The value. </param>
 
     Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
-        ' this should apply only to the listeners associated with this form
-        MyBase.ApplyListenerTraceLevel(listenerType, value)
         If listenerType = Me._TraceMessagesBox.ListenerType Then Me._TraceMessagesBox.ApplyTraceLevel(value)
         Me._InstrumentPanel?.ApplyListenerTraceLevel(listenerType, value)
+        ' this should apply only to the listeners associated with this form
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
@@ -166,8 +173,8 @@ Public Class SimpleReadWriteForm
     ''' <param name="listenerType"> Type of the trace level. </param>
     ''' <param name="value">        The value. </param>
     Public Overrides Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
-        MyBase.ApplyTalkerTraceLevel(listenerType, value)
         Me._InstrumentPanel?.ApplyTalkerTraceLevel(listenerType, value)
+        MyBase.ApplyTalkerTraceLevel(listenerType, value)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>

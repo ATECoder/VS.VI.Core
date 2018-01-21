@@ -1370,10 +1370,16 @@ Public Class Console
 
 #Region " TALKER "
 
+    ''' <summary> Identify talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+        My.MyLibrary.Identify(Talker)
+    End Sub
+
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
     Protected Overloads Sub AddListeners()
-        Me.Talker.Listeners.Add(Me._TraceMessagesBox)
-        Me._AssignTalker(Me.Talker)
+        Me.AddListener(Me._TraceMessagesBox)
+        ' Me._AssignTalker(Me.Talker)
     End Sub
 
     ''' <summary> Assign talker. </summary>
@@ -1382,28 +1388,29 @@ Public Class Console
     Private Sub _AssignTalker(ByVal talker As ITraceMessageTalker)
         Me._PartsPanel.AssignTalker(Me.Talker)
         Me._TTMConfigurationPanel.AssignTalker(Me.Talker)
-        My.MyLibrary.Identify(Me.Talker)
+        ' My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Assign talker. </summary>
     ''' <param name="talker"> The talker. </param>
     Public Overrides Sub AssignTalker(ByVal talker As ITraceMessageTalker)
-        MyBase.AssignTalker(talker)
-        Me.Talker.Listeners.Add(Me._TraceMessagesBox)
         Me._AssignTalker(Me.Talker)
+        MyBase.AssignTalker(talker)
+        Me.AddListener(Me._TraceMessagesBox)
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
     ''' <param name="listenerType"> Type of the listener. </param>
     ''' <param name="value">        The value. </param>
     Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
-        ' this should apply only to the listeners associated with this form
-        MyBase.ApplyListenerTraceLevel(listenerType, value)
         If listenerType = Me._TraceMessagesBox.ListenerType Then Me._TraceMessagesBox.ApplyTraceLevel(value)
         Me._PartsPanel.ApplyListenerTraceLevel(listenerType, value)
         Me._TTMConfigurationPanel.ApplyListenerTraceLevel(listenerType, value)
+        ' this should apply only to the listeners associated with this form
+        ' MyBase.ApplyListenerTraceLevel(listenerType, value)
+
     End Sub
-	
+
     ''' <summary> Executes the trace messages box property changed action. </summary>
     ''' <param name="sender">       The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>

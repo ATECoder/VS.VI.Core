@@ -23,7 +23,7 @@ Public Class Meter
     Public Sub New()
         MyBase.New()
         Me._MasterDevice = New Device
-        Me._Talker = New TraceMessageTalker
+        Me.ConstructorSafeTalkerSetter(New TraceMessageTalker)
         AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 
@@ -50,8 +50,7 @@ Public Class Meter
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 Try
-                    Me.DisposeTalker()
-
+                    Me.Talker = Nothing
                     If Me._MasterDevice Is Nothing Then
                         Me.OnClosing()
                     Else
@@ -1217,88 +1216,6 @@ Public Class Meter
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling Settings.{e.PropertyName} property;. {ex.ToFullBlownString}")
         End Try
-    End Sub
-
-#End Region
-
-#Region " TALKER "
-
-    ''' <summary> Adds subsystem listeners. </summary>
-    Public Overridable Sub AddSubsystemListeners()
-        Me.ShuntResistance.AddListeners(Me.Talker)
-        Me.MasterDevice.AddListeners(Me.Talker)
-    End Sub
-
-    ''' <summary> Clears the subsystem listeners. </summary>
-    Public Overridable Sub ClearSubsystemListeners()
-        Me.MasterDevice.ClearListeners()
-    End Sub
-
-#End Region
-
-#Region " I TALKER IMPLEMENTATION "
-
-    ''' <summary> Gets the trace message talker. </summary>
-    ''' <value> The trace message talker. </value>
-    Public ReadOnly Property Talker As ITraceMessageTalker
-
-    ''' <summary> Adds a listener. </summary>
-    ''' <param name="listener"> The listener. </param>
-    Public Overridable Sub AddListener(ByVal listener As IMessageListener) Implements ITalker.AddListener
-        Me._Talker.AddListener(listener)
-    End Sub
-
-    ''' <summary> Adds the listeners. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.AddListeners
-        Me._Talker.AddListeners(listeners)
-    End Sub
-
-    ''' <summary> Adds the listeners. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
-        Me._Talker.AddListeners(talker)
-         My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Applies the trace level to all listeners of the specified type. </summary>
-    ''' <param name="listenerType"> Type of the listener. </param>
-    ''' <param name="value">        The value. </param>
-    Public Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyListenerTraceLevel
-        ' this should apply only to the listeners associated with this form
-        Me.Talker.ApplyListenerTraceLevel(listenerType, value)
-        Me.ShuntResistance.ApplyListenerTraceLevel(listenerType, value)
-        Me.MasterDevice.ApplyListenerTraceLevel(listenerType, value)
-    End Sub
-
-    ''' <summary> Applies the trace level type to all talkers. </summary>
-    ''' <param name="listenerType"> Type of listener. </param>
-    ''' <param name="value">        The value. </param>
-    Public Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyTalkerTraceLevel
-        Me.Talker.ApplyTalkerTraceLevel(listenerType, value)
-        Me.ShuntResistance.ApplyTalkerTraceLevel(listenerType, value)
-        Me.MasterDevice.ApplyTalkerTraceLevel(listenerType, value)
-    End Sub
-
-    ''' <summary> Applies the talker trace levels described by talker. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.ApplyTalkerTraceLevels
-        Me.Talker.ApplyTalkerTraceLevels(talker)
-        Me.MasterDevice.ApplyTalkerTraceLevels(talker)
-        Me.ShuntResistance?.ApplyTalkerTraceLevels(talker)
-    End Sub
-
-    ''' <summary> Clears the listeners. </summary>
-    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker.Listeners?.Clear()
-        Me.MasterDevice?.ClearListeners()
-        Me.ShuntResistance?.ClearListeners()
-    End Sub
-
-    ''' <summary> Dispose talker. </summary>
-    Private Sub DisposeTalker()
-        Me.ClearListeners()
-        Me._Talker = Nothing
     End Sub
 
 #End Region

@@ -18,7 +18,6 @@ Public MustInherit Class MasterDeviceBase
     ''' <summary> Initializes a new instance of the <see cref="MasterDeviceBase" /> class. </summary>
     Protected Sub New()
         MyBase.New()
-        Me.InitializeTimeout = TimeSpan.FromMilliseconds(30000)
         AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 
@@ -169,6 +168,7 @@ Public MustInherit Class MasterDeviceBase
     ''' <summary> Executes the subsystem property changed action. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")>
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As StatusSubsystem, ByVal propertyName As String)
         MyBase.OnPropertyChanged(subsystem, propertyName)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
@@ -205,7 +205,12 @@ Public MustInherit Class MasterDeviceBase
 
     ''' <summary> Gets or sets the Smu Subsystem. </summary>
     ''' <value> Smu Subsystem. </value>
-    Public Property SourceMeasureUnit As VI.Tsp.SourceMeasureUnit
+    Public Property SourceMeasureUnit As VI.Tsp.SourceMeasureUnitBase
+
+    ''' <summary> Gets or sets the contact subsystem. </summary>
+    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <value> The contact subsystem. </value>
+    Public Property ContactSubsystem As VI.Tsp.ContactSubsystemBase
 
     ''' <summary> Gets or sets source measure unit current source. </summary>
     ''' <value> The source measure unit current source. </value>
@@ -231,11 +236,11 @@ Public MustInherit Class MasterDeviceBase
 
     ''' <summary> Checks contact resistance. </summary>
     Public Sub CheckContacts(ByVal threshold As Integer)
-        Me.SourceMeasureUnit.CheckContacts(threshold)
-        If Not Me.SourceMeasureUnit.ContactCheckOkay.HasValue Then
+        Me.ContactSubsystem.CheckContacts(threshold)
+        If Not Me.ContactSubsystem.ContactCheckOkay.HasValue Then
             Throw New OperationFailedException("Failed Measuring contacts;. ")
-        ElseIf Not Me.SourceMeasureUnit.ContactCheckOkay.Value Then
-            Throw New OperationFailedException("High contact resistances;. Values: '{0}'", Me.SourceMeasureUnit.ContactResistances)
+        ElseIf Not Me.ContactSubsystem.ContactCheckOkay.Value Then
+            Throw New OperationFailedException("High contact resistances;. Values: '{0}'", Me.ContactSubsystem.ContactResistances)
         End If
     End Sub
 
@@ -245,15 +250,14 @@ Public MustInherit Class MasterDeviceBase
     ''' <returns> <c>True</c> if contacts checked okay. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
     Public Function TryCheckContacts(ByVal threshold As Integer, ByRef details As String) As Boolean
-        Me.SourceMeasureUnit.CheckContacts(threshold)
-        If Not Me.SourceMeasureUnit.ContactCheckOkay.HasValue Then
+        Me.ContactSubsystem.CheckContacts(threshold)
+        If Not Me.ContactSubsystem.ContactCheckOkay.HasValue Then
             details = "Failed Measuring contacts;. "
             Return False
-        ElseIf Me.SourceMeasureUnit.ContactCheckOkay.Value Then
+        ElseIf Me.ContactSubsystem.ContactCheckOkay.Value Then
             Return True
         Else
-            details = String.Format("High contact resistances;. Values: '{0}'",
-                                    Me.SourceMeasureUnit.ContactResistances)
+            details = String.Format("High contact resistances;. Values: '{0}'", Me.ContactSubsystem.ContactResistances)
             Return False
         End If
     End Function
@@ -325,24 +329,9 @@ Public MustInherit Class MasterDeviceBase
 
 #Region " TALKER "
 
-    ''' <summary> Adds a listener. </summary>
-    ''' <param name="listener"> The listener. </param>
-    Public Overrides Sub AddListener(ByVal listener As isr.Core.Pith.IMessageListener)
-        MyBase.AddListener(listener)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of isr.Core.Pith.IMessageListener))
-        MyBase.AddListeners(listeners)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Adds the listeners. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overrides Sub AddListeners(ByVal talker As isr.Core.Pith.ITraceMessageTalker)
-        MyBase.AddListeners(talker)
+    ''' <summary> Identify talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
         My.MyLibrary.Identify(Me.Talker)
     End Sub
 

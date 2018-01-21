@@ -687,11 +687,17 @@ Public Class BridgeMeterControl
 
 #Region " TALKER "
 
+    ''' <summary> Identify talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+
+        My.MyLibrary.Identify(Talker)
+    End Sub
+
     ''' <summary> Assigns talker. </summary>
     ''' <param name="talker"> The talker. </param>
     Public Overrides Sub AssignTalker(talker As ITraceMessageTalker)
         MyBase.AssignTalker(talker)
-        My.MyLibrary.Identify(talker)
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
@@ -699,10 +705,11 @@ Public Class BridgeMeterControl
     ''' <param name="value">        The value. </param>
     Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
         ' this should apply only to the listeners associated with this form
-        MyBase.ApplyListenerTraceLevel(listenerType, value)
+        ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
 #End Region
+
 
 End Class
 
@@ -799,26 +806,32 @@ Public Class ResistorCollection
         grid.Refresh()
         Dim displayIndex As Integer = 0
         Dim width As Integer = 30
-        Dim column As New DataGridViewTextBoxColumn()
-        With column
-            .DataPropertyName = "Title"
-            .Name = "Title"
-            .Visible = True
-            .DisplayIndex = displayIndex
-        End With
-        grid.Columns.Add(column)
-        width += column.Width
+        Dim column As DataGridViewTextBoxColumn = Nothing
+        Try
+            column = New DataGridViewTextBoxColumn()
+            With column
+                .DataPropertyName = "Title"
+                .Name = "Title"
+                .Visible = True
+                .DisplayIndex = displayIndex
+            End With
+            grid.Columns.Add(column)
+            width += column.Width
 
-        displayIndex += 1
-        column = New DataGridViewTextBoxColumn()
-        With column
-            .DataPropertyName = "Resistance"
-            .Name = "Resistance"
-            .Visible = True
-            .DisplayIndex = displayIndex
-            .Width = grid.Width - width
-            .DefaultCellStyle.Format = "G5"
-        End With
+            displayIndex += 1
+            column = New DataGridViewTextBoxColumn()
+            With column
+                .DataPropertyName = "Resistance"
+                .Name = "Resistance"
+                .Visible = True
+                .DisplayIndex = displayIndex
+                .Width = grid.Width - width
+                .DefaultCellStyle.Format = "G5"
+            End With
+        Catch
+            If column IsNot Nothing Then column.Dispose()
+            Throw
+        End Try
         grid.Columns.Add(column)
         grid.ParseHeaderText()
         grid.Enabled = True

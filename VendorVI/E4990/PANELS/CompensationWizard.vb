@@ -30,12 +30,13 @@ Public Class CompensationWizard
         Me.InitializingComponents = True
         Me.InitializeComponent()
         Me.InitializingComponents = False
-        Me._Talker = New TraceMessageTalker
+        Me.ConstructorSafeTalkerSetter(New TraceMessageTalker)
         Dim builder As New System.Text.StringBuilder
         builder.AppendLine("This wizard will guide you through the steps of performing a compensation task.")
         builder.AppendLine("The following items are required:")
         builder.AppendLine("-- An Open fixture for open compensation;")
         builder.AppendLine("-- A Short fixture for short compensation;")
+
         builder.AppendLine("-- A Load Resistance fixture for load compensation; and")
         builder.AppendLine("-- A Yardstick Resistance fixture for validation.")
         Me._WelcomeWizardPage.Description = builder.ToString
@@ -58,7 +59,7 @@ Public Class CompensationWizard
             If Not Me.IsDisposed Then
                 If disposing Then
                     Me.Device = Nothing
-                    Me.DisposeTalker()
+                    Me.Talker = Nothing
                     If components IsNot Nothing Then components.Dispose()
                 End If
             End If
@@ -985,75 +986,6 @@ Public Class CompensationWizard
             ' update progress bar
             Me._LongTaskProgressBar.PerformStep()
         End If
-    End Sub
-
-#End Region
-
-#Region " I TALKER IMPLEMENTATION "
-
-    ''' <summary> Gets the trace message talker. </summary>
-    ''' <value> The trace message talker. </value>
-    Public ReadOnly Property Talker As ITraceMessageTalker
-
-    Private IsAssignedTalker As Boolean
-    ''' <summary> Assigns a talker. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overridable Sub AssignTalker(ByVal talker As ITraceMessageTalker)
-        Me.IsAssignedTalker = talker IsNot Nothing
-        Me._Talker = talker
-    End Sub
-
-    ''' <summary> Clears the listeners. </summary>
-    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        If Me.IsAssignedTalker Then
-            Me.Talker.Listeners?.Clear()
-        End If
-    End Sub
-
-    ''' <summary> Dispose talker. </summary>
-    Private Sub DisposeTalker()
-        Me.ClearListeners()
-        Me._Talker = Nothing
-    End Sub
-
-    ''' <summary> Adds a listener. </summary>
-    ''' <param name="listener"> The listener. </param>
-    Public Overridable Sub AddListener(ByVal listener As IMessageListener) Implements ITalker.AddListener
-        Me._Talker.AddListener(listener)
-    End Sub
-
-    ''' <summary> Adds the listeners. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.AddListeners
-        Me._Talker.AddListeners(listeners)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Adds the listeners. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
-        Me._Talker.AddListeners(talker)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Applies the trace level to all listeners of the specified type. </summary>
-    ''' <param name="listenerType"> Type of the listener. </param>
-    ''' <param name="value">        The value. </param>
-    Public Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyListenerTraceLevel
-        Me.Talker.ApplyListenerTraceLevel(listenerType, value)
-    End Sub
-
-    ''' <summary> Applies the trace level type to all talkers. </summary>
-    ''' <param name="listenerType"> Type of listener. </param>
-    ''' <param name="value">        The value. </param>
-    Public Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyTalkerTraceLevel
-        Me.Talker.ApplyTalkerTraceLevel(listenerType, value)
-    End Sub
-
-    ''' <summary> Applies the talker trace levels described by talker. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.ApplyTalkerTraceLevels
-        Me.Talker.ApplyTalkerTraceLevels(talker)
     End Sub
 
 #End Region

@@ -84,6 +84,9 @@
     <Compile Include="DUT\ColdResistanceValidation.vb" />
     <Compile Include="DUT\DeviceUnderTest.vb" />
     <Compile Include="DUT\ResistanceMeasureBase.vb" />
+    <Compile Include="DUT\ResistanceMeasureBase-ITalker.vb" />
+    <Compile Include="DUT\ResistanceMeasureCollection.vb" />
+    <Compile Include="DUT\ResistanceMeasureCollection-ITalker.vb" />
     <Compile Include="DUT\ShuntResistance.vb" />
     <Compile Include="DUT\ShuntResistanceBase.vb" />
     <Compile Include="DUT\ShuntResistanceValidation.vb" />
@@ -170,6 +173,7 @@
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
     <Compile Include="METER\Meter.vb" />
+    <Compile Include="METER\Meter-ITalker.vb" />
     <Compile Include="My\SolutionInfo.vb" />
   </ItemGroup>
   <ItemGroup>

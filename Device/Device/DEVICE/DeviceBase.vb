@@ -17,7 +17,7 @@ Imports isr.VI.National.Visa
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
 Public MustInherit Class DeviceBase
     Inherits PropertyPublisherBase
-    Implements IPresettablePropertyPublisher, ITalker
+    Implements IPresettablePropertyPublisher
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
@@ -41,7 +41,7 @@ Public MustInherit Class DeviceBase
         Me._Subsystems = New SubsystemCollection
         Me._ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter
         Me._UsingSyncServiceRequestHandler = True
-        Me._Talker = New TraceMessageTalker
+        Me.ConstructorSafeTalkerSetter(New TraceMessageTalker)
         Me._ResourceTitle = DeviceBase.DefaultResourceTitle
         Me._ResourceName = DeviceBase.ResourceNameClosed
     End Sub
@@ -59,13 +59,13 @@ Public MustInherit Class DeviceBase
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                Me.Talker.Listeners.Clear()
-                Me._Talker = Nothing
+                Me.Talker = Nothing
                 Me.SessionMessagesTraceEnabled = False
                 Me.Session?.DisableServiceRequest()
                 Me.RemoveServiceRequestEventHandler()
                 Me.RemoveEventHandler(Me.ServiceRequestedEvent)
                 Me.RemoveOpeningEventHandler(Me.OpeningEvent)
+
                 Me.RemoveOpenedEventHandler(Me.OpenedEvent)
                 Me.RemoveClosingEventHandler(Me.ClosingEvent)
                 Me.RemoveClosedEventHandler(Me.ClosedEvent)
@@ -487,8 +487,13 @@ Public MustInherit Class DeviceBase
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Me.SyncNotifyInitializing(e)
 
-        ' add listens and enable publishing while initializing the device.
-        Me.AddSubsystemListeners()
+#If False Then
+        ' add listeners and enable publishing while initializing the device.
+        ' subsystems use the same talker as the device. 
+        Me.Subsystems.ApplyTalkerTraceLevels(Me.Talker)
+        Me.Subsystems.ApplyListenerTraceLevels(Me.Talker)
+        Me.Subsystems.AddListeners(Me.Talker)
+#End If
 
         ' 2/18/16: replaces calls to reset and then init known states
         Me.ResetClearInit()
@@ -881,6 +886,7 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Safe query existing device errors. </summary>
     Public Overridable Function QueryExistingDeviceErrors(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Me.StatusSubsystemBase.MessageAvailable Then
             ' if the device has message with an error state, the message must be fetched before the device
             ' errors can be fetched. The system requesting the message must:
@@ -1188,77 +1194,6 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Applies the settings. </summary>
     Protected MustOverride Sub ApplySettings()
-
-#End Region
-
-#Region " TALKER "
-
-    ''' <summary> Gets the trace message talker. </summary>
-    ''' <value> The trace message talker. </value>
-    Public ReadOnly Property Talker As ITraceMessageTalker
-
-    ''' <summary> Adds a listener. </summary>
-    ''' <param name="listener"> The listener. </param>
-    Public Overridable Sub AddListener(ByVal listener As IMessageListener) Implements ITalker.AddListener
-        Me.Talker.Listeners.Add(listener)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.AddListeners
-        Me.Talker.Listeners.Add(listeners)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Adds the listeners. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
-        Me.Talker.AddListeners(talker)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
-    ''' <param name="listenerType"> Type of the listener. </param>
-    ''' <param name="value">        The value. </param>
-    Public Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyListenerTraceLevel
-        Me.Talker.ApplyListenerTraceLevel(listenerType, value)
-        Me.Subsystems.ApplyListenerTraceLevel(listenerType, value)
-    End Sub
-
-    ''' <summary> Applies the trace level type to all talkers. </summary>
-    ''' <param name="listenerType"> Type of the trace level. </param>
-    ''' <param name="value">        The value. </param>
-    Public Overridable Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType) Implements ITalker.ApplyTalkerTraceLevel
-        Me.Talker.ApplyTalkerTraceLevel(listenerType, value)
-        Me.Subsystems.ApplyTalkerTraceLevel(listenerType, value)
-    End Sub
-
-    ''' <summary> Applies the talker trace levels described by talker. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overridable Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.ApplyTalkerTraceLevels
-        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
-        Me.ApplyTalkerTraceLevel(ListenerType.Logger, talker.TraceLogLevel)
-        Me.ApplyTalkerTraceLevel(ListenerType.Display, talker.TraceShowLevel)
-    End Sub
-
-    ''' <summary> Adds subsystem listeners. </summary>
-    Public Overridable Sub AddSubsystemListeners()
-        Me.Subsystems.ApplyTalkerTraceLevel(ListenerType.Logger, Me.Talker.TraceLogLevel)
-        Me.Subsystems.ApplyTalkerTraceLevel(ListenerType.Display, Me.Talker.TraceShowLevel)
-        Me.Subsystems.AddListeners(Me.Talker)
-    End Sub
-
-    ''' <summary> Clears the listeners. </summary>
-    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
-        Me.Talker.Listeners?.Clear()
-        Me.Subsystems.ClearListeners()
-    End Sub
-
-    ''' <summary> Clears the subsystem listeners. </summary>
-    Public Overridable Sub ClearSubsystemListeners()
-        Me.Subsystems?.ClearListeners()
-    End Sub
 
 #End Region
 

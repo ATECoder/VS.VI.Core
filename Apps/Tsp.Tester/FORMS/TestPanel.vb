@@ -1568,23 +1568,27 @@ Public Class TestPanel
 
 #End Region
 
-
 #Region " TALKER "
+
+    ''' <summary> Identify talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+        My.MyLibrary.Identify(Talker)
+    End Sub
 
     ''' <summary> Assigns talker. </summary>
     Public Overloads Sub AssignTalker()
         Me.Talker.AddListener(Me._TraceMessagesBox)
-        My.MyLibrary.Identify(Me.Talker)
+        ' My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
     ''' <param name="listenerType"> Type of the listener. </param>
     ''' <param name="value">        The value. </param>
     Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
-        MyBase.ApplyListenerTraceLevel(listenerType, value)
-        If listenerType = Me._TraceMessagesBox.ListenerType Then
-            Me._TraceMessagesBox.ApplyTraceLevel(value)
-        End If
+        If listenerType = Me._TraceMessagesBox.ListenerType Then Me._TraceMessagesBox.ApplyTraceLevel(value)
+        ' this should apply only to the listeners associated with this form
+        ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
 

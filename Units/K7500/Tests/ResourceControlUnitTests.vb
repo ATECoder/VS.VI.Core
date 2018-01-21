@@ -72,7 +72,7 @@ Public Class ResourceControlUnitTests
         Dim actualBoolean As Boolean = True
         Using control As isr.VI.Instrument.ResourceControlBase = New isr.VI.Instrument.ResourceControlBase
             control.ResourceTitle = TestInfo.ResourceTitle
-            control.DisplayNames()
+            control.DisplayResourceNames()
             actualBoolean = control.HasResourceNames
             expectedBoolean = True
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Has Resources {control.ResourceName}")
@@ -95,14 +95,14 @@ Public Class ResourceControlUnitTests
         Using control As isr.VI.Instrument.ResourceControlBase = New isr.VI.Instrument.ResourceControlBase
             Using target As Device = New Device()
                 target.ResourceTitle = TestInfo.ResourceTitle
-                Dim e As New System.ComponentModel.CancelEventArgs
-                control.AssignDevice(target)
+                Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+                control.DeviceBase = target
                 control.ResourceName = TestInfo.ResourceName
 
-                control.Connect(e)
+                control.TryOpenSession(e)
                 actualBoolean = e.Cancel
                 expectedBoolean = False
-                Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect cancel {control.ResourceName}")
+                Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect cancel {control.ResourceName} {e.Details}")
 
                 actualBoolean = target.IsDeviceOpen
                 expectedBoolean = True
@@ -112,10 +112,10 @@ Public Class ResourceControlUnitTests
                 Assert.AreEqual(TestInfo.ResourceModel, target.StatusSubsystem.VersionInfo.Model,
                                 $"Disconnect open {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
 
-                control.Disconnect(e)
+                control.TryCloseSession(e)
                 actualBoolean = e.Cancel
                 expectedBoolean = False
-                Assert.AreEqual(expectedBoolean, actualBoolean, $"Disconnect cancel {control.ResourceName}")
+                Assert.AreEqual(expectedBoolean, actualBoolean, $"Disconnect cancel {control.ResourceName} {e.Details}")
 
                 actualBoolean = target.IsDeviceOpen
                 expectedBoolean = False

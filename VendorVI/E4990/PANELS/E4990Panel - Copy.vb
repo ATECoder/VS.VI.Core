@@ -1699,9 +1699,9 @@ Public Class E4990Panel
     ''' <param name="listenerType"> Type of the listener. </param>
     ''' <param name="value">        The value. </param>
     Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
-        ' this should apply only to the listeners associated with this form
-        MyBase.ApplyListenerTraceLevel(listenerType, value)
         Me._SimpleReadWriteControl.ApplyListenerTraceLevel(listenerType, value)
+        ' this should apply only to the listeners associated with this form
+        ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
 #End Region

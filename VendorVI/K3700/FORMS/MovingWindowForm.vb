@@ -127,12 +127,19 @@ Public Class MovingWindowForm
 
 #Region " TALKER "
 
+    ''' <summary> Identify talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+
+        My.MyLibrary.Identify(Talker)
+    End Sub
+
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
     Protected Overloads Sub AddListeners()
-        MyBase.AddListener(Me._TraceMessagesBox)
         Me._InstrumentPanel.AssignTalker(Me.Talker)
         Me._MovingWindowMeter.AssignTalker(Me.Talker)
-         My.MyLibrary.Identify(Me.Talker)
+        MyBase.AddListener(Me._TraceMessagesBox)
+        'My.MyLibrary.Identify(Me.Talker)
     End Sub
 
 
@@ -140,11 +147,12 @@ Public Class MovingWindowForm
     ''' <param name="listenerType"> Type of the listener. </param>
     ''' <param name="value">        The value. </param>
     Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
-        ' this should apply only to the listeners associated with this form
-        MyBase.ApplyListenerTraceLevel(listenerType, value)
         Me._InstrumentPanel.ApplyListenerTraceLevel(listenerType, value)
         Me._MovingWindowMeter.ApplyListenerTraceLevel(listenerType, value)
+        ' this should apply only to the listeners associated with this form
+        ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
+
 
     Public Overrides Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker)
         ' this should apply only to the listeners associated with this form

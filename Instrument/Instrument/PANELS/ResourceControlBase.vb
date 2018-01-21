@@ -992,22 +992,27 @@ Public Class ResourceControlBase
 
 #Region " TALKER "
 
+    ''' <summary> Identify talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+        My.MyLibrary.Identify(Talker)
+    End Sub
+
     ''' <summary> Assigns talker. </summary>
     ''' <param name="talker"> The talker. </param>
     Public Overrides Sub AssignTalker(talker As ITraceMessageTalker)
         If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
-        MyBase.AssignTalker(talker)
         Me.Connector.AssignTalker(talker)
-        My.MyLibrary.Identify(talker)
+        MyBase.AssignTalker(talker)
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
     ''' <param name="listenerType"> Type of the listener. </param>
     ''' <param name="value">        The value. </param>
     Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
-        ' this should apply only to the listeners associated with this form
-        MyBase.ApplyListenerTraceLevel(listenerType, value)
         Me.Connector.ApplyListenerTraceLevel(listenerType, value)
+        ' this should apply only to the listeners associated with this form
+        ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
 #End Region

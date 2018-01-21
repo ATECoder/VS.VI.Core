@@ -9,7 +9,7 @@
 ''' SOFTWARE.</para> </license>
 ''' <history date="12/14/2013" by="David" revision=""> Created. </history>
 Public Class SourceMeasureUnitDevice
-    Inherits isr.VI.Tsp.SourceMeasureUnit
+    Inherits isr.VI.Tsp.SourceMeasureUnitBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 

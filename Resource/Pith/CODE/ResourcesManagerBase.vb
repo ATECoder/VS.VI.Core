@@ -208,16 +208,24 @@ Public MustInherit Class ResourcesManagerBase
         Return result
     End Function
 
+    ''' <summary> Attempts to validate visa versions using settings versions. </summary>
+    ''' <param name="e"> Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Shared Function TryValidateVisaVersions(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If Not isr.VI.ResourcesManagerBase.ValidateFoundationSystemFileVersion(e) Then
+        ElseIf Not isr.VI.ResourcesManagerBase.ValidateFoundationVisaAssemblyVersion(e) Then
+        ElseIf Not isr.VI.ResourcesManagerBase.ValidateVendorVersion(e) Then
+        End If
+        Return Not e.Cancel
+    End Function
+
     ''' <summary> Validates the visa versions. </summary>
     ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
     Public Shared Sub ValidateVisaVersions()
         Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-        If Not isr.VI.ResourcesManagerBase.ValidateFoundationSystemFileVersion(e) Then
-            Throw New OperationFailedException($"Invalid foundation VISA System file version: {e.Details}")
-        ElseIf Not isr.VI.ResourcesManagerBase.ValidateFoundationVisaAssemblyVersion(e) Then
-            Throw New OperationFailedException($"Invalid foundation VISA .NET file version: {e.Details}")
-        ElseIf Not isr.VI.ResourcesManagerBase.ValidateVendorVersion(e) Then
-            Throw New OperationFailedException($"Invalid national Instrument VISA version: {e.Details}")
+        If Not ResourcesManagerBase.TryValidateVisaVersions(e) Then
+            Throw New OperationFailedException($"Invalid VISA version: {e.Details}")
         End If
     End Sub
 
@@ -243,6 +251,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <param name="e">               Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Shared Function ValidateVendorVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim actualVersion As String = ResourcesManagerBase.ReadVendorVersion.ToString
         If Not ResourcesManagerBase.AreEqual(expectedVersion, actualVersion) Then
             e.RegisterCancellation($"Vendor {ResourcesManagerBase.VendorVersionPath} version {actualVersion} different from expected {expectedVersion}")
@@ -284,9 +293,10 @@ Public MustInherit Class ResourcesManagerBase
     ''' <param name="e">               Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Shared Function ValidateFoundationVisaAssemblyVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim actualVersion As String = ResourcesManagerBase.ReadFoundationVisaAssemblyFileVersionInfo.FileVersion.ToString
         If Not ResourcesManagerBase.AreEqual(expectedVersion, actualVersion) Then
-            e.RegisterCancellation($"IVI Foundation visa file {ResourcesManagerBase.FoundationVisaAssemblyFileFullName}  version {actualVersion} different from expected {expectedVersion}")
+            e.RegisterCancellation($"IVI Foundation VISA assembly {ResourcesManagerBase.FoundationVisaAssemblyFileFullName} version {actualVersion} different from expected {expectedVersion}")
         End If
         Return Not e.Cancel
     End Function
@@ -325,9 +335,10 @@ Public MustInherit Class ResourcesManagerBase
     ''' <param name="e">               Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Shared Function ValidateFoundationSystemFileVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim actualVersion As String = ResourcesManagerBase.ReadFoundationSystemFileVersionInfo.FileVersion.ToString
         If Not ResourcesManagerBase.AreEqual(expectedVersion, actualVersion) Then
-            e.RegisterCancellation($"IVI Foundation file {ResourcesManagerBase.FoundationSystemFileFullName} version {actualVersion} different from expected {expectedVersion}")
+            e.RegisterCancellation($"IVI Foundation system file {ResourcesManagerBase.FoundationSystemFileFullName} version {actualVersion} different from expected {expectedVersion}")
         End If
         Return Not e.Cancel
     End Function

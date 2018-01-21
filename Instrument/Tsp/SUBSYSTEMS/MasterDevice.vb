@@ -58,7 +58,7 @@ Public Class MasterDevice
         MyBase.OnClosing(e)
         If e?.Cancel Then Return
         If Me.DisplaySubsystem IsNot Nothing Then
-            Me.DisplaySubsystem.RestoreDisplay(Me.InitializeTimeout)
+            Me.DisplaySubsystem.RestoreDisplay(Me.StatusSubsystem.InitializeTimeout)
         End If
         If Me.SourceMeasureUnit IsNot Nothing Then
             RemoveHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf SourceMeasureSubsystemPropertyChanged
@@ -132,12 +132,14 @@ Public Class MasterDevice
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+    Protected Overloads Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
         Try
-            Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+                               $"{Me.ResourceName} exception handling {NameOf(StatusSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

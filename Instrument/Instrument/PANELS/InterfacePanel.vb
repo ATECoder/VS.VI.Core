@@ -499,20 +499,24 @@ Public Class InterfacePanel
 
 #Region " TALKER "
 
+    ''' <summary> Identify talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+        My.MyLibrary.Identify(Talker)
+    End Sub
+
     ''' <summary> Assign talker. </summary>
     Protected Overloads Sub AddListeners()
-        Me.Talker.AddListener(Me._TraceMessagesBox)
-        My.MyLibrary.Identify(Me.Talker)
+        Me.AddListener(Me._TraceMessagesBox)
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
     ''' <param name="listenerType"> Type of the listener. </param>
     ''' <param name="value">        The value. </param>
     Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
-        ' this should apply only to the listeners associated with this form
-        MyBase.ApplyListenerTraceLevel(listenerType, value)
         If listenerType = Me._TraceMessagesBox.ListenerType Then Me._TraceMessagesBox.ApplyTraceLevel(value)
-        My.MyLibrary.Identify(Me.Talker)
+        ' this should apply only to the listeners associated with this form
+        ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>

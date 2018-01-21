@@ -393,6 +393,18 @@ Public Class K7500MeasureControl
 
 #Region " TALKER "
 
+    ''' <summary> Identifies talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+        My.MyLibrary.Identify(Talker)
+    End Sub
+
+#End Region
+
+End Class
+
+#Region " UNUSED "
+#If False Then
     ''' <summary> Adds a listener. </summary>
     ''' <param name="listener"> The listener. </param>
     Public Overrides Sub AddListener(ByVal listener As isr.Core.Pith.IMessageListener)
@@ -412,9 +424,6 @@ Public Class K7500MeasureControl
     Public Overrides Sub AddListeners(ByVal talker As ITraceMessageTalker)
         MyBase.AddListeners(talker)
         My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
+   End Sub
+#End If
 #End Region
-
-	
-End Class

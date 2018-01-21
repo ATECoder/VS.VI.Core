@@ -18,8 +18,8 @@
         ''' <param name="talker"> The talker. </param>
         Public Shared Sub Identify(ByVal talker As isr.Core.Pith.ITraceMessageTalker)
             If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
-            If DateTime.Now.Date > MyApplication.IdentifyDate AndAlso talker.Listeners.ContainsListener(isr.Core.Pith.ListenerType.Logger) Then
-                talker.Publish(TraceEventType.Information, MyApplication.TraceEventId, MyApplication.Identity)
+            If DateTime.Now.Date > My.MyLibrary.IdentifyDate AndAlso talker.Listeners.Any AndAlso talker.Listeners.ContainsLoggerListener Then
+                talker.PublishOverride(TraceEventType.Information, MyApplication.TraceEventId, MyApplication.Identity)
                 MyApplication.IdentifyDate = DateTime.Now.Date
             End If
         End Sub

@@ -812,4 +812,15 @@ Public Class MeasurementPanelBase
 
 #End Region
 
+#Region " TALKER "
+
+    ''' <summary> Identify talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+
+        My.MyLibrary.Identify(Talker)
+    End Sub
+
+#End Region
+
 End Class

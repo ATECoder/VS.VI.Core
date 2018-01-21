@@ -178,7 +178,7 @@ Public Class StatusSubsystem
     Protected Overrides ReadOnly Property LastErrorQueryCommand As String
         Get
             If Debugger.IsAttached Then
-                Return VI.Scpi.Syntax.LastErrorQueryCommand
+                Return VI.Scpi.Syntax.LastSystemErrorQueryCommand
             Else
                 Return ""
             End If

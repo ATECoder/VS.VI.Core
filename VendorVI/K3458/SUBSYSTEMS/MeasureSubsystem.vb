@@ -480,7 +480,7 @@ Public Enum SenseFunctionMode
     ''' <summary> DCV 1 Selects DC voltage measurements. </summary>
     <ComponentModel.Description("DC Volts (DCV)")> VoltageDirect = 1
     ''' <summary> Selects AC voltage measurements (the mode is set by the SETACV command). </summary>
-    <ComponentModel.Description("AC Volts (ACV)")> VoltagAlternating = 2
+    <ComponentModel.Description("AC Volts (ACV)")> VoltageAlternating = 2
     ''' <summary> ACDCV 3 Selects AC+DC voltage measurements (the mode is set by the SETACV command). </summary>
     <ComponentModel.Description("Once (ACDCV)")> VoltageDirectAlternating = 3
     ''' <summary> OHM 4 Selects 2-wire ohms measurements. </summary>
@@ -492,7 +492,7 @@ Public Enum SenseFunctionMode
     ''' <summary> ACI 7 Selects AC current measurements. </summary>
     <ComponentModel.Description("AC Current (ACI)")> CurrentAlternating = 7
     ''' <summary> ACDCI 8 Selects AC+DC current measurements. </summary>
-    <ComponentModel.Description("AC DC Current (ACDCI)")> CurrentDirectAlerternating = 8
+    <ComponentModel.Description("AC DC Current (ACDCI)")> CurrentDirectAlternating = 8
 End Enum
 
 Public Enum MathMode

@@ -55,13 +55,14 @@ Public Class Device
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                'listeners must clear, otherwise closing could raise an exception.
-                Me.Talker.Listeners.Clear()
+                ' ?listeners must clear, otherwise closing could raise an exception.
+                ' Me.Talker.Listeners.Clear()
                 If Me.IsDeviceOpen Then Me.OnClosing(New System.ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
         Finally
+
             MyBase.Dispose(disposing)
         End Try
     End Sub
@@ -615,25 +616,10 @@ Public Class Device
 
 #Region " TALKER "
 
-    ''' <summary> Adds a listener. </summary>
-    ''' <param name="listener"> The listener. </param>
-    Public Overrides Sub AddListener(ByVal listener As isr.Core.Pith.IMessageListener)
-        MyBase.AddListener(listener)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of isr.Core.Pith.IMessageListener))
-        MyBase.AddListeners(listeners)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Adds the listeners. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overrides Sub AddListeners(ByVal talker As isr.Core.Pith.ITraceMessageTalker)
-        MyBase.AddListeners(talker)
-        My.MyLibrary.Identify(Me.Talker)
+    ''' <summary> Identifies talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+        My.MyLibrary.Identify(Talker)
     End Sub
 
 #End Region
