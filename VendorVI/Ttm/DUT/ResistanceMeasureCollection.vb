@@ -87,7 +87,7 @@ Public Class ResistanceMeasureCollection
     ''' <summary> Dispose items. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub DisposeItems()
-        Me.ClearListeners()
+        Me.RemoveListeners()
         For Each element As IDisposable In Me.Items
             Try
                 element.Dispose()

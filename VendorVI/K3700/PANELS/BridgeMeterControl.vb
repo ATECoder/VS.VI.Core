@@ -129,8 +129,11 @@ Public Class BridgeMeterControl
         If Me._Device IsNot Nothing Then
             Me._Device.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
             MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            If Me.Device.IsDeviceOpen Then
+                Me.DeviceOpened()
+                Me.DeviceInitialized()
+            End If
             Me.OnDeviceOpenChanged(value)
-
             Me.AssignTalker(Me._Device.Talker)
             Me.ApplyListenerTraceLevel(ListenerType.Display, Me._Device.Talker.TraceShowLevel)
         End If
@@ -150,13 +153,10 @@ Public Class BridgeMeterControl
     ''' <summary> Executes the device open changed action. </summary>
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
         Me._ConfigureGroupBox.Enabled = Me.IsDeviceOpen 
-        Me._MeasureGroupBox.Enabled = Me.IsDeviceOpen 
+        Me._MeasureGroupBox.Enabled = Me.IsDeviceOpen
         If Me.IsDeviceOpen Then
             Me.Bridge.DisplayValues(Me._DataGrid)
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Device.StatusSubsystem.VersionInfo.Model} is open")
-
-
-
         End If
     End Sub
 
@@ -172,17 +172,27 @@ Public Class BridgeMeterControl
         End Select
     End Sub
 
-    ''' <summary> Event handler. Called when device opened. </summary>
-    ''' <param name="sender"> <see cref="System.Object"/> instance of this
-    ''' <see cref="System.Windows.Forms.Control"/> </param>
-    ''' <param name="e">      Event information. </param>
-    Protected Overrides Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
+    Private Overloads Sub DeviceOpened()
         AddHandler Me.Device.MultimeterSubsystem.PropertyChanged, AddressOf Me.MultimeterSubsystemPropertyChanged
         AddHandler Me.Device.ChannelSubsystem.PropertyChanged, AddressOf Me.ChannelSubsystemPropertyChanged
         AddHandler Me.Device.DisplaySubsystem.PropertyChanged, AddressOf Me.DisplaySubsystemPropertyChanged
         AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
         AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
+    End Sub
+
+
+    ''' <summary> Event handler. Called when device opened. </summary>
+    ''' <param name="sender"> <see cref="System.Object"/> instance of this
+    ''' <see cref="System.Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information. </param>
+    Protected Overrides Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
+        Me.DeviceOpened()
         MyBase.DeviceOpened(sender, e)
+    End Sub
+
+    Private Overloads Sub DeviceInitialized()
+        Me.OnSubSystemInitialized(Me.Device.MultimeterSubsystem)
+        Me.ReadServiceRequestStatus()
     End Sub
 
     ''' <summary> Device initialized. </summary>
@@ -190,9 +200,7 @@ Public Class BridgeMeterControl
     ''' <param name="e">      Event information. </param>
     Protected Overrides Sub DeviceInitialized(ByVal sender As Object, ByVal e As System.EventArgs)
         Try
-            MyBase.DeviceInitialized(sender, e)
-            Me.OnSubSystemInitialized(Me.Device.MultimeterSubsystem)
-            Me.ReadServiceRequestStatus()
+            Me.DeviceInitialized()
         Catch
             Throw
         Finally
@@ -207,7 +215,7 @@ Public Class BridgeMeterControl
         If String.IsNullOrWhiteSpace(value) Then
             Stop
         End If
-        MyBase.OnTitleChanged(Title)
+        MyBase.OnTitleChanged(value)
     End Sub
 
     ''' <summary> Event handler. Called when device is closing. </summary>
@@ -690,26 +698,10 @@ Public Class BridgeMeterControl
     ''' <summary> Identify talkers. </summary>
     Protected Overrides Sub IdentifyTalkers()
         MyBase.IdentifyTalkers()
-
         My.MyLibrary.Identify(Talker)
     End Sub
 
-    ''' <summary> Assigns talker. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overrides Sub AssignTalker(talker As ITraceMessageTalker)
-        MyBase.AssignTalker(talker)
-    End Sub
-
-    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
-    ''' <param name="listenerType"> Type of the listener. </param>
-    ''' <param name="value">        The value. </param>
-    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
-        ' this should apply only to the listeners associated with this form
-        ' MyBase.ApplyListenerTraceLevel(listenerType, value)
-    End Sub
-
 #End Region
-
 
 End Class
 

@@ -23,7 +23,7 @@ Partial Public Class SubsystemBase
         Private Set(value As ITraceMessageTalker)
             If Me._Talker IsNot Nothing Then
                 RemoveHandler Me._Talker.DateChanged, AddressOf Me.HandleTalkerDateChange
-                Me.ClearListeners()
+                Me.RemoveListeners()
             End If
             Me.ConstructorSafeTalkerSetter(value)
         End Set
@@ -35,10 +35,11 @@ Partial Public Class SubsystemBase
     Public Overridable Sub AssignTalker(ByVal talker As ITraceMessageTalker)
         Me.IsAssignedTalker = talker IsNot Nothing
         Me.Talker = talker
-        Me.IdentifyTalkers()
+        If talker IsNot Nothing Then Me.IdentifyTalkers()
     End Sub
 
     ''' <summary> Handles the talker date change. </summary>
+
     ''' <param name="log">          The log. </param>
     ''' <param name="assemblyInfo"> Information describing my assembly. </param>
     Protected Overridable Sub HandleTalkerDateChange(ByVal log As MyLog, ByVal assemblyInfo As MyAssemblyInfo)
@@ -49,14 +50,12 @@ Partial Public Class SubsystemBase
     End Sub
 
     ''' <summary> Handles the talker date change. </summary>
-
     Protected Overridable Sub HandleTalkerDateChange()
         Me.IdentifyTalkers()
     End Sub
 
     ''' <summary> Identifies talkers. </summary>
     Protected Overridable Sub IdentifyTalkers()
-
         My.MyLibrary.Identify(Me.Talker)
     End Sub
 
@@ -73,7 +72,7 @@ Partial Public Class SubsystemBase
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    Public Overridable Sub ClearListeners() Implements ITalker.ClearListeners
+    Public Overridable Sub RemoveListeners() Implements ITalker.RemoveListeners
         If Not Me.IsAssignedTalker Then Me.Talker.Listeners?.Clear()
     End Sub
 
@@ -86,15 +85,17 @@ Partial Public Class SubsystemBase
     ''' <summary> Adds the listeners. </summary>
     ''' <param name="listeners"> The listeners. </param>
     Public Overridable Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.AddListeners
-        Me.Talker.AddListeners(listeners)
-        Me.IdentifyTalkers()
+        If listeners Is Nothing Then Throw New ArgumentNullException(NameOf(listeners))
+        For Each listener As IMessageListener In listeners
+            Me.AddListener(listener)
+        Next
     End Sub
 
     ''' <summary> Adds the listeners. </summary>
     ''' <param name="talker"> The talker. </param>
     Public Overridable Sub AddListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddListeners
-        Me.Talker.AddListeners(talker)
-        Me.IdentifyTalkers()
+        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
+        Me.AddListeners(talker.Listeners)
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>

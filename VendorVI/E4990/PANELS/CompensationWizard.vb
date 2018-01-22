@@ -403,7 +403,8 @@ Public Class CompensationWizard
 
     ''' <summary> Reports the last error. </summary>
     Private Sub OnLastError(ByVal lastError As DeviceError)
-        Me._StatusLabel.Text = lastError.CompoundErrorMessage
+        Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(lastError.CompoundErrorMessage, Me._StatusLabel)
+        Me._StatusLabel.ToolTipText = lastError.CompoundErrorMessage
     End Sub
 
     ''' <summary> Handle the Status subsystem property changed event. </summary>

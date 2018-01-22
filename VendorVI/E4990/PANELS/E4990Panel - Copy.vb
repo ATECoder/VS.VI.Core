@@ -222,7 +222,7 @@ Public Class E4990Panel
         Try
             Me._TitleLabel.Text = value
             Me._TitleLabel.Visible = Not String.IsNullOrWhiteSpace(value)
-            MyBase.OnTitleChanged(Title)
+            MyBase.OnTitleChanged(value)
         Catch ex As Exception
             Me.Talker?.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling the title changed event;. {0}", ex.ToFullBlownString)

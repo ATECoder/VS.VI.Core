@@ -208,7 +208,8 @@ Public Class SimpleReadWritePanel
                 Case NameOf(sender.ReceivedMessage)
                 Case NameOf(sender.SentMessage)
                 Case NameOf(sender.StatusMessage)
-                    Me._StatusLabel.Text = sender.StatusMessage
+                    Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
+                    Me._StatusLabel.ToolTipText = sender.StatusMessage
                 Case NameOf(sender.ServiceRequestValue)
                     Me._ServiceRequestStatusLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
                 Case NameOf(sender.ElapsedTime)
@@ -468,7 +469,7 @@ Public Class SimpleReadWritePanel
     Private Overloads Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
-            Me._StatusLabel.Text = sender.StatusPrompt
+            Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If
     End Sub

@@ -35,6 +35,9 @@ Public Class ResourceControlBase
         Me.InitializeComponent()
         Me.AssignConnector(connector)
         Me._IsConnectorOwner = False
+        Me._OpenResourceTitleFormat = ResourceControlBase.DefaultOpenSourceTitleFormat
+        Me._ClosedResourceTitleFormat = ResourceControlBase.DefaultClosedResourceTitleFormat
+        Me._ResourceTitle = ResourceControlBase.DefaultResourceTitle
     End Sub
 
     ''' <summary>
@@ -268,12 +271,17 @@ Public Class ResourceControlBase
                 Me._ResourceName = value
                 Me.Identity = Me.ResourceName
                 Me.SafePostPropertyChanged()
+                Me.OnTitleChanged(Me.BuildTitle)
             End If
             If Not String.Equals(Me.ResourceName, Me.Connector.SelectedResourceName, StringComparison.OrdinalIgnoreCase) Then
                 Me.Connector.SelectedResourceName = value
             End If
         End Set
     End Property
+
+    ''' <summary> Gets or sets the default open source title format. </summary>
+    ''' <value> The default open source title format. </value>
+    Public Shared Property DefaultOpenSourceTitleFormat As String = "{0}.{1}"
 
     ''' <summary> Gets or sets the title. </summary>
     ''' <value> The title. </value>
@@ -283,6 +291,10 @@ Public Class ResourceControlBase
             DefaultValue("{0}.{1}")>
     Public Property OpenResourceTitleFormat As String
 
+    ''' <summary> Gets or sets the default closed resource title format. </summary>
+    ''' <value> The default closed resource title format. </value>
+    Public Shared Property DefaultClosedResourceTitleFormat As String = "{0}"
+
     ''' <summary> Gets or sets the title. </summary>
     ''' <value> The title. </value>
     <Category("Appearance"), Description("The format of the close resource title"),
@@ -290,6 +302,10 @@ Public Class ResourceControlBase
             DesignerSerializationVisibility(DesignerSerializationVisibility.Visible),
             DefaultValue("{0}")>
     Public Property ClosedResourceTitleFormat As String
+
+    ''' <summary> Gets or sets the default resource title. </summary>
+    ''' <value> The default resource title. </value>
+    Public Shared Property DefaultResourceTitle As String = "INSTR"
 
     Private _ResourceTitle As String
     ''' <summary> Gets or sets the title. </summary>
@@ -305,25 +321,31 @@ Public Class ResourceControlBase
         Set(value As String)
             Me._ResourceTitle = value
             Me.SafePostPropertyChanged()
+            Me.OnTitleChanged(Me.BuildTitle)
         End Set
     End Property
 
     ''' <summary> Builds the title. </summary>
     ''' <returns> A String. </returns>
     Protected Function BuildTitle() As String
+        Dim result As String = ""
         If Me.IsDeviceOpen Then
             If String.IsNullOrWhiteSpace(Me.OpenResourceTitleFormat) OrElse String.IsNullOrWhiteSpace(Me.ResourceTitle) Then
-                Return ""
+                result = ""
             Else
-                Return String.Format(Me.OpenResourceTitleFormat, Me.ResourceTitle, Me.ResourceName)
+                result = String.Format(Me.OpenResourceTitleFormat, Me.ResourceTitle, Me.ResourceName)
             End If
         Else
             If String.IsNullOrWhiteSpace(Me.ClosedResourceTitleFormat) OrElse String.IsNullOrWhiteSpace(Me.ResourceTitle) Then
-                Return ""
+                result = ""
             Else
-                Return String.Format(Me.ClosedResourceTitleFormat, Me.ResourceTitle)
+                result = String.Format(Me.ClosedResourceTitleFormat, Me.ResourceTitle)
             End If
         End If
+        If String.IsNullOrWhiteSpace(result) Then
+            Stop
+        End If
+        Return result
     End Function
 
 #End Region
@@ -403,6 +425,7 @@ Public Class ResourceControlBase
                     Me.Connector.ResourcesFilter = Me.DeviceBase.ResourcesFilter
                 End If
                 Me.ResourceName = Me.DeviceBase.ResourceName
+                Me.ResourceTitle = Me.DeviceBase.ResourceTitle
                 Me.StatusSubsystem = Me.DeviceBase.StatusSubsystemBase
             End If
         End If
@@ -506,10 +529,8 @@ Public Class ResourceControlBase
                 End If
             Case NameOf(device.ResourceTitle)
                 Me.ResourceTitle = device.ResourceTitle
-                Me.OnTitleChanged(Me.BuildTitle)
             Case NameOf(device.ResourceName)
                 Me.ResourceName = device.ResourceName
-                Me.OnTitleChanged(Me.BuildTitle)
         End Select
     End Sub
 

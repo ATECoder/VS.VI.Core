@@ -1601,8 +1601,8 @@ Public Class TestPanel
             Case NameOf(sender.Caption)
                 Me._tabControl.TabPages.Item(MainTabsIndex.MessagesTabIndex).Text = sender.Caption()
             Case NameOf(sender.StatusPrompt)
-                Me._statusLabel.Text = sender.StatusPrompt
-                Me._statusLabel.ToolTipText = sender.StatusPrompt
+                Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
+                Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End Select
     End Sub
 

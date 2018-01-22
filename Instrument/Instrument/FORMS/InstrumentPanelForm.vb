@@ -376,15 +376,13 @@ Public Class InstrumentPanelForm
     ''' <summary> Identify talkers. </summary>
     Protected Overrides Sub IdentifyTalkers()
         MyBase.IdentifyTalkers()
-
-        My.MyLibrary.Identify(Talker)
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
     Protected Overloads Sub AddListeners()
-        Me._TalkerControl?.AddListeners(Me.Talker)
         MyBase.AddListener(Me._TraceMessagesBox)
-        ' My.MyLibrary.Identify(Me.Talker)
+        Me._TalkerControl?.AddListeners(Me.Talker)
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
@@ -392,13 +390,12 @@ Public Class InstrumentPanelForm
     Public Overrides Sub AddListener(ByVal listener As IMessageListener)
         Me._TalkerControl?.AddListener(listener)
         MyBase.AddListener(listener)
-        ' My.MyLibrary.Identify(Me.Talker)
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    Public Overrides Sub ClearListeners()
-        MyBase.ClearListeners()
-        Me._TalkerControl?.ClearListeners()
+    Public Overrides Sub RemoveListeners()
+        MyBase.RemoveListeners()
+        Me._TalkerControl?.RemoveListeners()
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
@@ -425,9 +422,9 @@ Public Class InstrumentPanelForm
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
             If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
-                Me._StatusLabel.Text = sender.StatusPrompt
-                Me._StatusLabel.ToolTipText = sender.StatusPrompt
-            End If
+            Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
+            Me._StatusLabel.ToolTipText = sender.StatusPrompt
+        End If
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>

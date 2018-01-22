@@ -472,5 +472,4 @@ Public Class SimpleReadWriteControl
 
 #End Region
 
-	
 End Class

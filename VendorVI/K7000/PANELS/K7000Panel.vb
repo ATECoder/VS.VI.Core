@@ -211,7 +211,7 @@ Public Class K7000Panel
     Protected Overrides Sub OnTitleChanged(ByVal value As String)
         Me._TitleLabel.Text = value
         Me._TitleLabel.Visible = Not String.IsNullOrWhiteSpace(value)
-        MyBase.OnTitleChanged(Title)
+        MyBase.OnTitleChanged(value)
     End Sub
 
     ''' <summary> Event handler. Called when device is closing. </summary>

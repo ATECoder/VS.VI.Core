@@ -202,7 +202,7 @@ Public Class K3700Panel
         If String.IsNullOrWhiteSpace(value) Then
             Stop
         End If
-        MyBase.OnTitleChanged(Title)
+        MyBase.OnTitleChanged(value)
     End Sub
 
     ''' <summary> Event handler. Called when device is closing. </summary>

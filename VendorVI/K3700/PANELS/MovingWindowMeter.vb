@@ -471,7 +471,9 @@ Public Class MovingWindowMeter
         Protected Set(value As Core.Engineering.MovingWindowStatus)
             If Me.ReadingStatus <> value Then
                 Me._ReadingStatus = value
-                Me._StatusLabel.Text = Core.Engineering.MovingWindow.StatusAnnunciationCaption(value)
+                Dim v As String = Core.Engineering.MovingWindow.StatusAnnunciationCaption(value)
+                Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(v, Me._StatusLabel)
+                Me._ToolTip.SetToolTip(Me._StatusLabel, v)
             End If
         End Set
     End Property

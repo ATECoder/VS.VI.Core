@@ -1417,7 +1417,8 @@ Public Class Console
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
-            Me._StatusLabel.Text = sender.StatusPrompt
+            Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
+            Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If
     End Sub
 

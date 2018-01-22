@@ -225,7 +225,7 @@ Public Class K3700Control
         If String.IsNullOrWhiteSpace(value) Then
             Stop
         End If
-        MyBase.OnTitleChanged(Title)
+        MyBase.OnTitleChanged(value)
     End Sub
 
     ''' <summary> Event handler. Called when device is closing. </summary>
@@ -511,6 +511,59 @@ Public Class K3700Control
     End Sub
 
 #End Region
+
+#End Region
+
+#Region " STATUS DISPLAY "
+
+    ''' <summary> Gets or sets the status. </summary>
+    ''' <value> The status. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property Status As String
+        Get
+            Return Me._StatusLabel.Text
+        End Get
+        Set(value As String)
+            Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._StatusLabel)
+            Me._StatusLabel.ToolTipText = value
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the identity. </summary>
+    ''' <value> The identity. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property Identity As String
+        Get
+            Return Me._IdentityLabel.Text
+        End Get
+        Set(value As String)
+            Me._IdentityLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._IdentityLabel)
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the status register caption. </summary>
+    ''' <value> The status register caption. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property StatusRegisterCaption As String
+        Get
+            Return Me._StatusRegisterLabel.Text
+        End Get
+        Set(value As String)
+            Me._StatusRegisterLabel.Text = value
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the standard register caption. </summary>
+    ''' <value> The status register caption. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property StandardRegisterCaption As String
+        Get
+            Return Me._StandardRegisterLabel.Text
+        End Get
+        Set(value As String)
+            Me._StandardRegisterLabel.Text = value
+        End Set
+    End Property
 
 #End Region
 
@@ -1379,7 +1432,8 @@ Public Class K3700Control
                 Case NameOf(sender.ReceivedMessage)
                 Case NameOf(sender.SentMessage)
                 Case NameOf(sender.StatusMessage)
-                    Me._StatusLabel.Text = sender.StatusMessage
+                    Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
+                    Me._StatusLabel.ToolTipText = sender.StatusMessage
                 Case NameOf(sender.ServiceRequestValue)
                     Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
                 Case NameOf(sender.ElapsedTime)

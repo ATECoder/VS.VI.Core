@@ -243,7 +243,7 @@ Public Class E4990Panel
         Try
             Me._TitleLabel.Text = value
             Me._TitleLabel.Visible = Not String.IsNullOrWhiteSpace(value)
-            MyBase.OnTitleChanged(Title)
+            MyBase.OnTitleChanged(value)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling the title changed event;. {0}", ex.ToFullBlownString)
@@ -387,7 +387,7 @@ Public Class E4990Panel
         Me._ReadingToolStripStatusLabel.SafeTextSetter(caption)
         Me._FailureCodeToolStripStatusLabel.SafeTextSetter(failureCaption)
         Me._FailureCodeToolStripStatusLabel.SafeToolTipTextSetter(failureToolTip)
-        Me._StatusRegisterLabel.SafeTextSetter(tbdCaption)
+        ' Me._StatusRegisterLabel.SafeTextSetter(tbdCaption)
     End Sub
 
     ''' <summary> Handle the channel marker subsystem property changed event. </summary>
@@ -645,6 +645,8 @@ Public Class E4990Panel
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
                 End If
+            Case NameOf(subsystem.ServiceRequestStatus)
+                Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
         End Select
     End Sub
 
@@ -714,6 +716,60 @@ Public Class E4990Panel
     End Sub
 
 #End Region
+
+#End Region
+
+#Region " STATUS DISPLAY "
+
+    ''' <summary> Gets or sets the status. </summary>
+    ''' <value> The status. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property Status As String
+        Get
+            Return Me._StatusLabel.Text
+        End Get
+        Set(value As String)
+            Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._StatusLabel)
+            Me._StatusLabel.ToolTipText = value
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the identity. </summary>
+    ''' <value> The identity. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property Identity As String
+        Get
+            Return Me._IdentityLabel.Text
+        End Get
+        Set(value As String)
+            Me._IdentityLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._IdentityLabel)
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the status register caption. </summary>
+    ''' <value> The status register caption. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property StatusRegisterCaption As String
+        Get
+            Return Me._StatusRegisterLabel.Text
+        End Get
+        Set(value As String)
+            Me._StatusRegisterLabel.Text = value
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the standard register caption. </summary>
+    ''' <value> The status register caption. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property StandardRegisterCaption As String
+        Get
+            Return Me._StandardRegisterLabel.Text
+        End Get
+        Set(value As String)
+            Me._StandardRegisterLabel.Text = value
+        End Set
+    End Property
+
 
 #End Region
 
@@ -1675,7 +1731,8 @@ Public Class E4990Panel
                 Case NameOf(sender.ReceivedMessage)
                 Case NameOf(sender.SentMessage)
                 Case NameOf(sender.StatusMessage)
-                    Me._StatusLabel.Text = sender.StatusMessage
+                    Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
+                    Me._StatusLabel.ToolTipText = sender.StatusMessage
                 Case NameOf(sender.ServiceRequestValue)
                     Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
                 Case NameOf(sender.ElapsedTime)

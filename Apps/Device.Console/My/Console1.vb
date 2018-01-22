@@ -25,6 +25,11 @@
 #ElseIf K3700 Then
         Me.AddInstrumentPanel("DMM/Scanner", New VI.Tsp.K3700.K3700Panel, True)
         enabled = True
+#ElseIf K3700c Then
+        Me.AddTalkerControl("DMM/Scanner", New VI.Tsp.K3700.K3700Control With {
+            .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}", .ResourceTitle = "3700"
+                                    }, True)
+        enabled = true
 #ElseIf K3700bm Then
         Me.AddTalkerControl("BridgeMeter", New VI.Tsp.K3700.BridgeMeterControl With {
             .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}", .ResourceTitle = "3700"
@@ -33,6 +38,7 @@
 #ElseIf K7000 Then
         Me.AddInstrumentPanel("Scanner", New VI.K7000.K7000Panel, True)
         enabled = True
+
 #ElseIf K7500 Then
         Me.AddInstrumentPanel("Meter", New VI.K7500.K7500Panel, True)
         enabled = True

@@ -796,9 +796,9 @@ Public Class InstrumentInterfaceForm
     End Sub
 
     ''' <summary> Clears the listeners. </summary>
-    Public Overrides Sub ClearListeners()
-        MyBase.ClearListeners()
-        Me._InterfacePanel.ClearListeners()
+    Public Overrides Sub RemoveListeners()
+        MyBase.RemoveListeners()
+        Me._InterfacePanel.RemoveListeners()
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
@@ -826,10 +826,10 @@ Public Class InstrumentInterfaceForm
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-            If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
-                Me._StatusLabel.Text = sender.StatusPrompt
-                Me._StatusLabel.ToolTipText = sender.StatusPrompt
-            End If
+        If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
+            Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
+            Me._StatusLabel.ToolTipText = sender.StatusPrompt
+        End If
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>
