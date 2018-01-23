@@ -1591,6 +1591,9 @@ Public Class TestPanel
         ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
+#End Region
+
+#Region " MESSAGE BOX EVENTS "
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>

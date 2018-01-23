@@ -33,7 +33,7 @@ Public Class ServiceRequesterPanel
         Me._WriteButton.Enabled = False
         Me._OpenSessionButton.Enabled = True
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-        Me.AddListeners()
+        Me.AddPrivateListeners()
         Me.StopWatch = New Stopwatch
     End Sub
 
@@ -48,6 +48,7 @@ Public Class ServiceRequesterPanel
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                Me.RemovePrivateListener(Me._TraceMessagesBox)
                 If Me._Session IsNot Nothing Then
                     Me._Session.Dispose()
                     Try
@@ -304,9 +305,8 @@ Public Class ServiceRequesterPanel
     End Sub
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overloads Sub AddListeners()
-        Me.AddListener(Me._TraceMessagesBox)
-        ' My.MyLibrary.Identify(Me.Talker)
+    Protected Overloads Sub AddPrivateListeners()
+        Me.AddPrivateListener(Me._TraceMessagesBox)
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
@@ -317,6 +317,10 @@ Public Class ServiceRequesterPanel
         If listenerType = Me._TraceMessagesBox.ListenerType Then Me._TraceMessagesBox.ApplyTraceLevel(value)
         ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
+
+#End Region
+
+#Region " MESSAGE BOX EVENTS "
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>

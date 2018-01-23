@@ -25,8 +25,8 @@ Public Class InstrumentInterfaceForm
         Me._InitializingComponents = True
         Me.InitializeComponent()
         Me._InitializingComponents = False
-        Me._TraceMessagesBox.ContainerPanel = Me._messagesTabPage
-        Me.AddListeners()
+        Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
+        Me.AddPrivateListeners()
     End Sub
 
     ''' <summary>
@@ -39,6 +39,13 @@ Public Class InstrumentInterfaceForm
     Protected Overloads Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+
+				' removes the private text box listener
+				Me.RemovePrivateListener(Me._TraceMessagesBox)
+
+				' removes the private listeners of the interface panel hosted in this form.
+				Me._InterfacePanel?.RemovePrivateListeners()
+				
                 ' Free managed resources when explicitly called
                 If Me.Session IsNot Nothing Then
                     Me.CloseInstrumentSession()
@@ -777,15 +784,15 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Identify talkers. </summary>
     Protected Overrides Sub IdentifyTalkers()
         MyBase.IdentifyTalkers()
-
         My.MyLibrary.Identify(Talker)
     End Sub
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overloads Sub AddListeners()
-        Me._InterfacePanel.AddListeners(Me.Talker)
-        MyBase.AddListener(Me._TraceMessagesBox)
+    Protected Overloads Sub AddPrivateListeners()
+        Me._InterfacePanel.AddPrivateListeners(Me.Talker)
+        MyBase.AddPrivateListener(Me._TraceMessagesBox)
     End Sub
+
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
     ''' <param name="listener"> The listener. </param>
@@ -795,7 +802,7 @@ Public Class InstrumentInterfaceForm
         MyBase.AddListener(listener)
     End Sub
 
-    ''' <summary> Clears the listeners. </summary>
+    ''' <summary> Removes the listeners if the talker was not assigned. </summary>
     Public Overrides Sub RemoveListeners()
         MyBase.RemoveListeners()
         Me._InterfacePanel.RemoveListeners()
@@ -821,6 +828,10 @@ Public Class InstrumentInterfaceForm
         MyBase.ApplyTalkerTraceLevel(listenerType, value)
     End Sub
 
+#End Region
+
+#Region " MESSAGE BOX EVENTS "
+
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
@@ -830,6 +841,7 @@ Public Class InstrumentInterfaceForm
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If
+
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>

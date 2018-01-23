@@ -21,7 +21,7 @@ Public Class MovingWindowForm
         MyBase.New()
         Me.InitializeComponent()
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-        Me.AddListeners()
+        Me.AddPrivateListeners()
     End Sub
 
     ''' <summary>
@@ -34,6 +34,10 @@ Public Class MovingWindowForm
     Protected Overloads Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+				' removes the private text box listener
+				Me.RemovePrivateListener(Me._TraceMessagesBox)
+                Me._InstrumentPanel.RemovePrivateListeners()
+                Me._MovingWindowMeter.RemovePrivateListeners()
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
         Finally
@@ -130,18 +134,15 @@ Public Class MovingWindowForm
     ''' <summary> Identify talkers. </summary>
     Protected Overrides Sub IdentifyTalkers()
         MyBase.IdentifyTalkers()
-
         My.MyLibrary.Identify(Talker)
     End Sub
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overloads Sub AddListeners()
-        Me._InstrumentPanel.AssignTalker(Me.Talker)
-        Me._MovingWindowMeter.AssignTalker(Me.Talker)
-        MyBase.AddListener(Me._TraceMessagesBox)
-        'My.MyLibrary.Identify(Me.Talker)
+    Protected Overloads Sub AddPrivateListeners()
+        Me._InstrumentPanel.AddPrivateListeners(Me.Talker)
+        Me._MovingWindowMeter.AddPrivateListeners(Me.Talker)
+        MyBase.AddPrivateListener(Me._TraceMessagesBox)
     End Sub
-
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
     ''' <param name="listenerType"> Type of the listener. </param>
@@ -166,10 +167,14 @@ Public Class MovingWindowForm
         If TypeOf (listener) Is MyLog Then My.MyLibrary.Identify(Me.Talker)
     End Sub
 
-    ''' <summary> Clears the listeners. </summary>
+    ''' <summary> Removes the listeners if the talker was not assigned. </summary>
     Public Overrides Sub RemoveListeners()
         MyBase.RemoveListeners()
     End Sub
+
+#End Region
+
+#Region " MESSAGE BOX EVENTS "
 
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
@@ -180,6 +185,7 @@ Public Class MovingWindowForm
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If
+
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>

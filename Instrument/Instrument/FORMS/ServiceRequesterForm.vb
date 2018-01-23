@@ -21,7 +21,7 @@ Public Class ServiceRequesterForm
         MyBase.New()
         Me.InitializeComponent()
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-        Me.AddListeners()
+        Me.AddPrivateListeners()
     End Sub
 
     ''' <summary>
@@ -34,6 +34,12 @@ Public Class ServiceRequesterForm
     Protected Overloads Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                ' removes the private text box listener; ?might as well remove all private listeners
+                Me.RemovePrivateListener(Me._TraceMessagesBox)
+
+                ' removes all private listeners of the instrument panel hosted in this form.
+                Me._InstrumentPanel?.RemovePrivateListeners()
+
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
         Finally
@@ -129,16 +135,15 @@ Public Class ServiceRequesterForm
     ''' <summary> Identify talkers. </summary>
     Protected Overrides Sub IdentifyTalkers()
         MyBase.IdentifyTalkers()
-
         My.MyLibrary.Identify(Talker)
     End Sub
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overloads Sub AddListeners()
-        Me._InstrumentPanel?.AddListeners(Me.Talker)
-        MyBase.AddListener(Me._TraceMessagesBox)
-        'My.MyLibrary.Identify(Me.Talker)
+    Protected Overloads Sub AddPrivateListeners()
+        Me._InstrumentPanel?.AddPrivateListeners(Me.Talker)
+        MyBase.AddPrivateListener(Me._TraceMessagesBox)
     End Sub
+
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
     ''' <param name="listener"> The listener. </param>
@@ -158,7 +163,7 @@ Public Class ServiceRequesterForm
         MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
-    ''' <summary> Clears the listeners. </summary>
+    ''' <summary> Removes the listeners if the talker was not assigned. </summary>
     Public Overrides Sub RemoveListeners()
         MyBase.RemoveListeners()
         Me._InstrumentPanel?.RemoveListeners()
@@ -172,6 +177,10 @@ Public Class ServiceRequesterForm
         MyBase.ApplyTalkerTraceLevel(listenerType, value)
     End Sub
 
+#End Region
+
+#Region " MESSAGE BOX EVENTS "
+
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
@@ -181,6 +190,7 @@ Public Class ServiceRequesterForm
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If
+
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>

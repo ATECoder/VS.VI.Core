@@ -81,6 +81,7 @@ Public Class K2000Control
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 Try
+                    Me.Device?.RemovePrivateListener(Me._TraceMessagesBox)
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
                     Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
@@ -137,7 +138,7 @@ Public Class K2000Control
 
             Me.AssignTalker(Me._Device.Talker)
             Me.ApplyListenerTraceLevel(ListenerType.Display, Me._Device.Talker.TraceShowLevel)
-            Me._Device.AddListener(Me._TraceMessagesBox)
+            Me._Device.AddPrivateListener(Me._TraceMessagesBox)
         End If
     End Sub
 

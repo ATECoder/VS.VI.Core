@@ -81,6 +81,7 @@ Public Class E4990Panel
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 Try
+                    Me.Device?.RemovePrivateListener(Me._TraceMessagesBox)
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
                     Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
@@ -133,6 +134,7 @@ Public Class E4990Panel
         If Me._Device IsNot Nothing Then
             Me._Device.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
             MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            Me._Device.AddPrivateListener(Me._TraceMessagesBox)
             Me.OnDeviceOpenChanged(value)
         End If
     End Sub
@@ -1774,7 +1776,6 @@ Public Class E4990Panel
     Public Overrides Sub AssignTalker(talker As ITraceMessageTalker)
         Me._SimpleReadWriteControl.AssignTalker(talker)
         MyBase.AssignTalker(talker)
-        ' My.MyLibrary.Identify(talker)
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>

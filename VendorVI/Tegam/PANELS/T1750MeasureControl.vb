@@ -571,7 +571,6 @@ Public Class T1750MeasureControl
     ''' <summary> Identify talkers. </summary>
     Protected Overrides Sub IdentifyTalkers()
         MyBase.IdentifyTalkers()
-
         My.MyLibrary.Identify(Talker)
     End Sub
 

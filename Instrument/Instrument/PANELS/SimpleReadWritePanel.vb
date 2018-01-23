@@ -33,7 +33,7 @@ Public Class SimpleReadWritePanel
         Me._ServiceRequestStatusLabel.Text = "0x.."
         Me._ServiceRequestStatusLabel.ToolTipText = "Status byte. Double click to update"
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-        Me.AddListeners()
+        Me.AddPrivateListeners()
     End Sub
 
     ''' <summary>
@@ -47,6 +47,8 @@ Public Class SimpleReadWritePanel
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                Me.RemovePrivateListener(Me._TraceMessagesBox)
+                Me._SimpleReadWriteControl.RemovePrivateListeners()
                 If Me.Session IsNot Nothing Then
                     Me.Session = Nothing
                 End If
@@ -439,9 +441,9 @@ Public Class SimpleReadWritePanel
     End Sub
 
     ''' <summary> Adds listeners. </summary>
-    Private Overloads Sub AddListeners()
-        Me._SimpleReadWriteControl.AssignTalker(Me.Talker)
-        Me.AddListener(Me._TraceMessagesBox)
+    Private Overloads Sub AddPrivateListeners()
+        Me._SimpleReadWriteControl.AddPrivateListeners(Me.Talker)
+        Me.AddPrivateListener(Me._TraceMessagesBox)
     End Sub
 
     ''' <summary> Assigns talker. </summary>

@@ -33,6 +33,8 @@ Public Class InstrumentPanelForm
     Protected Overloads Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                ' removes the private text box listener
+                Me.RemovePrivateListener(Me._TraceMessagesBox)
                 If Me._InstrumentPanel IsNot Nothing Then
                     Me._InstrumentLayout.Controls.Remove(Me._InstrumentPanel)
                     If Me._InstrumentPanelDisposeEnabled Then
@@ -47,6 +49,8 @@ Public Class InstrumentPanelForm
                     Me._PropertyNotifyControl.Dispose()
                 End If
                 If Me._TalkerControl IsNot Nothing Then
+                    ' removes the private listeners of the talker control hosted in this form.
+                    Me._TalkerControl.RemovePrivateListeners()
                     Me._InstrumentLayout.Controls.Remove(Me._TalkerControl)
                     If Me._TalkerControlDisposeEnabled Then
                         Me._TalkerControl.Dispose()
@@ -182,7 +186,7 @@ Public Class InstrumentPanelForm
         Me._InstrumentPanel = value
         Me._TalkerControl = value
         Me.Talker.ApplyTalkerTraceLevels(Me._TalkerControl.Talker)
-        Me.AddListeners()
+        Me.AddPrivateListeners()
         Me._InstrumentPanelDisposeEnabled = disposeEnabled
         With Me._InstrumentPanel
             Me._InstrumentPanel.Dock = Windows.Forms.DockStyle.Fill
@@ -260,7 +264,7 @@ Public Class InstrumentPanelForm
     Public Sub AddPropertyNotifyControl(ByVal title As String, ByVal value As PropertyNotifyControlBase, ByVal disposeEnabled As Boolean)
         Me.ResizeClientArea(value)
         Me._PropertyNotifyControl = value
-        Me.AddListeners()
+        Me.AddPrivateListeners()
         Me._PropertyNotifyControlDisposeEnabled = disposeEnabled
         With Me._PropertyNotifyControl
             .Dock = Windows.Forms.DockStyle.Fill
@@ -329,7 +333,7 @@ Public Class InstrumentPanelForm
     Public Sub AddTalkerControl(ByVal title As String, ByVal value As TalkerControlBase, ByVal disposeEnabled As Boolean)
         Me.ResizeClientArea(value)
         Me._TalkerControl = value
-        Me.AddListeners()
+        Me.AddPrivateListeners()
         Me._TalkerControlDisposeEnabled = disposeEnabled
         With Me._TalkerControl
             .Dock = Windows.Forms.DockStyle.Fill
@@ -380,9 +384,9 @@ Public Class InstrumentPanelForm
     End Sub
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overloads Sub AddListeners()
-        MyBase.AddListener(Me._TraceMessagesBox)
-        Me._TalkerControl?.AddListeners(Me.Talker)
+    Protected Overloads Sub AddPrivateListeners()
+        MyBase.AddPrivateListener(Me._TraceMessagesBox)
+        Me._TalkerControl?.AddPrivateListeners(Me.Talker)
     End Sub
 
     ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
@@ -392,7 +396,7 @@ Public Class InstrumentPanelForm
         MyBase.AddListener(listener)
     End Sub
 
-    ''' <summary> Clears the listeners. </summary>
+    ''' <summary> Removes the listeners if the talker was not assigned. </summary>
     Public Overrides Sub RemoveListeners()
         MyBase.RemoveListeners()
         Me._TalkerControl?.RemoveListeners()
@@ -416,6 +420,10 @@ Public Class InstrumentPanelForm
         MyBase.ApplyTalkerTraceLevel(listenerType, value)
     End Sub
 
+#End Region
+
+#Region " MESSAGE BOX EVENTS "
+
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
@@ -425,6 +433,7 @@ Public Class InstrumentPanelForm
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If
+
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>

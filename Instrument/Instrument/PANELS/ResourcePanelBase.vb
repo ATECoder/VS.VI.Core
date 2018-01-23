@@ -55,7 +55,8 @@ Public Class ResourcePanelBase
                 If Me.Device IsNot Nothing Then
                     Try
                         ' this is required to release the device event handlers associated with this panel. 
-                        If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
+                        Me.Device?.RemovePrivateListener(Me.TraceMessagesBox)
+                    If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                     Catch ex As Exception
                         Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
                     End Try
@@ -355,6 +356,7 @@ Public Class ResourcePanelBase
                 Me.Connector.ResourcesFilter = Me.Device.ResourcesFilter
             End If
             Me.ResourceName = Me.Device.ResourceName
+			Me._Device.AddPrivateListener(Me.TraceMessagesBox)
         End If
     End Sub
 
@@ -757,6 +759,10 @@ Public Class ResourcePanelBase
         ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
+#End Region
+
+#Region " MESSAGE BOX EVENTS "
+
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
@@ -793,7 +799,7 @@ End Class
 #Region " UNUSED "
 #If False Then
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overridable Overloads Sub AddListeners()
+    Protected Overridable Overloads Sub AddPrivateListeners()
         Me.Talker.Listeners.Add(Me.TraceMessagesBox)
         Me.Connector.AssignTalker(Device.Talker)
         Me.Device.AddListeners(Me.Talker)

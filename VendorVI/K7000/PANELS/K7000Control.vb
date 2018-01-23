@@ -90,6 +90,7 @@ Public Class K7000Control
                     Debug.Assert(Not Debugger.IsAttached, "Exception occurred disposing the channel builder", $"Exception {ex.ToFullBlownString}")
                 End Try
                 Try
+                    Me.Device?.RemovePrivateListener(Me._TraceMessagesBox)
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
                     Debug.Assert(Not Debugger.IsAttached, $"{ex.Message} occurred closing the device", $"Exception {ex.ToFullBlownString}")
@@ -146,7 +147,7 @@ Public Class K7000Control
 
             Me.AssignTalker(Me._Device.Talker)
             Me.ApplyListenerTraceLevel(ListenerType.Display, Me._Device.Talker.TraceShowLevel)
-            Me._Device.AddListener(Me._TraceMessagesBox)
+            Me._Device.AddPrivateListener(Me._TraceMessagesBox)
         End If
     End Sub
 

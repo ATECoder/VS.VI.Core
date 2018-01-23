@@ -27,7 +27,7 @@ Public Class Console
         Me.InitializeComponent()
         Me.InitializingComponents = False
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-        Me.AddListeners()
+        Me.AddPrivateListeners()
     End Sub
 
     ''' <summary>
@@ -41,11 +41,12 @@ Public Class Console
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                Me.RemovePrivateListener(Me._TraceMessagesBox)
                 If Me._Part IsNot Nothing Then
                     RemoveHandler Me._Part.ShuntResistance.PropertyChanged, AddressOf Me.ShuntResistancePropertyChanged
                     Me._Part.Dispose() : Me._Part = Nothing
                 End If
-                If Me._meter IsNot Nothing Then Me._meter.Dispose() : Me._meter = Nothing
+                If Me._Meter IsNot Nothing Then Me._Meter.Dispose() : Me._Meter = Nothing
                 If components IsNot Nothing Then components.Dispose()
             End If
         Finally
@@ -922,7 +923,7 @@ Public Class Console
     Private Sub _AssignMeter(ByVal value As Meter)
         Me._Meter = value
         Me._Meter.CaptureSyncContext(Threading.SynchronizationContext.Current)
-        Me.AddListeners()
+        Me.AddPrivateListeners()
         Me.OnConnectionChanged(Me.ResourceName)
     End Sub
 
@@ -1377,9 +1378,8 @@ Public Class Console
     End Sub
 
     ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overloads Sub AddListeners()
-        Me.AddListener(Me._TraceMessagesBox)
-        ' Me._AssignTalker(Me.Talker)
+    Protected Overloads Sub AddPrivateListeners()
+        Me.AddPrivateListener(Me._TraceMessagesBox)
     End Sub
 
     ''' <summary> Assign talker. </summary>

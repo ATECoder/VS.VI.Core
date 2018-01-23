@@ -36,7 +36,7 @@ Public Class InterfacePanel
         Me._InstrumentChooser.Searchable = True
 
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-        Me.AddListeners()
+        Me.AddPrivateListeners()
 
     End Sub
 
@@ -52,6 +52,8 @@ Public Class InterfacePanel
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                ' removes the private text box listener; ?might as well remove all private listeners
+                Me.RemovePrivateListener(Me._TraceMessagesBox)
                 ' Traps the VISA error because the interface might be disposed and the dispose sentinel is not exposed by the interface.
                 Try
                     Me.VisaInterface?.Dispose() : Me._VisaInterface = Nothing
@@ -506,8 +508,8 @@ Public Class InterfacePanel
     End Sub
 
     ''' <summary> Assign talker. </summary>
-    Protected Overloads Sub AddListeners()
-        Me.AddListener(Me._TraceMessagesBox)
+    Protected Overloads Sub AddPrivateListeners()
+        Me.AddPrivateListener(Me._TraceMessagesBox)
     End Sub
 
     ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
@@ -519,7 +521,11 @@ Public Class InterfacePanel
         ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
 
-    ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
+#End Region
+
+#Region " MESSAGE BOX EVENTS "
+
+   ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)

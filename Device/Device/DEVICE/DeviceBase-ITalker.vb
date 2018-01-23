@@ -40,7 +40,6 @@ Partial Public Class DeviceBase
     End Sub
 
     ''' <summary> Handles the talker date change. </summary>
-
     ''' <param name="log">          The log. </param>
     ''' <param name="assemblyInfo"> Information describing my assembly. </param>
     Protected Overridable Sub HandleTalkerDateChange(ByVal log As MyLog, ByVal assemblyInfo As MyAssemblyInfo)
@@ -72,12 +71,86 @@ Partial Public Class DeviceBase
         End Try
     End Sub
 
-    ''' <summary> Clears the listeners. </summary>
+    ''' <summary>
+    ''' Removes the private listeners. Removes all listeners if the talker was not assigned.
+    ''' </summary>
     Public Overridable Sub RemoveListeners() Implements ITalker.RemoveListeners
-        If Not Me.IsAssignedTalker Then Me.Talker.Listeners?.Clear()
-        Me.Subsystems.RemoveListeners()
+        Me.RemovePrivateListeners()
+        If Not Me.IsAssignedTalker Then Me.Talker.RemoveListeners()
     End Sub
 
+    Private _PrivateListeners As List(Of IMessageListener)
+    ''' <summary> Gets the private listeners. </summary>
+    ''' <value> The private listeners. </value>
+    Public Overridable ReadOnly Property PrivateListeners As IEnumerable(Of IMessageListener) Implements ITalker.PrivateListeners
+        Get
+            If Me._PrivateListeners Is Nothing Then _PrivateListeners = New List(Of IMessageListener)
+            Return Me._PrivateListeners
+        End Get
+    End Property
+
+    ''' <summary> Adds a private listener. </summary>
+    ''' <param name="listener"> The listener. </param>
+    Public Overridable Sub AddPrivateListener(ByVal listener As IMessageListener) Implements ITalker.AddPrivateListener
+        If Me.PrivateListeners IsNot Nothing Then
+            Me._PrivateListeners.Add(listener)
+        End If
+        Me.AddListener(listener)
+    End Sub
+
+    ''' <summary> Adds private listeners. </summary>
+    ''' <param name="listeners"> The listeners. </param>
+    Public Overridable Sub AddPrivateListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.AddPrivateListeners
+        If listeners Is Nothing Then Throw New ArgumentNullException(NameOf(listeners))
+        If Me.PrivateListeners IsNot Nothing Then
+            Me._PrivateListeners.AddRange(listeners)
+        End If
+        Me.AddListeners(listeners)
+    End Sub
+
+    ''' <summary> Adds private listeners. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="talker"> The talker. </param>
+    Public Overridable Sub AddPrivateListeners(ByVal talker As ITraceMessageTalker) Implements ITalker.AddPrivateListeners
+        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
+        Me.AddPrivateListeners(talker.Listeners)
+    End Sub
+
+    ''' <summary> Removes the private listener described by listener. </summary>
+    ''' <param name="listener"> The listener. </param>
+    Public Overridable Sub RemovePrivateListener(ByVal listener As IMessageListener) Implements ITalker.RemovePrivateListener
+        Me.RemoveListener(listener)
+        If Me.PrivateListeners IsNot Nothing Then
+            Me._PrivateListeners.Remove(listener)
+        End If
+    End Sub
+
+    ''' <summary> Removes the private listeners. </summary>
+    Public Overridable Sub RemovePrivateListeners() Implements ITalker.RemovePrivateListeners
+        For Each listener As IMessageListener In Me.PrivateListeners
+            Me.RemoveListener(listener)
+        Next
+        Me._PrivateListeners.Clear()
+    End Sub
+
+    ''' <summary> Removes the listener described by listener. </summary>
+    ''' <param name="listener"> The listener. </param>
+    Public Overridable Sub RemoveListener(ByVal listener As IMessageListener) Implements ITalker.RemoveListener
+        Me.Subsystems?.RemoveListener(listener)
+        Me.Talker.RemoveListener(listener)
+    End Sub
+
+    ''' <summary> Removes the specified listeners. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listeners"> The listeners. </param>
+    Public Overridable Sub RemoveListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.RemoveListeners
+        If listeners Is Nothing Then Throw New ArgumentNullException(NameOf(listeners))
+        For Each listener As IMessageListener In listeners
+            Me.RemoveListener(listener)
+        Next
+    End Sub
+
+    ''' <summary> Adds a listener. </summary>
     ''' <param name="listener"> The listener. </param>
     Public Overridable Sub AddListener(ByVal listener As IMessageListener) Implements ITalker.AddListener
         Me.Subsystems?.AddListener(listener)

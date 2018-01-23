@@ -125,6 +125,7 @@ Public Class K7500Panel
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 Try
+                    Me.Device?.RemovePrivateListener(Me.TraceMessagesBox)
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
                 Catch ex As Exception
                     Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
@@ -146,7 +147,7 @@ Public Class K7500Panel
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
         Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
-        ' Me.AddListeners()
+		Me._Device.AddPrivateListener(Me.TraceMessagesBox)
         Me.OnDeviceOpenChanged(value)
     End Sub
 
@@ -2573,12 +2574,6 @@ End Class
 
 #Region " UNUSED "
 #If False Then
-    ''' <summary> Adds listeners such as current level trace message box and log. </summary>
-    Protected Overrides Sub AddListeners()
-        MyBase.AddListeners()
-        Me._SimpleReadWriteControl.AssignTalker(Me.Talker)
-    End Sub
-
     ''' <summary> Adds listeners such as top level trace message box and log. </summary>
     ''' <param name="listeners"> The listeners. </param>
     Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of ITraceMessageListener))
