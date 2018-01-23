@@ -135,16 +135,17 @@ Public Class K3700Control
     ''' <param name="value"> The value. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         MyBase.DeviceBase = value
-        If Me._Device IsNot Nothing Then
-        End If
         Me._Device = value
-        If Me._Device IsNot Nothing Then
-            Me._Device.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+        If value IsNot Nothing Then
+            value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
             MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            If value.IsDeviceOpen Then
+                Me.DeviceOpened(value, System.EventArgs.Empty)
+                Me.DeviceInitialized(value, System.EventArgs.Empty)
+            End If
             Me.OnDeviceOpenChanged(value)
-
-            Me.AssignTalker(Me._Device.Talker)
-            Me.ApplyListenerTraceLevel(ListenerType.Display, Me._Device.Talker.TraceShowLevel)
+            Me.AssignTalker(value.Talker)
+            Me.ApplyListenerTraceLevel(ListenerType.Display, value.Talker.TraceShowLevel)
             Me._Device.AddPrivateListener(Me._TraceMessagesBox)
         End If
     End Sub

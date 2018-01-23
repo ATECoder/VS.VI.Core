@@ -121,21 +121,21 @@ Public Class BridgeMeterControl
         End Set
     End Property
 
+    ''' <summary> Assign device. </summary>
+    ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
         MyBase.DeviceBase = value
-        If Me._Device IsNot Nothing Then
-        End If
         Me._Device = value
-        If Me._Device IsNot Nothing Then
-            Me._Device.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+        If value IsNot Nothing Then
+            value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
             MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            If Me.Device.IsDeviceOpen Then
-                Me.DeviceOpened()
-                Me.DeviceInitialized()
+            If value.IsDeviceOpen Then
+                Me.DeviceOpened(value, System.EventArgs.Empty)
+                Me.DeviceInitialized(value, System.EventArgs.Empty)
             End If
             Me.OnDeviceOpenChanged(value)
-            Me.AssignTalker(Me._Device.Talker)
-            Me.ApplyListenerTraceLevel(ListenerType.Display, Me._Device.Talker.TraceShowLevel)
+            Me.AssignTalker(value.Talker)
+            Me.ApplyListenerTraceLevel(ListenerType.Display, value.Talker.TraceShowLevel)
         End If
     End Sub
 
@@ -172,27 +172,17 @@ Public Class BridgeMeterControl
         End Select
     End Sub
 
-    Private Overloads Sub DeviceOpened()
-        AddHandler Me.Device.MultimeterSubsystem.PropertyChanged, AddressOf Me.MultimeterSubsystemPropertyChanged
-        AddHandler Me.Device.ChannelSubsystem.PropertyChanged, AddressOf Me.ChannelSubsystemPropertyChanged
-        AddHandler Me.Device.DisplaySubsystem.PropertyChanged, AddressOf Me.DisplaySubsystemPropertyChanged
-        AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
-        AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
-    End Sub
-
-
     ''' <summary> Event handler. Called when device opened. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Protected Overrides Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
-        Me.DeviceOpened()
+        AddHandler Me.Device.MultimeterSubsystem.PropertyChanged, AddressOf Me.MultimeterSubsystemPropertyChanged
+        AddHandler Me.Device.ChannelSubsystem.PropertyChanged, AddressOf Me.ChannelSubsystemPropertyChanged
+        AddHandler Me.Device.DisplaySubsystem.PropertyChanged, AddressOf Me.DisplaySubsystemPropertyChanged
+        AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
+        AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
         MyBase.DeviceOpened(sender, e)
-    End Sub
-
-    Private Overloads Sub DeviceInitialized()
-        Me.OnSubSystemInitialized(Me.Device.MultimeterSubsystem)
-        Me.ReadServiceRequestStatus()
     End Sub
 
     ''' <summary> Device initialized. </summary>
@@ -200,7 +190,9 @@ Public Class BridgeMeterControl
     ''' <param name="e">      Event information. </param>
     Protected Overrides Sub DeviceInitialized(ByVal sender As Object, ByVal e As System.EventArgs)
         Try
-            Me.DeviceInitialized()
+            MyBase.DeviceInitialized(sender, e)
+            Me.OnSubSystemInitialized(Me.Device.MultimeterSubsystem)
+            Me.ReadServiceRequestStatus()
         Catch
             Throw
         Finally
