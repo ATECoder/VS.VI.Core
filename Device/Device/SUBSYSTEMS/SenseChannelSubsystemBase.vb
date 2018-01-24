@@ -22,6 +22,7 @@ Public MustInherit Class SenseChannelSubsystemBase
     Protected Sub New(ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me.ChannelNumber = channelNumber
+        Me.ApertureRange = RangeR.FullNonNegative
     End Sub
 
 #End Region
@@ -177,8 +178,19 @@ Public MustInherit Class SenseChannelSubsystemBase
 
 #Region " APERTURE (NPLC) "
 
+    Private _ApertureRange As Core.Pith.RangeR
     ''' <summary> The Range of the Aperture. </summary>
     Public Property ApertureRange As Core.Pith.RangeR
+        Get
+            Return Me._ApertureRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.ApertureRange <> value Then
+                Me._ApertureRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The Aperture. </summary>
     Private _Aperture As Double?

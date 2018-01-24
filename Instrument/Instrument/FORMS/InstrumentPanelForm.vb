@@ -21,6 +21,7 @@ Public Class InstrumentPanelForm
         MyBase.New()
         Me.InitializeComponent()
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
+        Me._TraceMessagesBox.MaxSynopsisLength = 0
     End Sub
 
     ''' <summary>
@@ -341,6 +342,8 @@ Public Class InstrumentPanelForm
             .BackColor = System.Drawing.Color.Transparent
             .Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Regular)
             .Name = "_TalkerControl"
+            .ApplyTalkerTraceLevels(Me.Talker)
+            .ApplyListenerTraceLevels(Me.Talker)
         End With
         Me._InstrumentTabPage.Text = title
         Me._InstrumentTabPage.ToolTipText = title
@@ -429,11 +432,10 @@ Public Class InstrumentPanelForm
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-            If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
+        If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If
-
     End Sub
 
     ''' <summary> Trace messages box property changed. </summary>

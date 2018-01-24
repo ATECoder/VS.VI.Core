@@ -24,6 +24,7 @@ Public Class SourceSubsystemBase
         For Each fm As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
             Me._FunctionModeRanges.Add(fm, New Core.Pith.RangeR(0, 1))
         Next
+        Me.RangeRange = Core.Pith.RangeR.Full
     End Sub
 
 #End Region
@@ -577,8 +578,19 @@ Public Class SourceSubsystemBase
     ''' <value> The function mode ranges. </value>
     Public ReadOnly Property FunctionModeRanges As SourceFunctionRangeDictionary
 
+    Private _RangeRange As Core.Pith.RangeR
     ''' <summary> The Range of the range. </summary>
-    Public ReadOnly Property RangeRange As Core.Pith.RangeR
+    Public Property RangeRange As Core.Pith.RangeR
+        Get
+            Return Me._RangeRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.RangeRange <> value Then
+                Me._RangeRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The Range. </summary>
     Private _Range As Double?

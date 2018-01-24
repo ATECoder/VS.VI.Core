@@ -22,6 +22,24 @@ Public Class SourceCurrentSubsystem
 
 #End Region
 
+#Region " I PRESETTABLE "
+
+    ''' <summary> Sets the subsystem to its initial post reset state. </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Overrides Sub InitKnownState()
+        Dim action As String = ""
+        MyBase.InitKnownState()
+        Try
+            action = $"Setting {NameOf(SourceCurrentSubsystem)} level range"
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            Me.LevelRangeSetter(StatusSubsystem.VersionInfo.Model)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action}; Ignored;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
+
 #Region " PUBLISHER "
 
     ''' <summary> Publishes all values by raising the property changed events. </summary>
@@ -59,26 +77,24 @@ Public Class SourceCurrentSubsystem
     ''' <value> The range query command. </value>
     Protected Overrides ReadOnly Property RangeQueryCommand As String = ":SOUR:CURR:RANG?"
 
-    ''' <summary> The Range of function values. </summary>
-    Public Overrides ReadOnly Property LevelRange As Core.Pith.RangeR
-        Get
-            Dim model As String = Me.StatusSubsystem.VersionInfo.Model
-            Select Case True
-                Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
-                    Return New isr.Core.Pith.RangeR(-1.05, +1.05)
-                Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
-                    Return New isr.Core.Pith.RangeR(-1.05, +1.05)
-                Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
-                    Return New isr.Core.Pith.RangeR(-3.15, +3.05)
-                Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
-                    Return New isr.Core.Pith.RangeR(-3.15, +3.15)
-                Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
-                    Return New isr.Core.Pith.RangeR(-5.25, +5.25)
-                Case Else
-                    Return New isr.Core.Pith.RangeR(-1.05, +1.05)
-            End Select
-        End Get
-    End Property
+    ''' <summary> Sets the level range for the instrument model. </summary>
+    ''' <param name="model"> The model. </param>
+    Public Sub LevelRangeSetter(ByVal model As String)
+        Select Case True
+            Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
+                Me.LevelRange = New Core.Pith.RangeR(-1.05, +1.05)
+            Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
+                Me.LevelRange = New Core.Pith.RangeR(-1.05, +1.05)
+            Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
+                Me.LevelRange = New Core.Pith.RangeR(-3.15, +3.05)
+            Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
+                Me.LevelRange = New Core.Pith.RangeR(-3.15, +3.15)
+            Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
+                Me.LevelRange = New Core.Pith.RangeR(-5.25, +5.25)
+            Case Else
+                Me.LevelRange = New Core.Pith.RangeR(-1.05, +1.05)
+        End Select
+    End Sub
 
 #End Region
 

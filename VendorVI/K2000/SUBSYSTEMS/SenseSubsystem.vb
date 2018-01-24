@@ -1,3 +1,4 @@
+Imports isr.VI.Scpi
 ''' <summary> Defines a SCPI Sense Subsystem for a Keithley 2000 instrument. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -23,7 +24,7 @@ Public Class SenseSubsystem
                                         VI.Scpi.SenseFunctionModes.Resistance Or
                                         VI.Scpi.SenseFunctionModes.FourWireResistance
         ' the readings are initialized when the format system is reset.
-        Me._readings = New Readings
+        Me._Readings = New Readings
     End Sub
 
 #End Region
@@ -35,7 +36,7 @@ Public Class SenseSubsystem
     ''' </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me._readings.Reset()
+        Me._Readings.Reset()
     End Sub
 
     ''' <summary> Sets the subsystem to its reset state. </summary>
@@ -78,7 +79,7 @@ Public Class SenseSubsystem
     ''' <summary> Returns the readings. </summary>
     ''' <returns> The readings. </returns>
     Public Function Readings() As Readings
-        Return Me._readings
+        Return Me._Readings
     End Function
 
     ''' <summary> Parses a new set of reading elements. </summary>
@@ -96,5 +97,47 @@ Public Class SenseSubsystem
     End Sub
 
 #End Region
+
+#Region " FUNCTION MODE "
+
+    ''' <summary> Gets or sets the cached Sense Function Mode. </summary>
+    ''' <value> The Function Mode or null if unknown. </value>
+    Public Overrides Property FunctionMode As SenseFunctionModes?
+        Get
+            Return MyBase.FunctionMode
+        End Get
+        Protected Set(value As SenseFunctionModes?)
+            MyBase.FunctionMode = value
+            If value.HasValue Then Me.UpdateFunctionModeRange(value.Value)
+        End Set
+    End Property
+
+    ''' <summary> Updates the function mode range described by value. </summary>
+    ''' <param name="value"> The value. </param>
+    Public Sub UpdateFunctionModeRange(value As VI.Scpi.SenseFunctionModes)
+        Dim symbol As String = "?"
+        Select Case value
+            Case VI.Scpi.SenseFunctionModes.CurrentDC, VI.Scpi.SenseFunctionModes.Current, VI.Scpi.SenseFunctionModes.CurrentAC
+                Me.RangeSymbol = "A"
+                Me.RangeDecimalPlaces = 3
+                Me.RangeRange = New Core.Pith.RangeR(0, 10)
+            Case VI.Scpi.SenseFunctionModes.VoltageDC, VI.Scpi.SenseFunctionModes.Voltage, VI.Scpi.SenseFunctionModes.VoltageAC
+                Me.RangeSymbol = "V"
+                Me.RangeDecimalPlaces = 3
+                Me.RangeRange = New Core.Pith.RangeR(0, 1000)
+            Case VI.Scpi.SenseFunctionModes.FourWireResistance
+                Me.RangeSymbol = Arebis.StandardUnits.UnitSymbols.Omega
+                Me.RangeDecimalPlaces = 0
+                Me.RangeRange = New Core.Pith.RangeR(0, 2000000)
+            Case VI.Scpi.SenseFunctionModes.Resistance
+                Me.RangeSymbol = Arebis.StandardUnits.UnitSymbols.Omega
+                Me.RangeDecimalPlaces = 0
+                Me.RangeRange = New Core.Pith.RangeR(0, 1000000000D)
+        End Select
+    End Sub
+
+#End Region
+
+
 
 End Class

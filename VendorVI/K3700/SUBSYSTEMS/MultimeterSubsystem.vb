@@ -25,6 +25,16 @@ Public Class MultimeterSubsystem
 
 #Region " I PRESETTABLE "
 
+    ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
+    ''' <remarks> Use this method to customize the reset. </remarks>
+    Public Overrides Sub InitKnownState()
+        MyBase.InitKnownState()
+        Me.ApertureRange = New isr.Core.Pith.RangeR(0.00000833, 0.25)
+        Me.FilterCountRange = New isr.Core.Pith.RangeI(1, 100)
+        Me.FilterWindowRange = New isr.Core.Pith.RangeR(0, 0.1)
+        Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.0005, 15)
+    End Sub
+
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
@@ -70,10 +80,6 @@ Public Class MultimeterSubsystem
 #Region " COMMAND SYNTAX "
 
 #Region " APERTURE "
-
-    ''' <summary> The aperture range in seconds. </summary>
-    ''' <value> The aperture range. </value>
-    Public Overrides ReadOnly Property ApertureRange As Core.Pith.RangeR = New isr.Core.Pith.RangeR(0.00000833, 0.25)
 
     ''' <summary> Gets the Aperture query command. </summary>
     ''' <value> The Aperture query command. </value>
@@ -157,10 +163,6 @@ Public Class MultimeterSubsystem
 
 #Region " FILTER COUNT "
 
-    ''' <summary> The Filter Count range in seconds. </summary>
-    ''' <value> The FilterCount range. </value>
-    Public Overrides ReadOnly Property FilterCountRange As Core.Pith.RangeI = New isr.Core.Pith.RangeI(1, 100)
-
     ''' <summary> Gets the Filter Count query command. </summary>
     ''' <value> The FilterCount query command. </value>
     Protected Overrides ReadOnly Property FilterCountQueryCommand As String = "_G.print(_G.dmm.filter.count)"
@@ -196,10 +198,6 @@ Public Class MultimeterSubsystem
 #End Region
 
 #Region " FILTER Window "
-
-    ''' <summary> The Filter Window range in seconds. </summary>
-    ''' <value> The FilterWindow range. </value>
-    Public Overrides ReadOnly Property FilterWindowRange As Core.Pith.RangeR = New isr.Core.Pith.RangeR(0, 0.1)
 
     ''' <summary> Gets the Filter Window query command. </summary>
     ''' <value> The FilterWindow query command. </value>
@@ -264,8 +262,6 @@ Public Class MultimeterSubsystem
 #End Region
 
 #Region " POWER LINE CYCLES "
-
-    Public Overrides ReadOnly Property PowerLineCyclesRange As Core.Pith.RangeR = New isr.Core.Pith.RangeR(0.0005, 15)
 
     ''' <summary> Gets The Power Line Cycles command format. </summary>
     ''' <value> The Power Line Cycles command format. </value>

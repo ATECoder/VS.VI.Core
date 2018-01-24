@@ -164,47 +164,106 @@ Public Class BridgeMeterUnitTests
 
 #End Region
 
+#Region " DEVICE SESSION "
+
+    ''' <summary> Opens a session. </summary>
+    ''' <param name="device"> The device. </param>
+    Private Shared Sub OpenSession(ByVal device As Device)
+        device.Session.ResourceTitle = TestInfo.ResourceTitle
+        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        Dim actualBoolean As Boolean = device.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
+        Assert.IsTrue(actualBoolean, $"Failed to open session: {e.Details}")
+    End Sub
+
+    ''' <summary> Closes a session. </summary>
+    ''' <param name="device"> The device. </param>
+    Private Shared Sub CloseSession(ByVal device As Device)
+        device.Session.Clear()
+        device.CloseSession()
+        Assert.IsFalse(device.IsDeviceOpen, $"Failed to close session")
+    End Sub
+
+#End Region
+
 #Region " MEASURE BRIDGE "
+
+    ''' <summary> Bridge meter measure resistor. </summary>
+    ''' <param name="control"> The control. </param>
+    Public Sub BridgeMeterMeasureResistor(control As isr.VI.Tsp.K3700.BridgeMeterControl)
+        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        control.TryConfigureMeter(e)
+        Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
+        Dim resistor As Resistor = control.Bridge(0)
+        control.TryMeasureResistance(resistor, e)
+        Assert.AreEqual(False, e.Cancel, $"Measuring resistor {resistor.Title} failed; {e.Details}")
+        Assert.AreEqual(TestInfo.BridgeR1, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor resistance expected {TestInfo.BridgeR1:G5} actual {resistor.Resistance:G5}")
+    End Sub
 
     <TestMethod()>
     Public Sub BridgeMeterMeasureResistorTest()
         Using control As isr.VI.Tsp.K3700.BridgeMeterControl = New isr.VI.Tsp.K3700.BridgeMeterControl
             BridgeMeterUnitTests.OpenSession(1, control)
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-            control.TryConfigureMeter(e)
-            Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
-            Dim resistor As Resistor = control.Bridge(0)
-            control.TryMeasureResistance(resistor, e)
-            Assert.AreEqual(False, e.Cancel, $"Measuring resistor {resistor.Title} failed; {e.Details}")
-            Assert.AreEqual(TestInfo.BridgeR1, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor resistance expected {TestInfo.BridgeR1:G5} actual {resistor.Resistance:G5}")
+            Me.BridgeMeterMeasureResistor(control)
             BridgeMeterUnitTests.CloseSession(1, control)
         End Using
+    End Sub
+
+    Public Sub BridgeMeterMeasure(control As isr.VI.Tsp.K3700.BridgeMeterControl)
+        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        control.TryConfigureMeter(e)
+        Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
+        control.TryMeasureBridge(e)
+        Assert.AreEqual(False, e.Cancel, $"Measuring bridge {TestInfo.BridgeNumber} failed; {e.Details}")
+        Dim resistor As Resistor = control.Bridge(0)
+        Dim expectedResistance As Double = TestInfo.BridgeR1
+        Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
+        resistor = control.Bridge(1)
+        expectedResistance = TestInfo.BridgeR2
+        Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
+        resistor = control.Bridge(2)
+        expectedResistance = TestInfo.BridgeR3
+        Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
+        resistor = control.Bridge(3)
+        expectedResistance = TestInfo.BridgeR4
+        Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
     End Sub
 
     <TestMethod()>
     Public Sub BridgeMeterMeasureTest()
         Using control As isr.VI.Tsp.K3700.BridgeMeterControl = New isr.VI.Tsp.K3700.BridgeMeterControl
             BridgeMeterUnitTests.OpenSession(1, control)
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-            control.TryConfigureMeter(e)
-            Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
-            control.TryMeasureBridge(e)
-            Assert.AreEqual(False, e.Cancel, $"Measuring bridge {TestInfo.BridgeNumber} failed; {e.Details}")
-            Dim resistor As Resistor = control.Bridge(0)
-            Dim expectedResistance As Double = TestInfo.BridgeR1
-            Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
-            resistor = control.Bridge(1)
-            expectedResistance = TestInfo.BridgeR2
-            Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
-            resistor = control.Bridge(2)
-            expectedResistance = TestInfo.BridgeR3
-            Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
-            resistor = control.Bridge(3)
-            expectedResistance = TestInfo.BridgeR4
-            Assert.AreEqual(expectedResistance, resistor.Resistance, TestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
+            Me.BridgeMeterMeasure(control)
+            BridgeMeterUnitTests.CloseSession(1, control)
         End Using
     End Sub
 
 #End Region
 
+#Region " ASSIGNED DEVICE TESTS "
+
+    <TestMethod()>
+    Public Sub AssignedDeviceMeasureResistorTest()
+        Using device As Device = Device.Create
+            Using control As isr.VI.Tsp.K3700.BridgeMeterControl = New isr.VI.Tsp.K3700.BridgeMeterControl
+                control.AssignDevice(device)
+                BridgeMeterUnitTests.OpenSession(1, control)
+                Me.BridgeMeterMeasureResistor(control)
+                BridgeMeterUnitTests.CloseSession(1, control)
+            End Using
+        End Using
+    End Sub
+
+    <TestMethod()>
+    Public Sub AssignedOpenDeviceMeasureResistorTest()
+        Using device As Device = Device.Create
+            BridgeMeterUnitTests.OpenSession(device)
+            Using control As isr.VI.Tsp.K3700.BridgeMeterControl = New isr.VI.Tsp.K3700.BridgeMeterControl
+                control.AssignDevice(device)
+                Me.BridgeMeterMeasureResistor(control)
+            End Using
+            BridgeMeterUnitTests.CloseSession(device)
+        End Using
+    End Sub
+
+#End Region
 End Class

@@ -24,6 +24,11 @@ Public MustInherit Class MeasureSubsystemBase
         For Each fm As MeasureFunctionMode In [Enum].GetValues(GetType(MeasureFunctionMode))
             Me._FunctionModeRanges.Add(fm, New Core.Pith.RangeR(0, 1))
         Next
+        Me.ApertureRange = Core.Pith.RangeR.FullNonNegative
+        Me.FilterCountRange = Core.Pith.RangeI.FullNonNegative
+        Me.FilterWindowRange = Core.Pith.RangeR.FullNonNegative
+        Me.PowerLineCyclesRange = Core.Pith.RangeR.FullNonNegative
+        Me.RangeRange = Core.Pith.RangeR.Full
     End Sub
 
 #End Region
@@ -40,8 +45,19 @@ Public MustInherit Class MeasureSubsystemBase
 
 #Region " APERTURE "
 
+    Private _ApertureRange As Core.Pith.RangeR
     ''' <summary> The aperture range in seconds. </summary>
-    Public MustOverride ReadOnly Property ApertureRange As Core.Pith.RangeR
+    Public Property ApertureRange As Core.Pith.RangeR
+        Get
+            Return Me._ApertureRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.ApertureRange <> value Then
+                Me._ApertureRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The Aperture. </summary>
     Private _Aperture As Double?
@@ -301,8 +317,19 @@ Public MustInherit Class MeasureSubsystemBase
 
 #Region " FILTER COUNT "
 
+    Private _FilterCountRange As Core.Pith.RangeI
     ''' <summary> The Filter Count range in seconds. </summary>
-    Public MustOverride ReadOnly Property FilterCountRange As Core.Pith.RangeI
+    Public Property FilterCountRange As Core.Pith.RangeI
+        Get
+            Return Me._FilterCountRange
+        End Get
+        Set(value As Core.Pith.RangeI)
+            If Me.FilterCountRange <> value Then
+                Me._FilterCountRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The FilterCount. </summary>
     Private _FilterCount As Integer?
@@ -472,8 +499,19 @@ Public MustInherit Class MeasureSubsystemBase
 
 #Region " FILTER WINDOW "
 
+    Private _FilterWindowRange As Core.Pith.RangeR
     ''' <summary> The Filter Window range. </summary>
-    Public MustOverride ReadOnly Property FilterWindowRange As Core.Pith.RangeR
+    Public Property FilterWindowRange As Core.Pith.RangeR
+        Get
+            Return Me._FilterWindowRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.FilterWindowRange <> value Then
+                Me._FilterWindowRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The FilterWindow. </summary>
     Private _FilterWindow As Double?
@@ -792,8 +830,19 @@ Public MustInherit Class MeasureSubsystemBase
 
 #Region " POWER LINE CYCLES (NPLC) "
 
-    ''' <summary> The power line cycles range in seconds. </summary>
-    Public MustOverride ReadOnly Property PowerLineCyclesRange As Core.Pith.RangeR
+    Private _PowerLineCyclesRange As Core.Pith.RangeR
+    ''' <summary> The power line cycles range in units. </summary>
+    Public Property PowerLineCyclesRange As Core.Pith.RangeR
+        Get
+            Return Me._PowerLineCyclesRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.PowerLineCyclesRange <> value Then
+                Me._PowerLineCyclesRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The Power Line Cycles. </summary>
     Private _PowerLineCycles As Double?
@@ -856,8 +905,19 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <value> The function mode ranges. </value>
     Public ReadOnly Property FunctionModeRanges As MeasureFunctionRangeDictionary
 
+    Private _RangeRange As Core.Pith.RangeR
     ''' <summary> The Range of the range. </summary>
-    Public ReadOnly Property RangeRange As Core.Pith.RangeR
+    Public Property RangeRange As Core.Pith.RangeR
+        Get
+            Return Me._RangeRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.RangeRange <> value Then
+                Me._RangeRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The Range. </summary>
     Private _Range As Double?

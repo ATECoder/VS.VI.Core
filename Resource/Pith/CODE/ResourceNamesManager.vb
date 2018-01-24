@@ -286,6 +286,29 @@ Public NotInheritable Class ResourceNamesManager
 
 #Region " PING "
 
+    ''' <summary> Enumerates resources that can be pinged or non-TCP/IP resources. </summary>
+    ''' <param name="resources"> The resources. </param>
+    ''' <returns>
+    ''' An enumerator that allows for each to be used to process ping filter in this collection.
+    ''' </returns>
+    Public Shared Function PingFilter(ByVal resources As IEnumerable(Of String)) As IEnumerable(Of String)
+        If resources Is Nothing Then Throw New ArgumentNullException(NameOf(resources))
+        Dim l As New List(Of String)
+        For Each resource As String In resources
+            If Not ResourceNamesManager.IsTcpIpResource(resource) OrElse ResourceNamesManager.Ping(resource) Then
+                l.Add(resource)
+            End If
+        Next
+        Return l
+    End Function
+
+    ''' <summary> Query if 'resourceName' is TCP IP resource. </summary>
+    ''' <param name="resourceName"> The name of the resource. </param>
+    ''' <returns> <c>true</c> if TCP IP resource; otherwise <c>false</c> </returns>
+    Public Shared Function IsTcpIpResource(ByVal resourceName As String) As Boolean
+        Return Not String.IsNullOrWhiteSpace(resourceName) AndAlso resourceName.StartsWith(HardwareInterfaceType.Tcpip.ToString, StringComparison.OrdinalIgnoreCase)
+    End Function
+
     ''' <summary> Converts a resourceName to a resource address. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="resourceName"> The name of the resource. </param>
@@ -293,16 +316,17 @@ Public NotInheritable Class ResourceNamesManager
     ''' <remarks> Works only on TCP/IP resources. </remarks>
     Public Shared Function ToResourceAddress(ByVal resourceName As String) As String
         If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
-        If Not resourceName.StartsWith(HardwareInterfaceType.Tcpip.ToString, StringComparison.OrdinalIgnoreCase) Then
+        If Not ResourceNamesManager.IsTcpIpResource(resourceName) Then
             Throw New InvalidOperationException($"Unable to convert resource {resourceName} to a {HardwareInterfaceType.Tcpip} resource")
         End If
         Return resourceName.Split(":"c)(2)
     End Function
 
-    ''' <summary> Pings to resource name. </summary>
+    ''' <summary> Pings the resource name. </summary>
     ''' <param name="resourceName"> The name of the resource. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Shared Function Ping(ByVal resourceName As String) As Boolean
+        If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
         Return My.Computer.Network.Ping(ResourceNamesManager.ToResourceAddress(resourceName))
     End Function
 

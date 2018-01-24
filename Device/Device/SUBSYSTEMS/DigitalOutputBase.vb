@@ -181,9 +181,20 @@ Public MustInherit Class DigitalOutputBase
 
 #Region " DELAY (PULSE WIDTH) "
 
+    Private _DelayRange As Range(Of TimeSpan)
     ''' <summary> Gets or sets the delay (pulse width) range. </summary>
     ''' <value> The delay range. </value>
-    Public Overridable ReadOnly Property DelayRange As Range(Of TimeSpan)
+    Public Overridable Property DelayRange As Range(Of TimeSpan)
+        Get
+            Return Me._DelayRange
+        End Get
+        Set(value As Range(Of TimeSpan))
+            If Me.DelayRange <> value Then
+                Me._DelayRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The delay. </summary>
     Private _Delay As TimeSpan?

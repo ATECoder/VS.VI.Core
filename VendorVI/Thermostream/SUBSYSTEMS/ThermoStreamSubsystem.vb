@@ -30,6 +30,21 @@ Public Class ThermostreamSubsystem
 
 #Region " I PRESETTABLE "
 
+    ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
+    ''' <remarks> Use this method to customize the reset. </remarks>
+    Public Overrides Sub InitKnownState()
+        MyBase.InitKnownState()
+        Me.CycleCountRange = New isr.Core.Pith.RangeI(1, 9999)
+        Me.DeviceThermalConstantRange = New isr.Core.Pith.RangeI(20, 500)
+        Me.LowRampRateRange = New isr.Core.Pith.RangeR(0, 99.99)
+        Me.HighRampRateRange = New isr.Core.Pith.RangeR(100, 9999)
+        Me.SetpointRange = New isr.Core.Pith.RangeR(-99.9, 225)
+        Me.SetpointNumberRange = New isr.Core.Pith.RangeI(0, 11)
+        Me.SetpointWindowRange = New isr.Core.Pith.RangeR(0.1, 9.9)
+        Me.SoakTimeRange = New isr.Core.Pith.RangeI(0, 9999)
+        Me.MaximumTestTimeRange = New isr.Core.Pith.RangeI(0, 9999)
+    End Sub
+
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
@@ -97,9 +112,6 @@ Public Class ThermostreamSubsystem
 #End Region
 
 #Region " CYCLE COUNT "
-
-    ''' <summary> The Cycle Count range. </summary>
-    Public Overrides ReadOnly Property CycleCountRange As isr.Core.Pith.RangeI = New isr.Core.Pith.RangeI(1, 9999)
 
     ''' <summary> Gets the Cycle Count command format. </summary>
     ''' <value> the Cycle Count command format. </value>
@@ -242,9 +254,6 @@ Public Class ThermostreamSubsystem
 
 #Region " DEVICE THERMAL CONSTANT "
 
-    ''' <summary> The Device Thermal Constant range. </summary>
-    Public Overrides ReadOnly Property DeviceThermalConstantRange As isr.Core.Pith.RangeI = New isr.Core.Pith.RangeI(20, 500)
-
     ''' <summary> Gets the Device Thermal Constant command format. </summary>
     ''' <value> the Device Thermal Constant command format. </value>
     Protected Overrides ReadOnly Property DeviceThermalConstantCommandFormat As String = "DUTC {0}"
@@ -383,12 +392,6 @@ Public Class ThermostreamSubsystem
 
 #Region " RAMP RATE "
 
-    ''' <summary> The Low Ramp Rate range in degrees per minute. </summary>
-    Public Overrides ReadOnly Property LowRampRateRange As isr.Core.Pith.RangeR = New isr.Core.Pith.RangeR(0, 99.99)
-
-    ''' <summary> The High Ramp Rate range in degrees per minute. </summary>
-    Public Overrides ReadOnly Property HighRampRateRange As isr.Core.Pith.RangeR = New isr.Core.Pith.RangeR(100, 9999)
-
     ''' <summary> Gets Low the Ramp Rate command format. </summary>
     ''' <value> the Low Ramp Rate command format. </value>
     Protected Overrides ReadOnly Property LowRampRateCommandFormat As String = "RAMP {0:0.0}"
@@ -404,9 +407,6 @@ Public Class ThermostreamSubsystem
 #End Region
 
 #Region " SET POINT "
-
-    ''' <summary> The Setpoint range. </summary>
-    Public Overrides ReadOnly Property SetpointRange As isr.Core.Pith.RangeR = New isr.Core.Pith.RangeR(-99.9, 225)
 
     ''' <summary> Gets The Set Point command format. </summary>
     ''' <value> The Set Point command format. </value>
@@ -525,9 +525,6 @@ Public Class ThermostreamSubsystem
 
 #Region " SET POINT NUMBER "
 
-    ''' <summary> The Setpoint Number range. </summary>
-    Public Overrides ReadOnly Property SetpointNumberRange As isr.Core.Pith.RangeI = New isr.Core.Pith.RangeI(0, 11)
-
     ''' <summary> Gets the Set Point Number command format. </summary>
     ''' <value> the Set Point Number command format. </value>
     Protected Overrides ReadOnly Property SetpointNumberCommandFormat As String = "SETN {0}"
@@ -540,9 +537,6 @@ Public Class ThermostreamSubsystem
 
 #Region " SET POINT WINDOW "
 
-    ''' <summary> The Setpoint Window range in degrees centigrade. </summary>
-    Public Overrides ReadOnly Property SetpointWindowRange As isr.Core.Pith.RangeR = New isr.Core.Pith.RangeR(0.1, 9.9)
-
     ''' <summary> Gets the Set Point Window command format. </summary>
     ''' <value> the Set Point Window command format. </value>
     Protected Overrides ReadOnly Property SetpointWindowCommandFormat As String = "WNDW {0}"
@@ -554,9 +548,6 @@ Public Class ThermostreamSubsystem
 #End Region
 
 #Region " SOAK TIME "
-
-    ''' <summary> The Soak Time range in seconds. </summary>
-    Public Overrides ReadOnly Property SoakTimeRange As isr.Core.Pith.RangeR = New isr.Core.Pith.RangeR(0, 9999)
 
     ''' <summary> Gets the Soak Time command format. </summary>
     ''' <value> the Soak Time command format. </value>
@@ -577,9 +568,6 @@ Public Class ThermostreamSubsystem
 #End Region
 
 #Region " MAXIMUM TEST TIME "
-
-    ''' <summary> The maximum Test Time range in seconds. </summary>
-    Public Overrides ReadOnly Property MaximumTestTimeRange As isr.Core.Pith.RangeR = New isr.Core.Pith.RangeR(0, 9999)
 
     ''' <summary> Gets the Maximum Test Time command format. </summary>
     ''' <value> the Maximum Test Time command format. </value>

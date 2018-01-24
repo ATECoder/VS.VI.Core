@@ -15,6 +15,8 @@
         Me.AddInstrumentPanel("Meter", New VI.K2000.K2000Panel, True)
         enabled = true
 #ElseIf K2450 Then
+        Tsp2.K2450.My.MySettings.Default.TraceLogLevel = TraceEventType.Verbose
+        Tsp2.K2450.My.MySettings.Default.TraceShowLevel = TraceEventType.Verbose
         Me.AddTalkerControl("SourceMeter", New VI.Tsp2.K2450.K2450Control With {
             .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}", .ResourceTitle = "2450"
                                     }, True)
@@ -23,14 +25,20 @@
         Me.AddInstrumentPanel("SourceMeter", New VI.K2400.K2400Panel, True)
         enabled = true
 #ElseIf K3700 Then
+        VI.Tsp.K3700.My.MySettings.Default.TraceLogLevel = TraceEventType.Verbose
+        VI.Tsp.K3700.My.MySettings.Default.TraceShowLevel = TraceEventType.Verbose
         Me.AddInstrumentPanel("DMM/Scanner", New VI.Tsp.K3700.K3700Panel, True)
         enabled = True
 #ElseIf K3700c Then
+        VI.Tsp.K3700.My.MySettings.Default.TraceLogLevel = TraceEventType.Verbose
+        VI.Tsp.K3700.My.MySettings.Default.TraceShowLevel = TraceEventType.Verbose
         Me.AddTalkerControl("DMM/Scanner", New VI.Tsp.K3700.K3700Control With {
             .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}", .ResourceTitle = "3700"
                                     }, True)
         enabled = true
 #ElseIf K3700bm Then
+        VI.Tsp.K3700.My.MySettings.Default.TraceLogLevel = TraceEventType.Verbose
+        VI.Tsp.K3700.My.MySettings.Default.TraceShowLevel = TraceEventType.Verbose
         Me.AddTalkerControl("BridgeMeter", New VI.Tsp.K3700.BridgeMeterControl With {
             .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}", .ResourceTitle = "3700"
                                     }, True)
@@ -40,9 +48,13 @@
         enabled = True
 
 #ElseIf K7500 Then
+        VI.K7500.My.MySettings.Default.TraceLogLevel = TraceEventType.Verbose
+        VI.K7500.My.MySettings.Default.TraceShowLevel = TraceEventType.Verbose
         Me.AddInstrumentPanel("Meter", New VI.K7500.K7500Panel, True)
         enabled = True
 #ElseIf K34980 Then
+        VI.K34980.My.MySettings.Default.TraceLogLevel = TraceEventType.Verbose
+        VI.K34980.My.MySettings.Default.TraceShowLevel = TraceEventType.Verbose
         Me.AddInstrumentPanel("Scanner", New VI.K34980.K34980Panel, True)
         enabled = True
 #ElseIf TTM Then

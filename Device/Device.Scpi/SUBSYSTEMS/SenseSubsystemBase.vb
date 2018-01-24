@@ -20,6 +20,9 @@ Public MustInherit Class SenseSubsystemBase
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
+        Me.RangeRange = isr.Core.Pith.RangeR.Full
+        Me.RangeSymbol = "V"
+        Me.RangeDecimalPlaces = 3
     End Sub
 
 #End Region
@@ -37,6 +40,56 @@ Public MustInherit Class SenseSubsystemBase
         MyBase.ResetKnownState()
         Me.FunctionMode = SenseFunctionModes.VoltageDC
     End Sub
+
+#End Region
+
+#Region " SENSE RANGE "
+
+    Private _RangeRange As Core.Pith.RangeR
+    ''' <summary> The range of the range. </summary>
+    Public Property RangeRange As Core.Pith.RangeR
+        Get
+            Return Me._RangeRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.RangeRange <> value Then
+                Me._RangeRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _RangeDecimalPlaces As Integer
+
+    ''' <summary> Gets or sets the range decimal places. </summary>
+    ''' <value> The range decimal places. </value>
+    Public Property RangeDecimalPlaces As Integer
+        Get
+            Return Me._RangeDecimalPlaces
+        End Get
+        Set(value As Integer)
+            If Me.RangeDecimalPlaces <> value Then
+                Me._RangeDecimalPlaces = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _RangeSymbol As String
+
+    ''' <summary> Gets or sets the range symbol. </summary>
+    ''' <value> The range symbol. </value>
+    Public Property RangeSymbol As String
+        Get
+            Return Me._RangeSymbol
+        End Get
+        Set(value As String)
+            If Not String.Equals(Me.RangeSymbol, value, StringComparison.OrdinalIgnoreCase) Then
+                Me._RangeSymbol = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
 #End Region
 
@@ -59,7 +112,7 @@ Public MustInherit Class SenseSubsystemBase
 
     ''' <summary> Gets or sets the cached Sense Function Mode. </summary>
     ''' <value> The Function Mode or null if unknown. </value>
-    Public Property FunctionMode As SenseFunctionModes?
+    Public Overridable Property FunctionMode As SenseFunctionModes?
         Get
             Return Me._FunctionMode
         End Get

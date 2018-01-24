@@ -3,6 +3,7 @@ Imports isr.Core.Controls
 Imports isr.Core.Controls.ControlExtensions
 Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports System.Windows.Forms
 ''' <summary> Provides a base user interface for a <see cref="isr.VI.DeviceBase">Visa Device</see>. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -53,28 +54,39 @@ Public Class ResourceControlBase
             If Not Me.IsDisposed AndAlso disposing Then
                 If Me.IsConnectorOwner Then Me.Connector.Dispose()
                 Me.Connector = Nothing
-                If Me.DeviceBase IsNot Nothing Then
+                If Me.DeviceBase?.IsDeviceOpen Then
                     Try
-                        ' this is required to release the device event handlers associated with this panel. 
-                        If Me.DeviceBase IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
+                        If Me.IsDeviceOwner Then
+                            ' if the device owner, then close the session
+                            Me.DeviceBase.CloseSession()
+                        Else
+                            ' if not device owner, just release the event handlers associated with this panel. 
+                            Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
+                        End If
                     Catch ex As Exception
                         Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
                     End Try
+                End If
+                If Me.DeviceBase IsNot Nothing Then
                     Try
-                        ' this also releases the device event handlers associated with this panel. 
-                        Me.DeviceBase = Nothing
+                        Me.ReleaseDevice()
                     Catch ex As Exception
                         Debug.Assert(Not Debugger.IsAttached, "Exception occurred releasing the device", $"Exception {ex.ToFullBlownString}")
                     End Try
                 End If
                 Me._ElapsedTimeStopwatch = Nothing
-                ' unable to use null conditional because it is not seen by code analysis
-                ' If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
         Finally
             MyBase.Dispose(disposing)
         End Try
     End Sub
+
+    ''' <summary> Releases the device. </summary>
+    Protected Overridable Sub ReleaseDevice()
+        ' this also releases the device event handlers associated with this panel. 
+        Me.DeviceBase = Nothing
+    End Sub
+
 
 #End Region
 
@@ -388,7 +400,7 @@ Public Class ResourceControlBase
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub AssignDevice(ByVal value As DeviceBase)
         If Me.DeviceBase IsNot Nothing Then
-            If Me.DeviceBase.Talker IsNot Nothing Then Me.DeviceBase.Talker.Listeners?.Clear()
+            If Me.DeviceBase.Talker IsNot Nothing Then Me.DeviceBase.Talker.RemoveListeners()
             RemoveHandler Me.DeviceBase.PropertyChanged, AddressOf Me.DevicePropertyChanged
             RemoveHandler Me.DeviceBase.Opening, AddressOf Me.DeviceOpening
             RemoveHandler Me.DeviceBase.Opened, AddressOf Me.DeviceOpened
@@ -412,25 +424,26 @@ Public Class ResourceControlBase
         Me._StandardRegisterStatus = ResourceControlBase.UnknownRegisterValue
         Me._DeviceBase = value
         If Me.DeviceBase IsNot Nothing Then
-            If Me._DeviceBase IsNot Nothing Then
-                Me.DeviceBase.CaptureSyncContext(Threading.SynchronizationContext.Current)
-                AddHandler Me.DeviceBase.PropertyChanged, AddressOf Me.DevicePropertyChanged
-                AddHandler Me.DeviceBase.Opening, AddressOf Me.DeviceOpening
-                AddHandler Me.DeviceBase.Opened, AddressOf Me.DeviceOpened
-                AddHandler Me.DeviceBase.Closing, AddressOf Me.DeviceClosing
-                AddHandler Me.DeviceBase.Closed, AddressOf Me.DeviceClosed
-                AddHandler Me.DeviceBase.Initialized, AddressOf Me.DeviceInitialized
-                AddHandler Me.DeviceBase.Initializing, AddressOf Me.DeviceInitializing
-                If Me.DeviceBase.ResourcesFilter IsNot Nothing Then
-                    Me.Connector.ResourcesFilter = Me.DeviceBase.ResourcesFilter
-                End If
-                Me.ResourceName = Me.DeviceBase.ResourceName
-                Me.ResourceTitle = Me.DeviceBase.ResourceTitle
-                Me.StatusSubsystem = Me.DeviceBase.StatusSubsystemBase
+            Me.DeviceBase.CaptureSyncContext(Threading.SynchronizationContext.Current)
+            AddHandler Me.DeviceBase.PropertyChanged, AddressOf Me.DevicePropertyChanged
+            AddHandler Me.DeviceBase.Opening, AddressOf Me.DeviceOpening
+            AddHandler Me.DeviceBase.Opened, AddressOf Me.DeviceOpened
+            AddHandler Me.DeviceBase.Closing, AddressOf Me.DeviceClosing
+            AddHandler Me.DeviceBase.Closed, AddressOf Me.DeviceClosed
+            AddHandler Me.DeviceBase.Initialized, AddressOf Me.DeviceInitialized
+            AddHandler Me.DeviceBase.Initializing, AddressOf Me.DeviceInitializing
+            If Me.DeviceBase.ResourcesFilter IsNot Nothing Then
+                Me.Connector.ResourcesFilter = Me.DeviceBase.ResourcesFilter
             End If
+            Me.ResourceName = Me.DeviceBase.ResourceName
+            Me.ResourceTitle = Me.DeviceBase.ResourceTitle
+            Me.StatusSubsystem = Me.DeviceBase.StatusSubsystemBase
+
+            Me.DeviceBase.NotifyDeviceOpenState()
+            Me.AssignTalker(value.Talker)
+            Me.ApplyListenerTraceLevel(ListenerType.Display, value.Talker.TraceShowLevel)
         End If
     End Sub
-
 
     ''' <summary> Gets the sentinel indicating if the device is open. </summary>
     ''' <value> The is device open. </value>
@@ -562,16 +575,17 @@ Public Class ResourceControlBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:   DoNotCatchGeneralExceptionTypes")>
     Public Function TryOpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal e As CancelDetailsEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        Dim action As String = $"opening {resourceName} VISA session"
         If Me.InvokeRequired Then
             Me.Invoke(New Action(Of String, String, CancelDetailsEventArgs)(AddressOf Me.TryOpenSession), New Object() {resourceName, resourceTitle, e})
         Else
             Try
                 Me.OpenSession(resourceName, resourceTitle)
                 If Not Me.DeviceBase.IsDeviceOpen Then
-                    e.RegisterCancellation($"failed opening {resourceName} VISA session;. ")
+                    e.RegisterCancellation($"failed {action};. ")
                 End If
             Catch ex As Exception
-                e.RegisterCancellation($"Exception opening {resourceName} VISA session;. {ex.ToFullBlownString}")
+                e.RegisterCancellation($"Exception opening {action};. {ex.ToFullBlownString}")
             Finally
                 Me.Connector.IsConnected = Me.IsDeviceOpen
                 Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
@@ -594,13 +608,13 @@ Public Class ResourceControlBase
         If Me.InvokeRequired Then
             Me.Invoke(New Action(Of String, String)(AddressOf Me.OpenSession), New Object() {resourceName, resourceTitle})
         Else
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opening {0} VISA session;. ", resourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opening {resourceName} VISA session;. ")
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
             Me.DeviceBase.OpenSession(resourceName, resourceTitle)
             If Me.DeviceBase.IsDeviceOpen Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Opened {0} VISA session;. ", resourceName)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opened {resourceName} VISA session;. ")
             Else
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed opening {0} VISA session;. ", resourceName)
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Failed opening {resourceName} VISA session;. ")
             End If
             Me.Connector.IsConnected = Me.IsDeviceOpen
         End If
@@ -615,7 +629,7 @@ Public Class ResourceControlBase
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
-    Protected Overridable Sub DeviceOpening(ByVal sender As Object, ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overridable Sub DeviceOpening(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs)
         Me._StatusRegisterStatus = ResourceControlBase.UnknownRegisterValue
         Me._StandardRegisterStatus = ResourceControlBase.UnknownRegisterValue
     End Sub
@@ -641,7 +655,7 @@ Public Class ResourceControlBase
 
 #Region " INITALIZING / INITIALIZED  "
 
-    Protected Overridable Sub DeviceInitializing(ByVal sender As Object, ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overridable Sub DeviceInitializing(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs)
     End Sub
 
     ''' <summary> Device initialized. </summary>
@@ -649,6 +663,7 @@ Public Class ResourceControlBase
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Protected Overridable Sub DeviceInitialized(ByVal sender As Object, ByVal e As System.EventArgs)
+        Me.ReadServiceRequestStatus()
     End Sub
 
     ''' <summary> Executes the title changed action. </summary>
@@ -661,6 +676,16 @@ Public Class ResourceControlBase
     ''' <value> The title. </value>
     <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
     Public Property Title As String
+
+    ''' <summary> Reads a service request status. </summary>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Sub ReadServiceRequestStatus()
+        Try
+            Me.DeviceBase.StatusSubsystemBase.ReadServiceRequestStatus()
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
+        End Try
+    End Sub
 
 #End Region
 
@@ -696,12 +721,12 @@ Public Class ResourceControlBase
             Me.Invoke(New Action(AddressOf Me.CloseSession))
         Else
             If Me.DeviceBase.IsDeviceOpen Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Closing {0} VISA session;. ", Me.DeviceBase.ResourceName)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Closing {Me.DeviceBase.ResourceName} VISA session;. ")
             End If
             If Me.DeviceBase.TryCloseSession() Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Closed {0} VISA session;. ", Me.Connector.SelectedResourceName)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Closed {Me.DeviceBase.ResourceName} VISA session;. ")
             Else
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed closing {0} VISA session;. ", Me.Connector.SelectedResourceName)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed closing {Me.Connector.SelectedResourceName} VISA session;. ")
             End If
             Me.Connector.IsConnected = Me.IsDeviceOpen
         End If
@@ -711,7 +736,7 @@ Public Class ResourceControlBase
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
-    Protected Overridable Sub DeviceClosing(ByVal sender As Object, ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overridable Sub DeviceClosing(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs)
         If Me.DeviceBase IsNot Nothing Then
             Me.RemoveServiceRequestEventHandler()
             If Me.DeviceBase.Session IsNot Nothing Then
@@ -793,7 +818,7 @@ Public Class ResourceControlBase
         e.Cancel = args.Cancel
         If e.Cancel Then
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                              $"Failed opening session to resource; {Me.Connector.SelectedResourceName}; details: {args.Details}")
+                              $"Failed opening {Me.Connector.SelectedResourceName};. details: {args.Details}")
         Else
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"connected;. {Me.Connector.SelectedResourceName}")
         End If
@@ -1040,3 +1065,59 @@ Public Class ResourceControlBase
 
 End Class
 
+#Region " UNUSED "
+#If False Then
+' 1/23/2018
+    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        Try
+            If Not Me.IsDisposed AndAlso disposing Then
+                If Me.IsConnectorOwner Then Me.Connector.Dispose()
+                Me.Connector = Nothing
+                If Me.DeviceBase?.IsDeviceOpen Then
+                    Try
+                        If Me.IsDeviceOwner Then
+                            ' if the device owner, then close the session
+                            Me.DeviceBase.CloseSession()
+                        Else
+                            ' if not device owner, just release the event handlers associated with this panel. 
+                            Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
+                        End If
+                    Catch ex As Exception
+                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
+                    End Try
+                End If
+                If Me.DeviceBase IsNot Nothing Then
+                    Try
+                        Me.ReleaseDevice()
+                    Catch ex As Exception
+                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred releasing the device", $"Exception {ex.ToFullBlownString}")
+                    End Try
+                End If
+                Me._ElapsedTimeStopwatch = Nothing
+#If False Then
+                If Me.DeviceBase IsNot Nothing Then
+                    Try
+                        ' this is required to release the device event handlers associated with this panel. 
+                        If Me.DeviceBase IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
+                    Catch ex As Exception
+                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
+                    End Try
+                    Try
+                        ' this also releases the device event handlers associated with this panel. 
+                        Me.DeviceBase = Nothing
+                    Catch ex As Exception
+                        Debug.Assert(Not Debugger.IsAttached, "Exception occurred releasing the device", $"Exception {ex.ToFullBlownString}")
+                    End Try
+                End If
+                Me._ElapsedTimeStopwatch = Nothing
+                ' unable to use null conditional because it is not seen by code analysis
+                ' If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
+#End If
+            End If
+        Finally
+            MyBase.Dispose(disposing)
+        End Try
+    End Sub
+
+#End If
+#End Region

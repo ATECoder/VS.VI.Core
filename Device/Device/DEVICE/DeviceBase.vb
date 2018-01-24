@@ -59,6 +59,7 @@ Public MustInherit Class DeviceBase
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                ' this also removes the talker that was assigned to the subsystems.
                 Me.Talker = Nothing
                 Me.SessionMessagesTraceEnabled = False
                 Me.Session?.DisableServiceRequest()
@@ -455,6 +456,17 @@ Public MustInherit Class DeviceBase
             Me.IsInitialized = False
             Me.SuspendPublishing()
             Me.SyncNotifyOpening(e)
+        End If
+    End Sub
+
+    ''' <summary> Notifies the device open state. </summary>
+    ''' <remakrs> Used when assigning a device to a control panel. </remakrs>
+    Public Sub NotifyDeviceOpenState()
+        If Me.IsDeviceOpen Then
+            Me.OnOpened()
+            Me.OnInitialized()
+        Else
+            Me.OnClosed()
         End If
     End Sub
 

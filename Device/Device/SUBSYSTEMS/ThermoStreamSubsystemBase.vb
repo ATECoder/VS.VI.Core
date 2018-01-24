@@ -18,6 +18,15 @@ Public MustInherit Class ThermostreamSubsystemBase
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
+        Me.CycleCountRange = Core.Pith.RangeI.FullNonNegative
+        Me.DeviceThermalConstantRange = Core.Pith.RangeI.FullNonNegative
+        Me.LowRampRateRange = Core.Pith.RangeR.FullNonNegative
+        Me.HighRampRateRange = Core.Pith.RangeR.FullNonNegative
+        Me.SetpointRange = Core.Pith.RangeR.Full
+        Me.SetpointNumberRange = Core.Pith.RangeI.FullNonNegative
+        Me.SetpointWindowRange = Core.Pith.RangeR.FullNonNegative
+        Me.SoakTimeRange = Core.Pith.RangeI.FullNonNegative
+        Me.MaximumTestTimeRange = Core.Pith.RangeI.FullNonNegative
     End Sub
 
 #End Region
@@ -43,8 +52,19 @@ Public MustInherit Class ThermostreamSubsystemBase
 
 #Region " CYCLE COUNT "
 
-    ''' <summary> The Cycle Count range. </summary>
-    Public MustOverride ReadOnly Property CycleCountRange As isr.Core.Pith.RangeI
+    Private _CycleCountRange As Core.Pith.RangeI
+    ''' <summary> The Range of the CycleCount. </summary>
+    Public Property CycleCountRange As Core.Pith.RangeI
+        Get
+            Return Me._CycleCountRange
+        End Get
+        Set(value As Core.Pith.RangeI)
+            If Me.CycleCountRange <> value Then
+                Me._CycleCountRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> the Cycle Count. </summary>
     Private _CycleCount As Integer?
@@ -298,8 +318,19 @@ Public MustInherit Class ThermostreamSubsystemBase
 
 #Region " DEVICE THERMAL CONSTANT "
 
+    Private _DeviceThermalConstantRange As Core.Pith.RangeI
     ''' <summary> The Device Thermal Constant range. </summary>
-    Public MustOverride ReadOnly Property DeviceThermalConstantRange As Core.Pith.RangeI
+    Public Property DeviceThermalConstantRange As Core.Pith.RangeI
+        Get
+            Return Me._DeviceThermalConstantRange
+        End Get
+        Set(value As Core.Pith.RangeI)
+            If Me.DeviceThermalConstantRange <> value Then
+                Me._DeviceThermalConstantRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> the Device Thermal Constant. </summary>
     Private _DeviceThermalConstant As Integer?
@@ -519,8 +550,19 @@ Public MustInherit Class ThermostreamSubsystemBase
 
 #Region " LOW RAMP RATE "
 
+    Private _LowRampRateRange As Core.Pith.RangeR
     ''' <summary> The Low Ramp Rate range in degrees per minute. </summary>
-    Public MustOverride ReadOnly Property LowRampRateRange As Core.Pith.RangeR
+    Public Property LowRampRateRange As Core.Pith.RangeR
+        Get
+            Return Me._LowRampRateRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.LowRampRateRange <> value Then
+                Me._LowRampRateRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> Gets or sets the Low Ramp Rate command format. </summary>
     ''' <value> the Low Ramp Rate command format. </value>
@@ -530,8 +572,19 @@ Public MustInherit Class ThermostreamSubsystemBase
 
 #Region " High RAMP RATE "
 
+    Private _HighRampRateRange As Core.Pith.RangeR
     ''' <summary> The High Ramp Rate range in degrees per minute. </summary>
-    Public MustOverride ReadOnly Property HighRampRateRange As Core.Pith.RangeR
+    Public Property HighRampRateRange As Core.Pith.RangeR
+        Get
+            Return Me._HighRampRateRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.HighRampRateRange <> value Then
+                Me._HighRampRateRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> Gets or sets the High Ramp Rate command format. </summary>
     ''' <value> the High Ramp Rate command format. </value>
@@ -543,8 +596,19 @@ Public MustInherit Class ThermostreamSubsystemBase
 
 #Region " SET POINT "
 
+    Private _SetpointRange As Core.Pith.RangeR
     ''' <summary> The Setpoint range. </summary>
-    Public MustOverride ReadOnly Property SetpointRange As Core.Pith.RangeR
+    Public Property SetpointRange As Core.Pith.RangeR
+        Get
+            Return Me._SetpointRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.SetpointRange <> value Then
+                Me._SetpointRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The Set Point. </summary>
     Private _Setpoint As Double?
@@ -599,8 +663,20 @@ Public MustInherit Class ThermostreamSubsystemBase
 
 #Region " SET POINT NUMBER "
 
+    Private _SetpointNumberRange As Core.Pith.RangeI
     ''' <summary> The Setpoint Number range. </summary>
-    Public MustOverride ReadOnly Property SetpointNumberRange As Core.Pith.RangeI
+    Public Property SetpointNumberRange As Core.Pith.RangeI
+        Get
+            Return Me._SetpointNumberRange
+        End Get
+        Set(value As Core.Pith.RangeI)
+            If Me.SetpointNumberRange <> value Then
+                Me._SetpointNumberRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
 
     ''' <summary> The Set Point Number. </summary>
     Private _SetpointNumber As Integer?
@@ -672,8 +748,19 @@ Public MustInherit Class ThermostreamSubsystemBase
 
 #Region " SET POINT WINDOW "
 
+    Private _SetpointWindowRange As Core.Pith.RangeR
     ''' <summary> The Setpoint Window range in degrees centigrade. </summary>
-    Public MustOverride ReadOnly Property SetpointWindowRange As Core.Pith.RangeR
+    Public Property SetpointWindowRange As Core.Pith.RangeR
+        Get
+            Return Me._SetpointWindowRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.SetpointWindowRange <> value Then
+                Me._SetpointWindowRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> the Set Point Window. </summary>
     Private _SetpointWindow As Double?
@@ -728,8 +815,19 @@ Public MustInherit Class ThermostreamSubsystemBase
 
 #Region " SOAK TIME "
 
+    Private _SoakTimeRange As Core.Pith.RangeI
     ''' <summary> The Soak Time range in seconds. </summary>
-    Public MustOverride ReadOnly Property SoakTimeRange As Core.Pith.RangeR
+    Public Property SoakTimeRange As Core.Pith.RangeI
+        Get
+            Return Me._SoakTimeRange
+        End Get
+        Set(value As Core.Pith.RangeI)
+            If Me.SoakTimeRange <> value Then
+                Me._SoakTimeRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The Soak Time. </summary>
     Private _SoakTime As Double?
@@ -816,8 +914,20 @@ Public MustInherit Class ThermostreamSubsystemBase
 
 #Region " MAXIMUM TEST TIME "
 
+    Private _MaximumTestTimeRange As Core.Pith.RangeI
     ''' <summary> The maximum Test Time range in seconds. </summary>
-    Public MustOverride ReadOnly Property MaximumTestTimeRange As Core.Pith.RangeR
+    Public Property MaximumTestTimeRange As Core.Pith.RangeI
+        Get
+            Return Me._MaximumTestTimeRange
+        End Get
+        Set(value As Core.Pith.RangeI)
+            If Me.MaximumTestTimeRange <> value Then
+                Me._MaximumTestTimeRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
 
     ''' <summary> The Maximum Test Time. </summary>
     Private _MaximumTestTime As Double?

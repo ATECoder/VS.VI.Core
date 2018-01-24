@@ -141,7 +141,6 @@ Partial Public Class SubsystemCollection
     ''' <summary> Removes the specified listeners. </summary>
     ''' <param name="listeners"> The listeners. </param>
     Public Overridable Sub RemoveListeners(ByVal listeners As IEnumerable(Of IMessageListener)) Implements ITalker.RemoveListeners
-
         If listeners Is Nothing Then Throw New ArgumentNullException(NameOf(listeners))
         For Each listener As IMessageListener In listeners
             Me.RemoveListener(listener)

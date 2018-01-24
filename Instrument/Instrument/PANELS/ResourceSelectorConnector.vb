@@ -291,6 +291,13 @@ Public Class ResourceSelectorConnector
         End Set
     End Property
 
+    ''' <summary>
+    ''' Gets or sets the Ping Filter enabled sentinel. When enabled, Tcp/IP resources are added only
+    ''' if they can be pinged.
+    ''' </summary>
+    ''' <value> The ping filter enabled. </value>
+    Public Property PingFilterEnabled As Boolean = True
+
     ''' <summary> Displays the resource names based on the <see cref="ResourcesFilter">search pattern</see>. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub DisplayResourceNames()
@@ -306,6 +313,7 @@ Public Class ResourceSelectorConnector
                     resources = rm.FindResources(Me.ResourcesFilter).ToArray
                 End If
             End Using
+            If Me.PingFilterEnabled Then resources = ResourceNamesManager.PingFilter(resources)
             If resources.Count = 0 Then
                 Me.HasResources = False
                 Me._ResourceNamesComboBox.ToolTipText = isr.VI.My.Resources.LocalResourceNotFoundSynopsis
@@ -315,10 +323,10 @@ Public Class ResourceSelectorConnector
             Else
                 Me._ResourceNamesComboBox.ComboBox.DataSource = Nothing
                 Me._ResourceNamesComboBox.Items.Clear()
-                Me._ResourceNamesComboBox.ComboBox.DataSource = resources
-                Me.HasResources = True
-                Me._ResourceNamesComboBox.ToolTipText = isr.VI.My.Resources.LocalResourceSelectorTip
-            End If
+                    Me._ResourceNamesComboBox.ComboBox.DataSource = resources
+                    Me.HasResources = True
+                    Me._ResourceNamesComboBox.ToolTipText = isr.VI.My.Resources.LocalResourceSelectorTip
+                End If
         Catch ex As Exception
             Me.HasResources = False
             Me._ErrorProvider.Annunciate(Me._FindButton, ex.Message)

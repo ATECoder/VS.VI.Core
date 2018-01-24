@@ -95,9 +95,9 @@ Public Class ResourceControlUnitTests
     Private Shared Sub ConnectDevice(ByVal trialNumber As Integer, ByVal control As isr.VI.Instrument.ResourceControlBase)
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
-        Using target As Device = New Device()
-            target.ResourceTitle = TestInfo.ResourceTitle
-            control.DeviceBase = target
+        Using device As Device = New Device()
+            device.ResourceTitle = TestInfo.ResourceTitle
+            control.DeviceBase = device
             control.ResourceName = TestInfo.ResourceName
 
             Dim e As New isr.Core.Pith.CancelDetailsEventArgs
@@ -106,12 +106,12 @@ Public Class ResourceControlUnitTests
             expectedBoolean = False
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect {trialNumber} cancel; {e.Details}")
 
-            actualBoolean = target.IsDeviceOpen
+            actualBoolean = device.IsDeviceOpen
             expectedBoolean = True
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect {trialNumber} open {control.ResourceName}")
 
             ' check the MODEL
-            Assert.AreEqual(TestInfo.ResourceModel, target.StatusSubsystem.VersionInfo.Model,
+            Assert.AreEqual(TestInfo.ResourceModel, device.StatusSubsystem.VersionInfo.Model,
                             $"Version Info Model {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
 
             control.TryCloseSession(e)
@@ -119,7 +119,7 @@ Public Class ResourceControlUnitTests
             expectedBoolean = False
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Disconnect {trialNumber} cancel {e.Details}")
 
-            actualBoolean = target.IsDeviceOpen
+            actualBoolean = device.IsDeviceOpen
             expectedBoolean = False
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Disconnect {trialNumber} open {control.ResourceName}")
 
@@ -154,6 +154,74 @@ Public Class ResourceControlUnitTests
             ResourceControlUnitTests.ConnectDevice(3, control)
             sw.Wait(TimeSpan.FromMilliseconds(100))
             ResourceControlUnitTests.ConnectDevice(4, control)
+        End Using
+    End Sub
+
+#End Region
+
+#Region " ASSIGNED DEVICE TESTS "
+
+    Private Shared Sub AssignDevice(ByVal trialNumber As Integer, ByVal openFirst As Boolean, ByVal control As K3700Control, ByVal device As Device)
+        Dim expectedBoolean As Boolean = True
+        Dim actualBoolean As Boolean
+
+        device.ResourceTitle = TestInfo.ResourceTitle
+        device.ResourceName = TestInfo.ResourceName
+        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+
+        If openFirst Then
+            device.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
+            actualBoolean = e.Cancel
+            expectedBoolean = False
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Device {trialNumber} cancel; {e.Details}")
+        End If
+
+        control.AssignDevice(device)
+
+        If Not device.IsDeviceOpen Then
+            control.ResourceName = device.ResourceName
+            control.TryOpenSession(e)
+            actualBoolean = e.Cancel
+            expectedBoolean = False
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect {trialNumber} cancel; {e.Details}")
+        End If
+
+        actualBoolean = device.IsDeviceOpen
+        expectedBoolean = True
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"Connect {trialNumber} open {control.ResourceName}")
+
+        ' check the MODEL
+        Assert.AreEqual(TestInfo.ResourceModel, device.StatusSubsystem.VersionInfo.Model,
+                            $"Version Info Model {control.ResourceName}", Globalization.CultureInfo.CurrentCulture)
+
+        control.TryCloseSession(e)
+        actualBoolean = e.Cancel
+        expectedBoolean = False
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"Disconnect {trialNumber} cancel {e.Details}")
+
+        actualBoolean = device.IsDeviceOpen
+        expectedBoolean = False
+        Assert.AreEqual(expectedBoolean, actualBoolean, $"Disconnect {trialNumber} open {control.ResourceName}")
+        Dim sw As Stopwatch = Stopwatch.StartNew
+        sw.Wait(TimeSpan.FromMilliseconds(100))
+
+    End Sub
+
+    <TestMethod()>
+    Public Sub AssignDeviceTest()
+        Using control As isr.VI.Tsp.K3700.K3700Control = New isr.VI.Tsp.K3700.K3700Control
+            Using Device As Device = Device.Create
+                ResourceControlUnitTests.AssignDevice(1, False, control, Device)
+            End Using
+        End Using
+    End Sub
+
+    <TestMethod()>
+    Public Sub AssignOpenDeviceTest()
+        Using control As isr.VI.Tsp.K3700.K3700Control = New isr.VI.Tsp.K3700.K3700Control
+            Using Device As Device = Device.Create
+                ResourceControlUnitTests.AssignDevice(1, True, control, Device)
+            End Using
         End Using
     End Sub
 

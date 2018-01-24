@@ -80,12 +80,6 @@ Public Class K2000Control
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                Try
-                    Me.Device?.RemovePrivateListener(Me._TraceMessagesBox)
-                    If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
-                Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
-                End Try
                 ' the device gets closed and disposed (if panel is device owner) in the base class
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
@@ -127,19 +121,15 @@ Public Class K2000Control
     ''' <summary> Assign device. </summary>
     ''' <param name="value"> The value. </param>
     Private Sub _AssignDevice(ByVal value As Device)
-        MyBase.DeviceBase = value
         If Me._Device IsNot Nothing Then
+            ' the device base already clears all or only the private listeners. 
         End If
         Me._Device = value
-        If Me._Device IsNot Nothing Then
-            Me._Device.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            Me.OnDeviceOpenChanged(value)
-
-            Me.AssignTalker(Me._Device.Talker)
-            Me.ApplyListenerTraceLevel(ListenerType.Display, Me._Device.Talker.TraceShowLevel)
-            Me._Device.AddPrivateListener(Me._TraceMessagesBox)
+        If value IsNot Nothing Then
+            value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            value.AddPrivateListener(Me._TraceMessagesBox)
         End If
+        MyBase.DeviceBase = value
     End Sub
 
     ''' <summary> Assigns a device. </summary>
@@ -147,6 +137,12 @@ Public Class K2000Control
     Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
         Me.Device = value
+    End Sub
+
+    ''' <summary> Releases the device. </summary>
+    Protected Overrides Sub ReleaseDevice()
+        MyBase.ReleaseDevice()
+        Me._Device = Nothing
     End Sub
 
 #End Region
@@ -396,43 +392,6 @@ Public Class K2000Control
         End If
     End Sub
 
-    Private Sub UpdateFunctionModeRange(value As VI.Scpi.SenseFunctionModes)
-        Dim symbol As String = "?"
-        Select Case value
-            Case VI.Scpi.SenseFunctionModes.CurrentDC, VI.Scpi.SenseFunctionModes.Current, VI.Scpi.SenseFunctionModes.CurrentAC
-                symbol = "A"
-                With Me._SenseRangeNumeric
-                    .Minimum = 0
-                    .Maximum = 10D
-                    .DecimalPlaces = 3
-                End With
-            Case VI.Scpi.SenseFunctionModes.VoltageDC, VI.Scpi.SenseFunctionModes.Voltage, VI.Scpi.SenseFunctionModes.VoltageAC
-                symbol = "V"
-                With Me._SenseRangeNumeric
-                    .Minimum = 0
-                    .Maximum = 1000D
-                    .DecimalPlaces = 3
-                End With
-            Case VI.Scpi.SenseFunctionModes.FourWireResistance
-                symbol = Arebis.StandardUnits.UnitSymbols.Omega
-                With Me._SenseRangeNumeric
-                    .Minimum = 0
-                    .Maximum = 2000000D
-                    .DecimalPlaces = 0
-                End With
-            Case VI.Scpi.SenseFunctionModes.Resistance
-                symbol = Arebis.StandardUnits.UnitSymbols.Omega
-                With Me._SenseRangeNumeric
-                    .Minimum = 0
-                    .Maximum = 1000000000D
-                    .DecimalPlaces = 0
-                End With
-        End Select
-        Me._SenseRangeNumericLabel.Text = $"Range [{symbol}]:"
-        Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
-
-    End Sub
-
     ''' <summary> Handles the function modes changed action. </summary>
     ''' <param name="subsystem"> The subsystem. </param>
     Private Sub OnFunctionModesChanged(ByVal subsystem As SenseSubsystem)
@@ -441,7 +400,7 @@ Public Class K2000Control
             If value <> VI.Scpi.SenseFunctionModes.None Then
                 If Not VI.Scpi.SenseSubsystemBase.TryParse(value, Me.Device.MeasureSubsystem.Readings.Reading.Unit) Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                       "Failed parsing function mode '{0}' to a standard unit.", subsystem.FunctionMode.Value)
+                                      "Failed parsing function mode '{0}' to a standard unit.", subsystem.FunctionMode.Value)
                 End If
                 Me._SenseFunctionComboBox.SafeSelectItem(value, value.Description)
             End If
@@ -463,6 +422,16 @@ Public Class K2000Control
             Case NameOf(subsystem.FunctionMode)
                 Me.OnFunctionModesChanged(subsystem)
                 Me.DisplayActiveReading()
+            Case NameOf(subsystem.RangeRange)
+                With Me._SenseRangeNumeric
+                    .Minimum = CDec(subsystem.RangeRange.Min)
+                    .Maximum = CDec(subsystem.RangeRange.Max)
+                End With
+            Case NameOf(subsystem.RangeDecimalPlaces)
+                Me._SenseRangeNumeric.DecimalPlaces = subsystem.RangeDecimalPlaces
+            Case NameOf(subsystem.RangeSymbol)
+                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.RangeSymbol}]:"
+                Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
     End Sub
 
@@ -701,16 +670,6 @@ Public Class K2000Control
         End Try
     End Sub
 
-    ''' <summary> Reads a service request status. </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Sub ReadServiceRequestStatus()
-        Try
-            Me.Device.StatusSubsystem.ReadServiceRequestStatus()
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading service request;. {ex.ToFullBlownString}")
-        End Try
-    End Sub
-
 #End Region
 
 #Region " SYSTEM "
@@ -903,8 +862,7 @@ Public Class K2000Control
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Private ReadOnly Property SelectedFunctionMode() As VI.Scpi.SenseFunctionModes
         Get
-            Return CType(CType(Me._SenseFunctionComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(
-                  Of [Enum], String)).Key, VI.Scpi.SenseFunctionModes)
+            Return CType(CType(Me._SenseFunctionComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, VI.Scpi.SenseFunctionModes)
         End Get
     End Property
 
@@ -1389,9 +1347,7 @@ Public Class K2000Control
     Private Sub _SenseFunctionComboBox_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _SenseFunctionComboBox.SelectedIndexChanged
         If Me._InitializingComponents Then Return
         Dim control As Windows.Forms.Control = TryCast(sender, Windows.Forms.Control)
-        If control IsNot Nothing Then
-            Me.UpdateFunctionModeRange(Me.SelectedFunctionMode)
-        End If
+        If control IsNot Nothing Then Me.Device.SenseSubsystem.UpdateFunctionModeRange(Me.SelectedFunctionMode)
     End Sub
 
     ''' <summary>
@@ -2027,7 +1983,6 @@ Public Class K2000Control
 
 #End Region
 
-
 #Region " TOOL STRIP RENDERER "
 
     ''' <summary> A custom professional renderer. </summary>
@@ -2057,3 +2012,42 @@ Public Class K2000Control
 
 End Class
 
+#Region " UNUSED "
+#If False Then
+1/23/2018
+    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        Try
+            If Not Me.IsDisposed AndAlso disposing Then
+                Try
+                    Me.Device?.RemovePrivateListener(Me._TraceMessagesBox)
+                    If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
+                Catch ex As Exception
+                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", $"Exception {ex.ToFullBlownString}")
+                End Try
+                ' the device gets closed and disposed (if panel is device owner) in the base class
+                If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
+            End If
+        Finally
+            MyBase.Dispose(disposing)
+        End Try
+    End Sub
+    ''' <summary> Assign device. </summary>
+    ''' <param name="value"> The value. </param>
+    Private Sub _AssignDevice(ByVal value As Device)
+        MyBase.DeviceBase = value
+        If Me._Device IsNot Nothing Then
+        End If
+        Me._Device = value
+        If Me._Device IsNot Nothing Then
+            Me._Device.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            Me.OnDeviceOpenChanged(value)
+
+            Me.AssignTalker(Me._Device.Talker)
+            Me.ApplyListenerTraceLevel(ListenerType.Display, Me._Device.Talker.TraceShowLevel)
+            Me._Device.AddPrivateListener(Me._TraceMessagesBox)
+        End If
+    End Sub
+
+#End If
+#End Region

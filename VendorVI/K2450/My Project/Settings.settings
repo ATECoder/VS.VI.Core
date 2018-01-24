@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="TraceLogLevel" Type="System.Diagnostics.TraceEventType" Scope="User">
-      <Value Profile="(Default)">Verbose</Value>
+      <Value Profile="(Default)">Warning</Value>
     </Setting>
     <Setting Name="TraceShowLevel" Type="System.Diagnostics.TraceEventType" Scope="User">
-      <Value Profile="(Default)">Verbose</Value>
+      <Value Profile="(Default)">Warning</Value>
     </Setting>
     <Setting Name="InitializeTimeout" Type="System.TimeSpan" Scope="User">
       <Value Profile="(Default)">00:00:10</Value>

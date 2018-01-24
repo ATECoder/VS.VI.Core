@@ -24,6 +24,7 @@ Public MustInherit Class SourceChannelSubsystemBase
     Protected Sub New(ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me.ChannelNumber = channelNumber
+        Me.LevelRange = RangeR.Full
     End Sub
 
 #End Region
@@ -339,8 +340,19 @@ Public MustInherit Class SourceChannelSubsystemBase
 
 #Region " LEVEL "
 
-    ''' <summary> The Range of function values. </summary>
-    Public Overridable Property LevelRange As Core.Pith.RangeR
+    Private _LevelRange As Core.Pith.RangeR
+    ''' <summary> The Range of the Level. </summary>
+    Public Property LevelRange As Core.Pith.RangeR
+        Get
+            Return Me._LevelRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.LevelRange <> value Then
+                Me._LevelRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The Level. </summary>
     Private _Level As Double?

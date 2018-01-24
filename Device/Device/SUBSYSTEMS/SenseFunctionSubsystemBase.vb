@@ -29,8 +29,10 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Me.AutoZeroEnabled = True
         Me.AutoRangeEnabled = True
         Me.PowerLineCycles = 1
-        Me.PowerLineCyclesRange = isr.Core.Pith.RangeR.Full
+        Me.PowerLineCyclesRange = isr.Core.Pith.RangeR.FullNonNegative
         Me.ValueRange = isr.Core.Pith.RangeR.Full
+        Me.ValueSymbol = "V"
+        Me.ValueDecimalPlaces = 3
     End Sub
 
 #End Region
@@ -484,8 +486,35 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #Region " POWER LINE CYCLES (NPLC) "
 
+    Private _PowerLineCyclesRange As Core.Pith.RangeR
     ''' <summary> The Range of the power line cycles. </summary>
     Public Property PowerLineCyclesRange As Core.Pith.RangeR
+        Get
+            Return Me._PowerLineCyclesRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.PowerLineCyclesRange <> value Then
+                Me._PowerLineCyclesRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _PowerLineCyclesDecimalPlaces As Integer
+
+    ''' <summary> Gets or sets the value decimal places. </summary>
+    ''' <value> The value decimal places. </value>
+    Public Property PowerLineCyclesDecimalPlaces As Integer
+        Get
+            Return Me._PowerLineCyclesDecimalPlaces
+        End Get
+        Set(value As Integer)
+            If Me.PowerLineCyclesDecimalPlaces <> value Then
+                Me._PowerLineCyclesDecimalPlaces = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The Power Line Cycles. </summary>
     Private _PowerLineCycles As Double?
@@ -554,8 +583,48 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #Region " RANGE "
 
-    ''' <summary> The Range of function values. </summary>
+    Private _ValueRange As Core.Pith.RangeR
+    ''' <summary> The value range. </summary>
     Public Property ValueRange As Core.Pith.RangeR
+        Get
+            Return Me._ValueRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.ValueRange <> value Then
+                Me._ValueRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ValueDecimalPlaces As Integer
+
+    ''' <summary> Gets or sets the value decimal places. </summary>
+    ''' <value> The value decimal places. </value>
+    Public Property ValueDecimalPlaces As Integer
+        Get
+            Return Me._ValueDecimalPlaces
+        End Get
+        Set(value As Integer)
+            If Me.ValueDecimalPlaces <> value Then
+                Me._ValueDecimalPlaces = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ValueSymbol As String
+    Public Property ValueSymbol As String
+        Get
+            Return Me._ValueSymbol
+        End Get
+        Set(value As String)
+            If Not String.Equals(Me.ValueSymbol, value, StringComparison.OrdinalIgnoreCase) Then
+                Me._ValueSymbol = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> The range. </summary>
     Private _Range As Double?

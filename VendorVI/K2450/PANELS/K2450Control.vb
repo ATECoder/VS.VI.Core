@@ -83,12 +83,6 @@ Public Class K2450Control
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                Try
-                    Me.Device?.RemovePrivateListener(Me._TraceMessagesBox)
-                    If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
-                Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
-                End Try
                 ' the device gets disposed in the base class!
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
@@ -133,25 +127,29 @@ Public Class K2450Control
     ''' <summary> Assign device. </summary>
     ''' <param name="value"> The value. </param>
     Private Sub _AssignDevice(ByVal value As Device)
-        MyBase.DeviceBase = value
         If Me._Device IsNot Nothing Then
+            ' the device base already clears all or only the private listeners. 
         End If
         Me._Device = value
-        If Me._Device IsNot Nothing Then
-            Me._Device.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            Me.OnDeviceOpenChanged(value)
-            Me.AssignTalker(Me._Device.Talker)
-            Me.ApplyListenerTraceLevel(ListenerType.Display, Me._Device.Talker.TraceShowLevel)
-            Me._Device.AddPrivateListener(Me._TraceMessagesBox)
+        If value IsNot Nothing Then
+            value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            value.AddPrivateListener(Me._TraceMessagesBox)
         End If
+        MyBase.DeviceBase = value
     End Sub
+
 
     ''' <summary> Assigns a device. </summary>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
         Me.Device = value
+    End Sub
+
+    ''' <summary> Releases the device. </summary>
+    Protected Overrides Sub ReleaseDevice()
+        MyBase.ReleaseDevice()
+        Me._Device = Nothing
     End Sub
 
 #End Region
@@ -199,20 +197,6 @@ Public Class K2450Control
         If Me.Device.StatusSubsystem IsNot Nothing Then AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
         If Me.Device.SystemSubsystem IsNot Nothing Then AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
         MyBase.DeviceOpened(sender, e)
-    End Sub
-
-    ''' <summary> Device initialized. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    Protected Overrides Sub DeviceInitialized(ByVal sender As Object, ByVal e As System.EventArgs)
-        Try
-            MyBase.DeviceInitialized(sender, e)
-            Me.OnSusystemInitialized(Me.Device.MeasureSubsystem)
-            Me.ReadServiceRequestStatus()
-        Catch
-            Throw
-        Finally
-        End Try
     End Sub
 
     ''' <summary> Executes the title changed action. </summary>
@@ -283,23 +267,6 @@ Public Class K2450Control
 
     End Sub
 
-    Private Sub OnSusystemInitialized(ByVal subsystem As MeasureSubsystem)
-        If subsystem Is Nothing Then Return
-        With Me._PowerLineCyclesNumeric
-            .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
-            .Minimum = 1000 * CDec(subsystem.PowerLineCyclesRange.Min)
-        End With
-        With Me._FilterCountNumeric
-            .Maximum = CDec(subsystem.FilterCountRange.Max)
-            .Minimum = CDec(subsystem.FilterCountRange.Min)
-        End With
-        With Me._FilterWindowNumeric
-            .Maximum = 100 * CDec(subsystem.FilterWindowRange.Max)
-            .Minimum = 100 * CDec(subsystem.FilterWindowRange.Min)
-        End With
-        Me.DisplayFunctionModes()
-    End Sub
-
     ''' <summary> Handles the Multimeter subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
@@ -313,15 +280,26 @@ Public Class K2450Control
                 If subsystem.AutoZeroEnabled.HasValue Then Me._AutoZeroCheckBox.Checked = subsystem.AutoZeroEnabled.Value
             Case NameOf(subsystem.FilterCount)
                 If subsystem.FilterCount.HasValue Then Me._FilterCountNumeric.Value = subsystem.FilterCount.Value
+            Case NameOf(subsystem.FilterCountRange)
+                With Me._FilterCountNumeric
+                    .Maximum = CDec(subsystem.FilterCountRange.Max)
+                    .Minimum = CDec(subsystem.FilterCountRange.Min)
+                End With
             Case NameOf(subsystem.FilterEnabled)
                 If subsystem.FilterEnabled.HasValue Then Me._FilterEnabledCheckBox.Checked = subsystem.FilterEnabled.Value
                 If Me._FilterEnabledCheckBox.Checked <> Me._FilterGroupBox.Enabled Then Me._FilterGroupBox.Enabled = Me._FilterEnabledCheckBox.Checked
             Case NameOf(subsystem.FilterWindow)
                 If subsystem.FilterWindow.HasValue Then Me._FilterWindowNumeric.Value = CDec(100 * subsystem.FilterWindow.Value)
+            Case NameOf(subsystem.FilterWindowRange)
+                With Me._FilterWindowNumeric
+                    .Maximum = 100 * CDec(subsystem.FilterWindowRange.Max)
+                    .Minimum = 100 * CDec(subsystem.FilterWindowRange.Min)
+                End With
             Case NameOf(subsystem.MovingAverageFilterEnabled)
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._MovingAverageRadioButton.Checked = subsystem.MovingAverageFilterEnabled.Value
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._RepeatingAverageRadioButton.Checked = Not subsystem.MovingAverageFilterEnabled.Value
             Case NameOf(subsystem.FunctionMode)
+                If Me._SenseFunctionComboBox.DataSource Is Nothing Then Me.DisplayFunctionModes()
                 Me._SenseFunctionComboBox.SelectedItem = subsystem.FunctionMode.GetValueOrDefault(VI.Tsp2.MeasureFunctionMode.VoltageDC).ValueDescriptionPair()
                 If Me.SelectedFunctionMode <> subsystem.FunctionMode.GetValueOrDefault(Me.SelectedFunctionMode) Then
                     Me.OnSelectedFunctionModeChanged(subsystem.FunctionMode.Value)
@@ -330,6 +308,11 @@ Public Class K2450Control
                 If subsystem.OpenDetectorEnabled.HasValue Then Me._OpenDetectorCheckBox.Checked = subsystem.OpenDetectorEnabled.Value
             Case NameOf(subsystem.PowerLineCycles)
                 If subsystem.PowerLineCycles.HasValue Then Me._PowerLineCyclesNumeric.Value = CDec(subsystem.PowerLineCycles.Value)
+            Case NameOf(subsystem.PowerLineCyclesRange)
+                With Me._PowerLineCyclesNumeric
+                    .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
+                    .Minimum = 1000 * CDec(subsystem.PowerLineCyclesRange.Min)
+                End With
             Case NameOf(subsystem.Range)
                 If Me.SelectedFunctionMode <> subsystem.FunctionMode.GetValueOrDefault(Me.SelectedFunctionMode) Then
                     Me.OnSelectedFunctionModeChanged(subsystem.FunctionMode.Value)
@@ -431,16 +414,6 @@ Public Class K2450Control
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "{0} exception handling Status subsystem {1} property change;. {2}",
                                Me.Name, e.PropertyName, ex.ToFullBlownString)
-        End Try
-    End Sub
-
-    ''' <summary> Reads a service request status. </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Sub ReadServiceRequestStatus()
-        Try
-            Me.Device.StatusSubsystem.ReadServiceRequestStatus()
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -1286,3 +1259,40 @@ Public Class K2450Control
 #End Region
 
 End Class
+
+#Region " UNUSED "
+#If False Then
+' 01/23/2018
+    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+        Try
+            If Not Me.IsDisposed AndAlso disposing Then
+                Try
+                    Me.Device?.RemovePrivateListener(Me._TraceMessagesBox)
+                    If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
+                Catch ex As Exception
+                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
+                End Try
+                ' the device gets disposed in the base class!
+                If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
+            End If
+        Finally
+            MyBase.Dispose(disposing)
+        End Try
+    End Sub
+    Private Sub _AssignDevice(ByVal value As Device)
+        MyBase.DeviceBase = value
+        If Me._Device IsNot Nothing Then
+        End If
+        Me._Device = value
+        If Me._Device IsNot Nothing Then
+            value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            value.NotifyDeviceOpentate()
+            Me.AssignTalker(value.Talker)
+            Me.ApplyListenerTraceLevel(ListenerType.Display, value.Talker.TraceShowLevel)
+            value.AddPrivateListener(Me._TraceMessagesBox)
+        End If
+    End Sub
+
+#End If
+#End Region
