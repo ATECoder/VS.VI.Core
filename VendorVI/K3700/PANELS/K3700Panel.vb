@@ -182,20 +182,6 @@ Public Class K3700Panel
         MyBase.DeviceOpened(sender, e)
     End Sub
 
-    ''' <summary> Device initialized. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    Protected Overrides Sub DeviceInitialized(ByVal sender As Object, ByVal e As System.EventArgs)
-        Try
-            MyBase.DeviceInitialized(sender, e)
-            Me.OnSusystemInitialized(Me.Device.MultimeterSubsystem)
-            Me.ReadServiceRequestStatus()
-        Catch
-            Throw
-        Finally
-        End Try
-    End Sub
-
     ''' <summary> Executes the title changed action. </summary>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Protected Overrides Sub OnTitleChanged(ByVal value As String)
@@ -266,23 +252,6 @@ Public Class K3700Panel
 
     End Sub
 
-    Private Sub OnSusystemInitialized(ByVal subsystem As MultimeterSubsystem)
-        If subsystem Is Nothing Then Return
-        With Me._PowerLineCyclesNumeric
-            .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
-            .Minimum = 1000 * CDec(subsystem.PowerLineCyclesRange.Min)
-        End With
-        With Me._FilterCountNumeric
-            .Maximum = CDec(subsystem.FilterCountRange.Max)
-            .Minimum = CDec(subsystem.FilterCountRange.Min)
-        End With
-        With Me._FilterWindowNumeric
-            .Maximum = 100 * CDec(subsystem.FilterWindowRange.Max)
-            .Minimum = 100 * CDec(subsystem.FilterWindowRange.Min)
-        End With
-        Me.DisplayFunctionModes()
-    End Sub
-
     ''' <summary> Handles the Multimeter subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
@@ -298,27 +267,47 @@ Public Class K3700Panel
                 If subsystem.AutoZeroEnabled.HasValue Then Me._AutoZeroCheckBox.Checked = subsystem.AutoZeroEnabled.Value
             Case NameOf(subsystem.FilterCount)
                 If subsystem.FilterCount.HasValue Then Me._FilterCountNumeric.Value = subsystem.FilterCount.Value
+            Case NameOf(subsystem.FilterCountRange)
+                With Me._FilterCountNumeric
+                    .Maximum = CDec(subsystem.FilterCountRange.Max)
+                    .Minimum = CDec(subsystem.FilterCountRange.Min)
+                End With
             Case NameOf(subsystem.FilterEnabled)
                 If subsystem.FilterEnabled.HasValue Then Me._FilterEnabledCheckBox.Checked = subsystem.FilterEnabled.Value
                 If Me._FilterEnabledCheckBox.Checked <> Me._FilterGroupBox.Enabled Then Me._FilterGroupBox.Enabled = Me._FilterEnabledCheckBox.Checked
             Case NameOf(subsystem.FilterWindow)
                 If subsystem.FilterWindow.HasValue Then Me._FilterWindowNumeric.Value = CDec(100 * subsystem.FilterWindow.Value)
+            Case NameOf(subsystem.FilterWindowRange)
+                With Me._FilterWindowNumeric
+                    .Maximum = 100 * CDec(subsystem.FilterWindowRange.Max)
+                    .Minimum = 100 * CDec(subsystem.FilterWindowRange.Min)
+                End With
             Case NameOf(subsystem.MovingAverageFilterEnabled)
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._MovingAverageRadioButton.Checked = subsystem.MovingAverageFilterEnabled.Value
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._RepeatingAverageRadioButton.Checked = Not subsystem.MovingAverageFilterEnabled.Value
             Case NameOf(subsystem.FunctionMode)
+                If Me._SenseFunctionComboBox.DataSource Is Nothing Then Me.DisplayFunctionModes()
                 Me._SenseFunctionComboBox.SelectedItem = subsystem.FunctionMode.GetValueOrDefault(VI.Tsp.MultimeterFunctionMode.VoltageDC).ValueDescriptionPair()
-                If Me.selectedFunctionMode <> subsystem.FunctionMode.GetValueOrDefault(Me.selectedFunctionMode) Then
-                    Me.OnSelectedFunctionModeChanged(subsystem.FunctionMode.Value)
-                End If
+            Case NameOf(subsystem.FunctionRange)
+                With Me._SenseRangeNumeric
+                    .Maximum = CDec(Me.Device.MultimeterSubsystem.FunctionRange.Max)
+                    .Minimum = CDec(Me.Device.MultimeterSubsystem.FunctionRange.Min)
+                End With
+            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+                Me._SenseRangeNumeric.DecimalPlaces = 3
+            Case NameOf(subsystem.FunctionUnit)
+                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
+                Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
             Case NameOf(subsystem.OpenDetectorEnabled)
                 If subsystem.OpenDetectorEnabled.HasValue Then Me._OpenDetectorCheckBox.Checked = subsystem.OpenDetectorEnabled.Value
             Case NameOf(subsystem.PowerLineCycles)
                 If subsystem.PowerLineCycles.HasValue Then Me._PowerLineCyclesNumeric.Value = CDec(subsystem.PowerLineCycles.Value)
+            Case NameOf(subsystem.PowerLineCyclesRange)
+                With Me._PowerLineCyclesNumeric
+                    .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
+                    .Minimum = 1000 * CDec(subsystem.PowerLineCyclesRange.Min)
+                End With
             Case NameOf(subsystem.Range)
-                If Me.selectedFunctionMode <> subsystem.FunctionMode.GetValueOrDefault(Me.selectedFunctionMode) Then
-                    Me.OnSelectedFunctionModeChanged(subsystem.FunctionMode.Value)
-                End If
                 If subsystem.Range.HasValue Then Me.SenseRangeSetter(subsystem.Range.Value)
             Case NameOf(subsystem.Reading)
                 Me.DisplayReading(subsystem)
@@ -449,16 +438,6 @@ Public Class K3700Panel
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "{0} exception handling Status subsystem {1} property change;. {2}",
                                Me.Name, e.PropertyName, ex.ToFullBlownString)
-        End Try
-    End Sub
-
-    ''' <summary> Reads a service request status. </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Sub ReadServiceRequestStatus()
-        Try
-            Me.Device.StatusSubsystem.ReadServiceRequestStatus()
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
@@ -878,29 +857,6 @@ Public Class K3700Panel
         If value <= Me._SenseRangeNumeric.Maximum AndAlso value >= Me._SenseRangeNumeric.Minimum Then Me._SenseRangeNumeric.Value = CDec(value)
     End Sub
 
-    ''' <summary> Executes the selected function mode changed action. </summary>
-    ''' <param name="functionMode"> The function mode. </param>
-    Private Sub OnSelectedFunctionModeChanged(ByVal functionMode As MultimeterFunctionMode)
-        Dim format As String = "Range [{0}]:"
-        Me._SenseRangeNumericLabel.Text = MultimeterSubsystemBase.ParseUnits(functionMode).ToString
-        Me._SenseRangeNumericLabel.Text = String.Format(format, Me._SenseRangeNumericLabel.Text)
-        Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
-        With Me._SenseRangeNumeric
-            If Me.IsDeviceOpen Then
-                .Maximum = CDec(Me.Device.MultimeterSubsystem.FunctionModeRanges(functionMode).Max)
-                .Minimum = CDec(Me.Device.MultimeterSubsystem.FunctionModeRanges(functionMode).Min)
-                Select Case functionMode
-                    Case MultimeterFunctionMode.CurrentAC, MultimeterFunctionMode.CurrentDC
-                        .DecimalPlaces = 3
-                    Case MultimeterFunctionMode.VoltageAC, MultimeterFunctionMode.VoltageDC
-                        .DecimalPlaces = 3
-                    Case MultimeterFunctionMode.ResistanceCommonWire, MultimeterFunctionMode.ResistanceFourWire, MultimeterFunctionMode.ResistanceTwoWire
-                        .DecimalPlaces = 0
-                End Select
-            End If
-        End With
-    End Sub
-
     ''' <summary> Event handler. Called by _SenseFunctionComboBox for selected index changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
@@ -910,7 +866,10 @@ Public Class K3700Panel
         If _InitializingComponents Then Return
         Dim control As Windows.Forms.Control = TryCast(sender, Windows.Forms.Control)
         If control IsNot Nothing AndAlso control.Enabled Then
-            Me.OnSelectedFunctionModeChanged(Me.selectedFunctionMode)
+            Dim functionMode As MultimeterFunctionMode = Me.SelectedFunctionMode
+            Me.Device.MultimeterSubsystem.FunctionUnit = Me.Device.MultimeterSubsystem.ToUnit(functionMode)
+            Me.Device.MultimeterSubsystem.FunctionRange = Me.Device.MultimeterSubsystem.ToRange(functionMode)
+            Me.Device.MultimeterSubsystem.FunctionRangeDecimalPlaces = Me.Device.MultimeterSubsystem.ToDecimalPlaces(functionMode)
         End If
     End Sub
 

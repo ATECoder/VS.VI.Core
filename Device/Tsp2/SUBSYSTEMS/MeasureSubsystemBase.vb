@@ -28,7 +28,10 @@ Public MustInherit Class MeasureSubsystemBase
         Me.FilterCountRange = Core.Pith.RangeI.FullNonNegative
         Me.FilterWindowRange = Core.Pith.RangeR.FullNonNegative
         Me.PowerLineCyclesRange = Core.Pith.RangeR.FullNonNegative
-        Me.RangeRange = Core.Pith.RangeR.Full
+        Me.FunctionUnit = Me.DefaultFunctionUnit
+        Me.FunctionRange = Me.DefaultFunctionRange
+        Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
+        Me.DefaultMeasurementUnit = Arebis.StandardUnits.ElectricUnits.Volt
     End Sub
 
 #End Region
@@ -629,22 +632,6 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <summary> The function mode. </summary>
     Private _FunctionMode As MeasureFunctionMode?
 
-    ''' <summary> Parse units. </summary>
-    ''' <param name="value"> The  Measure Function Mode. </param>
-    ''' <returns> An Arebis.TypedUnits.Unit. </returns>
-    Public Shared Function ParseUnits(ByVal value As MeasureFunctionMode) As Arebis.TypedUnits.Unit
-        Select Case value
-            Case MeasureFunctionMode.CurrentDC
-                Return Arebis.StandardUnits.ElectricUnits.Ampere
-            Case MeasureFunctionMode.VoltageDC
-                Return Arebis.StandardUnits.ElectricUnits.Volt
-            Case MeasureFunctionMode.Resistance
-                Return Arebis.StandardUnits.ElectricUnits.Ohm
-            Case Else
-                Return Arebis.StandardUnits.ElectricUnits.Volt
-        End Select
-    End Function
-
     ''' <summary> Writes and reads back the Measure Function Mode. </summary>
     ''' <param name="value"> The  Measure Function Mode. </param>
     ''' <returns> The <see cref="MeasureFunctionMode">Measure Function Mode</see> or none if unknown. </returns>
@@ -667,8 +654,10 @@ Public MustInherit Class MeasureSubsystemBase
             If Not Nullable.Equals(Me.FunctionMode, value) Then
                 Me._FunctionMode = value
                 If value.HasValue Then
-                    Me.Amount.Unit = MeasureSubsystemBase.ParseUnits(value.Value)
-                    Me._RangeRange = Me.FunctionModeRanges(value.Value)
+                    Me.FunctionUnit = Me.ToUnit(value.Value)
+                    Me.FunctionRange = Me.ToRange(value.Value)
+                    Me.FunctionRangeDecimalPlaces = Me.ToDecimalPlaces(value.Value)
+                    Me._FunctionRange = Me.FunctionModeRanges(value.Value)
                 End If
                 Me.SafePostPropertyChanged()
             End If
@@ -706,9 +695,106 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <returns> The <see cref="MeasureFunctionMode">Measure Function Mode</see> or none if unknown. </returns>
     Public Overridable Function WriteFunctionMode(ByVal value As MeasureFunctionMode) As MeasureFunctionMode?
         Me.Session.WriteLine(Me.FunctionModeCommandFormat, value.ExtractBetween())
+        ' check on the measure unit.
+        Me.QueryMeasureUnit()
         Me.FunctionMode = value
         Return Me.FunctionMode
     End Function
+
+#End Region
+
+#Region " FUNCTION MODE RANGE "
+
+    ''' <summary> Gets or sets the function mode ranges. </summary>
+    ''' <value> The function mode ranges. </value>
+    Public ReadOnly Property FunctionModeRanges As MeasureFunctionRangeDictionary
+
+    ''' <summary> Gets or sets the default function range. </summary>
+    ''' <value> The default function range. </value>
+    Public Property DefaultFunctionRange As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
+
+    ''' <summary> Converts a functionMode to a range. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an isr.Core.Pith.RangeR. </returns>
+    Public Overridable Function ToRange(ByVal functionMode As MeasureFunctionMode) As isr.Core.Pith.RangeR
+        Return Me.FunctionModeRanges(functionMode)
+    End Function
+
+    Private _FunctionRange As Core.Pith.RangeR
+    ''' <summary> The Range of the range. </summary>
+    Public Property FunctionRange As Core.Pith.RangeR
+        Get
+            Return Me._FunctionRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.FunctionRange <> value Then
+                Me._FunctionRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the default decimal places. </summary>
+    ''' <value> The default decimal places. </value>
+    Public Property DefaultFunctionModeDecimalPlaces As Integer = 3
+
+    ''' <summary> Converts a function Mode to a decimal places. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an Integer. </returns>
+    Public Overridable Function ToDecimalPlaces(ByVal functionMode As MeasureFunctionMode) As Integer
+        Return Me.DefaultFunctionModeDecimalPlaces
+    End Function
+
+    Private _FunctionRangeDecimalPlaces As Integer
+
+    ''' <summary> Gets or sets the function range decimal places. </summary>
+    ''' <value> The function range decimal places. </value>
+    Public Property FunctionRangeDecimalPlaces As Integer
+        Get
+            Return Me._FunctionRangeDecimalPlaces
+        End Get
+        Set(value As Integer)
+            If Me.FunctionRangeDecimalPlaces <> value Then
+                Me._FunctionRangeDecimalPlaces = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the default unit. </summary>
+    ''' <value> The default unit. </value>
+    Public Property DefaultFunctionUnit As Arebis.TypedUnits.Unit = Arebis.StandardUnits.ElectricUnits.Volt
+
+    ''' <summary> Parse units. </summary>
+    ''' <param name="functionMode"> The  Multimeter Function Mode. </param>
+    ''' <returns> An Arebis.TypedUnits.Unit. </returns>
+    Public Overridable Function ToUnit(ByVal functionMode As MeasureFunctionMode) As Arebis.TypedUnits.Unit
+        Dim result As Arebis.TypedUnits.Unit = Me.DefaultFunctionUnit
+        Select Case functionMode
+            Case MeasureFunctionMode.CurrentDC
+                result = Arebis.StandardUnits.ElectricUnits.Ampere
+            Case MeasureFunctionMode.VoltageDC
+                result = Arebis.StandardUnits.ElectricUnits.Volt
+            Case MeasureFunctionMode.Resistance
+                result = Arebis.StandardUnits.ElectricUnits.Ohm
+        End Select
+        Return result
+    End Function
+
+    Private _FunctionUnit As Arebis.TypedUnits.Unit
+    ''' <summary> Gets or sets the function mode unit. </summary>
+    ''' <value> The function unit. </value>
+    Public Property FunctionUnit As Arebis.TypedUnits.Unit
+        Get
+            Return Me.Amount.Unit
+        End Get
+        Set(value As Arebis.TypedUnits.Unit)
+            If Me.FunctionUnit <> value Then
+                Me._FunctionUnit = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
 #End Region
 
@@ -764,6 +850,110 @@ Public MustInherit Class MeasureSubsystemBase
     Public Function Measure() As Double?
         Me.Reading = Me.Query(Me.Reading, Me.MeasureQueryCommand)
         Return Me.Reading
+    End Function
+
+#End Region
+
+#Region " MEASURE UNIT "
+
+    ''' <summary> Gets or sets the default measurement unit. </summary>
+    ''' <value> The default measure unit. </value>
+    Public Property DefaultMeasurementUnit As Arebis.TypedUnits.Unit
+
+    ''' <summary> Gets or sets the function unit. </summary>
+    ''' <value> The function unit. </value>
+    Public Property MeasurementUnit As Arebis.TypedUnits.Unit
+        Get
+            Return Me.Amount.Unit
+        End Get
+        Set(value As Arebis.TypedUnits.Unit)
+            If Me.MeasurementUnit <> value Then
+                Me.Amount.Unit = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Converts a a measure unit to a measurement unit. </summary>
+    ''' <param name="value"> The Measure Unit. </param>
+    ''' <returns> Value as an Arebis.TypedUnits.Unit. </returns>
+    Public Function ToMeasurementUnit(ByVal value As Tsp2.MeasureUnit) As Arebis.TypedUnits.Unit
+        Dim result As Arebis.TypedUnits.Unit = Me.DefaultFunctionUnit
+        Select Case value
+            Case Tsp2.MeasureUnit.Ampere
+                result = Arebis.StandardUnits.ElectricUnits.Ampere
+            Case Tsp2.MeasureUnit.Volt
+                result = Arebis.StandardUnits.ElectricUnits.Volt
+            Case Tsp2.MeasureUnit.Ohm
+                result = Arebis.StandardUnits.ElectricUnits.Ohm
+            Case Tsp2.MeasureUnit.Watt
+                result = Arebis.StandardUnits.EnergyUnits.Watt
+        End Select
+        Return result
+    End Function
+
+    ''' <summary> Writes and reads back the Measure Unit. </summary>
+    ''' <param name="value"> The  Measure Unit. </param>
+    ''' <returns> The <see cref="MeasurementUnit">Measure Unit</see> or none if unknown. </returns>
+    Public Function ApplyMeasureUnit(ByVal value As MeasureUnit) As MeasureUnit?
+        Me.WriteMeasureUnit(value)
+        Return Me.QueryMeasureUnit
+    End Function
+
+    ''' <summary> The Unit. </summary>
+    Private _MeasureUnit As MeasureUnit?
+
+    ''' <summary> Gets or sets the cached measure Unit.  This is the actual unit for measurement. </summary>
+    ''' <value> The <see cref="MeasurementUnit">Measure Unit</see> or none if not set or
+    ''' unknown. </value>
+    Public Overloads Property MeasureUnit As MeasureUnit?
+        Get
+            Return Me._MeasureUnit
+        End Get
+        Protected Set(ByVal value As MeasureUnit?)
+            If Not Nullable.Equals(Me.MeasureUnit, value) Then
+                Me._MeasureUnit = value
+                If value.HasValue Then
+                    Me.MeasurementUnit = Me.ToMeasurementUnit(value.Value)
+                End If
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the Measure Unit query command. </summary>
+    ''' <value> The Unit query command. </value>
+    Protected Overridable ReadOnly Property MeasureUnitQueryCommand As String = "_G.smu.measure.unit"
+
+    ''' <summary> Queries the Measure Unit. </summary>
+    ''' <returns> The <see cref="MeasureUnit">Measure Unit</see> or none if unknown. </returns>
+    Public Overridable Function QueryMeasureUnit() As MeasureUnit?
+        Dim mode As String = Me.MeasureUnit.ToString
+        Me.Session.MakeEmulatedReplyIfEmpty(mode)
+        mode = Me.Session.QueryPrintTrimEnd(Me.MeasureUnitQueryCommand)
+        If String.IsNullOrWhiteSpace(mode) Then
+            Dim message As String = $"Failed fetching {NameOf(MeasureSubsystemBase)}.{NameOf(MeasureUnit)}"
+            Debug.Assert(Not Debugger.IsAttached, message)
+            Me.MeasureUnit = New MeasureUnit?
+        Else
+            Dim se As New StringEnumerator(Of MeasureUnit)
+            Me.MeasureUnit = se.ParseContained(mode.BuildDelimitedValue)
+        End If
+        Return Me.MeasureUnit
+    End Function
+
+    ''' <summary> Gets or sets the Measure Unit command format. </summary>
+    ''' <value> The Unit command format. </value>
+    Protected Overridable ReadOnly Property MeasureUnitCommandFormat As String = "_G.smu.measure.unit={0}"
+
+
+    ''' <summary> Writes the Measure Unit without reading back the value from the device. </summary>
+    ''' <param name="value"> The Unit. </param>
+    ''' <returns> The <see cref="MeasureUnit">Measure Unit</see> or none if unknown. </returns>
+    Public Overridable Function WriteMeasureUnit(ByVal value As MeasureUnit) As MeasureUnit?
+        Me.Session.WriteLine(Me.MeasureUnitCommandFormat, value.ExtractBetween())
+        Me.MeasureUnit = value
+        Return Me.MeasureUnit
     End Function
 
 #End Region
@@ -901,24 +1091,6 @@ Public MustInherit Class MeasureSubsystemBase
 
 #Region " RANGE "
 
-    ''' <summary> Gets or sets the function mode ranges. </summary>
-    ''' <value> The function mode ranges. </value>
-    Public ReadOnly Property FunctionModeRanges As MeasureFunctionRangeDictionary
-
-    Private _RangeRange As Core.Pith.RangeR
-    ''' <summary> The Range of the range. </summary>
-    Public Property RangeRange As Core.Pith.RangeR
-        Get
-            Return Me._RangeRange
-        End Get
-        Set(value As Core.Pith.RangeR)
-            If Me.RangeRange <> value Then
-                Me._RangeRange = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
     ''' <summary> The Range. </summary>
     Private _Range As Double?
 
@@ -966,7 +1138,7 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <param name="value"> The Range. </param>
     ''' <returns> The Range. </returns>
     Public Function WriteRange(ByVal value As Double) As Double?
-        value = If(value > RangeRange.Max, RangeRange.Max, If(value < RangeRange.Min, RangeRange.Min, value))
+        value = If(value > FunctionRange.Max, FunctionRange.Max, If(value < FunctionRange.Min, FunctionRange.Min, value))
         Me.Range = Me.Write(value, Me.RangeCommandFormat)
         Return Me.Range
     End Function
@@ -1023,92 +1195,6 @@ Public MustInherit Class MeasureSubsystemBase
     Public Function WriteRemoteSenseSelected(ByVal value As Boolean) As Boolean?
         Me.RemoteSenseSelected = Me.Write(value, Me.RemoteSenseSelectedCommandFormat)
         Return Me.RemoteSenseSelected
-    End Function
-
-#End Region
-
-#Region " UNIT "
-
-    ''' <summary> The Unit. </summary>
-    Private _Unit As MeasureUnit?
-
-    ''' <summary> Parse units. </summary>
-    ''' <param name="value"> The  Measure Unit. </param>
-    ''' <returns> An Arebis.TypedUnits.Unit. </returns>
-    Public Shared Function ParseUnits(ByVal value As MeasureUnit) As Arebis.TypedUnits.Unit
-        Select Case value
-            Case MeasureUnit.Ampere
-                Return Arebis.StandardUnits.ElectricUnits.Ampere
-            Case MeasureUnit.Volt
-                Return Arebis.StandardUnits.ElectricUnits.Volt
-            Case MeasureUnit.Ohm
-                Return Arebis.StandardUnits.ElectricUnits.Ohm
-            Case MeasureUnit.Watt
-                Return Arebis.StandardUnits.EnergyUnits.Watt
-            Case Else
-                Return Arebis.StandardUnits.ElectricUnits.Volt
-        End Select
-    End Function
-
-    ''' <summary> Writes and reads back the Measure Unit. </summary>
-    ''' <param name="value"> The  Measure Unit. </param>
-    ''' <returns> The <see cref="MeasureUnit">Measure Unit</see> or none if unknown. </returns>
-    Public Function ApplyUnit(ByVal value As MeasureUnit) As MeasureUnit?
-        Me.WriteUnit(value)
-        Return Me.QueryUnit
-    End Function
-
-    ''' <summary> Gets or sets the cached Unit. </summary>
-    ''' <value> The <see cref="MeasureUnit">Measure Unit</see> or none if not set or
-    ''' unknown. </value>
-    Public Overloads Property Unit As MeasureUnit?
-        Get
-            Return Me._Unit
-        End Get
-        Protected Set(ByVal value As MeasureUnit?)
-            If Not Nullable.Equals(Me.Unit, value) Then
-                Me._Unit = value
-                If value.HasValue Then
-                    Me.Amount.Unit = MeasureSubsystemBase.ParseUnits(value.Value)
-                End If
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Gets or sets the Unit query command. </summary>
-    ''' <value> The Unit query command. </value>
-    Protected Overridable ReadOnly Property UnitQueryCommand As String = "_G.smu.measure.unit"
-
-    ''' <summary> Queries the Measure Unit. </summary>
-    ''' <returns> The <see cref="MeasureUnit">Measure Unit</see> or none if unknown. </returns>
-    Public Overridable Function QueryUnit() As MeasureUnit?
-        Dim mode As String = Me.Unit.ToString
-        Me.Session.MakeEmulatedReplyIfEmpty(mode)
-        mode = Me.Session.QueryPrintTrimEnd(Me.UnitQueryCommand)
-        If String.IsNullOrWhiteSpace(mode) Then
-            Dim message As String = $"Failed fetching {NameOf(MeasureSubsystemBase)}.{NameOf(Unit)}"
-            Debug.Assert(Not Debugger.IsAttached, message)
-            Me.Unit = New MeasureUnit?
-        Else
-            Dim se As New StringEnumerator(Of MeasureUnit)
-            Me.Unit = se.ParseContained(mode.BuildDelimitedValue)
-        End If
-        Return Me.Unit
-    End Function
-
-    ''' <summary> Gets or sets the Unit command format. </summary>
-    ''' <value> The Unit command format. </value>
-    Protected Overridable ReadOnly Property UnitCommandFormat As String = "_G.smu.measure.unit={0}"
-
-
-    ''' <summary> Writes the Measure Unit without reading back the value from the device. </summary>
-    ''' <param name="value"> The Unit. </param>
-    ''' <returns> The <see cref="MeasureUnit">Measure Unit</see> or none if unknown. </returns>
-    Public Overridable Function WriteUnit(ByVal value As MeasureUnit) As MeasureUnit?
-        Me.Session.WriteLine(Me.UnitCommandFormat, value.ExtractBetween())
-        Me.Unit = value
-        Return Me.Unit
     End Function
 
 #End Region

@@ -200,6 +200,22 @@ Public Class MeasureSubsystem
 
 #Region " FUNCTION MODE "
 
+    ''' <summary> Converts a function Mode to a decimal places. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an Integer. </returns>
+    Public Overrides Function ToDecimalPlaces(functionMode As MeasureFunctionMode) As Integer
+        Dim result As Integer = MyBase.ToDecimalPlaces(functionMode)
+        Select Case functionMode
+            Case MeasureFunctionMode.CurrentDC
+                result = 3
+            Case MeasureFunctionMode.VoltageDC
+                result = 3
+            Case MeasureFunctionMode.Resistance
+                result = 0
+        End Select
+        Return result
+    End Function
+
     ''' <summary> Gets or sets the function mode query command. </summary>
     ''' <value> The function mode query command. </value>
     Protected Overrides ReadOnly Property FunctionModeQueryCommand As String = "_G.smu.measure.func"
@@ -270,14 +286,16 @@ Public Class MeasureSubsystem
 
     ''' <summary> Gets or sets the unit command. </summary>
     ''' <value> The unit query command. </value>
-    Protected Overrides ReadOnly Property UnitQueryCommand As String = "_G.smu.measure.unit"
+    Protected Overrides ReadOnly Property MeasureUnitQueryCommand As String = "_G.smu.measure.unit"
 
     ''' <summary> Gets or sets the unit command format. </summary>
     ''' <value> The unit command format. </value>
-    Protected Overrides ReadOnly Property UnitCommandFormat As String = "_G.smu.measure.unit={0}"
+    Protected Overrides ReadOnly Property MeasureUnitCommandFormat As String = "_G.smu.measure.unit={0}"
 
 #End Region
 
 #End Region
+
+
 
 End Class

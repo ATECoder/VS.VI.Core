@@ -305,9 +305,16 @@ Public Class K3700Control
             Case NameOf(subsystem.FunctionMode)
                 If Me._SenseFunctionComboBox.DataSource Is Nothing Then Me.DisplayFunctionModes()
                 Me._SenseFunctionComboBox.SelectedItem = subsystem.FunctionMode.GetValueOrDefault(VI.Tsp.MultimeterFunctionMode.VoltageDC).ValueDescriptionPair()
-                If Me.SelectedFunctionMode <> subsystem.FunctionMode.GetValueOrDefault(Me.SelectedFunctionMode) Then
-                    Me.OnSelectedFunctionModeChanged(subsystem.FunctionMode.Value)
-                End If
+            Case NameOf(subsystem.FunctionRange)
+                With Me._SenseRangeNumeric
+                    .Maximum = CDec(subsystem.FunctionRange.Max)
+                    .Minimum = CDec(subsystem.FunctionRange.Min)
+                End With
+            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+                Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
+            Case NameOf(subsystem.FunctionUnit)
+                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
+                Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
             Case NameOf(subsystem.OpenDetectorEnabled)
                 If subsystem.OpenDetectorEnabled.HasValue Then Me._OpenDetectorCheckBox.Checked = subsystem.OpenDetectorEnabled.Value
             Case NameOf(subsystem.PowerLineCycles)
@@ -318,9 +325,6 @@ Public Class K3700Control
                     .Minimum = 1000 * CDec(subsystem.PowerLineCyclesRange.Min)
                 End With
             Case NameOf(subsystem.Range)
-                If Me.SelectedFunctionMode <> subsystem.FunctionMode.GetValueOrDefault(Me.SelectedFunctionMode) Then
-                    Me.OnSelectedFunctionModeChanged(subsystem.FunctionMode.Value)
-                End If
                 If subsystem.Range.HasValue Then Me.SenseRangeSetter(subsystem.Range.Value)
             Case NameOf(subsystem.Reading)
                 Me.DisplayReading(subsystem)
@@ -921,29 +925,6 @@ Public Class K3700Control
         If value <= Me._SenseRangeNumeric.Maximum AndAlso value >= Me._SenseRangeNumeric.Minimum Then Me._SenseRangeNumeric.Value = CDec(value)
     End Sub
 
-    ''' <summary> Executes the selected function mode changed action. </summary>
-    ''' <param name="functionMode"> The function mode. </param>
-    Private Sub OnSelectedFunctionModeChanged(ByVal functionMode As MultimeterFunctionMode)
-        Dim format As String = "Range [{0}]:"
-        Me._SenseRangeNumericLabel.Text = MultimeterSubsystemBase.ParseUnits(functionMode).ToString
-        Me._SenseRangeNumericLabel.Text = String.Format(format, Me._SenseRangeNumericLabel.Text)
-        Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
-        With Me._SenseRangeNumeric
-            If Me.IsDeviceOpen Then
-                .Maximum = CDec(Me.Device.MultimeterSubsystem.FunctionModeRanges(functionMode).Max)
-                .Minimum = CDec(Me.Device.MultimeterSubsystem.FunctionModeRanges(functionMode).Min)
-                Select Case functionMode
-                    Case MultimeterFunctionMode.CurrentAC, MultimeterFunctionMode.CurrentDC
-                        .DecimalPlaces = 3
-                    Case MultimeterFunctionMode.VoltageAC, MultimeterFunctionMode.VoltageDC
-                        .DecimalPlaces = 3
-                    Case MultimeterFunctionMode.ResistanceCommonWire, MultimeterFunctionMode.ResistanceFourWire, MultimeterFunctionMode.ResistanceTwoWire
-                        .DecimalPlaces = 0
-                End Select
-            End If
-        End With
-    End Sub
-
     ''' <summary> Event handler. Called by _SenseFunctionComboBox for selected index changed
     ''' events. </summary>
     ''' <param name="sender"> Source of the event. </param>
@@ -953,7 +934,10 @@ Public Class K3700Control
         If _InitializingComponents Then Return
         Dim control As Windows.Forms.Control = TryCast(sender, Windows.Forms.Control)
         If control IsNot Nothing AndAlso control.Enabled Then
-            Me.OnSelectedFunctionModeChanged(Me.SelectedFunctionMode)
+            Dim functionMode As MultimeterFunctionMode = Me.SelectedFunctionMode
+            Me.Device.MultimeterSubsystem.FunctionUnit = Me.Device.MultimeterSubsystem.ToUnit(functionMode)
+            Me.Device.MultimeterSubsystem.FunctionRange = Me.Device.MultimeterSubsystem.ToRange(functionMode)
+            Me.Device.MultimeterSubsystem.FunctionRangeDecimalPlaces = Me.Device.MultimeterSubsystem.ToDecimalPlaces(functionMode)
         End If
     End Sub
 

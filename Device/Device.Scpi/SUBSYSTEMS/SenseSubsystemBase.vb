@@ -1,3 +1,4 @@
+Imports Arebis.TypedUnits
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.VI.ComboBoxExtensions
@@ -20,9 +21,6 @@ Public MustInherit Class SenseSubsystemBase
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me.RangeRange = isr.Core.Pith.RangeR.Full
-        Me.RangeSymbol = "V"
-        Me.RangeDecimalPlaces = 3
     End Sub
 
 #End Region
@@ -43,57 +41,25 @@ Public MustInherit Class SenseSubsystemBase
 
 #End Region
 
-#Region " SENSE RANGE "
-
-    Private _RangeRange As Core.Pith.RangeR
-    ''' <summary> The range of the range. </summary>
-    Public Property RangeRange As Core.Pith.RangeR
-        Get
-            Return Me._RangeRange
-        End Get
-        Set(value As Core.Pith.RangeR)
-            If Me.RangeRange <> value Then
-                Me._RangeRange = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    Private _RangeDecimalPlaces As Integer
-
-    ''' <summary> Gets or sets the range decimal places. </summary>
-    ''' <value> The range decimal places. </value>
-    Public Property RangeDecimalPlaces As Integer
-        Get
-            Return Me._RangeDecimalPlaces
-        End Get
-        Set(value As Integer)
-            If Me.RangeDecimalPlaces <> value Then
-                Me._RangeDecimalPlaces = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    Private _RangeSymbol As String
-
-    ''' <summary> Gets or sets the range symbol. </summary>
-    ''' <value> The range symbol. </value>
-    Public Property RangeSymbol As String
-        Get
-            Return Me._RangeSymbol
-        End Get
-        Set(value As String)
-            If Not String.Equals(Me.RangeSymbol, value, StringComparison.OrdinalIgnoreCase) Then
-                Me._RangeSymbol = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-#End Region
-
 #Region " FUNCTION MODE "
+
+    ''' <summary> Converts a function Mode to a unit. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> Function Mode as a Unit. </returns>
+    Public Overrides Function ToUnit(ByVal functionMode As Integer) As Unit
+        Dim result As Arebis.TypedUnits.Unit = Arebis.StandardUnits.ElectricUnits.Volt
+        Select Case functionMode
+            Case VI.Scpi.SenseFunctionModes.CurrentDC, VI.Scpi.SenseFunctionModes.Current, VI.Scpi.SenseFunctionModes.CurrentAC
+                result = Arebis.StandardUnits.ElectricUnits.Ampere
+            Case VI.Scpi.SenseFunctionModes.VoltageDC, VI.Scpi.SenseFunctionModes.Voltage, VI.Scpi.SenseFunctionModes.VoltageAC
+                result = Arebis.StandardUnits.ElectricUnits.Volt
+            Case VI.Scpi.SenseFunctionModes.FourWireResistance
+                result = Arebis.StandardUnits.ElectricUnits.Ohm
+            Case VI.Scpi.SenseFunctionModes.Resistance
+                result = Arebis.StandardUnits.ElectricUnits.Ohm
+        End Select
+        Return result
+    End Function
 
     ''' <summary> Returns the <see cref="SenseFunctionModes"></see> from the specified value. </summary>
     ''' <param name="value"> The Modes. </param>
@@ -120,6 +86,11 @@ Public MustInherit Class SenseSubsystemBase
             If Not Nullable.Equals(Me.FunctionMode, value) Then
                 Me._FunctionMode = value
                 Me.SafePostPropertyChanged()
+                If value.HasValue Then
+                    Me.FunctionUnit = Me.ToUnit(value.Value)
+                    Me.FunctionRange = Me.ToRange(value.Value)
+                    Me.FunctionRangeDecimalPlaces = Me.ToDecimalPlaces(value.Value)
+                End If
             End If
         End Set
     End Property
@@ -252,8 +223,8 @@ Public MustInherit Class SenseSubsystemBase
     '''           Assume a single function mode is defined. </summary>
     ''' <param name="functionMode"> The function mode. </param>
     ''' <param name="unit">         [in,out] The unit. </param>
-    ''' <returns> <c>True</c> if parsed. </returns>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
+    ''' <returns><c>True</c> if parsed. </returns>
+                                       <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
     Public Overloads Shared Function TryParse(ByVal functionMode As SenseFunctionModes, ByRef unit As Arebis.TypedUnits.Unit) As Boolean
         unit = SenseSubsystemBase.ParseUnits(functionMode)
         Return unit IsNot Nothing
@@ -278,23 +249,23 @@ Public MustInherit Class SenseSubsystemBase
 End Class
 
 ''' <summary>Specifies the sense function modes.</summary>
-<System.Flags()> Public Enum SenseFunctionModes
+                                           <System.Flags()> Public Enum SenseFunctionModes
     <ComponentModel.Description("Not specified")> None = 0
     <ComponentModel.Description("Voltage ('VOLT')")> Voltage = 1
-    <ComponentModel.Description("Current ('CURR')")> Current = SenseFunctionModes.Voltage << 1
-    <ComponentModel.Description("DC Voltage ('VOLT:DC')")> VoltageDC = SenseFunctionModes.Current << 1
-    <ComponentModel.Description("DC Current ('CURR:DC')")> CurrentDC = SenseFunctionModes.VoltageDC << 1
-    <ComponentModel.Description("AC Voltage ('VOLT:AC')")> VoltageAC = SenseFunctionModes.CurrentDC << 1
-    <ComponentModel.Description("AC Current ('CURR:AC')")> CurrentAC = SenseFunctionModes.VoltageAC << 1
-    <ComponentModel.Description("Resistance ('RES')")> Resistance = SenseFunctionModes.CurrentAC << 1
-    <ComponentModel.Description("Four-Wire Resistance ('FRES')")> FourWireResistance = SenseFunctionModes.Resistance << 1
-    <ComponentModel.Description("Temperature ('TEMP')")> Temperature = SenseFunctionModes.FourWireResistance << 1
-    <ComponentModel.Description("Frequency ('FREQ')")> Frequency = SenseFunctionModes.Temperature << 1
-    <ComponentModel.Description("Period ('PER')")> Period = SenseFunctionModes.Frequency << 1
-    <ComponentModel.Description("Continuity ('CONT')")> Continuity = SenseFunctionModes.Period << 1
-    <ComponentModel.Description("Timestamp element ('TIME')")> TimestampElement = SenseFunctionModes.Continuity << 1
-    <ComponentModel.Description("Status Element ('STAT')")> StatusElement = SenseFunctionModes.TimestampElement << 1
-    <ComponentModel.Description("Memory ('MEM')")> Memory = SenseFunctionModes.StatusElement << 1
-    <ComponentModel.Description("Diode ('DIOD')")> Diode = SenseFunctionModes.Memory << 1
+    <ComponentModel.Description("Current ('CURR')")> Current = SenseFunctionModes.Voltage <<1
+    <ComponentModel.Description("DC Voltage ('VOLT:DC')")> VoltageDC = SenseFunctionModes.Current <<1
+    <ComponentModel.Description("DC Current ('CURR:DC')")> CurrentDC = SenseFunctionModes.VoltageDC <<1
+    <ComponentModel.Description("AC Voltage ('VOLT:AC')")> VoltageAC = SenseFunctionModes.CurrentDC <<1
+    <ComponentModel.Description("AC Current ('CURR:AC')")> CurrentAC = SenseFunctionModes.VoltageAC <<1
+    <ComponentModel.Description("Resistance ('RES')")> Resistance = SenseFunctionModes.CurrentAC <<1
+    <ComponentModel.Description("Four-Wire Resistance ('FRES')")> FourWireResistance = SenseFunctionModes.Resistance <<1
+    <ComponentModel.Description("Temperature ('TEMP')")> Temperature = SenseFunctionModes.FourWireResistance <<1
+    <ComponentModel.Description("Frequency ('FREQ')")> Frequency = SenseFunctionModes.Temperature <<1
+    <ComponentModel.Description("Period ('PER')")> Period = SenseFunctionModes.Frequency <<1
+    <ComponentModel.Description("Continuity ('CONT')")> Continuity = SenseFunctionModes.Period <<1
+    <ComponentModel.Description("Timestamp element ('TIME')")> TimestampElement = SenseFunctionModes.Continuity <<1
+    <ComponentModel.Description("Status Element ('STAT')")> StatusElement = SenseFunctionModes.TimestampElement <<1
+    <ComponentModel.Description("Memory ('MEM')")> Memory = SenseFunctionModes.StatusElement <<1
+    <ComponentModel.Description("Diode ('DIOD')")> Diode = SenseFunctionModes.Memory <<1
 End Enum
 

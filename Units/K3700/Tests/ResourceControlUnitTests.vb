@@ -161,6 +161,11 @@ Public Class ResourceControlUnitTests
 
 #Region " ASSIGNED DEVICE TESTS "
 
+    ''' <summary> Assign device. </summary>
+    ''' <param name="trialNumber"> The trial number. </param>
+    ''' <param name="openFirst">   True to open first. </param>
+    ''' <param name="control">     The control. </param>
+    ''' <param name="device">      The device. </param>
     Private Shared Sub AssignDevice(ByVal trialNumber As Integer, ByVal openFirst As Boolean, ByVal control As K3700Control, ByVal device As Device)
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean

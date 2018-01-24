@@ -586,6 +586,17 @@ Public Class ResourcePanelBase
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Protected Overridable Sub DeviceInitialized(ByVal sender As Object, ByVal e As System.EventArgs)
+        Me.ReadServiceRequestStatus()
+    End Sub
+
+    ''' <summary> Reads a service request status. </summary>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Sub ReadServiceRequestStatus()
+        Try
+            Me.Device.StatusSubsystemBase.ReadServiceRequestStatus()
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading service request;. {ex.ToFullBlownString}")
+        End Try
     End Sub
 
     ''' <summary> Executes the title changed action. </summary>

@@ -31,7 +31,9 @@ Public MustInherit Class MultimeterSubsystemBase
         Me.FilterCountRange = Core.Pith.RangeI.FullNonNegative
         Me.FilterWindowRange = Core.Pith.RangeR.FullNonNegative
         Me.PowerLineCyclesRange = Core.Pith.RangeR.FullNonNegative
-        Me.RangeRange = Core.Pith.RangeR.Full
+        Me.FunctionUnit = Me.DefaultFunctionUnit
+        Me.FunctionRange = Me.DefaultFunctionRange
+        Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
     End Sub
 
     ''' <summary>
@@ -559,22 +561,6 @@ Public MustInherit Class MultimeterSubsystemBase
     ''' <summary> The function mode. </summary>
     Private _FunctionMode As MultimeterFunctionMode?
 
-    ''' <summary> Parse units. </summary>
-    ''' <param name="value"> The  Multimeter Function Mode. </param>
-    ''' <returns> An Arebis.TypedUnits.Unit. </returns>
-    Public Shared Function ParseUnits(ByVal value As MultimeterFunctionMode) As Arebis.TypedUnits.Unit
-        Select Case value
-            Case MultimeterFunctionMode.CurrentAC, MultimeterFunctionMode.CurrentDC
-                Return Arebis.StandardUnits.ElectricUnits.Ampere
-            Case MultimeterFunctionMode.VoltageAC, MultimeterFunctionMode.VoltageDC
-                Return Arebis.StandardUnits.ElectricUnits.Volt
-            Case MultimeterFunctionMode.ResistanceCommonWire, MultimeterFunctionMode.ResistanceFourWire, MultimeterFunctionMode.ResistanceTwoWire
-                Return Arebis.StandardUnits.ElectricUnits.Ohm
-            Case Else
-                Return Arebis.StandardUnits.ElectricUnits.Volt
-        End Select
-    End Function
-
     ''' <summary> Gets or sets the cached function mode. </summary>
     ''' <value> The <see cref="MultimeterFunctionMode">Multimeter Function Mode</see> or none if not set or
     ''' unknown. </value>
@@ -586,8 +572,9 @@ Public MustInherit Class MultimeterSubsystemBase
             If Not Nullable.Equals(Me.FunctionMode, value) Then
                 Me._FunctionMode = value
                 If value.HasValue Then
-                    Me.Amount.Unit = MultimeterSubsystemBase.ParseUnits(value.Value)
-                    Me._RangeRange = Me.FunctionModeRanges(value.Value)
+                    Me.FunctionUnit = Me.ToUnit(value.Value)
+                    Me.FunctionRange = Me.ToRange(value.Value)
+                    Me.FunctionRangeDecimalPlaces = Me.ToDecimalPlaces(value.Value)
                 End If
                 Me.SafePostPropertyChanged()
             End If
@@ -614,6 +601,100 @@ Public MustInherit Class MultimeterSubsystemBase
     ''' <param name="value"> The Function Mode. </param>
     ''' <returns> The <see cref="MultimeterFunctionMode">Multimeter Function Mode</see> or none if unknown. </returns>
     Public MustOverride Function WriteFunctionMode(ByVal value As MultimeterFunctionMode) As MultimeterFunctionMode?
+
+#End Region
+
+#Region " FUNCTION MODE RANGE "
+
+    ''' <summary> Gets or sets the function mode ranges. </summary>
+    ''' <value> The function mode ranges. </value>
+    Public ReadOnly Property FunctionModeRanges As FunctionRangeDictionary
+
+    ''' <summary> Gets or sets the default function range. </summary>
+    ''' <value> The default function range. </value>
+    Public Property DefaultFunctionRange As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
+
+    ''' <summary> Converts a functionMode to a range. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an isr.Core.Pith.RangeR. </returns>
+    Public Overridable Function ToRange(ByVal functionMode As MultimeterFunctionMode) As isr.Core.Pith.RangeR
+        Return Me.FunctionModeRanges(functionMode)
+    End Function
+
+    Private _FunctionRange As Core.Pith.RangeR
+    ''' <summary> The Range of the range. </summary>
+    Public Property FunctionRange As Core.Pith.RangeR
+        Get
+            Return Me._FunctionRange
+        End Get
+        Set(value As Core.Pith.RangeR)
+            If Me.FunctionRange <> value Then
+                Me._FunctionRange = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the default decimal places. </summary>
+    ''' <value> The default decimal places. </value>
+    Public Property DefaultFunctionModeDecimalPlaces As Integer = 3
+
+    ''' <summary> Converts a function Mode to a decimal places. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an Integer. </returns>
+    Public Overridable Function ToDecimalPlaces(ByVal functionMode As MultimeterFunctionMode) As Integer
+        Return Me.DefaultFunctionModeDecimalPlaces
+    End Function
+
+    Private _FunctionRangeDecimalPlaces As Integer
+
+    ''' <summary> Gets or sets the function range decimal places. </summary>
+    ''' <value> The function range decimal places. </value>
+    Public Property FunctionRangeDecimalPlaces As Integer
+        Get
+            Return Me._FunctionRangeDecimalPlaces
+        End Get
+        Set(value As Integer)
+            If Me.FunctionRangeDecimalPlaces <> value Then
+                Me._FunctionRangeDecimalPlaces = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the default unit. </summary>
+    ''' <value> The default unit. </value>
+    Public Property DefaultFunctionUnit As Arebis.TypedUnits.Unit = Arebis.StandardUnits.ElectricUnits.Volt
+
+    ''' <summary> Parse units. </summary>
+    ''' <param name="functionMode"> The  Multimeter Function Mode. </param>
+    ''' <returns> An Arebis.TypedUnits.Unit. </returns>
+    Public Overridable Function ToUnit(ByVal functionMode As MultimeterFunctionMode) As Arebis.TypedUnits.Unit
+        Dim result As Arebis.TypedUnits.Unit = Me.DefaultFunctionUnit
+        Select Case functionMode
+            Case MultimeterFunctionMode.CurrentAC, MultimeterFunctionMode.CurrentDC
+                result = Arebis.StandardUnits.ElectricUnits.Ampere
+            Case MultimeterFunctionMode.VoltageAC, MultimeterFunctionMode.VoltageDC
+                result = Arebis.StandardUnits.ElectricUnits.Volt
+            Case MultimeterFunctionMode.ResistanceCommonWire, MultimeterFunctionMode.ResistanceFourWire, MultimeterFunctionMode.ResistanceTwoWire
+                result = Arebis.StandardUnits.ElectricUnits.Ohm
+        End Select
+        Return result
+    End Function
+
+    ''' <summary> Gets or sets the function unit. </summary>
+    ''' <value> The function unit. </value>
+    Public Property FunctionUnit As Arebis.TypedUnits.Unit
+        Get
+            Return Me.Amount.Unit
+        End Get
+        Set(value As Arebis.TypedUnits.Unit)
+            If Me.FunctionUnit <> value Then
+                Me.Amount.Unit = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
 #End Region
 
@@ -791,24 +872,6 @@ Public MustInherit Class MultimeterSubsystemBase
 
 #Region " RANGE "
 
-    ''' <summary> Gets or sets the function mode ranges. </summary>
-    ''' <value> The function mode ranges. </value>
-    Public ReadOnly Property FunctionModeRanges As FunctionRangeDictionary
-
-    Private _RangeRange As Core.Pith.RangeR
-    ''' <summary> The Range of the range. </summary>
-    Public Property RangeRange As Core.Pith.RangeR
-        Get
-            Return Me._RangeRange
-        End Get
-        Set(value As Core.Pith.RangeR)
-            If Me.RangeRange <> value Then
-                Me._RangeRange = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
     ''' <summary> The Range. </summary>
     Private _Range As Double?
 
@@ -856,7 +919,7 @@ Public MustInherit Class MultimeterSubsystemBase
     ''' <param name="value"> The Range. </param>
     ''' <returns> The Range. </returns>
     Public Function WriteRange(ByVal value As Double) As Double?
-        value = If(value > RangeRange.Max, RangeRange.Max, If(value < RangeRange.Min, RangeRange.Min, value))
+        value = If(value > FunctionRange.Max, FunctionRange.Max, If(value < FunctionRange.Min, FunctionRange.Min, value))
         Me.Range = Me.Write(value, Me.RangeCommandFormat)
         Return Me.Range
     End Function

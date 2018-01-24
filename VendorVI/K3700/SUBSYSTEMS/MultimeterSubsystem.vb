@@ -1,5 +1,6 @@
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.VI.Tsp
 ''' <summary> Defines a Multimeter Subsystem for a Keithley 3700 instrument. </summary>
 ''' <license> (c) 2016 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -212,6 +213,22 @@ Public Class MultimeterSubsystem
 #End Region
 
 #Region " FUNCTION MODE "
+
+    ''' <summary> Converts a function Mode to a decimal places. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an Integer. </returns>
+    Public Overrides Function ToDecimalPlaces(functionMode As MultimeterFunctionMode) As Integer
+        Dim result As Integer = MyBase.ToDecimalPlaces(functionMode)
+        Select Case functionMode
+            Case MultimeterFunctionMode.CurrentAC, MultimeterFunctionMode.CurrentDC
+                result = 3
+            Case MultimeterFunctionMode.VoltageAC, MultimeterFunctionMode.VoltageDC
+                result = 3
+            Case MultimeterFunctionMode.ResistanceCommonWire, MultimeterFunctionMode.ResistanceFourWire, MultimeterFunctionMode.ResistanceTwoWire
+                result = 0
+        End Select
+        Return result
+    End Function
 
     ''' <summary> Queries the Multimeter Function Mode. </summary>
     ''' <returns> The <see cref="MultimeterFunctionMode">Multimeter Function Mode</see> or none if unknown. </returns>

@@ -422,15 +422,15 @@ Public Class K2000Control
             Case NameOf(subsystem.FunctionMode)
                 Me.OnFunctionModesChanged(subsystem)
                 Me.DisplayActiveReading()
-            Case NameOf(subsystem.RangeRange)
+            Case NameOf(subsystem.FunctionRange)
                 With Me._SenseRangeNumeric
-                    .Minimum = CDec(subsystem.RangeRange.Min)
-                    .Maximum = CDec(subsystem.RangeRange.Max)
+                    .Minimum = CDec(subsystem.FunctionRange.Min)
+                    .Maximum = CDec(subsystem.FunctionRange.Max)
                 End With
-            Case NameOf(subsystem.RangeDecimalPlaces)
-                Me._SenseRangeNumeric.DecimalPlaces = subsystem.RangeDecimalPlaces
-            Case NameOf(subsystem.RangeSymbol)
-                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.RangeSymbol}]:"
+            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+                Me._SenseRangeNumeric.DecimalPlaces = subsystem.FunctionRangeDecimalPlaces
+            Case NameOf(subsystem.FunctionUnit)
+                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
     End Sub
@@ -1347,7 +1347,11 @@ Public Class K2000Control
     Private Sub _SenseFunctionComboBox_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _SenseFunctionComboBox.SelectedIndexChanged
         If Me._InitializingComponents Then Return
         Dim control As Windows.Forms.Control = TryCast(sender, Windows.Forms.Control)
-        If control IsNot Nothing Then Me.Device.SenseSubsystem.UpdateFunctionModeRange(Me.SelectedFunctionMode)
+        If control IsNot Nothing Then
+            Me.Device.SenseSubsystem.FunctionUnit = Me.Device.SenseSubsystem.ToUnit(Me.SelectedFunctionMode)
+            Me.Device.SenseSubsystem.FunctionRange = Me.Device.SenseSubsystem.ToRange(Me.SelectedFunctionMode)
+            Me.Device.SenseSubsystem.FunctionRangeDecimalPlaces = Me.Device.SenseSubsystem.ToDecimalPlaces(Me.SelectedFunctionMode)
+        End If
     End Sub
 
     ''' <summary>

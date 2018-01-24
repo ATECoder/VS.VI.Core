@@ -100,41 +100,41 @@ Public Class SenseSubsystem
 
 #Region " FUNCTION MODE "
 
-    ''' <summary> Gets or sets the cached Sense Function Mode. </summary>
-    ''' <value> The Function Mode or null if unknown. </value>
-    Public Overrides Property FunctionMode As SenseFunctionModes?
-        Get
-            Return MyBase.FunctionMode
-        End Get
-        Protected Set(value As SenseFunctionModes?)
-            MyBase.FunctionMode = value
-            If value.HasValue Then Me.UpdateFunctionModeRange(value.Value)
-        End Set
-    End Property
-
-    ''' <summary> Updates the function mode range described by value. </summary>
-    ''' <param name="value"> The value. </param>
-    Public Sub UpdateFunctionModeRange(value As VI.Scpi.SenseFunctionModes)
-        Dim symbol As String = "?"
-        Select Case value
+    ''' <summary> Converts a functionMode to a range. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an isr.Core.Pith.RangeR. </returns>
+    Public Overrides Function ToRange(ByVal functionMode As Integer) As isr.Core.Pith.RangeR
+        Dim result As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
+        Select Case functionMode
             Case VI.Scpi.SenseFunctionModes.CurrentDC, VI.Scpi.SenseFunctionModes.Current, VI.Scpi.SenseFunctionModes.CurrentAC
-                Me.RangeSymbol = "A"
-                Me.RangeDecimalPlaces = 3
-                Me.RangeRange = New Core.Pith.RangeR(0, 10)
+                result = New Core.Pith.RangeR(0, 10)
             Case VI.Scpi.SenseFunctionModes.VoltageDC, VI.Scpi.SenseFunctionModes.Voltage, VI.Scpi.SenseFunctionModes.VoltageAC
-                Me.RangeSymbol = "V"
-                Me.RangeDecimalPlaces = 3
-                Me.RangeRange = New Core.Pith.RangeR(0, 1000)
+                result = New Core.Pith.RangeR(0, 1000)
             Case VI.Scpi.SenseFunctionModes.FourWireResistance
-                Me.RangeSymbol = Arebis.StandardUnits.UnitSymbols.Omega
-                Me.RangeDecimalPlaces = 0
-                Me.RangeRange = New Core.Pith.RangeR(0, 2000000)
+                result = New Core.Pith.RangeR(0, 2000000)
             Case VI.Scpi.SenseFunctionModes.Resistance
-                Me.RangeSymbol = Arebis.StandardUnits.UnitSymbols.Omega
-                Me.RangeDecimalPlaces = 0
-                Me.RangeRange = New Core.Pith.RangeR(0, 1000000000D)
+                result = New Core.Pith.RangeR(0, 1000000000D)
         End Select
-    End Sub
+        Return result
+    End Function
+
+    ''' <summary> Converts a functionMode to a decimal places. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an Integer. </returns>
+    Public Overrides Function ToDecimalPlaces(ByVal functionMode As Integer) As Integer
+        Dim result As Integer = 3
+        Select Case functionMode
+            Case VI.Scpi.SenseFunctionModes.CurrentDC, VI.Scpi.SenseFunctionModes.Current, VI.Scpi.SenseFunctionModes.CurrentAC
+                result = 3
+            Case VI.Scpi.SenseFunctionModes.VoltageDC, VI.Scpi.SenseFunctionModes.Voltage, VI.Scpi.SenseFunctionModes.VoltageAC
+                result = 3
+            Case VI.Scpi.SenseFunctionModes.FourWireResistance
+                result = 0
+            Case VI.Scpi.SenseFunctionModes.Resistance
+                result = 0
+        End Select
+        Return result
+    End Function
 
 #End Region
 
