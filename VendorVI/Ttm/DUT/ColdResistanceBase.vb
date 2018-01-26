@@ -52,7 +52,7 @@ Public MustInherit Class ColdResistanceBase
     ''' <returns> <c>True</c> if <paramref name="obj" /> and this instance are the same type and represent the
     ''' same value; otherwise, <c>False</c>. </returns>
     Public Overloads Overrides Function Equals(ByVal obj As Object) As Boolean
-        Return obj IsNot Nothing AndAlso (Object.ReferenceEquals(Me, obj) OrElse ColdResistanceBase.Equals(Me, TryCast(obj, ColdResistanceBase)))
+        Return Me.Equals(TryCast(obj, ColdResistanceBase))
     End Function
 
     ''' <summary> Indicates whether the current <see cref="T:ColdResistanceBase"></see> value is
@@ -79,7 +79,7 @@ Public MustInherit Class ColdResistanceBase
     ''' <param name="right"> The right. </param>
     ''' <returns> The result of the operation. </returns>
     Public Shared Operator =(ByVal left As ColdResistanceBase, ByVal right As ColdResistanceBase) As Boolean
-        Return ((left Is Nothing) AndAlso (right Is Nothing)) OrElse (left IsNot Nothing) AndAlso left.Equals(right)
+        Return (CObj(left) Is CObj(right)) OrElse (left IsNot Nothing AndAlso left.Equals(right))
     End Operator
 
     ''' <summary> Implements the operator &lt;&gt;. </summary>
@@ -87,7 +87,7 @@ Public MustInherit Class ColdResistanceBase
     ''' <param name="right"> The right. </param>
     ''' <returns> The result of the operation. </returns>
     Public Shared Operator <>(ByVal left As ColdResistanceBase, ByVal right As ColdResistanceBase) As Boolean
-        Return ((left Is Nothing) AndAlso (right IsNot Nothing)) OrElse Not ((left IsNot Nothing) AndAlso left.Equals(right))
+        Return ((CObj(left) IsNot CObj(right)) AndAlso (left Is Nothing OrElse Not left.Equals(right)))
     End Operator
 
 #End Region

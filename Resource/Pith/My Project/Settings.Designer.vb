@@ -56,7 +56,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("17.0.0f0")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("17.5.0f0")>  _
         Public Property FoundationSystemFileVersion() As String
             Get
                 Return CType(Me("FoundationSystemFileVersion"),String)
@@ -80,7 +80,7 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("17.0.0.0")>  _
+         Global.System.Configuration.DefaultSettingValueAttribute("17.5.0")>  _
         Public Property NatioalInsrumentVisaVersion() As String
             Get
                 Return CType(Me("NatioalInsrumentVisaVersion"),String)

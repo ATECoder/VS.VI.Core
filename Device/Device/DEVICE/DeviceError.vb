@@ -177,12 +177,14 @@ Public Class DeviceError
     ''' <returns> <c>True</c> if <paramref name="obj" /> and this instance are the same type and represent the
     ''' same value; otherwise, <c>False</c>. </returns>
     Public Overloads Overrides Function Equals(ByVal obj As Object) As Boolean
-        Return obj IsNot Nothing AndAlso (Object.ReferenceEquals(Me, obj) OrElse DeviceError.Equals(Me, TryCast(obj, DeviceError)))
+        Return Me.Equals(TryCast(obj, DeviceError))
     End Function
 
     ''' <summary> Indicates whether the current <see cref="T:DeviceError"></see> value is equal to a
     ''' specified object. </summary>
     ''' <remarks> The two Parameters are the same if they have the same actual and cached values. </remarks>
+
+
     ''' <param name="value"> The value to compare. </param>
     ''' <returns> <c>True</c> if the other parameter is equal to the current
     ''' <see cref="T:DeviceError"></see> value;
@@ -202,7 +204,7 @@ Public Class DeviceError
     ''' <param name="right"> The right. </param>
     ''' <returns> The result of the operation. </returns>
     Public Shared Operator =(ByVal left As DeviceError, ByVal right As DeviceError) As Boolean
-        Return ((left Is Nothing) AndAlso (right Is Nothing)) OrElse (left IsNot Nothing) AndAlso left.Equals(right)
+        Return (CObj(left) Is CObj(right)) OrElse (left IsNot Nothing AndAlso left.Equals(right))
     End Operator
 
     ''' <summary> Implements the operator &lt;&gt;. </summary>
@@ -210,7 +212,7 @@ Public Class DeviceError
     ''' <param name="right"> The right. </param>
     ''' <returns> The result of the operation. </returns>
     Public Shared Operator <>(ByVal left As DeviceError, ByVal right As DeviceError) As Boolean
-        Return ((left Is Nothing) AndAlso (right IsNot Nothing)) OrElse Not ((left IsNot Nothing) AndAlso left.Equals(right))
+        Return ((CObj(left) IsNot CObj(right)) AndAlso (left Is Nothing OrElse Not left.Equals(right)))
     End Operator
 
 #End Region
