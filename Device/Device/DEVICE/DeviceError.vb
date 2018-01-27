@@ -183,8 +183,6 @@ Public Class DeviceError
     ''' <summary> Indicates whether the current <see cref="T:DeviceError"></see> value is equal to a
     ''' specified object. </summary>
     ''' <remarks> The two Parameters are the same if they have the same actual and cached values. </remarks>
-
-
     ''' <param name="value"> The value to compare. </param>
     ''' <returns> <c>True</c> if the other parameter is equal to the current
     ''' <see cref="T:DeviceError"></see> value;
