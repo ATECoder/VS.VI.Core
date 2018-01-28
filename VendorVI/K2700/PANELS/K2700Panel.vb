@@ -592,6 +592,10 @@ Public Class K2700Panel
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
                 End If
+            Case NameOf(subsystem.ServiceRequestStatus)
+               ' Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
+            Case NameOf(subsystem.StandardEventStatus)
+                'Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
 
@@ -605,16 +609,6 @@ Public Class K2700Panel
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
-        End Try
-    End Sub
-
-    ''' <summary> Reads a service request status. </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Sub ReadServiceRequestStatus()
-        Try
-            Me.Device.StatusSubsystem.ReadServiceRequestStatus()
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 

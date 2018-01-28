@@ -76,11 +76,6 @@ Public Class BridgeMeterControl
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                Try
-                    If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
-                Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
-                End Try
                 ' the device gets disposed in the base class!
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
@@ -124,19 +119,12 @@ Public Class BridgeMeterControl
     ''' <summary> Assign device. </summary>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Private Sub _AssignDevice(ByVal value As Device)
-        MyBase.DeviceBase = value
         Me._Device = value
         If value IsNot Nothing Then
             value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            If value.IsDeviceOpen Then
-                Me.DeviceOpened(value, System.EventArgs.Empty)
-                Me.DeviceInitialized(value, System.EventArgs.Empty)
-            End If
-            Me.OnDeviceOpenChanged(value)
-            Me.AssignTalker(value.Talker)
-            Me.ApplyListenerTraceLevel(ListenerType.Display, value.Talker.TraceShowLevel)
         End If
+        ' the device base class addresses the device open state.
+        MyBase.DeviceBase = value
     End Sub
 
     ''' <summary> Assigns a device. </summary>
@@ -144,6 +132,13 @@ Public Class BridgeMeterControl
     Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
         Me.Device = value
+    End Sub
+
+    ''' <summary> Releases the device. </summary>
+    ''' <remarks> Called from the base device to release the reference to the device. </remarks>
+    Protected Overrides Sub ReleaseDevice()
+        MyBase.ReleaseDevice()
+        Me._Device = Nothing
     End Sub
 
 #End Region
@@ -154,9 +149,16 @@ Public Class BridgeMeterControl
     Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
         Me._ConfigureGroupBox.Enabled = Me.IsDeviceOpen 
         Me._MeasureGroupBox.Enabled = Me.IsDeviceOpen
+        Me._MeasureGroupBox.Enabled = Me.IsDeviceOpen AndAlso
+                                        Me.Device.MultimeterSubsystem.FunctionMode.HasValue AndAlso
+                                        Me.Device.MultimeterSubsystem.FunctionMode.Value = MultimeterFunctionMode.ResistanceFourWire
         If Me.IsDeviceOpen Then
             Me.Bridge.DisplayValues(Me._DataGrid)
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Device.StatusSubsystem.VersionInfo.Model} is open")
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            If Not Me.TryConfigureMeter(e) Then
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Files configuring meter;. Details: {e.Details}")
+            End If
         End If
     End Sub
 
@@ -183,31 +185,6 @@ Public Class BridgeMeterControl
         AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
         AddHandler Me.Device.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
         MyBase.DeviceOpened(sender, e)
-    End Sub
-
-    ''' <summary> Device initialized. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    Protected Overrides Sub DeviceInitialized(ByVal sender As Object, ByVal e As System.EventArgs)
-        Try
-            MyBase.DeviceInitialized(sender, e)
-            Me.OnSubSystemInitialized(Me.Device.MultimeterSubsystem)
-            Me.ReadServiceRequestStatus()
-        Catch
-            Throw
-        Finally
-        End Try
-    End Sub
-
-    ''' <summary> Executes the title changed action. </summary>
-    ''' <param name="value"> True to show or False to hide the control. </param>
-    Protected Overrides Sub OnTitleChanged(ByVal value As String)
-        'Me._TitleLabel.Text = value
-        'Me._TitleLabel.Visible = Not String.IsNullOrWhiteSpace(value)
-        If String.IsNullOrWhiteSpace(value) Then
-            Stop
-        End If
-        MyBase.OnTitleChanged(value)
     End Sub
 
     ''' <summary> Event handler. Called when device is closing. </summary>
@@ -289,24 +266,6 @@ Public Class BridgeMeterControl
 
     End Sub
 
-    ''' <summary> Executes the subsystem initialized action. </summary>
-    ''' <param name="subsystem"> The subsystem. </param>
-    Private Sub OnSubSystemInitialized(ByVal subsystem As MultimeterSubsystem)
-        If subsystem Is Nothing Then Return
-        With Me._PowerLineCyclesNumeric
-            .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
-            .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
-        End With
-        With Me._FilterCountNumeric
-            .Maximum = CDec(subsystem.FilterCountRange.Max)
-            .Minimum = CDec(subsystem.FilterCountRange.Min)
-        End With
-        'With Me._FilterWindowNumeric
-        '.Maximum = 100 * CDec(subsystem.FilterWindowRange.Max)
-        '.Minimum = 100 * CDec(subsystem.FilterWindowRange.Min)
-        'End With
-    End Sub
-
     ''' <summary> Handles the Multimeter subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
@@ -316,10 +275,26 @@ Public Class BridgeMeterControl
         Select Case propertyName
             Case NameOf(subsystem.FilterCount)
                 If subsystem.FilterCount.HasValue Then Me._FilterCountNumeric.Value = subsystem.FilterCount.Value
+            Case NameOf(subsystem.FilterCountRange)
+                With Me._FilterCountNumeric
+                    .Maximum = CDec(subsystem.FilterCountRange.Max)
+                    .Minimum = CDec(subsystem.FilterCountRange.Min)
+                    .DecimalPlaces = 0
+                End With
             Case NameOf(subsystem.FilterWindow)
                 'If subsystem.FilterWindow.HasValue Then Me._FilterWindowNumeric.Value = CDec(100 * subsystem.FilterWindow.Value)
+            Case NameOf(subsystem.FunctionMode)
+                Me._MeasureGroupBox.Enabled = Me.IsDeviceOpen AndAlso
+                                                Me.Device.MultimeterSubsystem.FunctionMode.HasValue AndAlso
+                                                Me.Device.MultimeterSubsystem.FunctionMode.Value = MultimeterFunctionMode.ResistanceFourWire
             Case NameOf(subsystem.PowerLineCycles)
                 If subsystem.PowerLineCycles.HasValue Then Me._PowerLineCyclesNumeric.Value = CDec(subsystem.PowerLineCycles.Value)
+            Case NameOf(subsystem.PowerLineCyclesRange)
+                With Me._PowerLineCyclesNumeric
+                    .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
+                    .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
+                    .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
+                End With
             Case NameOf(subsystem.Reading)
                 Me.DisplayReading(subsystem)
         End Select

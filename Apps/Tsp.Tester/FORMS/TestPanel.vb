@@ -539,6 +539,10 @@ Public Class TestPanel
                     Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                        "{0} error {1};. ", Me.ResourceName, subsystem.LastDeviceError.CompoundErrorMessage)
                 End If
+            Case NameOf(subsystem.ServiceRequestStatus)
+                'Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
+            Case NameOf(subsystem.StandardEventStatus)
+                'Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
 

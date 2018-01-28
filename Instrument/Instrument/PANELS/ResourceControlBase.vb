@@ -432,9 +432,8 @@ Public Class ResourceControlBase
             AddHandler Me.DeviceBase.Closed, AddressOf Me.DeviceClosed
             AddHandler Me.DeviceBase.Initialized, AddressOf Me.DeviceInitialized
             AddHandler Me.DeviceBase.Initializing, AddressOf Me.DeviceInitializing
-            If Me.DeviceBase.ResourcesFilter IsNot Nothing Then
-                Me.Connector.ResourcesFilter = Me.DeviceBase.ResourcesFilter
-            End If
+            Me.Connector.ResourcesFilter = If(Me.DeviceBase.ResourcesFilter, Me.DeviceBase.ResourcesFilter)
+            Me.Connector.IsConnected = value.IsDeviceOpen
             Me.ResourceName = Me.DeviceBase.ResourceName
             Me.ResourceTitle = Me.DeviceBase.ResourceTitle
             Me.StatusSubsystem = Me.DeviceBase.StatusSubsystemBase
@@ -520,6 +519,9 @@ Public Class ResourceControlBase
     ''' <summary> Executes the device open changed action. 
     '''           The open event occurs after all subsystems are created. </summary>
     Protected Overridable Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
+        If device IsNot Nothing Then
+            Me.Connector.IsConnected = device.IsDeviceOpen
+        End If
     End Sub
 
     ''' <summary> Handle the device property changed event. </summary>
@@ -639,6 +641,7 @@ Public Class ResourceControlBase
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     Protected Overridable Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
+        Me.Connector.IsConnected = Me.IsDeviceOpen
         Me.ResourceName = Me.DeviceBase.ResourceName
         If Not String.IsNullOrEmpty(Me.ResourceTitle) Then Me.DeviceBase.Session.ResourceTitle = Me.ResourceTitle
         Dim outcome As TraceEventType = TraceEventType.Information

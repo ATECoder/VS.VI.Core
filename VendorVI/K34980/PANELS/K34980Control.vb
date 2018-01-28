@@ -395,16 +395,6 @@ Public Class K34980Control
     End Sub
 
     Private Sub OnFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
-        With Me._SenseRangeNumeric
-            .Minimum = CDec(value.ValueRange.Min)
-            .Maximum = CDec(value.ValueRange.Max)
-            .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.ValueRange.Min)))
-        End With
-        With Me._PowerLineCyclesNumeric
-            .Minimum = CDec(value.PowerLineCyclesRange.Min)
-            .Maximum = CDec(value.PowerLineCyclesRange.Max)
-            .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.PowerLineCyclesRange.Min)))
-        End With
         With value
             .QueryRange()
             .QueryAutoRangeEnabled()
@@ -448,16 +438,8 @@ Public Class K34980Control
         If subsystem IsNot Nothing AndAlso subsystem.FunctionMode.HasValue Then
             Dim value As VI.Scpi.SenseFunctionModes = subsystem.FunctionMode.GetValueOrDefault(VI.Scpi.SenseFunctionModes.None)
             If value <> VI.Scpi.SenseFunctionModes.None Then
-                If Not VI.Scpi.SenseSubsystemBase.TryParse(value, Me.Device.MeasureSubsystem.Readings.Reading.Unit) Then
-                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                       "Failed parsing function mode '{0}' to a standard unit.", subsystem.FunctionMode.Value)
-                    Me.Device.MeasureSubsystem.Readings.Reading.Unit = Arebis.StandardUnits.ElectricUnits.Volt
-                End If
-                subsystem.Readings.Reading.Unit = Me.Device.MeasureSubsystem.Readings.Reading.Unit
-                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.Readings.Reading.Unit.Symbol}]:"
-                Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
                 Me._SenseFunctionComboBox.SafeSelectItem(value, value.Description)
-                Me.onFunctionModesChanged(value)
+                Me.OnFunctionModesChanged(value)
             End If
         End If
     End Sub
@@ -475,8 +457,20 @@ Public Class K34980Control
             Case NameOf(subsystem.SupportedFunctionModes)
                 Me.onSupportedFunctionModesChanged(subsystem)
             Case NameOf(subsystem.FunctionMode)
-                Me.onFunctionModesChanged(subsystem)
+                Me.OnFunctionModesChanged(subsystem)
                 Me.DisplayActiveReading()
+            Case NameOf(subsystem.FunctionRange)
+                With Me._SenseRangeNumeric
+                    .Maximum = CDec(subsystem.FunctionRange.Max)
+                    .Minimum = CDec(subsystem.FunctionRange.Min)
+                End With
+            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+                Me._SenseRangeNumeric.DecimalPlaces = subsystem.FunctionRangeDecimalPlaces
+            Case NameOf(subsystem.FunctionUnit)
+                Me.Device.MeasureSubsystem.Readings.Reading.Unit = subsystem.FunctionUnit
+                subsystem.Readings.Reading.Unit = subsystem.FunctionUnit
+                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
+                Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
     End Sub
 
@@ -516,10 +510,26 @@ Public Class K34980Control
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
+            Case NameOf(subsystem.PowerLineCyclesRange)
+                With Me._PowerLineCyclesNumeric
+                    .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
+                    .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
+                    .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
+                End With
             Case NameOf(subsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
+            Case NameOf(subsystem.FunctionRange)
+                With Me._SenseRangeNumeric
+                    .Maximum = CDec(subsystem.FunctionRange.Max)
+                    .Minimum = CDec(subsystem.FunctionRange.Min)
+                End With
+            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+                Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
+            Case NameOf(subsystem.FunctionUnit)
+                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
+                Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
     End Sub
 
@@ -559,10 +569,26 @@ Public Class K34980Control
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
+            Case NameOf(subsystem.PowerLineCyclesRange)
+                With Me._PowerLineCyclesNumeric
+                    .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
+                    .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
+                    .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
+                End With
             Case NameOf(subsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
+            Case NameOf(subsystem.FunctionRange)
+                With Me._SenseRangeNumeric
+                    .Maximum = CDec(subsystem.FunctionRange.Max)
+                    .Minimum = CDec(subsystem.FunctionRange.Min)
+                End With
+            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+                Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
+            Case NameOf(subsystem.FunctionUnit)
+                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
+                Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
     End Sub
 
@@ -602,10 +628,26 @@ Public Class K34980Control
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
+            Case NameOf(subsystem.PowerLineCyclesRange)
+                With Me._PowerLineCyclesNumeric
+                    .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
+                    .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
+                    .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
+                End With
             Case NameOf(subsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
+            Case NameOf(subsystem.FunctionRange)
+                With Me._SenseRangeNumeric
+                    .Maximum = CDec(subsystem.FunctionRange.Max)
+                    .Minimum = CDec(subsystem.FunctionRange.Min)
+                End With
+            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+                Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
+            Case NameOf(subsystem.FunctionUnit)
+                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
+                Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
     End Sub
 
@@ -645,10 +687,26 @@ Public Class K34980Control
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
+            Case NameOf(subsystem.PowerLineCyclesRange)
+                With Me._PowerLineCyclesNumeric
+                    .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
+                    .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
+                    .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
+                End With
             Case NameOf(subsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
+            Case NameOf(subsystem.FunctionRange)
+                With Me._SenseRangeNumeric
+                    .Maximum = CDec(subsystem.FunctionRange.Max)
+                    .Minimum = CDec(subsystem.FunctionRange.Min)
+                End With
+            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+                Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
+            Case NameOf(subsystem.FunctionUnit)
+                Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
+                Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
     End Sub
 

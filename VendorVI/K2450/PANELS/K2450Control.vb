@@ -318,7 +318,8 @@ Public Class K2450Control
             Case NameOf(subsystem.PowerLineCyclesRange)
                 With Me._PowerLineCyclesNumeric
                     .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
-                    .Minimum = 1000 * CDec(subsystem.PowerLineCyclesRange.Min)
+                    .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
+                    .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
                 End With
             Case NameOf(subsystem.Range)
                 If subsystem.Range.HasValue Then Me.SenseRangeSetter(subsystem.Range.Value)

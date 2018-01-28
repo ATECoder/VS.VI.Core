@@ -29,10 +29,10 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Me.AutoZeroEnabled = True
         Me.AutoRangeEnabled = True
         Me.PowerLineCycles = 1
-        Me.PowerLineCyclesRange = isr.Core.Pith.RangeR.FullNonNegative
-        Me.ValueRange = isr.Core.Pith.RangeR.Full
-        Me.ValueSymbol = "V"
-        Me.ValueDecimalPlaces = 3
+        Me.PowerLineCyclesRange = isr.Core.Pith.RangeR.FullNonnegative
+        Me.FunctionRange = Me.DefaultFunctionRange
+        Me.FunctionUnit = Me.DefaultFunctionUnit
+        Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
     End Sub
 
 #End Region
@@ -486,6 +486,14 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #Region " POWER LINE CYCLES (NPLC) "
 
+    ''' <summary> Gets the power line cycles decimal places. </summary>
+    ''' <value> The power line decimal places. </value>
+    Public ReadOnly Property PowerLineCyclesDecimalPlaces As Integer
+        Get
+            Return CInt(Math.Max(0, 1 - Math.Log10(Me.PowerLineCyclesRange.Min)))
+        End Get
+    End Property
+
     Private _PowerLineCyclesRange As Core.Pith.RangeR
     ''' <summary> The Range of the power line cycles. </summary>
     Public Property PowerLineCyclesRange As Core.Pith.RangeR
@@ -493,26 +501,9 @@ Public MustInherit Class SenseFunctionSubsystemBase
             Return Me._PowerLineCyclesRange
         End Get
         Set(value As Core.Pith.RangeR)
-            If Me.PowerLineCyclesRange <> value Then
-                Me._PowerLineCyclesRange = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    Private _PowerLineCyclesDecimalPlaces As Integer
-
-    ''' <summary> Gets or sets the value decimal places. </summary>
-    ''' <value> The value decimal places. </value>
-    Public Property PowerLineCyclesDecimalPlaces As Integer
-        Get
-            Return Me._PowerLineCyclesDecimalPlaces
-        End Get
-        Set(value As Integer)
-            If Me.PowerLineCyclesDecimalPlaces <> value Then
-                Me._PowerLineCyclesDecimalPlaces = value
-                Me.SafePostPropertyChanged()
-            End If
+            ' force a unit change as the value needs to be updated when the subsystem is switched.
+            Me._PowerLineCyclesRange = value
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -540,10 +531,9 @@ Public MustInherit Class SenseFunctionSubsystemBase
             Return Me._PowerLineCycles
         End Get
         Protected Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.PowerLineCycles, value) Then
-                Me._PowerLineCycles = value
-                Me.SafePostPropertyChanged()
-            End If
+            ' force a unit change as the value needs to be updated when the subsystem is switched.
+            Me._PowerLineCycles = value
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -581,50 +571,69 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #End Region
 
-#Region " RANGE "
+#Region " FUNCTION MODE RANGE "
 
-    Private _ValueRange As Core.Pith.RangeR
-    ''' <summary> The value range. </summary>
-    Public Property ValueRange As Core.Pith.RangeR
+    ''' <summary> Gets or sets the default function range. </summary>
+    ''' <value> The default function range. </value>
+    Public Property DefaultFunctionRange As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
+
+    Private _FunctionRange As Core.Pith.RangeR
+    ''' <summary> The Range of the range. </summary>
+    Public Property FunctionRange As Core.Pith.RangeR
         Get
-            Return Me._ValueRange
+            Return Me._FunctionRange
         End Get
         Set(value As Core.Pith.RangeR)
-            If Me.ValueRange <> value Then
-                Me._ValueRange = value
-                Me.SafePostPropertyChanged()
-            End If
+            ' force a unit change as the value needs to be updated when the subsystem is switched.
+            Me._FunctionRange = value
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
-    Private _ValueDecimalPlaces As Integer
+    ''' <summary> Gets or sets the default decimal places. </summary>
+    ''' <value> The default decimal places. </value>
+    Public Property DefaultFunctionModeDecimalPlaces As Integer = 3
 
-    ''' <summary> Gets or sets the value decimal places. </summary>
-    ''' <value> The value decimal places. </value>
-    Public Property ValueDecimalPlaces As Integer
+    Private _FunctionRangeDecimalPlaces As Integer
+
+    ''' <summary> Gets or sets the function range decimal places. </summary>
+    ''' <value> The function range decimal places. </value>
+    Public Property FunctionRangeDecimalPlaces As Integer
         Get
-            Return Me._ValueDecimalPlaces
+            Return Me._FunctionRangeDecimalPlaces
         End Get
         Set(value As Integer)
-            If Me.ValueDecimalPlaces <> value Then
-                Me._ValueDecimalPlaces = value
-                Me.SafePostPropertyChanged()
-            End If
+            ' force a unit change as the value needs to be updated when the subsystem is switched.
+            Me._FunctionRangeDecimalPlaces = value
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
-    Private _ValueSymbol As String
-    Public Property ValueSymbol As String
+    ''' <summary> Gets or sets the default unit. </summary>
+    ''' <value> The default unit. </value>
+    Public Property DefaultFunctionUnit As Arebis.TypedUnits.Unit = Arebis.StandardUnits.ElectricUnits.Volt
+
+    Private _FunctionUnit As Arebis.TypedUnits.Unit
+    ''' <summary> Gets or sets the function mode unit. </summary>
+    ''' <value> The function unit. </value>
+    Public Property FunctionUnit As Arebis.TypedUnits.Unit
         Get
-            Return Me._ValueSymbol
+            Return Me.Amount.Unit
         End Get
-        Set(value As String)
-            If Not String.Equals(Me.ValueSymbol, value, StringComparison.OrdinalIgnoreCase) Then
-                Me._ValueSymbol = value
-                Me.SafePostPropertyChanged()
-            End If
+        Set(value As Arebis.TypedUnits.Unit)
+            ' force a unit change as the value needs to be updated when the subsystem is switched.
+            Me._FunctionUnit = value
+            Me.SafePostPropertyChanged()
         End Set
     End Property
+
+    ''' <summary> Gets or sets the amount. </summary>
+    ''' <value> The amount. </value>
+    Public ReadOnly Property Amount As MeasuredAmount
+
+#End Region
+
+#Region " RANGE "
 
     ''' <summary> The range. </summary>
     Private _Range As Double?
@@ -638,10 +647,9 @@ Public MustInherit Class SenseFunctionSubsystemBase
             Return Me._Range
         End Get
         Protected Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.Range, value) Then
-                Me._Range = value
-                Me.SafePostPropertyChanged()
-            End If
+            ' force a unit change as the value needs to be updated when the subsystem is switched.
+            Me._Range = value
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 

@@ -136,6 +136,7 @@ Public Class K3700Control
             value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
             value.AddPrivateListener(Me._TraceMessagesBox)
         End If
+        ' the device base class addresses the device open state.
         MyBase.DeviceBase = value
     End Sub
 
@@ -147,6 +148,7 @@ Public Class K3700Control
     End Sub
 
     ''' <summary> Releases the device. </summary>
+    ''' <remarks> Called from the base device to release the reference to the device. </remarks>
     Protected Overrides Sub ReleaseDevice()
         MyBase.ReleaseDevice()
         Me._Device = Nothing
@@ -288,6 +290,7 @@ Public Class K3700Control
                 With Me._FilterCountNumeric
                     .Maximum = CDec(subsystem.FilterCountRange.Max)
                     .Minimum = CDec(subsystem.FilterCountRange.Min)
+                    .DecimalPlaces = 0
                 End With
             Case NameOf(subsystem.FilterEnabled)
                 If subsystem.FilterEnabled.HasValue Then Me._FilterEnabledCheckBox.Checked = subsystem.FilterEnabled.Value
@@ -298,6 +301,7 @@ Public Class K3700Control
                 With Me._FilterWindowNumeric
                     .Maximum = 100 * CDec(subsystem.FilterWindowRange.Max)
                     .Minimum = 100 * CDec(subsystem.FilterWindowRange.Min)
+                    .DecimalPlaces = 0
                 End With
             Case NameOf(subsystem.MovingAverageFilterEnabled)
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._MovingAverageRadioButton.Checked = subsystem.MovingAverageFilterEnabled.Value
@@ -322,7 +326,8 @@ Public Class K3700Control
             Case NameOf(subsystem.PowerLineCyclesRange)
                 With Me._PowerLineCyclesNumeric
                     .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
-                    .Minimum = 1000 * CDec(subsystem.PowerLineCyclesRange.Min)
+                    .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
+                    .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
                 End With
             Case NameOf(subsystem.Range)
                 If subsystem.Range.HasValue Then Me.SenseRangeSetter(subsystem.Range.Value)

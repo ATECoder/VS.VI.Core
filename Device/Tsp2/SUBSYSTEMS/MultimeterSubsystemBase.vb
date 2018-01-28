@@ -801,6 +801,14 @@ Public MustInherit Class MultimeterSubsystemBase
 
 #Region " POWER LINE CYCLES (NPLC) "
 
+    ''' <summary> Gets the power line cycles decimal places. </summary>
+    ''' <value> The power line decimal places. </value>
+    Public ReadOnly Property PowerLineCyclesDecimalPlaces As Integer
+        Get
+            Return CInt(Math.Max(0, 1 - Math.Log10(Me.PowerLineCyclesRange.Min)))
+        End Get
+    End Property
+
     Private _PowerLineCyclesRange As Core.Pith.RangeR
     ''' <summary> The power line cycles range in units. </summary>
     Public Property PowerLineCyclesRange As Core.Pith.RangeR

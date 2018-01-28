@@ -342,6 +342,10 @@ Public Class ThermostreamPanel
             Case NameOf(subsystem.ErrorAvailable)
                 ' if no errors, this clears the error queue.
                 subsystem.QueryLastError()
+            Case NameOf(subsystem.ServiceRequestStatus)
+                'Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
+            Case NameOf(subsystem.StandardEventStatus)
+                'Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
 

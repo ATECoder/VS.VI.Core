@@ -336,6 +336,10 @@ Public Class EG2000Panel
                 Me._LastMessageTextBox.Text = subsystem.LastDeviceError.CompoundErrorMessage
             Case NameOf(subsystem.LastDeviceError)
                 Me._LastMessageTextBox.Text = subsystem.LastDeviceError.CompoundErrorMessage
+            Case NameOf(subsystem.ServiceRequestStatus)
+                'Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
+            Case NameOf(subsystem.StandardEventStatus)
+                'Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
 
