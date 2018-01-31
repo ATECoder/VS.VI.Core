@@ -88,6 +88,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="PANELS\T1750Control.Designer.vb">
+      <DependentUpon>T1750Control.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\T1750Control.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SUBSYSTEMS\ConstantsEnums.vb" />
     <Compile Include="SUBSYSTEMS\Device.vb" />
     <Compile Include="SUBSYSTEMS\DeviceError.vb" />
@@ -112,8 +118,12 @@
   <ItemGroup>
     <Content Include="My\isr.VI.Tegam.History.rtf" />
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <EmbeddedResource Include="PANELS\T1750Control.bmp" />
     <EmbeddedResource Include="PANELS\T1750MeasureControl.resx">
       <DependentUpon>T1750MeasureControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\T1750Control.resx">
+      <DependentUpon>T1750Control.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PANELS\T1750Panel.resx">
       <DependentUpon>T1750Panel.vb</DependentUpon>

@@ -86,10 +86,10 @@
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="PANELS\E4990Panel.Designer.vb">
-      <DependentUpon>E4990Panel.vb</DependentUpon>
+    <Compile Include="PANELS\E4990Control.Designer.vb">
+      <DependentUpon>E4990Control.vb</DependentUpon>
     </Compile>
-    <Compile Include="PANELS\E4990Panel.vb">
+    <Compile Include="PANELS\E4990Control.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PANELS\CompensationWizard.Designer.vb">
@@ -119,7 +119,7 @@
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
     <None Include="Examples\KeysightExamples.txt" />
-    <Content Include="PANELS\E4990Panel.bmp" />
+    <Content Include="PANELS\E4990Control.bmp" />
     <Content Include="Resources\WelcomeImage.jpg" />
     <EmbeddedResource Include="My Project\Resources.resx">
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
@@ -180,8 +180,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PANELS\E4990Panel.resx">
-      <DependentUpon>E4990Panel.vb</DependentUpon>
+    <EmbeddedResource Include="PANELS\E4990Control.resx">
+      <DependentUpon>E4990Control.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

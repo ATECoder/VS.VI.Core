@@ -88,12 +88,6 @@ Public Class K34980Control
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                Try
-                    Me.Device?.RemovePrivateListener(Me._TraceMessagesBox)
-                    If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
-                Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
-                End Try
                 ' the device gets disposed in the base class!
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
@@ -135,19 +129,15 @@ Public Class K34980Control
     ''' <summary> Assign device. </summary>
     ''' <param name="value"> The value. </param>
     Private Sub _AssignDevice(ByVal value As Device)
-        MyBase.DeviceBase = value
         If Me._Device IsNot Nothing Then
+            ' the device base already clears all or only the private listeners. 
         End If
         Me._Device = value
-        If Me._Device IsNot Nothing Then
-            Me._Device.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            Me.OnDeviceOpenChanged(value)
-
-            Me.AssignTalker(Me._Device.Talker)
-            Me.ApplyListenerTraceLevel(ListenerType.Display, Me._Device.Talker.TraceShowLevel)
-            Me._Device.AddPrivateListener(Me._TraceMessagesBox)
+        If value IsNot Nothing Then
+            value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            value.AddPrivateListener(Me._TraceMessagesBox)
         End If
+        MyBase.DeviceBase = value
     End Sub
 
     ''' <summary> Assigns a device. </summary>
@@ -155,6 +145,12 @@ Public Class K34980Control
     Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
         Me.Device = value
+    End Sub
+
+    ''' <summary> Releases the device. </summary>
+    Protected Overrides Sub ReleaseDevice()
+        MyBase.ReleaseDevice()
+        Me._Device = Nothing
     End Sub
 
 #End Region

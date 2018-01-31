@@ -1,4 +1,4 @@
-﻿Imports System.Windows.Forms
+Imports System.Windows.Forms
 Imports isr.Core.Controls
 Imports isr.Core.Controls.ComboBoxExtensions
 Imports isr.Core.Pith

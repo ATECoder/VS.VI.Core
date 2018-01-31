@@ -19,15 +19,15 @@ Imports isr.Core.Pith.ErrorProviderExtensions
 ''' <history date="01/15/2015" by="David" revision="2.0.2936.x"> Create based on the 27xx
 ''' system classes. </history>
 <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")>
-<System.ComponentModel.DisplayName("Thermo Stream Panel"),
-      System.ComponentModel.Description("In Test Thermo Stream Device Panel"),
-      System.Drawing.ToolboxBitmap(GetType(Thermostream.ThermostreamPanel))>
-Public Class ThermostreamPanel
-    Inherits VI.Instrument.ResourcePanelBase
+<System.ComponentModel.DisplayName("Thermo Stream Control"),
+      System.ComponentModel.Description("In Test Thermo Stream Device Control"),
+      System.Drawing.ToolboxBitmap(GetType(Thermostream.ThermoStreamControl))>
+Public Class ThermoStreamControl
+    Inherits VI.Instrument.ResourceControlBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private _InitializingComponents As Boolean
+    Private Property InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
@@ -38,21 +38,27 @@ Public Class ThermostreamPanel
     ''' <summary> Constructor. </summary>
     ''' <param name="device"> The device. </param>
     Public Sub New(ByVal device As Device)
-        MyBase.New(device)
-        Me._InitializingComponents = True
-        Me.InitializeComponent()
-        Me._InitializingComponents = False
-        Me._SetpointWindowNumeric.ReadOnly = True
-        Me._SetpointNumeric.ReadOnly = True
-        Me._SoakTimeNumeric.ReadOnly = True
+
+        MyBase.New()
+
+        Me.InitializingComponents = True
+        ' This call is required by the designer.
+        InitializeComponent()
+        Me.InitializingComponents = False
+
+        Me._ToolStripPanel.Renderer = New CustomProfessionalRenderer
+        MyBase.Connector = Me._ResourceSelectorConnector
+
         Me._AssignDevice(device)
+
         ' note that the caption is not set if this is run inside the On Load function.
-        With Me.TraceMessagesBox
+        With Me._TraceMessagesBox
             ' set defaults for the messages box.
             .ResetCount = 500
             .PresetCount = 250
             .ContainerPanel = Me._MessagesTabPage
         End With
+
         With Me._ServiceRequestEnableNumeric.NumericUpDownControl
             .Hexadecimal = True
             .Maximum = 255
@@ -73,12 +79,6 @@ Public Class ThermostreamPanel
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                Try
-                    Me.Device?.RemovePrivateListener(Me.TraceMessagesBox)
-                    If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
-                Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
-                End Try
                 ' the device gets disposed in the base class!
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
@@ -105,36 +105,45 @@ Public Class ThermostreamPanel
 
 #Region " DEVICE "
 
-    ''' <summary> Assigns a device. </summary>
-    ''' <param name="value"> True to show or False to hide the control. </param>
+    Private _Device As Device
+    ''' <summary> Gets or sets the device. </summary>
+    ''' <value> The device. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property Device As Device
+        Get
+            Return Me._Device
+        End Get
+        Set(value As Device)
+            Me._AssignDevice(value)
+        End Set
+    End Property
+
+    ''' <summary> Assign device. </summary>
+    ''' <param name="value"> The value. </param>
     Private Sub _AssignDevice(ByVal value As Device)
+        If Me._Device IsNot Nothing Then
+            ' the device base already clears all or only the private listeners. 
+        End If
         Me._Device = value
-        Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
-		Me._Device.AddPrivateListener(Me.TraceMessagesBox)
-        Me.OnDeviceOpenChanged(value)
+        If value IsNot Nothing Then
+            value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
+            value.AddPrivateListener(Me._TraceMessagesBox)
+        End If
+        MyBase.DeviceBase = value
     End Sub
 
     ''' <summary> Assigns a device. </summary>
     ''' <param name="value"> True to show or False to hide the control. </param>
     Public Overloads Sub AssignDevice(ByVal value As Device)
         Me.IsDeviceOwner = False
-        MyBase.AssignDevice(value)
-        Me._AssignDevice(value)
+        Me.Device = value
     End Sub
 
     ''' <summary> Releases the device. </summary>
     Protected Overrides Sub ReleaseDevice()
-        If Me.IsDeviceOwner Then
-            MyBase.ReleaseDevice()
-        Else
-            Me._Device = Nothing
-        End If
+        MyBase.ReleaseDevice()
+        Me._Device = Nothing
     End Sub
-
-    ''' <summary> Gets a reference to the InTest Thermo Stream Device. </summary>
-    ''' <value> The device. </value>
-    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Overloads ReadOnly Property Device() As Device
 
 #End Region
 
@@ -148,9 +157,7 @@ Public Class ThermostreamPanel
             Me._SimpleReadWriteControl.Disconnect()
         End If
         For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
-            If t IsNot Me._MessagesTabPage Then
-                For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, Me.IsDeviceOpen) : Next
-            End If
+            If t IsNot Me._MessagesTabPage Then Me.RecursivelyEnable(t.Controls, Me.IsDeviceOpen)
         Next
     End Sub
 
@@ -223,9 +230,9 @@ Public Class ThermostreamPanel
     ''' <summary> Executes the measurement available action. </summary>
     Private Sub OnMeasurementAvailable(ByVal value As Double?)
         If value.HasValue Then
-            Me.onMeasurementAvailable(CStr(value.Value))
+            Me.OnMeasurementAvailable(CStr(value.Value))
         Else
-            Me.onMeasurementAvailable("")
+            Me.OnMeasurementAvailable("")
         End If
     End Sub
 
@@ -233,11 +240,10 @@ Public Class ThermostreamPanel
     Private Sub OnMeasurementAvailable(ByVal value As String)
         Const clear As String = "    "
         If String.IsNullOrWhiteSpace(value) Then
-            Me._ReadingToolStripStatusLabel.Text = ThermostreamPanel.DegreesCaption("-.-")
+            Me._ReadingToolStripStatusLabel.Text = ThermoStreamControl.DegreesCaption("-.-")
             Me._ComplianceToolStripStatusLabel.Text = clear
-            Me._TbdToolStripStatusLabel.Text = clear
         Else
-            Me._ReadingToolStripStatusLabel.SafeTextSetter(ThermostreamPanel.DegreesCaption(value))
+            Me._ReadingToolStripStatusLabel.SafeTextSetter(ThermoStreamControl.DegreesCaption(value))
             Me._ComplianceToolStripStatusLabel.Text = "  "
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Instruments parsed reading elements.")
         End If
@@ -311,22 +317,13 @@ Public Class ThermostreamPanel
 #Region " STATUS "
 
     ''' <summary> Reports the last error. </summary>
-    Private Sub OnLastError(ByVal lastError As DeviceError)
-        If lastError?.IsError Then
-            Me._LastErrorTextBox.ForeColor = Drawing.Color.OrangeRed
-        Else
-            Me._LastErrorTextBox.ForeColor = Drawing.Color.Aquamarine
+    Protected Overrides Sub OnLastError(ByVal lastError As isr.VI.DeviceError)
+        If lastError IsNot Nothing Then
+            Me._LastErrorTextBox.ForeColor = If(lastError.IsError, Drawing.Color.OrangeRed, Drawing.Color.Aquamarine)
+            Me._LastErrorTextBox.Text = lastError.CompoundErrorMessage
         End If
-        Me._LastErrorTextBox.Text = lastError.CompoundErrorMessage
     End Sub
 
-    ''' <summary> Displays the status register status using hex format. </summary>
-    ''' <param name="value"> The register value. </param>
-    Public Overrides Sub DisplayStatusRegisterStatus(ByVal value As Integer)
-        Me._StatusByteLabel.Text = $"{Convert.ToString(value, 2),8}".Replace(" ", "0")
-        MyBase.DisplayStatusRegisterStatus(value)
-        Application.DoEvents()
-    End Sub
 
     ''' <summary> Handle the Status subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
@@ -336,16 +333,18 @@ Public Class ThermostreamPanel
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
             Case NameOf(subsystem.DeviceErrors)
-                onLastError(subsystem.LastDeviceError)
+                OnLastError(subsystem.LastDeviceError)
             Case NameOf(subsystem.LastDeviceError)
-                onLastError(subsystem.LastDeviceError)
+                OnLastError(subsystem.LastDeviceError)
             Case NameOf(subsystem.ErrorAvailable)
-                ' if no errors, this clears the error queue.
-                subsystem.QueryLastError()
+                If Not subsystem.ReadingDeviceErrors Then
+                    ' if no errors, this clears the error queue.
+                    subsystem.QueryDeviceErrors()
+                End If
             Case NameOf(subsystem.ServiceRequestStatus)
-                'Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
+                Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
             Case NameOf(subsystem.StandardEventStatus)
-                'Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
+                Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
 
@@ -356,7 +355,6 @@ Public Class ThermostreamPanel
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
             Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
-            System.Windows.Forms.Application.DoEvents()
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
@@ -392,6 +390,58 @@ Public Class ThermostreamPanel
 
 #End Region
 
+#Region " STATUS DISPLAY "
+
+    ''' <summary> Gets or sets the status. </summary>
+    ''' <value> The status. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property Status As String
+        Get
+            Return Me._StatusLabel.Text
+        End Get
+        Set(value As String)
+            Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._StatusLabel)
+            Me._StatusLabel.ToolTipText = value
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the identity. </summary>
+    ''' <value> The identity. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property Identity As String
+        Get
+            Return Me._IdentityLabel.Text
+        End Get
+        Set(value As String)
+            Me._IdentityLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._IdentityLabel)
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the status register caption. </summary>
+    ''' <value> The status register caption. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property StatusRegisterCaption As String
+        Get
+            Return Me._StatusRegisterLabel.Text
+        End Get
+        Set(value As String)
+            Me._StatusRegisterLabel.Text = value
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the standard register caption. </summary>
+    ''' <value> The status register caption. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property StandardRegisterCaption As String
+        Get
+            Return Me._StandardRegisterLabel.Text
+        End Get
+        Set(value As String)
+            Me._StandardRegisterLabel.Text = value
+        End Set
+    End Property
+
+#End Region
 #End Region
 
 #Region " CONTROL EVENT HANDLERS: RESET "
@@ -406,12 +456,12 @@ Public Class ThermostreamPanel
         Try
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
-                Me.ErrorProvider.Clear()
+                Me._InfoProvider.Clear()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 Me.Device.SystemSubsystem.ClearInterface()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me._InfoProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
@@ -430,12 +480,12 @@ Public Class ThermostreamPanel
         Try
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
-                Me.ErrorProvider.Clear()
+                Me._InfoProvider.Clear()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 Me.Device.SystemSubsystem.ClearDevice()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me._InfoProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
@@ -455,12 +505,12 @@ Public Class ThermostreamPanel
         Try
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
-                Me.ErrorProvider.Clear()
+                Me._InfoProvider.Clear()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 Me.Device.SystemSubsystem.ClearExecutionState()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me._InfoProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
@@ -478,7 +528,7 @@ Public Class ThermostreamPanel
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
                 If Me.IsDeviceOpen Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
@@ -486,7 +536,7 @@ Public Class ThermostreamPanel
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me._InfoProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
@@ -504,7 +554,7 @@ Public Class ThermostreamPanel
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
                 If Me.IsDeviceOpen Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
@@ -515,7 +565,7 @@ Public Class ThermostreamPanel
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me._InfoProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
@@ -550,11 +600,11 @@ Public Class ThermostreamPanel
         Dim activity As String = "selecting log trace level on this instrument only"
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             Me.Device.ApplyTalkerTraceLevel(ListenerType.Logger,
                                             TalkerControlBase.SelectedValue(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel))
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
@@ -572,11 +622,11 @@ Public Class ThermostreamPanel
         Dim activity As String = "selecting Display trace level on this instrument only"
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             Me.Device.ApplyTalkerTraceLevel(ListenerType.Display,
                                             TalkerControlBase.SelectedValue(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel))
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
@@ -601,13 +651,13 @@ Public Class ThermostreamPanel
         End If
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 Me.Device.SessionMessagesTraceEnabled = menuItem.Checked
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me._InfoProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
@@ -624,7 +674,7 @@ Public Class ThermostreamPanel
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.Session.ServiceRequestEventEnabled Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
@@ -641,7 +691,7 @@ Public Class ThermostreamPanel
                 Me.Device.StatusSubsystem.ReadEventRegisters()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me._InfoProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
@@ -658,7 +708,7 @@ Public Class ThermostreamPanel
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.DeviceServiceRequestHandlerAdded Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
@@ -669,7 +719,7 @@ Public Class ThermostreamPanel
                 Me.Device.StatusSubsystem.ReadEventRegisters()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me._InfoProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
@@ -687,20 +737,20 @@ Public Class ThermostreamPanel
     Private Sub _ReadLastErrorButton_Click(sender As System.Object, e As System.EventArgs) Handles _ReadLastErrorButton.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If Me.IsDeviceOpen Then
 #If False Then
                 Me.Device.SystemSubsystem.WriteLastErrorQuery()
                 Dim srq As isr.VI.ServiceRequests = Me.readServiceRequest
                 If (srq And ServiceRequests.MessageAvailable) = 0 Then
-                    Me.ErrorProvider.Annunciate(sender, "Nothing to read")
+                    Me._InfoProvider.Annunciate(sender, "Nothing to read")
                 Else
                     Me.Device.SystemSubsystem.ReadLastError()
                 End If
 #End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initializing known state;. {0}", ex.ToFullBlownString)
         Finally
@@ -715,13 +765,13 @@ Public Class ThermostreamPanel
     Private Sub _ClearErrorQueueButton_Click(sender As System.Object, e As System.EventArgs) Handles _ClearErrorQueueButton.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If Me.IsDeviceOpen Then
                 Me.Device.StatusSubsystem.ClearErrorQueue()
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initializing known state;. {0}", ex.ToFullBlownString)
         Finally
@@ -737,7 +787,7 @@ Public Class ThermostreamPanel
     Private Sub _InitializeButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _InitializeButton.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
 
             If Me.Device.IsDeviceOpen Then
 
@@ -748,11 +798,11 @@ Public Class ThermostreamPanel
                 Me.Device.ThermoStreamSubsystem.WriteTemperatureEventEnableBitmask(255)
                 Me.Device.StatusSubsystem.EnableServiceRequest(VI.ServiceRequests.All And Not VI.ServiceRequests.MessageAvailable)
                 Me.Device.ClearExecutionState()
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
 
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
@@ -769,15 +819,15 @@ Public Class ThermostreamPanel
     Private Sub _ReadButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ReadButton.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 ' update display if changed.
                 Me.Device.ThermoStreamSubsystem.QueryTemperature()
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
                 Application.DoEvents()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred reading temperature;. {0}", ex.ToFullBlownString)
         Finally
@@ -804,7 +854,7 @@ Public Class ThermostreamPanel
     ''' <param name="e">      Event information. </param>
     Private Sub _ReadStatusByteButton_Click(sender As System.Object, e As System.EventArgs) Handles _ReadStatusByteButton.Click
         If Me.IsDeviceOpen Then
-            Me.readServiceRequest()
+            Me.ReadServiceRequest()
         End If
     End Sub
 
@@ -815,15 +865,15 @@ Public Class ThermostreamPanel
     Private Sub _SendButton_Click(sender As System.Object, e As System.EventArgs) Handles _SendButton.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 If Not String.IsNullOrWhiteSpace(Me._SendComboBox.Text) Then
                     Me.Device.Session.WriteLine(Me._SendComboBox.Text)
-                    Me.readServiceRequest()
+                    Me.ReadServiceRequest()
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred moving to the next setpoint;. {0}", ex.ToFullBlownString)
         Finally
@@ -835,18 +885,18 @@ Public Class ThermostreamPanel
     Private Sub _ReceiveButton_Click(sender As Object, e As System.EventArgs) Handles _ReceiveButton.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 Dim srq As isr.VI.ServiceRequests = Me.Device.StatusSubsystem.ReadServiceRequestStatus()
                 If (srq And ServiceRequests.MessageAvailable) = 0 Then
-                    Me.ErrorProvider.Annunciate(sender, "Nothing to read")
+                    Me._InfoProvider.Annunciate(sender, "Nothing to read")
                 Else
                     Me._ReceiveTextBox.Text = Me.Device.Session.ReadLineTrimEnd
-                    Me.readServiceRequest()
+                    Me.ReadServiceRequest()
                 End If
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred moving to the next setpoint;. {0}", ex.ToFullBlownString)
         Finally
@@ -862,13 +912,13 @@ Public Class ThermostreamPanel
     Private Sub _FindLastSetpointButton_Click(sender As System.Object, e As System.EventArgs) Handles _FindLastSetpointButton1.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 Me._FindLastSetpointButton1.Text = String.Format("Find Last Setpoint: {0}", Me.Device.ThermoStreamSubsystem.FindLastSetpointNumber)
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred finding last set point;. {0}", ex.ToFullBlownString)
         Finally
@@ -880,13 +930,13 @@ Public Class ThermostreamPanel
     Private Sub _QueryTempEvents(sender As System.Object)
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 Me.Device.ThermoStreamSubsystem.QueryTemperatureEventStatus()
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred reading temperature events;. {0}", ex.ToFullBlownString)
         Finally
@@ -898,13 +948,13 @@ Public Class ThermostreamPanel
     Private Sub _QueryAuxiliaryStatus(sender As System.Object)
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 Me.Device.ThermoStreamSubsystem.QueryAuxiliaryEventStatus()
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred reading auxiliary event status;. {0}", ex.ToFullBlownString)
         Finally
@@ -929,7 +979,7 @@ Public Class ThermostreamPanel
     Private Sub _SetpointNumberNumeric_ValueSelected(sender As System.Object, e As System.EventArgs) Handles _SetpointNumberNumeric.ValueSelected
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 With Me.Device.ThermoStreamSubsystem
                     If Me._SetpointNumberNumeric.SelectedValue.HasValue Then
@@ -941,10 +991,10 @@ Public Class ThermostreamPanel
                     .ReadCurrentSetpointValues()
                     Application.DoEvents()
                 End With
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred selecting setpoint;. {0}", ex.ToFullBlownString)
         Finally
@@ -957,15 +1007,15 @@ Public Class ThermostreamPanel
     Private Sub QueryHeadStatus(sender As System.Object)
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 With Me.Device.ThermoStreamSubsystem
                     .QueryHeadDown()
                 End With
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred reading head status;. {0}", ex.ToFullBlownString)
         Finally
@@ -980,15 +1030,15 @@ Public Class ThermostreamPanel
     Private Sub _ReadSetpointButton_Click(sender As System.Object, e As System.EventArgs) Handles _ReadSetpointButton.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 With Me.Device.ThermoStreamSubsystem
                     .ReadCurrentSetpointValues()
                 End With
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred reading the setpoint values;. {0}", ex.ToFullBlownString)
         Finally
@@ -1003,15 +1053,15 @@ Public Class ThermostreamPanel
     Private Sub _NextButton_Click(sender As System.Object, e As System.EventArgs) Handles _NextSetpointButton.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 With Me.Device.ThermoStreamSubsystem
                     .NextSetpoint()
                 End With
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred moving to the next setpoint;. {0}", ex.ToFullBlownString)
         Finally
@@ -1023,7 +1073,7 @@ Public Class ThermostreamPanel
     Private Sub _MaxTestTimeNumeric_ValueSelected(sender As System.Object, e As System.EventArgs) Handles _MaxTestTimeNumeric.ValueSelected
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 With Me.Device.ThermoStreamSubsystem
                     If Me._MaxTestTimeNumeric.SelectedValue.HasValue Then
@@ -1031,10 +1081,10 @@ Public Class ThermostreamPanel
                     End If
                     .QueryMaximumTestTime()
                 End With
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred setting and reading the maximum test time;. {0}", ex.ToFullBlownString)
         Finally
@@ -1046,16 +1096,16 @@ Public Class ThermostreamPanel
     Private Sub _CycleCountNumeric_ValueSelected(sender As System.Object, e As System.EventArgs) Handles _CycleCountNumeric.ValueSelected
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen AndAlso Me._CycleCountNumeric.SelectedValue.HasValue Then
                 With Me.Device.ThermoStreamSubsystem
                     .ApplyCycleCount(CInt(Me._CycleCountNumeric.SelectedValue.Value))
                     .QueryCycleCount()
                 End With
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred setting and reading the cycle count;. {0}", ex.ToFullBlownString)
         Finally
@@ -1067,15 +1117,15 @@ Public Class ThermostreamPanel
     Private Sub _StartButton_Click(sender As System.Object, e As System.EventArgs) Handles _StartCycleButton.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 With Me.Device.ThermoStreamSubsystem
                     .StartCycling()
                 End With
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred starting cycling;. {0}", ex.ToFullBlownString)
         Finally
@@ -1087,15 +1137,15 @@ Public Class ThermostreamPanel
     Private Sub _StopCycleButton_Click(sender As System.Object, e As System.EventArgs) Handles _StopCycleButton.Click
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 With Me.Device.ThermoStreamSubsystem
                     .StopCycling()
                 End With
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred Stopping cycling;. {0}", ex.ToFullBlownString)
         Finally
@@ -1107,7 +1157,7 @@ Public Class ThermostreamPanel
     Private Sub ResetSystemMode(ByVal resetOperator As Boolean, sender As System.Object)
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If sender IsNot Nothing AndAlso Me.IsDeviceOpen Then
                 With Me.Device.ThermoStreamSubsystem
                     Dim refrectoryPeriod As TimeSpan = TimeSpan.Zero
@@ -1132,10 +1182,10 @@ Public Class ThermostreamPanel
                         Me._ResetCycleModeButton.Text = String.Format("Cycle Mode: {0}", "N/A")
                     End If
                 End With
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred Stopping cycling;. {0}", ex.ToFullBlownString)
         Finally
@@ -1169,7 +1219,7 @@ Public Class ThermostreamPanel
     Private Sub _DeviceSensorTypeSelector_ValueSelected(sender As System.Object, e As System.EventArgs) Handles _DeviceSensorTypeSelector.ValueSelected
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            Me.ErrorProvider.Clear()
+            Me._InfoProvider.Clear()
             If Me._DeviceSensorType IsNot Nothing Then
 
             End If
@@ -1187,10 +1237,10 @@ Public Class ThermostreamPanel
                     .QueryDeviceControl()
                     .QueryDeviceThermalConstant()
                 End With
-                Me.readServiceRequest()
+                Me.ReadServiceRequest()
             End If
         Catch ex As Exception
-            Me.ErrorProvider.Annunciate(sender, ex.Message)
+            Me._InfoProvider.Annunciate(sender, ex.Message)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception occurred setting and reading the device sensor type;. {0}", ex.ToFullBlownString)
         Finally
@@ -1211,9 +1261,10 @@ Public Class ThermostreamPanel
                 Case NameOf(sender.ReceivedMessage)
                 Case NameOf(sender.SentMessage)
                 Case NameOf(sender.StatusMessage)
-                    Me.StatusLabel.Text = sender.StatusMessage
+                    Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
+                    Me._StatusLabel.ToolTipText = sender.StatusMessage
                 Case NameOf(sender.ServiceRequestValue)
-                    Me.StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
+                    Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
                 Case NameOf(sender.ElapsedTime)
             End Select
         End If
@@ -1260,10 +1311,37 @@ Public Class ThermostreamPanel
     ''' <param name="listenerType"> Type of the listener. </param>
     ''' <param name="value">        The value. </param>
     Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
-        Me._SimpleReadWriteControl.ApplyListenerTraceLevel(listenerType, value)
+        Me._SimpleReadWriteControl?.ApplyListenerTraceLevel(listenerType, value)
         ' this should apply only to the listeners associated with this form
         ' MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
+
+#End Region
+
+#Region " TOOL STRIP RENDERER "
+
+    ''' <summary> A custom professional renderer. </summary>
+    ''' <license>
+    ''' (c) 2017 Integrated Scientific Resources, Inc. All rights reserved.<para>
+    ''' Licensed under The MIT License.</para><para>
+    ''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+    ''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    ''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    ''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+    ''' </license>
+    ''' <history date="10/30/2017" by="David" revision=""> Created. </history>
+    Private Class CustomProfessionalRenderer
+        Inherits ToolStripProfessionalRenderer
+
+        Protected Overrides Sub OnRenderLabelBackground(ByVal e As ToolStripItemRenderEventArgs)
+            If e IsNot Nothing AndAlso (e.Item.BackColor <> System.Drawing.SystemColors.ControlDark) Then
+                Using brush As New Drawing.SolidBrush(e.Item.BackColor)
+                    e.Graphics.FillRectangle(brush, e.Item.ContentRectangle)
+                End Using
+            End If
+        End Sub
+    End Class
 
 #End Region
 

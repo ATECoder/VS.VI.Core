@@ -79,6 +79,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PANELS\EG2000Control.Designer.vb">
+      <DependentUpon>EG2000Control.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\EG2000Control.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="SUBSYSTEMS\DeviceError.vb" />
     <Compile Include="SUBSYSTEMS\ProberSubsystem.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -102,6 +108,10 @@
   <ItemGroup>
     <Content Include="My\isr.VI.EG2000.History.rtf" />
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <EmbeddedResource Include="PANELS\EG2000Control.bmp" />
+    <EmbeddedResource Include="PANELS\EG2000Control.resx">
+      <DependentUpon>EG2000Control.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PANELS\EG2000Panel.bmp" />
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>

@@ -100,6 +100,9 @@ Public Class MovingWindowMeter
         End Get
         Set(value As K3700.Device)
             Me._Device = value
+            If value IsNot Nothing Then
+                Me._StartMovingAverageButton.Enabled = value.IsDeviceOpen
+            End If
         End Set
     End Property
 

@@ -23,7 +23,7 @@ Imports isr.Core.Pith.ErrorProviderExtensions
 <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")>
 <System.ComponentModel.DisplayName("K34980 Panel"),
       System.ComponentModel.Description("Keysight 34980 Device Panel"),
-      System.Drawing.ToolboxBitmap(GetType(K34980Panel))>
+      System.Drawing.ToolboxBitmap(GetType(K34980Control))>
 Public Class K34980Panel
     Inherits VI.Instrument.ResourcePanelBase
 
@@ -95,7 +95,7 @@ Public Class K34980Panel
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
         Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
-		Me._Device.AddPrivateListener(Me.TraceMessagesBox)
+        Me._Device.AddPrivateListener(Me.TraceMessagesBox)
         Me.OnDeviceOpenChanged(value)
     End Sub
 
@@ -219,7 +219,7 @@ Public Class K34980Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.Elements)
                 subsystem.ListElements(Me._ReadingComboBox.ComboBox, ReadingTypes.Units)
@@ -281,7 +281,7 @@ Public Class K34980Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As MeasureSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.LastReading)
                 Me._LastReadingTextBox.SafeTextSetter(subsystem.LastReading)
@@ -316,7 +316,7 @@ Public Class K34980Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As RouteSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(subsystem.ClosedChannel)
                 Me.ClosedChannels = subsystem.ClosedChannel
@@ -383,7 +383,7 @@ Public Class K34980Panel
 
     Private ReadOnly Property SelectedSenseSubsystem() As SenseFunctionSubsystemBase
         Get
-            Return Me.SelectSenseSubsystem(Me.selectedFunctionMode)
+            Return Me.SelectSenseSubsystem(Me.SelectedFunctionMode)
         End Get
     End Property
 
@@ -407,7 +407,7 @@ Public Class K34980Panel
     ''' <param name="value"> The <see cref="TraceMessage">message</see> to display and
     ''' log. </param>
     Private Sub OnFunctionModesChanged(ByVal value As VI.Scpi.SenseFunctionModes)
-        Me.onFunctionModesChanged(Me.SelectSenseSubsystem(value))
+        Me.OnFunctionModesChanged(Me.SelectSenseSubsystem(value))
     End Sub
 
     ''' <summary> Handles the function modes changed action. </summary>
@@ -425,7 +425,7 @@ Public Class K34980Panel
                 Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.Readings.Reading.Unit.Symbol}]:"
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
                 Me._SenseFunctionComboBox.SafeSelectItem(value, value.Description)
-                Me.onFunctionModesChanged(value)
+                Me.OnFunctionModesChanged(value)
             End If
         End If
     End Sub
@@ -441,9 +441,9 @@ Public Class K34980Panel
             Case NameOf(subsystem.MeasurementAvailable)
                 Me.DisplayActiveReading()
             Case NameOf(subsystem.SupportedFunctionModes)
-                Me.onSupportedFunctionModesChanged(subsystem)
+                Me.OnSupportedFunctionModesChanged(subsystem)
             Case NameOf(subsystem.FunctionMode)
-                Me.onFunctionModesChanged(subsystem)
+                Me.OnFunctionModesChanged(subsystem)
                 Me.DisplayActiveReading()
         End Select
     End Sub
@@ -654,13 +654,13 @@ Public Class K34980Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Protected Overrides Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
             Case NameOf(subsystem.DeviceErrors)
-                onLastError(subsystem.LastDeviceError)
+                OnLastError(subsystem.LastDeviceError)
             Case NameOf(subsystem.LastDeviceError)
-                onLastError(subsystem.LastDeviceError)
+                OnLastError(subsystem.LastDeviceError)
             Case NameOf(subsystem.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
@@ -783,7 +783,7 @@ Public Class K34980Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            updateChannelListComboBox()
+            UpdateChannelListComboBox()
             Me.Device.ClearExecutionState()
             Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyClosedChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(1))
@@ -803,7 +803,7 @@ Public Class K34980Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            updateChannelListComboBox()
+            UpdateChannelListComboBox()
             Me.Device.ClearExecutionState()
             Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyOpenChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(1))
@@ -823,7 +823,7 @@ Public Class K34980Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            updateChannelListComboBox()
+            UpdateChannelListComboBox()
             Me.Device.ClearExecutionState()
             Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(1))
@@ -1350,7 +1350,7 @@ Public Class K34980Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Me.ApplyFunctionMode(Me.selectedFunctionMode)
+            Me.ApplyFunctionMode(Me.SelectedFunctionMode)
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
@@ -1400,7 +1400,7 @@ Public Class K34980Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Me.applySenseSettings()
+            Me.ApplySenseSettings()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,

@@ -75,6 +75,12 @@
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="PANELS\ThermoStreamControl.Designer.vb">
+      <DependentUpon>ThermoStreamControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\ThermoStreamControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PRIMITIVES\AuxiliaryStatusInfo.vb" />
     <Compile Include="PRIMITIVES\TemperatureEventInfo.vb" />
     <Compile Include="SUBSYSTEMS\Device.vb" />
@@ -106,6 +112,10 @@
     <Compile Include="My\MySuppressions.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="PANELS\ThermoStreamControl.resx">
+      <DependentUpon>ThermoStreamControl.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="PANELS\ThermoStreamPanel.resx">
       <DependentUpon>ThermoStreamPanel.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -118,6 +128,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PANELS\ThermoStreamControl.bmp" />
     <Content Include="PANELS\ThermoStreamPanel.bmp" />
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>

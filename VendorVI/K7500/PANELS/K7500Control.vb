@@ -190,7 +190,6 @@ Public Class K7500Control
         Me.Device = value
     End Sub
 
-
     ''' <summary> Releases the device. </summary>
     Protected Overrides Sub ReleaseDevice()
         MyBase.ReleaseDevice()
