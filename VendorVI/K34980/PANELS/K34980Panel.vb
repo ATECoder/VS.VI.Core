@@ -364,9 +364,9 @@ Public Class K34980Panel
 
     Private Sub OnFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
         With Me._SenseRangeNumeric
-            .Minimum = CDec(value.ValueRange.Min)
-            .Maximum = CDec(value.ValueRange.Max)
-            .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.ValueRange.Min)))
+            .Minimum = CDec(value.FunctionRange.Min)
+            .Maximum = CDec(value.FunctionRange.Max)
+            .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.FunctionRange.Min)))
         End With
         With Me._PowerLineCyclesNumeric
             .Minimum = CDec(value.PowerLineCyclesRange.Min)
@@ -679,16 +679,6 @@ Public Class K34980Panel
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
-        End Try
-    End Sub
-
-    ''' <summary> Reads a service request status. </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Sub ReadServiceRequestStatus()
-        Try
-            Me.Device.StatusSubsystem.ReadServiceRequestStatus()
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 
