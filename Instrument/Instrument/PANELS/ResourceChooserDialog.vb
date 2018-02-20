@@ -1,4 +1,5 @@
 Imports System.ComponentModel
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Selects a resource. </summary>
 ''' <license> (c) 2006 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

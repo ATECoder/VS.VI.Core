@@ -1,3 +1,4 @@
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Defines a Status Subsystem for a TSP System. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

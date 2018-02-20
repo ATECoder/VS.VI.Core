@@ -618,7 +618,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
     ''' <value> The function unit. </value>
     Public Property FunctionUnit As Arebis.TypedUnits.Unit
         Get
-            Return Me.Amount.Unit
+            Return Me._FunctionUnit
         End Get
         Set(value As Arebis.TypedUnits.Unit)
             ' force a unit change as the value needs to be updated when the subsystem is switched.
@@ -627,9 +627,11 @@ Public MustInherit Class SenseFunctionSubsystemBase
         End Set
     End Property
 
+#If False Then
     ''' <summary> Gets or sets the amount. </summary>
     ''' <value> The amount. </value>
     Public ReadOnly Property Amount As MeasuredAmount
+#End If
 
 #End Region
 

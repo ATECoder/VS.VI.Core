@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports isr.VI.National.Visa.ExceptionExtensions
 ''' <summary> Resource Manager Extensions. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

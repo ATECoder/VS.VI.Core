@@ -3,6 +3,7 @@ Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EventHandlerExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> A control for selecting and connecting to a VISA resource. </summary>
 ''' <license> (c) 2006 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

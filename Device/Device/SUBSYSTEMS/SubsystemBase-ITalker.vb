@@ -1,6 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports isr.Core.Pith
-Imports isr.Core.Pith.ExceptionExtensions
+Imports isr.VI.ExceptionExtensions
 Partial Public Class SubsystemBase
     Implements ITalker
 

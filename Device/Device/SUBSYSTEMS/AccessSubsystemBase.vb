@@ -1,4 +1,4 @@
-Imports isr.VI.National.Visa
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Defines the contract that must be implemented by an Output Subsystem. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

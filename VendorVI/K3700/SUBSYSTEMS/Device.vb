@@ -1,4 +1,5 @@
-﻿''' <summary> The System Switch Multimeter device. </summary>
+﻿Imports isr.VI.ExceptionExtensions
+''' <summary> The System Switch Multimeter device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc. All rights reserved.<para>

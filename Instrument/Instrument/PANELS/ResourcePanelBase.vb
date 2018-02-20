@@ -1,6 +1,6 @@
-Imports isr.VI.Instrument
 Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a base user interface for a <see cref="isr.VI.DeviceBase">Visa Device</see>. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

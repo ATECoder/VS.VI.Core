@@ -3,8 +3,7 @@ Imports System.ComponentModel
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EventHandlerExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
-Imports isr.Core.Pith.StopwatchExtensions
-Imports isr.VI.National.Visa
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Defines the contract that must be implemented by Devices. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

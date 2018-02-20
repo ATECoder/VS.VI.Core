@@ -1,4 +1,5 @@
-﻿''' <summary> A National Instrument message based session. </summary>
+﻿Imports isr.VI.National.Visa.ExceptionExtensions
+''' <summary> A National Instrument message based session. </summary>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

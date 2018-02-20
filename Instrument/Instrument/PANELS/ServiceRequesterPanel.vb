@@ -1,7 +1,7 @@
 Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports isr.Core.Pith
-Imports isr.Core.Pith.EscapeSequencesExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Panel for simple service requests. </summary>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>

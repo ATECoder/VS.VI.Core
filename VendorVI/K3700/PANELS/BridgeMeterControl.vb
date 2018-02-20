@@ -2,14 +2,11 @@
 Imports System.Drawing
 Imports System.Windows.Forms
 Imports isr.Core.Controls.ComboBoxExtensions
-Imports isr.Core.Controls.ControlExtensions
 Imports isr.Core.Controls.DataGridViewExtensions
 Imports isr.Core.Controls.SafeSetterExtensions
 Imports isr.Core.Controls.ToolStripExtensions
 Imports isr.Core.Pith
-Imports isr.Core.Pith.EnumExtensions
-Imports isr.Core.Pith.ErrorProviderExtensions
-Imports isr.VI.Tsp.K3700
+Imports isr.VI.ExceptionExtensions
 ''' <summary> A meter control. </summary>
 ''' <license>
 ''' (c) 2017 Integrated Scientific Resources, Inc. All rights reserved.<para>

@@ -1,4 +1,5 @@
-﻿Imports isr.VI.National.Visa.GpibInterfaceExtensions
+﻿Imports isr.VI.National.Visa.ExceptionExtensions
+Imports isr.VI.National.Visa.GpibInterfaceExtensions
 ''' <summary> A gpib interface session. </summary>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>

@@ -1,6 +1,5 @@
 Imports isr.Core.Pith
-Imports isr.Core.Pith.StopwatchExtensions
-Imports isr.VI.National.Visa
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Collection of subsystems. </summary>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>

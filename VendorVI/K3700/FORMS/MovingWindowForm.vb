@@ -1,6 +1,7 @@
 ﻿Imports System.Windows.Forms
 Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.VI.ExceptionExtensions
 ''' <summary> The Test Panel. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

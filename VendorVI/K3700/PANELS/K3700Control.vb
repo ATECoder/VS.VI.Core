@@ -1,12 +1,12 @@
 Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports isr.Core.Controls.ComboBoxExtensions
-Imports isr.Core.Controls.ControlExtensions
 Imports isr.Core.Controls.SafeSetterExtensions
 Imports isr.Core.Controls.ToolStripExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a user interface for a Keithley 37XX Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

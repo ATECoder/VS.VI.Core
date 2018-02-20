@@ -6,5 +6,7 @@ Imports System.Diagnostics.CodeAnalysis
 <Assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes",
     Scope:="namespace", Target:="isr.VI.National",
     Justification:="Ignoring this warning...we want these namespaces, but don't have enough classes to go in them to satisfy the rule.")>
+<Assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope:="namespace", Target:="isr.VI.National.Visa")>
+<Assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope:="namespace", Target:="isr.VI.National.Visa.ExceptionExtensions")>
 
 #End Region
