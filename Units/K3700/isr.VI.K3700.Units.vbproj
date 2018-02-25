@@ -88,8 +88,8 @@
     <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\Share\Bare\MyAppSettingsReader.vb">
-      <Link>My\MyAppSettingsReader.vb</Link>
+    <Compile Include="..\..\..\..\Share\Bare\ShareAppSettingsReader.vb">
+      <Link>My\ShareAppSettingsReader.vb</Link>
     </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
