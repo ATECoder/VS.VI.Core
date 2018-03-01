@@ -295,7 +295,7 @@ Public NotInheritable Class ResourceNamesManager
         If resources Is Nothing Then Throw New ArgumentNullException(NameOf(resources))
         Dim l As New List(Of String)
         For Each resource As String In resources
-            If Not ResourceNamesManager.IsTcpIpResource(resource) OrElse ResourceNamesManager.Ping(resource) Then
+            If Not ResourceNamesManager.IsTcpipResource(resource) OrElse ResourceNamesManager.Ping(resource) Then
                 l.Add(resource)
             End If
         Next
@@ -305,7 +305,7 @@ Public NotInheritable Class ResourceNamesManager
     ''' <summary> Query if 'resourceName' is TCP IP resource. </summary>
     ''' <param name="resourceName"> The name of the resource. </param>
     ''' <returns> <c>true</c> if TCP IP resource; otherwise <c>false</c> </returns>
-    Public Shared Function IsTcpIpResource(ByVal resourceName As String) As Boolean
+    Public Shared Function IsTcpipResource(ByVal resourceName As String) As Boolean
         Return Not String.IsNullOrWhiteSpace(resourceName) AndAlso resourceName.StartsWith(HardwareInterfaceType.Tcpip.ToString, StringComparison.OrdinalIgnoreCase)
     End Function
 
@@ -316,7 +316,7 @@ Public NotInheritable Class ResourceNamesManager
     ''' <remarks> Works only on TCP/IP resources. </remarks>
     Public Shared Function ToResourceAddress(ByVal resourceName As String) As String
         If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
-        If Not ResourceNamesManager.IsTcpIpResource(resourceName) Then
+        If Not ResourceNamesManager.IsTcpipResource(resourceName) Then
             Throw New InvalidOperationException($"Unable to convert resource {resourceName} to a {HardwareInterfaceType.Tcpip} resource")
         End If
         Return resourceName.Split(":"c)(2)

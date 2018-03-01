@@ -172,7 +172,7 @@ Public MustInherit Class SubsystemBase
         Return Me.Session.WriteEnumValue(Of T)(value, commandFormat)
     End Function
 
-    ''' <summary> Issues the query command and parses the returned en um value name into an Enum. </summary>
+    ''' <summary> Issues the query command and parses the returned enum value name into an Enum. </summary>
     ''' <param name="value">        The value. </param>
     ''' <param name="queryCommand"> The query command. </param>
     ''' <returns> The parsed value or none if unknown. </returns>
@@ -346,6 +346,38 @@ Public MustInherit Class SubsystemBase
             Me.Session.WriteLine(commandFormat, value)
         End If
         Return value
+    End Function
+
+#End Region
+
+#Region " PAYLOAD "
+
+    ''' <summary>
+    ''' Issues the query command and parses the returned payload.
+    ''' </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="payload"> The payload. </param>
+    ''' <returns> <c>True</c> if <see cref="PayloadStatus"/> is <see cref="PayloadStatus.Okay"/>; otherwise <c>False</c>. </returns>
+    Public Function Query(ByVal payload As PayloadBase) As Boolean
+        If payload Is Nothing Then Throw New ArgumentNullException(NameOf(payload))
+        Dim result As Boolean = True
+        If Not String.IsNullOrWhiteSpace(payload.QueryCommand) Then
+            result = Me.Session.Query(payload)
+        End If
+        Return result
+    End Function
+
+    ''' <summary> Write the payload. A <see cref="Query(PayloadBase)"/> must be issued to get the value from the device. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="payload"> The payload. </param>
+    ''' <returns> <c>True</c> if <see cref="PayloadStatus"/> is <see cref="PayloadStatus.Okay"/>; otherwise <c>False</c>. </returns>
+    Public Function Write(ByVal payload As PayloadBase) As Boolean
+        If payload Is Nothing Then Throw New ArgumentNullException(NameOf(payload))
+        Dim result As Boolean = True
+        If Not String.IsNullOrWhiteSpace(payload.CommandFormat) Then
+            result = Me.Session.Write(payload)
+        End If
+        Return result
     End Function
 
 #End Region

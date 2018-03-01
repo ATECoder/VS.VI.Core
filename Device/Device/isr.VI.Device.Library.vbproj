@@ -99,6 +99,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
+    <Compile Include="PAYLOAD\RealValuePayload.vb" />
     <Compile Include="PRIMITIVES\BinningInfo.vb" />
     <Compile Include="PRIMITIVES\ChannelListBuilder.vb" />
     <Compile Include="PRIMITIVES\Extensions.vb" />
