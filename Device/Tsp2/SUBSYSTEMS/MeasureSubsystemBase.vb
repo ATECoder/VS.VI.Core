@@ -781,7 +781,6 @@ Public MustInherit Class MeasureSubsystemBase
         Return result
     End Function
 
-    Private _FunctionUnit As Arebis.TypedUnits.Unit
     ''' <summary> Gets or sets the function mode unit. </summary>
     ''' <value> The function unit. </value>
     Public Property FunctionUnit As Arebis.TypedUnits.Unit
@@ -790,7 +789,7 @@ Public MustInherit Class MeasureSubsystemBase
         End Get
         Set(value As Arebis.TypedUnits.Unit)
             If Me.FunctionUnit <> value Then
-                Me._FunctionUnit = value
+                Me.Amount.Unit = value
                 Me.SafePostPropertyChanged()
             End If
         End Set

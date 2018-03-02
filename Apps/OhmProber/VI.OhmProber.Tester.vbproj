@@ -50,7 +50,7 @@
     <OptionInfer>Off</OptionInfer>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>My\isr new logo.ico</ApplicationIcon>
+    <ApplicationIcon>My\MyLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -191,7 +191,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="My\isr new logo.ico" />
+    <Content Include="My\MyLogo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

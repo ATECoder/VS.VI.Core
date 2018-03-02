@@ -68,7 +68,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>My\isr new logo.ico</ApplicationIcon>
+    <ApplicationIcon>My\MyLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
@@ -204,7 +204,7 @@
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="My\isr new logo.ico" />
+    <Content Include="My\MyLogo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

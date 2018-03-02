@@ -117,7 +117,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="My\logo.ico" />
+    <Content Include="My\MyLogo.ico" />
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>

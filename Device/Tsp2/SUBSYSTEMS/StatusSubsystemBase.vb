@@ -17,7 +17,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
     ''' <param name="session"> A reference to a <see cref="Session">message based TSP session</see>. </param>
     Protected Sub New(ByVal session As SessionBase)
-        MyBase.New(session, TspSyntax.NoErrorCompoundMessage)
+        MyBase.New(session, TspSyntax.EventLog.NoErrorCompoundMessage)
 
         Me._VersionInfo = New VersionInfo
 
@@ -112,12 +112,12 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the clear execution state command. </summary>
     ''' <value> The clear execution state command. </value>
-    Protected Overrides ReadOnly Property ClearExecutionStateCommand As String = TspSyntax.ClearExecutionStateCommand
+    Protected Overrides ReadOnly Property ClearExecutionStateCommand As String = TspSyntax.Status.ClearExecutionStateCommand
 
     ''' <summary> Gets the reset known state command. </summary>
     ''' <value> The reset known state command. </value>
     ''' <remarks> Uses reset() to reset all devices on the TSP link. </remarks>
-    Protected Overrides ReadOnly Property ResetKnownStateCommand As String = TspSyntax.ResetKnownStateCommand
+    Protected Overrides ReadOnly Property ResetKnownStateCommand As String = LuaSyntax.ResetKnownStateCommand
 
 #End Region
 
@@ -141,20 +141,20 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the operation completed query command. </summary>
     ''' <value> The operation completed query command. </value>
-    Protected Overrides ReadOnly Property OperationCompletedQueryCommand As String = TspSyntax.OperationCompletedQueryCommand
+    Protected Overrides ReadOnly Property OperationCompletedQueryCommand As String = LuaSyntax.OperationCompletedQueryCommand
     ' Protected Overrides ReadOnly Property OperationCompletedQueryCommand As String = Ieee488.Syntax.OperationCompletedQueryCommand
 
     ''' <summary> Gets the standard service enable command format. </summary>
     ''' <value> The standard service enable command format. </value>
-    Protected Overrides ReadOnly Property StandardServiceEnableCommandFormat As String = TspSyntax.StandardServiceEnableCommandFormat
+    Protected Overrides ReadOnly Property StandardServiceEnableCommandFormat As String = TspSyntax.Status.StandardServiceEnableCommandFormat
 
     ''' <summary> Gets or sets the standard service enable and complete command format. </summary>
     ''' <value> The standard service enable command and complete format. </value>
-    Protected Overrides ReadOnly Property StandardServiceEnableCompleteCommandFormat As String = TspSyntax.StandardServiceEnableCompleteCommandFormat
+    Protected Overrides ReadOnly Property StandardServiceEnableCompleteCommandFormat As String = TspSyntax.Status.StandardServiceEnableCompleteCommandFormat
 
     ''' <summary> Gets the service request enable command format. </summary>
     ''' <value> The service request enable command format. </value>
-    Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = TspSyntax.ServiceRequestEnableCommandFormat
+    Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = TspSyntax.Status.ServiceRequestEnableCommandFormat
 
 #End Region
 
@@ -162,11 +162,11 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the standard event status query command. </summary>
     ''' <value> The standard event status query command. </value>
-    Protected Overrides ReadOnly Property StandardEventStatusQueryCommand As String = TspSyntax.StandardEventQueryCommand
+    Protected Overrides ReadOnly Property StandardEventStatusQueryCommand As String = TspSyntax.Status.StandardEventPrintCommand
 
     ''' <summary> Gets the standard event enable query command. </summary>
     ''' <value> The standard event enable query command. </value>
-    Protected Overrides ReadOnly Property StandardEventEnableQueryCommand As String = TspSyntax.StandardEventEnableQueryCommand
+    Protected Overrides ReadOnly Property StandardEventEnableQueryCommand As String = TspSyntax.Status.StandardEventEnablePrintCommand
 
 #End Region
 
@@ -174,11 +174,11 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the measurement status query command. </summary>
     ''' <value> The measurement status query command. </value>
-    Protected Overrides ReadOnly Property MeasurementStatusQueryCommand As String = TspSyntax.MeasurementEventQueryCommand
+    Protected Overrides ReadOnly Property MeasurementStatusQueryCommand As String = "" ' Not available with TSP2
 
     ''' <summary> Gets the measurement event condition query command. </summary>
     ''' <value> The measurement event condition query command. </value>
-    Protected Overrides ReadOnly Property MeasurementEventConditionQueryCommand As String = TspSyntax.MeasurementEventConditionQueryCommand
+    Protected Overrides ReadOnly Property MeasurementEventConditionQueryCommand As String = "" ' Not available with TSP2
 
 #End Region
 
@@ -186,15 +186,15 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the operation event enable Query command </summary>
     ''' <value> The operation event enable Query command. </value>
-    Protected Overrides ReadOnly Property OperationEventEnableQueryCommand As String = TspSyntax.OperationEventEnableQueryCommand
+    Protected Overrides ReadOnly Property OperationEventEnableQueryCommand As String = TspSyntax.Status.OperationEventEnablePrintCommand
 
     ''' <summary> Gets the operation event enable command format. </summary>
     ''' <value> The operation event enable command format. </value>
-    Protected Overrides ReadOnly Property OperationEventEnableCommandFormat As String = TspSyntax.OperationEventEnableCommandFormat
+    Protected Overrides ReadOnly Property OperationEventEnableCommandFormat As String = TspSyntax.Status.OperationEventEnableCommandFormat
 
     ''' <summary> Gets the operation event status query command. </summary>
     ''' <value> The operation event status query command. </value>
-    Protected Overrides ReadOnly Property OperationEventStatusQueryCommand As String = TspSyntax.OperationEventQueryCommand
+    Protected Overrides ReadOnly Property OperationEventStatusQueryCommand As String = TspSyntax.Status.OperationEventPrintCommand
 
     ''' <summary> Programs the Operation register event enable bit mask. </summary>
     ''' <param name="value"> The bitmask. </param>
@@ -221,7 +221,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets line frequency query command. </summary>
     ''' <value> The line frequency query command. </value>
-    Protected Overrides ReadOnly Property LineFrequencyQueryCommand As String = TspSyntax.LineFrequencyPrintCommand
+    Protected Overrides ReadOnly Property LineFrequencyQueryCommand As String = TspSyntax.LocalNode.LineFrequencyPrintCommand
 
 #End Region
 
@@ -231,11 +231,11 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the identity query command. </summary>
     ''' <value> The identity query command. </value>
-    Protected Overrides ReadOnly Property IdentityQueryCommand As String = TspSyntax.IdentityQueryCommand
+    Protected Overrides ReadOnly Property IdentityQueryCommand As String = TspSyntax.LocalNode.IdentityQueryCommand
 
     ''' <summary> Gets the serial number query command. </summary>
     ''' <value> The serial number query command. </value>
-    Protected Overrides ReadOnly Property SerialNumberQueryCommand As String = "_G.print(string.format('%d',_G.localnode.serialno))"
+    Protected Overrides ReadOnly Property SerialNumberQueryCommand As String = TspSyntax.LocalNode.SerialNumberPrintNumberCommand
 
     ''' <summary> Parse version information. </summary>
     ''' <param name="value"> The value. </param>
@@ -259,11 +259,11 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the clear error queue command. </summary>
     ''' <value> The clear error queue command. </value>
-    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = TspSyntax.ClearEventLogCommand
+    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = TspSyntax.EventLog.ClearEventLogCommand
 
     ''' <summary> Gets the 'Next Error' query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = TspSyntax.NextErrorFormattedPrintCommand
+    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = TspSyntax.EventLog.NextErrorFormattedPrintCommand
 
     ''' <summary> Enqueue device error. </summary>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
@@ -281,7 +281,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the collect garbage wait complete command. </summary>
     ''' <value> The collect garbage wait complete command. </value>
-    Protected Overrides ReadOnly Property CollectGarbageWaitCompleteCommand As String = TspSyntax.CollectGarbageWaitCompleteCommand
+    Protected Overrides ReadOnly Property CollectGarbageWaitCompleteCommand As String = LuaSyntax.CollectGarbageWaitCompleteCommand
 
 #End Region
 

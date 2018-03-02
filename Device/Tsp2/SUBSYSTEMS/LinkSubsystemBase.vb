@@ -72,9 +72,9 @@ Public MustInherit Class LinkSubsystemBase
         Dim count As Integer?
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If node.IsController Then
-            count = Me.Session.QueryPrint(0I, 1, TspSyntax.ErrorCountQueryCommand)
+            count = Me.Session.QueryPrint(0I, 1, TspSyntax.EventLog.ErrorCountQueryCommand)
         Else
-            count = Me.Session.QueryPrint(0I, 1, TspSyntax.NodeErrorCountQueryCommand, node.Number)
+            count = Me.Session.QueryPrint(0I, 1, TspSyntax.EventLog.NodeErrorCountQueryCommand, node.Number)
         End If
         Return count.GetValueOrDefault(0)
     End Function
@@ -89,7 +89,7 @@ Public MustInherit Class LinkSubsystemBase
     ''' <param name="nodeNumber"> The node number. </param>
     Public Sub ClearErrorQueue(ByVal nodeNumber As Integer)
         If Not Me.NodeExists(nodeNumber) Then
-            Me.Session.WriteLine(TspSyntax.NodeClearEventLogCommand, nodeNumber)
+            Me.Session.WriteLine(TspSyntax.EventLog.NodeClearEventLogCommand, nodeNumber)
         End If
     End Sub
 
@@ -181,7 +181,7 @@ Public MustInherit Class LinkSubsystemBase
     ''' Link group number for the node. </param>
     Public Overloads Sub EnableWaitComplete(ByVal groupNumber As Integer)
         Me.StatusSubsystem.EnableWaitComplete()
-        Me.Session.WriteLine(TspSyntax.WaitGroupCommandFormat, groupNumber)
+        Me.Session.WriteLine(LuaSyntax.WaitGroupCommandFormat, groupNumber)
     End Sub
 
     ''' <summary> Waits completion after command. </summary>
@@ -239,7 +239,7 @@ Public MustInherit Class LinkSubsystemBase
         Dim affirmative As Boolean = True
         ' do a garbage collection
         Try
-            Me.Session.WriteLine(TspSyntax.CollectNodeGarbageFormat, node.Number)
+            Me.Session.WriteLine(TspSyntax.Node.CollectNodeGarbageFormat, node.Number)
             affirmative = Me.TraceVisaDeviceOperationOkay(node.Number, True, "collecting garbage after {0};. ",
                                                           String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
         Catch ex As NativeException
@@ -429,7 +429,7 @@ Public MustInherit Class LinkSubsystemBase
     ''' <param name="nodeNumber"> Specifies the remote node number. </param>
     ''' <param name="value">      true to value. </param>
     Public Sub ConnectRuleSetter(ByVal nodeNumber As Integer, ByVal value As Integer)
-        Me.Session.WriteLine(TspSyntax.NodeConnectRuleSetterCommandFormat, nodeNumber, value)
+        Me.Session.WriteLine(TspSyntax.Node.ConnectRuleSetterCommandFormat, nodeNumber, value)
     End Sub
 
 #End Region

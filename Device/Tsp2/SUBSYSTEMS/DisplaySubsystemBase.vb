@@ -40,6 +40,34 @@ Public MustInherit Class DisplaySubsystemBase
 
 #End Region
 
+#Region " COMMAND SYNTAX "
+
+#Region " DISPLAY SCREEN  "
+
+    ''' <summary> Gets the display Screen command format. </summary>
+    ''' <value> The display Screen command format. </value>
+    Protected Overrides ReadOnly Property DisplayScreenCommandFormat As String = TspSyntax.Display.DisplayScreenCommandFormat
+
+    ''' <summary> Gets the display Screen query command. </summary>
+    ''' <value> The display Screen query command. </value>
+    Protected Overrides ReadOnly Property DisplayScreenQueryCommand As String = ""
+
+#End Region
+
+#Region " ENABLED "
+
+    ''' <summary> Gets the display enable command format. </summary>
+    ''' <value> The display enable command format. </value>
+    Protected Overrides ReadOnly Property DisplayEnableCommandFormat As String = ""
+
+    ''' <summary> Gets the display enabled query command. </summary>
+    ''' <value> The display enabled query command. </value>
+    Protected Overrides ReadOnly Property DisplayEnabledQueryCommand As String = ""
+
+#End Region
+
+#End Region
+
 #Region " EXISTS "
 
     ''' <summary> Reads the display existence indicator.
@@ -56,15 +84,17 @@ Public MustInherit Class DisplaySubsystemBase
 
 #Region " CLEAR "
 
+    ''' <summary> Gets or sets the default display screen. </summary>
+    ''' <value> The default display. </value>
+    Public Property DefaultScreen As VI.DisplayScreens = VI.DisplayScreens.User
+
     Protected Overrides ReadOnly Property ClearCommand As String = TspSyntax.Display.ClearCommand
 
     ''' <summary> Clears the display. </summary>
     ''' <remarks> Sets the display to the user mode. </remarks>
     Public Overrides Sub ClearDisplay()
-        Me.DisplayScreen = VI.DisplayScreens.User
-        If Me.QueryExists.GetValueOrDefault(False) Then
-            Me.Session.WriteLine(TspSyntax.Display.ClearCommand)
-        End If
+        Me.DisplayScreen = Me.DefaultScreen
+        MyBase.ClearDisplay()
     End Sub
 
     ''' <summary> Clears the display if not in measurement mode and set measurement mode. </summary>
@@ -75,70 +105,38 @@ Public MustInherit Class DisplaySubsystemBase
         End If
     End Sub
 
+    ''' <summary> Gets or sets the measurement screen. </summary>
+    ''' <value> The measurement screen. </value>
+    Public Property MeasurementScreen As VI.DisplayScreens = VI.DisplayScreens.Measurement
+
     ''' <summary> Clears the display if not in measurement mode and set measurement mode. </summary>
     ''' <remarks> Sets the display to the measurement. </remarks>
     Public Sub ClearDisplayMeasurement()
         If Me.QueryExists.GetValueOrDefault(False) AndAlso ((Me.DisplayScreen And DisplayScreens.Measurement) = 0) Then
             Me.ClearDisplay()
         End If
-        Me.DisplayScreen = DisplayScreens.Measurement
+        Me.DisplayScreen = Me.MeasurementScreen
     End Sub
 
 #End Region
 
-#Region " DISPLAY CHARACTER "
+#Region " USER SCREEN TEXT "
 
-    ''' <summary> Displays the character. </summary>
-    ''' <param name="lineNumber">      The line number. </param>
-    ''' <param name="position">        The position. </param>
-    ''' <param name="characterNumber"> The character number. </param>
-    Public Sub DisplayCharacter(ByVal lineNumber As Integer, ByVal position As Integer,
-                                ByVal characterNumber As Integer)
-        Me.DisplayScreen = DisplayScreens.User Or DisplayScreens.Custom
-        If Not Me.QueryExists.GetValueOrDefault(False) Then
-            Return
-        End If
-        ' ignore empty character.
-        If characterNumber <= 0 OrElse characterNumber > TspSyntax.Display.MaximumCharacterNumber Then
-            Return
-        End If
-        Me.Session.WriteLine(TspSyntax.Display.SetCursorCommandFormat, lineNumber, position)
-        Me.Session.WriteLine(TspSyntax.Display.SetCharacterCommandFormat, characterNumber)
-    End Sub
-
-#End Region
-
-#Region " DISPLAY LINE "
+    ''' <summary> Gets or sets the user screen. </summary>
+    ''' <value> The user screen. </value>
+    Public Property UserScreen As VI.DisplayScreens = VI.DisplayScreens.UserSwipe
 
     ''' <summary> Displays a message on the display. </summary>
     ''' <param name="lineNumber"> The line number. </param>
     ''' <param name="value">      The value. </param>
     Public Overrides Sub DisplayLine(ByVal lineNumber As Integer, ByVal value As String)
-
-        Me.DisplayScreen = DisplayScreens.User Or DisplayScreens.Custom
-        If Not Me.QueryExists.GetValueOrDefault(False) Then
-            Return
+        If Me.QueryExists.GetValueOrDefault(False) AndAlso Not String.IsNullOrWhiteSpace(value) Then
+            lineNumber = Math.Max(1, Math.Min(2, lineNumber))
+            Dim length As Integer = If(lineNumber = 1, TspSyntax.Display.FirstLineLength, TspSyntax.Display.SecondLineLength)
+            If value.Length < length Then value = value.PadRight(length)
+            Me.Write(TspSyntax.Display.SetTextLineCommandFormat, lineNumber, value)
+            Me.DisplayScreen = Me.UserScreen
         End If
-
-        ' ignore empty strings.
-        If String.IsNullOrWhiteSpace(value) Then
-            Return
-        End If
-
-        Dim length As Integer = TspSyntax.Display.FirstLineLength
-
-        If lineNumber < 1 Then
-            lineNumber = 1
-        ElseIf lineNumber > 2 Then
-            lineNumber = 2
-        End If
-        If lineNumber = 2 Then
-            length = TspSyntax.Display.SecondLineLength
-        End If
-
-        Me.Session.WriteLine(TspSyntax.Display.SetCursorLineCommandFormat, lineNumber)
-        If value.Length < length Then value = value.PadRight(length)
-        Me.Session.WriteLine(TspSyntax.Display.SetTextCommandFormat, value)
 
     End Sub
 
@@ -146,7 +144,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <param name="title">    Top row data. </param>
     ''' <param name="subtitle"> Bottom row data. </param>
     Public Sub DisplayTitle(ByVal title As String, ByVal subtitle As String)
-        Me.DisplayLine(0, title)
+        Me.DisplayLine(1, title)
         Me.DisplayLine(2, subtitle)
     End Sub
 
@@ -161,7 +159,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <summary> Restores the instrument display. </summary>
     ''' <param name="timeout"> The timeout. </param>
     Public Sub RestoreDisplay(ByVal timeout As TimeSpan)
-        Me.DisplayScreen = DisplayScreens.Default
+        Me.DisplayScreen = VI.DisplayScreens.Default
         If Me.Exists.HasValue AndAlso Me.Exists.Value AndAlso Not String.IsNullOrWhiteSpace(Me.RestoreMainScreenWaitCompleteCommand) Then
             Me.StatusSubsystem.EnableWaitComplete()
             ' Documentation error: Display Main equals 1, not 0. This code should work on other instruments.
@@ -172,7 +170,7 @@ Public MustInherit Class DisplaySubsystemBase
 
     ''' <summary> Restores the instrument display. </summary>
     Public Sub RestoreDisplay()
-        Me.DisplayScreen = DisplayScreens.Default
+        Me.DisplayScreen = VI.DisplayScreens.Default
         If Me.Exists.HasValue AndAlso Me.Exists.Value AndAlso Not String.IsNullOrWhiteSpace(Me.RestoreMainScreenWaitCompleteCommand) Then
             ' Documentation error: Display Main equals 1, not 0. This code should work on other instruments.
             Me.Session.WriteLine(Me.RestoreMainScreenWaitCompleteCommand)

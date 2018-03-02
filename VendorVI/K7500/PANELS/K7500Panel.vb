@@ -10,6 +10,7 @@ Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a user interface for a Keithley 200X Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -415,9 +416,9 @@ Public Class K7500Panel
     End Sub
     Private Sub OnFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
         With Me._SenseRangeNumeric
-            .Minimum = CDec(value.ValueRange.Min)
-            .Maximum = CDec(value.ValueRange.Max)
-            .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.ValueRange.Min)))
+            .Minimum = CDec(value.FunctionRange.Min)
+            .Maximum = CDec(value.FunctionRange.Max)
+            .DecimalPlaces = CInt(Math.Max(0, -Math.Log10(value.FunctionRange.Min)))
         End With
         With Me._PowerLineCyclesNumeric
             .Minimum = CDec(value.PowerLineCyclesRange.Min)
@@ -731,17 +732,6 @@ Public Class K7500Panel
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{Me.Device.ResourceTitle} exception handling STATUS '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
-        End Try
-    End Sub
-
-    ''' <summary> Reads a service request status. </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Sub ReadServiceRequestStatus()
-        Try
-            Me.Device.StatusSubsystem.ReadServiceRequestStatus()
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.Device.ResourceTitle} exception handling service request;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

@@ -317,9 +317,7 @@ Public MustInherit Class SubsystemBase
     ''' <param name="value"> The value. </param>
     ''' <returns> The value. </returns>
     Public Function Write(ByVal value As String) As String
-        If Not String.IsNullOrWhiteSpace(value) Then
-            Me.Session.WriteLine(value)
-        End If
+        If Not String.IsNullOrWhiteSpace(value) Then Me.Session.WriteLine(value)
         Return value
     End Function
 

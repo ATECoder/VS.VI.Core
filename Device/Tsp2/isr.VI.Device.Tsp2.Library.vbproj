@@ -85,7 +85,14 @@
     <Compile Include="ENTITIES\NodeEntity.vb" />
     <Compile Include="ENTITIES\NodeEntityBase.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="SYNTAX\TspNodeSyntax.vb" />
+    <Compile Include="SYNTAX\EventLogSyntax.vb" />
+    <Compile Include="SYNTAX\DisplaySyntax.vb" />
+    <Compile Include="SYNTAX\LocalNodeSyntax.vb" />
+    <Compile Include="SYNTAX\SlotSyntax.vb" />
+    <Compile Include="SYNTAX\SmuSyntax.vb" />
+    <Compile Include="SYNTAX\NodeSyntax.vb" />
+    <Compile Include="SYNTAX\LuaSyntax.vb" />
+    <Compile Include="SYNTAX\StatusSyntax.vb" />
     <Compile Include="SYNTAX\TspSyntax.vb" />
     <Content Include="My\isr.VI.Device.Tsp2.Library.rtf" />
     <EmbeddedResource Include="RESOURCES\BinaryScripts.tsp" />

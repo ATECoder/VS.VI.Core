@@ -152,7 +152,7 @@ Public MustInherit Class SlotSubsystemBase
         If Not Me.IsSlotExists.HasValue Then Me.QuerySlotExists()
         If Not Me.SupportsInterlock.HasValue Then Me.QuerySupportsInterlock()
         If Me.IsSlotExists.GetValueOrDefault(False) AndAlso Me.QuerySupportsInterlock.GetValueOrDefault(False) Then
-            Me.InterlocksState = Me.Query(Me.InterlocksState, String.Format(TspSyntax.Slot.PrintInterlockStateFormat, Me.SlotNumber))
+            Me.InterlocksState = Me.Query(Me.InterlocksState, String.Format(TspSyntax.Slot.InterlockStatePrintCommandFormat, Me.SlotNumber))
             Me.Interlocks.UpdateInterlockState(Me.InterlocksState.GetValueOrDefault(0))
         End If
         Return Me.InterlocksState

@@ -16,7 +16,7 @@ Public Class DeviceError
     ''' <summary> Initializes a new instance of the <see cref="DeviceError" /> class 
     '''           specifying no error. </summary>
     Public Sub New()
-        MyBase.New(TspSyntax.NoErrorCompoundMessage)
+        MyBase.New(TspSyntax.EventLog.NoErrorCompoundMessage)
     End Sub
 
     ''' <summary> Initializes a new instance of the <see cref="DeviceError" /> class. </summary>
@@ -24,8 +24,8 @@ Public Class DeviceError
     Public Sub New(ByVal value As DeviceError)
         MyBase.New(value)
         If value Is Nothing Then
-            Me.CompoundErrorMessage = TspSyntax.NoErrorCompoundMessage
-            Me.ErrorMessage = TspSyntax.NoErrorMessage
+            Me.CompoundErrorMessage = TspSyntax.EventLog.NoErrorCompoundMessage
+            Me.ErrorMessage = TspSyntax.EventLog.NoErrorMessage
             Me._ErrorLevel = TspErrorLevel.None
             Me._NodeNumber = 0
         Else

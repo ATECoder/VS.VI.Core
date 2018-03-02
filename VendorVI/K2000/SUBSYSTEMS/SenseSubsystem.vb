@@ -138,6 +138,4 @@ Public Class SenseSubsystem
 
 #End Region
 
-
-
 End Class

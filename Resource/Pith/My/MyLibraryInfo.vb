@@ -50,6 +50,7 @@
         <System.ComponentModel.Description("K34980 Meter/Scanner")> K34980 = ProjectTraceEventId.PowerSupply + &H10
         <System.ComponentModel.Description("K3458 Meter")> K3458 = ProjectTraceEventId.PowerSupply + &H11
         <System.ComponentModel.Description("K2450 Source Meter")> K2450 = ProjectTraceEventId.PowerSupply + &H12
+        <System.ComponentModel.Description("K7500 TSP2 Meter")> K7500T = ProjectTraceEventId.PowerSupply + &H13
 
         <System.ComponentModel.Description("Core Tester")> DeviceTester = ProjectTraceEventId.VI *
                                                                           TraceEventConstants.BaseScaleFactor +

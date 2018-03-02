@@ -112,6 +112,37 @@ Public MustInherit Class SystemSubsystemBase
 
 #End Region
 
+#Region " FIRMWARE VERSION "
+
+    ''' <summary> The Firmware Version. </summary>
+    Private _FirmwareVersion As Double?
+    ''' <summary> Gets the cached version the Firmware. </summary>
+    ''' <value> The Firmware Version. </value>
+    Public Property FirmwareVersion As Double?
+        Get
+            Return Me._FirmwareVersion
+        End Get
+        Protected Set(value As Double?)
+            Me._FirmwareVersion = value
+            Me.SafePostPropertyChanged()
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the Firmware Version query command. </summary>
+    ''' <value> The Firmware Version query command. </value>
+    Protected Overridable ReadOnly Property FirmwareVersionQueryCommand As String
+
+    ''' <summary> Queries the Firmware version. </summary>
+    ''' <returns> System.Nullable{System.Double}. </returns>
+    Public Function QueryFirmwareVersion() As Double?
+        If Not String.IsNullOrWhiteSpace(Me.FirmwareVersionQueryCommand) Then
+            Me._FirmwareVersion = Me.Session.Query(0.0F, Me.FirmwareVersionQueryCommand)
+        End If
+        Return Me.FirmwareVersion
+    End Function
+
+#End Region
+
 End Class
 
 Public Enum FanLevel

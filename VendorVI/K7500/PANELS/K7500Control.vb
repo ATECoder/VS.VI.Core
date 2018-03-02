@@ -1,9 +1,7 @@
 Imports System.ComponentModel
-Imports System.Threading
 Imports System.Windows.Forms
 Imports isr.Core.Controls.ComboBoxExtensions
 Imports isr.Core.Controls.CheckBoxExtensions
-Imports isr.Core.Controls.ControlExtensions
 Imports isr.Core.Controls.NumericUpDownExtensions
 Imports isr.Core.Controls.SafeSetterExtensions
 Imports isr.Core.Controls.ToolStripExtensions
@@ -11,6 +9,7 @@ Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a user interface for a Keithley 200X Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -433,6 +432,8 @@ Public Class K7500Control
             End With
         End If
     End Sub
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    <CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId:="value")>
     Private Sub OnFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
 #If False Then
         With Me._PowerLineCyclesNumeric

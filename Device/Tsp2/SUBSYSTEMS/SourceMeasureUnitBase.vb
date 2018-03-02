@@ -21,7 +21,7 @@ Public MustInherit Class SourceMeasureUnitBase
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystem">TSP status
     ''' Subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
-        Me.New(statusSubsystem, 0, TspSyntax.SourceMeasureUnitNumberA)
+        Me.New(statusSubsystem, 0, TspSyntax.SourceMeasureUnit.SourceMeasureUnitNumberA)
     End Sub
 
     ''' <summary> Initializes a new instance of the <see cref="SourceMeasureUnitBase" /> class. </summary>
@@ -158,11 +158,11 @@ Public MustInherit Class SourceMeasureUnitBase
                 Me.SourceMeasureUnitName = ""
                 Me.SourceMeasureUnitReference = ""
             Else
-                Me.SourceMeasureUnitName = TspSyntax.BuildSmuName(Me.UnitNumber)
+                Me.SourceMeasureUnitName = TspSyntax.SourceMeasureUnit.BuildSmuName(Me.UnitNumber)
                 If Me.NodeNumber <= 0 OrElse Me.LocalNodeNumber <= 0 Then
-                    Me.SourceMeasureUnitReference = TspSyntax.BuildSmuReference(Me.UnitNumber)
+                    Me.SourceMeasureUnitReference = TspSyntax.SourceMeasureUnit.BuildSmuReference(Me.UnitNumber)
                 Else
-                    Me.SourceMeasureUnitReference = TspSyntax.BuildSmuReference(Me.NodeNumber, Me.LocalNodeNumber, Me.UnitNumber)
+                    Me.SourceMeasureUnitReference = TspSyntax.SourceMeasureUnit.BuildSmuReference(Me.NodeNumber, Me.LocalNodeNumber, Me.UnitNumber)
                 End If
             End If
         End Set

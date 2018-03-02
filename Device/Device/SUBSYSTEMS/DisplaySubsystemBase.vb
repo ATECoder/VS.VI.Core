@@ -21,7 +21,7 @@ Public MustInherit Class DisplaySubsystemBase
 
 #End Region
 
-#Region " CLEAR CAUTION MESSAGES (IMPEDANCE METER)"
+#Region " CLEAR CAUTION MESSAGES (IMPEDANCE ANALYZER)"
 
     ''' <summary> Gets the clear caution messages command. </summary>
     ''' <value> The Abort command. </value>
@@ -30,9 +30,7 @@ Public MustInherit Class DisplaySubsystemBase
 
     ''' <summary> Clears the caution messages. </summary>
     Public Sub ClearCautionMessages()
-        If Not String.IsNullOrWhiteSpace(Me.ClearCautionMessagesCommand) Then
-            Me.Session.WriteLine(Me.ClearCautionMessagesCommand)
-        End If
+        Me.Write(Me.ClearCautionMessagesCommand)
     End Sub
 
 #End Region
@@ -46,9 +44,7 @@ Public MustInherit Class DisplaySubsystemBase
 
     ''' <summary> Clears the triggers. </summary>
     Public Overridable Sub ClearDisplay()
-        If Me.QueryExists.GetValueOrDefault(False) Then
-            Me.Write(Me.ClearCommand)
-        End If
+        If Me.QueryExists.GetValueOrDefault(False) Then Me.Write(Me.ClearCommand)
     End Sub
 
     ''' <summary> Clears the display without raising exceptions. </summary>
@@ -94,7 +90,6 @@ Public MustInherit Class DisplaySubsystemBase
         Me.DisplayLine(lineNumber, String.Format(format, args))
     End Sub
 
-
 #End Region
 
 #Region " ENABLED "
@@ -138,9 +133,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <returns> <c>null</c> display status is not known; <c>True</c> if enabled; otherwise, <c>False</c>. </returns>
     Public Function QueryEnabled() As Boolean?
         Me.Session.MakeEmulatedReplyIfEmpty(Me.Enabled.GetValueOrDefault(True))
-        If Not String.IsNullOrWhiteSpace(Me.DisplayEnabledQueryCommand) Then
-            Me.Enabled = Me.Session.Query(Me.Enabled.GetValueOrDefault(True), Me.DisplayEnabledQueryCommand)
-        End If
+        Me.Enabled = Me.Query(Me.Enabled.GetValueOrDefault(True), Me.DisplayEnabledQueryCommand)
         Return Me.Enabled
     End Function
 
@@ -152,9 +145,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <param name="value"> if set to <c>True</c> is enabled. </param>
     ''' <returns> <c>null</c> if display status is not known; <c>True</c> if enabled; otherwise, <c>False</c>. </returns>
     Public Function WriteEnabled(ByVal value As Boolean) As Boolean?
-        If Not String.IsNullOrWhiteSpace(Me.DisplayEnableCommandFormat) Then
-            Me.Session.WriteLine(Me.DisplayEnableCommandFormat, CType(value, Integer))
-        End If
+        Me.Write(Me.DisplayEnableCommandFormat, CType(value, Integer))
         Me.Enabled = value
         Return Me.Enabled
     End Function
@@ -189,9 +180,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <returns> <c>null</c> status is not known; <c>True</c> if display exists; otherwise, <c>False</c>. </returns>
     Public Overridable Function QueryExists() As Boolean?
         Me.Session.MakeEmulatedReplyIfEmpty(Me.Exists.GetValueOrDefault(True))
-        If Not String.IsNullOrWhiteSpace(Me.DisplayExistsQueryCommand) Then
-            Me.Exists = Me.Session.Query(Me.Exists.GetValueOrDefault(True), Me.DisplayExistsQueryCommand)
-        End If
+        Me.Exists = Me.Query(Me.Exists.GetValueOrDefault(True), Me.DisplayExistsQueryCommand)
         Return Me.Exists
     End Function
 
@@ -257,18 +246,25 @@ End Class
 Public Enum DisplayScreens
     <ComponentModel.Description("Not specified")> None
 
-    ''' <summary> 7500 SCREENS. </summary>
+    ''' <summary> 2450+7500 SCREENS. </summary>
     <ComponentModel.Description("Home (HOME)")> Home
-    <ComponentModel.Description("Home Large Reading (HOME_LARG)")> HomeLargeReading
-    <ComponentModel.Description("Reading Table (READ)")> ReadingTable
+    <ComponentModel.Description("User swipe (USER_SWIPE)")> UserSwipe
+    <ComponentModel.Description("Statistics swipe (STATS_SWIPE)")> StatisticsSwipe
+    <ComponentModel.Description("Settings swipe (SETTINGS_SWIPE)")> SettingsSwipe
     <ComponentModel.Description("Graph (GRAP)")> Graph
-    <ComponentModel.Description("Histogram  (HIST)")> Histogram
-    <ComponentModel.Description("Functions swipe screen (SWIPE_FUNC)")> FunctionsSwipe
-    <ComponentModel.Description("Graph swipe screen (SWIPE_GRAP)")> GraphSwipe
-    <ComponentModel.Description("Secondary swipe screen (SWIPE_SEC)")> SecondarySwipe
-    <ComponentModel.Description("Settings swipe screen (SWIPE_SETT)")> SettingsSwipe
-    <ComponentModel.Description("Statistics swipe screen (SWIPE_STAT)")> StatisticsSwipe
-    <ComponentModel.Description("USER swipe screen (SWIPE_USER)")> UserSwipe
+
+    ''' <summary> 2450 SCREENS. </summary> 
+    <ComponentModel.Description("Source swipe (SOURCE_SWIPE)")> SourceSwipe
+    <ComponentModel.Description("Plot swipe (PLOT_SWIPE)")> PlotSwipe
+    <ComponentModel.Description("Data sheet (SATASHEET)")> Datasheet
+
+    ''' <summary> 7500 SCREENS. </summary>
+    <ComponentModel.Description("Home Large Reading (HOME_LARGE_READING)")> HomeLargeReading
+    <ComponentModel.Description("Reading Table (READING_TABLE)")> ReadingTable
+    <ComponentModel.Description("Histogram (HISTOGRAM)")> Histogram
+    <ComponentModel.Description("Functions swipe (FUNCTIONS_SWIPE)")> FunctionsSwipe
+    <ComponentModel.Description("Graph swipe (GRAPH_SWIPE)")> GraphSwipe
+    <ComponentModel.Description("Secondary swipe (SECONDARY_SWIPE)")> SecondarySwipe
 
     ''' <summary> Special User Screens </summary>
     <System.ComponentModel.Description("Default screen")> [Default] = 1

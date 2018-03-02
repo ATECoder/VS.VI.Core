@@ -24,10 +24,9 @@ Public MustInherit Class SystemSubsystemBase
 
 #Region " SYNTAX "
 
-    ''' <summary> Gets or sets the TSP revision query command. </summary>
-    ''' <value> The scpi revision query command. </value>
-    ''' <remarks> ':SYST:VERS?'</remarks>
-    Protected Overrides ReadOnly Property ScpiRevisionQueryCommand As String = "_G.print(_G.localnode.revision)"
+    ''' <summary> Gets or sets the Firmware Version query command. </summary>
+    ''' <value> The Firmware Version query command. </value>
+    Protected Overrides ReadOnly Property FirmwareVersionQueryCommand As String = TspSyntax.LocalNode.FirmwareVersionPrintCommand
 
 #End Region
 

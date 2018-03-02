@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='iso-8859-1'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TraceLogLevel" Type="System.Diagnostics.TraceEventType" Scope="User">
+      <Value Profile="(Default)">Warning</Value>
+    </Setting>
+    <Setting Name="TraceShowLevel" Type="System.Diagnostics.TraceEventType" Scope="User">
+      <Value Profile="(Default)">Warning</Value>
+    </Setting>
+    <Setting Name="InitializeTimeout" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:00:10</Value>
+    </Setting>
+    <Setting Name="DeviceClearRefractoryPeriod" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:00:00.5000000</Value>
+    </Setting>
+    <Setting Name="ResetRefractoryPeriod" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:00:00.2000000</Value>
+    </Setting>
+    <Setting Name="InitRefractoryPeriod" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:00:00.1000000</Value>
+    </Setting>
+    <Setting Name="ClearRefractoryPeriod" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:00:00.1000000</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
