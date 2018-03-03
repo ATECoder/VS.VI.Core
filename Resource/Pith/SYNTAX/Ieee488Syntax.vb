@@ -65,6 +65,22 @@ Namespace Ieee488
 
 #End Region
 
+#Region " KEITHLEY IEEE488 COMMANDS "
+
+            ''' <summary> Gets the Language query (*LANG?) command. </summary>
+            Public Const LanguageQueryCommand As String = "*LANG?"
+
+            ''' <summary> Gets the Language command format (*LANG). </summary>
+            Public Const LanguageCommandFormat As String = "*LANG {0}"
+
+            ''' <summary> The language scpi. </summary>
+            Public Const LanguageScpi As String = "SCPI"
+
+            ''' <summary> The language TSP. </summary>
+            Public Const LanguageTsp As String = "TSP"
+
+#End Region
+
 #Region " BUILDERS "
 
             ''' <summary> Builds the device clear (DCL) command. </summary>

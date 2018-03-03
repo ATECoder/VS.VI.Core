@@ -96,4 +96,44 @@ Public Class SenseSubsystem
 
 #End Region
 
+#Region " FUNCTION MODE "
+
+    ''' <summary> Converts a functionMode to a range. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an isr.Core.Pith.RangeR. </returns>
+    Public Overrides Function ToRange(ByVal functionMode As Integer) As isr.Core.Pith.RangeR
+        Dim result As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
+        Select Case functionMode
+            Case VI.Scpi.SenseFunctionModes.CurrentDC, VI.Scpi.SenseFunctionModes.Current, VI.Scpi.SenseFunctionModes.CurrentAC
+                result = New Core.Pith.RangeR(0, 10)
+            Case VI.Scpi.SenseFunctionModes.VoltageDC, VI.Scpi.SenseFunctionModes.Voltage, VI.Scpi.SenseFunctionModes.VoltageAC
+                result = New Core.Pith.RangeR(0, 1000)
+            Case VI.Scpi.SenseFunctionModes.FourWireResistance
+                result = New Core.Pith.RangeR(0, 2000000)
+            Case VI.Scpi.SenseFunctionModes.Resistance
+                result = New Core.Pith.RangeR(0, 1000000000D)
+        End Select
+        Return result
+    End Function
+
+    ''' <summary> Converts a functionMode to a decimal places. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an Integer. </returns>
+    Public Overrides Function ToDecimalPlaces(ByVal functionMode As Integer) As Integer
+        Dim result As Integer = 3
+        Select Case functionMode
+            Case VI.Scpi.SenseFunctionModes.CurrentDC, VI.Scpi.SenseFunctionModes.Current, VI.Scpi.SenseFunctionModes.CurrentAC
+                result = 3
+            Case VI.Scpi.SenseFunctionModes.VoltageDC, VI.Scpi.SenseFunctionModes.Voltage, VI.Scpi.SenseFunctionModes.VoltageAC
+                result = 3
+            Case VI.Scpi.SenseFunctionModes.FourWireResistance
+                result = 0
+            Case VI.Scpi.SenseFunctionModes.Resistance
+                result = 0
+        End Select
+        Return result
+    End Function
+
+#End Region
+
 End Class

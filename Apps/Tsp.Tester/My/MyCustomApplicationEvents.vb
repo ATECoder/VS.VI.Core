@@ -1,4 +1,5 @@
 ﻿Imports isr.Core.Pith
+Imports isr.VI.ExceptionExtensions
 Namespace My
 
     Partial Friend Class MyApplication
@@ -8,7 +9,7 @@ Namespace My
         Friend Function BuildDefaultCaption() As String
             Dim suffix As New System.Text.StringBuilder
             suffix.Append(" ")
-            Return Core.Pith.ApplicationInfo.BuildDefaultCaption(suffix.ToString)
+            Return Core.Pith.ApplicationInfo.BuildApplicationTitleCaption(suffix.ToString)
         End Function
 
         ''' <summary> Applies the default trace level. </summary>

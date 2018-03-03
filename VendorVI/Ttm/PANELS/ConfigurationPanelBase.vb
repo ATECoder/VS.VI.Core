@@ -2,6 +2,7 @@
 Imports System.ComponentModel
 Imports isr.Core.Pith
 Imports isr.Core.Pith.NumericExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Panel for editing the configuration. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

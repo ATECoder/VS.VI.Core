@@ -3,6 +3,7 @@ Imports System.ComponentModel
 Imports isr.Core.Pith
 Imports isr.Core.Pith.ErrorProviderExtensions
 Imports isr.Core.Pith.SplitExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a user interface for the EG2000 Prober Device. </summary>
 ''' <license> (c) 2015 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

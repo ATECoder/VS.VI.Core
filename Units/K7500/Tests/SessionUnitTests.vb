@@ -75,6 +75,63 @@ Public Class SessionUnitTests
 
 #End Region
 
+#Region " SESSION TESTs: STATUS OPEN CHECK LANGAUGE "
+
+    ''' <summary> Uses a status session to check the device language. </summary>
+    Private Shared Sub CheckDeviceLanguage()
+        Dim expectedBoolean As Boolean = True
+        Dim actualBoolean As Boolean
+        Using device As Device = Device.Create
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            device.Session.ResourceTitle = TestInfo.ResourceTitle
+            actualBoolean = device.TryOpenStatusSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Failed to open status session: {e.Details}")
+            ' device.StatusSubsystem.QueryLanguage()
+            Assert.AreEqual(TestInfo.Language, device.StatusSubsystem.Language, $"System language mismatch")
+            device.CloseStatusSession()
+            actualBoolean = device.IsDeviceOpen
+            expectedBoolean = False
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Failed to close status session")
+        End Using
+    End Sub
+
+    <TestMethod()>
+    Public Sub DeviceLangageTest()
+        SessionUnitTests.CheckDeviceLanguage()
+    End Sub
+
+    ''' <summary> Reset Device language to the expected language. </summary>
+    Private Shared Sub ResetDeviceLanguage()
+        Dim expectedBoolean As Boolean = True
+        Dim actualBoolean As Boolean
+        Using device As Device = Device.Create
+            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            device.Session.ResourceTitle = TestInfo.ResourceTitle
+            actualBoolean = device.TryOpenStatusSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Failed to open status session: {e.Details}")
+            ' device.StatusSubsystem.QueryLanguage()
+            ' set the device to the same language
+            Dim currentLanguage As String = device.StatusSubsystem.Language
+            device.StatusSubsystem.ApplyLanguage(device.StatusSubsystem.Language)
+            Assert.AreEqual(currentLanguage, device.StatusSubsystem.Language, $"Failed resetting to the same language")
+            If Not String.Equals(currentLanguage, device.StatusSubsystem.ExpectedLanguage) Then
+                ' reset the device to a new language. 
+                device.StatusSubsystem.ApplyLanguage(device.StatusSubsystem.ExpectedLanguage)
+            End If
+            device.CloseStatusSession()
+            actualBoolean = device.IsDeviceOpen
+            expectedBoolean = False
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"Failed to close status session")
+        End Using
+    End Sub
+
+    <TestMethod()>
+    Public Sub ResetDeviceLanguageTest()
+        SessionUnitTests.ResetDeviceLanguage()
+    End Sub
+
+#End Region
+
 #Region " SESSION TESTs: OPEN / CLOSE ONLY "
 
     ''' <summary> Opens close session. </summary>

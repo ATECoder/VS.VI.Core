@@ -11,16 +11,17 @@
 Option Strict On
 Option Explicit On
 
-Namespace My
 
-    <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
-     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
-     Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
+Namespace My
+    
+    <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),  _
+     Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
     Partial Public NotInheritable Class MySettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
-
-        Private Shared defaultInstance As MySettings = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New MySettings()), MySettings)
-
+        
+        Private Shared defaultInstance As MySettings = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New MySettings()),MySettings)
+        
 #Region "My.Settings Auto-Save Functionality"
 #If _MyType = "WindowsForms" Then
     Private Shared addedHandler As Boolean
@@ -35,10 +36,10 @@ Namespace My
     End Sub
 #End If
 #End Region
-
+        
         Public Shared ReadOnly Property [Default]() As MySettings
             Get
-
+                
 #If _MyType = "WindowsForms" Then
                If Not addedHandler Then
                     SyncLock addedHandlerLockObject
@@ -52,88 +53,88 @@ Namespace My
                 Return defaultInstance
             End Get
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("Warning")>
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Warning")>  _
         Public Property TraceLogLevel() As Global.System.Diagnostics.TraceEventType
             Get
-                Return CType(Me("TraceLogLevel"), Global.System.Diagnostics.TraceEventType)
+                Return CType(Me("TraceLogLevel"),Global.System.Diagnostics.TraceEventType)
             End Get
             Set
-                Me("TraceLogLevel") = Value
+                Me("TraceLogLevel") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("Warning")>
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Warning")>  _
         Public Property TraceShowLevel() As Global.System.Diagnostics.TraceEventType
             Get
-                Return CType(Me("TraceShowLevel"), Global.System.Diagnostics.TraceEventType)
+                Return CType(Me("TraceShowLevel"),Global.System.Diagnostics.TraceEventType)
             End Get
             Set
-                Me("TraceShowLevel") = Value
+                Me("TraceShowLevel") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:10")>
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:10")>  _
         Public Property InitializeTimeout() As Global.System.TimeSpan
             Get
-                Return CType(Me("InitializeTimeout"), Global.System.TimeSpan)
+                Return CType(Me("InitializeTimeout"),Global.System.TimeSpan)
             End Get
             Set
-                Me("InitializeTimeout") = Value
+                Me("InitializeTimeout") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.5000000")>
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.5000000")>  _
         Public Property DeviceClearRefractoryPeriod() As Global.System.TimeSpan
             Get
-                Return CType(Me("DeviceClearRefractoryPeriod"), Global.System.TimeSpan)
+                Return CType(Me("DeviceClearRefractoryPeriod"),Global.System.TimeSpan)
             End Get
             Set
-                Me("DeviceClearRefractoryPeriod") = Value
+                Me("DeviceClearRefractoryPeriod") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.2000000")>
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.2000000")>  _
         Public Property ResetRefractoryPeriod() As Global.System.TimeSpan
             Get
-                Return CType(Me("ResetRefractoryPeriod"), Global.System.TimeSpan)
+                Return CType(Me("ResetRefractoryPeriod"),Global.System.TimeSpan)
             End Get
             Set
-                Me("ResetRefractoryPeriod") = Value
+                Me("ResetRefractoryPeriod") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>  _
         Public Property InitRefractoryPeriod() As Global.System.TimeSpan
             Get
-                Return CType(Me("InitRefractoryPeriod"), Global.System.TimeSpan)
+                Return CType(Me("InitRefractoryPeriod"),Global.System.TimeSpan)
             End Get
             Set
-                Me("InitRefractoryPeriod") = Value
+                Me("InitRefractoryPeriod") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>  _
         Public Property ClearRefractoryPeriod() As Global.System.TimeSpan
             Get
-                Return CType(Me("ClearRefractoryPeriod"), Global.System.TimeSpan)
+                Return CType(Me("ClearRefractoryPeriod"),Global.System.TimeSpan)
             End Get
             Set
-                Me("ClearRefractoryPeriod") = Value
+                Me("ClearRefractoryPeriod") = value
             End Set
         End Property
     End Class

@@ -1,4 +1,5 @@
-﻿''' <summary> Defines the contract that must be implemented by R2D2 Status Subsystem. </summary>
+﻿Imports isr.VI.ExceptionExtensions
+''' <summary> Defines the contract that must be implemented by R2D2 Status Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
 ''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING

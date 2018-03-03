@@ -61,11 +61,7 @@
     </Compile>
     <Compile Include="ENTITIES\BufferElement.vb" />
     <Compile Include="ENTITIES\DeviceError.vb" />
-    <Compile Include="My Project\Settings.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
+    <Compile Include="My Project\Application.Designer.vb" />
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="SUBSYSTEMS\SlotSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SlotsSubsystemBase.vb" />
@@ -94,6 +90,7 @@
     <Compile Include="SYNTAX\LuaSyntax.vb" />
     <Compile Include="SYNTAX\StatusSyntax.vb" />
     <Compile Include="SYNTAX\TspSyntax.vb" />
+    <Content Include="My Project\Application.myapp" />
     <Content Include="My\isr.VI.Device.Tsp2.Library.rtf" />
     <EmbeddedResource Include="RESOURCES\BinaryScripts.tsp" />
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
@@ -127,11 +124,6 @@
   <ItemGroup>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>
-    </None>
-    <None Include="app.config" />
-    <None Include="My Project\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

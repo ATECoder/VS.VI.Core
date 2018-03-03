@@ -1,4 +1,5 @@
 ﻿Imports isr.Core.Pith
+Imports isr.VI.ExceptionExtensions
 Namespace My
 
     Partial Friend Class MyApplication
@@ -8,7 +9,7 @@ Namespace My
         Friend Function BuildDefaultCaption() As String
             Dim suffix As New System.Text.StringBuilder
             suffix.Append(" ")
-            Return isr.Core.Pith.ApplicationInfo.BuildDefaultCaption(suffix.ToString)
+            Return isr.Core.Pith.ApplicationInfo.BuildApplicationTitleCaption(suffix.ToString)
         End Function
 
         ''' <summary> Applies the default trace level. </summary>
@@ -77,7 +78,7 @@ Namespace My
         ''' <param name="value"> The value. </param>
         Public Sub Apply(ByVal value As MyLog)
             Me._MyLog = value
-            Global.isr.VI.My.MyLibrary.apply(value)
+            Global.isr.VI.My.MyLibrary.Apply(value)
         End Sub
 
         ''' <summary> Processes the startup. Sets the event arguments

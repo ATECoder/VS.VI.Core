@@ -3,6 +3,7 @@ Imports System.Windows.Forms
 Imports isr.Core.Pith
 Imports isr.Core.Pith.ErrorProviderExtensions
 Imports isr.VI.Instrument
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a user interface for a generic R2D2 Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -208,16 +209,6 @@ Public Class R2D2Panel
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
-        End Try
-    End Sub
-
-    ''' <summary> Reads a service request status. </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Sub ReadServiceRequestStatus()
-        Try
-            Me.Device.StatusSubsystem.ReadServiceRequestStatus()
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception reading service request;. {0}", ex.ToFullBlownString)
         End Try
     End Sub
 

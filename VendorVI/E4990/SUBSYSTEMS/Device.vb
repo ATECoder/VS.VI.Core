@@ -1,4 +1,5 @@
-﻿''' <summary> Implements a generic switch device. </summary>
+﻿Imports isr.VI.ExceptionExtensions
+''' <summary> Implements a generic switch device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
@@ -67,7 +68,7 @@ Public Class Device
             If Not Me.IsDisposed AndAlso disposing Then
                 ' ?listeners must clear, otherwise closing could raise an exception.
                 ' Me.Talker.Listeners.Clear()
-                If Me.IsDeviceOpen Then Me.OnClosing(New ComponentModel.CancelEventArgs)
+                If Me.IsDeviceOpen Then Me.OnClosing(New isr.Core.Pith.CancelDetailsEventArgs)
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
@@ -106,121 +107,348 @@ Public Class Device
     ''' <summary> Allows the derived device to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overrides Sub OnClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnClosing(e)
-        If e?.Cancel Then Return
-        If Me._SystemSubsystem IsNot Nothing Then
-            'RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+        If Not e.Cancel Then
+            Me.StatusSubsystem = Nothing
+            Me.SystemSubsystem = Nothing
+            Me.CalculateChannelSubsystem = Nothing
+            Me.CompensateOpenSubsystem = Nothing
+            Me.CompensateShortSubsystem = Nothing
+            Me.CompensateLoadSubsystem = Nothing
+            Me.ChannelMarkerSubsystem = Nothing
+            Me.PrimaryChannelTraceSubsystem = Nothing
+            Me.SecondaryChannelTraceSubsystem = Nothing
+            Me.ChannelTriggerSubsystem = Nothing
+            Me.DisplaySubsystem = Nothing
+            Me.SenseChannelSubsystem = Nothing
+            Me.SourceChannelSubsystem = Nothing
+            Me.TriggerSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
         End If
-        If Me._StatusSubsystem IsNot Nothing Then RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
-        Me.StatusSubsystem = Nothing
-        Me.Subsystems.DisposeItems()
     End Sub
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnOpening(ByVal e As ComponentModel.CancelEventArgs)
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnOpening(e)
-        If e?.Cancel Then Return
+        If Not e.Cancel Then
+            ' STATUS must be the first subsystem.
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+            Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
+            Me.CalculateChannelSubsystem = New CalculateChannelSubsystem(1, Me.StatusSubsystem)
+            Me.CompensateOpenSubsystem = New CompensateChannelSubsystem(CompensationTypes.OpenCircuit, 1, Me.StatusSubsystem)
+            Me.CompensateShortSubsystem = New CompensateChannelSubsystem(CompensationTypes.ShortCircuit, 1, Me.StatusSubsystem)
+            Me.CompensateLoadSubsystem = New CompensateChannelSubsystem(CompensationTypes.Load, 1, Me.StatusSubsystem)
+            Me.ChannelMarkerSubsystem = New ChannelMarkerSubsystem(1, 1, Me.StatusSubsystem)
+            Me.PrimaryChannelTraceSubsystem = New ChannelTraceSubsystem(1, 1, Me.StatusSubsystem)
+            Me.SecondaryChannelTraceSubsystem = New ChannelTraceSubsystem(2, 1, Me.StatusSubsystem)
+            Me.ChannelTriggerSubsystem = New ChannelTriggerSubsystem(1, Me.StatusSubsystem)
+            Me.DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
+            Me.SenseChannelSubsystem = New SenseChannelSubsystem(1, Me.StatusSubsystem)
+            Me.SourceChannelSubsystem = New SourceChannelSubsystem(1, Me.StatusSubsystem)
+            Me.TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
+        End If
+    End Sub
 
-        ' STATUS must be the first subsystem.
-        Me.StatusSubsystem = New StatusSubsystem(Me.Session)
-        'Me.AddSubsystem(Me.StatusSubsystem)
-        'AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+#End Region
 
-        Me._SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SystemSubsystem)
-        'AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+#Region " STATUS SESSION "
 
-        Me._CalculateChannelSubsystem = New CalculateChannelSubsystem(1, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.CalculateChannelSubsystem)
+    ''' <summary> Allows the derived device status subsystem to take actions before closing. Removes subsystems and
+    ''' event handlers. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    Protected Overrides Sub OnStatusClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnClosing(e)
+        If Not e.Cancel Then
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
+        End If
+    End Sub
 
-        Me._CompensateOpenSubsystem = New CompensateChannelSubsystem(CompensationTypes.OpenCircuit, 1, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.CompensateOpenSubsystem)
-
-        Me._CompensateShortSubsystem = New CompensateChannelSubsystem(CompensationTypes.ShortCircuit, 1, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.CompensateShortSubsystem)
-
-        Me._CompensateLoadSubsystem = New CompensateChannelSubsystem(CompensationTypes.Load, 1, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.CompensateLoadSubsystem)
-
-        Me._ChannelMarkerSubsystem = New ChannelMarkerSubsystem(1, 1, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.ChannelMarkerSubsystem)
-
-        Me._PrimaryChannelTraceSubsystem = New ChannelTraceSubsystem(1, 1, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.PrimaryChannelTraceSubsystem)
-
-        Me._SecondaryChannelTraceSubsystem = New ChannelTraceSubsystem(2, 1, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SecondaryChannelTraceSubsystem)
-
-        Me._ChannelTriggerSubsystem = New ChannelTriggerSubsystem(1, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.ChannelTriggerSubsystem)
-
-        Me._DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.DisplaySubsystem)
-
-        Me._SenseChannelSubsystem = New SenseChannelSubsystem(1, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SenseChannelSubsystem)
-
-        Me._SourceChannelSubsystem = New SourceChannelSubsystem(1, Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SourceChannelSubsystem)
-
-        Me._TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.TriggerSubsystem)
-
+    ''' <summary> Allows the derived device status subsystem to take actions before opening. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnStatusOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnOpening(e)
+        If Not e.Cancel Then
+            ' check the language status. 
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+        End If
     End Sub
 
 #End Region
 
 #Region " SUBSYSTEMS "
 
-    ''' <summary> Gets or sets the calculate channel subsystem. </summary>
-    ''' <value> The calculate channel subsystem. </value>
+    Private _CalculateChannelSubsystem As CalculateChannelSubsystem
+    ''' <summary>
+    ''' Gets or sets the CalculateChannel Subsystem.
+    ''' </summary>
+    ''' <value>The CalculateChannel Subsystem.</value>
     Public Property CalculateChannelSubsystem As CalculateChannelSubsystem
+        Get
+            Return Me._CalculateChannelSubsystem
+        End Get
+        Set(value As CalculateChannelSubsystem)
+            If Me._CalculateChannelSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.CalculateChannelSubsystem)
+                Me.CalculateChannelSubsystem.Dispose()
+                Me._CalculateChannelSubsystem = Nothing
+            End If
+            Me._CalculateChannelSubsystem = value
+            If Me._CalculateChannelSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.CalculateChannelSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets the channel marker subsystem. </summary>
-    ''' <value> The channel marker subsystem. </value>
+    Private _ChannelMarkerSubsystem As ChannelMarkerSubsystem
+    ''' <summary>
+    ''' Gets or sets the ChannelMarker Subsystem.
+    ''' </summary>
+    ''' <value>The ChannelMarker Subsystem.</value>
     Public Property ChannelMarkerSubsystem As ChannelMarkerSubsystem
+        Get
+            Return Me._ChannelMarkerSubsystem
+        End Get
+        Set(value As ChannelMarkerSubsystem)
+            If Me._ChannelMarkerSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.ChannelMarkerSubsystem)
+                Me.ChannelMarkerSubsystem.Dispose()
+                Me._ChannelMarkerSubsystem = Nothing
+            End If
+            Me._ChannelMarkerSubsystem = value
+            If Me._ChannelMarkerSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.ChannelMarkerSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets the primary channel Trace subsystem. </summary>
-    ''' <value> The primary channel Trace subsystem. </value>
+    Private _PrimaryChannelTraceSubsystem As ChannelTraceSubsystem
+    ''' <summary>
+    ''' Gets or sets the PrimaryChannelTrace Subsystem.
+    ''' </summary>
+    ''' <value>The PrimaryChannelTrace Subsystem.</value>
     Public Property PrimaryChannelTraceSubsystem As ChannelTraceSubsystem
+        Get
+            Return Me._PrimaryChannelTraceSubsystem
+        End Get
+        Set(value As ChannelTraceSubsystem)
+            If Me._PrimaryChannelTraceSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.PrimaryChannelTraceSubsystem)
+                Me.PrimaryChannelTraceSubsystem.Dispose()
+                Me._PrimaryChannelTraceSubsystem = Nothing
+            End If
+            Me._PrimaryChannelTraceSubsystem = value
+            If Me._PrimaryChannelTraceSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.PrimaryChannelTraceSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets the Secondary channel Trace subsystem. </summary>
-    ''' <value> The Secondary channel Trace subsystem. </value>
+    Private _SecondaryChannelTraceSubsystem As ChannelTraceSubsystem
+    ''' <summary>
+    ''' Gets or sets the SecondaryChannelTrace Subsystem.
+    ''' </summary>
+    ''' <value>The SecondaryChannelTrace Subsystem.</value>
     Public Property SecondaryChannelTraceSubsystem As ChannelTraceSubsystem
+        Get
+            Return Me._SecondaryChannelTraceSubsystem
+        End Get
+        Set(value As ChannelTraceSubsystem)
+            If Me._SecondaryChannelTraceSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.SecondaryChannelTraceSubsystem)
+                Me.SecondaryChannelTraceSubsystem.Dispose()
+                Me._SecondaryChannelTraceSubsystem = Nothing
+            End If
+            Me._SecondaryChannelTraceSubsystem = value
+            If Me._SecondaryChannelTraceSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.SecondaryChannelTraceSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets the channel Trigger subsystem. </summary>
-    ''' <value> The channel Trigger subsystem. </value>
+    Private _ChannelTriggerSubsystem As ChannelTriggerSubsystem
+    ''' <summary>
+    ''' Gets or sets the ChannelTrigger Subsystem.
+    ''' </summary>
+    ''' <value>The ChannelTrigger Subsystem.</value>
     Public Property ChannelTriggerSubsystem As ChannelTriggerSubsystem
+        Get
+            Return Me._ChannelTriggerSubsystem
+        End Get
+        Set(value As ChannelTriggerSubsystem)
+            If Me._ChannelTriggerSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.ChannelTriggerSubsystem)
+                Me.ChannelTriggerSubsystem.Dispose()
+                Me._ChannelTriggerSubsystem = Nothing
+            End If
+            Me._ChannelTriggerSubsystem = value
+            If Me._ChannelTriggerSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.ChannelTriggerSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets the Compensate open subsystem. </summary>
-    ''' <value> The Compensate open subsystem. </value>
+    Private _CompensateOpenSubsystem As CompensateChannelSubsystem
+    ''' <summary>
+    ''' Gets or sets the Compensate Open Subsystem.
+    ''' </summary>
+    ''' <value>The Compensate Open Subsystem.</value>
     Public Property CompensateOpenSubsystem As CompensateChannelSubsystem
+        Get
+            Return Me._CompensateOpenSubsystem
+        End Get
+        Set(value As CompensateChannelSubsystem)
+            If Me._CompensateOpenSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me._CompensateOpenSubsystem)
+                Me._CompensateOpenSubsystem.Dispose()
+                Me._CompensateOpenSubsystem = Nothing
+            End If
+            Me._CompensateOpenSubsystem = value
+            If Me._CompensateOpenSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.CompensateOpenSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets the Compensate Short subsystem. </summary>
-    ''' <value> The Compensate Short subsystem. </value>
+    Private _CompensateShortSubsystem As CompensateChannelSubsystem
+    ''' <summary>
+    ''' Gets or sets the Compensate Short Subsystem.
+    ''' </summary>
+    ''' <value>The Compensate Short Subsystem.</value>
     Public Property CompensateShortSubsystem As CompensateChannelSubsystem
+        Get
+            Return Me._CompensateShortSubsystem
+        End Get
+        Set(value As CompensateChannelSubsystem)
+            If Me._CompensateShortSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.CompensateShortSubsystem)
+                Me.CompensateShortSubsystem.Dispose()
+                Me._CompensateShortSubsystem = Nothing
+            End If
+            Me._CompensateShortSubsystem = value
+            If Me._CompensateShortSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.CompensateShortSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets the Compensate Load subsystem. </summary>
-    ''' <value> The Compensate Load subsystem. </value>
+    Private _CompensateLoadSubsystem As CompensateChannelSubsystem
+    ''' <summary>
+    ''' Gets or sets the Compensate Load Subsystem.
+    ''' </summary>
+    ''' <value>The Compensate Load Subsystem.</value>
     Public Property CompensateLoadSubsystem As CompensateChannelSubsystem
+        Get
+            Return Me._CompensateLoadSubsystem
+        End Get
+        Set(value As CompensateChannelSubsystem)
+            If Me._CompensateLoadSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.CompensateLoadSubsystem)
+                Me.CompensateLoadSubsystem.Dispose()
+                Me._CompensateLoadSubsystem = Nothing
+            End If
+            Me._CompensateLoadSubsystem = value
+            If Me._CompensateLoadSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.CompensateLoadSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets Display subsystem. </summary>
-    ''' <value> The Display subsystem. </value>
+    Private _DisplaySubsystem As DisplaySubsystem
+    ''' <summary>
+    ''' Gets or sets the Display Subsystem.
+    ''' </summary>
+    ''' <value>The Display Subsystem.</value>
     Public Property DisplaySubsystem As DisplaySubsystem
+        Get
+            Return Me._DisplaySubsystem
+        End Get
+        Set(value As DisplaySubsystem)
+            If Me._DisplaySubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.DisplaySubsystem)
+                Me.DisplaySubsystem.Dispose()
+                Me._DisplaySubsystem = Nothing
+            End If
+            Me._DisplaySubsystem = value
+            If Me._DisplaySubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.DisplaySubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets the sense channel subsystem. </summary>
-    ''' <value> The sense channel subsystem. </value>
+    Private _SenseChannelSubsystem As SenseChannelSubsystem
+    ''' <summary>
+    ''' Gets or sets the SenseChannel Subsystem.
+    ''' </summary>
+    ''' <value>The SenseChannel Subsystem.</value>
     Public Property SenseChannelSubsystem As SenseChannelSubsystem
+        Get
+            Return Me._SenseChannelSubsystem
+        End Get
+        Set(value As SenseChannelSubsystem)
+            If Me._SenseChannelSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.SenseChannelSubsystem)
+                Me.SenseChannelSubsystem.Dispose()
+                Me._SenseChannelSubsystem = Nothing
+            End If
+            Me._SenseChannelSubsystem = value
+            If Me._SenseChannelSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.SenseChannelSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets source channel subsystem. </summary>
-    ''' <value> The source channel subsystem. </value>
+    Private _SourceChannelSubsystem As SourceChannelSubsystem
+    ''' <summary>
+    ''' Gets or sets the SourceChannel Subsystem.
+    ''' </summary>
+    ''' <value>The SourceChannel Subsystem.</value>
     Public Property SourceChannelSubsystem As SourceChannelSubsystem
+        Get
+            Return Me._SourceChannelSubsystem
+        End Get
+        Set(value As SourceChannelSubsystem)
+            If Me._SourceChannelSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.SourceChannelSubsystem)
+                Me.SourceChannelSubsystem.Dispose()
+                Me._SourceChannelSubsystem = Nothing
+            End If
+            Me._SourceChannelSubsystem = value
+            If Me._SourceChannelSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.SourceChannelSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets trigger subsystem. </summary>
-    ''' <value> The trigger subsystem. </value>
+    Private _TriggerSubsystem As TriggerSubsystem
+    ''' <summary>
+    ''' Gets or sets the Trigger Subsystem.
+    ''' </summary>
+    ''' <value>The Trigger Subsystem.</value>
     Public Property TriggerSubsystem As TriggerSubsystem
+        Get
+            Return Me._TriggerSubsystem
+        End Get
+        Set(value As TriggerSubsystem)
+            If Me._TriggerSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.TriggerSubsystem)
+                Me.TriggerSubsystem.Dispose()
+                Me._TriggerSubsystem = Nothing
+            End If
+            Me._TriggerSubsystem = value
+            If Me._TriggerSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.TriggerSubsystem)
+            End If
+        End Set
+    End Property
 
 #Region " COMPENSATION "
 
@@ -302,13 +530,31 @@ Public Class Device
     End Sub
 
 #End Region
+
 #Region " SYSTEM "
 
+    Private _SystemSubsystem As SystemSubsystem
     ''' <summary>
     ''' Gets or sets the System Subsystem.
     ''' </summary>
     ''' <value>The System Subsystem.</value>
     Public Property SystemSubsystem As SystemSubsystem
+        Get
+            Return Me._SystemSubsystem
+        End Get
+        Set(value As SystemSubsystem)
+            If Me._SystemSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.SystemSubsystem)
+                Me.SystemSubsystem.Dispose()
+                Me._SystemSubsystem = Nothing
+            End If
+            Me._SystemSubsystem = value
+            If Me._SystemSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.SystemSubsystem)
+            End If
+        End Set
+    End Property
+
 
 #End Region
 
@@ -364,6 +610,21 @@ Public Class Device
             Case NameOf(sender.TraceShowLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
+            Case NameOf(sender.InitializeTimeout)
+                Me.StatusSubsystemBase.InitializeTimeout = sender.InitializeTimeout
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitializeTimeout}")
+            Case NameOf(sender.ResetRefractoryPeriod)
+                Me.StatusSubsystemBase.ResetRefractoryPeriod = sender.ResetRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ResetRefractoryPeriod}")
+            Case NameOf(sender.DeviceClearRefractoryPeriod)
+                Me.StatusSubsystemBase.DeviceClearRefractoryPeriod = sender.DeviceClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.DeviceClearRefractoryPeriod}")
+            Case NameOf(sender.InitRefractoryPeriod)
+                Me.StatusSubsystemBase.InitRefractoryPeriod = sender.InitRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitRefractoryPeriod}")
+            Case NameOf(sender.ClearRefractoryPeriod)
+                Me.StatusSubsystemBase.ClearRefractoryPeriod = sender.ClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ClearRefractoryPeriod}")
         End Select
     End Sub
 

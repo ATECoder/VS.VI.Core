@@ -3,6 +3,7 @@ Imports isr.Core.Controls.ComboBoxExtensions
 Imports isr.Core.Controls.NumericUpDownExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Measure control -- defines the Four Wire Resistance Sense subsystem  settings. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

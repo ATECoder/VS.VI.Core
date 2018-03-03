@@ -58,7 +58,7 @@ Public Class Device
             If Not Me.IsDisposed AndAlso disposing Then
                 ' ?listeners must clear, otherwise closing could raise an exception.
                 ' Me.Talker.Listeners.Clear()
-                If Me.IsDeviceOpen Then Me.OnClosing(New System.ComponentModel.CancelEventArgs)
+                If Me.IsDeviceOpen Then Me.OnClosing(New isr.Core.Pith.CancelDetailsEventArgs)
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
@@ -101,27 +101,45 @@ Public Class Device
     ''' <summary> Allows the derived device to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub OnClosing(ByVal e As System.ComponentModel.CancelEventArgs)
+    Protected Overrides Sub OnClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnClosing(e)
-        If e?.Cancel Then Return
-        Me.MeasureSubsystem = Nothing
-        Me.SourceSubsystem = Nothing
-        Me.DisplaySubsystem = Nothing
-        Me.LocalNodeSubsystem = Nothing
-        Me.SourceMeasureUnit = Nothing
-        Me.SystemSubsystem = Nothing
-        Me.StatusSubsystem = Nothing
-        Me.Subsystems.DisposeItems()
+        If Not e.Cancel Then
+            Me.MeasureSubsystem = Nothing
+            Me.SourceSubsystem = Nothing
+            Me.DisplaySubsystem = Nothing
+            Me.LocalNodeSubsystem = Nothing
+            Me.SourceMeasureUnit = Nothing
+            Me.SystemSubsystem = Nothing
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
+        End If
     End Sub
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnOpening(e As System.ComponentModel.CancelEventArgs)
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnOpening(e)
-        If e?.Cancel Then Return
-        ' STATUS must be the first subsystem.
-        Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+        If Not e.Cancel Then
+            ' STATUS must be the first subsystem.
+            ' check the language status. 
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session) With {
+                .ExpectedLanguage = VI.Ieee488.Syntax.LanguageTsp
+            }
+            Me.StatusSubsystem.QueryLanguage()
+            If Me.StatusSubsystem.LanguageValidated Then
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Device language {Me.StatusSubsystem.Language} validated;. ")
+            Else
+                ' set the device to the correct language.
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Setting device to {Me.StatusSubsystem.ExpectedLanguage} language;. ")
+                Me.StatusSubsystem.ApplyLanguage(Me.StatusSubsystem.ExpectedLanguage)
+                If Not Me.StatusSubsystem.LanguageValidated Then
+                    e.RegisterCancellation($"Incorrect {NameOf(Me.StatusSubsystem.Language)} settings {Me.StatusSubsystem.Language}; must be {Me.StatusSubsystem.ExpectedLanguage}")
+                End If
+            End If
+        End If
         Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
         Me.SourceMeasureUnit = New SourceMeasureUnit(Me.StatusSubsystem)
         Me.LocalNodeSubsystem = New LocalNodeSubsystem(Me.StatusSubsystem)
@@ -143,6 +161,38 @@ Public Class Device
             Me.CloseSession()
         End Try
 
+    End Sub
+
+#End Region
+
+#Region " STATUS SESSION "
+
+    ''' <summary> Allows the derived device status subsystem to take actions before closing. Removes subsystems and
+    ''' event handlers. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    Protected Overrides Sub OnStatusClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        MyBase.OnClosing(e)
+        If Not e.Cancel Then
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
+        End If
+    End Sub
+
+    ''' <summary> Allows the derived device status subsystem to take actions before opening. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnStatusOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        MyBase.OnOpening(e)
+        If Not e.Cancel Then
+            ' check the language status. 
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session) With {
+                .ExpectedLanguage = VI.Ieee488.Syntax.LanguageTsp
+            }
+            Me.StatusSubsystem.QueryLanguage()
+            ' report but do not cancel allowing the calling program to take action and reset the device.
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                              $"Incorrect {NameOf(Me.StatusSubsystem.Language)} settings {Me.StatusSubsystem.Language}; must be {Me.StatusSubsystem.ExpectedLanguage}")
+        End If
     End Sub
 
 #End Region

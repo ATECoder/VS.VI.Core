@@ -444,13 +444,11 @@ Public MustInherit Class DeviceBase
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     ''' <remarks> This override should occur as the first call of the overriding method.
     '''           After this call, the parent class adds the subsystems. </remarks>
-    Protected Overridable Sub OnOpening(ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overridable Sub OnOpening(ByVal e As CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Me.Subsystems?.Any Then
-            e.Cancel = True
-            Dim msg As String = Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                                   $"Aborting attempt to add subsystems on top of existing subsystems for resource '{ResourceName}';. ")
-            Debug.Assert(Not Debugger.IsAttached, msg)
+            e.RegisterCancellation($"Aborting attempt to add subsystems on top of existing subsystems for resource '{ResourceName}'")
+            Debug.Assert(Not Debugger.IsAttached, e.Details)
         Else
             Me.IsInitialized = False
             Me.SuspendPublishing()
@@ -472,7 +470,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Allows the derived device to take actions after opening. </summary>
     ''' <remarks>
     ''' This override should occur as the last call of the overriding method.
-    ''' The subsystems are added as part of the <see cref="OnOpening(CancelEventArgs)"/> method.
+    ''' The subsystems are added as part of the <see cref="OnOpening(CancelDetailsEventArgs)"/> method.
     ''' </remarks>
     Protected Overridable Sub OnOpened()
 
@@ -494,21 +492,12 @@ Public MustInherit Class DeviceBase
     End Sub
 
     ''' <summary> Executes the initializing actions. </summary>
-    Protected Overridable Sub OnInitializing(ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overridable Sub OnInitializing(ByVal e As CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Me.SyncNotifyInitializing(e)
 
-#If False Then
-        ' add listeners and enable publishing while initializing the device.
-        ' subsystems use the same talker as the device. 
-        Me.Subsystems.ApplyTalkerTraceLevels(Me.Talker)
-        Me.Subsystems.ApplyListenerTraceLevels(Me.Talker)
-        Me.Subsystems.AddListeners(Me.Talker)
-#End If
-
         ' 2/18/16: replaces calls to reset and then init known states
         Me.ResetClearInit()
-
     End Sub
 
     ''' <summary> Executes the initialized action. </summary>
@@ -540,22 +529,17 @@ Public MustInherit Class DeviceBase
             End If
             If Me.Session.IsSessionOpen OrElse (Me.IsDeviceOpen AndAlso Not Me.Session.Enabled) Then
 
-                Dim e As New ComponentModel.CancelEventArgs
+                Dim e As New CancelDetailsEventArgs
                 Me.OnOpening(e)
 
-                If e.Cancel Then
-                    Throw New OperationCanceledException($"Opening {resourceTitle}:{resourceName} canceled;. ")
-                End If
+                If e.Cancel Then Throw New OperationCanceledException($"Opening {resourceTitle}:{resourceName} canceled;. Details: {e.Details}")
 
                 Me.OnOpened()
 
                 If Me.IsDeviceOpen Then
-
                     Me.OnInitializing(e)
-                    If e.Cancel Then Throw New OperationCanceledException($"{resourceTitle}:{resourceName} initialization canceled;. ")
-
+                    If e.Cancel Then Throw New OperationCanceledException($"{resourceTitle}:{resourceName} initialization canceled;. Details: {e.Details}")
                     Me.OnInitialized()
-
                 Else
                     Throw New OperationFailedException($"Opening {resourceTitle}:{resourceName} device failed;. ")
                 End If
@@ -595,7 +579,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Allows the derived device to take actions before closing. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     ''' <remarks> This override should occur as the first call of the overriding method. </remarks>
-    Protected Overridable Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overridable Sub OnClosing(ByVal e As CancelDetailsEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Not e.Cancel Then Me.SyncNotifyClosing(e)
         If Not e.Cancel Then
@@ -619,20 +603,22 @@ Public MustInherit Class DeviceBase
         Try
             ' check if already closed.
             If Me.IsDisposed OrElse Not Me.IsDeviceOpen Then Return
-            Dim e As New ComponentModel.CancelEventArgs
+            Dim e As New CancelDetailsEventArgs
             Me.OnClosing(e)
-            If e.Cancel Then Return
-            Me.RemoveServiceRequestEventHandler()
-            Me.Session.DisableServiceRequest()
-            Me.Session.CloseSession()
-            Me.OnClosed()
+            If e.Cancel Then
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Close session canceled;. {e.Details}")
+            Else
+                Me.RemoveServiceRequestEventHandler()
+                Me.Session.DisableServiceRequest()
+                Me.Session.CloseSession()
+                Me.OnClosed()
+            End If
         Catch ex As NativeException
             Throw New OperationFailedException("Failed closing the VISA session.", ex)
         Catch ex As Exception
             Throw New OperationFailedException("Exception occurred closing the session.", ex)
         End Try
     End Sub
-
 
     ''' <summary> Try close session. </summary>
     ''' <returns> <c>True</c> if session closed; otherwise <c>False</c>. </returns>
@@ -641,6 +627,166 @@ Public MustInherit Class DeviceBase
             Me.CloseSession()
         Catch ex As OperationFailedException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred closing session;. {ex.ToFullBlownString}")
+            Return False
+        End Try
+        Return Not Me.IsDeviceOpen
+    End Function
+
+#End Region
+
+#Region " OPEN / CLOSE STATUS SUBSYSTEM "
+
+    ''' <summary> Allows the derived device to take actions before opening the status subsystem. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    ''' <remarks> This override should occur as the first call of the overriding method.
+    '''           After this call, the parent class adds the subsystems. </remarks>
+    Protected Overridable Sub OnStatusOpening(ByVal e As CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If Me.Subsystems?.Any Then
+            e.Cancel = True
+            Dim msg As String = Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                                                   $"Aborting attempt to add a status on top of existing subsystems for resource '{ResourceName}';. ")
+            Debug.Assert(Not Debugger.IsAttached, msg)
+        Else
+            Me.IsInitialized = False
+        End If
+    End Sub
+
+    ''' <summary> Allows the derived device status to take actions after opening. </summary>
+    ''' <remarks>
+    ''' This override should occur as the last call of the overriding method.
+    ''' The subsystems are added as part of the <see cref="OnOpening(CancelDetailsEventArgs)"/> method.
+    ''' </remarks>
+    Protected Overridable Sub OnStatusOpened()
+
+        Me.ApplySettings()
+        Me.Session.CaptureSyncContext(Me.CapturedSyncContext)
+        Me.Subsystems.CaptureSyncContext(Me.CapturedSyncContext)
+
+        Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
+        ' 2016/01/18: this was done before adding listeners, which was useful when using the device
+        ' as a class in a 'meter'. As a result, the actions taken when handling the Opened event, 
+        ' such as Reset and Initialize do not get reported. 
+        ' The solution was to add the device Initialize event to process publishing and initialization of device
+        ' and subsystems.
+
+        Me.SyncNotifyOpened(System.EventArgs.Empty)
+    End Sub
+
+    ''' <summary> Opens the session. </summary>
+    ''' <remarks> Register the device trace notifier before opening the session. </remarks>
+    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <param name="resourceName"> Name of the resource. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Overridable Sub OpenStatusSession(ByVal resourceName As String, ByVal resourceTitle As String)
+        Dim success As Boolean = False
+        Try
+            If Me.Enabled Then Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Opening session to {resourceName};. ")
+            Me.Session.ResourceTitle = resourceTitle
+            Me.OnCreated()
+            Me.Session.OpenSession(resourceName, resourceTitle, Me.CapturedSyncContext)
+            If Me.Session.IsSessionOpen Then
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Session open to {resourceName};. ")
+            ElseIf Me.Session.Enabled Then
+                Throw New OperationFailedException($"Unable to open session to {resourceName};. ")
+            ElseIf Not Me.IsDeviceOpen Then
+                Throw New OperationFailedException($"Unable to emulate {resourceName};. ")
+            End If
+            If Me.Session.IsSessionOpen OrElse (Me.IsDeviceOpen AndAlso Not Me.Session.Enabled) Then
+
+                Dim e As New CancelDetailsEventArgs
+                Me.OnStatusOpening(e)
+
+                If e.Cancel Then
+                    Throw New OperationCanceledException($"Opening {resourceTitle}:{resourceName} status canceled;. {e.Details}")
+                End If
+
+                Me.OnStatusOpened()
+
+                If Not Me.IsDeviceOpen Then
+                    Throw New OperationFailedException($"Opening {resourceTitle}:{resourceName} device status failed;. ")
+                End If
+
+            Else
+                Throw New OperationFailedException($"Opening {resourceTitle}:{resourceName} status session failed;. ")
+            End If
+            success = True
+        Catch
+            Throw
+        Finally
+            If Not success Then
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{resourceName} failed connecting. Disconnecting.")
+                Me.TryCloseStatusSession()
+            End If
+        End Try
+    End Sub
+
+    ''' <summary> Try open session. </summary>
+    ''' <param name="resourceName">  Name of the resource. </param>
+    ''' <param name="resourceTitle"> The resource title. </param>
+    ''' <param name="e">             Cancel details event information. </param>
+    ''' <returns> <c>True</c> if success; <c>False</c> otherwise. </returns>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Overridable Function TryOpenStatusSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal e As CancelDetailsEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        Dim action As String = $"opening {resourceTitle}:{resourceName}"
+        Try
+            Me.OpenStatusSession(resourceName, resourceTitle)
+        Catch ex As Exception
+            e.RegisterCancellation($"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, e.Details)
+        End Try
+        Return Not e.Cancel AndAlso Me.IsDeviceOpen
+    End Function
+
+    ''' <summary> Allows the derived device status subsystem to take actions before closing. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    ''' <remarks> This override should occur as the first call of the overriding method. </remarks>
+    Protected Overridable Sub OnStatusClosing(ByVal e As CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If Not e.Cancel Then Me.SyncNotifyClosing(e)
+        If Not e.Cancel Then
+            Me.IsInitialized = False
+            Me.SuspendPublishing()
+        End If
+    End Sub
+
+    ''' <summary> Allows the derived device status subsystem to take actions after closing. </summary>
+    ''' <remarks> This override should occur as the last call of the overriding method. </remarks>
+    Protected Overridable Sub OnStatusClosed()
+        Me.ResumePublishing()
+        Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
+    End Sub
+
+    ''' <summary> Closes the session. </summary>
+    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Overridable Sub CloseStatusSession()
+        Try
+            ' check if already closed.
+            If Me.IsDisposed OrElse Not Me.IsDeviceOpen Then Return
+            Dim e As New CancelDetailsEventArgs
+            Me.OnStatusClosing(e)
+            If e.Cancel Then
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Close status session canceled;. {e.Details}")
+            Else
+                Me.Session.CloseSession()
+                Me.OnStatusClosed()
+            End If
+        Catch ex As NativeException
+            Throw New OperationFailedException("Failed closing the status session.", ex)
+        Catch ex As Exception
+            Throw New OperationFailedException("Exception occurred closing the status session.", ex)
+        End Try
+    End Sub
+
+    ''' <summary> Try close session. </summary>
+    ''' <returns> <c>True</c> if session closed; otherwise <c>False</c>. </returns>
+    Public Overridable Function TryCloseStatusSession() As Boolean
+        Try
+            Me.CloseStatusSession()
+        Catch ex As OperationFailedException
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{ex.Message} occurred closing status session;. {ex.ToFullBlownString}")
             Return False
         End Try
         Return Not Me.IsDeviceOpen

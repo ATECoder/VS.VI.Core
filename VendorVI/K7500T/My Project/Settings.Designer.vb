@@ -16,10 +16,10 @@ Namespace My
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
      Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Partial Public NotInheritable Class Settings
+    Partial Public NotInheritable Class MySettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
 
-        Private Shared defaultInstance As Settings = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New Settings()), Settings)
+        Private Shared defaultInstance As MySettings = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New MySettings()), MySettings)
 
 #Region "My.Settings Auto-Save Functionality"
 #If _MyType = "WindowsForms" Then
@@ -36,9 +36,8 @@ Namespace My
 #End If
 #End Region
 
-        Public Shared ReadOnly Property [Default]() As Settings
+        Public Shared ReadOnly Property [Default]() As MySettings
             Get
-
 #If _MyType = "WindowsForms" Then
                If Not addedHandler Then
                     SyncLock addedHandlerLockObject
@@ -144,9 +143,9 @@ Namespace My
     Friend Module MySettingsProperty
 
         <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>
-        Friend ReadOnly Property Settings() As Global.isr.VI.Tsp2.K7500.My.Settings
+        Friend ReadOnly Property Settings() As Global.isr.VI.Tsp2.K7500.My.MySettings
             Get
-                Return Global.isr.VI.Tsp2.K7500.My.Settings.Default
+                Return Global.isr.VI.Tsp2.K7500.My.MySettings.Default
             End Get
         End Property
     End Module

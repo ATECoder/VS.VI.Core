@@ -1,4 +1,5 @@
-﻿''' <summary> Implements a TSP based device. Defines the I/O driver for accessing the master node
+﻿Imports isr.VI.ExceptionExtensions
+''' <summary> Implements a TSP based device. Defines the I/O driver for accessing the master node
 ''' of a TSP Linked system. </summary>
 ''' <license> (c) 2009 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -38,7 +39,7 @@ Public MustInherit Class MasterDeviceBase
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                If Me.IsDeviceOpen Then Me.OnClosing(New System.ComponentModel.CancelEventArgs)
+                If Me.IsDeviceOpen Then Me.OnClosing(New isr.Core.Pith.CancelDetailsEventArgs)
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
@@ -69,40 +70,42 @@ Public MustInherit Class MasterDeviceBase
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overrides Sub OnClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnClosing(e)
-        If e?.Cancel Then Return
-        If Me.InteractiveSubsystem IsNot Nothing Then
-            Try
-                ' turn off prompts
-                Me.InteractiveSubsystem.WriteShowPrompts(False)
-                Me.InteractiveSubsystem.WriteShowErrors(False)
-            Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, "Exception turning of prompts", "{0}", ex.ToFullBlownString)
-            End Try
-            Try
-                ' set the state to closed
-                Me.InteractiveSubsystem.ExecutionState = TspExecutionState.Closed
-            Catch ex As Exception
-                Debug.Assert(Not Debugger.IsAttached, "Exception disposing", "{0}", ex.ToFullBlownString)
-            End Try
-        End If
+        If Not e.Cancel Then
+            If Me.InteractiveSubsystem IsNot Nothing Then
+                Try
+                    ' turn off prompts
+                    Me.InteractiveSubsystem.WriteShowPrompts(False)
+                    Me.InteractiveSubsystem.WriteShowErrors(False)
+                Catch ex As Exception
+                    Debug.Assert(Not Debugger.IsAttached, "Exception turning of prompts", "{0}", ex.ToFullBlownString)
+                End Try
+                Try
+                    ' set the state to closed
+                    Me.InteractiveSubsystem.ExecutionState = TspExecutionState.Closed
+                Catch ex As Exception
+                    Debug.Assert(Not Debugger.IsAttached, "Exception disposing", "{0}", ex.ToFullBlownString)
+                End Try
+            End If
 
-        If Me._StatusSubsystem IsNot Nothing Then
-            RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+            If Me._StatusSubsystem IsNot Nothing Then
+                RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+            End If
         End If
     End Sub
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub OnOpening(ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overrides Sub OnOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnOpening(e)
-        If e?.Cancel Then Return
-
-        ' allow connection time to materialize
-        Threading.Thread.Sleep(100)
-
+        If Not e.Cancel Then
+            ' allow connection time to materialize
+            Threading.Thread.Sleep(100)
+        End If
     End Sub
 
     ''' <summary> Allows the derived device to take actions after opening. Adds subsystems and event
@@ -308,6 +311,21 @@ Public MustInherit Class MasterDeviceBase
             Case NameOf(sender.TraceShowLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
+            Case NameOf(sender.InitializeTimeout)
+                Me.StatusSubsystemBase.InitializeTimeout = sender.InitializeTimeout
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitializeTimeout}")
+            Case NameOf(sender.ResetRefractoryPeriod)
+                Me.StatusSubsystemBase.ResetRefractoryPeriod = sender.ResetRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ResetRefractoryPeriod}")
+            Case NameOf(sender.DeviceClearRefractoryPeriod)
+                Me.StatusSubsystemBase.DeviceClearRefractoryPeriod = sender.DeviceClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.DeviceClearRefractoryPeriod}")
+            Case NameOf(sender.InitRefractoryPeriod)
+                Me.StatusSubsystemBase.InitRefractoryPeriod = sender.InitRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitRefractoryPeriod}")
+            Case NameOf(sender.ClearRefractoryPeriod)
+                Me.StatusSubsystemBase.ClearRefractoryPeriod = sender.ClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ClearRefractoryPeriod}")
         End Select
     End Sub
 

@@ -156,37 +156,3 @@ Public MustInherit Class NumericLimitBase
 
 End Class
 
-
-''' <summary> Enumerates the arm layer control sources. </summary>
-<Flags>
-Public Enum ArmSources
-
-    <ComponentModel.Description("Not Defined ()")> None
-    <ComponentModel.Description("Bus (BUS)")> Bus
-    <ComponentModel.Description("External (EXT)")> External
-    <ComponentModel.Description("Hold operation (HOLD)")> Hold
-    <ComponentModel.Description("Immediate (IMM)")> Immediate
-    <ComponentModel.Description("Manual (MAN)")> Manual
-    <ComponentModel.Description("Timer (TIM)")> Timer
-
-    ''' <summary> Event detection for the arm layer is satisfied when either a positive-going or 
-    ''' a negative-going pulse (via the SOT line of the Digital I/O) is received. </summary>
-    <ComponentModel.Description("SOT Pulsed High or Low (BSTES)")> StartTestBoth
-
-    ''' <summary> Event detection for the arm layer is satisfied when a positive-going pulse 
-    ''' (via the SOT line of the Digital I/O) is received.  </summary>
-    <ComponentModel.Description("SOT Pulsed High (PSTES)")> StartTestHigh
-
-    ''' <summary> Event detection for the arm layer is satisfied when a negative-going pulse 
-    ''' (via the SOT line of the Digital I/O) is received. </summary>
-    <ComponentModel.Description("SOT Pulsed High (NSTES)")> StartTestLow
-
-    ''' <summary> Event detection occurs when an input trigger via the Trigger Link input line is
-    ''' received. See “Trigger link,” 2400 manual page 11-19, For more information. With TLINk selected, you
-    ''' can Loop around the Arm Event Detector by setting the Event detector bypass. </summary>
-    <ComponentModel.Description("Trigger Link (TLIN)")> TriggerLink
-
-    <ComponentModel.Description("All")> All = ArmSources.TriggerLink - 1
-
-End Enum
-

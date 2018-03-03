@@ -3,6 +3,7 @@ Imports isr.Core.Controls
 Imports isr.Core.Controls.ComboBoxExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Wizard for setting the compensation. </summary>
 ''' <license>
 ''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>

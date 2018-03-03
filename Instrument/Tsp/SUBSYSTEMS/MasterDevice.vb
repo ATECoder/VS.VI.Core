@@ -1,4 +1,5 @@
-﻿''' <summary> The Thermal Transient Meter device. </summary>
+﻿Imports isr.VI.ExceptionExtensions
+''' <summary> The Thermal Transient Meter device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc. All rights reserved.<para>
@@ -54,45 +55,78 @@ Public Class MasterDevice
     ''' <summary> Allows the derived device to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnClosing(ByVal e As System.ComponentModel.CancelEventArgs)
+    Protected Overrides Sub OnClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnClosing(e)
-        If e?.Cancel Then Return
-        If Me.DisplaySubsystem IsNot Nothing Then
-            Me.DisplaySubsystem.RestoreDisplay(Me.StatusSubsystem.InitializeTimeout)
+        If Not e.Cancel Then
+            If Me.DisplaySubsystem IsNot Nothing Then
+                Me.DisplaySubsystem.RestoreDisplay(Me.StatusSubsystem.InitializeTimeout)
+            End If
+            If Me.SourceMeasureUnit IsNot Nothing Then
+                RemoveHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf SourceMeasureSubsystemPropertyChanged
+            End If
+            If Me.DisplaySubsystem IsNot Nothing Then
+                RemoveHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
+            End If
+            If Me.SystemSubsystem IsNot Nothing Then
+                RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+            End If
+            Me.Subsystems.DisposeItems()
         End If
-        If Me.SourceMeasureUnit IsNot Nothing Then
-            RemoveHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf SourceMeasureSubsystemPropertyChanged
-        End If
-        If Me.DisplaySubsystem IsNot Nothing Then
-            RemoveHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
-        End If
-        If Me.SystemSubsystem IsNot Nothing Then
-            RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
-        End If
-        Me.Subsystems.DisposeItems()
     End Sub
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnOpening(e As System.ComponentModel.CancelEventArgs)
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnOpening(e)
-        If e?.Cancel Then Return
-        ' STATUS must be the first subsystem.
-        Me.StatusSubsystem = New StatusSubsystem(Me.Session)
-        Me.AddSubsystem(Me.StatusSubsystem)
-        AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+        If Not e.Cancel Then
+            ' STATUS must be the first subsystem.
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+            Me.AddSubsystem(Me.StatusSubsystem)
+            AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
 
-        Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SystemSubsystem)
-        AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+            Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
+            Me.AddSubsystem(Me.SystemSubsystem)
+            AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
 
-        Me.DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.DisplaySubsystem)
-        AddHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
+            Me.DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
+            Me.AddSubsystem(Me.DisplaySubsystem)
+            AddHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
 
-        Me.SourceMeasureUnit = New SourceMeasureUnitDevice(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SourceMeasureUnit)
-        AddHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf SourceMeasureSubsystemPropertyChanged
+            Me.SourceMeasureUnit = New SourceMeasureUnitDevice(Me.StatusSubsystem)
+            Me.AddSubsystem(Me.SourceMeasureUnit)
+            AddHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf SourceMeasureSubsystemPropertyChanged
+        End If
+    End Sub
+
+#End Region
+
+#Region " STATUS SESSION "
+
+    ''' <summary> Allows the derived device status subsystem to take actions before closing. Removes subsystems and
+    ''' event handlers. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    Protected Overrides Sub OnStatusClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnClosing(e)
+        If Not e.Cancel Then
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
+        End If
+    End Sub
+
+    ''' <summary> Allows the derived device status subsystem to take actions before opening. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnStatusOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnOpening(e)
+        If Not e.Cancel Then
+            ' check the language status. 
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+        End If
     End Sub
 
 #End Region

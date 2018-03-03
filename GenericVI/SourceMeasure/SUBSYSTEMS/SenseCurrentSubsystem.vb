@@ -28,7 +28,7 @@ Public Class SenseCurrentSubsystem
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.01, 10)
-        Me.ValueRange = New isr.Core.Pith.RangeR(0.001, 1.05)
+        Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 1.05)
     End Sub
 
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
@@ -38,17 +38,17 @@ Public Class SenseCurrentSubsystem
         Dim model As String = Me.StatusSubsystem.VersionInfo.Model
         Select Case True
             Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange = New isr.Core.Pith.RangeR(0.001, 1.05)
+                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 1.05)
             Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange = New isr.Core.Pith.RangeR(0.001, 1.05)
+                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 1.05)
             Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange = New isr.Core.Pith.RangeR(0.001, 3.05)
+                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 3.05)
             Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange = New isr.Core.Pith.RangeR(0.001, 3.15)
+                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 3.15)
             Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
-                Me.ValueRange = New isr.Core.Pith.RangeR(0.001, 5.25)
+                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 5.25)
             Case Else
-                Me.ValueRange = New isr.Core.Pith.RangeR(0.001, 1.05)
+                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 1.05)
         End Select
     End Sub
 

@@ -42,6 +42,13 @@ Public Class StatusSubsystem
     ''' <value> The preset command. </value>
     Protected Overrides ReadOnly Property PresetCommand As String = VI.Scpi.Syntax.StatusPresetCommand
 
+#Region " LANGUAGE "
+
+    Protected Overrides ReadOnly Property LanguageQueryCommand As String = Ieee488.Syntax.LanguageQueryCommand
+
+    Protected Overrides ReadOnly Property LanguageCommandFormat As String = Ieee488.Syntax.LanguageCommandFormat
+
+#End Region
 
 #Region " STANDARD STATUS  "
 

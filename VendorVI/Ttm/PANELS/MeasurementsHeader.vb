@@ -1,6 +1,7 @@
 ﻿Imports System.Windows.Forms
 Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Measurements header. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

@@ -28,7 +28,7 @@ Public Class SenseVoltageSubsystem
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.02, 200)
-        Me.ValueRange = New isr.Core.Pith.RangeR(0.1, 300.0)
+        Me.FunctionRange = New isr.Core.Pith.RangeR(0.1, 300.0)
     End Sub
 
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
@@ -39,7 +39,7 @@ Public Class SenseVoltageSubsystem
         Else
             Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.02, 200)
         End If
-        Me.ValueRange = New isr.Core.Pith.RangeR(0.1, 300.0)
+        Me.FunctionRange = New isr.Core.Pith.RangeR(0.1, 300.0)
     End Sub
 
 #End Region

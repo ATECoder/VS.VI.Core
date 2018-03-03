@@ -1,4 +1,5 @@
 ﻿Imports isr.Core.Pith
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Implements a EG2000 Prober device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
@@ -57,7 +58,7 @@ Public Class Device
             If Not Me.IsDisposed AndAlso disposing Then
                 ' ?listeners must clear, otherwise closing could raise an exception.
                 ' Me.Talker.Listeners.Clear()
-                If Me.IsDeviceOpen Then Me.OnClosing(New ComponentModel.CancelEventArgs)
+                If Me.IsDeviceOpen Then Me.OnClosing(New isr.Core.Pith.CancelDetailsEventArgs)
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", $"Exception {ex.ToFullBlownString}")
@@ -123,38 +124,57 @@ Public Class Device
     ''' <summary> Allows the derived device to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overrides Sub OnClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnClosing(e)
-        If e?.Cancel Then Return
-        If Me._ProberSubsystem IsNot Nothing Then
-            RemoveHandler Me.ProberSubsystem.PropertyChanged, AddressOf Me.ProberSubsystemPropertyChanged
+        If Not e.Cancel Then
+            Me.ProberSubsystem = Nothing
+            Me.SystemSubsystem = Nothing
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
         End If
-        If Me._SystemSubsystem IsNot Nothing Then
-            'RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
-        End If
-        'If Me._StatusSubsystem IsNot Nothing Then RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
-        Me.StatusSubsystem = Nothing
-        Me.Subsystems.DisposeItems()
     End Sub
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnOpening(ByVal e As ComponentModel.CancelEventArgs)
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnOpening(e)
-        If e?.Cancel Then Return
+        If Not e.Cancel Then
+            ' STATUS must be the first subsystem.
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+            Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
+            Me.ProberSubsystem = New ProberSubsystem(Me.StatusSubsystem)
+        End If
+    End Sub
 
-        ' STATUS must be the first subsystem.
-        Me.StatusSubsystem = New StatusSubsystem(Me.Session)
-        'Me.AddSubsystem(Me.StatusSubsystem)
-        'AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
+#End Region
 
-        Me._SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SystemSubsystem)
-        'AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
+#Region " STATUS SESSION "
 
-        Me._ProberSubsystem = New ProberSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.ProberSubsystem)
-        AddHandler Me.ProberSubsystem.PropertyChanged, AddressOf Me.ProberSubsystemPropertyChanged
+    ''' <summary> Allows the derived device status subsystem to take actions before closing. Removes subsystems and
+    ''' event handlers. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    Protected Overrides Sub OnStatusClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnClosing(e)
+        If Not e.Cancel Then
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
+        End If
+    End Sub
+
+    ''' <summary> Allows the derived device status subsystem to take actions before opening. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnStatusOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnOpening(e)
+        If Not e.Cancel Then
+            ' check the language status. 
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+        End If
     End Sub
 
 #End Region
@@ -163,9 +183,29 @@ Public Class Device
 
 #Region " PROBER "
 
-    ''' <summary> Gets or sets the Prober Subsystem. </summary>
-    ''' <value> The Prober Subsystem. </value>
+    Private _ProberSubsystem As ProberSubsystem
+    ''' <summary>
+    ''' Gets or sets the Prober Subsystem.
+    ''' </summary>
+    ''' <value>The Prober Subsystem.</value>
     Public Property ProberSubsystem As ProberSubsystem
+        Get
+            Return Me._ProberSubsystem
+        End Get
+        Set(value As ProberSubsystem)
+            If Me._ProberSubsystem IsNot Nothing Then
+                RemoveHandler Me.ProberSubsystem.PropertyChanged, AddressOf Me.ProberSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.ProberSubsystem)
+                Me.ProberSubsystem.Dispose()
+                Me._ProberSubsystem = Nothing
+            End If
+            Me._ProberSubsystem = value
+            If Me._ProberSubsystem IsNot Nothing Then
+                AddHandler Me.ProberSubsystem.PropertyChanged, AddressOf ProberSubsystemPropertyChanged
+                Me.AddSubsystem(Me.ProberSubsystem)
+            End If
+        End Set
+    End Property
 
     ''' <summary> Handle the Prober subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
@@ -264,11 +304,57 @@ Public Class Device
     End Sub
 
 #End Region
+
 #Region " SYSTEM "
 
-    ''' <summary> Gets or sets the System Subsystem. </summary>
-    ''' <value> The System Subsystem. </value>
+    Private _SystemSubsystem As SystemSubsystem
+    ''' <summary>
+    ''' Gets or sets the System Subsystem.
+    ''' </summary>
+    ''' <value>The System Subsystem.</value>
     Public Property SystemSubsystem As SystemSubsystem
+        Get
+            Return Me._SystemSubsystem
+        End Get
+        Set(value As SystemSubsystem)
+            If Me._SystemSubsystem IsNot Nothing Then
+                RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.SystemSubsystem)
+                Me.SystemSubsystem.Dispose()
+                Me._SystemSubsystem = Nothing
+            End If
+            Me._SystemSubsystem = value
+            If Me._SystemSubsystem IsNot Nothing Then
+                AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+                Me.AddSubsystem(Me.SystemSubsystem)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Handle the System subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub OnPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+        End Select
+    End Sub
+
+    ''' <summary> System subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As SystemSubsystem = TryCast(sender, SystemSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.ResourceName} exception handling {NameOf(SystemSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
 
 #End Region
 
@@ -331,6 +417,21 @@ Public Class Device
             Case NameOf(sender.TraceShowLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
+            Case NameOf(sender.InitializeTimeout)
+                Me.StatusSubsystemBase.InitializeTimeout = sender.InitializeTimeout
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitializeTimeout}")
+            Case NameOf(sender.ResetRefractoryPeriod)
+                Me.StatusSubsystemBase.ResetRefractoryPeriod = sender.ResetRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ResetRefractoryPeriod}")
+            Case NameOf(sender.DeviceClearRefractoryPeriod)
+                Me.StatusSubsystemBase.DeviceClearRefractoryPeriod = sender.DeviceClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.DeviceClearRefractoryPeriod}")
+            Case NameOf(sender.InitRefractoryPeriod)
+                Me.StatusSubsystemBase.InitRefractoryPeriod = sender.InitRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitRefractoryPeriod}")
+            Case NameOf(sender.ClearRefractoryPeriod)
+                Me.StatusSubsystemBase.ClearRefractoryPeriod = sender.ClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ClearRefractoryPeriod}")
         End Select
     End Sub
 

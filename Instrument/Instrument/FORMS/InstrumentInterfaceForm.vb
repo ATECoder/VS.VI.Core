@@ -266,7 +266,7 @@ Public Class InstrumentInterfaceForm
             Me.Cursor = Cursors.WaitCursor
             Me._StatusLabel.Text = "CLOSING."
             Me.CloseInstrumentSession()
-            Me.stopPollTimer()
+            Me.StopPollTimer()
             If e IsNot Nothing Then
                 e.Cancel = False
             End If

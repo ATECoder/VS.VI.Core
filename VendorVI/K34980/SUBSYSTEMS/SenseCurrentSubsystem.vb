@@ -26,7 +26,7 @@ Public Class SenseCurrentSubsystem
 
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.ValueRange = New isr.Core.Pith.RangeR(0.01, 1)
+        Me.FunctionRange = New isr.Core.Pith.RangeR(0.01, 1)
         Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.02, 200)
     End Sub
 
@@ -38,7 +38,7 @@ Public Class SenseCurrentSubsystem
         Else
             Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.02, 200)
         End If
-        Me.ValueRange = New isr.Core.Pith.RangeR(0.01, 1)
+        Me.FunctionRange = New isr.Core.Pith.RangeR(0.01, 1)
     End Sub
 
 #End Region

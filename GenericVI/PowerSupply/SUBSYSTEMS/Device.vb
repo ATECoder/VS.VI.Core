@@ -1,4 +1,5 @@
-﻿''' <summary> Implements a Power Supply device. </summary>
+﻿Imports isr.VI.ExceptionExtensions
+''' <summary> Implements a Power Supply device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
@@ -58,7 +59,7 @@ Public Class Device
             If Not Me.IsDisposed AndAlso disposing Then
                 ' ?listeners must clear, otherwise closing could raise an exception.
                 ' Me.Talker.Listeners.Clear()
-                If Me.IsDeviceOpen Then Me.OnClosing(New ComponentModel.CancelEventArgs)
+                If Me.IsDeviceOpen Then Me.OnClosing(New isr.Core.Pith.CancelDetailsEventArgs)
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
@@ -103,81 +104,179 @@ Public Class Device
     ''' <summary> Allows the derived device to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overrides Sub OnClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
         MyBase.OnClosing(e)
-        If e?.Cancel Then Return
-        If Me._SystemSubsystem IsNot Nothing Then
-            'RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+        If Not e.Cancel Then
+            Me.MeasureCurrentSubsystem = Nothing
+            Me.MeasureVoltageSubsystem = Nothing
+            Me.OutputSubsystem = Nothing
+            Me.SourceCurrentSubsystem = Nothing
+            Me.SourceVoltageSubsystem = Nothing
+            Me.SystemSubsystem = Nothing
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
         End If
-        ' If Me._StatusSubsystem IsNot Nothing Then RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
-        Me.StatusSubsystem = Nothing
-        Me.Subsystems.DisposeItems()
     End Sub
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnOpening(ByVal e As ComponentModel.CancelEventArgs)
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnOpening(e)
-        If e?.Cancel Then Return
+        If Not e.Cancel Then
+            ' STATUS must be the first subsystem.
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+            Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
+            Me.MeasureCurrentSubsystem = New MeasureCurrentSubsystem(Me.StatusSubsystem)
+            Me.MeasureVoltageSubsystem = New MeasureVoltageSubsystem(Me.StatusSubsystem)
+            Me.OutputSubsystem = New OutputSubsystem(Me.StatusSubsystem)
+            Me.SourceCurrentSubsystem = New SourceCurrentSubsystem(Me.StatusSubsystem)
+            Me.SourceVoltageSubsystem = New SourceVoltageSubsystem(Me.StatusSubsystem)
+        End If
+    End Sub
 
-        ' STATUS must be the first subsystem.
-        Me.StatusSubsystem = New StatusSubsystem(Me.Session)
-        'Me.AddSubsystem(Me.StatusSubsystem)
-        'AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+#End Region
 
-        Me._SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SystemSubsystem)
-        'AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+#Region " STATUS SESSION "
 
-        Me._MeasureCurrentSubsystem = New MeasureCurrentSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.MeasureCurrentSubsystem)
+    ''' <summary> Allows the derived device status subsystem to take actions before closing. Removes subsystems and
+    ''' event handlers. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    Protected Overrides Sub OnStatusClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnClosing(e)
+        If Not e.Cancel Then
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
+        End If
+    End Sub
 
-        Me._MeasureVoltageSubsystem = New MeasureVoltageSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.MeasureVoltageSubsystem)
-
-        Me._OutputSubsystem = New OutputSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.OutputSubsystem)
-
-        Me._SourceCurrentSubsystem = New SourceCurrentSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SourceCurrentSubsystem)
-
-        Me._SourceVoltageSubsystem = New SourceVoltageSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SourceVoltageSubsystem)
+    ''' <summary> Allows the derived device status subsystem to take actions before opening. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnStatusOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnOpening(e)
+        If Not e.Cancel Then
+            ' check the language status. 
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+        End If
     End Sub
 
 #End Region
 
 #Region " SUBSYSTEMS "
 
+    Private _MeasureCurrentSubsystem As MeasureCurrentSubsystem
     ''' <summary>
-    ''' Gets or sets the Measure Current subsystem.
+    ''' Gets or sets the Measure Current Subsystem.
     ''' </summary>
-    ''' <value>The Measure subsystem.</value>
+    ''' <value>The Measure Current Subsystem.</value>
     Public Property MeasureCurrentSubsystem As MeasureCurrentSubsystem
+        Get
+            Return Me._MeasureCurrentSubsystem
+        End Get
+        Set(value As MeasureCurrentSubsystem)
+            If Me._MeasureCurrentSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.MeasureCurrentSubsystem)
+                Me.MeasureCurrentSubsystem.Dispose()
+                Me._MeasureCurrentSubsystem = Nothing
+            End If
+            Me._MeasureCurrentSubsystem = value
+            If Me._MeasureCurrentSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.MeasureCurrentSubsystem)
+            End If
+        End Set
+    End Property
 
+    Private _MeasureVoltageSubsystem As MeasureVoltageSubsystem
     ''' <summary>
-    ''' Gets or sets the Measure Voltage subsystem.
+    ''' Gets or sets the Measure Voltage Subsystem.
     ''' </summary>
-    ''' <value>The Measure subsystem.</value>
+    ''' <value>The Measure Voltage Subsystem.</value>
     Public Property MeasureVoltageSubsystem As MeasureVoltageSubsystem
+        Get
+            Return Me._MeasureVoltageSubsystem
+        End Get
+        Set(value As MeasureVoltageSubsystem)
+            If Me._MeasureVoltageSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.MeasureVoltageSubsystem)
+                Me.MeasureVoltageSubsystem.Dispose()
+                Me._MeasureVoltageSubsystem = Nothing
+            End If
+            Me._MeasureVoltageSubsystem = value
+            If Me._MeasureVoltageSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.MeasureVoltageSubsystem)
+            End If
+        End Set
+    End Property
 
+    Private _OutputSubsystem As OutputSubsystem
     ''' <summary>
-    ''' Gets or sets the Output subsystem.
+    ''' Gets or sets the Output Subsystem.
     ''' </summary>
-    ''' <value>The Output subsystem.</value>
+    ''' <value>The Output Subsystem.</value>
     Public Property OutputSubsystem As OutputSubsystem
+        Get
+            Return Me._OutputSubsystem
+        End Get
+        Set(value As OutputSubsystem)
+            If Me._OutputSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.OutputSubsystem)
+                Me.OutputSubsystem.Dispose()
+                Me._OutputSubsystem = Nothing
+            End If
+            Me._OutputSubsystem = value
+            If Me._OutputSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.OutputSubsystem)
+            End If
+        End Set
+    End Property
 
+    Private _SourceCurrentSubsystem As SourceCurrentSubsystem
     ''' <summary>
-    ''' Gets or sets the Source Current subsystem.
+    ''' Gets or sets the Source Current Subsystem.
     ''' </summary>
-    ''' <value>The Source subsystem.</value>
+    ''' <value>The Source Current Subsystem.</value>
     Public Property SourceCurrentSubsystem As SourceCurrentSubsystem
+        Get
+            Return Me._SourceCurrentSubsystem
+        End Get
+        Set(value As SourceCurrentSubsystem)
+            If Me._SourceCurrentSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.SourceCurrentSubsystem)
+                Me.SourceCurrentSubsystem.Dispose()
+                Me._SourceCurrentSubsystem = Nothing
+            End If
+            Me._SourceCurrentSubsystem = value
+            If Me._SourceCurrentSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.SourceCurrentSubsystem)
+            End If
+        End Set
+    End Property
 
+    Private _SourceVoltageSubsystem As SourceVoltageSubsystem
     ''' <summary>
-    ''' Gets or sets the Source Voltage subsystem.
+    ''' Gets or sets the Source Voltage Subsystem.
     ''' </summary>
-    ''' <value>The Source subsystem.</value>
+    ''' <value>The Source Voltage Subsystem.</value>
     Public Property SourceVoltageSubsystem As SourceVoltageSubsystem
+        Get
+            Return Me._SourceVoltageSubsystem
+        End Get
+        Set(value As SourceVoltageSubsystem)
+            If Me._SourceVoltageSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.SourceVoltageSubsystem)
+                Me.SourceVoltageSubsystem.Dispose()
+                Me._SourceVoltageSubsystem = Nothing
+            End If
+            Me._SourceVoltageSubsystem = value
+            If Me._SourceVoltageSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.SourceVoltageSubsystem)
+            End If
+        End Set
+    End Property
 
 #Region " STATUS "
 
@@ -243,12 +342,56 @@ Public Class Device
 
 #Region " SYSTEM "
 
-    ''' <summary> Gets or sets the System Subsystem. </summary>
-    ''' <value> The System Subsystem. </value>
+    Private _SystemSubsystem As SystemSubsystem
+    ''' <summary>
+    ''' Gets or sets the System Subsystem.
+    ''' </summary>
+    ''' <value>The System Subsystem.</value>
     Public Property SystemSubsystem As SystemSubsystem
+        Get
+            Return Me._SystemSubsystem
+        End Get
+        Set(value As SystemSubsystem)
+            If Me._SystemSubsystem IsNot Nothing Then
+                RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.SystemSubsystem)
+                Me.SystemSubsystem.Dispose()
+                Me._SystemSubsystem = Nothing
+            End If
+            Me._SystemSubsystem = value
+            If Me._SystemSubsystem IsNot Nothing Then
+                AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+                Me.AddSubsystem(Me.SystemSubsystem)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Handle the System subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub OnPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+        End Select
+    End Sub
+
+    ''' <summary> System subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As SystemSubsystem = TryCast(sender, SystemSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.ResourceName} exception handling {NameOf(SystemSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
 
 #End Region
-
 #End Region
 
 #Region " MIXED SUBSYSTEMS: OUTPUT / MEASURE "
@@ -351,6 +494,21 @@ Public Class Device
             Case NameOf(sender.TraceShowLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
+            Case NameOf(sender.InitializeTimeout)
+                Me.StatusSubsystemBase.InitializeTimeout = sender.InitializeTimeout
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitializeTimeout}")
+            Case NameOf(sender.ResetRefractoryPeriod)
+                Me.StatusSubsystemBase.ResetRefractoryPeriod = sender.ResetRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ResetRefractoryPeriod}")
+            Case NameOf(sender.DeviceClearRefractoryPeriod)
+                Me.StatusSubsystemBase.DeviceClearRefractoryPeriod = sender.DeviceClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.DeviceClearRefractoryPeriod}")
+            Case NameOf(sender.InitRefractoryPeriod)
+                Me.StatusSubsystemBase.InitRefractoryPeriod = sender.InitRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitRefractoryPeriod}")
+            Case NameOf(sender.ClearRefractoryPeriod)
+                Me.StatusSubsystemBase.ClearRefractoryPeriod = sender.ClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ClearRefractoryPeriod}")
         End Select
     End Sub
 

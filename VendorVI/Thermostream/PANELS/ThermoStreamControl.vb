@@ -7,6 +7,7 @@ Imports isr.Core.Controls.ToolStripExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.StopwatchExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a user interface for the Thermo Stream Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

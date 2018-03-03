@@ -62,7 +62,7 @@ Public Class Switchboard
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
 
             ' set the form caption
-            Me.Text = Core.Pith.ApplicationInfo.BuildDefaultCaption("SWITCH BOARD")
+            Me.Text = Core.Pith.ApplicationInfo.BuildApplicationTitleCaption("SWITCH BOARD")
 
             ' center the form
             Me.CenterToScreen()

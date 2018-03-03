@@ -1,4 +1,5 @@
-﻿''' <summary> Implements a generic switch device. </summary>
+﻿Imports isr.VI.ExceptionExtensions
+''' <summary> Implements a generic switch device. </summary>
 ''' <remarks> An instrument is defined, for the purpose of this library, as a device with a front
 ''' panel. </remarks>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
@@ -58,7 +59,7 @@ Public Class Device
             If Not Me.IsDisposed AndAlso disposing Then
                 ' ?listeners must clear, otherwise closing could raise an exception.
                 ' Me.Talker.Listeners.Clear()
-                If Me.IsDeviceOpen Then Me.OnClosing(New ComponentModel.CancelEventArgs)
+                If Me.IsDeviceOpen Then Me.OnClosing(New isr.Core.Pith.CancelDetailsEventArgs)
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", $"Exception {ex.ToFullBlownString}")
@@ -105,67 +106,156 @@ Public Class Device
     ''' <summary> Allows the derived device to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
+    Protected Overrides Sub OnClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnClosing(e)
-        If e?.Cancel Then Return
-        If Me._SystemSubsystem IsNot Nothing Then
-            'RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+        If Not e.Cancel Then
+            Me.SystemSubsystem = Nothing
+            Me.RouteSubsystem = Nothing
+            Me.TriggerSubsystem = Nothing
+            Me.ArmLayer1Subsystem = Nothing
+            Me.ArmLayer2Subsystem = Nothing
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
         End If
-        ' If Me._StatusSubsystem IsNot Nothing Then RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
-        Me.StatusSubsystem = Nothing
-        Me.Subsystems.DisposeItems()
     End Sub
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnOpening(ByVal e As ComponentModel.CancelEventArgs)
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnOpening(e)
-        If e?.Cancel Then Return
+        If Not e.Cancel Then
+            ' STATUS must be the first subsystem.
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+            Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
+            Me.RouteSubsystem = New RouteSubsystem(Me.StatusSubsystem)
+            Me.TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
+            Me.ArmLayer1Subsystem = New ArmLayer1Subsystem(Me.StatusSubsystem)
+            Me.ArmLayer2Subsystem = New ArmLayer2Subsystem(Me.StatusSubsystem)
+        End If
+    End Sub
 
-        ' STATUS must be the first subsystem.
-        Me.StatusSubsystem = New StatusSubsystem(Me.Session)
-        'Me.AddSubsystem(Me.StatusSubsystem)
-        'AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+#End Region
 
-        Me._SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.SystemSubsystem)
-        'AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+#Region " STATUS SESSION "
 
-        Me._RouteSubsystem = New RouteSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.RouteSubsystem)
+    ''' <summary> Allows the derived device status subsystem to take actions before closing. Removes subsystems and
+    ''' event handlers. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    Protected Overrides Sub OnStatusClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnClosing(e)
+        If Not e.Cancel Then
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
+        End If
+    End Sub
 
-        Me._TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.TriggerSubsystem)
-
-        Me._ArmLayer1Subsystem = New ArmLayer1Subsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.ArmLayer1Subsystem)
-
-        Me._ArmLayer2Subsystem = New ArmLayer2Subsystem(Me.StatusSubsystem)
-        Me.AddSubsystem(Me.ArmLayer2Subsystem)
-
+    ''' <summary> Allows the derived device status subsystem to take actions before opening. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnStatusOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnOpening(e)
+        If Not e.Cancel Then
+            ' check the language status. 
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+        End If
     End Sub
 
 #End Region
 
 #Region " SUBSYSTEMS "
 
-    ''' <summary> Gets or sets the Arm Subsystem. </summary>
-    ''' <value> The Arm Subsystem. </value>
+    Private _ArmLayer1Subsystem As ArmLayer1Subsystem
+    ''' <summary>
+    ''' Gets or sets the ArmLayer1 Subsystem.
+    ''' </summary>
+    ''' <value>The ArmLayer1 Subsystem.</value>
     Public Property ArmLayer1Subsystem As ArmLayer1Subsystem
+        Get
+            Return Me._ArmLayer1Subsystem
+        End Get
+        Set(value As ArmLayer1Subsystem)
+            If Me._ArmLayer1Subsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.ArmLayer1Subsystem)
+                Me.ArmLayer1Subsystem.Dispose()
+                Me._ArmLayer1Subsystem = Nothing
+            End If
+            Me._ArmLayer1Subsystem = value
+            If Me._ArmLayer1Subsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.ArmLayer1Subsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets the Arm Layer 2 Subsystem. </summary>
-    ''' <value> The Arm Layer 2 Subsystem. </value>
+    Private _ArmLayer2Subsystem As ArmLayer2Subsystem
+    ''' <summary>
+    ''' Gets or sets the ArmLayer2 Subsystem.
+    ''' </summary>
+    ''' <value>The ArmLayer2 Subsystem.</value>
     Public Property ArmLayer2Subsystem As ArmLayer2Subsystem
+        Get
+            Return Me._ArmLayer2Subsystem
+        End Get
+        Set(value As ArmLayer2Subsystem)
+            If Me._ArmLayer2Subsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.ArmLayer2Subsystem)
+                Me.ArmLayer2Subsystem.Dispose()
+                Me._ArmLayer2Subsystem = Nothing
+            End If
+            Me._ArmLayer2Subsystem = value
+            If Me._ArmLayer2Subsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.ArmLayer2Subsystem)
+            End If
+        End Set
+    End Property
 
+    Private _RouteSubsystem As RouteSubsystem
     ''' <summary>
     ''' Gets or sets the Route Subsystem.
     ''' </summary>
-    ''' <value>The System Subsystem.</value>
+    ''' <value>The Route Subsystem.</value>
     Public Property RouteSubsystem As RouteSubsystem
+        Get
+            Return Me._RouteSubsystem
+        End Get
+        Set(value As RouteSubsystem)
+            If Me._RouteSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.RouteSubsystem)
+                Me.RouteSubsystem.Dispose()
+                Me._RouteSubsystem = Nothing
+            End If
+            Me._RouteSubsystem = value
+            If Me._RouteSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.RouteSubsystem)
+            End If
+        End Set
+    End Property
 
-    ''' <summary> Gets or sets the Trigger Subsystem. </summary>
-    ''' <value> The Trigger Subsystem. </value>
+    Private _TriggerSubsystem As TriggerSubsystem
+    ''' <summary>
+    ''' Gets or sets the Trigger Subsystem.
+    ''' </summary>
+    ''' <value>The Trigger Subsystem.</value>
     Public Property TriggerSubsystem As TriggerSubsystem
+        Get
+            Return Me._TriggerSubsystem
+        End Get
+        Set(value As TriggerSubsystem)
+            If Me._TriggerSubsystem IsNot Nothing Then
+                Me.RemoveSubsystem(Me.TriggerSubsystem)
+                Me.TriggerSubsystem.Dispose()
+                Me._TriggerSubsystem = Nothing
+            End If
+            Me._TriggerSubsystem = value
+            If Me._TriggerSubsystem IsNot Nothing Then
+                Me.AddSubsystem(Me.TriggerSubsystem)
+            End If
+        End Set
+    End Property
 
 #Region " STATUS "
 
@@ -274,11 +364,54 @@ Public Class Device
 
 #Region " SYSTEM "
 
+    Private _SystemSubsystem As SystemSubsystem
     ''' <summary>
     ''' Gets or sets the System Subsystem.
     ''' </summary>
     ''' <value>The System Subsystem.</value>
     Public Property SystemSubsystem As SystemSubsystem
+        Get
+            Return Me._SystemSubsystem
+        End Get
+        Set(value As SystemSubsystem)
+            If Me._SystemSubsystem IsNot Nothing Then
+                RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf Me.SystemSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.SystemSubsystem)
+                Me.SystemSubsystem.Dispose()
+                Me._SystemSubsystem = Nothing
+            End If
+            Me._SystemSubsystem = value
+            If Me._SystemSubsystem IsNot Nothing Then
+                AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
+                Me.AddSubsystem(Me.SystemSubsystem)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Handle the System subsystem property changed event. </summary>
+    ''' <param name="subsystem">    The subsystem. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub OnPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+        End Select
+    End Sub
+
+    ''' <summary> System subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        Dim subsystem As SystemSubsystem = TryCast(sender, SystemSubsystem)
+        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        Try
+            Me.OnPropertyChanged(subsystem, e.PropertyName)
+        Catch ex As Exception
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{Me.ResourceName} exception handling {NameOf(SystemSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
+        End Try
+    End Sub
 
 #End Region
 
@@ -334,6 +467,21 @@ Public Class Device
             Case NameOf(sender.TraceShowLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
+            Case NameOf(sender.InitializeTimeout)
+                Me.StatusSubsystemBase.InitializeTimeout = sender.InitializeTimeout
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitializeTimeout}")
+            Case NameOf(sender.ResetRefractoryPeriod)
+                Me.StatusSubsystemBase.ResetRefractoryPeriod = sender.ResetRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ResetRefractoryPeriod}")
+            Case NameOf(sender.DeviceClearRefractoryPeriod)
+                Me.StatusSubsystemBase.DeviceClearRefractoryPeriod = sender.DeviceClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.DeviceClearRefractoryPeriod}")
+            Case NameOf(sender.InitRefractoryPeriod)
+                Me.StatusSubsystemBase.InitRefractoryPeriod = sender.InitRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitRefractoryPeriod}")
+            Case NameOf(sender.ClearRefractoryPeriod)
+                Me.StatusSubsystemBase.ClearRefractoryPeriod = sender.ClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ClearRefractoryPeriod}")
         End Select
     End Sub
 

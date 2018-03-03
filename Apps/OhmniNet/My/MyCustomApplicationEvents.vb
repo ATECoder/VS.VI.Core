@@ -1,4 +1,5 @@
 ﻿Imports isr.Core.Pith
+Imports isr.VI.ExceptionExtensions
 Namespace My
 
     Partial Friend Class MyApplication
@@ -8,7 +9,7 @@ Namespace My
         Friend Function BuildDefaultCaption() As String
             Dim suffix As New System.Text.StringBuilder
             suffix.Append(" ")
-            Return isr.Core.Pith.ApplicationInfo.BuildDefaultCaption(suffix.ToString)
+            Return isr.Core.Pith.ApplicationInfo.BuildApplicationTitleCaption(suffix.ToString)
         End Function
 
         ''' <summary> Destroys objects for this project. </summary>

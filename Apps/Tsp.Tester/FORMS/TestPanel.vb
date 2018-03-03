@@ -3,6 +3,7 @@ Imports isr.Core.Controls
 Imports isr.Core.Controls.CheckBoxExtensions
 Imports isr.Core.Pith
 Imports isr.VI.Tsp.Instrument
+Imports isr.VI.ExceptionExtensions
 ''' <summary> TSP Test panel. </summary>
 ''' <license> (c) 2010 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

@@ -9,6 +9,7 @@ Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a user interface for a Keithley 200X Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -671,16 +672,6 @@ Public Class K2000Panel
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{Me.Device.ResourceTitle} exception handling STATUS '{e.PropertyName}' change event;. {ex.ToFullBlownString}")
-        End Try
-    End Sub
-
-    ''' <summary> Reads a service request status. </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Sub ReadServiceRequestStatus()
-        Try
-            Me.Device.StatusSubsystem.ReadServiceRequestStatus()
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception reading service request;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

@@ -57,7 +57,7 @@ Public Class Device
             If Not Me.IsDisposed AndAlso disposing Then
                 ' ?listeners must clear, otherwise closing could raise an exception.
                 ' Me.Talker.Listeners.Clear()
-                If Me.IsDeviceOpen Then Me.OnClosing(New System.ComponentModel.CancelEventArgs)
+                If Me.IsDeviceOpen Then Me.OnClosing(New isr.Core.Pith.CancelDetailsEventArgs)
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
@@ -100,32 +100,35 @@ Public Class Device
     ''' <summary> Allows the derived device to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub OnClosing(ByVal e As System.ComponentModel.CancelEventArgs)
+    Protected Overrides Sub OnClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnClosing(e)
-        If e?.Cancel Then Return
-        Me.MultimeterSubsystem = Nothing
-        Me.ChannelSubsystem = Nothing
-        Me.SlotsSubsystem = Nothing
-        Me.DisplaySubsystem = Nothing
-        Me.SystemSubsystem = Nothing
-        Me.StatusSubsystem = Nothing
-        Me.Subsystems.DisposeItems()
+        If Not e.Cancel Then
+            Me.MultimeterSubsystem = Nothing
+            Me.ChannelSubsystem = Nothing
+            Me.SlotsSubsystem = Nothing
+            Me.DisplaySubsystem = Nothing
+            Me.SystemSubsystem = Nothing
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
+        End If
     End Sub
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnOpening(e As System.ComponentModel.CancelEventArgs)
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnOpening(e)
-        If e?.Cancel Then Return
-        ' STATUS must be the first subsystem.
-        ' STATUS must be the first subsystem.
-        Me.StatusSubsystem = New StatusSubsystem(Me.Session)
-        Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
-        Me.ChannelSubsystem = New ChannelSubsystem(Me.StatusSubsystem)
-        Me.DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
-        Me.SlotsSubsystem = New SlotsSubsystem(6, Me.StatusSubsystem)
-        Me.MultimeterSubsystem = New MultimeterSubsystem(Me.StatusSubsystem)
+        If Not e.Cancel Then
+            ' STATUS must be the first subsystem.
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+            Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
+            Me.ChannelSubsystem = New ChannelSubsystem(Me.StatusSubsystem)
+            Me.DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
+            Me.SlotsSubsystem = New SlotsSubsystem(6, Me.StatusSubsystem)
+            Me.MultimeterSubsystem = New MultimeterSubsystem(Me.StatusSubsystem)
+        End If
     End Sub
 
     ''' <summary> Allows the derived device to take actions after opening. Adds subsystems and event
@@ -141,6 +144,34 @@ Public Class Device
             Me.CloseSession()
         End Try
 
+    End Sub
+
+#End Region
+
+#Region " STATUS SESSION "
+
+    ''' <summary> Allows the derived device status subsystem to take actions before closing. Removes subsystems and
+    ''' event handlers. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    Protected Overrides Sub OnStatusClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnClosing(e)
+        If Not e.Cancel Then
+            Me.StatusSubsystem = Nothing
+            Me.Subsystems.DisposeItems()
+        End If
+    End Sub
+
+    ''' <summary> Allows the derived device status subsystem to take actions before opening. </summary>
+    ''' <param name="e"> Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Protected Overrides Sub OnStatusOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        MyBase.OnOpening(e)
+        If Not e.Cancel Then
+            ' check the language status. 
+            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
+        End If
     End Sub
 
 #End Region

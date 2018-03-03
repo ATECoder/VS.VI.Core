@@ -747,6 +747,93 @@ Public MustInherit Class StatusSubsystemBase
 
 #End Region
 
+#Region " LANGUAGE "
+
+    ''' <summary> The Language. </summary>
+    Private _Language As String
+
+    ''' <summary> Gets or sets the device Language string (*IDN?). </summary>
+    ''' <value> The Language. </value>
+    Public Property Language As String
+        Get
+            Return Me._Language
+        End Get
+        Set(ByVal value As String)
+            If String.IsNullOrEmpty(value) Then value = ""
+            If Not String.Equals(value, Me.Language) Then
+                value = value.Trim
+                Me._Language = value
+                Me.SafePostPropertyChanged()
+            End If
+            Me.LanguageValidated = String.Equals(Me.Language, Me.ExpectedLanguage, StringComparison.OrdinalIgnoreCase)
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the expected language. </summary>
+    ''' <value> The expected language. </value>
+    Public Property ExpectedLanguage As String = ""
+
+    Private _LanguageValidated As Boolean
+
+    ''' <summary> Gets or sets the sentinel indicating if the language was validated. </summary>
+    ''' <value> The LanguageValidated. </value>
+    Public Property LanguageValidated As Boolean
+        Get
+            Return Me._LanguageValidated
+        End Get
+        Set(ByVal value As Boolean)
+            If Not Boolean.Equals(value, Me.LanguageValidated) Then
+                Me._LanguageValidated = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the language. </summary>
+    ''' <param name="value"> The required language. </param>
+    ''' <returns> The language. </returns>
+    Public Function ApplyLanguage(ByVal value As String) As String
+        Me.WriteLanguage(value)
+        Return Me.QueryLanguage()
+    End Function
+
+    ''' <summary> Gets the Language query command. </summary>
+    ''' <remarks> SCPI: "*LANG?" </remarks>
+    ''' <value> The Language query command. </value>
+    Protected Overridable ReadOnly Property LanguageQueryCommand As String
+
+    ''' <summary> Queries the Language. </summary>
+    ''' <returns> The Language or Empty if not required or unknown. </returns>
+    ''' <remarks> Sends the '*LANG?' query. </remarks>
+    Public Overridable Function QueryLanguage() As String
+        If String.IsNullOrWhiteSpace(Me.LanguageQueryCommand) Then
+            Me.Language = ""
+        Else
+            Me.Language = Me.Session.QueryTrimEnd(Me.LanguageQueryCommand)
+        End If
+        Return Me.Language
+    End Function
+
+    ''' <summary> Gets the Language command format. </summary>
+    ''' <value> The Language command format. </value>
+    ''' <remarks> *LANG {0}" </remarks>
+    Protected Overridable ReadOnly Property LanguageCommandFormat As String
+
+    ''' <summary> Writes the Language value without reading back the value from the device. </summary>
+    ''' <param name="value"> The current Language. </param>
+    ''' <returns> The Language or Empty if not required or unknown. </returns>
+    ''' <remarks> Changing the language causes the instrument to reboot. </remarks>
+    Public Function WriteLanguage(ByVal value As String) As String
+        If String.IsNullOrWhiteSpace(Me.LanguageQueryCommand) Then
+            Me.Language = value
+        Else
+            Me.Language = Me.Write(Me.LanguageCommandFormat, value)
+        End If
+        Return Me.Language
+    End Function
+
+#End Region
+
 #Region " OPC "
 
     ''' <summary> Gets or sets the wait command. </summary>

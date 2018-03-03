@@ -1,6 +1,7 @@
 Imports isr.Core.Pith
 Imports isr.VI.Tsp
 Imports isr.VI.Tsp.K2600
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Defines the thermal transient meter including measurement and
 ''' configuration. The Thermal Transient meter includes the elements that define a complete
 ''' set of thermal transient measurements and settings. </summary>

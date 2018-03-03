@@ -1,3 +1,4 @@
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Defines a SCPI Source Voltage Subsystem for a generic Source Measure instrument. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

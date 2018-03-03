@@ -121,6 +121,18 @@ Public MustInherit Class StatusSubsystemBase
 
 #End Region
 
+#Region " LANGUAGE "
+
+    ''' <summary> Gets or sets the Language query command. </summary>
+    ''' <value> The Language query command. </value>
+    Protected Overrides ReadOnly Property LanguageQueryCommand As String = Ieee488.Syntax.LanguageQueryCommand
+
+    ''' <summary> Gets or sets the Language command format. </summary>
+    ''' <value> The Language command format. </value>
+    Protected Overrides ReadOnly Property LanguageCommandFormat As String = Ieee488.Syntax.LanguageCommandFormat
+
+#End Region
+
 #Region " SERVICE REQUEST "
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>

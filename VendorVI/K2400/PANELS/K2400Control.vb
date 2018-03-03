@@ -11,6 +11,7 @@ Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
 Imports isr.VI.SourceMeasure
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a user interface for the Keithley 2400 Instrument. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>

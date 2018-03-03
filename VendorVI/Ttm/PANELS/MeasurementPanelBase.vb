@@ -4,6 +4,7 @@ Imports System.Drawing
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.VI.ExceptionExtensions
 ''' <summary> Measurement panel base. </summary>
 ''' <license> (c) 2014 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>

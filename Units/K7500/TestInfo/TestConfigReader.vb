@@ -55,6 +55,14 @@ Partial Public NotInheritable Class TestInfo
         End Get
     End Property
 
+    ''' <summary> Gets the language. </summary>
+    ''' <value> The language. </value>
+    Public Shared ReadOnly Property Language As String
+        Get
+            Return My.MyAppSettingsReader.AppSettingValue()
+        End Get
+    End Property
+
     ''' <summary> Gets the keep alive query command. </summary>
     ''' <value> The keep alive query command. </value>
     Public Shared ReadOnly Property KeepAliveQueryCommand As String

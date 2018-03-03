@@ -14,7 +14,7 @@ Option Explicit On
 Namespace My
 
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
-     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0"),
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
     Partial Public NotInheritable Class MySettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
@@ -55,114 +55,6 @@ Namespace My
 
         <Global.System.Configuration.UserScopedSettingAttribute(),
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("10")>
-        Public Property LoadResistance() As Decimal
-            Get
-                Return CType(Me("LoadResistance"), Decimal)
-            End Get
-            Set
-                Me("LoadResistance") = Value
-            End Set
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("5")>
-        Public Property YardstickResistance() As Decimal
-            Get
-                Return CType(Me("YardstickResistance"), Decimal)
-            End Get
-            Set
-                Me("YardstickResistance") = Value
-            End Set
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("0.01")>
-        Public Property YardstickResistanceTolerance() As Decimal
-            Get
-                Return CType(Me("YardstickResistanceTolerance"), Decimal)
-            End Get
-            Set
-                Me("YardstickResistanceTolerance") = Value
-            End Set
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("0.000001")>
-        Public Property YardstickInductanceLimit() As Decimal
-            Get
-                Return CType(Me("YardstickInductanceLimit"), Decimal)
-            End Get
-            Set
-                Me("YardstickInductanceLimit") = Value
-            End Set
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public Property OpenCompensationReading() As String
-            Get
-                Return CType(Me("OpenCompensationReading"), String)
-            End Get
-            Set
-                Me("OpenCompensationReading") = Value
-            End Set
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public Property ShortCompensationReading() As String
-            Get
-                Return CType(Me("ShortCompensationReading"), String)
-            End Get
-            Set
-                Me("ShortCompensationReading") = Value
-            End Set
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public Property LoadCompensationReading() As String
-            Get
-                Return CType(Me("LoadCompensationReading"), String)
-            End Get
-            Set
-                Me("LoadCompensationReading") = Value
-            End Set
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public Property FrequencyArrayReading() As String
-            Get
-                Return CType(Me("FrequencyArrayReading"), String)
-            End Get
-            Set
-                Me("FrequencyArrayReading") = Value
-            End Set
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
-         Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public Property AdapterType() As String
-            Get
-                Return CType(Me("AdapterType"), String)
-            End Get
-            Set
-                Me("AdapterType") = Value
-            End Set
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
          Global.System.Configuration.DefaultSettingValueAttribute("Warning")>
         Public Property TraceLogLevel() As Global.System.Diagnostics.TraceEventType
             Get
@@ -184,10 +76,67 @@ Namespace My
                 Me("TraceShowLevel") = Value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:10")>  _
+        Public Property InitializeTimeout() As Global.System.TimeSpan
+            Get
+                Return CType(Me("InitializeTimeout"),Global.System.TimeSpan)
+            End Get
+            Set
+                Me("InitializeTimeout") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:01.0500000")>  _
+        Public Property DeviceClearRefractoryPeriod() As Global.System.TimeSpan
+            Get
+                Return CType(Me("DeviceClearRefractoryPeriod"),Global.System.TimeSpan)
+            End Get
+            Set
+                Me("DeviceClearRefractoryPeriod") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.2000000")>  _
+        Public Property ResetRefractoryPeriod() As Global.System.TimeSpan
+            Get
+                Return CType(Me("ResetRefractoryPeriod"),Global.System.TimeSpan)
+            End Get
+            Set
+                Me("ResetRefractoryPeriod") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>  _
+        Public Property InitRefractoryPeriod() As Global.System.TimeSpan
+            Get
+                Return CType(Me("InitRefractoryPeriod"),Global.System.TimeSpan)
+            End Get
+            Set
+                Me("InitRefractoryPeriod") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>  _
+        Public Property ClearRefractoryPeriod() As Global.System.TimeSpan
+            Get
+                Return CType(Me("ClearRefractoryPeriod"),Global.System.TimeSpan)
+            End Get
+            Set
+                Me("ClearRefractoryPeriod") = value
+            End Set
+        End Property
     End Class
-End Namespace
-
-Namespace My
 
     <Global.Microsoft.VisualBasic.HideModuleNameAttribute(),
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
