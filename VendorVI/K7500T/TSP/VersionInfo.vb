@@ -35,7 +35,6 @@ Public Class VersionInfo
         If revision Is Nothing Then
             Throw New ArgumentNullException(NameOf(revision))
         ElseIf String.IsNullOrWhiteSpace(revision) Then
-            ' this clears the firmware revision elements
             MyBase.ParseFirmwareRevision(revision)
         Else
             MyBase.ParseFirmwareRevision(revision)

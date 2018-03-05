@@ -95,6 +95,7 @@
     <Compile Include="TSP\LocalNodeSubsystem.vb" />
     <Compile Include="TSP\StatusSubsystem.vb" />
     <Compile Include="TSP\SystemSubsystem.vb" />
+    <Compile Include="TSP\VersionInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="My\isr.VI.Tsp2.K7500.History.rtf" />

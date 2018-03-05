@@ -2,7 +2,7 @@
 Imports System.Text
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
-''' <summary> k7500 Device unit tests. </summary>
+''' <summary> K7500 TSP Device unit tests. </summary>
 ''' <license>
 ''' (c) 2017 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -131,10 +131,10 @@ Public Class DeviceUnitTests
     End Sub
 
     ''' <summary> Check status subsystem information. </summary>
-    ''' <param name="device"> The device. </param>
-    Private Shared Sub CheckStatusSubsystemInfo(ByVal device As Device)
+    ''' <param name="subsystem"> The subsystem. </param>
+    Private Shared Sub CheckStatusSubsystemInfo(ByVal subsystem As StatusSubsystem)
 
-        Dim actualFrequency As Double = device.StatusSubsystem.LineFrequency.GetValueOrDefault(0)
+        Dim actualFrequency As Double = subsystem.LineFrequency.GetValueOrDefault(0)
         Assert.AreEqual(TestInfo.LineFrequency, actualFrequency,
                                 $"{NameOf(StatusSubsystem.LineFrequency)} is {actualFrequency}; expected {TestInfo.LineFrequency}")
 
@@ -147,6 +147,10 @@ Public Class DeviceUnitTests
         Dim actualPowerLineCycles As Double = VI.StatusSubsystemBase.ToPowerLineCycles(actualIntegrationPeriod)
         Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, TestInfo.LineFrequency / TimeSpan.TicksPerSecond,
                                 $"Power line cycles is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
+
+        Dim expectedFirmware As String = TestInfo.FirmwareRevision
+        Dim actualFirmware As String = subsystem.VersionInfo.FirmwareRevision
+        Assert.AreEqual(expectedFirmware, actualFirmware, $"Expected firmware version")
 
     End Sub
 
@@ -166,7 +170,7 @@ Public Class DeviceUnitTests
         Using device As Device = Device.Create
             DeviceUnitTests.OpenSession(device)
             DeviceUnitTests.CheckSessionInfo(device)
-            DeviceUnitTests.CheckStatusSubsystemInfo(device)
+            DeviceUnitTests.CheckStatusSubsystemInfo(device.StatusSubsystem)
             DeviceUnitTests.CloseSession(device)
         End Using
     End Sub
