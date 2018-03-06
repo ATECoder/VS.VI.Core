@@ -81,6 +81,7 @@
     <Compile Include="ENTITIES\NodeEntity.vb" />
     <Compile Include="ENTITIES\NodeEntityBase.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="SUBSYSTEMS\BufferSubsystemBase.vb" />
     <Compile Include="SYNTAX\EventLogSyntax.vb" />
     <Compile Include="SYNTAX\DisplaySyntax.vb" />
     <Compile Include="SYNTAX\LocalNodeSyntax.vb" />

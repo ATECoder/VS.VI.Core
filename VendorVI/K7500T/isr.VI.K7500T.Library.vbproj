@@ -89,10 +89,11 @@
     </Compile>
     <Compile Include="My\MyLibraryInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="TSP\ConstantsEnums.vb" />
     <Compile Include="TSP\Device.vb" />
     <Compile Include="TSP\DisplaySubsystem.vb" />
     <Compile Include="TSP\LocalNodeSubsystem.vb" />
+    <Compile Include="TSP\MultimeterSubsystem.vb" />
+    <Compile Include="TSP\Readings.vb" />
     <Compile Include="TSP\StatusSubsystem.vb" />
     <Compile Include="TSP\SystemSubsystem.vb" />
     <Compile Include="TSP\VersionInfo.vb" />

@@ -65,9 +65,25 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <summary> The Aperture. </summary>
     Private _Aperture As Double?
 
-    ''' <summary> Gets or sets the cached sense Aperture. Set to
+    ''' <summary>
+    ''' Gets or sets the cached sense Aperture. Set to
     ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum.
+    ''' </summary>
+    ''' <remarks>
+    ''' The aperture sets the amount of time the ADC takes when making a measurement, which is the
+    ''' integration period For the selected measurement Function. The integration period Is specified
+    ''' In seconds. In general, a short integration period provides a fast reading rate, while a long
+    ''' integration period provides better accuracy. The selected integration period Is a compromise
+    ''' between speed And accuracy. During the integration period, If an external trigger With a
+    ''' count Of 1 Is sent, the trigger Is ignored. If the count Is Set To more than 1, the first
+    ''' reading Is initialized by this trigger. Subsequent readings occur as rapidly as the
+    ''' instrument can make them. If a trigger occurs during the group measurement, the trigger Is
+    ''' latched And another group Of measurements With the same count will be triggered after the
+    ''' current group completes. You can also Set the integration rate by setting the number Of power
+    ''' line cycles (NPLCs). Changing the NPLC value changes the aperture time And changing the
+    ''' aperture time changes the NPLC value.
+    ''' </remarks>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property Aperture As Double?
         Get
@@ -666,7 +682,7 @@ Public MustInherit Class MeasureSubsystemBase
 
     ''' <summary> Gets or sets the function mode query command. </summary>
     ''' <value> The function mode query command. </value>
-    Protected Overridable ReadOnly Property FunctionModeQueryCommand As String = "_G.smu.measure.func"
+    Protected Overridable ReadOnly Property FunctionModeQueryCommand As String
 
     ''' <summary> Queries the Measure Function Mode. </summary>
     ''' <returns> The <see cref="MeasureFunctionMode">Measure Function Mode</see> or none if unknown. </returns>
@@ -687,7 +703,7 @@ Public MustInherit Class MeasureSubsystemBase
 
     ''' <summary> Gets or sets the function mode command format. </summary>
     ''' <value> The function mode command format. </value>
-    Protected Overridable ReadOnly Property FunctionModeCommandFormat As String = "_G.smu.measure.func={0}"
+    Protected Overridable ReadOnly Property FunctionModeCommandFormat As String
 
 
     ''' <summary> Writes the Measure Function Mode without reading back the value from the device. </summary>
@@ -761,6 +777,10 @@ Public MustInherit Class MeasureSubsystemBase
         End Set
     End Property
 
+#End Region
+
+#Region " FUNCTION MODE UNIT "
+
     ''' <summary> Gets or sets the default unit. </summary>
     ''' <value> The default unit. </value>
     Public Property DefaultFunctionUnit As Arebis.TypedUnits.Unit = Arebis.StandardUnits.ElectricUnits.Volt
@@ -794,6 +814,516 @@ Public MustInherit Class MeasureSubsystemBase
             End If
         End Set
     End Property
+
+#End Region
+
+#Region " LIMIT 1 "
+
+#Region " LIMIT1 AUTO CLEAR "
+
+    ''' <summary> Limit1 Auto Clear. </summary>
+    Private _Limit1AutoClear As Boolean?
+
+    ''' <summary> Gets or sets the cached Limit1 Auto Clear sentinel. </summary>
+    ''' <remarks>
+    ''' When auto clear is set to on for a measure function, limit conditions are cleared
+    ''' automatically after each measurement. If you are making a series of measurements, the
+    ''' instrument shows the limit test result of the last measurement for the pass Or fail
+    ''' indication for the limit. If you want To know If any Of a series Of measurements failed the
+    ''' limit, Set the auto clear setting To off. When this set to off, a failed indication Is Not
+    ''' cleared automatically. It remains set until it Is cleared With the clear command. The auto
+    ''' clear setting affects both the high And low limits.
+    ''' </remarks>
+    ''' <value>
+    ''' <c>null</c> if Limit1 Auto Clear is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>.
+    ''' </value>
+    Public Property Limit1AutoClear As Boolean?
+        Get
+            Return Me._Limit1AutoClear
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.Limit1AutoClear, value) Then
+                Me._Limit1AutoClear = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Limit1 Auto Clear sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function ApplyLimit1AutoClear(ByVal value As Boolean) As Boolean?
+        Me.WriteLimit1AutoClear(value)
+        Return Me.QueryLimit1AutoClear()
+    End Function
+
+    ''' <summary> Gets or sets the Limit1 Auto Clear query command. </summary>
+    ''' <value> The Limit1 Auto Clear query command. </value>
+    ''' <remarks> TSP: G_.print(_G.dmm.measure.limit1.autoclear==dmm.ON) </remarks>
+    Protected Overridable ReadOnly Property Limit1AutoClearQueryCommand As String
+
+    ''' <summary> Queries the Limit1 Auto Clear sentinel. Also sets the
+    ''' <see cref="Limit1AutoClear">AutoClear</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function QueryLimit1AutoClear() As Boolean?
+        Me.Limit1AutoClear = Me.Query(Me.Limit1AutoClear, Me.Limit1AutoClearQueryCommand)
+        Return Me.Limit1AutoClear
+    End Function
+
+    ''' <summary> Gets or sets the Limit1 Auto Clear command Format. </summary>
+    ''' <value> The Limit1 Auto Clear query command. </value>
+    ''' <remarks> TSP: "_G.dmm.measure.limit1.autoclear={0:'dmm.ON';'dmm.ON';'dmm.OFF'}" </remarks>
+    Protected Overridable ReadOnly Property Limit1AutoClearCommandFormat As String
+
+    ''' <summary> Writes the Limit1 Auto Clear sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is Auto Clear. </param>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function WriteLimit1AutoClear(ByVal value As Boolean) As Boolean?
+        Me.Limit1AutoClear = Me.Write(value, Me.Limit1AutoClearCommandFormat)
+        Return Me.Limit1AutoClear
+    End Function
+
+#End Region
+
+#Region " LIMIT1 ENABLED "
+
+    ''' <summary> Limit1 enabled. </summary>
+    Private _Limit1Enabled As Boolean?
+
+    ''' <summary> Gets or sets the cached Limit1 Enabled sentinel. </summary>
+    ''' <remarks> This command enables or disables a limit test for the selected measurement function. When this
+    ''' attribute Is enabled, the limit 1 testing occurs on each measurement made by the instrument. Limit 1
+    ''' testing compares the measurements To the high And low limit values. If a measurement falls outside
+    ''' these limits, the test fails. </remarks>
+    ''' <value> <c>null</c> if Limit1 Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property Limit1Enabled As Boolean?
+        Get
+            Return Me._Limit1Enabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.Limit1Enabled, value) Then
+                Me._Limit1Enabled = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Limit1 Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyLimit1Enabled(ByVal value As Boolean) As Boolean?
+        Me.WriteLimit1Enabled(value)
+        Return Me.QueryLimit1Enabled()
+    End Function
+
+    ''' <summary> Gets or sets the Limit1 enabled query command. </summary>
+    ''' <value> The Limit1 enabled query command. </value>
+    ''' <remarks> TSP G_.print(_G.dmm.measure.limit1.autoclear==dmm.ON)" </remarks>
+    Protected Overridable ReadOnly Property Limit1EnabledQueryCommand As String
+
+    ''' <summary> Queries the Limit1 Enabled sentinel. Also sets the
+    ''' <see cref="Limit1Enabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryLimit1Enabled() As Boolean?
+        Me.Limit1Enabled = Me.Query(Me.Limit1Enabled, Me.Limit1EnabledQueryCommand)
+        Return Me.Limit1Enabled
+    End Function
+
+    ''' <summary> Gets or sets the Limit1 enabled command Format. </summary>
+    ''' <value> The Limit1 enabled query command. </value>
+    ''' <remarks> TSP _G.dmm.measure.limit1.enable={0:'dmm.ON';'dmm.ON';'dmm.OFF'} </remarks>
+    Protected Overridable ReadOnly Property Limit1EnabledCommandFormat As String
+
+    ''' <summary> Writes the Limit1 Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteLimit1Enabled(ByVal value As Boolean) As Boolean?
+        Me.Limit1Enabled = Me.Write(value, Me.Limit1EnabledCommandFormat)
+        Return Me.Limit1Enabled
+    End Function
+
+#End Region
+
+#Region " LIMIT1 LOWER LEVEL "
+
+    ''' <summary> The Limit1 Lower Level. </summary>
+    Private _Limit1LowerLevel As Double?
+
+    ''' <summary>
+    ''' Gets or sets the cached Limit1 Lower Level. Set to
+    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum.
+    ''' </summary>
+    ''' <remarks>
+    ''' This command sets the lower limit for the limit 1 test for the selected measure function.
+    ''' When limit 1 testing Is enabled, this causes a fail indication to occur when the measurement
+    ''' value Is less than this value.  Default Is 0.3 For limit 1 When the diode Function Is
+    ''' selected. The Default For limit 2 For the diode Function is() –1.
+    ''' </remarks>
+    ''' <value> <c>null</c> if value is not known. </value>
+    Public Overloads Property Limit1LowerLevel As Double?
+        Get
+            Return Me._Limit1LowerLevel
+        End Get
+        Protected Set(ByVal value As Double?)
+            If Not Nullable.Equals(Me.Limit1LowerLevel, value) Then
+                Me._Limit1LowerLevel = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Limit1 Lower Level. </summary>
+    ''' <param name="value"> The Limit1 Lower Level. </param>
+    ''' <returns> The Limit1 Lower Level. </returns>
+    Public Function ApplyLimit1LowerLevel(ByVal value As Double) As Double?
+        Me.WriteLimit1LowerLevel(value)
+        Return Me.QueryLimit1LowerLevel
+    End Function
+
+    ''' <summary> Gets or sets The Limit1 Lower Level query command. </summary>
+    ''' <value> The Limit1 Lower Level query command. </value>
+    Protected Overridable ReadOnly Property Limit1LowerLevelQueryCommand As String
+
+    ''' <summary> Queries The Limit1 Lower Level. </summary>
+    ''' <returns> The Limit1 Lower Level or none if unknown. </returns>
+    Public Function QueryLimit1LowerLevel() As Double?
+        Me.Limit1LowerLevel = Me.Query(Me.Limit1LowerLevel, Me.Limit1LowerLevelQueryCommand)
+        Return Me.Limit1LowerLevel
+    End Function
+
+    ''' <summary> Gets or sets The Limit1 Lower Level command format. </summary>
+    ''' <value> The Limit1 Lower Level command format. </value>
+    Protected Overridable ReadOnly Property Limit1LowerLevelCommandFormat As String
+
+    ''' <summary> Writes The Limit1 Lower Level without reading back the value from the device. </summary>
+    ''' <remarks> This command sets The Limit1 Lower Level. </remarks>
+    ''' <param name="value"> The Limit1 Lower Level. </param>
+    ''' <returns> The Limit1 Lower Level. </returns>
+    Public Function WriteLimit1LowerLevel(ByVal value As Double) As Double?
+        Me.Limit1LowerLevel = Me.Write(value, Me.Limit1LowerLevelCommandFormat)
+        Return Me.Limit1LowerLevel
+    End Function
+
+#End Region
+
+#Region " LIMIT1 UPPER LEVEL "
+
+    ''' <summary> The Limit1 Upper Level. </summary>
+    Private _Limit1UpperLevel As Double?
+
+    ''' <summary>
+    ''' Gets or sets the cached Limit1 Upper Level. Set to
+    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum.
+    ''' </summary>
+    ''' <remarks>
+    ''' This command sets the high limit for the limit 2 test for the selected measurement function.
+    ''' When limit 2 testing Is enabled, the instrument generates a fail indication When the
+    ''' measurement value Is more than this value. Default Is 0.8 For limit 1 When the diode Function
+    ''' Is selected; 10 When the continuity Function Is selected. The default for limit 2 for the
+    ''' diode And continuity functions Is 1.
+    ''' </remarks>
+    ''' <value> <c>null</c> if value is not known. </value>
+    Public Overloads Property Limit1UpperLevel As Double?
+        Get
+            Return Me._Limit1UpperLevel
+        End Get
+        Protected Set(ByVal value As Double?)
+            If Not Nullable.Equals(Me.Limit1UpperLevel, value) Then
+                Me._Limit1UpperLevel = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Limit1 Upper Level. </summary>
+    ''' <param name="value"> The Limit1 Upper Level. </param>
+    ''' <returns> The Limit1 Upper Level. </returns>
+    Public Function ApplyLimit1UpperLevel(ByVal value As Double) As Double?
+        Me.WriteLimit1UpperLevel(value)
+        Return Me.QueryLimit1UpperLevel
+    End Function
+
+    ''' <summary> Gets or sets The Limit1 Upper Level query command. </summary>
+    ''' <value> The Limit1 Upper Level query command. </value>
+    Protected Overridable ReadOnly Property Limit1UpperLevelQueryCommand As String
+
+    ''' <summary> Queries The Limit1 Upper Level. </summary>
+    ''' <returns> The Limit1 Upper Level or none if unknown. </returns>
+    Public Function QueryLimit1UpperLevel() As Double?
+        Me.Limit1UpperLevel = Me.Query(Me.Limit1UpperLevel, Me.Limit1UpperLevelQueryCommand)
+        Return Me.Limit1UpperLevel
+    End Function
+
+    ''' <summary> Gets or sets The Limit1 Upper Level command format. </summary>
+    ''' <value> The Limit1 Upper Level command format. </value>
+    Protected Overridable ReadOnly Property Limit1UpperLevelCommandFormat As String
+
+    ''' <summary> Writes The Limit1 Upper Level without reading back the value from the device. </summary>
+    ''' <remarks> This command sets The Limit1 Upper Level. </remarks>
+    ''' <param name="value"> The Limit1 Upper Level. </param>
+    ''' <returns> The Limit1 Upper Level. </returns>
+    Public Function WriteLimit1UpperLevel(ByVal value As Double) As Double?
+        Me.Limit1UpperLevel = Me.Write(value, Me.Limit1UpperLevelCommandFormat)
+        Return Me.Limit1UpperLevel
+    End Function
+
+#End Region
+
+#End Region
+
+#Region " LIMIT 2 "
+
+#Region " LIMIT2 AUTO CLEAR "
+
+    ''' <summary> Limit2 Auto Clear. </summary>
+    Private _Limit2AutoClear As Boolean?
+
+    ''' <summary> Gets or sets the cached Limit2 Auto Clear sentinel. </summary>
+    ''' <remarks>
+    ''' When auto clear is set to on for a measure function, limit conditions are cleared
+    ''' automatically after each measurement. If you are making a series of measurements, the
+    ''' instrument shows the limit test result of the last measurement for the pass Or fail
+    ''' indication for the limit. If you want To know If any Of a series Of measurements failed the
+    ''' limit, Set the auto clear setting To off. When this set to off, a failed indication Is Not
+    ''' cleared automatically. It remains set until it Is cleared With the clear command. The auto
+    ''' clear setting affects both the high And low limits.
+    ''' </remarks>
+    ''' <value> <c>null</c> if Limit2 Auto Clear is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property Limit2AutoClear As Boolean?
+        Get
+            Return Me._Limit2AutoClear
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.Limit2AutoClear, value) Then
+                Me._Limit2AutoClear = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Limit2 Auto Clear sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function ApplyLimit2AutoClear(ByVal value As Boolean) As Boolean?
+        Me.WriteLimit2AutoClear(value)
+        Return Me.QueryLimit2AutoClear()
+    End Function
+
+    ''' <summary> Gets or sets the Limit2 Auto Clear query command. </summary>
+    ''' <value> The Limit2 Auto Clear query command. </value>
+    ''' <remarks> TSP: G_.print(_G.dmm.measure.limit1.autoclear==dmm.ON) </remarks>
+    Protected Overridable ReadOnly Property Limit2AutoClearQueryCommand As String
+
+    ''' <summary> Queries the Limit2 Auto Clear sentinel. Also sets the
+    ''' <see cref="Limit2AutoClear">AutoClear</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function QueryLimit2AutoClear() As Boolean?
+        Me.Limit2AutoClear = Me.Query(Me.Limit2AutoClear, Me.Limit2AutoClearQueryCommand)
+        Return Me.Limit2AutoClear
+    End Function
+
+    ''' <summary> Gets or sets the Limit2 Auto Clear command Format. </summary>
+    ''' <value> The Limit2 Auto Clear query command. </value>
+    ''' <remarks> TSP: "_G.dmm.measure.limit1.autoclear={0:'dmm.ON';'dmm.ON';'dmm.OFF'}" </remarks>
+    Protected Overridable ReadOnly Property Limit2AutoClearCommandFormat As String
+
+    ''' <summary> Writes the Limit2 Auto Clear sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is Auto Clear. </param>
+    ''' <returns> <c>True</c> if AutoClear; otherwise <c>False</c>. </returns>
+    Public Function WriteLimit2AutoClear(ByVal value As Boolean) As Boolean?
+        Me.Limit2AutoClear = Me.Write(value, Me.Limit2AutoClearCommandFormat)
+        Return Me.Limit2AutoClear
+    End Function
+
+#End Region
+
+#Region " LIMIT2 ENABLED "
+
+    ''' <summary> Limit2 enabled. </summary>
+    Private _Limit2Enabled As Boolean?
+
+    ''' <summary> Gets or sets the cached Limit2 Enabled sentinel. </summary>
+    ''' <value> <c>null</c> if Limit2 Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    ''' <remarks> This command enables or disables a limit test for the selected measurement function. When this
+    ''' attribute Is enabled, the limit 2 testing occurs on each measurement made by the instrument. Limit 2
+    ''' testing compares the measurements To the high And low limit values. If a measurement falls outside
+    ''' these limits, the test fails. </remarks>
+    Public Property Limit2Enabled As Boolean?
+        Get
+            Return Me._Limit2Enabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.Limit2Enabled, value) Then
+                Me._Limit2Enabled = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Limit2 Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyLimit2Enabled(ByVal value As Boolean) As Boolean?
+        Me.WriteLimit2Enabled(value)
+        Return Me.QueryLimit2Enabled()
+    End Function
+
+    ''' <summary> Gets or sets the Limit2 enabled query command. </summary>
+    ''' <value> The Limit2 enabled query command. </value>
+    ''' <remarks> TSP G_.print(_G.dmm.measure.limit2.autoclear==dmm.ON)" </remarks>
+    Protected Overridable ReadOnly Property Limit2EnabledQueryCommand As String
+
+    ''' <summary> Queries the Limit2 Enabled sentinel. Also sets the
+    ''' <see cref="Limit2Enabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryLimit2Enabled() As Boolean?
+        Me.Limit2Enabled = Me.Query(Me.Limit2Enabled, Me.Limit2EnabledQueryCommand)
+        Return Me.Limit2Enabled
+    End Function
+
+    ''' <summary> Gets or sets the Limit2 enabled command Format. </summary>
+    ''' <value> The Limit2 enabled query command. </value>
+    ''' <remarks> TSP: _G.dmm.measure.limit2.enable={0:'dmm.ON';'dmm.ON';'dmm.OFF'} </remarks>
+    Protected Overridable ReadOnly Property Limit2EnabledCommandFormat As String
+
+    ''' <summary> Writes the Limit2 Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteLimit2Enabled(ByVal value As Boolean) As Boolean?
+        Me.Limit2Enabled = Me.Write(value, Me.Limit2EnabledCommandFormat)
+        Return Me.Limit2Enabled
+    End Function
+
+#End Region
+
+#Region " LIMIT2 LOWER LEVEL "
+
+    ''' <summary> The Limit2 Lower Level. </summary>
+    Private _Limit2LowerLevel As Double?
+
+    ''' <summary>
+    ''' Gets or sets the cached Limit2 Lower Level. Set to
+    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum.
+    ''' </summary>
+    ''' <remarks>
+    ''' This command sets the lower limit for the limit 1 test for the selected measure function.
+    ''' When limit 1 testing Is enabled, this causes a fail indication to occur when the measurement
+    ''' value Is less than this value.  Default Is 0.3 For limit 1 When the diode Function Is
+    ''' selected. The Default For limit 2 For the diode Function is() –1.
+    ''' </remarks>
+    ''' <value> <c>null</c> if value is not known. </value>
+    Public Overloads Property Limit2LowerLevel As Double?
+        Get
+            Return Me._Limit2LowerLevel
+        End Get
+        Protected Set(ByVal value As Double?)
+            If Not Nullable.Equals(Me.Limit2LowerLevel, value) Then
+                Me._Limit2LowerLevel = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Limit2 Lower Level. </summary>
+    ''' <param name="value"> The Limit2 Lower Level. </param>
+    ''' <returns> The Limit2 Lower Level. </returns>
+    Public Function ApplyLimit2LowerLevel(ByVal value As Double) As Double?
+        Me.WriteLimit2LowerLevel(value)
+        Return Me.QueryLimit2LowerLevel
+    End Function
+
+    ''' <summary> Gets or sets The Limit2 Lower Level query command. </summary>
+    ''' <value> The Limit2 Lower Level query command. </value>
+    Protected Overridable ReadOnly Property Limit2LowerLevelQueryCommand As String
+
+    ''' <summary> Queries The Limit2 Lower Level. </summary>
+    ''' <returns> The Limit2 Lower Level or none if unknown. </returns>
+    Public Function QueryLimit2LowerLevel() As Double?
+        Me.Limit2LowerLevel = Me.Query(Me.Limit2LowerLevel, Me.Limit2LowerLevelQueryCommand)
+        Return Me.Limit2LowerLevel
+    End Function
+
+    ''' <summary> Gets or sets The Limit2 Lower Level command format. </summary>
+    ''' <value> The Limit2 Lower Level command format. </value>
+    Protected Overridable ReadOnly Property Limit2LowerLevelCommandFormat As String
+
+    ''' <summary> Writes The Limit2 Lower Level without reading back the value from the device. </summary>
+    ''' <remarks> This command sets The Limit2 Lower Level. </remarks>
+    ''' <param name="value"> The Limit2 Lower Level. </param>
+    ''' <returns> The Limit2 Lower Level. </returns>
+    Public Function WriteLimit2LowerLevel(ByVal value As Double) As Double?
+        Me.Limit2LowerLevel = Me.Write(value, Me.Limit2LowerLevelCommandFormat)
+        Return Me.Limit2LowerLevel
+    End Function
+
+#End Region
+
+#Region " LIMIT2 UPPER LEVEL "
+
+    ''' <summary> The Limit2 Upper Level. </summary>
+    Private _Limit2UpperLevel As Double?
+
+    ''' <summary> Gets or sets the cached Limit2 Upper Level. Set to
+    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <value> <c>null</c> if value is not known. </value>
+    ''' <remarks> This command sets the high limit for the limit 2 test for the selected measurement function. When limit
+    ''' 2 testing Is enabled, the instrument generates a fail indication When the measurement value Is more
+    ''' than this value.
+    ''' Default Is 0.8 For limit 1 When the diode Function Is selected; 10 When the continuity Function Is
+    ''' selected. The default for limit 2 for the diode And continuity functions Is 1</remarks>
+    Public Overloads Property Limit2UpperLevel As Double?
+        Get
+            Return Me._Limit2UpperLevel
+        End Get
+        Protected Set(ByVal value As Double?)
+            If Not Nullable.Equals(Me.Limit2UpperLevel, value) Then
+                Me._Limit2UpperLevel = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Limit2 Upper Level. </summary>
+    ''' <param name="value"> The Limit2 Upper Level. </param>
+    ''' <returns> The Limit2 Upper Level. </returns>
+    Public Function ApplyLimit2UpperLevel(ByVal value As Double) As Double?
+        Me.WriteLimit2UpperLevel(value)
+        Return Me.QueryLimit2UpperLevel
+    End Function
+
+    ''' <summary> Gets or sets The Limit2 Upper Level query command. </summary>
+    ''' <value> The Limit2 Upper Level query command. </value>
+    Protected Overridable ReadOnly Property Limit2UpperLevelQueryCommand As String
+
+    ''' <summary> Queries The Limit2 Upper Level. </summary>
+    ''' <returns> The Limit2 Upper Level or none if unknown. </returns>
+    Public Function QueryLimit2UpperLevel() As Double?
+        Me.Limit2UpperLevel = Me.Query(Me.Limit2UpperLevel, Me.Limit2UpperLevelQueryCommand)
+        Return Me.Limit2UpperLevel
+    End Function
+
+    ''' <summary> Gets or sets The Limit2 Upper Level command format. </summary>
+    ''' <value> The Limit2 Upper Level command format. </value>
+    Protected Overridable ReadOnly Property Limit2UpperLevelCommandFormat As String
+
+    ''' <summary> Writes The Limit2 Upper Level without reading back the value from the device. </summary>
+    ''' <remarks> This command sets The Limit2 Upper Level. </remarks>
+    ''' <param name="value"> The Limit2 Upper Level. </param>
+    ''' <returns> The Limit2 Upper Level. </returns>
+    Public Function WriteLimit2UpperLevel(ByVal value As Double) As Double?
+        Me.Limit2UpperLevel = Me.Write(value, Me.Limit2UpperLevelCommandFormat)
+        Return Me.Limit2UpperLevel
+    End Function
+
+#End Region
 
 #End Region
 
@@ -1055,7 +1585,7 @@ Public MustInherit Class MeasureSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.PowerLineCycles, value) Then
                 Me._PowerLineCycles = value
-                Me._Aperture = StatusSubsystemBase.FromPowerLineCycles(Me._PowerLineCycles.Value).TotalSeconds
+                Me.Aperture = StatusSubsystemBase.FromPowerLineCycles(Me._PowerLineCycles.Value).TotalSeconds
                 Me.SafePostPropertyChanged()
             End If
         End Set

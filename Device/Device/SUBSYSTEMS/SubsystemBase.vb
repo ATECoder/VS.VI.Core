@@ -380,6 +380,15 @@ Public MustInherit Class SubsystemBase
 
 #End Region
 
+#Region " EXECUTE "
+
+    ''' <summary> Executes the command. </summary>
+    ''' <param name="command"> The command. </param>
+    Public Sub Execute(ByVal command As String)
+        If Not String.IsNullOrWhiteSpace(command) Then Me.Session.Execute(command)
+    End Sub
+
+#End Region
 #End Region
 
 End Class

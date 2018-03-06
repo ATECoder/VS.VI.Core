@@ -140,6 +140,7 @@
     <Compile Include="SUBSYSTEMS\SubsystemCollection-ITalker.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ProberSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\BufferSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\TraceSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\FormatSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\MeasureCurrentSubsystemBase.vb" />

@@ -190,7 +190,7 @@ Public Class MeasureSubsystem
 
     ''' <summary> Gets or sets the front terminals selected command format. </summary>
     ''' <value> The front terminals selected command format. </value>
-    Protected Overrides ReadOnly Property FrontTerminalsSelectedCommandFormat As String = "_G.smu.measure.terminals={0:'smu.TERMINALS_FRONT';'smu.TERMINALS_FRONT';'smu.TERMINALS_READ'}"
+    Protected Overrides ReadOnly Property FrontTerminalsSelectedCommandFormat As String = "_G.smu.measure.terminals={0:'smu.TERMINALS_FRONT';'smu.TERMINALS_FRONT';'smu.TERMINALS_REAR'}"
 
     ''' <summary> Gets or sets the front terminals selected query command. </summary>
     ''' <value> The front terminals selected query command. </value>

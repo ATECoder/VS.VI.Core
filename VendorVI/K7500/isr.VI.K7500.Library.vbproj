@@ -88,7 +88,6 @@
     <Compile Include="PANELS\K7500Control.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SUBSYSTEMS\ConstantsEnums.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystem.vb" />
     <Compile Include="SUBSYSTEMS\Calculate2FourWireResistanceSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SenseResistanceSubsystem.vb" />

@@ -184,6 +184,126 @@ Public Class SenseFourWireResistanceSubsystem
 
 #End Region
 
+#Region " RANGES: LEVEL, CURRENT "
+
+    Private Shared _FourWireResistanceRanges As FourWireResistanceRangeCollection
+    ''' <summary> Gets the FourWireResistance ranges. </summary>
+    ''' <value> The FourWireResistance ranges. </value>
+    Public Shared ReadOnly Property FourWireResistanceRanges As FourWireResistanceRangeCollection
+        Get
+            If SenseFourWireResistanceSubsystem._FourWireResistanceRanges Is Nothing Then
+                SenseFourWireResistanceSubsystem._FourWireResistanceRanges = New FourWireResistanceRangeCollection
+            End If
+            Return SenseFourWireResistanceSubsystem._FourWireResistanceRanges
+        End Get
+    End Property
+
+    ''' <summary> Gets the current. </summary>
+    ''' <value> The current. </value>
+    Public Overrides ReadOnly Property Current As Decimal
+        Get
+            Return CDec(SenseFourWireResistanceSubsystem.FourWireResistanceRanges.FindFourWireResistanceRange(Me.Range.GetValueOrDefault(100)).Current)
+        End Get
+    End Property
+
+#End Region
+
+End Class
+
+''' <summary> A FourWireResistance range. </summary>
+''' <license>
+''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
+''' Licensed under The MIT License.</para><para>
+''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+''' </license>
+Public Structure FourWireResistanceRange
+    Public Sub New(ByVal mode As FourWireResistanceRangeMode, ByVal current As Double, ByVal Range As Double)
+        Me.Mode = mode
+        Me.Current = current
+        Me.Range = Range
+    End Sub
+    Public Mode As FourWireResistanceRangeMode
+    Public Current As Double
+    Public Range As Double
+    Public ReadOnly Property IsAutoRange As Boolean
+        Get
+            Return Me.Mode = FourWireResistanceRangeMode.R0
+        End Get
+    End Property
+    Public Shared ReadOnly Property AutoRange As FourWireResistanceRange
+        Get
+            Return New FourWireResistanceRange(FourWireResistanceRangeMode.R0, 0, 0)
+        End Get
+    End Property
+End Structure
+
+''' <summary> Collection of FourWireResistance ranges. </summary>
+''' <license>
+''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
+''' Licensed under The MIT License.</para><para>
+''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+''' </license>
+''' <history date="3/5/2018" by="David" revision=""> Created. </history>
+Public Class FourWireResistanceRangeCollection
+    Inherits Collections.ObjectModel.KeyedCollection(Of FourWireResistanceRangeMode, FourWireResistanceRange)
+
+    Protected Overrides Function GetKeyForItem(item As FourWireResistanceRange) As FourWireResistanceRangeMode
+        Throw New NotImplementedException()
+    End Function
+
+    Public Sub New()
+        Me.Populate()
+    End Sub
+
+    Private Sub Populate()
+        Me.Clear()
+        Me.Add(FourWireResistanceRange.AutoRange)
+        Me.Add(New FourWireResistanceRange(FourWireResistanceRangeMode.R20, 0.0072, 20))
+        Me.Add(New FourWireResistanceRange(FourWireResistanceRangeMode.R200, 0.00096, 200))
+        Me.Add(New FourWireResistanceRange(FourWireResistanceRangeMode.R2000, 0.00096, 2000))
+        Me.Add(New FourWireResistanceRange(FourWireResistanceRangeMode.R20000, 0.000096, 20000))
+        Me.Add(New FourWireResistanceRange(FourWireResistanceRangeMode.R200000, 0.0000096, 200000))
+        Me.Add(New FourWireResistanceRange(FourWireResistanceRangeMode.R2000000, 0.0000019, 2000000))
+    End Sub
+
+    ''' <summary> Searches for the first FourWireResistance range. </summary>
+    ''' <param name="range"> The range. </param>
+    ''' <returns> The found FourWireResistance range. </returns>
+    Public Function FindFourWireResistanceRange(ByVal range As Double) As FourWireResistanceRange
+        Dim result As FourWireResistanceRange = FourWireResistanceRange.AutoRange
+        For Each FourWireResistanceRange As FourWireResistanceRange In Me
+            If range <= FourWireResistanceRange.Range Then
+                result = FourWireResistanceRange
+                Exit For
+            End If
+        Next
+        Return result
+    End Function
+
+End Class
+
+''' <summary> Values that represent the four-wire resistance range mode. </summary>
+Public Enum FourWireResistanceRangeMode
+    <ComponentModel.Description("Auto Range (R0)")> R0 = 0
+    <ComponentModel.Description("20 ohm range @ 7.2 mA Test Current")> R20 = 20
+    <ComponentModel.Description("200 ohm range @ 960 uA Test Current")> R200 = 200
+    <ComponentModel.Description("2k ohm range @ 960 uA Test Current")> R2000 = 2000
+    <ComponentModel.Description("20k ohm range @ 96 uA Test Current")> R20000 = 20000
+    <ComponentModel.Description("200k ohm range @ 9.6 uA Test Current")> R200000 = 200000
+    <ComponentModel.Description("2M ohm range @ 1.9 uA Test Current")> R2000000 = 2000000
+End Enum
+
+
+#Region " UNUSED "
+#If False Then
 #Region " CURRENT "
 
     ''' <summary> Range current. </summary>
@@ -270,4 +390,6 @@ Public Class SenseFourWireResistanceSubsystem
 
 #End Region
 
-End Class
+
+#End If
+#End Region

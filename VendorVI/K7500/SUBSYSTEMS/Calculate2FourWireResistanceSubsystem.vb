@@ -138,6 +138,7 @@ Public Class Calculate2FourWireResistanceSubsystem
 
 #End Region
 #End Region
+
 #End Region
 
 End Class
