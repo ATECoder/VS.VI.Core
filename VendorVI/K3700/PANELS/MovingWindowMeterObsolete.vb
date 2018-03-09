@@ -120,9 +120,9 @@ Partial Public Class MovingWindowMeter
                     eventCount -= 1
                 Loop
             End If
-        Loop Until w.CancellationPending OrElse e.Cancel OrElse payload.MovingWindow.IsCompleted OrElse payload.MovingWindow.IsTimeout
+        Loop Until w.CancellationPending OrElse e.Cancel OrElse payload.MovingWindow.IsStopStatus
 
-        Do Until e.Cancel OrElse payload.MovingWindow.IsCompleted OrElse payload.MovingWindow.IsTimeout
+        Do Until e.Cancel OrElse payload.MovingWindow.IsStopStatus
             Dim eventCount As Integer = payload.DoEventCount
             Do While eventCount > 0
                 Windows.Forms.Application.DoEvents()

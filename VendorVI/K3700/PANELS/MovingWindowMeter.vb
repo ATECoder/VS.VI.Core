@@ -150,14 +150,14 @@ Public Class MovingWindowMeter
     ''' <summary> Gets or sets the window. </summary>
     ''' <value> The window. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property Window As Double
+    Public Property Window As RangeR
         Get
             Return Me.MovingWindow.Window
         End Get
-        Set(value As Double)
+        Set(value As RangeR)
             If value <> Me.Window Then
-                Me.MovingWindow.Window = value
-                Me._WindowTextBox.Text = $"{(100 * value):0.####}"
+                Me.MovingWindow.Window = New RangeR(value)
+                Me._WindowTextBox.Text = $"{(100 * value.Span):0.####}"
             End If
         End Set
     End Property
@@ -559,12 +559,11 @@ Public Class MovingWindowMeter
                 Do
                     ' measure and time
                     If Me.MovingWindow.ReadValue(Function() Me.Device.MultimeterSubsystem.Measure()) Then
-
                         progress.Report(New isr.Core.Engineering.MovingWindow(Me.MovingWindow))
                     Else
                         Me.MovingAverageTaskResult.RegisterFailure("device returned a null value")
                     End If
-                Loop Until Me.IsCancellationRequested OrElse Me.MovingAverageTaskResult.Failed OrElse Me.MovingWindow.IsCompleted OrElse Me.MovingWindow.IsTimeout
+                Loop Until Me.IsCancellationRequested OrElse Me.MovingAverageTaskResult.Failed OrElse Me.MovingWindow.IsStopStatus
             Else
                 Me.MovingAverageTaskResult.RegisterFailure("Timeout receiving start acknowledgment")
             End If
@@ -683,7 +682,6 @@ Public Class MovingWindowMeter
         Me._TaskStart = NotificationSemaphores.None
         Me.CancellationTokenSource = New CancellationTokenSource
         Me.CancellationToken = CancellationTokenSource.Token
-
         Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
         Me._task = New Task(Sub() Me.MeasureMovingAverage(progress))
         If runSynchronously Then
@@ -710,7 +708,6 @@ Public Class MovingWindowMeter
             Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
             Me._task = New Task(Sub() Me.MeasureMovingAverage(progress))
             If runSynchronously Then
-
                 Me.Task.RunSynchronously(TaskScheduler.FromCurrentSynchronizationContext)
             Else
                 Me.Task.Start()
@@ -745,7 +742,7 @@ Public Class MovingWindowMeter
         Try
             If button.Checked Then
                 Me.MovingWindow.Length = CInt(Me._LengthTextBox.Text)
-                Me.MovingWindow.Window = 0.01 * CDbl(Me._WindowTextBox.Text)
+                Me.MovingWindow.Window = New RangeR(0.01 * CDbl(Me._WindowTextBox.Text))
                 Me.MovingWindow.UpdateRule = Core.Engineering.MovingWindowUpdateRule.StopOnWithinWindow
                 Me.MovingWindow.TimeoutInterval = TimeSpan.FromSeconds(CDbl(Me._TimeoutTextBox.Text))
                 Me.StartMeasureAsync(SynchronizationContext.Current)
