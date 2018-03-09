@@ -199,7 +199,7 @@ Partial Public Class MovingWindowMeter
     ''' <summary> Starts measure asynchronous. </summary>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function StartMeasureWork(ByVal syncContext As SynchronizationContext) As Boolean
-        Me._MovingAverageTaskResult = New TaskResult
+        Me._MovingWindowTaskResult = New TaskResult
 	  Me.CaptureSyncContext(syncContext)
         Dim stopped As Boolean = StopMeasureAsyncIf(TimeSpan.FromSeconds(1))
         If Not stopped Then Return False

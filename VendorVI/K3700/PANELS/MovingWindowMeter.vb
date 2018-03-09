@@ -77,18 +77,18 @@ Public Class MovingWindowMeter
 #Region " FORM EVENTS  "
 
     Private Sub MovingWindowMeter_Load(sender As Object, e As EventArgs) Handles Me.Load
-        Me._StartMovingAverageButton.Enabled = False
+        Me._StartMovingWindowButton.Enabled = False
     End Sub
 
 #End Region
 
-#Region " MOVING AVERAGE "
+#Region " MOVING WINDOW AVERAGE "
 
     ''' <summary> Device open changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     Private Sub _Device_OpenChanged(sender As Object, e As EventArgs) Handles _Device.Opened, _Device.Closed
-        Me._StartMovingAverageButton.Enabled = Me._Device.IsDeviceOpen
+        Me._StartMovingWindowButton.Enabled = Me._Device.IsDeviceOpen
     End Sub
 
     Private WithEvents _Device As K3700.Device
@@ -102,16 +102,18 @@ Public Class MovingWindowMeter
         Set(value As K3700.Device)
             Me._Device = value
             If value IsNot Nothing Then
-                Me._StartMovingAverageButton.Enabled = value.IsDeviceOpen
+                Me._StartMovingWindowButton.Enabled = value.IsDeviceOpen
             End If
         End Set
     End Property
 
-    ''' <summary> Gets or sets the moving average. </summary>
-    ''' <value> The moving average. </value>
+    ''' <summary> Gets or sets the moving window. </summary>
+    ''' <value> The moving window. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Public ReadOnly Property MovingWindow As isr.Core.Engineering.MovingWindow
 
+    ''' <summary> Gets or sets the length. </summary>
+    ''' <value> The length. </value>
     Public Property Length As Integer
         Get
             Return Me.MovingWindow.Length
@@ -184,31 +186,60 @@ Public Class MovingWindowMeter
     End Sub
 
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public ReadOnly Property HasMovingAverageTaskResult As Boolean
+    Public ReadOnly Property HasMovingWindowTaskResult As Boolean
         Get
-            Return Me.MovingAverageTaskResult IsNot Nothing
+            Return Me.MovingWindowTaskResult IsNot Nothing
         End Get
     End Property
 
-    ''' <summary> Gets or sets the measurement Failed. </summary>
-    ''' <value> The measurement Failed. </value>
+    Private _MeasurementFormatString As String
+
+    ''' <summary> Gets or sets the measurement Format String. </summary>
+    ''' <value> The measurement FormatString. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public ReadOnly Property MeasurementFailed As Boolean
+    Public Property MeasurementFormatString As String
         Get
-            Return Me.HasMovingAverageTaskResult AndAlso Me.MovingAverageTaskResult.Failed
+            Return Me._MeasurementFormatString
+        End Get
+        Protected Set(value As String)
+            Me._MeasurementFormatString = value
+            Me.SafePostPropertyChanged()
+        End Set
+    End Property
+
+    ''' <summary> Gets the moving window measurement failed. </summary>
+    ''' <value> The moving window measurement failed. </value>
+    Public ReadOnly Property MovingWindowMeasurementFailed As Boolean
+        Get
+            Return Me.MovingWindow.Status <> Core.Engineering.MovingWindowStatus.Within
         End Get
     End Property
 
-    ''' <summary> Gets the failure details. </summary>
+#End Region
+
+#Region " moving window TASK "
+
+#Region " TASK FAILURE INFO "
+
+    ''' <summary> Gets or sets the sentinel indicating if the moving window average task failed. </summary>
+    ''' <value> The sentinel indicating if the moving window task failed. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public ReadOnly Property MovingWindowTaskFailed As Boolean
+        Get
+            Return Me.HasMovingWindowTaskResult AndAlso Me.MovingWindowTaskResult.Failed
+        End Get
+    End Property
+
+    ''' <summary> Gets the task failure details. </summary>
     ''' <value> The failure details. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public ReadOnly Property FailureDetails As String
+    Public ReadOnly Property MovingWindowTaskFailureDetails As String
         Get
-            If Me.MeasurementFailed Then
-                If Me.MovingAverageTaskResult.Exception IsNot Nothing Then
-                    Return Me.MovingAverageTaskResult.Exception.ToString
+            If Me.MovingWindowTaskFailed Then
+                If Me.MovingWindowTaskResult.Exception IsNot Nothing Then
+                    Return Me.MovingWindowTaskResult.Exception.ToFullBlownString
                 Else
-                    Return Me.MovingAverageTaskResult.Details
+                    Return Me.MovingWindowTaskResult.Details
                 End If
             Else
                 Return ""
@@ -219,11 +250,13 @@ Public Class MovingWindowMeter
     ''' <summary> Gets the failure exception. </summary>
     ''' <value> The failure exception. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public ReadOnly Property FailureException As Exception
+    Public ReadOnly Property MovingWindowTaskFailureException As Exception
         Get
-            Return Me.MovingAverageTaskResult.Exception
+            Return Me.MovingWindowTaskResult.Exception
         End Get
     End Property
+
+#End Region
 
 #Region " TASK COMPLETE "
 
@@ -308,21 +341,6 @@ Public Class MovingWindowMeter
 
 #End Region
 
-    Private _MeasurementFormatString As String
-
-    ''' <summary> Gets or sets the measurement Format String. </summary>
-    ''' <value> The measurement FormatString. </value>
-    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property MeasurementFormatString As String
-        Get
-            Return Me._MeasurementFormatString
-        End Get
-        Protected Set(value As String)
-            Me._MeasurementFormatString = value
-            Me.SafePostPropertyChanged()
-        End Set
-    End Property
-
 #End Region
 
 #Region " PROGRESS REPORTING "
@@ -373,7 +391,7 @@ Public Class MovingWindowMeter
         Protected Set(value As Integer)
             If Me.PercentProgress <> value Then
                 Me._PercentProgress = value
-                Me._AverageProgressBar.ValueSetter(value)
+                Me._TaskProgressBar.ValueSetter(value)
             End If
         End Set
     End Property
@@ -519,23 +537,23 @@ Public Class MovingWindowMeter
     ''' <summary> Reports progress changed. </summary>
     ''' <param name="movingWindow"> The moving window. </param>
     Private Sub ReportProgressChanged(ByVal movingWindow As isr.Core.Engineering.MovingWindow)
-        Me.ReportProgressChanged(movingWindow, movingWindow.PercentProgress, Me.MovingAverageTaskResult)
+        Me.ReportProgressChanged(movingWindow, movingWindow.PercentProgress, Me.MovingWindowTaskResult)
     End Sub
 
     ''' <summary> Process the completion described by result. </summary>
     ''' <param name="result"> The result. </param>
     Private Sub ProcessCompletion(ByVal result As TaskResult)
         If result Is Nothing Then
-            Me._MovingAverageTaskResult = New TaskResult
-            Me.MovingAverageTaskResult.RegisterFailure("Unexpected null task result when completing the task;. Contact the developer")
+            Me._MovingWindowTaskResult = New TaskResult
+            Me.MovingWindowTaskResult.RegisterFailure("Unexpected null task result when completing the task;. Contact the developer")
         Else
-            Me._MovingAverageTaskResult = result
+            Me._MovingWindowTaskResult = result
         End If
         If Not Me.NotifyTaskComplete(Me.TaskCompleteNotificationTimeout) Then
-            If Me.MovingAverageTaskResult.Failed Then
-                Me.MovingAverageTaskResult.RegisterFailure($"{Me.MovingAverageTaskResult.Details}; also, timeout receiving completion acknowledgment")
+            If Me.MovingWindowTaskResult.Failed Then
+                Me.MovingWindowTaskResult.RegisterFailure($"{Me.MovingWindowTaskResult.Details}; also, timeout receiving completion acknowledgment")
             Else
-                Me.MovingAverageTaskResult.RegisterFailure("Timeout receiving completion acknowledgment")
+                Me.MovingWindowTaskResult.RegisterFailure("Timeout receiving completion acknowledgment")
             End If
         End If
     End Sub
@@ -544,16 +562,16 @@ Public Class MovingWindowMeter
 
 #Region " MEASURE "
 
-    Private ReadOnly Property MovingAverageTaskResult As New TaskResult
+    Private ReadOnly Property MovingWindowTaskResult As New TaskResult
 
-    ''' <summary> Measure moving average. </summary>
+    ''' <summary> Measure moving window average. </summary>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
     ''' <param name="progress"> The progress reporter. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub MeasureMovingAverage(progress As IProgress(Of isr.Core.Engineering.MovingWindow))
-        Me._MovingAverageTaskResult = New TaskResult
+    Private Sub MeasureMovingWindowAverage(progress As IProgress(Of isr.Core.Engineering.MovingWindow))
+        Me._MovingWindowTaskResult = New TaskResult
         Try
-		Me.ApplyCapturedSyncContext()
+            Me.ApplyCapturedSyncContext()
             Me.MovingWindow.ClearKnownState()
             If Me.NotifyTaskStart(Me.TaskStartNotificationTimeout) Then
                 Do
@@ -561,16 +579,16 @@ Public Class MovingWindowMeter
                     If Me.MovingWindow.ReadValue(Function() Me.Device.MultimeterSubsystem.Measure()) Then
                         progress.Report(New isr.Core.Engineering.MovingWindow(Me.MovingWindow))
                     Else
-                        Me.MovingAverageTaskResult.RegisterFailure("device returned a null value")
+                        Me.MovingWindowTaskResult.RegisterFailure("device returned a null value")
                     End If
-                Loop Until Me.IsCancellationRequested OrElse Me.MovingAverageTaskResult.Failed OrElse Me.MovingWindow.IsStopStatus
+                Loop Until Me.IsCancellationRequested OrElse Me.MovingWindowTaskResult.Failed OrElse Me.MovingWindow.IsStopStatus
             Else
-                Me.MovingAverageTaskResult.RegisterFailure("Timeout receiving start acknowledgment")
+                Me.MovingWindowTaskResult.RegisterFailure("Timeout receiving start acknowledgment")
             End If
         Catch ex As Exception
-            Me.MovingAverageTaskResult.RegisterFailure(ex)
+            Me.MovingWindowTaskResult.RegisterFailure(ex)
         Finally
-            Me.ProcessCompletion(Me.MovingAverageTaskResult)
+            Me.ProcessCompletion(Me.MovingWindowTaskResult)
         End Try
     End Sub
 
@@ -662,7 +680,7 @@ Public Class MovingWindowMeter
     ''' <value> The task. </value>
     Protected ReadOnly Property Task As Task
         Get
-            Return Me._task
+            Return Me._Task
         End Get
     End Property
 
@@ -683,7 +701,7 @@ Public Class MovingWindowMeter
         Me.CancellationTokenSource = New CancellationTokenSource
         Me.CancellationToken = CancellationTokenSource.Token
         Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
-        Me._task = New Task(Sub() Me.MeasureMovingAverage(progress))
+        Me._Task = New Task(Sub() Me.MeasureMovingWindowAverage(progress))
         If runSynchronously Then
             Me.Task.RunSynchronously(TaskScheduler.FromCurrentSynchronizationContext)
         Else
@@ -706,7 +724,7 @@ Public Class MovingWindowMeter
             Me.CancellationTokenSource = New CancellationTokenSource
             Me.CancellationToken = CancellationTokenSource.Token
             Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
-            Me._task = New Task(Sub() Me.MeasureMovingAverage(progress))
+            Me._Task = New Task(Sub() Me.MeasureMovingWindowAverage(progress))
             If runSynchronously Then
                 Me.Task.RunSynchronously(TaskScheduler.FromCurrentSynchronizationContext)
             Else
@@ -724,19 +742,19 @@ Public Class MovingWindowMeter
 
     Public Async Function AsyncTask() As Task
         Dim progress As New Progress(Of Core.Engineering.MovingWindow)(AddressOf ReportProgressChanged)
-        Await Task.Run(Sub() Me.MeasureMovingAverage(progress))
+        Await Task.Run(Sub() Me.MeasureMovingWindowAverage(progress))
     End Function
 
 #End Region
 
 #Region " START STOP "
 
-    ''' <summary> Starts moving average button check state changed. </summary>
+    ''' <summary> Starts moving window button check state changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _StartMovingAverageButton_CheckStateChanged(sender As Object, e As EventArgs) Handles _StartMovingAverageButton.CheckStateChanged
-        If Me._initializingComponents Then Return
+    Private Sub _StartMovingWindowButton_CheckStateChanged(sender As Object, e As EventArgs) Handles _StartMovingWindowButton.CheckStateChanged
+        If Me._InitializingComponents Then Return
         Dim button As ToolStripButton = TryCast(sender, ToolStripButton)
         If button Is Nothing Then Return
         Try
@@ -824,7 +842,6 @@ Public Class MovingWindowMeter
 
 #End Region
 
-	
 End Class
 
 ''' <summary> Values that represent notification semaphores. </summary>

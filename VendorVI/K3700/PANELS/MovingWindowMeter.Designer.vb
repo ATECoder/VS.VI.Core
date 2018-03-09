@@ -18,7 +18,7 @@ Partial Class MovingWindowMeter
         Me._ReadingLabel = New System.Windows.Forms.Label()
         Me._StatusLabel = New System.Windows.Forms.Label()
         Me._MiddleLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._AverageProgressBar = New System.Windows.Forms.ProgressBar()
+        Me._TaskProgressBar = New System.Windows.Forms.ProgressBar()
         Me._AverageLabel = New System.Windows.Forms.Label()
         Me._LeftLayout = New System.Windows.Forms.TableLayoutPanel()
         Me._ElapsedTimeLabel = New System.Windows.Forms.Label()
@@ -33,7 +33,7 @@ Partial Class MovingWindowMeter
         Me._WindowTextBox = New System.Windows.Forms.ToolStripTextBox()
         Me._TimeoutTextBoxLabel = New System.Windows.Forms.ToolStripLabel()
         Me._TimeoutTextBox = New System.Windows.Forms.ToolStripTextBox()
-        Me._StartMovingAverageButton = New System.Windows.Forms.ToolStripButton()
+        Me._StartMovingWindowButton = New System.Windows.Forms.ToolStripButton()
         Me._TopLayout.SuspendLayout()
         Me._RightLayout.SuspendLayout()
         Me._MiddleLayout.SuspendLayout()
@@ -137,7 +137,7 @@ Partial Class MovingWindowMeter
         '
         Me._MiddleLayout.ColumnCount = 1
         Me._MiddleLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me._MiddleLayout.Controls.Add(Me._AverageProgressBar, 0, 1)
+        Me._MiddleLayout.Controls.Add(Me._TaskProgressBar, 0, 1)
         Me._MiddleLayout.Controls.Add(Me._AverageLabel, 0, 0)
         Me._MiddleLayout.Dock = System.Windows.Forms.DockStyle.Fill
         Me._MiddleLayout.Location = New System.Drawing.Point(84, 0)
@@ -151,14 +151,14 @@ Partial Class MovingWindowMeter
         '
         '_AverageProgressBar
         '
-        Me._AverageProgressBar.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._AverageProgressBar.Location = New System.Drawing.Point(3, 74)
-        Me._AverageProgressBar.Name = "_AverageProgressBar"
-        Me._AverageProgressBar.Size = New System.Drawing.Size(196, 23)
-        Me._AverageProgressBar.Step = 1
-        Me._AverageProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous
-        Me._AverageProgressBar.TabIndex = 0
-        Me._ToolTip.SetToolTip(Me._AverageProgressBar, "Progress")
+        Me._TaskProgressBar.Dock = System.Windows.Forms.DockStyle.Bottom
+        Me._TaskProgressBar.Location = New System.Drawing.Point(3, 74)
+        Me._TaskProgressBar.Name = "_AverageProgressBar"
+        Me._TaskProgressBar.Size = New System.Drawing.Size(196, 23)
+        Me._TaskProgressBar.Step = 1
+        Me._TaskProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous
+        Me._TaskProgressBar.TabIndex = 0
+        Me._ToolTip.SetToolTip(Me._TaskProgressBar, "Progress")
         '
         '_AverageLabel
         '
@@ -252,7 +252,7 @@ Partial Class MovingWindowMeter
         '
         '_SettingsToolStrip
         '
-        Me._SettingsToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._LengthTextBoxLabel, Me._LengthTextBox, Me._WindowTextBoxLabel, Me._WindowTextBox, Me._TimeoutTextBoxLabel, Me._TimeoutTextBox, Me._StartMovingAverageButton})
+        Me._SettingsToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._LengthTextBoxLabel, Me._LengthTextBox, Me._WindowTextBoxLabel, Me._WindowTextBox, Me._TimeoutTextBoxLabel, Me._TimeoutTextBox, Me._StartMovingWindowButton})
         Me._SettingsToolStrip.Location = New System.Drawing.Point(0, 100)
         Me._SettingsToolStrip.Name = "_SettingsToolStrip"
         Me._SettingsToolStrip.Size = New System.Drawing.Size(370, 25)
@@ -303,15 +303,15 @@ Partial Class MovingWindowMeter
         '
         '_StartMovingAverageButton
         '
-        Me._StartMovingAverageButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
-        Me._StartMovingAverageButton.CheckOnClick = True
-        Me._StartMovingAverageButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._StartMovingAverageButton.Image = CType(resources.GetObject("_StartMovingAverageButton.Image"), System.Drawing.Image)
-        Me._StartMovingAverageButton.ImageTransparentColor = System.Drawing.Color.Magenta
-        Me._StartMovingAverageButton.Name = "_StartMovingAverageButton"
-        Me._StartMovingAverageButton.Size = New System.Drawing.Size(35, 22)
-        Me._StartMovingAverageButton.Text = "Start"
-        Me._StartMovingAverageButton.ToolTipText = "Start the moving average"
+        Me._StartMovingWindowButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
+        Me._StartMovingWindowButton.CheckOnClick = True
+        Me._StartMovingWindowButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._StartMovingWindowButton.Image = CType(resources.GetObject("_StartMovingAverageButton.Image"), System.Drawing.Image)
+        Me._StartMovingWindowButton.ImageTransparentColor = System.Drawing.Color.Magenta
+        Me._StartMovingWindowButton.Name = "_StartMovingAverageButton"
+        Me._StartMovingWindowButton.Size = New System.Drawing.Size(35, 22)
+        Me._StartMovingWindowButton.Text = "Start"
+        Me._StartMovingWindowButton.ToolTipText = "Start the moving average"
         '
         'MovingWindowMeter
         '
@@ -337,7 +337,7 @@ Partial Class MovingWindowMeter
 
     Private WithEvents _TopLayout As Windows.Forms.TableLayoutPanel
     Private WithEvents _MiddleLayout As Windows.Forms.TableLayoutPanel
-    Private WithEvents _AverageProgressBar As Windows.Forms.ProgressBar
+    Private WithEvents _TaskProgressBar As Windows.Forms.ProgressBar
     Private WithEvents _ToolTip As Windows.Forms.ToolTip
     Private WithEvents _AverageLabel As Windows.Forms.Label
     Private WithEvents _LeftLayout As Windows.Forms.TableLayoutPanel
@@ -357,5 +357,5 @@ Partial Class MovingWindowMeter
     Private WithEvents _WindowTextBox As Windows.Forms.ToolStripTextBox
     Private WithEvents _TimeoutTextBoxLabel As Windows.Forms.ToolStripLabel
     Private WithEvents _TimeoutTextBox As Windows.Forms.ToolStripTextBox
-    Private WithEvents _StartMovingAverageButton As Windows.Forms.ToolStripButton
+    Private WithEvents _StartMovingWindowButton As Windows.Forms.ToolStripButton
 End Class

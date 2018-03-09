@@ -111,7 +111,7 @@
     <Compile Include="PANELS\MovingWindowMeter.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PANELS\MovingWindowMeterObsolete.vb">
+    <Compile Include="PANELS\MovingWindowMeterWorker.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SUBSYSTEMS\DisplaySubsystem.vb" />
