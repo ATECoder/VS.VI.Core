@@ -1248,39 +1248,3 @@ Public Class K2450Control
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-' 01/23/2018
-    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
-        Try
-            If Not Me.IsDisposed AndAlso disposing Then
-                Try
-                    Me.Device?.RemovePrivateListener(Me._TraceMessagesBox)
-                    If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
-                Catch ex As Exception
-                    Debug.Assert(Not Debugger.IsAttached, "Exception occurred closing the device", "Exception {0}", ex.ToFullBlownString)
-                End Try
-                ' the device gets disposed in the base class!
-                If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
-            End If
-        Finally
-            MyBase.Dispose(disposing)
-        End Try
-    End Sub
-    Private Sub _AssignDevice(ByVal value As Device)
-        MyBase.DeviceBase = value
-        If Me._Device IsNot Nothing Then
-        End If
-        Me._Device = value
-        If Me._Device IsNot Nothing Then
-            value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            value.NotifyDeviceOpentate()
-            Me.AssignTalker(value.Talker)
-            Me.ApplyListenerTraceLevel(ListenerType.Display, value.Talker.TraceShowLevel)
-            value.AddPrivateListener(Me._TraceMessagesBox)
-        End If
-    End Sub
-
-#End If
-#End Region

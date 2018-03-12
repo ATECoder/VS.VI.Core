@@ -209,26 +209,3 @@ Partial Public Class DeviceBase
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    ''' <summary> Updates the trace log and show level described by the talker. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overridable Sub UpdateTraceLevels(ByVal talker As ITraceMessageTalker) Implements ITalker.UpdateTraceLevels
-        If talker Is Nothing Then Throw New ArgumentNullException(NameOf(talker))
-        Me.UpdateTraceLogLevel(talker.TraceLogLevel)
-        Me.UpdateTraceShowLevel(talker.TraceShowLevel)
-    End Sub
-
-    ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overridable Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceLogLevel
-        Me.Talker.UpdateTraceLogLevel(traceLevel)
-    End Sub
-
-    ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overridable Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType) Implements ITalker.UpdateTraceShowLevel
-        Me.Talker.UpdateTraceShowLevel(traceLevel)
-    End Sub
-#End If
-#End Region

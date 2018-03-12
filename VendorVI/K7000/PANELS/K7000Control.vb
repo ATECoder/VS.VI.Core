@@ -1345,24 +1345,3 @@ Public Class K7000Control
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    Private Sub _AssignDevice(ByVal value As Device)
-        MyBase.DeviceBase = value
-        If Me._Device IsNot Nothing Then
-        End If
-        Me._Device = value
-        If Me._Device IsNot Nothing Then
-            Me._Device.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            MyBase.DeviceBase.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
-            Me.OnDeviceOpenChanged(value)
-
-            Me.AssignTalker(Me._Device.Talker)
-            Me.ApplyListenerTraceLevel(ListenerType.Display, Me._Device.Talker.TraceShowLevel)
-            Me._Device.AddPrivateListener(Me._TraceMessagesBox)
-        End If
-    End Sub
-
-
-#End If
-#End Region

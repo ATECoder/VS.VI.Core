@@ -1356,21 +1356,3 @@ Public MustInherit Class DeviceBase
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    Private _InitializeTimeout As TimeSpan
-    ''' <summary> Gets or sets the time out for doing a reset and clear on the instrument. </summary>
-    ''' <value> The connect timeout. </value>
-    Public Property InitializeTimeout() As TimeSpan
-        Get
-            Return Me._InitializeTimeout
-        End Get
-        Set(ByVal value As TimeSpan)
-            If Not value.Equals(Me.InitializeTimeout) Then
-                Me._InitializeTimeout = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-   End Property
-#End If
-#End Region

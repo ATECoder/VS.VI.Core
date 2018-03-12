@@ -214,21 +214,3 @@ Public Class InterfaceForm
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overrides Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType)
-        MyBase.UpdateTraceLogLevel(traceLevel)
-        Me._InterfacePanel?.UpdateTraceLogLevel(traceLevel)
-    End Sub
-
-    ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overrides Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType)
-        MyBase.UpdateTraceShowLevel(traceLevel)
-        Me._InterfacePanel?.UpdateTraceShowLevel(traceLevel)
-    End Sub
-
-#End If
-#End Region

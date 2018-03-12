@@ -1390,33 +1390,3 @@ Public Class K3700Panel
 End Class
 
 
-#Region " UNUSED "
-#If False Then
-
-#Region " TALKER "
-    ''' <summary> Adds listeners such as top level trace message box and log. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener))
-        MyBase.AddListeners(listeners)
-        Me._SimpleReadWriteControl.AddListeners(listeners)
-    End Sub
-
-    ''' <summary> Adds the listeners. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overrides Sub AddListeners(ByVal talker As ITraceMessageTalker)
-        MyBase.AddListeners(talker)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Adds the log listener. </summary>
-    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <param name="log"> The log. </param>
-    Public Overrides Sub AddListeners(ByVal log As MyLog)
-        If log Is Nothing Then Throw New ArgumentNullException(NameOf(log))
-        MyBase.AddListeners(log)
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-#End Region
-#End If
-#End Region

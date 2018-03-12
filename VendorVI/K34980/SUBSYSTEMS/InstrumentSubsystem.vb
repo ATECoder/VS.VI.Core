@@ -64,10 +64,3 @@ Public Class InstrumentSubsystem
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    ''' <summary> Gets the initiate command. </summary>
-    ''' <value> The initiate command. </value>
-    Protected Overrides ReadOnly Property InitiateCommand As String = ""
-#End If
-#End Region

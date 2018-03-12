@@ -1916,26 +1916,3 @@ Public Class MultimeterFunctionEnabledDictionary
 End Class
 
 
-#Region " UNUSED "
-#If False Then
-#Region " CONNECT/DISCONNECT "
-
-    Protected Overridable ReadOnly Property ConnectCommand As String
-
-    ''' <summary> Connects this object. </summary>
-    Public Sub Connect()
-        Me.Execute(Me.ConnectCommand)
-    End Sub
-
-    Protected Overridable ReadOnly Property DisconnectCommand As String
-
-    ''' <summary> Disconnects this object. </summary>
-    Public Sub Disconnect()
-        Me.Execute(DisconnectCommand)
-    End Sub
-
-#End Region
-
-
-#End If
-#End Region

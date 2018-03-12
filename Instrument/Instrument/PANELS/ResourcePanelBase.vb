@@ -807,38 +807,3 @@ Public Class ResourcePanelBase
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    ''' <summary> Adds the listeners such as the current trace messages box. </summary>
-    Protected Overridable Overloads Sub AddPrivateListeners()
-        Me.Talker.Listeners.Add(Me.TraceMessagesBox)
-        Me.Connector.AssignTalker(Device.Talker)
-        Me.Device.AddListeners(Me.Talker)
-         My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-    ''' <summary> Adds the listeners such as the top level trace messages box and log. </summary>
-    ''' <param name="listeners"> The listeners. </param>
-    Public Overrides Sub AddListeners(ByVal listeners As IEnumerable(Of IMessageListener))
-        MyBase.AddListeners(listeners)
-        Me.Connector.AddListeners(listeners)
-        Me.Device.AddListeners(listeners)
-    End Sub
-
-    ''' <summary> Adds the listeners. </summary>
-    ''' <param name="talker"> The talker. </param>
-    Public Overrides Sub AddListeners(ByVal talker As ITraceMessageTalker)
-        MyBase.AddListeners(talker)
-        Me.Connector.AddListeners(talker)
-        Me.Device.AddListeners(talker)
-         My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-
-    ''' <summary> Adds the log listener. </summary>
-    ''' <param name="log"> The log. </param>
-    Public Overridable Overloads Sub AddListeners(ByVal log As MyLog)
-        Me.AddListeners(New ITraceMessageListener() {log})
-    End Sub
-#End If
-#End Region

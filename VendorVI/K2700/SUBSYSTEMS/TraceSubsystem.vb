@@ -130,18 +130,3 @@ Public Class TraceSubsystem
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-' part of trigger subsystem.
-' 
-
-    ''' <summary> Gets the initiate command. </summary>
-    ''' <value> The initiate command. </value>
-    Protected Overrides ReadOnly Property InitiateCommand As String = ":INIT"
-
-    ''' <summary> Gets the Abort command. </summary>
-    ''' <value> The Abort command. </value>
-    Protected Overrides ReadOnly Property AbortCommand As String = ":ABOR"
-
-#End If
-#End Region

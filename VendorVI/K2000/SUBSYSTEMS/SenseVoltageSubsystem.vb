@@ -89,30 +89,3 @@ Public Class SenseVoltageSubsystem
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-#Region " PROTECTION "
-
-    ''' <summary> Gets the Protection enabled command Format. </summary>
-    ''' <value> The Protection enabled query command. </value>
-    Protected Overrides ReadOnly Property ProtectionEnabledCommandFormat As String = ":SENS:VOLT:PROT:STAT {0:'ON';'ON';'OFF'}"
-
-    ''' <summary> Gets the Protection enabled query command. </summary>
-    ''' <value> The Protection enabled query command. </value>
-    Protected Overrides ReadOnly Property ProtectionEnabledQueryCommand As String = ":SENS:VOLT:PROT:STAT?"
-
-#End Region
-
-#Region " PROTECTION LEVEL "
-
-    ''' <summary> Gets the protection level command format. </summary>
-    ''' <value> the protection level command format. </value>
-    Protected Overrides ReadOnly Property ProtectionLevelCommandFormat As String = ":SENS:VOLT:PROT {0}"
-
-    ''' <summary> Gets the protection level query command. </summary>
-    ''' <value> the protection level query command. </value>
-    Protected Overrides ReadOnly Property ProtectionLevelQueryCommand As String = ":SENS:VOLT:PROT?"
-
-#End Region
-#End If
-#End Region
