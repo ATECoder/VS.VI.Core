@@ -522,7 +522,7 @@ Public Class MovingWindowMeter
                     Me.ReadingsCount = ma.ReadingsCount
                     Me.MaximumReading = ma.Maximum
                     Me.MinimumReading = ma.Minimum
-                    Me.LastReading = ma.LastReading
+                    Me.LastReading = ma.LastAddedReading
                     Me.ReadingStatus = ma.Status
                     If hasReading Then Me.Reading = value
                     ' this helps flash out exceptions:
