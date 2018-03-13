@@ -186,7 +186,7 @@ Public Class ResistanceRangeCollection
     Inherits Collections.ObjectModel.KeyedCollection(Of ResistanceRangeMode, ResistanceRange)
 
     Protected Overrides Function GetKeyForItem(item As ResistanceRange) As ResistanceRangeMode
-        Throw New NotImplementedException()
+        Return item.Mode
     End Function
 
     Public Sub New()

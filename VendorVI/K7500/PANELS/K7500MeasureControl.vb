@@ -259,7 +259,7 @@ Public Class K7500MeasureControl
         Windows.Forms.Application.DoEvents()
         Me.SetMeterRange(Me.SelectedMeterRange)
         For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
-        Me.MeterCurrent = K7500.SenseResistanceSubsystem.RangeCurrent(Me.MeterRange)
+        Me.MeterCurrent = CDec(K7500.SenseResistanceSubsystem.ResistanceRanges.FindResistanceRange(Me.MeterRange).Current)
     End Sub
 
     ''' <summary> Selects the meter range based on the range mode. </summary>
@@ -270,16 +270,13 @@ Public Class K7500MeasureControl
         Windows.Forms.Application.DoEvents()
         Me.SetMeterRange(value)
         For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
-        Me.MeterCurrent = K7500.SenseResistanceSubsystem.RangeCurrent(Me.MeterRange)
+        Me.MeterCurrent = CDec(K7500.SenseResistanceSubsystem.ResistanceRanges.FindResistanceRange(Me.MeterRange).Current)
     End Sub
 
     ''' <summary> Selects the meter range based on the range settings. </summary>
     ''' <param name="range">   The range. </param>
     Public Sub SelectMeterRange(ByVal range As Double)
-        Dim resistanceRangeMode As ResistanceRangeMode = ResistanceRangeMode.R0
-        If K7500.SenseResistanceSubsystem.TryMatch(range, resistanceRangeMode) Then
-            Me.SelectMeterRange(resistanceRangeMode)
-        End If
+        Me.SelectMeterRange(K7500.SenseResistanceSubsystem.ResistanceRanges.FindResistanceRange(Me.MeterRange).Mode)
     End Sub
 
     ''' <summary> Gets or sets the meter current. </summary>
@@ -322,7 +319,7 @@ Public Class K7500MeasureControl
                     Me.MeterCurrent = Me.SenseResistanceSubsystem.Current
                 Else
                     For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
-                    Me.MeterCurrent = K7500.SenseResistanceSubsystem.RangeCurrent(value)
+                    Me.MeterCurrent = CDec(K7500.SenseResistanceSubsystem.ResistanceRanges.FindResistanceRange(value).Current)
                 End If
             End If
         End Set
@@ -331,10 +328,7 @@ Public Class K7500MeasureControl
     ''' <summary> Sets meter range. </summary>
     ''' <param name="value"> The value. </param>
     Private Sub SetMeterRange(ByVal value As ResistanceRangeMode)
-        Dim r As Double
-        If K7500.SenseResistanceSubsystem.TryConvert(value, r) Then
-            Me.MeterRange = CDec(r)
-        End If
+        Me.MeterRange = CDec(K7500.SenseResistanceSubsystem.ResistanceRanges(value).Range)
     End Sub
 
     ''' <summary> Gets or sets the range selection as read only. </summary>

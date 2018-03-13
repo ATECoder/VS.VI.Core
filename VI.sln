@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VENDORvi", "VENDORvi", "{38
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APPS", "APPS", "{5A67A281-8142-4FB8-8AFF-3EC87B02355F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UNITS", "UNITS", "{D787833B-1C85-43C1-BEFC-74C9DF4C5B89}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TESTS", "TESTS", "{D787833B-1C85-43C1-BEFC-74C9DF4C5B89}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Pith.Library", "Resource\Pith\isr.VI.Pith.Library.vbproj", "{AC4FDBF7-8AAB-4FD5-92D7-EF49DBAF3604}"
 EndProject
@@ -90,15 +90,15 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Tegam.Library", "Ven
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Thermostream.Library", "VendorVI\Thermostream\isr.VI.Thermostream.Library.vbproj", "{DA6B5DD6-57FF-4BEC-8200-488272278F40}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Device.Units", "Units\Device\isr.VI.Device.Units.vbproj", "{4248F89B-B3A3-463D-A509-7A4C8FD59DD4}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Device.Tests", "Tests\Device\isr.VI.Device.Tests.vbproj", "{4248F89B-B3A3-463D-A509-7A4C8FD59DD4}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Instrument.Units", "Units\Instrument\isr.VI.Instrument.Units.vbproj", "{33740945-AB0F-4CDA-BB23-98F66383927F}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Instrument.Tests", "Tests\Instrument\isr.VI.Instrument.Tests.vbproj", "{33740945-AB0F-4CDA-BB23-98F66383927F}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Multimeter.Units", "Units\Multimeter\isr.VI.Multimeter.Units.vbproj", "{378FEDFA-42F6-49B1-B2D0-D6BBC4CE04BB}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Multimeter.Tests", "Tests\Multimeter\isr.VI.Multimeter.Tests.vbproj", "{378FEDFA-42F6-49B1-B2D0-D6BBC4CE04BB}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.PowerSupply.Units", "Units\PowerSupply\isr.VI.PowerSupply.Units.vbproj", "{7A70BB7A-929C-4CFD-9CAB-891EAA70F250}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.PowerSupply.Tests", "Tests\PowerSupply\isr.VI.PowerSupply.Tests.vbproj", "{7A70BB7A-929C-4CFD-9CAB-891EAA70F250}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.SourceMeasure.Units", "Units\SourceMeasure\isr.VI.SourceMeasure.Units.vbproj", "{9EECCD62-65E6-4793-8A91-960B4E2BB445}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.SourceMeasure.Tests", "Tests\SourceMeasure\isr.VI.SourceMeasure.Tests.vbproj", "{9EECCD62-65E6-4793-8A91-960B4E2BB445}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VI.Device.Tester", "Apps\Device.Tester\VI.Device.Tester.vbproj", "{76BE615A-13D5-403E-9CA8-805E0BFD387A}"
 EndProject
@@ -162,25 +162,23 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SimpleReadWrite", "NI\Simpl
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K3458.Library", "VendorVI\K3458\isr.VI.K3458.Library.vbproj", "{67C48570-97E9-4438-8A3A-BBD6CDB9934F}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K3458.Units", "Units\K3458\isr.VI.K3458.Units.vbproj", "{F141A018-280A-4621-85E8-CB4BF5FE8126}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K3458.Tests", "Tests\K3458\isr.VI.K3458.Tests.vbproj", "{F141A018-280A-4621-85E8-CB4BF5FE8126}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Ttm.Units", "Units\TTM\isr.VI.Ttm.Units.vbproj", "{BD01E062-9C12-433F-94AF-BCE0B7414428}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Ttm.Tests", "Tests\TTM\isr.VI.Ttm.Tests.vbproj", "{BD01E062-9C12-433F-94AF-BCE0B7414428}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K7500.Units", "Units\K7500\isr.VI.K7500.Units.vbproj", "{D9B58490-B396-4597-A47C-7685B91BED93}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K7500.Tests", "Tests\K7500\isr.VI.K7500.Tests.vbproj", "{D9B58490-B396-4597-A47C-7685B91BED93}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K2450.Library", "VendorVI\K2450\isr.VI.K2450.Library.vbproj", "{00B7B1AC-3370-45B0-9E4E-436208A1E376}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K2450.Units", "Units\K2450\isr.VI.K2450.Units.vbproj", "{7D610C62-995B-46ED-AA8A-C5085C246C31}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K2450.Tests", "Tests\K2450\isr.VI.K2450.Tests.vbproj", "{7D610C62-995B-46ED-AA8A-C5085C246C31}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.Device.Tsp2.Library", "Device\Tsp2\isr.VI.Device.Tsp2.Library.vbproj", "{F3FE3897-0F6B-4A55-A0D4-5873742FEAD6}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K3700.Units", "Units\K3700\isr.VI.K3700.Units.vbproj", "{0D6FDFB9-17C6-46A2-83A6-C9E601583926}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K3700.Tests", "Tests\K3700\isr.VI.K3700.Tests.vbproj", "{0D6FDFB9-17C6-46A2-83A6-C9E601583926}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K7500T.Library", "VendorVI\K7500T\isr.VI.K7500T.Library.vbproj", "{72604C42-0A65-405F-9D46-F8B50D285132}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K7500T.Units", "Units\K7500T\isr.VI.K7500T.Units.vbproj", "{9E9B10CD-FAF4-4392-B660-589FFAE748D5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arebis.TypeUnits.Units", "..\..\Core\TypedUnits\TestProject\Arebis.TypeUnits.Units.csproj", "{A63AC72D-36A1-4D66-9E74-E18592467A4C}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "isr.VI.K7500T.Tests", "Tests\K7500T\isr.VI.K7500T.Tests.vbproj", "{9E9B10CD-FAF4-4392-B660-589FFAE748D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1345,22 +1343,6 @@ Global
 		{9E9B10CD-FAF4-4392-B660-589FFAE748D5}.Release|x64.Build.0 = Release|Any CPU
 		{9E9B10CD-FAF4-4392-B660-589FFAE748D5}.Release|x86.ActiveCfg = Release|Any CPU
 		{9E9B10CD-FAF4-4392-B660-589FFAE748D5}.Release|x86.Build.0 = Release|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Debug|x64.Build.0 = Debug|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Debug|x86.Build.0 = Debug|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Release|x64.ActiveCfg = Release|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Release|x64.Build.0 = Release|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Release|x86.ActiveCfg = Release|Any CPU
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1440,7 +1422,6 @@ Global
 		{0D6FDFB9-17C6-46A2-83A6-C9E601583926} = {D787833B-1C85-43C1-BEFC-74C9DF4C5B89}
 		{72604C42-0A65-405F-9D46-F8B50D285132} = {38B40B9B-F77A-4F77-AF3C-AF44EEC41E6E}
 		{9E9B10CD-FAF4-4392-B660-589FFAE748D5} = {D787833B-1C85-43C1-BEFC-74C9DF4C5B89}
-		{A63AC72D-36A1-4D66-9E74-E18592467A4C} = {D787833B-1C85-43C1-BEFC-74C9DF4C5B89}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7DDB320A-00F3-404A-A58C-7BBF5A085BE0}
