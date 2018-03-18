@@ -200,13 +200,13 @@ Public Class K7500Panel
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionServiceRequestEventEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionServiceRequestEventEnabled)
                 Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
-            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+            Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
-            Case NameOf(device.SessionMessagesTraceEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionMessagesTraceEnabled)
                 Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
-            Case NameOf(device.ServiceRequestEnableBitmask)
+            Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
                 Me._ServiceRequestEnableBitmaskNumeric.Value = device.ServiceRequestEnableBitmask
                 Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = $"SRE:0b{Convert.ToString(device.ServiceRequestEnableBitmask, 2),8}".Replace(" ", "0")
         End Select
@@ -275,7 +275,7 @@ Public Class K7500Panel
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.Elements)
+            Case NameOf(K7500.FormatSubsystem.Elements)
                 subsystem.ListElements(Me._ReadingComboBox.ComboBox, ReadingTypes.Units)
         End Select
     End Sub
@@ -340,11 +340,11 @@ Public Class K7500Panel
             Return
         Else
             Select Case propertyName
-                Case NameOf(subsystem.LastReading)
+                Case NameOf(K7500.MeasureSubsystem.LastReading)
                     Me._LastReadingTextBox.SafeTextSetter(subsystem.LastReading)
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                        "Measure message: {0}.", subsystem.LastReading.InsertCommonEscapeSequences)
-                Case NameOf(subsystem.MeasurementAvailable)
+                Case NameOf(K7500.MeasureSubsystem.MeasurementAvailable)
                     Me.DisplayActiveReading()
             End Select
         End If
@@ -375,7 +375,7 @@ Public Class K7500Panel
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As RouteSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.TerminalsMode)
+            Case NameOf(K7500.RouteSubsystem.TerminalsMode)
                 Me._ReadTerminalStateButton.CheckState = (subsystem.TerminalsMode = RouteTerminalsMode.Front).ToCheckState
                 Windows.Forms.Application.DoEvents()
         End Select
@@ -491,11 +491,11 @@ Public Class K7500Panel
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.MeasurementAvailable)
+            Case NameOf(K7500.SenseSubsystem.MeasurementAvailable)
                 Me.DisplayActiveReading()
-            Case NameOf(subsystem.SupportedFunctionModes)
+            Case NameOf(K7500.SenseSubsystem.SupportedFunctionModes)
                 Me.OnSupportedFunctionModesChanged(subsystem)
-            Case NameOf(subsystem.FunctionMode)
+            Case NameOf(K7500.SenseSubsystem.FunctionMode)
                 Me.OnFunctionModesChanged(subsystem)
                 Me.DisplayActiveReading()
         End Select
@@ -528,15 +528,15 @@ Public Class K7500Panel
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K7500.SenseVoltageSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K7500.SenseVoltageSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
-            Case NameOf(subsystem.Range)
+            Case NameOf(K7500.SenseVoltageSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
@@ -570,15 +570,15 @@ Public Class K7500Panel
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K7500.SenseCurrentSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K7500.SenseCurrentSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
-            Case NameOf(subsystem.Range)
+            Case NameOf(K7500.SenseCurrentSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
@@ -612,20 +612,20 @@ Public Class K7500Panel
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K7500.SenseFourWireResistanceSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K7500.SenseFourWireResistanceSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
-            Case NameOf(subsystem.Range)
+            Case NameOf(K7500.SenseFourWireResistanceSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
 
-            Case NameOf(subsystem.OpenLeadDetectorEnabled)
+            Case NameOf(K7500.SenseFourWireResistanceSubsystem.OpenLeadDetectorEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.OpenLeadDetectorEnabled.HasValue Then
                     Me._OpenLeadsDetectionCheckBox.SafeCheckedSetter(subsystem.OpenLeadDetectorEnabled.Value)
                 End If
@@ -659,15 +659,15 @@ Public Class K7500Panel
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K7500.SenseResistanceSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K7500.SenseResistanceSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
-            Case NameOf(subsystem.Range)
+            Case NameOf(K7500.SenseResistanceSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
@@ -710,11 +710,11 @@ Public Class K7500Panel
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If subsystem.ErrorAvailable AndAlso Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
@@ -746,7 +746,7 @@ Public Class K7500Panel
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.ScpiRevision)
+            Case NameOf(K7500.SystemSubsystem.ScpiRevision)
                 Windows.Forms.Application.DoEvents()
         End Select
     End Sub
@@ -795,19 +795,19 @@ Public Class K7500Panel
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As TraceSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.PointsCount)
+            Case NameOf(K7500.TraceSubsystem.PointsCount)
                 Me._BufferSizeNumeric.Value = subsystem.PointsCount.GetValueOrDefault(0)
                 Me._BufferSizeNumeric.Invalidate()
-            Case NameOf(subsystem.ActualPointCount)
+            Case NameOf(K7500.TraceSubsystem.ActualPointCount)
                 Me._BufferCountLabel.Text = CStr(subsystem.ActualPointCount.GetValueOrDefault(0))
                 Me._BufferCountLabel.Invalidate()
-            Case NameOf(subsystem.FirstPointNumber)
+            Case NameOf(K7500.TraceSubsystem.FirstPointNumber)
                 Me._FirstPointNumberLabel.Text = CStr(subsystem.FirstPointNumber.GetValueOrDefault(0))
                 Me._BufferCountLabel.Invalidate()
-            Case NameOf(subsystem.LastPointNumber)
+            Case NameOf(K7500.TraceSubsystem.LastPointNumber)
                 Me._LastPointNumberLabel.Text = CStr(subsystem.LastPointNumber.GetValueOrDefault(0))
                 Me._BufferCountLabel.Invalidate()
-            Case NameOf(subsystem.BufferReadingsCount)
+            Case NameOf(K7500.TraceSubsystem.BufferReadingsCount)
                 If Me.BufferStreamingHandlerEnabled Then
                     ' must reconfigure = true to get the grid updated :(
                     If Me._BufferDataGridView.DataSource Is Nothing Then
@@ -858,22 +858,22 @@ Public Class K7500Panel
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As TriggerSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.TriggerCount)
+            Case NameOf(K7500.TriggerSubsystem.TriggerCount)
                 If subsystem.TriggerCount.HasValue Then
                     Me._TriggerCountNumeric.Value = subsystem.TriggerCount.Value
                 End If
-            Case NameOf(subsystem.ContinuousEnabled)
+            Case NameOf(K7500.TriggerSubsystem.ContinuousEnabled)
                 Me._ContinuousTriggerEnabledMenuItem.CheckState = subsystem.ContinuousEnabled.ToCheckState
-            Case NameOf(subsystem.TriggerSource)
+            Case NameOf(K7500.TriggerSubsystem.TriggerSource)
                 If subsystem.TriggerSource.HasValue AndAlso Me._TriggerSourceComboBox.ComboBox.Items.Count > 0 Then
                     Me._TriggerSourceComboBox.ComboBox.SelectedItem = subsystem.TriggerSource.Value.ValueNamePair
                 End If
-            Case NameOf(subsystem.SupportedTriggerSources)
+            Case NameOf(K7500.TriggerSubsystem.SupportedTriggerSources)
                 subsystem.ListSupportedTriggerSources(Me._TriggerSourceComboBox.ComboBox)
                 If subsystem.TriggerSource.HasValue AndAlso Me._TriggerSourceComboBox.ComboBox.Items.Count > 0 Then
                     Me._TriggerSourceComboBox.ComboBox.SelectedItem = subsystem.TriggerSource.Value.ValueNamePair
                 End If
-            Case NameOf(subsystem.TriggerState)
+            Case NameOf(K7500.TriggerSubsystem.TriggerState)
                 Me._TriggerStateLabel.Visible = subsystem.TriggerState.HasValue
                 If subsystem.TriggerState.HasValue Then
                     Me._TriggerStateLabel.Text = subsystem.TriggerState.Value.ToString
@@ -2493,13 +2493,10 @@ Public Class K7500Panel
     Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.ReceivedMessage)
-                Case NameOf(sender.SentMessage)
-                Case NameOf(sender.StatusMessage)
+                Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
                     Me.StatusLabel.Text = sender.StatusMessage
-                Case NameOf(sender.ServiceRequestValue)
+                Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
                     Me.StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
-                Case NameOf(sender.ElapsedTime)
             End Select
         End If
     End Sub

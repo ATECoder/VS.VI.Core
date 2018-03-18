@@ -56,7 +56,7 @@ Public Class ChannelMarkerSubsystem
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me._Readings.Initialize(ReadingTypes.Primary Or ReadingTypes.Secondary)
-        Me.SafePostPropertyChanged(NameOf(Me.Readings))
+        Me.SafePostPropertyChanged(NameOf(E4990.ChannelMarkerSubsystem.Readings))
     End Sub
 
 #End Region

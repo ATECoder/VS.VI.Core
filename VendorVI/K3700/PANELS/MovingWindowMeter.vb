@@ -159,7 +159,11 @@ Public Class MovingWindowMeter
         Set(value As RangeR)
             If value <> Me.Window Then
                 Me.MovingWindow.Window = New RangeR(value)
-                Me._WindowTextBox.Text = $"{(100 * value.Span):0.####}"
+                If value Is Nothing Then
+                    Me._WindowTextBox.Text = ""
+                Else
+                    Me._WindowTextBox.Text = $"{(100 * value.Span):0.####}"
+                End If
             End If
         End Set
     End Property
@@ -270,17 +274,19 @@ Public Class MovingWindowMeter
     ''' <summary> Clears the task complete semaphore. </summary>
     Private Sub ClearTaskComplete()
         Me._TaskComplete = NotificationSemaphores.None
-        Me.SafePostPropertyChanged(NameOf(Me.TaskComplete))
+        Me.SafePostPropertyChanged(NameOf(K3700.MovingWindowMeter.TaskComplete))
     End Sub
 
     ''' <summary> Set the task complete semaphore. </summary>
     Private Sub NotifyTaskComplete()
         Me._TaskComplete = NotificationSemaphores.Sent
-        Me.SafePostPropertyChanged(NameOf(Me.TaskComplete))
+
+        Me.SafePostPropertyChanged(NameOf(K3700.MovingWindowMeter.TaskComplete))
     End Sub
 
     Private Function NotifyTaskComplete(timeout As TimeSpan) As Boolean
         Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
+
         Me.NotifyTaskComplete()
         Do
             System.Windows.Forms.Application.DoEvents()
@@ -311,14 +317,16 @@ Public Class MovingWindowMeter
     ''' <summary> Clears the task Start semaphore. </summary>
     Private Sub ClearTaskStart()
         Me._TaskStart = NotificationSemaphores.None
-        Me.SafePostPropertyChanged(NameOf(Me.TaskStart))
+        Me.SafePostPropertyChanged(NameOf(K3700.MovingWindowMeter.TaskStart))
     End Sub
 
     ''' <summary> Set the task Start semaphore. </summary>
+
     Private Sub NotifyTaskStart()
         Me._TaskStart = NotificationSemaphores.Sent
-        Me.SafePostPropertyChanged(NameOf(Me.TaskStart))
+        Me.SafePostPropertyChanged(NameOf(K3700.MovingWindowMeter.TaskStart))
     End Sub
+
 
     Private Function NotifyTaskStart(timeout As TimeSpan) As Boolean
         Dim endTime As DateTime = DateTime.UtcNow.Add(timeout)
@@ -609,8 +617,9 @@ Public Class MovingWindowMeter
         If Not Me.IsCancellationRequested Then
             ' stops the wait.
             Me.CancellationTokenSource.Cancel()
-            Me.SafePostPropertyChanged(NameOf(Me.IsCancellationRequested))
+            Me.SafePostPropertyChanged(NameOf(K3700.MovingWindowMeter.IsCancellationRequested))
         End If
+
     End Sub
 
     ''' <summary> Query if cancellation requested. </summary>

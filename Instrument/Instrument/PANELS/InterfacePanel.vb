@@ -164,7 +164,7 @@ Public Class InterfacePanel
                     .Invalidate()
                 End With
                 Me.Cursor = System.Windows.Forms.Cursors.Default
-                Me.SafePostPropertyChanged(NameOf(Me.IsInterfaceOpen))
+                Me.SafePostPropertyChanged(NameOf(Instrument.InterfacePanel.IsInterfaceOpen))
                 Windows.Forms.Application.DoEvents()
             End Try
         End If
@@ -219,7 +219,7 @@ Public Class InterfacePanel
                         .Visible = True
                         .Invalidate()
                     End With
-                    Me.SafePostPropertyChanged(NameOf(Me.IsInterfaceOpen))
+                    Me.SafePostPropertyChanged(NameOf(Instrument.InterfacePanel.IsInterfaceOpen))
                     Windows.Forms.Application.DoEvents()
                 End Try
             End If
@@ -332,7 +332,7 @@ Public Class InterfacePanel
     Private Sub OnPropertyChanged(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.SelectedResourceName)
+            Case NameOf(Instrument.ResourceSelectorConnector.SelectedResourceName)
                 If String.IsNullOrWhiteSpace(sender.SelectedResourceName) OrElse
                     String.Equals(sender.SelectedResourceName, VI.DeviceBase.ResourceNameClosed) Then
                     Me.InterfaceResourceName = ""
@@ -340,13 +340,6 @@ Public Class InterfacePanel
                     Me.InterfaceResourceName = sender.SelectedResourceName
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Interface selected--connect;. {Me.InterfaceResourceName} selected;. ")
                 End If
-            Case NameOf(sender.SelectedResourceExists)
-            Case NameOf(sender.ResourcesFilter)
-            Case NameOf(sender.IsConnected)
-            Case NameOf(sender.Clearable)
-            Case NameOf(sender.Connectable)
-            Case NameOf(sender.Searchable)
-            Case NameOf(sender.HasResources)
         End Select
     End Sub
 
@@ -465,18 +458,12 @@ Public Class InterfacePanel
     Private Sub OnInstrumentChooserPropertyChanged(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.SelectedResourceName)
+            Case NameOf(ResourceSelectorConnector.SelectedResourceName)
                 Me._ClearSelectedResourceButton.Enabled = Not String.IsNullOrWhiteSpace(sender.SelectedResourceName)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Instrument resource selected--connect;. Selected resource {0}",
                                    sender.SelectedResourceName)
-            Case NameOf(sender.SelectedResourceExists)
-            Case NameOf(sender.ResourcesFilter)
-            Case NameOf(sender.IsConnected)
-            Case NameOf(sender.Clearable)
-            Case NameOf(sender.Connectable)
-            Case NameOf(sender.Searchable)
-            Case NameOf(sender.HasResources)
+            Case NameOf(ResourceSelectorConnector.HasResources)
                 Me._ClearSelectedResourceButton.Enabled = sender.HasResources AndAlso Not String.IsNullOrWhiteSpace(sender.SelectedResourceName)
                 Me._ClearAllResourcesButton.Enabled = sender.HasResources
         End Select
@@ -531,7 +518,7 @@ Public Class InterfacePanel
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
+        If String.Equals(propertyName, NameOf(isr.Core.Pith.TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If

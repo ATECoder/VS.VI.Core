@@ -449,21 +449,21 @@ Public Class ResourcePanelBase
     Protected Overridable Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(device.IsDeviceOpen)
+            Case NameOf(isr.VI.DeviceBase.IsDeviceOpen)
                 Me.OnDeviceOpenChanged(device)
-            Case NameOf(device.Enabled)
+            Case NameOf(isr.VI.DeviceBase.Enabled)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    $"{device.ResourceTitle} {device.Enabled.GetHashCode:enabled;enabled;disabled};. ")
-            Case NameOf(device.ResourcesFilter)
+            Case NameOf(isr.VI.DeviceBase.ResourcesFilter)
                 Me.Connector.ResourcesFilter = device.ResourcesFilter
-            Case NameOf(device.ServiceRequestFailureMessage)
+            Case NameOf(isr.VI.DeviceBase.ServiceRequestFailureMessage)
                 If Not String.IsNullOrWhiteSpace(device.ServiceRequestFailureMessage) Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, device.ServiceRequestFailureMessage)
                 End If
-            Case NameOf(device.ResourceTitle)
+            Case NameOf(isr.VI.DeviceBase.ResourceTitle)
                 Me.ResourceTitle = device.ResourceTitle
                 Me.OnTitleChanged(Me.BuildTitle)
-            Case NameOf(device.ResourceName)
+            Case NameOf(isr.VI.DeviceBase.ResourceName)
                 Me.ResourceName = device.ResourceName
                 Me.OnTitleChanged(Me.BuildTitle)
         End Select
@@ -491,25 +491,25 @@ Public Class ResourcePanelBase
     Protected Overridable Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors AndAlso subsystem.ErrorAvailable Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Error available;. ")
                 End If
-            Case NameOf(subsystem.MessageAvailable)
+            Case NameOf(VI.StatusSubsystemBase.MessageAvailable)
                 If subsystem.MessageAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
                 End If
-            Case NameOf(subsystem.MeasurementAvailable)
+            Case NameOf(VI.StatusSubsystemBase.MeasurementAvailable)
                 If subsystem.MeasurementAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
                 End If
-            Case NameOf(subsystem.ReadingDeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.ReadingDeviceErrors)
                 If subsystem.ReadingDeviceErrors Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
                 End If
-            Case NameOf(subsystem.ServiceRequestStatus)
+            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
                 Me.DisplayStatusRegisterStatus(subsystem.ServiceRequestStatus)
-            Case NameOf(subsystem.StandardEventStatus)
+            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
                 Me.DisplayStandardRegisterStatus(subsystem.StandardEventStatus)
         End Select
     End Sub
@@ -712,7 +712,7 @@ Public Class ResourcePanelBase
     Private Sub OnPropertyChanged(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.SelectedResourceName)
+            Case NameOf(ResourceSelectorConnector.SelectedResourceName)
                 If String.IsNullOrWhiteSpace(sender.SelectedResourceName) OrElse
                     String.Equals(sender.SelectedResourceName, VI.DeviceBase.ResourceNameClosed) Then
                     Me.ResourceName = ""
@@ -779,7 +779,7 @@ Public Class ResourcePanelBase
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
+        If String.Equals(propertyName, NameOf(isr.Core.Pith.TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If

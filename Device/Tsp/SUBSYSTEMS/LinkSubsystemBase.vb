@@ -520,7 +520,7 @@ Public MustInherit Class LinkSubsystemBase
             Me.QueryControllerNodeNumber()
             Me.ControllerNode = New NodeEntity(Me.ControllerNodeNumber.Value, Me.ControllerNodeNumber.Value)
             Me.ControllerNode.InitializeKnownState(Me.Session)
-            Me.SafePostPropertyChanged(NameOf(Me.ControllerNodeModel))
+            Me.SafePostPropertyChanged(NameOf(Tsp.LinkSubsystemBase.ControllerNodeModel))
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                "Initiated controller node #{3};. Instrument model {0} S/N={1} Firmware={2} enumerated on node.",
                                Me.ControllerNode.ModelNumber, Me.ControllerNode.SerialNumber,
@@ -649,7 +649,7 @@ Public MustInherit Class LinkSubsystemBase
                 End If
             Next
         End If
-        Me.SafePostPropertyChanged(NameOf(Me.NodeCount))
+        Me.SafePostPropertyChanged(NameOf(Tsp.LinkSubsystemBase.NodeCount))
     End Sub
 
 #End Region

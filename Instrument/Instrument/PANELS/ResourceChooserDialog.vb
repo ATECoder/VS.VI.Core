@@ -158,7 +158,7 @@ Public Class ResourceChooserDialog
     Private Sub OnPropertyChanged(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.SelectedResourceName)
+            Case NameOf(ResourceSelectorConnector.SelectedResourceName)
                 Me._AcceptButton.Enabled = sender.SelectedResourceName.Length > 0
         End Select
     End Sub

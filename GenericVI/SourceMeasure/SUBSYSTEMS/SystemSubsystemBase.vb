@@ -69,7 +69,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoZeroEnabled, value) Then
                 Me._AutoZeroEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.AutoZeroEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -110,7 +110,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ContactCheckEnabled, value) Then
                 Me._ContactCheckEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.ContactCheckEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -151,7 +151,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.ContactCheckResistance, value) Then
                 Me._ContactCheckResistance = value
-                Me.SafePostPropertyChanged(NameOf(Me.ContactCheckResistance))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -203,7 +203,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.FourWireSenseEnabled, value) Then
                 Me._FourWireSenseEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.FourWireSenseEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -262,7 +262,7 @@ Public MustInherit Class SystemSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.SupportsContactCheck, value) Then
                 Me._SupportsContactCheck = value
-                Me.SafePostPropertyChanged(NameOf(Me.SupportsContactCheck))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

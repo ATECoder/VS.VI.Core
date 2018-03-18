@@ -227,7 +227,7 @@ Public Class DeviceUnderTest
         Set(ByVal value As Integer)
             If Not value.Equals(Me.SampleNumber) Then
                 Me._SampleNumber = value
-                Me.SafePostPropertyChanged(NameOf(Me.SampleNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -243,7 +243,7 @@ Public Class DeviceUnderTest
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me._uniqueKey) Then
                 Me._uniqueKey = value
-                Me.SafePostPropertyChanged(NameOf(Me.UniqueKey))
+                Me.SafePostPropertyChanged(NameOf(Ttm.DeviceUnderTest.UniqueKey))
             End If
             Return Me._uniqueKey
         End Get
@@ -251,7 +251,7 @@ Public Class DeviceUnderTest
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not value.Equals(Me.UniqueKey) Then
                 Me._uniqueKey = value
-                Me.SafePostPropertyChanged(NameOf(Me.UniqueKey))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -409,7 +409,7 @@ Public Class DeviceUnderTest
     Private Sub OnPropertyChanged(ByVal sender As ResistanceMeasureBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.MeasurementAvailable)
+            Case NameOf(Ttm.ResistanceMeasureBase.MeasurementAvailable)
                 If sender.MeasurementAvailable Then
                     Me.MergeOutcomes()
                 End If
@@ -426,7 +426,7 @@ Public Class DeviceUnderTest
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
         Finally
-            Me.SafePostPropertyChanged(NameOf(Me.InitialResistance))
+            Me.SafePostPropertyChanged(NameOf(Ttm.DeviceUnderTest.InitialResistance))
         End Try
     End Sub
 
@@ -453,7 +453,7 @@ Public Class DeviceUnderTest
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
         Finally
-            Me.SafePostPropertyChanged(NameOf(Me.FinalResistance))
+            Me.SafePostPropertyChanged(NameOf(Ttm.DeviceUnderTest.FinalResistance))
         End Try
     End Sub
 
@@ -474,7 +474,7 @@ Public Class DeviceUnderTest
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     Private Sub _ShuntResistance_PropertyChanged(sender As Object, e As System.ComponentModel.PropertyChangedEventArgs) Handles _ShuntResistance.PropertyChanged
-        Me.SafePostPropertyChanged(NameOf(Me.ShuntResistance))
+        Me.SafePostPropertyChanged(NameOf(Ttm.DeviceUnderTest.ShuntResistance))
     End Sub
 
     Private WithEvents _ShuntResistance As ShuntResistance
@@ -499,7 +499,7 @@ Public Class DeviceUnderTest
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
         Finally
-            Me.SafePostPropertyChanged(NameOf(Me.ThermalTransient))
+            Me.SafePostPropertyChanged(NameOf(Ttm.DeviceUnderTest.ThermalTransient))
         End Try
     End Sub
 
@@ -654,7 +654,7 @@ Public Class DeviceUnderTest
         End Get
         Set(value As Boolean)
             Me._AnyMeasurementAvailable = value
-            Me.SafePostPropertyChanged(NameOf(Me.AnyMeasurementsAvailable))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -678,7 +678,7 @@ Public Class DeviceUnderTest
         End Get
         Set(value As Boolean)
             Me._AllMeasurementAvailable = value
-            Me.SafePostPropertyChanged(NameOf(Me.AllMeasurementsAvailable))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 

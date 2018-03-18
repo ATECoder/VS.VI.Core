@@ -23,7 +23,7 @@ Public MustInherit Class SubsystemBase
     Protected Sub New(ByVal visaSession As VI.SessionBase)
         MyBase.New()
         Me._ApplySession(visaSession)
-        Me.ConstructorSafeTalkerSetter(New TraceMessageTalker)
+        Me.ConstructorSafeSetter(New TraceMessageTalker)
         Me._PresetRefractoryPeriod = TimeSpan.FromMilliseconds(100)
     End Sub
 
@@ -96,7 +96,7 @@ Public MustInherit Class SubsystemBase
     ''' <param name="value"> The value. </param>
     Public Sub ApplySession(ByVal value As SessionBase)
         Me._ApplySession(value)
-        Me.SafePostPropertyChanged(NameOf(Me.ResourceName))
+        Me.SafePostPropertyChanged(NameOf(VI.SessionBase.ResourceName))
     End Sub
 
     ''' <summary> Applies the session described by value. </summary>
@@ -389,6 +389,7 @@ Public MustInherit Class SubsystemBase
     End Sub
 
 #End Region
+
 #End Region
 
 End Class

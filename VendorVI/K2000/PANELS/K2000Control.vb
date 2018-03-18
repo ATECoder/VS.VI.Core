@@ -2,7 +2,6 @@ Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports isr.Core.Controls.CheckBoxExtensions
 Imports isr.Core.Controls.ComboBoxExtensions
-Imports isr.Core.Controls.ControlExtensions
 Imports isr.Core.Controls.NumericUpDownExtensions
 Imports isr.Core.Controls.SafeSetterExtensions
 Imports isr.Core.Controls.ToolStripExtensions
@@ -169,13 +168,13 @@ Public Class K2000Control
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionServiceRequestEventEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionServiceRequestEventEnabled)
                 Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
-            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+            Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
-            Case NameOf(device.SessionMessagesTraceEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionMessagesTraceEnabled)
                 Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
-            Case NameOf(device.ServiceRequestEnableBitmask)
+            Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
                 Me._ServiceRequestEnableBitmaskNumeric.Value = device.ServiceRequestEnableBitmask
                 Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = $"SRE:0b{Convert.ToString(device.ServiceRequestEnableBitmask, 2),8}".Replace(" ", "0")
         End Select
@@ -250,15 +249,15 @@ Public Class K2000Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As ArmLayer1Subsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.ArmCount)
+            Case NameOf(K2000.ArmLayer1Subsystem.ArmCount)
                 If subsystem.ArmCount.HasValue Then
                     Me._ArmLayer1CountNumeric.Value = subsystem.ArmCount.Value
                 End If
-            Case NameOf(subsystem.ArmSource)
+            Case NameOf(K2000.ArmLayer1Subsystem.ArmSource)
                 If subsystem.ArmSource.HasValue AndAlso Me._ArmLayer1SourceComboBox.ComboBox.Items.Count > 0 Then
                     Me._ArmLayer1SourceComboBox.ComboBox.SelectedItem = subsystem.ArmSource.Value.ValueNamePair
                 End If
-            Case NameOf(subsystem.SupportedArmSources)
+            Case NameOf(K2000.ArmLayer1Subsystem.SupportedArmSources)
                 subsystem.ListSupportedArmSources(Me._ArmLayer1SourceComboBox.ComboBox)
                 If subsystem.ArmSource.HasValue AndAlso Me._ArmLayer1SourceComboBox.ComboBox.Items.Count > 0 Then
                     Me._ArmLayer1SourceComboBox.ComboBox.SelectedItem = subsystem.ArmSource.Value.ValueNamePair
@@ -291,7 +290,7 @@ Public Class K2000Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.Elements)
+            Case NameOf(K2000.FormatSubsystem.Elements)
                 subsystem.ListElements(Me._ReadingComboBox.ComboBox, ReadingTypes.Units)
         End Select
     End Sub
@@ -356,11 +355,11 @@ Public Class K2000Control
             Return
         Else
             Select Case propertyName
-                Case NameOf(subsystem.LastReading)
+                Case NameOf(K2000.MeasureSubsystem.LastReading)
                     Me._LastReadingTextBox.SafeTextSetter(subsystem.LastReading)
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                        "Measure message: {0}.", subsystem.LastReading.InsertCommonEscapeSequences)
-                Case NameOf(subsystem.MeasurementAvailable)
+                Case NameOf(K2000.MeasureSubsystem.MeasurementAvailable)
                     Me.DisplayActiveReading()
             End Select
         End If
@@ -416,21 +415,21 @@ Public Class K2000Control
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.MeasurementAvailable)
+            Case NameOf(K2000.SenseSubsystem.MeasurementAvailable)
                 Me.DisplayActiveReading()
-            Case NameOf(subsystem.SupportedFunctionModes)
+            Case NameOf(K2000.SenseSubsystem.SupportedFunctionModes)
                 Me.OnSupportedFunctionModesChanged(subsystem)
-            Case NameOf(subsystem.FunctionMode)
+            Case NameOf(K2000.SenseSubsystem.FunctionMode)
                 Me.OnFunctionModesChanged(subsystem)
                 Me.DisplayActiveReading()
-            Case NameOf(subsystem.FunctionRange)
+            Case NameOf(K2000.SenseSubsystem.FunctionRange)
                 With Me._SenseRangeNumeric
                     .Minimum = CDec(subsystem.FunctionRange.Min)
                     .Maximum = CDec(subsystem.FunctionRange.Max)
                 End With
-            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+            Case NameOf(K2000.SenseSubsystem.FunctionRangeDecimalPlaces)
                 Me._SenseRangeNumeric.DecimalPlaces = subsystem.FunctionRangeDecimalPlaces
-            Case NameOf(subsystem.FunctionUnit)
+            Case NameOf(K2000.SenseSubsystem.FunctionUnit)
                 Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
@@ -463,16 +462,16 @@ Public Class K2000Control
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K2000.SenseVoltageSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K2000.SenseVoltageSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Dim nplc As Double = subsystem.PowerLineCycles.Value
                     Me._IntegrationPeriodNumeric.SafeValueSetter(VI.StatusSubsystemBase.FromPowerLineCycles(nplc).TotalMilliseconds)
                 End If
-            Case NameOf(subsystem.Range)
+            Case NameOf(K2000.SenseVoltageSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
@@ -506,16 +505,16 @@ Public Class K2000Control
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K2000.SenseCurrentSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K2000.SenseCurrentSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Dim nplc As Double = subsystem.PowerLineCycles.Value
                     Me._IntegrationPeriodNumeric.SafeValueSetter(VI.StatusSubsystemBase.FromPowerLineCycles(nplc).TotalMilliseconds)
                 End If
-            Case NameOf(subsystem.Range)
+            Case NameOf(K2000.SenseCurrentSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
@@ -549,16 +548,16 @@ Public Class K2000Control
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K2000.SenseFourWireResistanceSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K2000.SenseFourWireResistanceSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Dim nplc As Double = subsystem.PowerLineCycles.Value
                     Me._IntegrationPeriodNumeric.SafeValueSetter(VI.StatusSubsystemBase.FromPowerLineCycles(nplc).TotalMilliseconds)
                 End If
-            Case NameOf(subsystem.Range)
+            Case NameOf(K2000.SenseFourWireResistanceSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
@@ -592,16 +591,16 @@ Public Class K2000Control
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K2000.SenseResistanceSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K2000.SenseResistanceSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Dim nplc As Double = subsystem.PowerLineCycles.Value
                     Me._IntegrationPeriodNumeric.SafeValueSetter(VI.StatusSubsystemBase.FromPowerLineCycles(nplc).TotalMilliseconds)
                 End If
-            Case NameOf(subsystem.Range)
+            Case NameOf(K2000.SenseResistanceSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
@@ -642,18 +641,18 @@ Public Class K2000Control
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
                 End If
-            Case NameOf(subsystem.ServiceRequestStatus)
+            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
                 Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(subsystem.StandardEventStatus)
+            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
                 Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
@@ -681,7 +680,7 @@ Public Class K2000Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.FrontSwitched)
+            Case NameOf(K2000.SystemSubsystem.FrontSwitched)
                 Me._ReadTerminalStateButton.CheckState = subsystem.FrontSwitched.ToCheckState
                 Windows.Forms.Application.DoEvents()
         End Select
@@ -711,10 +710,10 @@ Public Class K2000Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As TraceSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.PointsCount)
-            Case NameOf(subsystem.ActualPointCount)
-            Case NameOf(subsystem.FirstPointNumber)
-            Case NameOf(subsystem.LastPointNumber)
+            Case NameOf(K2000.TraceSubsystem.PointsCount)
+            Case NameOf(K2000.TraceSubsystem.ActualPointCount)
+            Case NameOf(K2000.TraceSubsystem.FirstPointNumber)
+            Case NameOf(K2000.TraceSubsystem.LastPointNumber)
         End Select
         Windows.Forms.Application.DoEvents()
     End Sub
@@ -742,17 +741,17 @@ Public Class K2000Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As TriggerSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.TriggerCount)
+            Case NameOf(K2000.TriggerSubsystem.TriggerCount)
                 If subsystem.TriggerCount.HasValue Then
                     Me._TriggerCountNumeric.Value = subsystem.TriggerCount.Value
                 End If
-            Case NameOf(subsystem.ContinuousEnabled)
+            Case NameOf(K2000.TriggerSubsystem.ContinuousEnabled)
                 Me._ContinuousTriggerEnabledMenuItem.CheckState = subsystem.ContinuousEnabled.ToCheckState
-            Case NameOf(subsystem.TriggerSource)
+            Case NameOf(K2000.TriggerSubsystem.TriggerSource)
                 If subsystem.TriggerSource.HasValue AndAlso Me._TriggerSourceComboBox.ComboBox.Items.Count > 0 Then
                     Me._TriggerSourceComboBox.ComboBox.SelectedItem = subsystem.TriggerSource.Value.ValueNamePair
                 End If
-            Case NameOf(subsystem.SupportedTriggerSources)
+            Case NameOf(K2000.TriggerSubsystem.SupportedTriggerSources)
                 subsystem.ListSupportedTriggerSources(Me._TriggerSourceComboBox.ComboBox)
                 If subsystem.TriggerSource.HasValue AndAlso Me._TriggerSourceComboBox.ComboBox.Items.Count > 0 Then
                     Me._TriggerSourceComboBox.ComboBox.SelectedItem = subsystem.TriggerSource.Value.ValueNamePair
@@ -1929,14 +1928,11 @@ Public Class K2000Control
     Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.ReceivedMessage)
-                Case NameOf(sender.SentMessage)
-                Case NameOf(sender.StatusMessage)
+                Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
                     Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
                     Me._StatusLabel.ToolTipText = sender.StatusMessage
-                Case NameOf(sender.ServiceRequestValue)
+                Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
                     Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
-                Case NameOf(sender.ElapsedTime)
             End Select
         End If
     End Sub

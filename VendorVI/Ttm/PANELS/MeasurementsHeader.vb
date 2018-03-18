@@ -69,7 +69,7 @@ Public Class MeasurementsHeader
     Private Sub OnPropertyChanged(ByVal sender As DeviceUnderTest, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.Outcome)
+            Case NameOf(Ttm.DeviceUnderTest.Outcome)
                 Me.OutcomeSetter(sender.Outcome)
         End Select
     End Sub
@@ -290,11 +290,11 @@ Public Class MeasurementsHeader
     Private Sub OnInitialResistancePropertyChanged(ByVal sender As ColdResistance, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.MeasurementAvailable)
+            Case NameOf(Ttm.ColdResistance.MeasurementAvailable)
                 If sender.MeasurementAvailable Then
                     Me.showResistance(Me._InitialResistanceTextBox, sender)
                 End If
-            Case NameOf(sender.LastReading)
+            Case NameOf(Ttm.ColdResistance.LastReading)
                 If String.IsNullOrWhiteSpace(sender.LastReading) Then
                     Me.clearResistance(Me._InitialResistanceTextBox)
                 End If
@@ -331,11 +331,11 @@ Public Class MeasurementsHeader
     Private Sub OnFinalResistancePropertyChanged(ByVal sender As ColdResistance, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.MeasurementAvailable)
+            Case NameOf(Ttm.ColdResistance.MeasurementAvailable)
                 If sender.MeasurementAvailable Then
                     Me.showResistance(Me._FinalResistanceTextBox, sender)
                 End If
-            Case NameOf(sender.LastReading)
+            Case NameOf(Ttm.ColdResistance.LastReading)
                 If String.IsNullOrWhiteSpace(sender.LastReading) Then
                     Me.clearResistance(Me._FinalResistanceTextBox)
                 End If
@@ -372,11 +372,11 @@ Public Class MeasurementsHeader
     Private Sub OnPropertyChanged(ByVal sender As ResistanceMeasureBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.MeasurementAvailable)
+            Case NameOf(Ttm.ResistanceMeasureBase.MeasurementAvailable)
                 If sender.MeasurementAvailable Then
                     Me.showThermalTransient(Me._ThermalTransientVoltageTextBox, sender)
                 End If
-            Case NameOf(sender.LastReading)
+            Case NameOf(Ttm.ResistanceMeasureBase.LastReading)
                 If String.IsNullOrWhiteSpace(sender.LastReading) Then
                     Me.clearResistance(Me._ThermalTransientVoltageTextBox)
                 End If

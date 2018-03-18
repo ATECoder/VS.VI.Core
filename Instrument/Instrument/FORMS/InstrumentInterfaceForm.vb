@@ -392,12 +392,12 @@ Public Class InstrumentInterfaceForm
     Private Sub OnPropertyChanged(ByVal sender As InterfacePanel, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.InterfaceResourceName)
+            Case NameOf(InterfacePanel.InterfaceResourceName)
                 If Not String.IsNullOrWhiteSpace(sender.InterfaceResourceName) AndAlso
                     Not String.Equals(sender.InterfaceResourceName, VI.DeviceBase.ResourceNameClosed) Then
                     Me._StatusLabel.Text = $"Resource {sender.InterfaceResourceName} selected"
                 End If
-            Case NameOf(sender.IsInterfaceOpen)
+            Case NameOf(InterfacePanel.IsInterfaceOpen)
                 If sender.IsInterfaceOpen Then
                     Me._StatusLabel.Text = "Select Instrument Resource"
                 Else
@@ -838,7 +838,7 @@ Public Class InstrumentInterfaceForm
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
+        If String.Equals(propertyName, NameOf(TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If

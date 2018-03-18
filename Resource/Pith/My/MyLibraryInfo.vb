@@ -17,21 +17,19 @@
     ''' <summary> Values that represent project trace event identifiers. </summary>
     Public Enum ProjectTraceEventId
         <System.ComponentModel.Description("Not specified")> None
-        <System.ComponentModel.Description("VI Base Trace Event IO")> VI = &H70
-        <System.ComponentModel.Description("Device")> Device = ProjectTraceEventId.VI *
-                                                               TraceEventConstants.BaseScaleFactor +
-                                                               TraceEventConstants.LibraryDigitMask + &H1
+        <System.ComponentModel.Description("VI Base Trace Event IO")> VI = &H10 * TraceEventConstants.SolutionNamespaceSize
+        <System.ComponentModel.Description("Device")> Device = ProjectTraceEventId.VI + &H1
         <System.ComponentModel.Description("Tsp Device")> TspDevice = ProjectTraceEventId.Device + &H1
         <System.ComponentModel.Description("R2D2 Device")> DeviceR2D2 = ProjectTraceEventId.Device + &H2
         <System.ComponentModel.Description("SCPI Device")> DeviceScpi = ProjectTraceEventId.Device + &H3
         <System.ComponentModel.Description("Tsp2 Device")> Tsp2Device = ProjectTraceEventId.Device + &H4
 
-        <System.ComponentModel.Description("Instrument")> Instrument = ProjectTraceEventId.Device + &H10
+        <System.ComponentModel.Description("Instrument")> Instrument = ProjectTraceEventId.VI + &H10
         <System.ComponentModel.Description("Tsp Instrument")> InstrumentTsp = ProjectTraceEventId.Instrument + &H1
         <System.ComponentModel.Description("R2D2 Instrument")> InstrumentR2D2 = ProjectTraceEventId.Instrument + &H2
         <System.ComponentModel.Description("SCPI Instrument")> InstrumentScpi = ProjectTraceEventId.Instrument + &H3
 
-        <System.ComponentModel.Description("Power Supply")> PowerSupply = ProjectTraceEventId.Instrument + &H10
+        <System.ComponentModel.Description("Power Supply")> PowerSupply = ProjectTraceEventId.VI + &H20
         <System.ComponentModel.Description("Source Measure")> SourceMeasure = ProjectTraceEventId.PowerSupply + &H1
         <System.ComponentModel.Description("Scanner")> Scanner = ProjectTraceEventId.PowerSupply + &H2
         <System.ComponentModel.Description("Multimeter")> Multimeter = ProjectTraceEventId.PowerSupply + &H3
@@ -52,9 +50,7 @@
         <System.ComponentModel.Description("K2450 Source Meter")> K2450 = ProjectTraceEventId.PowerSupply + &H12
         <System.ComponentModel.Description("K7500 TSP2 Meter")> K7500T = ProjectTraceEventId.PowerSupply + &H13
 
-        <System.ComponentModel.Description("Core Tester")> DeviceTester = ProjectTraceEventId.VI *
-                                                                          TraceEventConstants.BaseScaleFactor +
-                                                                          TraceEventConstants.FormApplicationDigitMask + &H1
+        <System.ComponentModel.Description("Device Tester")> DeviceTester = ProjectTraceEventId.VI + &H40
         <System.ComponentModel.Description("Multimeter Tester")> MultimeterTester = ProjectTraceEventId.DeviceTester + &H1
         <System.ComponentModel.Description("Ohmni Tester")> OhmniTester = ProjectTraceEventId.DeviceTester + &H2
         <System.ComponentModel.Description("Tsp Tester")> TspTester = ProjectTraceEventId.DeviceTester + &H3
@@ -63,9 +59,7 @@
         <System.ComponentModel.Description("K3700 Console")> K3700Console = ProjectTraceEventId.DeviceTester + &H6
         <System.ComponentModel.Description("Gauge Console")> GaugeConsole = ProjectTraceEventId.DeviceTester + &H7
 
-        <System.ComponentModel.Description("Code Units")> CoreUnits = ProjectTraceEventId.VI *
-                                                                      TraceEventConstants.BaseScaleFactor +
-                                                                      TraceEventConstants.UnitTestDigitMask + &H1
+        <System.ComponentModel.Description("Device Tests")> DeviceTests = ProjectTraceEventId.VI + &H50
 
     End Enum
 

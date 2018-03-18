@@ -177,13 +177,13 @@ Public Class K3700Control
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionServiceRequestEventEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionServiceRequestEventEnabled)
                 Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
-            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+            Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
-            Case NameOf(device.SessionMessagesTraceEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionMessagesTraceEnabled)
                 Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
-            Case NameOf(device.ServiceRequestEnableBitmask)
+            Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
                 Me._ServiceRequestEnableBitmaskNumeric.Value = device.ServiceRequestEnableBitmask
                 Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = $"SRE:0b{Convert.ToString(device.ServiceRequestEnableBitmask, 2),8}".Replace(" ", "0")
         End Select
@@ -278,60 +278,60 @@ Public Class K3700Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As MultimeterSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.AutoDelayMode)
+            Case NameOf(K3700.MultimeterSubsystem.AutoDelayMode)
                 If subsystem.AutoDelayMode.HasValue Then Me.AutoDelayMode = subsystem.AutoDelayMode.Value
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K3700.MultimeterSubsystem.AutoRangeEnabled)
                 If subsystem.AutoRangeEnabled.HasValue Then Me._AutoRangeCheckBox.Checked = subsystem.AutoRangeEnabled.Value
-            Case NameOf(subsystem.AutoZeroEnabled)
+            Case NameOf(K3700.MultimeterSubsystem.AutoZeroEnabled)
                 If subsystem.AutoZeroEnabled.HasValue Then Me._AutoZeroCheckBox.Checked = subsystem.AutoZeroEnabled.Value
-            Case NameOf(subsystem.FilterCount)
+            Case NameOf(K3700.MultimeterSubsystem.FilterCount)
                 If subsystem.FilterCount.HasValue Then Me._FilterCountNumeric.Value = subsystem.FilterCount.Value
-            Case NameOf(subsystem.FilterCountRange)
+            Case NameOf(K3700.MultimeterSubsystem.FilterCountRange)
                 With Me._FilterCountNumeric
                     .Maximum = CDec(subsystem.FilterCountRange.Max)
                     .Minimum = CDec(subsystem.FilterCountRange.Min)
                     .DecimalPlaces = 0
                 End With
-            Case NameOf(subsystem.FilterEnabled)
+            Case NameOf(K3700.MultimeterSubsystem.FilterEnabled)
                 If subsystem.FilterEnabled.HasValue Then Me._FilterEnabledCheckBox.Checked = subsystem.FilterEnabled.Value
                 If Me._FilterEnabledCheckBox.Checked <> Me._FilterGroupBox.Enabled Then Me._FilterGroupBox.Enabled = Me._FilterEnabledCheckBox.Checked
-            Case NameOf(subsystem.FilterWindow)
+            Case NameOf(K3700.MultimeterSubsystem.FilterWindow)
                 If subsystem.FilterWindow.HasValue Then Me._FilterWindowNumeric.Value = CDec(100 * subsystem.FilterWindow.Value)
-            Case NameOf(subsystem.FilterWindowRange)
+            Case NameOf(K3700.MultimeterSubsystem.FilterWindowRange)
                 With Me._FilterWindowNumeric
                     .Maximum = 100 * CDec(subsystem.FilterWindowRange.Max)
                     .Minimum = 100 * CDec(subsystem.FilterWindowRange.Min)
                     .DecimalPlaces = 0
                 End With
-            Case NameOf(subsystem.MovingAverageFilterEnabled)
+            Case NameOf(K3700.MultimeterSubsystem.MovingAverageFilterEnabled)
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._MovingAverageRadioButton.Checked = subsystem.MovingAverageFilterEnabled.Value
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._RepeatingAverageRadioButton.Checked = Not subsystem.MovingAverageFilterEnabled.Value
-            Case NameOf(subsystem.FunctionMode)
+            Case NameOf(K3700.MultimeterSubsystem.FunctionMode)
                 If Me._SenseFunctionComboBox.DataSource Is Nothing Then Me.DisplayFunctionModes()
                 Me._SenseFunctionComboBox.SelectedItem = subsystem.FunctionMode.GetValueOrDefault(VI.Tsp.MultimeterFunctionMode.VoltageDC).ValueDescriptionPair()
-            Case NameOf(subsystem.FunctionRange)
+            Case NameOf(K3700.MultimeterSubsystem.FunctionRange)
                 With Me._SenseRangeNumeric
                     .Maximum = CDec(subsystem.FunctionRange.Max)
                     .Minimum = CDec(subsystem.FunctionRange.Min)
                 End With
-            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+            Case NameOf(K3700.MultimeterSubsystem.FunctionRangeDecimalPlaces)
                 Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
-            Case NameOf(subsystem.FunctionUnit)
+            Case NameOf(K3700.MultimeterSubsystem.FunctionUnit)
                 Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
-            Case NameOf(subsystem.OpenDetectorEnabled)
+            Case NameOf(K3700.MultimeterSubsystem.OpenDetectorEnabled)
                 If subsystem.OpenDetectorEnabled.HasValue Then Me._OpenDetectorCheckBox.Checked = subsystem.OpenDetectorEnabled.Value
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K3700.MultimeterSubsystem.PowerLineCycles)
                 If subsystem.PowerLineCycles.HasValue Then Me._PowerLineCyclesNumeric.Value = CDec(subsystem.PowerLineCycles.Value)
-            Case NameOf(subsystem.PowerLineCyclesRange)
+            Case NameOf(K3700.MultimeterSubsystem.PowerLineCyclesRange)
                 With Me._PowerLineCyclesNumeric
                     .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
                     .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
                     .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
                 End With
-            Case NameOf(subsystem.Range)
+            Case NameOf(K3700.MultimeterSubsystem.Range)
                 If subsystem.Range.HasValue Then Me.SenseRangeSetter(subsystem.Range.Value)
-            Case NameOf(subsystem.Reading)
+            Case NameOf(K3700.MultimeterSubsystem.Reading)
                 Me.DisplayReading(subsystem)
         End Select
     End Sub
@@ -362,7 +362,7 @@ Public Class K3700Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As ChannelSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.ClosedChannels)
+            Case NameOf(K3700.ChannelSubsystem.ClosedChannels)
                 Me.ClosedChannels = subsystem.ClosedChannels
         End Select
     End Sub
@@ -394,7 +394,7 @@ Public Class K3700Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As DisplaySubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.DisplayScreen)
+            Case NameOf(K3700.DisplaySubsystem.DisplayScreen)
         End Select
     End Sub
 
@@ -433,11 +433,11 @@ Public Class K3700Control
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
@@ -1390,14 +1390,11 @@ Public Class K3700Control
     Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.ReceivedMessage)
-                Case NameOf(sender.SentMessage)
-                Case NameOf(sender.StatusMessage)
+                Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
                     Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
                     Me._StatusLabel.ToolTipText = sender.StatusMessage
-                Case NameOf(sender.ServiceRequestValue)
+                Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
                     Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
-                Case NameOf(sender.ElapsedTime)
             End Select
         End If
     End Sub

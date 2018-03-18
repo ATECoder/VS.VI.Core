@@ -20,7 +20,7 @@ Public MustInherit Class ResistanceMeasureBase
     Protected Sub New()
         MyBase.New()
         randomNumberGenerator = New Random(DateTime.Now.Second)
-        Me.ConstructorSafeTalkerSetter(New TraceMessageTalker)
+        Me.ConstructorSafeSetter(New TraceMessageTalker)
     End Sub
 
     ''' <summary> Clones an existing measurement. </summary>

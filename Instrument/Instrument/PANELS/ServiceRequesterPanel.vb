@@ -203,6 +203,9 @@ Public Class ServiceRequesterPanel
         End If
     End Sub
 
+    ''' <summary> Replace common escape sequences. </summary>
+    ''' <param name="s"> The string. </param>
+    ''' <returns> A String. </returns>
     Private Shared Function ReplaceCommonEscapeSequences(ByVal s As String) As String
         If (s <> Nothing) Then
             Return s.Replace("\n", Convert.ToChar(10)).Replace("\r", Convert.ToChar(13))
@@ -211,6 +214,9 @@ Public Class ServiceRequesterPanel
         End If
     End Function
 
+    ''' <summary> Inserts a common escape sequences described by s. </summary>
+    ''' <param name="s"> The string. </param>
+    ''' <returns> A String. </returns>
     Private Shared Function InsertCommonEscapeSequences(ByVal s As String) As String
         If (s <> Nothing) Then
             Return s.Replace(Convert.ToChar(10), "\n").Replace(Convert.ToChar(13), "\r")
@@ -327,7 +333,7 @@ Public Class ServiceRequesterPanel
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
+        If String.Equals(propertyName, NameOf(isr.Core.Pith.TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If

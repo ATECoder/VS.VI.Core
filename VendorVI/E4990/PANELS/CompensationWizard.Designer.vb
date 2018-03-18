@@ -837,7 +837,6 @@ Partial Class CompensationWizard
         Me.Name = "CompensationWizard"
         Me.Opacity = 0.999R
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.TargetOpacity = 1.0R
         Me.Text = "Compensation Wizard"
         Me._LicenseWizardPage.ResumeLayout(False)
         Me._LicenseWizardPage.PerformLayout()

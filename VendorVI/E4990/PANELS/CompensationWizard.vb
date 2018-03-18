@@ -17,8 +17,7 @@ Imports isr.VI.ExceptionExtensions
 ''' <history date="7/8/2016" by="David" revision=""> Created. </history>
 <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")>
 Public Class CompensationWizard
-    Inherits isr.Core.Pith.FadeFormBase
-    Implements ITalker
+    Inherits isr.Core.Pith.ListenerFormBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
@@ -27,11 +26,12 @@ Public Class CompensationWizard
     ''' Creates a new instance of the <see cref="CompensationWizard"/> class.
     ''' </summary>
     Public Sub New()
+        MyBase.New()
         ' required for designer support
         Me.InitializingComponents = True
         Me.InitializeComponent()
         Me.InitializingComponents = False
-        Me.ConstructorSafeTalkerSetter(New TraceMessageTalker)
+        ' Me.ConstructorSafeSetter(New TraceMessageTalker)
         Dim builder As New System.Text.StringBuilder
         builder.AppendLine("This wizard will guide you through the steps of performing a compensation task.")
         builder.AppendLine("The following items are required:")
@@ -60,7 +60,6 @@ Public Class CompensationWizard
             If Not Me.IsDisposed Then
                 If disposing Then
                     Me.Device = Nothing
-                    Me.Talker = Nothing
                     If components IsNot Nothing Then components.Dispose()
                 End If
             End If
@@ -129,9 +128,9 @@ Public Class CompensationWizard
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As CalculateChannelSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.AveragingEnabled)
+            Case NameOf(E4990.CalculateChannelSubsystem.AveragingEnabled)
                 Me._AveragingEnabledCheckBox.Checked = subsystem.AveragingEnabled.GetValueOrDefault(False)
-            Case NameOf(subsystem.AverageCount)
+            Case NameOf(E4990.CalculateChannelSubsystem.AverageCount)
                 Me._AveragingCountNumeric.Value = subsystem.AverageCount.GetValueOrDefault(0)
         End Select
     End Sub
@@ -161,7 +160,7 @@ Public Class CompensationWizard
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As CompensateChannelSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.HasCompleteCompensationValues)
+            Case NameOf(E4990.CompensateChannelSubsystem.HasCompleteCompensationValues)
                 Dim value As String = ""
                 If subsystem.HasCompleteCompensationValues Then
                     value = CompensateChannelSubsystem.Merge(subsystem.FrequencyArrayReading, subsystem.ImpedanceArrayReading)
@@ -177,16 +176,16 @@ Public Class CompensationWizard
 
         If subsystem.CompensationType = VI.CompensationTypes.OpenCircuit Then
             Select Case propertyName
-                Case NameOf(subsystem.HasCompleteCompensationValues)
+                Case NameOf(E4990.CompensateChannelSubsystem.HasCompleteCompensationValues)
             End Select
         ElseIf subsystem.CompensationType = VI.CompensationTypes.ShortCircuit Then
             Select Case propertyName
-                Case NameOf(subsystem.FrequencyArrayReading)
+                Case NameOf(E4990.CompensateChannelSubsystem.FrequencyArrayReading)
             End Select
         ElseIf subsystem.CompensationType = VI.CompensationTypes.Load Then
             Select Case propertyName
-                Case NameOf(subsystem.FrequencyArrayReading)
-                Case NameOf(subsystem.ModelResistance)
+                Case NameOf(E4990.CompensateChannelSubsystem.FrequencyArrayReading)
+                Case NameOf(E4990.CompensateChannelSubsystem.ModelResistance)
                     If subsystem.ModelResistance.HasValue Then Me._LoadResistanceNumeric.Value = CDec(subsystem.ModelResistance.Value)
             End Select
         End If
@@ -216,7 +215,7 @@ Public Class CompensationWizard
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelMarkerSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.MeasurementAvailable)
+            Case NameOf(E4990.ChannelMarkerSubsystem.MeasurementAvailable)
                 If subsystem.MeasurementAvailable Then
                     Me.UpdateYardstickValues()
                 End If
@@ -247,7 +246,7 @@ Public Class CompensationWizard
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelTraceSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            ' Case NameOf(subsystem.AdapterType)
+            ' Case NameOf(VI.ChannelTraceSubsystemBase.ChannelNumber)
         End Select
     End Sub
 
@@ -275,7 +274,7 @@ Public Class CompensationWizard
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelTriggerSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            ' Case NameOf(subsystem.AdapterType)
+            'Case NameOf(VI.ChannelTriggerSubsystemBase.ChannelNumber)
         End Select
     End Sub
 
@@ -303,7 +302,7 @@ Public Class CompensationWizard
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As DisplaySubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            ' Case NameOf(subsystem.Delay)
+            ' Case NameOf(VI.DisplaySubsystemBase.Enabled)
         End Select
     End Sub
 
@@ -350,9 +349,9 @@ Public Class CompensationWizard
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As SenseChannelSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.AdapterType)
+            Case NameOf(VI.SenseChannelSubsystemBase.AdapterType)
                 If subsystem.AdapterType.HasValue Then Me.SelectAdapter(subsystem.AdapterType.Value)
-            Case NameOf(subsystem.Aperture)
+            Case NameOf(VI.SenseChannelSubsystemBase.Aperture)
                 If subsystem.Aperture.HasValue Then Me._ApertureNumeric.Value = CDec(subsystem.Aperture.Value)
         End Select
     End Sub
@@ -381,7 +380,7 @@ Public Class CompensationWizard
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As TriggerSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.Delay)
+            Case NameOf(VI.TriggerSubsystemBase.Delay)
         End Select
     End Sub
 
@@ -414,14 +413,14 @@ Public Class CompensationWizard
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 onLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 onLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.OperationCompleted)
-            Case NameOf(subsystem.ServiceRequestStatus)
+            Case NameOf(VI.StatusSubsystemBase.OperationCompleted)
+            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
                 'Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(subsystem.StandardEventStatus)
+            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
                 'Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub

@@ -87,19 +87,19 @@ Public Class PartsPanel
     Private Sub OnPartPropertyChanged(ByVal sender As DeviceUnderTest, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.AnyMeasurementsAvailable)
+            Case NameOf(Ttm.DeviceUnderTest.AnyMeasurementsAvailable)
                 Me.OnPartOutcomeChanged()
-            Case NameOf(sender.AllMeasurementsAvailable)
+            Case NameOf(Ttm.DeviceUnderTest.AllMeasurementsAvailable)
                 Me.OnPartOutcomeChanged()
-            Case NameOf(sender.LotId)
+            Case NameOf(Ttm.DeviceUnderTest.LotId)
                 Me._LotToolStripTextBox.Text = Me.Part.LotId
-            Case NameOf(sender.Outcome)
+            Case NameOf(Ttm.DeviceUnderTest.Outcome)
                 Me.OnPartOutcomeChanged()
-            Case NameOf(sender.PartNumber)
+            Case NameOf(Ttm.DeviceUnderTest.PartNumber)
                 Me._PartNumberToolStripTextBox.Text = Part.PartNumber.ToString
-            Case NameOf(sender.OperatorId)
+            Case NameOf(Ttm.DeviceUnderTest.OperatorId)
                 Me._OperatorToolStripTextBox.Text = Me.Part.OperatorId
-            Case NameOf(sender.SerialNumber)
+            Case NameOf(Ttm.DeviceUnderTest.SerialNumber)
                 Me._SerialNumberToolStripTextBox.Text = Me.Part.SerialNumber.ToString
         End Select
     End Sub

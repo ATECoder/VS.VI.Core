@@ -98,9 +98,6 @@
     <Compile Include="PANELS\CompensationWizard.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PANELS\CompensationWizard-ITalker.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="SUBSYSTEMS\ChannelTriggerSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\ChannelTraceSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\ChannelMarkerSubsystem.vb" />

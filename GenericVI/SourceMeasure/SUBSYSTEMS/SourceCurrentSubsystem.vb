@@ -81,6 +81,7 @@ Public Class SourceCurrentSubsystem
     ''' <summary> Sets the level range for the instrument model. </summary>
     ''' <param name="model"> The model. </param>
     Public Sub LevelRangeSetter(ByVal model As String)
+        If String.IsNullOrWhiteSpace(model) Then Throw New ArgumentNullException(NameOf(model))
         Select Case True
             Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
                 Me.LevelRange = New Core.Pith.RangeR(-1.05, +1.05)

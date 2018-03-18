@@ -36,8 +36,8 @@ Public MustInherit Class InterfaceSessionBase
         Protected Set(value As Boolean)
             If value <> Me.IsOpen Then
                 Me._IsOpen = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsOpen))
-                Me.SafePostPropertyChanged(NameOf(Me.ResourceName))
+                Me.SafePostPropertyChanged(NameOf(InterfaceSessionBase.IsOpen))
+                Me.SafePostPropertyChanged(NameOf(InterfaceSessionBase.ResourceName))
             End If
         End Set
     End Property

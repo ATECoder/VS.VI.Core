@@ -101,7 +101,7 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <param name="value"> <c>True</c> to indicate that a measurement is available; Otherwise, <c>False</c>. </param>
     Public Sub AsyncMeasurementAvailable(ByVal value As Boolean)
         Me._MeasurementAvailable = value
-        Me.SafePostPropertyChanged(NameOf(Me.MeasurementAvailable))
+        Me.SafePostPropertyChanged(NameOf(VI.MeasureSubsystemBase.MeasurementAvailable))
     End Sub
 
 #End Region

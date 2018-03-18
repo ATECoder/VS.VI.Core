@@ -82,7 +82,7 @@ Public Class ThermalTransient
         Set(value As Double?)
             If Me.TimeConstant.Differs(value, 0.000000001) Then
                 Me._timeConstant = value
-                Me.SafePostPropertyChanged(NameOf(Me.TimeConstant))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -110,10 +110,11 @@ Public Class ThermalTransient
         Set(value As Double?)
             If Me.Asymptote.Differs(value, 0.000000001) Then
                 Me._Asymptote = value
-                Me.SafePostPropertyChanged(NameOf(Me.Asymptote))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
+
 
     ''' <summary> Gets the asymptote caption. </summary>
     ''' <value> The asymptote caption. </value>
@@ -138,9 +139,10 @@ Public Class ThermalTransient
         Set(value As Double?)
             If Me.EstimatedVoltage.Differs(value, 0.000000001) Then
                 Me._EstimatedVoltage = value
-                Me.SafePostPropertyChanged(NameOf(Me.EstimatedVoltage))
+                Me.SafePostPropertyChanged()
             End If
         End Set
+
     End Property
 
     ''' <summary> Gets the estimated voltage caption. </summary>
@@ -166,8 +168,9 @@ Public Class ThermalTransient
         Set(value As Double?)
             If Me.CorrelationCoefficient.Differs(value, 0.000001) Then
                 Me._CorrelationCoefficient = value
-                Me.SafePostPropertyChanged(NameOf(Me.CorrelationCoefficient))
+                Me.SafePostPropertyChanged()
             End If
+
         End Set
     End Property
 
@@ -194,7 +197,8 @@ Public Class ThermalTransient
         Set(value As Double?)
             If Me.StandardError.Differs(value, 0.000001) Then
                 Me._StandardError = value
-                Me.SafePostPropertyChanged(NameOf(Me.StandardError))
+                Me.SafePostPropertyChanged()
+
             End If
         End Set
     End Property
@@ -222,7 +226,7 @@ Public Class ThermalTransient
         Set(value As Integer?)
             If Not Nullable.Equals(value, Me.Iterations) Then
                 Me._Iterations = value
-                Me.SafePostPropertyChanged(NameOf(Me.Iterations))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -233,6 +237,7 @@ Public Class ThermalTransient
         Get
             If Me.Iterations.HasValue Then
                 Return Me.Iterations.Value.ToString()
+
             Else
                 Return ""
             End If
@@ -250,7 +255,7 @@ Public Class ThermalTransient
         Set(value As OptimizationOutcome?)
             If Not Nullable.Equals(value, Me.OptimizationOutcome) Then
                 Me._OptimizationOutcome = value
-                Me.SafePostPropertyChanged(NameOf(Me.OptimizationOutcome))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -260,6 +265,7 @@ Public Class ThermalTransient
     Public ReadOnly Property OptimizationOutcomeCaption As String
         Get
             If Me.OptimizationOutcome.HasValue Then
+
                 Return Me.OptimizationOutcome.Value.ToString
             Else
                 Return ""

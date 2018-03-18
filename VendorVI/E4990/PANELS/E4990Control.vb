@@ -181,13 +181,13 @@ Public Class E4990Control
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionServiceRequestEventEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionServiceRequestEventEnabled)
                 Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
-            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+            Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
-            Case NameOf(device.SessionMessagesTraceEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionMessagesTraceEnabled)
                 Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
-            Case NameOf(device.ServiceRequestEnableBitmask)
+            Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
                 Me._ServiceRequestEnableBitmaskNumeric.Value = device.ServiceRequestEnableBitmask
                 Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = $"SRE:0b{Convert.ToString(device.ServiceRequestEnableBitmask, 2),8}".Replace(" ", "0")
         End Select
@@ -296,11 +296,11 @@ Public Class E4990Control
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As CalculateChannelSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.AveragingEnabled)
+            Case NameOf(VI.CalculateChannelSubsystemBase.AveragingEnabled)
                 Me._AveragingEnabledCheckBox.Checked = subsystem.AveragingEnabled.GetValueOrDefault(False)
-            Case NameOf(subsystem.AverageCount)
+            Case NameOf(VI.CalculateChannelSubsystemBase.AverageCount)
                 Me._AveragingCountNumeric.Value = subsystem.AverageCount.GetValueOrDefault(0)
-            Case NameOf(subsystem.TraceCount)
+            Case NameOf(VI.CalculateChannelSubsystemBase.TraceCount)
                 If subsystem.TraceCount.HasValue Then Me._TraceGroupBox.Text = $"Traces ({subsystem.TraceCount.Value})"
         End Select
     End Sub
@@ -330,15 +330,15 @@ Public Class E4990Control
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         If subsystem.CompensationType = VI.CompensationTypes.OpenCircuit Then
             Select Case propertyName
-                ' Case NameOf(subsystem.AdapterType)
+                'Case NameOf(VI.CompensateChannelSubsystemBase.ChannelNumber)
             End Select
         ElseIf subsystem.CompensationType = VI.CompensationTypes.ShortCircuit Then
             Select Case propertyName
-                ' Case NameOf(subsystem.AdapterType)
+                'Case NameOf(VI.CompensateChannelSubsystemBase.ChannelNumber)
             End Select
         ElseIf subsystem.CompensationType = VI.CompensationTypes.Load Then
             Select Case propertyName
-                ' Case NameOf(subsystem.AdapterType)
+                'Case NameOf(VI.CompensateChannelSubsystemBase.ChannelNumber)
             End Select
         End If
     End Sub
@@ -366,7 +366,6 @@ Public Class E4990Control
         Dim caption As String = clear
         Dim failureCaption As String = clear
         Dim failureToolTip As String = clear
-        Dim tbdCaption As String = clear
         If Me.Device.ChannelMarkerSubsystem Is Nothing OrElse
             Me.Device.ChannelMarkerSubsystem.Readings Is Nothing OrElse
             Me.Device.ChannelMarkerSubsystem.Readings.ActiveReadingType = ReadingTypes.None Then
@@ -399,11 +398,11 @@ Public Class E4990Control
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelMarkerSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.Abscissa)
+            Case NameOf(E4990.ChannelMarkerSubsystem.Abscissa)
                 Me._MarkerFrequencyComboBox.Text = subsystem.Abscissa.ToString
-            Case NameOf(subsystem.MeasurementAvailable)
+            Case NameOf(E4990.ChannelMarkerSubsystem.MeasurementAvailable)
                 Me.DisplayActiveReading()
-            Case NameOf(subsystem.Readings)
+            Case NameOf(E4990.ChannelMarkerSubsystem.Readings)
                 If subsystem.Readings Is Nothing Then
                     Me._ReadingComboBox.Items.Clear()
                 Else
@@ -437,11 +436,11 @@ Public Class E4990Control
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Dim combo As ComboBox = If(subsystem.TraceNumber = 1, Me._PrimaryTraceParameterComboBox, Me._SecondaryTraceParameterComboBox)
         Select Case propertyName
-            Case NameOf(subsystem.SupportedParameters)
+            Case NameOf(VI.ChannelTraceSubsystemBase.SupportedParameters)
                 subsystem.ListParameters(combo)
-            Case NameOf(subsystem.Parameter)
+            Case NameOf(VI.ChannelTraceSubsystemBase.Parameter)
                 subsystem.SafeSelectTraceParameters(combo)
-            Case NameOf(subsystem.TraceNumber)
+            Case NameOf(VI.ChannelTraceSubsystemBase.TraceNumber)
         End Select
     End Sub
 
@@ -469,7 +468,7 @@ Public Class E4990Control
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelTriggerSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.ContinuousEnabled)
+            Case NameOf(VI.ChannelTriggerSubsystemBase.ContinuousEnabled)
                 If subsystem.ContinuousEnabled.HasValue Then Me._ContinuousEnabledMenuItem.Checked = subsystem.ContinuousEnabled.Value
         End Select
     End Sub
@@ -498,7 +497,7 @@ Public Class E4990Control
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As DisplaySubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            ' Case NameOf(subsystem.Delay)
+            ' Case NameOf(E4990.DisplaySubsystem.DisplayScreen)
         End Select
     End Sub
 
@@ -526,17 +525,17 @@ Public Class E4990Control
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As SenseChannelSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.SupportedAdapterTypes)
+            Case NameOf(VI.SenseChannelSubsystemBase.SupportedAdapterTypes)
                 subsystem.ListAdapters(Me._AdapterComboBox)
-            Case NameOf(subsystem.Aperture)
+            Case NameOf(VI.SenseChannelSubsystemBase.Aperture)
                 If subsystem.Aperture.HasValue Then Me._ApertureNumeric.Value = CDec(subsystem.Aperture.Value)
-            Case NameOf(subsystem.AdapterType)
+            Case NameOf(VI.SenseChannelSubsystemBase.AdapterType)
                 If subsystem.AdapterType.HasValue Then Me.SelectAdapter(subsystem.AdapterType.Value)
-            Case NameOf(subsystem.SweepPoints)
+            Case NameOf(VI.SenseChannelSubsystemBase.SweepPoints)
                 If subsystem.SweepPoints.HasValue Then Me._SweepGroupBox.Text = $"Sweep points: {subsystem.SweepPoints.Value}"
-            Case NameOf(subsystem.SweepStart)
+            Case NameOf(VI.SenseChannelSubsystemBase.SweepStart)
                 If subsystem.SweepStart.HasValue Then Me._LowFrequencyNumeric.Value = CDec(subsystem.SweepStart.Value)
-            Case NameOf(subsystem.SweepStart)
+            Case NameOf(VI.SenseChannelSubsystemBase.SweepStart)
                 If subsystem.SweepStart.HasValue Then Me._HighFrequencyNumeric.Value = CDec(subsystem.SweepStop.Value)
         End Select
     End Sub
@@ -565,11 +564,11 @@ Public Class E4990Control
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As SourceChannelSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.SupportedFunctionModes)
+            Case NameOf(VI.SourceChannelSubsystemBase.SupportedFunctionModes)
                 subsystem.DisplaySupportedFunctionModes(Me._SourceFunctionComboBox)
-            Case NameOf(subsystem.FunctionMode)
+            Case NameOf(VI.SourceChannelSubsystemBase.FunctionMode)
                 Me.SelectSourceFunctionMode()
-            Case NameOf(subsystem.Level)
+            Case NameOf(VI.SourceChannelSubsystemBase.Level)
                 If subsystem.Level.HasValue Then Me.SourceLevel = subsystem.Level.Value
         End Select
     End Sub
@@ -598,11 +597,11 @@ Public Class E4990Control
     Protected Overloads Sub OnPropertyChanged(ByVal subsystem As TriggerSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.SafeSelectTriggerSource)
+            Case NameOf(VI.TriggerSubsystemBase.SafeSelectTriggerSource)
                 subsystem.ListTriggerSources(Me._TriggerSourceComboBox.ComboBox)
-            Case NameOf(subsystem.TriggerSource)
+            Case NameOf(VI.TriggerSubsystemBase.TriggerSource)
                 If subsystem.TriggerSource.HasValue Then subsystem.SafeSelectTriggerSource(Me._TriggerSourceComboBox.ComboBox)
-            Case NameOf(subsystem.Delay)
+            Case NameOf(VI.TriggerSubsystemBase.Delay)
         End Select
     End Sub
 
@@ -638,18 +637,18 @@ Public Class E4990Control
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 onLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 onLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
                 End If
-            Case NameOf(subsystem.ServiceRequestStatus)
+            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
                 Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(subsystem.StandardEventStatus)
+            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
                 Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
@@ -1722,14 +1721,11 @@ Public Class E4990Control
     Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.ReceivedMessage)
-                Case NameOf(sender.SentMessage)
-                Case NameOf(sender.StatusMessage)
+                Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
                     Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
                     Me._StatusLabel.ToolTipText = sender.StatusMessage
-                Case NameOf(sender.ServiceRequestValue)
+                Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
                     Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
-                Case NameOf(sender.ElapsedTime)
             End Select
         End If
     End Sub

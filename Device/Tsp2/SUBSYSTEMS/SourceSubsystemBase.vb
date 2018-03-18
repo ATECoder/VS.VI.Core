@@ -443,8 +443,8 @@ Public Class SourceSubsystemBase
         Else
             Me._Amount = New Arebis.TypedUnits.Amount(0, unit)
         End If
-        Me.SafePostPropertyChanged(NameOf(Me.Amount))
-        Me.SafePostPropertyChanged(NameOf(Me.FunctionUnit))
+        Me.SafePostPropertyChanged(NameOf(SourceSubsystemBase.Amount))
+        Me.SafePostPropertyChanged(NameOf(SourceSubsystemBase.FunctionUnit))
     End Sub
 
     ''' <summary> The level. </summary>

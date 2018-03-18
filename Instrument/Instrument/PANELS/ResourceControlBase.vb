@@ -86,6 +86,13 @@ Public Class ResourceControlBase
         Me.DeviceBase = Nothing
     End Sub
 
+    ''' <summary> Releases the device and reassigns the default device. </summary>
+    Public Overridable Sub RestoreDevice()
+        ' release the device
+        Me.ReleaseDevice()
+        ' the parent will assign the device.
+    End Sub
+
 
 #End Region
 
@@ -290,6 +297,21 @@ Public Class ResourceControlBase
         End Set
     End Property
 
+    ''' <summary> Gets or sets the selected resource name. </summary>
+    ''' <value> The name of the selected resource. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public Property SelectedResourceName As String
+        Get
+            Return Me.Connector.SelectedResourceName
+        End Get
+        Set(ByVal value As String)
+            If Not String.Equals(value, Me.SelectedResourceName, StringComparison.OrdinalIgnoreCase) Then
+                Me.Connector.SelectedResourceName = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
     ''' <summary> Gets or sets the default open source title format. </summary>
     ''' <value> The default open source title format. </value>
     Public Shared Property DefaultOpenSourceTitleFormat As String = "{0}.{1}"
@@ -436,8 +458,9 @@ Public Class ResourceControlBase
             Me.ResourceName = Me.DeviceBase.ResourceName
             Me.ResourceTitle = Me.DeviceBase.ResourceTitle
             Me.StatusSubsystem = Me.DeviceBase.StatusSubsystemBase
-
-            Me.DeviceBase.NotifyDeviceOpenState()
+            ' publish device state.  This should also report the open status and set the 
+            ' control open/close button state.
+            Me.DeviceBase.Publish()
             Me.AssignTalker(value.Talker)
             Me.ApplyListenerTraceLevel(ListenerType.Display, value.Talker.TraceShowLevel)
         End If
@@ -518,9 +541,7 @@ Public Class ResourceControlBase
     ''' <summary> Executes the device open changed action. 
     '''           The open event occurs after all subsystems are created. </summary>
     Protected Overridable Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
-        If device IsNot Nothing Then
-            Me.Connector.IsConnected = device.IsDeviceOpen
-        End If
+        If device IsNot Nothing Then Me.Connector.IsConnected = Me.IsDeviceOpen
     End Sub
 
     ''' <summary> Handle the device property changed event. </summary>
@@ -529,22 +550,22 @@ Public Class ResourceControlBase
     Protected Overridable Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(device.IsDeviceOpen)
+            Case NameOf(isr.VI.DeviceBase.IsDeviceOpen)
                 ' the open sentinel is turned on after all subsystems are set
                 Me.OnDeviceOpenChanged(device)
-            Case NameOf(device.Enabled)
+            Case NameOf(isr.VI.DeviceBase.Enabled)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                  $"{device.ResourceTitle} {device.Enabled.GetHashCode:enabled;enabled;disabled};. ")
-            Case NameOf(device.ResourcesFilter)
-                Me.Connector.ResourcesFilter = device.ResourcesFilter
-            Case NameOf(device.ServiceRequestFailureMessage)
-                If Not String.IsNullOrWhiteSpace(device.ServiceRequestFailureMessage) Then
-                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, device.ServiceRequestFailureMessage)
+                                  $"{device?.ResourceTitle} {device?.Enabled.GetHashCode:enabled;enabled;disabled};. ")
+            Case NameOf(isr.VI.DeviceBase.ResourcesFilter)
+                Me.Connector.ResourcesFilter = device?.ResourcesFilter
+            Case NameOf(isr.VI.DeviceBase.ServiceRequestFailureMessage)
+                If Not String.IsNullOrWhiteSpace(device?.ServiceRequestFailureMessage) Then
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, device?.ServiceRequestFailureMessage)
                 End If
-            Case NameOf(device.ResourceTitle)
-                Me.ResourceTitle = device.ResourceTitle
-            Case NameOf(device.ResourceName)
-                Me.ResourceName = device.ResourceName
+            Case NameOf(isr.VI.DeviceBase.ResourceTitle)
+                Me.ResourceTitle = device?.ResourceTitle
+            Case NameOf(isr.VI.DeviceBase.ResourceName)
+                Me.ResourceName = device?.ResourceName
         End Select
     End Sub
 
@@ -559,6 +580,9 @@ Public Class ResourceControlBase
                 Me.OnDevicePropertyChanged(TryCast(sender, DeviceBase), e.PropertyName)
             End If
         Catch ex As Exception
+            If Me.Talker Is Nothing Then
+                Console.Out.WriteLine($"Exception handling Device.{e?.PropertyName} change event;. ")
+            End If
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                               $"Exception handling Device.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
         End Try
@@ -586,7 +610,7 @@ Public Class ResourceControlBase
                     e.RegisterCancellation($"failed {action};. ")
                 End If
             Catch ex As Exception
-                e.RegisterCancellation($"Exception opening {action};. {ex.ToFullBlownString}")
+                e.RegisterCancellation($"Exception {action};. {ex.ToFullBlownString}")
             Finally
                 Me.Connector.IsConnected = Me.IsDeviceOpen
                 Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
@@ -609,13 +633,14 @@ Public Class ResourceControlBase
         If Me.InvokeRequired Then
             Me.Invoke(New Action(Of String, String)(AddressOf Me.OpenSession), New Object() {resourceName, resourceTitle})
         Else
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opening {resourceName} VISA session;. ")
+            Dim action As String = $"opening VISA session @{resourceName}"
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{action};. ")
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
             Me.DeviceBase.OpenSession(resourceName, resourceTitle)
             If Me.DeviceBase.IsDeviceOpen Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Opened {resourceName} VISA session;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Done {action};. ")
             Else
-                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Failed opening {resourceName} VISA session;. ")
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Failed {action};. ")
             End If
             Me.Connector.IsConnected = Me.IsDeviceOpen
         End If
@@ -702,13 +727,14 @@ Public Class ResourceControlBase
         If Me.InvokeRequired Then
             Me.Invoke(New Action(Of CancelDetailsEventArgs)(AddressOf Me.TryCloseSession), New Object() {e})
         Else
+            Dim action As String = $"closing VISA session @{ResourceName}"
             Try
                 Me.CloseSession()
                 If Me.DeviceBase.IsDeviceOpen Then
-                    e.RegisterCancellation($"Failed closing {ResourceName} VISA session;. ")
+                    e.RegisterCancellation($"Failed {action};. ")
                 End If
             Catch ex As Exception
-                e.RegisterCancellation($"Exception closing {ResourceName} VISA session;. {ex.ToFullBlownString}")
+                e.RegisterCancellation($"Exception {action};. {ex.ToFullBlownString}")
             Finally
                 Me.Connector.IsConnected = Me.IsDeviceOpen
                 Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Default
@@ -723,12 +749,12 @@ Public Class ResourceControlBase
             Me.Invoke(New Action(AddressOf Me.CloseSession))
         Else
             If Me.DeviceBase.IsDeviceOpen Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Closing {Me.DeviceBase.ResourceName} VISA session;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Closing VISA session @{Me.DeviceBase.ResourceName};. ")
             End If
             If Me.DeviceBase.TryCloseSession() Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Closed {Me.DeviceBase.ResourceName} VISA session;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Closed VISA session @{Me.DeviceBase.ResourceName};. ")
             Else
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed closing {Me.Connector.SelectedResourceName} VISA session;. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed closing VISA session @{Me.Connector.SelectedResourceName};. ")
             End If
             Me.Connector.IsConnected = Me.IsDeviceOpen
         End If
@@ -754,7 +780,7 @@ Public Class ResourceControlBase
     Protected Overridable Sub DeviceClosed(ByVal sender As Object, ByVal e As System.EventArgs)
         If Me.DeviceBase IsNot Nothing Then
             If Me.DeviceBase.Session.IsSessionOpen Then
-                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Device closed but session still open;. ")
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Device closed but session still open @{Me.DeviceBase.Session.ResourceName};. ")
             ElseIf Me.DeviceBase.Session.IsDeviceOpen Then
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Device closed but emulated session still open;. ")
             Else
@@ -888,6 +914,14 @@ Public Class ResourceControlBase
         End Get
     End Property
 
+    ''' <summary> Gets the connector is connected. </summary>
+    ''' <value> The connector is connected. </value>
+    Public ReadOnly Property IsConnected As Boolean
+        Get
+            Return Me.Connector.IsConnected
+        End Get
+    End Property
+
     ''' <summary> Gets the selected resource exists. </summary>
     ''' <value> The selected resource exists. </value>
     Public ReadOnly Property SelectedResourceExists As Boolean
@@ -919,9 +953,9 @@ Public Class ResourceControlBase
     Protected Overridable Sub OnConnectorPropertyChanged(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.EnteredResourceName)
-                Me.SafePostPropertyChanged(NameOf(Me.EnteredResourceName))
-            Case NameOf(sender.SelectedResourceName)
+            Case NameOf(ResourceSelectorConnector.EnteredResourceName)
+                Me.SafePostPropertyChanged(NameOf(ResourceSelectorConnector.EnteredResourceName))
+            Case NameOf(ResourceSelectorConnector.SelectedResourceName)
                 If String.IsNullOrWhiteSpace(sender.SelectedResourceName) OrElse String.Equals(sender.SelectedResourceName, VI.DeviceBase.ResourceNameClosed) Then
                     Me.ResourceName = ""
                 Else
@@ -987,34 +1021,34 @@ Public Class ResourceControlBase
     Protected Overridable Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors AndAlso subsystem.ErrorAvailable Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Error available;. ")
                     subsystem.QueryDeviceErrors()
                 End If
-            Case NameOf(subsystem.MessageAvailable)
+            Case NameOf(VI.StatusSubsystemBase.MessageAvailable)
                 If subsystem.MessageAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
                 End If
-            Case NameOf(subsystem.MeasurementAvailable)
+            Case NameOf(VI.StatusSubsystemBase.MeasurementAvailable)
                 If subsystem.MeasurementAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
                 End If
-            Case NameOf(subsystem.ReadingDeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.ReadingDeviceErrors)
                 If subsystem.ReadingDeviceErrors Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
                 End If
 
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 Me.OnLastError(subsystem.LastDeviceError)
 
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 OnLastError(subsystem.LastDeviceError)
 
-            Case NameOf(subsystem.ServiceRequestStatus)
+            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
                 Me.StatusRegisterStatus = subsystem.ServiceRequestStatus
 
-            Case NameOf(subsystem.StandardEventStatus)
+            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
                 Me.StandardRegisterStatus = subsystem.StandardEventStatus
 
         End Select

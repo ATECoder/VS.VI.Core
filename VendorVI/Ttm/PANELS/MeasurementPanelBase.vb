@@ -520,7 +520,7 @@ Public Class MeasurementPanelBase
     Private Sub OnPropertyChanged(ByVal sender As MeasureSequencer, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.MeasurementSequenceState)
+            Case NameOf(Ttm.MeasureSequencer.MeasurementSequenceState)
                 Me.OnMeasurementSequenceStateChanged(sender.MeasurementSequenceState)
         End Select
     End Sub
@@ -647,7 +647,7 @@ Public Class MeasurementPanelBase
     Private Sub OnPropertyChanged(ByVal sender As TriggerSequencer, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.TriggerSequenceState)
+            Case NameOf(Ttm.TriggerSequencer.TriggerSequenceState)
                 Me.OnTriggerSequenceStateChanged(sender.TriggerSequenceState)
         End Select
     End Sub

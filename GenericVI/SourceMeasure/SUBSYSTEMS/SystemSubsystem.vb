@@ -134,7 +134,7 @@ Public Class SystemSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.FrontSwitched, value) Then
                 Me._FrontSwitched = value
-                Me.SafePostPropertyChanged(NameOf(Me.FrontSwitched))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

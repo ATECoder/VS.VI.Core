@@ -34,7 +34,7 @@ Public Class Session
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 Try
-                    Me.DiscardSession()
+                    Me.DiscardSessionEvents()
                     Me._LastNativeError = Nothing
                 Catch ex As Exception
                     Debug.Assert(Not Debugger.IsAttached, "Failed discarding enabled events.",
@@ -142,7 +142,7 @@ Public Class Session
 
     ''' <summary> Discards the session. </summary>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
-    Protected Overrides Sub DiscardSession()
+    Protected Overrides Sub DiscardSessionEvents()
         If Me.IsSessionOpen Then
             Try
                 Me._LastNativeError = NativeError.Success

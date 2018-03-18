@@ -114,8 +114,8 @@ Public Class TraceSubsystem
             Dim displayIndex As Integer = 0
             Dim column As New Windows.Forms.DataGridViewTextBoxColumn()
             With column
-                .DataPropertyName = NameOf(Readings.RawReading)
-                .Name = NameOf(Readings.RawReading)
+                .DataPropertyName = NameOf(K2000.Readings.RawReading)
+                .Name = NameOf(K2000.Readings.RawReading)
                 .Visible = True
                 .DisplayIndex = displayIndex
                 .HeaderText = "Reading"

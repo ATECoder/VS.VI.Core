@@ -360,32 +360,36 @@ Public Class BufferReadingCollection
         Dim displayIndex As Integer = 0
         Dim column As New DataGridViewTextBoxColumn()
         With column
-            .DataPropertyName = NameOf(BufferReading.Reading)
-            .Name = NameOf(BufferReading.Reading)
+            .DataPropertyName = NameOf(VI.BufferReading.Reading)
+            .Name = NameOf(VI.BufferReading.Reading)
             .Visible = True
             .DisplayIndex = displayIndex
             .HeaderText = "Value"
         End With
+
         grid.Columns.Add(column)
 
         displayIndex += 1
         column = New DataGridViewTextBoxColumn()
         With column
-            .DataPropertyName = NameOf(BufferReading.UnitReading)
-            .Name = NameOf(BufferReading.UnitReading)
+            .DataPropertyName = NameOf(VI.BufferReading.UnitReading)
+            .Name = NameOf(VI.BufferReading.UnitReading)
             .Visible = True
             .DisplayIndex = displayIndex
             .HeaderText = "Unit"
+
+
         End With
         grid.Columns.Add(column)
 
         displayIndex += 1
         column = New DataGridViewTextBoxColumn()
         With column
-            .DataPropertyName = NameOf(BufferReading.TimestampReading)
-            .Name = NameOf(BufferReading.TimestampReading)
+            .DataPropertyName = NameOf(VI.BufferReading.TimestampReading)
+            .Name = NameOf(VI.BufferReading.TimestampReading)
             .Visible = True
             .DisplayIndex = displayIndex
+
             .HeaderText = "Time"
         End With
         grid.Columns.Add(column)
@@ -393,8 +397,9 @@ Public Class BufferReadingCollection
         displayIndex += 1
         column = New DataGridViewTextBoxColumn()
         With column
-            .DataPropertyName = NameOf(BufferReading.StatusReading)
-            .Name = NameOf(BufferReading.StatusReading)
+            .DataPropertyName = NameOf(VI.BufferReading.StatusReading)
+            .Name = NameOf(VI.BufferReading.StatusReading)
+
             .Visible = True
             .DisplayIndex = displayIndex
             .HeaderText = "Status"

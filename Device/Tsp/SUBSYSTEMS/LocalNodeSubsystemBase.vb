@@ -162,10 +162,10 @@ Public MustInherit Class LocalNodeSubsystemBase
     Protected Sub OnSessionPropertyChanged(ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         If Me.ProcessExecutionStateEnabled AndAlso e IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(e.PropertyName) Then
             Select Case e.PropertyName
-                Case NameOf(Me.Session.LastMessageReceived)
+                Case NameOf(VI.SessionBase.LastMessageReceived)
                     ' parse the command to get the TSP execution state.
                     Me.ParseExecutionState(Me.Session.LastMessageReceived, TspExecutionState.IdleReady)
-                Case NameOf(Me.Session.LastMessageSent)
+                Case NameOf(VI.SessionBase.LastMessageSent)
                     ' set the TSP status
                     Me.ExecutionState = TspExecutionState.Processing
             End Select

@@ -17,8 +17,6 @@ Public Class DigitalOutput
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
     Public Sub New(ByVal statusSubsystem As isr.VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        '  sets the delay (pulse width) range
-        Me.DelayRange.SetRange(TimeSpan.Zero, TimeSpan.FromSeconds(60))
     End Sub
 
 #End Region

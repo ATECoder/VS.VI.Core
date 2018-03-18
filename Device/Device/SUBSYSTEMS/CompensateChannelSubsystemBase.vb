@@ -342,7 +342,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
             If Not String.Equals(value, Me.FrequencyArrayReading) Then
                 Me._FrequencyArrayReading = value
                 Me.SafePostPropertyChanged()
-                Me.SafePostPropertyChanged(NameOf(Me.HasCompleteCompensationValues))
+                Me.SafePostPropertyChanged(NameOf(VI.CompensateChannelSubsystemBase.HasCompleteCompensationValues))
             End If
         End Set
     End Property
@@ -418,7 +418,7 @@ Public MustInherit Class CompensateChannelSubsystemBase
             If Not String.Equals(value, Me.ImpedanceArrayReading) Then
                 Me._ImpedanceArrayReading = value
                 Me.SafePostPropertyChanged()
-                Me.SafePostPropertyChanged(NameOf(Me.HasCompleteCompensationValues))
+                Me.SafePostPropertyChanged(NameOf(VI.CompensateChannelSubsystemBase.HasCompleteCompensationValues))
             End If
         End Set
     End Property

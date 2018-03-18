@@ -84,7 +84,7 @@
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="TESTS\MeasureSubsystemTest.vb" />
+    <Compile Include="TESTS\TegamMeasureSubsystemTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
   <ItemGroup>

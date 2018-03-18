@@ -145,7 +145,7 @@ Public Class InstrumentPanelForm
     ''' <param name="panelBase">      The panel control. </param>
     ''' <param name="disposeEnabled"> true to enable, false to disable the dispose. </param>
     Public Sub AddInstrumentPanel(ByVal title As String, ByVal panelBase As Instrument.ResourcePanelBase, ByVal disposeEnabled As Boolean)
-        If panelBase Is Nothing Then Throw New ArgumentException(NameOf(panelBase))
+        If panelBase Is Nothing Then Throw New ArgumentNullException(NameOf(panelBase))
         Me.ResizeClientArea(panelBase)
         Me._InstrumentPanel = panelBase
         Me.Talker.ApplyTalkerTraceLevels(panelBase.Talker)
@@ -172,7 +172,7 @@ Public Class InstrumentPanelForm
     Private Sub OnPropertyChange(sender As Instrument.ResourcePanelBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.ResourceTitle)
+            Case NameOf(Instrument.ResourcePanelBase.ResourceTitle)
                 If Not String.IsNullOrWhiteSpace(sender.ResourceTitle) Then
                     Me._InstrumentTabPage.Text = sender.ResourceTitle
                 End If

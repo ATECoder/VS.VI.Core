@@ -83,7 +83,7 @@
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="TESTS\ScpiDeviceTest.vb" />
+    <Compile Include="TESTS\ScpiDeviceTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
   <ItemGroup>

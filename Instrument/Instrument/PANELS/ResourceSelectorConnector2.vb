@@ -86,7 +86,7 @@ Public Class ResourceSelectorConnector
         Set(ByVal value As Boolean)
             If Not Me.Clearable.Equals(value) Then
                 Me._clearable = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Clearable))
+                Me.AsyncNotifyPropertyChanged()
             End If
             Me._ClearButton.Visible = value
         End Set
@@ -106,7 +106,7 @@ Public Class ResourceSelectorConnector
         Set(ByVal value As Boolean)
             If Not Me.Connectible.Equals(value) Then
                 Me._connectible = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Connectible))
+                Me.AsyncNotifyPropertyChanged()
             End If
             Me._ToggleConnectionButton.Visible = value
             If Not value Then
@@ -129,7 +129,7 @@ Public Class ResourceSelectorConnector
         Set(ByVal value As Boolean)
             If Not Me.Searchable.Equals(value) Then
                 Me._searchable = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.Searchable))
+                Me.AsyncNotifyPropertyChanged()
             End If
             Me._FindButton.Visible = value
         End Set
@@ -161,7 +161,7 @@ Public Class ResourceSelectorConnector
                                                              ResourceSelectorConnector.ImageIndex.Connect)) - 1
         Me._ToggleConnectionButton.Enabled = Me.Connectible
         Me._isConnected = value
-        Me.AsyncNotifyPropertyChanged(NameOf(Me.IsConnected))
+        Me.AsyncNotifyPropertyChanged(NameOf(Instrument.ResourceSelectorConnector.IsConnected))
     End Sub
 
     ''' <summary> Executes the toggle connection action. </summary>
@@ -259,7 +259,7 @@ Public Class ResourceSelectorConnector
         Set(ByVal value As Boolean)
             If Not Me.HasResources.Equals(value) Then
                 Me._HasResources = value
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.HasResources))
+                Me.AsyncNotifyPropertyChanged()
             End If
         End Set
     End Property
@@ -277,7 +277,7 @@ Public Class ResourceSelectorConnector
             If Not value.Equals(Me.ResourcesFilter) Then
                 Me._ResourcesFilter = value
                 Me._ToolTip.SetToolTip(Me._FindButton, "Search using the search pattern '" & value & "'")
-                Me.AsyncNotifyPropertyChanged(NameOf(Me.ResourcesFilter))
+                Me.AsyncNotifyPropertyChanged()
             End If
         End Set
     End Property
@@ -364,7 +364,7 @@ Public Class ResourceSelectorConnector
             If Not String.Equals(Value, Me.SelectedResourceName, StringComparison.OrdinalIgnoreCase) Then
                 If Not String.IsNullOrWhiteSpace(Value) Then
                     Me._SelectedResourceName = Value
-                    Me.AsyncNotifyPropertyChanged(NameOf(Me.SelectedResourceName))
+                    Me.AsyncNotifyPropertyChanged()
                     Try
                         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
                         Me._ErrorProvider.Clear()
@@ -397,7 +397,7 @@ Public Class ResourceSelectorConnector
             ' resource was selected.
             Me._ToggleConnectionButton.Enabled = Me.Connectible AndAlso value
             Me._SelectedResourceExists = value
-            Me.AsyncNotifyPropertyChanged(NameOf(Me.SelectedResourceExists))
+            Me.AsyncNotifyPropertyChanged()
         End Set
     End Property
 

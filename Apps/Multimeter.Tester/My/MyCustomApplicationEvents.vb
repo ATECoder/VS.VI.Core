@@ -8,7 +8,7 @@ Namespace My
         Friend Function BuildDefaultCaption() As String
             Dim suffix As New System.Text.StringBuilder
             suffix.Append(" ")
-            Return isr.Core.Pith.ApplicationInfo.BuildDefaultCaption(suffix.ToString)
+            Return isr.Core.Pith.ApplicationInfo.BuildApplicationDescriptionCaption(suffix.ToString)
         End Function
 
         ''' <summary> Instantiates the application to its known state. </summary>

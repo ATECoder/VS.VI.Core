@@ -47,7 +47,7 @@ Public Class ThermalTransientHeader
     Private Sub OnPropertyChanged(ByVal sender As DeviceUnderTest, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.Outcome)
+            Case NameOf(Ttm.DeviceUnderTest.Outcome)
                 If sender.Outcome = MeasurementOutcomes.None Then
                     Me.Clear()
                 End If
@@ -100,19 +100,19 @@ Public Class ThermalTransientHeader
     Private Sub OnPropertyChanged(ByVal sender As ThermalTransient, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.TimeConstant)
+            Case NameOf(Ttm.ThermalTransient.TimeConstant)
                 Me._TimeConstantTextBox.Text = sender.TimeConstantCaption
-            Case NameOf(sender.Asymptote)
+            Case NameOf(Ttm.ThermalTransient.Asymptote)
                 Me._AsymptoteTextBox.Text = sender.AsymptoteCaption
-            Case NameOf(sender.EstimatedVoltage)
+            Case NameOf(Ttm.ThermalTransient.EstimatedVoltage)
                 Me._EstimatedVoltageTextBox.Text = sender.EstimatedVoltageCaption
-            Case NameOf(sender.CorrelationCoefficient)
+            Case NameOf(Ttm.ThermalTransient.CorrelationCoefficient)
                 Me._CorrelationCoefficientTextBox.Text = sender.CorrelationCoefficientCaption
-            Case NameOf(sender.StandardError)
+            Case NameOf(Ttm.ThermalTransient.StandardError)
                 Me._StandardErrorTextBox.Text = sender.StandardErrorCaption
-            Case NameOf(sender.Iterations)
+            Case NameOf(Ttm.ThermalTransient.Iterations)
                 Me._IterationsCountTextBox.Text = sender.IterationsCaption
-            Case NameOf(sender.OptimizationOutcome)
+            Case NameOf(Ttm.ThermalTransient.OptimizationOutcome)
                 Me._OutcomeTextBox.Text = sender.OptimizationOutcomeCaption
                 Me._ToolTip.SetToolTip(Me._OutcomeTextBox, sender.OptimizationOutcomeDescription)
         End Select

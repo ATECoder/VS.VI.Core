@@ -98,11 +98,11 @@ Public Class SimpleReadWritePanel
     Private Overloads Sub OnPropertyChanged(ByVal sender As VI.SessionBase, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.TerminationCharacter)
+                Case NameOf(VI.SessionBase.TerminationCharacter)
                     Me.UpdateTermination(sender)
-                Case NameOf(sender.TerminationCharacterEnabled)
+                Case NameOf(VI.SessionBase.TerminationCharacterEnabled)
                     Me.UpdateTermination(sender)
-                Case NameOf(sender.IsSessionOpen)
+                Case NameOf(VI.SessionBase.IsSessionOpen)
                     If sender.IsSessionOpen Then
                         Me.UpdateTermination(sender)
                     End If
@@ -208,14 +208,11 @@ Public Class SimpleReadWritePanel
     Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.ReceivedMessage)
-                Case NameOf(sender.SentMessage)
-                Case NameOf(sender.StatusMessage)
+                Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
                     Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
                     Me._StatusLabel.ToolTipText = sender.StatusMessage
-                Case NameOf(sender.ServiceRequestValue)
+                Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
                     Me._ServiceRequestStatusLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
-                Case NameOf(sender.ElapsedTime)
             End Select
         End If
     End Sub
@@ -471,7 +468,7 @@ Public Class SimpleReadWritePanel
     ''' <param name="propertyName"> Name of the property. </param>
     Private Overloads Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
+        If String.Equals(propertyName, NameOf(isr.Core.Pith.TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If

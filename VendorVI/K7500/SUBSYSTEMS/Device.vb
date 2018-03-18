@@ -154,12 +154,13 @@ Public Class Device
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Setting device to {Me.StatusSubsystem.ExpectedLanguage} language;. ")
                 Me.StatusSubsystem.ApplyLanguage(Me.StatusSubsystem.ExpectedLanguage)
                 If Not Me.StatusSubsystem.LanguageValidated Then
-                    e.RegisterCancellation($"Incorrect {NameOf(Me.StatusSubsystem.Language)} settings {Me.StatusSubsystem.Language}; must be {Me.StatusSubsystem.ExpectedLanguage}")
+                    e.RegisterCancellation($"Incorrect {NameOf(VI.StatusSubsystemBase.Language)} settings {Me.StatusSubsystem.Language}; must be {Me.StatusSubsystem.ExpectedLanguage}")
                 End If
             End If
             If Not e.Cancel Then
                 Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
                 ' better add before the format subsystem, which reset initializes the readings.
+
                 Me.MeasureSubsystem = New MeasureSubsystem(Me.StatusSubsystem)
                 ' the measure subsystem readings are set when the format system is reset.
                 Me.FormatSubsystem = New FormatSubsystem(Me.StatusSubsystem)
@@ -207,11 +208,12 @@ Public Class Device
             Me.StatusSubsystem.QueryLanguage()
             ' report but do not cancel allowing the calling program to take action and reset the device.
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                              $"Incorrect {NameOf(Me.StatusSubsystem.Language)} settings {Me.StatusSubsystem.Language}; must be {Me.StatusSubsystem.ExpectedLanguage}")
+                              $"Incorrect {NameOf(VI.StatusSubsystemBase.Language)} settings {Me.StatusSubsystem.Language}; must be {Me.StatusSubsystem.ExpectedLanguage}")
         End If
     End Sub
 
 #End Region
+
 
 #Region " SUBSYSTEMS "
 
@@ -465,7 +467,7 @@ Public Class Device
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.Elements)
+            Case NameOf(K7500.FormatSubsystem.Elements)
                 Me.MeasureSubsystem.Readings.Initialize(subsystem.Elements)
         End Select
     End Sub
@@ -593,7 +595,7 @@ Public Class Device
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.FunctionMode)
+            Case NameOf(K7500.SenseSubsystem.FunctionMode)
                 Me.OnFunctionModesChanged(subsystem)
         End Select
     End Sub
@@ -766,8 +768,8 @@ Public Class Device
     ''' <summary> Applies the settings. </summary>
     Protected Overrides Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
-        Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
-        Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))
+        Me.OnSettingsPropertyChanged(settings, NameOf(My.MySettings.TraceLogLevel))
+        Me.OnSettingsPropertyChanged(settings, NameOf(My.MySettings.TraceShowLevel))
     End Sub
 
     ''' <summary> Handle the Platform property changed event. </summary>
@@ -776,25 +778,25 @@ Public Class Device
     Private Sub OnSettingsPropertyChanged(ByVal sender As My.MySettings, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.TraceLogLevel)
+            Case NameOf(My.MySettings.TraceLogLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Logger, sender.TraceLogLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace log level changed to {sender.TraceLogLevel}")
-            Case NameOf(sender.TraceShowLevel)
+            Case NameOf(My.MySettings.TraceShowLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
-            Case NameOf(sender.InitializeTimeout)
+            Case NameOf(My.MySettings.InitializeTimeout)
                 Me.StatusSubsystemBase.InitializeTimeout = sender.InitializeTimeout
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitializeTimeout}")
-            Case NameOf(sender.ResetRefractoryPeriod)
+            Case NameOf(My.MySettings.ResetRefractoryPeriod)
                 Me.StatusSubsystemBase.ResetRefractoryPeriod = sender.ResetRefractoryPeriod
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ResetRefractoryPeriod}")
-            Case NameOf(sender.DeviceClearRefractoryPeriod)
+            Case NameOf(My.MySettings.DeviceClearRefractoryPeriod)
                 Me.StatusSubsystemBase.DeviceClearRefractoryPeriod = sender.DeviceClearRefractoryPeriod
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.DeviceClearRefractoryPeriod}")
-            Case NameOf(sender.InitRefractoryPeriod)
+            Case NameOf(My.MySettings.InitRefractoryPeriod)
                 Me.StatusSubsystemBase.InitRefractoryPeriod = sender.InitRefractoryPeriod
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.InitRefractoryPeriod}")
-            Case NameOf(sender.ClearRefractoryPeriod)
+            Case NameOf(My.MySettings.ClearRefractoryPeriod)
                 Me.StatusSubsystemBase.ClearRefractoryPeriod = sender.ClearRefractoryPeriod
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} changed to {sender.ClearRefractoryPeriod}")
         End Select

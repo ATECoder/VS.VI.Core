@@ -124,53 +124,6 @@ Public Class ResourceTests
 
 #Region " VERSION TESTS "
 
-    <TestMethod()>
-    Public Sub VisaVersionTest()
-        Dim value As String = ""
-        Dim rv As RegistryView = RegistryView.Registry32
-        If Environment.Is64BitOperatingSystem Then
-            rv = RegistryView.Registry64
-        Else
-            rv = RegistryView.Registry32
-        End If
-        Dim readValue As Object = Nothing
-        Dim defaultValue As String = "0.0.0"
-#If True Then
-        Using regKeyBase As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, rv)
-            Using regKey As RegistryKey = regKeyBase.OpenSubKey("SOFTWARE\National Instruments\NI-VISA\", RegistryKeyPermissionCheck.ReadSubTree)
-                readValue = regKey.GetValue("CurrentVersion", CObj(defaultValue))
-            End Using
-        End Using
-#Else
-        Using regKeyBase As RegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, rv)
-            Using regKey As RegistryKey = regKeyBase.OpenSubKey("SOFTWARE\Microsoft\Cryptography", RegistryKeyPermissionCheck.ReadSubTree)
-                readValue = regKey.GetValue("MachineGuid", CObj(defaultValue))
-            End Using
-        End Using
-#End If
-        If readValue IsNot Nothing AndAlso readValue.ToString() <> "defaultValue" Then
-            value = readValue.ToString()
-            Assert.AreEqual(TestInfo.NationalInstrumentVisaVersion, value, $"Value set to {value}")
-        End If
-#If False Then
-        Dim varsionString As Object = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\National Instruments\NI-VISA\", "CurrentVersion", "0.0.0.0")
-        Assert.AreEqual("17.0.0", varsionString, $"Value set to {varsionString}")
-#End If
-        Dim version As Version = VI.ResourcesManagerBase.ReadVendorVersion
-        Dim expectedVersion As Version = New Version(TestInfo.NationalInstrumentVisaVersion)
-        Assert.IsTrue(version.Equals(expectedVersion), $"Vendor version {version.ToString} equals to {expectedVersion}")
-
-        Dim fileVersionInfo As FileVersionInfo = VI.ResourcesManagerBase.ReadFoundationSystemFileVersionInfo
-        If Environment.Is64BitOperatingSystem Then
-            expectedVersion = New Version(TestInfo.FoundationVisaFileVersion64)
-        Else
-            expectedVersion = New Version(TestInfo.FoundationVisaFileVersion32)
-        End If
-        Assert.AreEqual(expectedVersion.ToString, $"{fileVersionInfo.FileMajorPart}.{fileVersionInfo.FileMinorPart}.{fileVersionInfo.FileBuildPart}",
-                        $"Foundation file {VI.ResourcesManagerBase.FoundationSystemFileFullName} version set to {fileVersionInfo.FileVersion}")
-
-    End Sub
-
     ''' <summary> (Unit Test Method) validates the visa version test. </summary>
     <TestMethod()>
     Public Sub ValidateVisaVersionTest()

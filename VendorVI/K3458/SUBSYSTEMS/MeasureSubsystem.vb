@@ -111,7 +111,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As AutoZeroMode?)
             If Not Me.AutoZeroMode.Equals(value) Then
                 Me._AutoZeroMode = value
-                Me.SafePostPropertyChanged(NameOf(Me.AutoZeroMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -198,7 +198,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As MathMode?)
             If Not Me.MathMode.Equals(value) Then
                 Me._MathMode = value
-                Me.SafePostPropertyChanged(NameOf(Me.MathMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -249,7 +249,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As SenseFunctionMode?)
             If Not Me.SenseFunctionMode.Equals(value) Then
                 Me._SenseFunctionMode = value
-                Me.SafePostPropertyChanged(NameOf(Me.SenseFunctionMode))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -344,7 +344,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.PowerLineCycles, value) Then
                 Me._PowerLineCycles = value
-                Me.SafePostPropertyChanged(NameOf(Me.PowerLineCycles))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -395,7 +395,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.StoreMathValue, value) Then
                 Me._StoreMathValue = value
-                Me.SafePostPropertyChanged(NameOf(Me.StoreMathValue))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -411,7 +411,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As StoreMathRegister?)
             If Not Me.StoreMathRegister.Equals(value) Then
                 Me._StoreMathRegister = value
-                Me.SafePostPropertyChanged(NameOf(Me.StoreMathRegister))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

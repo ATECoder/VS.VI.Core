@@ -278,22 +278,24 @@ Public MustInherit Class StatusSubsystemBase
     Protected Overridable Sub OnSessionPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.ServiceRequestStatus)
-                Me.SafeSendPropertyChanged(NameOf(Me.ServiceRequestStatus))
-            Case NameOf(sender.ErrorAvailable)
+            Case NameOf(isr.VI.SessionBase.ServiceRequestStatus)
+                Me.SafeSendPropertyChanged(NameOf(isr.VI.SessionBase.ServiceRequestStatus))
+            Case NameOf(isr.VI.SessionBase.ErrorAvailable)
                 ' this event occurs if value changed or is still on.
-                Me.SafeSendPropertyChanged(NameOf(Me.ErrorAvailable))
-            Case NameOf(sender.MeasurementAvailable)
+                Me.SafeSendPropertyChanged(NameOf(isr.VI.SessionBase.ErrorAvailable))
+            Case NameOf(isr.VI.SessionBase.MeasurementAvailable)
                 ' this event occurs if value changed or is still on.
-                Me.SafeSendPropertyChanged(NameOf(Me.MeasurementAvailable))
-            Case NameOf(sender.MessageAvailable)
+
+                Me.SafeSendPropertyChanged(NameOf(isr.VI.SessionBase.MeasurementAvailable))
+            Case NameOf(isr.VI.SessionBase.MessageAvailable)
                 ' this event occurs if value changed or is still on.
-                Me.SafeSendPropertyChanged(NameOf(Me.MessageAvailable))
-            Case NameOf(sender.StandardEventAvailable)
+                Me.SafeSendPropertyChanged(NameOf(isr.VI.SessionBase.MessageAvailable))
+            Case NameOf(isr.VI.SessionBase.StandardEventAvailable)
                 ' this event occurs if value changed or is still on.
-                Me.SafeSendPropertyChanged(NameOf(Me.StandardEventAvailable))
+                Me.SafeSendPropertyChanged(NameOf(isr.VI.SessionBase.StandardEventAvailable))
         End Select
     End Sub
+
 
     ''' <summary> Handles the Session property changed event. </summary>
     ''' <param name="sender"> Source of the event. </param>
@@ -363,9 +365,10 @@ Public MustInherit Class StatusSubsystemBase
     Public Overridable Sub ClearErrorCache()
         Me.DeviceErrorQueue.Clear()
         Me.DeviceErrorBuilder = New System.Text.StringBuilder
-        Me.SafePostPropertyChanged(NameOf(Me.DeviceErrors))
-        Me.SafePostPropertyChanged(NameOf(Me.LastDeviceError))
+        Me.SafePostPropertyChanged(NameOf(isr.VI.statusSubsystemBase.DeviceErrors))
+        Me.SafePostPropertyChanged(NameOf(isr.VI.statusSubsystemBase.LastDeviceError))
     End Sub
+
 
     ''' <summary> Gets the last message that was sent before the error. </summary>
     ''' <value> The message sent before error. </value>
@@ -385,12 +388,13 @@ Public MustInherit Class StatusSubsystemBase
             If Me.DeviceErrorBuilder.Length > 0 Then Me.DeviceErrorBuilder.AppendLine()
             Me.DeviceErrorBuilder.Append(value)
         End If
-        Me.SafePostPropertyChanged(NameOf(Me.DeviceErrors))
+        Me.SafePostPropertyChanged(NameOf(VI.StatusSubsystemBase.DeviceErrors))
     End Sub
 
     ''' <summary> Gets or sets a report of the error stored in the cached error queue. </summary>
     ''' <value> The cached device errors. </value>
     Public ReadOnly Property DeviceErrors() As String
+
         Get
             Dim builder As New System.Text.StringBuilder(Me.DeviceErrorBuilder.ToString)
             If Me.StandardEventStatus.GetValueOrDefault(0) <> 0 Then
@@ -480,9 +484,10 @@ Public MustInherit Class StatusSubsystemBase
                     Me.AppendDeviceErrorMessage(builder.ToString)
                 End If
             End If
-            If notifyLastError Then Me.SafePostPropertyChanged(NameOf(Me.LastDeviceError))
+            If notifyLastError Then Me.SafePostPropertyChanged(NameOf(isr.VI.statusSubsystemBase.LastDeviceError))
             Return Me.DeviceErrors
         Catch
+
             Throw
         Finally
             Me.ReadingDeviceErrors = False
@@ -543,8 +548,9 @@ Public MustInherit Class StatusSubsystemBase
                     Me.AppendDeviceErrorMessage(builder.ToString)
                 End If
             End If
-            If notifyLastError Then Me.SafePostPropertyChanged(NameOf(Me.LastDeviceError))
+            If notifyLastError Then Me.SafePostPropertyChanged(NameOf(isr.VI.statusSubsystemBase.LastDeviceError))
             Return Me.DeviceErrors
+
         Catch
             Throw
         Finally
@@ -571,7 +577,8 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="value"> The value. </param>
     Public Sub AppendLastDeviceErrorMessage(ByVal value As String)
         Me.DeviceErrorBuilder.AppendLine(value)
-        Me.SafePostPropertyChanged(NameOf(Me.LastDeviceError))
+        Me.SafePostPropertyChanged(NameOf(isr.VI.statusSubsystemBase.LastDeviceError))
+
     End Sub
 
     ''' <summary> Enqueue last error. </summary>

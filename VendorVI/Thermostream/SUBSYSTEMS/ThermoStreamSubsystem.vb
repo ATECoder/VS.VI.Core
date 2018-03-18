@@ -301,7 +301,7 @@ Public Class ThermostreamSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.CycleScreen, value) Then
                 Me._CycleScreen = value
-                Me.SafePostPropertyChanged(NameOf(Me.CycleScreen))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -362,7 +362,7 @@ Public Class ThermostreamSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.OperatorScreen, value) Then
                 Me._OperatorScreen = value
-                Me.SafePostPropertyChanged(NameOf(Me.OperatorScreen))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -924,7 +924,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsCycleCompleted Then
                 Me._IsCycleCompleted = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsCycleCompleted))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -941,7 +941,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsCyclesCompleted Then
                 Me._IsCyclesCompleted = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsCyclesCompleted))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -958,7 +958,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsTestTimeElapsed Then
                 Me._IsTestTimeElapsed = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsTestTimeElapsed))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -975,7 +975,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsCyclingStopped Then
                 Me._IsCyclingStopped = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsCyclingStopped))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -994,7 +994,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsAtTemperature Then
                 Me._IsAtTemperature = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsAtTemperature))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -1010,7 +1010,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsNotAtTemperature Then
                 Me._IsNotAtTemperature = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsNotAtTemperature))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -1253,7 +1253,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsRampMode Then
                 Me._IsRampMode = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsRampMode))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1270,7 +1270,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsReady Then
                 Me._IsReady = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsReady))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1288,7 +1288,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsHeadUp Then
                 Me._IsHeadUp = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsHeadUp))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1305,7 +1305,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsManualMode Then
                 Me._IsManualMode = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsManualMode))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1322,7 +1322,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsHeatOnlyMode Then
                 Me._IsHeatOnlyMode = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsHeatOnlyMode))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -1339,7 +1339,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsDutControl Then
                 Me._IsDutControl = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsDutControl))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -1355,7 +1355,7 @@ Public Class ThermostreamSubsystem
         Set(value As Boolean)
             If value <> Me.IsFlowOn Then
                 Me._IsFlowOn = value
-                Me.SafePostPropertyChanged(NameOf(Me.IsFlowOn))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

@@ -172,7 +172,7 @@ Public Class ResourceSelectorConnector
         Me._ToggleConnectionButton.Enabled = Me.Connectable
         Me._ToolStrip.Invalidate()
         Me._IsConnected = affirmative
-        Me.SafePostPropertyChanged(NameOf(Me.IsConnected))
+        Me.SafePostPropertyChanged(NameOf(Instrument.ResourceSelectorConnector.IsConnected))
     End Sub
 
     ''' <summary> Executes the toggle connection action. </summary>

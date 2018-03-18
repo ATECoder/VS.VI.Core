@@ -59,7 +59,7 @@ Public Class SystemSubsystem
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.BeeperEnabled, value) Then
                 Me._BeeperEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.BeeperEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

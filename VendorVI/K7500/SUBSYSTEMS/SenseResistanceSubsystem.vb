@@ -150,15 +150,16 @@ End Class
 ''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
 ''' </license>
+<CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")>
 Public Structure ResistanceRange
-    Public Sub New(ByVal mode As ResistanceRangeMode, ByVal current As Double, ByVal Range As Double)
+    Public Sub New(ByVal mode As ResistanceRangeMode, ByVal current As Double, ByVal range As Double)
         Me.Mode = mode
         Me.Current = current
-        Me.Range = Range
+        Me.Range = range
     End Sub
-    Public Mode As ResistanceRangeMode
-    Public Current As Double
-    Public Range As Double
+    Public Property Mode As ResistanceRangeMode
+    Public Property Current As Double
+    Public Property Range As Double
     Public ReadOnly Property IsAutoRange As Boolean
         Get
             Return Me.Mode = ResistanceRangeMode.R0

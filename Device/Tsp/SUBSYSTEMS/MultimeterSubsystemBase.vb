@@ -590,11 +590,12 @@ Public MustInherit Class MultimeterSubsystemBase
     ''' <returns> The <see cref="MultimeterFunctionMode">Multimeter Function Mode</see> or none if unknown. </returns>
     Public Function ApplyFunctionMode(ByVal value As MultimeterFunctionMode) As MultimeterFunctionMode?
         Me.WriteFunctionMode(value)
+        Me.FunctionMode = Me.QueryFunctionMode()
         ' changing the function mode changes range, auto delay mode and open detector enabled. 
         Me.QueryRange()
         Me.QueryAutoDelayMode()
         Me.QueryOpenDetectorEnabled()
-        Return FunctionMode
+        Return Me.FunctionMode
     End Function
 
     ''' <summary> Writes the Multimeter Function Mode without reading back the value from the device. </summary>

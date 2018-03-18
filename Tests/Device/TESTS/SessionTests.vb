@@ -12,57 +12,58 @@
 <TestClass()>
 Public Class SessionTests
 
-    Private testContextInstance As TestContext
+#Region " CONSTRUCTION AND CLEANUP "
+
+    ''' <summary> My class initialize. </summary>
+    ''' <param name="testContext"> Gets or sets the test context which provides information about
+    '''                            and functionality for the current test run. </param>
+    ''' <remarks>Use ClassInitialize to run code before running the first test in the class</remarks>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    <ClassInitialize()>
+    Public Shared Sub MyClassInitialize(ByVal testContext As TestContext)
+        Try
+            TestInfo.InitializeTraceListener()
+        Catch
+            ' cleanup to meet strong guarantees
+            Try
+                MyClassCleanup()
+            Finally
+            End Try
+            Throw
+        End Try
+    End Sub
+
+    ''' <summary> My class cleanup. </summary>
+    ''' <remarks> Use ClassCleanup to run code after all tests in a class have run. </remarks>
+    <ClassCleanup()>
+    Public Shared Sub MyClassCleanup()
+    End Sub
+
+    ''' <summary> Initializes before each test runs. </summary>
+    <TestInitialize()> Public Sub MyTestInitialize()
+        Assert.IsTrue(TestInfo.Exists, "App.Config not found")
+    End Sub
+
+    ''' <summary> Cleans up after each test has run. </summary>
+    <TestCleanup()> Public Sub MyTestCleanup()
+    End Sub
 
     '''<summary>
     '''Gets or sets the test context which provides
     '''information about and functionality for the current test run.
     '''</summary>
     Public Property TestContext() As TestContext
-        Get
-            Return testContextInstance
-        End Get
-        Set(value As TestContext)
-            testContextInstance = value
-        End Set
-    End Property
 
-#Region "Additional test attributes"
-    '
-    'You can use the following additional attributes as you write your tests:
-    '
-    'Use ClassInitialize to run code before running the first test in the class
-    '<ClassInitialize()>  _
-    'Public Shared Sub MyClassInitialize(ByVal testContext As TestContext)
-    'End Sub
-    '
-    'Use ClassCleanup to run code after all tests in a class have run
-    '<ClassCleanup()>  _
-    'Public Shared Sub MyClassCleanup()
-    'End Sub
-    '
-    'Use TestInitialize to run code before running each test
-    '<TestInitialize()>  _
-    'Public Sub MyTestInitialize()
-    'End Sub
-    '
-    'Use TestCleanup to run code after each test has run
-    '<TestCleanup()>  _
-    'Public Sub MyTestCleanup()
-    'End Sub
-    '
 #End Region
 
-    '''<summary>
-    '''A test for Initial Termination
-    '''</summary>
+#Region " TERMINATION "
+
     <TestMethod()>
     Public Sub InitialTerminationTest()
-        Dim resourceName As String = "GPIB0::22::INSTR"
-        Dim target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
-        target.OpenSession(resourceName, Threading.SynchronizationContext.Current)
-        Assert.AreEqual(CByte(AscW(target.Termination(0))), target.TerminationCharacter)
-        Assert.AreEqual(target.Termination(0), Convert.ToChar(target.TerminationCharacter))
+        Using target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
+            Assert.AreEqual(CByte(AscW(Environment.NewLine.ToCharArray()(1))), CByte(AscW(target.Termination(0))),
+                            "Initial termination character set to line feed")
+        End Using
     End Sub
 
     '''<summary>
@@ -70,14 +71,19 @@ Public Class SessionTests
     '''</summary>
     <TestMethod()>
     Public Sub NewTerminationTest()
-        Dim target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
-        Dim values() As Char = Environment.NewLine.ToCharArray
-        target.NewTermination(values)
-        Assert.AreEqual(values.Length, target.Termination.Count)
-        For i As Integer = 0 To values.Length - 1
-            Assert.AreEqual(CByte(AscW(values(i))), CByte(AscW(target.Termination(i))))
-        Next
+        Using target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
+            Dim values() As Char = Environment.NewLine.ToCharArray
+            target.NewTermination(values)
+            Assert.AreEqual(values.Length, target.Termination.Count)
+            For i As Integer = 0 To values.Length - 1
+                Assert.AreEqual(CByte(AscW(values(i))), CByte(AscW(target.Termination(i))))
+            Next
+        End Using
     End Sub
+
+#End Region
+
+#Region " PARSE "
 
     '''<summary>
     '''A test for ParseEnumValue
@@ -92,5 +98,7 @@ Public Class SessionTests
     Public Sub ParseEnumValueTest()
         SessionTests.ParseEnumValueTestHelper(Of Diagnostics.TraceEventType)("2", TraceEventType.Error)
     End Sub
+
+#End Region
 
 End Class

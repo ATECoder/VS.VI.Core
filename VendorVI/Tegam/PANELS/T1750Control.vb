@@ -184,13 +184,13 @@ Public Class T1750Control
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionServiceRequestEventEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionServiceRequestEventEnabled)
                 Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
-            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+            Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
-            Case NameOf(device.SessionMessagesTraceEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionMessagesTraceEnabled)
                 Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
-            Case NameOf(device.ServiceRequestEnableBitmask)
+            Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
                 Me._ServiceRequestEnableNumeric.Value = device.ServiceRequestEnableBitmask
                 Me._ServiceRequestEnableNumeric.ToolTipText = $"SRE:0b{Convert.ToString(device.ServiceRequestEnableBitmask, 2),8}".Replace(" ", "0")
         End Select
@@ -338,33 +338,33 @@ Public Class T1750Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As MeasureSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.MaximumTrialsCount), NameOf(subsystem.InitialDelay),
-                 NameOf(subsystem.MeasurementDelay), NameOf(subsystem.MaximumDifference)
+            Case NameOf(VI.Tegam.MeasureSubsystem.MaximumTrialsCount), NameOf(VI.Tegam.MeasureSubsystem.InitialDelay),
+                 NameOf(VI.Tegam.MeasureSubsystem.MeasurementDelay), NameOf(VI.Tegam.MeasureSubsystem.MaximumDifference)
                 Me.OnMeasureSettingsChanged(subsystem)
-            Case NameOf(subsystem.LastReading)
+            Case NameOf(VI.Tegam.MeasureSubsystem.LastReading)
                 Me.OnLastReadingAvailable(subsystem)
-            Case NameOf(subsystem.OverRangeOpenWire)
+            Case NameOf(VI.Tegam.MeasureSubsystem.OverRangeOpenWire)
                 ' Me.onOverRangeOpenWire()
                 Me.OnMeasurementAvailable(subsystem)
-            Case NameOf(subsystem.RangeMode)
+            Case NameOf(VI.Tegam.MeasureSubsystem.RangeMode)
                 If subsystem.RangeMode.HasValue Then
                     Me._RangeComboBox.SafeSilentSelectItem(subsystem.RangeMode.Value.Description)
                     Me._RangeComboBox.Refresh()
                 End If
-            Case NameOf(subsystem.Resistance)
+            Case NameOf(VI.Tegam.MeasureSubsystem.Resistance)
                 If subsystem.Resistance.HasValue AndAlso Not subsystem?.OverRangeOpenWire.GetValueOrDefault(False) Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                        "Parsed resistance value;. Resistance = {0}", subsystem.Resistance.Value)
                 End If
-            Case NameOf(subsystem.TriggerMode)
+            Case NameOf(VI.Tegam.MeasureSubsystem.TriggerMode)
                 If subsystem.TriggerMode.HasValue Then
                     Me._TriggerCombo.SafeSilentSelectItem(subsystem.TriggerMode.Value.Description)
                     Me._TriggerCombo.Refresh()
                 End If
-            Case NameOf(subsystem.MeasurementAvailable)
+            Case NameOf(VI.Tegam.MeasureSubsystem.MeasurementAvailable)
                 ' Me.onMeasurementAvailable()
                 Me.OnMeasurementAvailable(subsystem)
-            Case NameOf(subsystem.SupportedCommands)
+            Case NameOf(VI.Tegam.MeasureSubsystem.SupportedCommands)
                 Me.OnSupportedCommandsChanged(subsystem)
         End Select
         Windows.Forms.Application.DoEvents()
@@ -405,18 +405,18 @@ Public Class T1750Control
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
                 End If
-            Case NameOf(subsystem.ServiceRequestStatus)
+            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
                 Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(subsystem.StandardEventStatus)
+            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
                 Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
@@ -928,14 +928,11 @@ Public Class T1750Control
     Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.ReceivedMessage)
-                Case NameOf(sender.SentMessage)
-                Case NameOf(sender.StatusMessage)
+                Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
                     Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
                     Me._StatusLabel.ToolTipText = sender.StatusMessage
-                Case NameOf(sender.ServiceRequestValue)
+                Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
                     Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
-                Case NameOf(sender.ElapsedTime)
             End Select
         End If
     End Sub

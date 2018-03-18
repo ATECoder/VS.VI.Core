@@ -24,7 +24,7 @@ Public Class Meter
     Public Sub New()
         MyBase.New()
         Me._MasterDevice = New Device
-        Me.ConstructorSafeTalkerSetter(New TraceMessageTalker)
+        Me.ConstructorSafeSetter(New TraceMessageTalker)
         AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
     End Sub
 
@@ -246,7 +246,7 @@ Public Class Meter
     Private Sub OnPropertyChanged(ByVal sender As Device, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.IsDeviceOpen)
+            Case NameOf(K2600.Device.IsDeviceOpen)
                 If sender.IsDeviceOpen Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "{0} open;. ", sender.ResourceName)
                 Else
@@ -892,7 +892,7 @@ Public Class Meter
     Private Sub OnPropertyChanged(ByVal sender As MeasureSequencer, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.MeasurementSequenceState)
+            Case NameOf(Ttm.MeasureSequencer.MeasurementSequenceState)
                 Me.onMeasurementSequenceStateChanged(sender.MeasurementSequenceState)
         End Select
     End Sub
@@ -1049,11 +1049,11 @@ Public Class Meter
     Private Sub OnPropertyChanged(ByVal sender As TriggerSequencer, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.AssertRequested)
+            Case NameOf(Ttm.TriggerSequencer.AssertRequested)
                 If sender.AssertRequested Then
                     Me.MasterDevice.Session.AssertTrigger()
                 End If
-            Case NameOf(sender.TriggerSequenceState)
+            Case NameOf(Ttm.TriggerSequencer.TriggerSequenceState)
                 Me.onTriggerSequenceStateChanged(sender.TriggerSequenceState)
         End Select
     End Sub
@@ -1186,8 +1186,8 @@ Public Class Meter
     ''' <summary> Applies the settings. </summary>
     Protected Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
-        Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceLogLevel))
-        Me.OnSettingsPropertyChanged(settings, NameOf(settings.TraceShowLevel))
+        Me.OnSettingsPropertyChanged(settings, NameOf(My.MySettings.TraceLogLevel))
+        Me.OnSettingsPropertyChanged(settings, NameOf(My.MySettings.TraceShowLevel))
     End Sub
 
     ''' <summary> Handle the Platform property changed event. </summary>
@@ -1196,10 +1196,10 @@ Public Class Meter
     Private Sub OnSettingsPropertyChanged(ByVal sender As My.MySettings, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.TraceLogLevel)
+            Case NameOf(My.MySettings.TraceLogLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Logger, sender.TraceLogLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace log level changed to {sender.TraceLogLevel}")
-            Case NameOf(sender.TraceShowLevel)
+            Case NameOf(My.MySettings.TraceShowLevel)
                 Me.ApplyTalkerTraceLevel(Core.Pith.ListenerType.Display, sender.TraceShowLevel)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Trace show level changed to {sender.TraceShowLevel}")
         End Select

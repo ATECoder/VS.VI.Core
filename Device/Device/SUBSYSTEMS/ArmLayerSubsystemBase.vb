@@ -103,7 +103,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.ArmCount, value) Then
                 Me._ArmCount = value
-                Me.SafePostPropertyChanged(NameOf(Me.ArmCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -161,7 +161,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As Direction?)
             If Not Me.Direction.Equals(value) Then
                 Me._Direction = value
-                Me.SafePostPropertyChanged(NameOf(Me.Direction))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -215,7 +215,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Set(ByVal value As ArmSources)
             If Not Me.SupportedArmSources.Equals(value) Then
                 Me._SupportedArmSources = value
-                Me.SafePostPropertyChanged(NameOf(Me.SupportedArmSources))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -244,7 +244,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As ArmSources?)
             If Not Me.ArmSource.Equals(value) Then
                 Me._ArmSource = value
-                Me.SafePostPropertyChanged(NameOf(Me.ArmSource))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -313,7 +313,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Nullable.Equals(Me.Delay, value) Then
                 Me._Delay = value
-                Me.SafePostPropertyChanged(NameOf(Me.Delay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -372,7 +372,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.InputLineNumber, value) Then
                 Me._InputLineNumber = value
-                Me.SafePostPropertyChanged(NameOf(Me.InputLineNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -426,7 +426,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.OutputLineNumber, value) Then
                 Me._OutputLineNumber = value
-                Me.SafePostPropertyChanged(NameOf(Me.OutputLineNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -481,7 +481,7 @@ Public MustInherit Class ArmLayerSubsystemBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Me.TimerInterval.Equals(value) Then
                 Me._TimerInterval = value
-                Me.SafePostPropertyChanged(NameOf(Me.TimerInterval))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

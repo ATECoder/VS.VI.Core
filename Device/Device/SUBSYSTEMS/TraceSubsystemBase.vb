@@ -374,7 +374,7 @@ Public MustInherit Class TraceSubsystemBase
                     Dim newReadings As IEnumerable(Of BufferReading) = Me.QueryBufferReadings(Me.BufferReadings.Count + 1, last)
                     Me.BufferReadings.Add(newReadings)
                     Me.EnqueueRange(newReadings)
-                    Me.SafePostPropertyChanged(NameOf(BufferReadingsCount))
+                    Me.SafePostPropertyChanged(NameOf(VI.TraceSubsystemBase.BufferReadingsCount))
                 End If
             End If
             Threading.Thread.Sleep(pollPeriod)

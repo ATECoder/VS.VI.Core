@@ -169,13 +169,13 @@ Public Class ThermoStreamControl
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionServiceRequestEventEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionServiceRequestEventEnabled)
                 Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
-            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+            Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
-            Case NameOf(device.SessionMessagesTraceEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionMessagesTraceEnabled)
                 Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
-            Case NameOf(device.ServiceRequestEnableBitmask)
+            Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
                 Me._ServiceRequestEnableNumeric.Value = device.ServiceRequestEnableBitmask
                 Me._ServiceRequestEnableNumeric.ToolTipText = $"SRE:0b{Convert.ToString(device.ServiceRequestEnableBitmask, 2),8}".Replace(" ", "0")
         End Select
@@ -257,41 +257,41 @@ Public Class ThermoStreamControl
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As ThermostreamSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Select Case propertyName
-            Case NameOf(subsystem.IsHeadUp)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.IsHeadUp)
                 Me._HeadDownCheckBox.SafeCheckedSetter(Not subsystem.IsHeadUp)
-            Case NameOf(subsystem.IsReady)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.IsReady)
                 Me._ReadyCheckBox.SafeCheckedSetter(subsystem.IsReady)
-            Case NameOf(subsystem.CycleCount)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.CycleCount)
                 Me._CycleCountNumeric.SafeValueSetter(CType(subsystem.CycleCount, Decimal?))
-            Case NameOf(subsystem.DeviceSensorType)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.DeviceSensorType)
                 Me._DeviceSensorTypeSelector.ComboBox.SafeSelectValue(subsystem.DeviceSensorType.GetValueOrDefault(0))
-            Case NameOf(subsystem.DeviceThermalConstant)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.DeviceThermalConstant)
                 Me._DeviceThermalConstantSelector.SafeValueSetter(CType(subsystem.DeviceThermalConstant, Decimal?))
-            Case NameOf(subsystem.MaximumTestTime)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.MaximumTestTime)
                 Me._MaxTestTimeNumeric.SafeValueSetter(CType(subsystem.MaximumTestTime, Decimal?))
-            Case NameOf(subsystem.RampRate)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.RampRate)
                 Me._RampRateNumeric.SafeValueSetter(CType(subsystem.RampRate, Decimal?))
-            Case NameOf(subsystem.SetpointNumber)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.SetpointNumber)
                 Me._SetpointNumberNumeric.SafeValueSetter(CType(subsystem.SetpointNumber, Decimal?))
-            Case NameOf(subsystem.Setpoint)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.Setpoint)
                 Me._SetpointNumeric.SafeValueSetter(CType(subsystem.Setpoint, Decimal?))
-            Case NameOf(subsystem.SetpointWindow)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.SetpointWindow)
                 Me._SetpointWindowNumeric.SafeValueSetter(CType(subsystem.SetpointWindow, Decimal?))
-            Case NameOf(subsystem.SoakTime)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.SoakTime)
                 Me._SoakTimeNumeric.SafeValueSetter(CType(subsystem.SoakTime, Decimal?))
-            Case NameOf(subsystem.IsAtTemperature)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.IsAtTemperature)
                 Me._AtTempCheckBox.SafeCheckedSetter(subsystem.IsAtTemperature)
-            Case NameOf(subsystem.IsCycleCompleted)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.IsCycleCompleted)
                 Me._CycleCompletedCheckBox1.CheckBoxControl.SafeCheckedSetter(subsystem.IsCycleCompleted)
-            Case NameOf(subsystem.IsCyclesCompleted)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.IsCyclesCompleted)
                 Me._CyclesCompletedCheckBox1.CheckBoxControl.SafeCheckedSetter(subsystem.IsCyclesCompleted)
-            Case NameOf(subsystem.IsCyclingStopped)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.IsCyclingStopped)
                 Me._CyclingStoppedCheckBox.CheckBoxControl.SafeCheckedSetter(subsystem.IsCyclingStopped)
-            Case NameOf(subsystem.IsTestTimeElapsed)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.IsTestTimeElapsed)
                 Me._TestTimeElapsedCheckBox.SafeCheckedSetter(subsystem.IsTestTimeElapsed)
-            Case NameOf(subsystem.IsNotAtTemperature)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.IsNotAtTemperature)
                 Me._NotAtTempCheckBox.SafeCheckedSetter(subsystem.IsNotAtTemperature)
-            Case NameOf(subsystem.Temperature)
+            Case NameOf(VI.Thermostream.ThermostreamSubsystem.Temperature)
                 Me.onMeasurementAvailable(subsystem.Temperature)
         End Select
     End Sub
@@ -333,18 +333,18 @@ Public Class ThermoStreamControl
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
                 End If
-            Case NameOf(subsystem.ServiceRequestStatus)
+            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
                 Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(subsystem.StandardEventStatus)
+            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
                 Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
@@ -1259,14 +1259,11 @@ Public Class ThermoStreamControl
     Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.ReceivedMessage)
-                Case NameOf(sender.SentMessage)
-                Case NameOf(sender.StatusMessage)
+                Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
                     Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
                     Me._StatusLabel.ToolTipText = sender.StatusMessage
-                Case NameOf(sender.ServiceRequestValue)
+                Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
                     Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
-                Case NameOf(sender.ElapsedTime)
             End Select
         End If
     End Sub

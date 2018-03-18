@@ -99,15 +99,16 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="TestInfo\TestConfigReader.vb" />
+    <Compile Include="TestInfo\ConfigInfo.vb" />
     <Compile Include="TestInfo\TestContextValidations.vb" />
     <Compile Include="TestInfo\TestInfo.vb" />
     <Compile Include="TestInfo\TestTrace.vb" />
-    <Compile Include="Tests\MeasureUnitTests.vb" />
-    <Compile Include="Tests\ResourceControlUnitTests.vb" />
-    <Compile Include="Tests\DeviceUnitTests.vb" />
-    <Compile Include="Tests\SessionUnitTests.vb" />
+    <Compile Include="Tests\MeasureTests.vb" />
+    <Compile Include="Tests\ResourceControlTests.vb" />
+    <Compile Include="Tests\DeviceTests.vb" />
+    <Compile Include="Tests\SessionTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="Tests\DeviceTestInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">

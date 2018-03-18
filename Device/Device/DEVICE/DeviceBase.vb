@@ -40,7 +40,7 @@ Public MustInherit Class DeviceBase
         Me._Subsystems = New SubsystemCollection
         Me._ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter
         Me._UsingSyncServiceRequestHandler = True
-        Me.ConstructorSafeTalkerSetter(New TraceMessageTalker)
+        Me.ConstructorSafeSetter(New TraceMessageTalker)
         Me._ResourceTitle = DeviceBase.DefaultResourceTitle
         Me._ResourceName = DeviceBase.ResourceNameClosed
     End Sub
@@ -58,8 +58,6 @@ Public MustInherit Class DeviceBase
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                ' this also removes the talker that was assigned to the subsystems.
-                Me.Talker = Nothing
                 Me.SessionMessagesTraceEnabled = False
                 Me.Session?.DisableServiceRequest()
                 Me.RemoveServiceRequestEventHandler()
@@ -71,6 +69,8 @@ Public MustInherit Class DeviceBase
                 Me.RemoveClosedEventHandler(Me.ClosedEvent)
                 Me.RemoveInitializingEventHandler(Me.InitializingEvent)
                 Me.RemoveInitializedEventHandler(Me.InitializedEvent)
+                ' this also removes the talker that was assigned to the subsystems.
+                Me.Talker = Nothing
                 If Me._IsSessionOwner Then
                     Try
                         Me.CloseSession()
@@ -209,15 +209,15 @@ Public MustInherit Class DeviceBase
     Private Sub OnPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.IsDeviceOpen)
+            Case NameOf(isr.VI.SessionBase.IsDeviceOpen)
                 If sender.IsDeviceOpen Then
                     AddHandler Me.Session.PropertyChanged, AddressOf Me.SessionPropertyChanged
                 Else
                     RemoveHandler Me.Session.PropertyChanged, AddressOf Me.SessionPropertyChanged
                 End If
-            Case NameOf(sender.ResourceTitle)
+            Case NameOf(isr.VI.SessionBase.ResourceTitle)
                 Me.ResourceTitle = sender.ResourceTitle
-            Case NameOf(sender.ResourceName)
+            Case NameOf(isr.VI.SessionBase.ResourceName)
                 Me.ResourceName = sender.ResourceName
         End Select
     End Sub
@@ -456,17 +456,6 @@ Public MustInherit Class DeviceBase
         End If
     End Sub
 
-    ''' <summary> Notifies the device open state. </summary>
-    ''' <remakrs> Used when assigning a device to a control panel. </remakrs>
-    Public Sub NotifyDeviceOpenState()
-        If Me.IsDeviceOpen Then
-            Me.OnOpened()
-            Me.OnInitialized()
-        Else
-            Me.OnClosed()
-        End If
-    End Sub
-
     ''' <summary> Allows the derived device to take actions after opening. </summary>
     ''' <remarks>
     ''' This override should occur as the last call of the overriding method.
@@ -474,6 +463,9 @@ Public MustInherit Class DeviceBase
     ''' </remarks>
     Protected Overridable Sub OnOpened()
 
+        ' A talker is assigned to the subsystem when the device is constructed. 
+        ' This talker is assigned to each subsystem when it is added.
+        ' Me.Subsystems.AssignTalker(Me.Talker)
         Me.ApplySettings()
         Me.Session.CaptureSyncContext(Me.CapturedSyncContext)
         Me.Subsystems.CaptureSyncContext(Me.CapturedSyncContext)
@@ -481,13 +473,12 @@ Public MustInherit Class DeviceBase
         ' reset and clear the device to remove any existing errors.
         Me.StatusSubsystemBase.OnDeviceOpen()
 
-        Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
+        Me.SafePostPropertyChanged(NameOf(DeviceBase.IsDeviceOpen))
         ' 2016/01/18: this was done before adding listeners, which was useful when using the device
         ' as a class in a 'meter'. As a result, the actions taken when handling the Opened event, 
         ' such as Reset and Initialize do not get reported. 
         ' The solution was to add the device Initialize event to process publishing and initialization of device
         ' and subsystems.
-
         Me.SyncNotifyOpened(System.EventArgs.Empty)
     End Sub
 
@@ -592,7 +583,8 @@ Public MustInherit Class DeviceBase
     ''' <remarks> This override should occur as the last call of the overriding method. </remarks>
     Protected Overridable Sub OnClosed()
         Me.ResumePublishing()
-        Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
+        ' required to prevent property change errors when the device closes.
+        Me.SafeSendPropertyChanged(NameOf(DeviceBase.IsDeviceOpen))
         Me.SyncNotifyClosed(System.EventArgs.Empty)
     End Sub
 
@@ -663,7 +655,7 @@ Public MustInherit Class DeviceBase
         Me.Session.CaptureSyncContext(Me.CapturedSyncContext)
         Me.Subsystems.CaptureSyncContext(Me.CapturedSyncContext)
 
-        Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
+        Me.SafePostPropertyChanged(NameOf(DeviceBase.IsDeviceOpen))
         ' 2016/01/18: this was done before adding listeners, which was useful when using the device
         ' as a class in a 'meter'. As a result, the actions taken when handling the Opened event, 
         ' such as Reset and Initialize do not get reported. 
@@ -755,7 +747,7 @@ Public MustInherit Class DeviceBase
     ''' <remarks> This override should occur as the last call of the overriding method. </remarks>
     Protected Overridable Sub OnStatusClosed()
         Me.ResumePublishing()
-        Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
+        Me.SafePostPropertyChanged(NameOf(DeviceBase.IsDeviceOpen))
     End Sub
 
     ''' <summary> Closes the session. </summary>
@@ -824,19 +816,20 @@ Public MustInherit Class DeviceBase
     Private Sub SessionPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.SessionMessagesTraceEnabled)
-                    Me.SafePostPropertyChanged(NameOf(Me.SessionMessagesTraceEnabled))
-                Case NameOf(sender.ServiceRequestEventEnabled)
-                    Me.SafePostPropertyChanged(NameOf(Me.SessionMessagesTraceEnabled))
-                Case NameOf(sender.ServiceRequestEnableBitmask)
-                    Me.SafePostPropertyChanged(NameOf(Me.ServiceRequestEnableBitmask))
-                Case NameOf(sender.LastMessageReceived)
+                Case NameOf(isr.VI.SessionBase.SessionMessagesTraceEnabled)
+                    Me.SafePostPropertyChanged(NameOf(isr.VI.SessionBase.SessionMessagesTraceEnabled))
+                Case NameOf(isr.VI.SessionBase.ServiceRequestEventEnabled)
+                    Me.SafePostPropertyChanged(NameOf(isr.VI.SessionBase.SessionMessagesTraceEnabled))
+                Case NameOf(isr.VI.SessionBase.ServiceRequestEnableBitmask)
+                    Me.SafePostPropertyChanged(NameOf(isr.VI.SessionBase.ServiceRequestEnableBitmask))
+                Case NameOf(isr.VI.SessionBase.LastMessageReceived)
+
                     Dim value As String = sender.LastMessageReceived
                     If Not String.IsNullOrWhiteSpace(value) Then
                         Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                "{0} sent: '{1}'.", Me.ResourceName, value.InsertCommonEscapeSequences)
                     End If
-                Case NameOf(sender.LastMessageSent)
+                Case NameOf(isr.VI.SessionBase.LastMessageSent)
                     Dim value As String = sender.LastMessageSent
                     If Not String.IsNullOrWhiteSpace(value) Then
                         Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
@@ -983,36 +976,36 @@ Public MustInherit Class DeviceBase
     Protected Overridable Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors AndAlso subsystem.ErrorAvailable Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Error available;. ")
                     subsystem.QueryDeviceErrors()
                 End If
-            Case NameOf(subsystem.MessageAvailable)
+            Case NameOf(VI.StatusSubsystemBase.MessageAvailable)
                 If subsystem.MessageAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
                 End If
-            Case NameOf(subsystem.MeasurementAvailable)
+            Case NameOf(VI.StatusSubsystemBase.MeasurementAvailable)
                 If subsystem.MeasurementAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
                 End If
-            Case NameOf(subsystem.ReadingDeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.ReadingDeviceErrors)
                 If subsystem.ReadingDeviceErrors Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
                 End If
 
-            Case NameOf(subsystem.Identity)
+            Case NameOf(VI.StatusSubsystemBase.Identity)
                 If Not String.IsNullOrWhiteSpace(subsystem.Identity) Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceName} identified;. as {subsystem.Identity}")
                     If Not String.IsNullOrWhiteSpace(subsystem.VersionInfo?.Model) Then Me.ResourceTitle = subsystem.VersionInfo.Model
                 End If
 
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 If Not String.IsNullOrWhiteSpace(subsystem.DeviceErrors) Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{Me.ResourceName} errors;. {subsystem.DeviceErrors}")
                 End If
 
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 If subsystem.LastDeviceError?.IsError Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                        $"{Me.ResourceName} last error;. {subsystem.LastDeviceError.CompoundErrorMessage}")

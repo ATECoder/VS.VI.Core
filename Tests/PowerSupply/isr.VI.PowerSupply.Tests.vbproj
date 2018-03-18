@@ -85,7 +85,7 @@
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="TESTS\ScpiPowerSupplyTest.vb" />
+    <Compile Include="TESTS\ScpiPowerSupplyTests.vb" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">

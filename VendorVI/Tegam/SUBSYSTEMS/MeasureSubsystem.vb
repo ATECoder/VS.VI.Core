@@ -169,7 +169,7 @@ Public Class MeasureSubsystem
         End Get
         Set(ByVal value As Double?)
             Me._resistance = value
-            Me.SafePostPropertyChanged(NameOf(Me.Resistance))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -251,7 +251,7 @@ Public Class MeasureSubsystem
         Set(value As TimeSpan)
             If Not value.Equals(Me.OverRangeOpenWireTimeout) Then
                 Me._OverRangeOpenWireTimeout = value
-                Me.SafePostPropertyChanged(NameOf(Me.OverRangeOpenWireTimeout))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -268,7 +268,7 @@ Public Class MeasureSubsystem
         Set(value As DateTimeOffset)
             If Not value.Equals(Me._OverRangeOpenWireTimeoutEndTime) Then
                 Me._OverRangeOpenWireTimeoutEndTime = value
-                Me.SafePostPropertyChanged(NameOf(Me.OverRangeOpenWireTimeoutEndTime))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -298,7 +298,7 @@ Public Class MeasureSubsystem
         End Get
         Set(ByVal value As Boolean?)
             Me._OverRangeOpenWire = value
-            Me.SafePostPropertyChanged(NameOf(Me.OverRangeOpenWire))
+            Me.SafePostPropertyChanged()
             Windows.Forms.Application.DoEvents()
         End Set
     End Property
@@ -502,7 +502,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As RangeMode?)
             If Not Nullable.Equals(Me.RangeMode, value) Then
                 Me._RangeMode = value
-                Me.SafePostPropertyChanged(NameOf(Me.RangeMode))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -568,7 +568,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As TimeSpan?)
             If Not Nullable.Equals(Me.TriggerDelay, value) Then
                 Me._TriggerDelay = value
-                Me.SafePostPropertyChanged(NameOf(Me.TriggerDelay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -627,7 +627,7 @@ Public Class MeasureSubsystem
         Protected Set(ByVal value As TriggerMode?)
             If Not Nullable.Equals(Me.TriggerMode, value) Then
                 Me._TriggerMode = value
-                Me.SafePostPropertyChanged(NameOf(Me.TriggerMode))
+                Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -685,7 +685,7 @@ Public Class MeasureSubsystem
         Set(value As TimeSpan)
             If Not value.Equals(Me.InitialDelay) Then
                 Me._InitialDelay = value
-                Me.SafePostPropertyChanged(NameOf(Me.InitialDelay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -701,7 +701,7 @@ Public Class MeasureSubsystem
         Set(value As TimeSpan)
             If Not value.Equals(Me.MeasurementDelay) Then
                 Me._MeasurementDelay = value
-                Me.SafePostPropertyChanged(NameOf(Me.MeasurementDelay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -717,7 +717,7 @@ Public Class MeasureSubsystem
         Set(value As Integer)
             If Not value.Equals(Me.MaximumTrialsCount) Then
                 Me._MaximumTrialsCount = value
-                Me.SafePostPropertyChanged(NameOf(Me.MaximumTrialsCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -733,7 +733,7 @@ Public Class MeasureSubsystem
         Set(value As Double)
             If Not value.Equals(Me._MaximumDifference) Then
                 Me._MaximumDifference = value
-                Me.SafePostPropertyChanged(NameOf(Me.MaximumDifference))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

@@ -37,7 +37,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoRangeEnabled, value) Then
                 Me._AutoRangeEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.AutoRangeEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -92,7 +92,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ConcurrentSenseEnabled, value) Then
                 Me._ConcurrentSenseEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.ConcurrentSenseEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -143,7 +143,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.PowerLineCycles, value) Then
                 Me._PowerLineCycles = value
-                Me.SafePostPropertyChanged(NameOf(Me.PowerLineCycles))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -198,7 +198,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.ProtectionLevel, value) Then
                 Me._ProtectionLevel = value
-                Me.SafePostPropertyChanged(NameOf(Me.ProtectionLevel))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -253,7 +253,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As Double?)
             If Not Nullable.Equals(Me.Range, value) Then
                 Me._Range = value
-                Me.SafePostPropertyChanged(NameOf(Me.Range))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -330,7 +330,7 @@ Public MustInherit Class SenseSubsystemBase
         Protected Set(ByVal value As VI.Scpi.SenseFunctionModes?)
             If Not Nullable.Equals(Me.FunctionModes, value) Then
                 Me._FunctionModes = value
-                Me.SafePostPropertyChanged(NameOf(Me.FunctionModes))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -366,7 +366,7 @@ Public MustInherit Class SenseSubsystemBase
         Set(ByVal value As Boolean)
             If Not Me.SupportsMultiFunctions.Equals(value) Then
                 Me._supportsMultiFunctions = value
-                Me.SafePostPropertyChanged(NameOf(Me.SupportsMultiFunctions))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

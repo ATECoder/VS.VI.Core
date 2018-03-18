@@ -78,25 +78,25 @@ Public Class T1750MeasureControl
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As MeasureSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.RangeMode)
+            Case NameOf(VI.Tegam.MeasureSubsystem.RangeMode)
                 If subsystem.RangeMode.HasValue Then
                     Me.SelectMeterRange(subsystem.RangeMode.Value.Description)
                 End If
-            Case NameOf(subsystem.TriggerMode)
+            Case NameOf(VI.Tegam.MeasureSubsystem.TriggerMode)
                 If subsystem.TriggerMode.HasValue Then
                     Me.SelectMeterTrigger(subsystem.TriggerMode.Value.Description)
                 End If
-            Case NameOf(subsystem.TriggerDelay)
+            Case NameOf(VI.Tegam.MeasureSubsystem.TriggerDelay)
                 If subsystem.TriggerDelay.HasValue Then
                     Me.TriggerDelay = subsystem.TriggerDelay.Value
                 End If
-            Case NameOf(subsystem.InitialDelay)
+            Case NameOf(VI.Tegam.MeasureSubsystem.InitialDelay)
                 Me.InitialDelay = subsystem.InitialDelay
-            Case NameOf(subsystem.MeasurementDelay)
+            Case NameOf(VI.Tegam.MeasureSubsystem.MeasurementDelay)
                 Me.MeasurementDelay = subsystem.MeasurementDelay
-            Case NameOf(subsystem.MaximumTrialsCount)
+            Case NameOf(VI.Tegam.MeasureSubsystem.MaximumTrialsCount)
                 Me.MaximumTrialsCount = subsystem.MaximumTrialsCount
-            Case NameOf(subsystem.MaximumDifference)
+            Case NameOf(VI.Tegam.MeasureSubsystem.MaximumDifference)
                 Me.MaximumDifference = CDec(subsystem.MaximumDifference)
         End Select
     End Sub
@@ -288,7 +288,7 @@ Public Class T1750MeasureControl
         Set(value As Decimal)
             If Not Decimal.Equals(value, Me.MeterCurrent) Then
                 Me._MeterCurrentNumeric.SafeSilentValueSetter(value)
-                Me.SafePostPropertyChanged(NameOf(Me.MeterCurrent))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -303,10 +303,11 @@ Public Class T1750MeasureControl
         Set(value As Decimal)
             If Not Decimal.Equals(value, Me.MeterRange) Then
                 Me._MeterRangeNumeric.SafeSilentValueSetter(value)
-                Me.SafePostPropertyChanged(NameOf(Me.MeterRange))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
+
 
     ''' <summary> Gets or sets the range selection as read only. </summary>
     ''' <value> The sentinel indicating if the meter range is read only. </value>
@@ -420,10 +421,11 @@ Public Class T1750MeasureControl
             If Not Decimal.Equals(value, Me.TriggerDelay) Then
                 Me._TriggerDelay = value
                 Me._TriggerDelayNumeric.SafeSilentValueSetter(value.TotalMilliseconds)
-                Me.SafePostPropertyChanged(NameOf(Me.TriggerDelay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
+
 
     ''' <summary> Event handler. Called by _TriggerDelayNumeric for value changed events. </summary>
     ''' <param name="sender"> Source of the event. </param>
@@ -455,9 +457,10 @@ Public Class T1750MeasureControl
                 If Me.MeasureSubsystem IsNot Nothing Then
                     Me.MeasureSubsystem.InitialDelay = value
                 End If
-                Me.SafeSendPropertyChanged(NameOf(Me.InitialDelay))
+                Me.SafeSendPropertyChanged()
                 ' For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
             End If
+
         End Set
     End Property
 
@@ -487,8 +490,9 @@ Public Class T1750MeasureControl
                 If Me.MeasureSubsystem IsNot Nothing Then
                     Me.MeasureSubsystem.MeasurementDelay = value
                 End If
-                Me.SafeSendPropertyChanged(NameOf(Me.MeasurementDelay))
+                Me.SafeSendPropertyChanged()
                 ' For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
+
             End If
         End Set
     End Property
@@ -519,7 +523,8 @@ Public Class T1750MeasureControl
                 If Me.MeasureSubsystem IsNot Nothing Then
                     Me.MeasureSubsystem.MaximumTrialsCount = value
                 End If
-                Me.SafeSendPropertyChanged(NameOf(Me.MaximumTrialsCount))
+                Me.SafeSendPropertyChanged()
+
                 ' For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
             End If
         End Set
@@ -549,7 +554,7 @@ Public Class T1750MeasureControl
                 If Me.MeasureSubsystem IsNot Nothing Then
                     Me.MeasureSubsystem.MaximumDifference = Me.MaximumDifference
                 End If
-                Me.SafeSendPropertyChanged(NameOf(Me.MaximumDifference))
+                Me.SafeSendPropertyChanged()
                 ' this is required to ensure binding takes place.
                 ' For i As Integer = 1 To 10 : Windows.Forms.Application.DoEvents() : Next
             End If
@@ -560,6 +565,7 @@ Public Class T1750MeasureControl
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     Private Sub _MaximumDifferenceNumeric_ValueChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _MaximumDifferenceNumeric.ValueChanged
+
         If Me._MaximumDifferenceNumeric.Enabled Then
             Me.MaximumDifference = CDec(0.01 * Me._MaximumDifferenceNumeric.Value)
         End If

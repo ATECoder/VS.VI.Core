@@ -82,12 +82,12 @@ Public Class ConfigurationPanelBase
     Private Sub OnPropertyChanged(ByVal sender As DeviceUnderTest, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.InitialResistance)
+            Case NameOf(Ttm.DeviceUnderTest.InitialResistance)
                 Me.onConfigurationChanged()
-            Case NameOf(sender.FinalResistance)
+            Case NameOf(Ttm.DeviceUnderTest.FinalResistance)
                 Me.onConfigurationChanged()
-            Case NameOf(sender.ShuntResistance)
-            Case NameOf(sender.ThermalTransient)
+            Case NameOf(Ttm.DeviceUnderTest.ShuntResistance)
+            Case NameOf(Ttm.DeviceUnderTest.ThermalTransient)
                 Me.onConfigurationChanged()
         End Select
     End Sub

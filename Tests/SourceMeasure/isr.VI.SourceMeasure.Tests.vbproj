@@ -83,7 +83,7 @@
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="TESTS\DeviceTest.vb" />
+    <Compile Include="TESTS\DeviceTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
   </ItemGroup>

@@ -101,7 +101,7 @@ Public Class K7500MeasureControl
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As TriggerSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.Delay)
+            Case NameOf(K7500.TriggerSubsystem.Delay)
                 If subsystem.Delay.HasValue Then
                     Me.TriggerDelay = subsystem.Delay.Value
                 End If
@@ -128,7 +128,7 @@ Public Class K7500MeasureControl
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SenseFourWireResistanceSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.Range)
+            Case NameOf(K7500.SenseFourWireResistanceSubsystem.Range)
                 If subsystem.Range.HasValue Then
                     Me.MeterRange = CDec(subsystem.Range.Value)
                 End If
@@ -276,7 +276,7 @@ Public Class K7500MeasureControl
     ''' <summary> Selects the meter range based on the range settings. </summary>
     ''' <param name="range">   The range. </param>
     Public Sub SelectMeterRange(ByVal range As Double)
-        Me.SelectMeterRange(K7500.SenseResistanceSubsystem.ResistanceRanges.FindResistanceRange(Me.MeterRange).Mode)
+        Me.SelectMeterRange(K7500.SenseResistanceSubsystem.ResistanceRanges.FindResistanceRange(range).Mode)
     End Sub
 
     ''' <summary> Gets or sets the meter current. </summary>

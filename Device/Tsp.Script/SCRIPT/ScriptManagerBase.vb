@@ -141,7 +141,7 @@ Public MustInherit Class ScriptManagerBase
         If Not value.Equals(Me.Name) Then
             If ScriptEntityBase.IsValidScriptName(value) Then
                 Me._name = value
-                Me.SafePostPropertyChanged(NameOf(Name))
+                Me.SafePostPropertyChanged(NameOf(Script.ScriptManagerBase.Name))
             Else
                 ' now report the error to the calling module
                 Throw New System.IO.IOException(String.Format(Globalization.CultureInfo.CurrentCulture,

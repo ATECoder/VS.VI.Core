@@ -366,7 +366,7 @@ Public Class TestPanel
     Private Sub OnPropertyChanged(ByVal sender As Instrument.ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.SelectedResourceName)
+            Case NameOf(Instrument.ResourceSelectorConnector.SelectedResourceName)
                 Me.ResourceName = sender.SelectedResourceName
                 Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Selected {0};. ", sender.SelectedResourceName)
         End Select
@@ -527,22 +527,22 @@ Public Class TestPanel
     Private Sub OnPropertyChanged(ByVal subsystem As StatusSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.Identity)
+            Case NameOf(VI.StatusSubsystemBase.Identity)
                 If Not String.IsNullOrWhiteSpace(subsystem.Identity) Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "{0} is {1};. ", Me.ResourceName, subsystem.Identity)
                 End If
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 If Not String.IsNullOrWhiteSpace(subsystem.DeviceErrors) Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId, "{0} error {1};. ", Me.ResourceName, subsystem.DeviceErrors)
                 End If
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 If subsystem.LastDeviceError?.IsError Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                        "{0} error {1};. ", Me.ResourceName, subsystem.LastDeviceError.CompoundErrorMessage)
                 End If
-            Case NameOf(subsystem.ServiceRequestStatus)
+            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
                 'Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(subsystem.StandardEventStatus)
+            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
                 'Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
@@ -570,11 +570,11 @@ Public Class TestPanel
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As Tsp.LocalNodeSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.ExecutionState)
+            Case NameOf(Tsp.LocalNodeSubsystemBase.ExecutionState)
                 Me._tspStatusLabel.Text = subsystem.ExecutionStateCaption
-            Case NameOf(subsystem.ShowErrors)
+            Case NameOf(Tsp.LocalNodeSubsystemBase.ShowErrors)
                 Me._showErrorsCheckBox.SafeSilentCheckStateSetter(subsystem.ShowErrors.ToCheckState)
-            Case NameOf(subsystem.ShowPrompts)
+            Case NameOf(Tsp.LocalNodeSubsystemBase.ShowPrompts)
                 Me._showPromptsCheckBox.SafeSilentCheckStateSetter(subsystem.ShowPrompts.ToCheckState)
         End Select
     End Sub
@@ -1606,9 +1606,9 @@ Public Class TestPanel
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.Caption)
+            Case NameOf(TraceMessagesBox.Caption)
                 Me._tabControl.TabPages.Item(MainTabsIndex.MessagesTabIndex).Text = sender.Caption()
-            Case NameOf(sender.StatusPrompt)
+            Case NameOf(TraceMessagesBox.StatusPrompt)
                 Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
                 Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End Select

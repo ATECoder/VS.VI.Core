@@ -57,14 +57,14 @@ Public Class PartHeader
     Private Sub OnPropertyChanged(ByVal sender As DeviceUnderTest, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.PartNumber)
+            Case NameOf(Ttm.DeviceUnderTest.PartNumber)
                 If String.IsNullOrWhiteSpace(sender.PartNumber) Then
                     Me.Visible = False
                 Else
                     Me.Visible = True
                     Me._PartNumberTextBox.Text = sender.PartNumber
                 End If
-            Case NameOf(sender.SerialNumber)
+            Case NameOf(Ttm.DeviceUnderTest.SerialNumber)
                 Me._PartSerialNumberTextBox.Text = sender.SerialNumber.ToString
         End Select
     End Sub

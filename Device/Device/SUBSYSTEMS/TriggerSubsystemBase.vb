@@ -123,7 +123,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoDelayEnabled, value) Then
                 Me._AutoDelayEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.AutoDelayEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -177,7 +177,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AveragingEnabled, value) Then
                 Me._AveragingEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.AveragingEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -231,7 +231,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.ContinuousEnabled, value) Then
                 Me._ContinuousEnabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.ContinuousEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -285,7 +285,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Direction?)
             If Not Me.Direction.Equals(value) Then
                 Me._Direction = value
-                Me.SafePostPropertyChanged(NameOf(Me.Direction))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -339,7 +339,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.TriggerCount, value) Then
                 Me._TriggerCount = value
-                Me.SafePostPropertyChanged(NameOf(Me.TriggerCount))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -399,7 +399,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Nullable.Equals(Me.Delay, value) Then
                 Me._Delay = value
-                Me.SafePostPropertyChanged(NameOf(Me.Delay))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -458,7 +458,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.InputLineNumber, value) Then
                 Me._InputLineNumber = value
-                Me.SafePostPropertyChanged(NameOf(Me.InputLineNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -512,7 +512,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As Integer?)
             If Not Nullable.Equals(Me.OutputLineNumber, value) Then
                 Me._OutputLineNumber = value
-                Me.SafePostPropertyChanged(NameOf(Me.OutputLineNumber))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
@@ -567,7 +567,7 @@ Public MustInherit Class TriggerSubsystemBase
         Protected Set(ByVal value As TimeSpan?)
             If Not Me.TimerInterval.Equals(value) Then
                 Me._TimerInterval = value
-                Me.SafePostPropertyChanged(NameOf(Me.TimerInterval))
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property

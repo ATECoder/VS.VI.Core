@@ -121,10 +121,10 @@ Public MustInherit Class SessionBase
             }
         End If
         Me._IsDeviceOpen = True
-        Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
-        Me.SafePostPropertyChanged(NameOf(Me.IsSessionOpen))
-        Me.SafePostPropertyChanged(NameOf(Me.ResourceName))
-        Me.SafePostPropertyChanged(NameOf(Me.ResourceTitle))
+        Me.SafePostPropertyChanged(NameOf(SessionBase.IsDeviceOpen))
+        Me.SafePostPropertyChanged(NameOf(SessionBase.IsSessionOpen))
+        Me.SafePostPropertyChanged(NameOf(SessionBase.ResourceName))
+        Me.SafePostPropertyChanged(NameOf(SessionBase.ResourceTitle))
         Me._Timeouts.Push(Me.Timeout)
     End Sub
 
@@ -167,8 +167,8 @@ Public MustInherit Class SessionBase
         Me.OpenSession(resourceName, resourceName, timeout, syncContext)
     End Sub
 
-    ''' <summary> Discards the session. </summary>
-    Protected MustOverride Sub DiscardSession()
+    ''' <summary> Discards the session events. </summary>
+    Protected MustOverride Sub DiscardSessionEvents()
 
     ''' <summary> Closes the <see cref="SessionBase">Session</see>. </summary>
     Public Sub CloseSession()
@@ -179,10 +179,11 @@ Public MustInherit Class SessionBase
         End If
         Me._Timeouts = New Collections.Generic.Stack(Of TimeSpan)
         If Me.IsDeviceOpen Then
-            Me.DiscardSession()
+            Me.DiscardSessionEvents()
             Me._IsDeviceOpen = False
-            Me.SafePostPropertyChanged(NameOf(Me.IsDeviceOpen))
-            Me.SafePostPropertyChanged(NameOf(Me.IsSessionOpen))
+            ' must use sync notification to prevent race condition if disposing the session.
+            Me.SafeSendPropertyChanged(NameOf(SessionBase.IsDeviceOpen))
+            Me.SafeSendPropertyChanged(NameOf(SessionBase.IsSessionOpen))
         End If
     End Sub
 
@@ -656,7 +657,7 @@ Public MustInherit Class SessionBase
             If value IsNot Nothing AndAlso value.Any Then
                 Me.__TerminationCharacters = New Char(value.Count - 1) {}
                 Array.Copy(value.ToArray, Me.__TerminationCharacters, value.Count)
-                Me.SafePostPropertyChanged(NameOf(Me.Termination))
+                Me.SafePostPropertyChanged(NameOf(SessionBase.Termination))
             End If
         End Set
     End Property
@@ -799,8 +800,12 @@ Public MustInherit Class SessionBase
 #If LogIO Then
         Dim value As String = Me.ReadString()
         My.Application.Log.WriteEntry($"r: {value.TrimEnd}")
-#Else
+#ElseIf False Then
         Return Me.ReadFiniteLine()
+#Else
+        ' this is an attempt to address seeing that a read is somehow delayed after a few writes. 
+        ' not sure how the instrument is not issuing query unterminated errors in this case.
+        Return Me.ReadFreeLine()
 #End If
     End Function
 

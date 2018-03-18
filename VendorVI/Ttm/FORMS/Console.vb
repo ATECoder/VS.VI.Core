@@ -547,9 +547,9 @@ Public Class Console
     Private Sub OnPropertyChanged(ByVal sender As Instrument.ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.SelectedResourceName)
+            Case NameOf(Instrument.ResourceSelectorConnector.SelectedResourceName)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Selected {sender.SelectedResourceName};. ")
-            Case NameOf(sender.SelectedResourceExists)
+            Case NameOf(Instrument.ResourceSelectorConnector.SelectedResourceExists)
                 If sender.SelectedResourceExists Then
                     If Me.Meter.IsDeviceOpen Then
                         Me._IdentityTextBox.Text = $"Resource {Me.ResourceName} connected"
@@ -852,7 +852,7 @@ Public Class Console
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Me.UpdateShuntConfigButtonCaption()
         Select Case propertyName
-            Case NameOf(sender.MeasurementAvailable)
+            Case NameOf(Ttm.ShuntResistance.MeasurementAvailable)
                 If sender.MeasurementAvailable Then
                     Me.showResistance(Me._ShuntResistanceTextBox, sender)
                 End If
@@ -889,7 +889,7 @@ Public Class Console
     Private Sub OnPropertyChanged(sender As ConfigurationPanel, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.IsNewConfigurationSettingAvailable)
+            Case NameOf(Ttm.ConfigurationPanel.IsNewConfigurationSettingAvailable)
                 If Me._NavigatorTreeView.Nodes IsNot Nothing AndAlso Me._NavigatorTreeView.Nodes.Count > 0 Then
                     Dim caption As String = TreeViewNode.ConfigureNode.Description
                     If sender.IsNewConfigurationSettingAvailable Then
@@ -977,7 +977,7 @@ Public Class Console
     Private Sub OnPropertyChanged(ByVal sender As Meter, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.MeasurementCompleted)
+            Case NameOf(Ttm.Meter.MeasurementCompleted)
                 If sender.MeasurementCompleted Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "{0} measurement completed;. ", sender.ResourceName)
                 End If
@@ -1024,7 +1024,7 @@ Public Class Console
     Private Sub OnPropertyChanged(ByVal sender As MeasureSequencer, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.MeasurementSequenceState)
+            Case NameOf(Ttm.MeasureSequencer.MeasurementSequenceState)
                 Me.OnMeasurementSequenceStateChanged(sender.MeasurementSequenceState)
         End Select
     End Sub
@@ -1112,7 +1112,7 @@ Public Class Console
     Private Sub OnPropertyChanged(ByVal sender As TriggerSequencer, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(sender.TriggerSequenceState)
+            Case NameOf(Ttm.TriggerSequencer.TriggerSequenceState)
                 Me.OnTriggerSequenceStateChanged(sender.TriggerSequenceState)
         End Select
     End Sub
@@ -1417,7 +1417,7 @@ Public Class Console
     ''' <param name="propertyName"> Name of the property. </param>
     Private Sub OnPropertyChanged(sender As TraceMessagesBox, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        If String.Equals(propertyName, NameOf(sender.StatusPrompt)) Then
+        If String.Equals(propertyName, NameOf(isr.Core.Pith.TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If

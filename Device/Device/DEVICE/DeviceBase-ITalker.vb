@@ -6,7 +6,7 @@ Partial Public Class DeviceBase
 
     ''' <summary> Constructor-Safe talker setter. </summary>
     ''' <param name="talker"> The talker. </param>
-    Private Sub ConstructorSafeTalkerSetter(ByVal talker As ITraceMessageTalker)
+    Private Sub ConstructorSafeSetter(ByVal talker As ITraceMessageTalker)
         Me._Talker = talker
         If Me._Talker IsNot Nothing Then
             AddHandler Me._Talker.DateChanged, AddressOf Me.HandleTalkerDateChange
@@ -26,7 +26,7 @@ Partial Public Class DeviceBase
                 RemoveHandler Me._Talker.DateChanged, AddressOf Me.HandleTalkerDateChange
                 Me.RemoveListeners()
             End If
-            Me.ConstructorSafeTalkerSetter(value)
+            Me.ConstructorSafeSetter(value)
         End Set
     End Property
 
@@ -35,7 +35,11 @@ Partial Public Class DeviceBase
     ''' <param name="talker"> The talker. </param>
     Public Overridable Sub AssignTalker(ByVal talker As ITraceMessageTalker)
         Me.IsAssignedTalker = talker IsNot Nothing
-        Me.Talker = talker
+        If Me.IsAssignedTalker Then
+            Me.Talker = talker
+        Else
+            Me.Talker = New TraceMessageTalker
+        End If
         If talker IsNot Nothing Then Me.IdentifyTalkers()
     End Sub
 

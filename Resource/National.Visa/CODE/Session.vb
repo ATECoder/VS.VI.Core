@@ -35,7 +35,7 @@ Public Class Session
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 Try
-                    Me.DiscardSession()
+                    Me.DiscardSessionEvents()
                     Me._LastNativeError = Nothing
                 Catch ex As Exception
                     Debug.Assert(Not Debugger.IsAttached, "Failed discarding enabled events.",
@@ -136,15 +136,15 @@ Public Class Session
     ''' <summary> Dispose session. </summary>
     Private Sub DisposeSession()
         If Me.VisaSession IsNot Nothing AndAlso Not Me.VisaSession.IsDisposed Then
-            Me._TcpIpSession = Nothing
+            Me._TcpipSession = Nothing
             Me._VisaSession.Dispose()
             Me._VisaSession = Nothing
         End If
     End Sub
 
-    ''' <summary> Discards the session. </summary>
+    ''' <summary> Discards the session events. </summary>
     ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
-    Protected Overrides Sub DiscardSession()
+    Protected Overrides Sub DiscardSessionEvents()
         If Me.IsSessionOpen Then
             Try
                 Me._LastNativeError = NativeError.Success
@@ -575,12 +575,13 @@ Public Class Session
         End Get
         Set(value As Ivi.Visa.EventType)
             Me._EnabledEventType = value
-            Me.SafePostPropertyChanged(NameOf(Me.ServiceRequestEventEnabled))
+            Me.SafePostPropertyChanged(NameOf(Session.ServiceRequestEventEnabled))
         End Set
     End Property
 
     ''' <summary> Gets the sentinel indication if a service request event was enabled. </summary>
     ''' <value> <c>True</c> if service request event is enabled; otherwise, <c>False</c>. </value>
+
     Public Overrides ReadOnly Property ServiceRequestEventEnabled As Boolean
         Get
             Return Ivi.Visa.EventType.ServiceRequest = Me.EnabledEventType
@@ -631,7 +632,7 @@ Public Class Session
                 End If
                 'this toggles the enabled sentinel
                 Me.EnabledEventType = Ivi.Visa.EventType.Custom
-                Me.SafePostPropertyChanged(NameOf(Me.ServiceRequestEventEnabled))
+                Me.SafePostPropertyChanged(NameOf(Session.ServiceRequestEventEnabled))
             End If
         Catch ex As Ivi.Visa.NativeVisaException
             If Me.LastNodeNumber.HasValue Then

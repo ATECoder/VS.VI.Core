@@ -28,8 +28,7 @@ Public Class BridgeMeterControl
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
-        MyBase.New()
-        Me._New(Device.Create)
+        Me.New(Device.Create)
         Me.IsDeviceOwner = True
     End Sub
 
@@ -138,6 +137,13 @@ Public Class BridgeMeterControl
         Me._Device = Nothing
     End Sub
 
+    ''' <summary> Releases the device and reassigns the default device. </summary>
+    Public Overrides Sub RestoreDevice()
+        Me.ReleaseDevice()
+        Me.AssignDevice(Device.Create)
+        Me.IsDeviceOwner = True
+    End Sub
+
 #End Region
 
 #Region " DEVICE EVENT HANDLERS "
@@ -166,7 +172,7 @@ Public Class BridgeMeterControl
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.ResourceName)
+            Case NameOf(isr.VI.DeviceBase.ResourceName)
                 Me._ReadingLabel.Text = Me.ResourceName
         End Select
     End Sub
@@ -205,22 +211,6 @@ Public Class BridgeMeterControl
 #Region " SUBSYSTEMS "
 
 #Region " MUTLIMETER "
-
-    ''' <summary> Gets or sets the power line cycles. </summary>
-    ''' <value> The power line cycles. </value>
-    Public Property PowerLineCycles As Double
-        Get
-            Return Me._PowerLineCyclesNumeric.Value
-        End Get
-        Set(value As Double)
-            If Me.PowerLineCycles <> value OrElse (Me.Device.IsDeviceOpen AndAlso Not Nullable.Equals(Me.Device.MultimeterSubsystem.PowerLineCycles, value)) Then
-                Me._PowerLineCyclesNumeric.Value = CDec(value)
-                If Me.Device.IsDeviceOpen AndAlso Not Nullable.Equals(Me.Device.MultimeterSubsystem.PowerLineCycles, value) Then
-                    Me.Device.MultimeterSubsystem.ApplyPowerLineCycles(value)
-                End If
-            End If
-        End Set
-    End Property
 
     ''' <summary> Gets or sets the last reading. </summary>
     ''' <value> The last reading. </value>
@@ -270,29 +260,29 @@ Public Class BridgeMeterControl
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As MultimeterSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.FilterCount)
+            Case NameOf(K3700.MultimeterSubsystem.FilterCount)
                 If subsystem.FilterCount.HasValue Then Me._FilterCountNumeric.Value = subsystem.FilterCount.Value
-            Case NameOf(subsystem.FilterCountRange)
+            Case NameOf(K3700.MultimeterSubsystem.FilterCountRange)
                 With Me._FilterCountNumeric
                     .Maximum = CDec(subsystem.FilterCountRange.Max)
                     .Minimum = CDec(subsystem.FilterCountRange.Min)
                     .DecimalPlaces = 0
                 End With
-            Case NameOf(subsystem.FilterWindow)
+            Case NameOf(K3700.MultimeterSubsystem.FilterWindow)
                 'If subsystem.FilterWindow.HasValue Then Me._FilterWindowNumeric.Value = CDec(100 * subsystem.FilterWindow.Value)
-            Case NameOf(subsystem.FunctionMode)
+            Case NameOf(K3700.MultimeterSubsystem.FunctionMode)
                 Me._MeasureGroupBox.Enabled = Me.IsDeviceOpen AndAlso
                                                 Me.Device.MultimeterSubsystem.FunctionMode.HasValue AndAlso
                                                 Me.Device.MultimeterSubsystem.FunctionMode.Value = MultimeterFunctionMode.ResistanceFourWire
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K3700.MultimeterSubsystem.PowerLineCycles)
                 If subsystem.PowerLineCycles.HasValue Then Me._PowerLineCyclesNumeric.Value = CDec(subsystem.PowerLineCycles.Value)
-            Case NameOf(subsystem.PowerLineCyclesRange)
+            Case NameOf(K3700.MultimeterSubsystem.PowerLineCyclesRange)
                 With Me._PowerLineCyclesNumeric
                     .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
                     .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
                     .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
                 End With
-            Case NameOf(subsystem.Reading)
+            Case NameOf(K3700.MultimeterSubsystem.Reading)
                 Me.DisplayReading(subsystem)
         End Select
     End Sub
@@ -324,7 +314,7 @@ Public Class BridgeMeterControl
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As ChannelSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.ClosedChannels)
+            Case NameOf(K3700.ChannelSubsystem.ClosedChannels)
                 ' Me.ClosedChannels = subsystem.ClosedChannels
         End Select
     End Sub
@@ -356,7 +346,7 @@ Public Class BridgeMeterControl
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As DisplaySubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(subsystem.DisplayScreen)
+            Case NameOf(K3700.DisplaySubsystem.DisplayScreen)
         End Select
     End Sub
 
@@ -395,11 +385,11 @@ Public Class BridgeMeterControl
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
@@ -470,7 +460,7 @@ Public Class BridgeMeterControl
         If Me.IsDeviceOpen Then
             action = $"Configuring function mode {MultimeterFunctionMode.ResistanceFourWire}"
             Dim expectedMeasureFunction As MultimeterFunctionMode = MultimeterFunctionMode.ResistanceFourWire
-            Dim measureFunction As MultimeterFunctionMode? = Device.MultimeterSubsystem.ApplyFunctionMode(expectedMeasureFunction).GetValueOrDefault(MultimeterFunctionMode.ResistanceTwoWire)
+            Dim measureFunction As MultimeterFunctionMode? = Device.MultimeterSubsystem.ApplyFunctionMode(expectedMeasureFunction)
             If measureFunction.HasValue Then
                 If expectedMeasureFunction <> measureFunction.Value Then
                     Throw New OperationFailedException($"Failed {action} Expected {expectedMeasureFunction } <> Actual {measureFunction.Value}")
@@ -868,3 +858,22 @@ Public Class ResistorCollection
     End Function
 End Class
 
+#Region " UNUSED "
+#If False Then
+    ''' <summary> Gets or sets the power line cycles. </summary>
+    ''' <value> The power line cycles. </value>
+    Public Property PowerLineCycles As Double
+        Get
+            Return Me._PowerLineCyclesNumeric.Value
+        End Get
+        Set(value As Double)
+            If Me.PowerLineCycles <> value OrElse (Me.Device.IsDeviceOpen AndAlso Not Nullable.Equals(Me.Device.MultimeterSubsystem.PowerLineCycles, value)) Then
+                Me._PowerLineCyclesNumeric.Value = CDec(value)
+                If Me.Device.IsDeviceOpen AndAlso Not Nullable.Equals(Me.Device.MultimeterSubsystem.PowerLineCycles, value) Then
+                    Me.Device.MultimeterSubsystem.ApplyPowerLineCycles(value)
+                End If
+            End If
+        End Set
+    End Property
+#End If
+#End Region

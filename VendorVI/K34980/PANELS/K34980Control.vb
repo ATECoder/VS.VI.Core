@@ -177,13 +177,13 @@ Public Class K34980Control
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.OnDevicePropertyChanged(device, propertyName)
         Select Case propertyName
-            Case NameOf(device.SessionServiceRequestEventEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionServiceRequestEventEnabled)
                 Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
-            Case NameOf(device.DeviceServiceRequestHandlerAdded)
+            Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
-            Case NameOf(device.SessionMessagesTraceEnabled)
+            Case NameOf(isr.VI.DeviceBase.SessionMessagesTraceEnabled)
                 Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
-            Case NameOf(device.ServiceRequestEnableBitmask)
+            Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
                 Me._ServiceRequestEnableBitmaskNumeric.Value = device.ServiceRequestEnableBitmask
                 Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = $"SRE:0b{Convert.ToString(device.ServiceRequestEnableBitmask, 2),8}".Replace(" ", "0")
         End Select
@@ -252,7 +252,7 @@ Public Class K34980Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Select Case propertyName
-            Case NameOf(subsystem.Elements)
+            Case NameOf(K34980.FormatSubsystem.Elements)
                 subsystem.ListElements(Me._ReadingComboBox.ComboBox, ReadingTypes.Units)
         End Select
     End Sub
@@ -312,11 +312,11 @@ Public Class K34980Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As MeasureSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Select Case propertyName
-            Case NameOf(subsystem.LastReading)
+            Case NameOf(K34980.MeasureSubsystem.LastReading)
                 Me._LastReadingTextBox.SafeTextSetter(subsystem.LastReading)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Measure message: {0}.", subsystem.LastReading.InsertCommonEscapeSequences)
-            Case NameOf(subsystem.MeasurementAvailable)
+            Case NameOf(K34980.MeasureSubsystem.MeasurementAvailable)
                 Me.DisplayActiveReading()
         End Select
     End Sub
@@ -347,9 +347,9 @@ Public Class K34980Control
     Private Sub OnSubsystemPropertyChanged(ByVal subsystem As RouteSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         Select Case propertyName
-            Case NameOf(subsystem.ClosedChannel)
+            Case NameOf(K34980.RouteSubsystem.ClosedChannel)
                 Me.ClosedChannels = subsystem.ClosedChannel
-            Case NameOf(subsystem.ClosedChannels)
+            Case NameOf(K34980.RouteSubsystem.ClosedChannels)
                 Me.ClosedChannels = subsystem.ClosedChannels
         End Select
     End Sub
@@ -391,7 +391,9 @@ Public Class K34980Control
         End If
     End Sub
 
-    Private Sub OnFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
+    ''' <summary> Handles the function modes changed action. </summary>
+    ''' <param name="value"> The <see cref="TraceMessage">message</see> to display and log. </param>
+    Private Shared Sub OnFunctionModesChanged(ByVal value As SenseFunctionSubsystemBase)
         With value
             .QueryRange()
             .QueryAutoRangeEnabled()
@@ -426,7 +428,7 @@ Public Class K34980Control
     ''' <param name="value"> The <see cref="TraceMessage">message</see> to display and
     ''' log. </param>
     Private Sub OnFunctionModesChanged(ByVal value As VI.Scpi.SenseFunctionModes)
-        Me.onFunctionModesChanged(Me.SelectSenseSubsystem(value))
+        K34980Control.OnFunctionModesChanged(Me.SelectSenseSubsystem(value))
     End Sub
 
     ''' <summary> Handles the function modes changed action. </summary>
@@ -449,21 +451,21 @@ Public Class K34980Control
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.MeasurementAvailable)
+            Case NameOf(K34980.SenseSubsystem.MeasurementAvailable)
                 Me.DisplayActiveReading()
-            Case NameOf(subsystem.SupportedFunctionModes)
+            Case NameOf(K34980.SenseSubsystem.SupportedFunctionModes)
                 Me.onSupportedFunctionModesChanged(subsystem)
-            Case NameOf(subsystem.FunctionMode)
+            Case NameOf(K34980.SenseSubsystem.FunctionMode)
                 Me.OnFunctionModesChanged(subsystem)
                 Me.DisplayActiveReading()
-            Case NameOf(subsystem.FunctionRange)
+            Case NameOf(K34980.SenseSubsystem.FunctionRange)
                 With Me._SenseRangeNumeric
                     .Maximum = CDec(subsystem.FunctionRange.Max)
                     .Minimum = CDec(subsystem.FunctionRange.Min)
                 End With
-            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+            Case NameOf(K34980.SenseSubsystem.FunctionRangeDecimalPlaces)
                 Me._SenseRangeNumeric.DecimalPlaces = subsystem.FunctionRangeDecimalPlaces
-            Case NameOf(subsystem.FunctionUnit)
+            Case NameOf(K34980.SenseSubsystem.FunctionUnit)
                 Me.Device.MeasureSubsystem.Readings.Reading.Unit = subsystem.FunctionUnit
                 subsystem.Readings.Reading.Unit = subsystem.FunctionUnit
                 Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
@@ -499,32 +501,32 @@ Public Class K34980Control
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K34980.SenseVoltageSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K34980.SenseVoltageSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCyclesRange)
+            Case NameOf(K34980.SenseVoltageSubsystem.PowerLineCyclesRange)
                 With Me._PowerLineCyclesNumeric
                     .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
                     .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
                     .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
                 End With
-            Case NameOf(subsystem.Range)
+            Case NameOf(K34980.SenseVoltageSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
-            Case NameOf(subsystem.FunctionRange)
+            Case NameOf(K34980.SenseVoltageSubsystem.FunctionRange)
                 With Me._SenseRangeNumeric
                     .Maximum = CDec(subsystem.FunctionRange.Max)
                     .Minimum = CDec(subsystem.FunctionRange.Min)
                 End With
-            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+            Case NameOf(K34980.SenseVoltageSubsystem.FunctionRangeDecimalPlaces)
                 Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
-            Case NameOf(subsystem.FunctionUnit)
+            Case NameOf(K34980.SenseVoltageSubsystem.FunctionUnit)
                 Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
@@ -558,32 +560,32 @@ Public Class K34980Control
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K34980.SenseCurrentSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K34980.SenseCurrentSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCyclesRange)
+            Case NameOf(K34980.SenseCurrentSubsystem.PowerLineCyclesRange)
                 With Me._PowerLineCyclesNumeric
                     .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
                     .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
                     .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
                 End With
-            Case NameOf(subsystem.Range)
+            Case NameOf(K34980.SenseCurrentSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
-            Case NameOf(subsystem.FunctionRange)
+            Case NameOf(K34980.SenseCurrentSubsystem.FunctionRange)
                 With Me._SenseRangeNumeric
                     .Maximum = CDec(subsystem.FunctionRange.Max)
                     .Minimum = CDec(subsystem.FunctionRange.Min)
                 End With
-            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+            Case NameOf(K34980.SenseCurrentSubsystem.FunctionRangeDecimalPlaces)
                 Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
-            Case NameOf(subsystem.FunctionUnit)
+            Case NameOf(K34980.SenseCurrentSubsystem.FunctionUnit)
                 Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
@@ -617,32 +619,32 @@ Public Class K34980Control
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K34980.SenseFourWireResistanceSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K34980.SenseFourWireResistanceSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCyclesRange)
+            Case NameOf(K34980.SenseFourWireResistanceSubsystem.PowerLineCyclesRange)
                 With Me._PowerLineCyclesNumeric
                     .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
                     .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
                     .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
                 End With
-            Case NameOf(subsystem.Range)
+            Case NameOf(K34980.SenseFourWireResistanceSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
-            Case NameOf(subsystem.FunctionRange)
+            Case NameOf(K34980.SenseFourWireResistanceSubsystem.FunctionRange)
                 With Me._SenseRangeNumeric
                     .Maximum = CDec(subsystem.FunctionRange.Max)
                     .Minimum = CDec(subsystem.FunctionRange.Min)
                 End With
-            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+            Case NameOf(K34980.SenseFourWireResistanceSubsystem.FunctionRangeDecimalPlaces)
                 Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
-            Case NameOf(subsystem.FunctionUnit)
+            Case NameOf(K34980.SenseFourWireResistanceSubsystem.FunctionUnit)
                 Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
@@ -676,32 +678,32 @@ Public Class K34980Control
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
-            Case NameOf(subsystem.AutoRangeEnabled)
+            Case NameOf(K34980.SenseResistanceSubsystem.AutoRangeEnabled)
                 If Me.Device IsNot Nothing AndAlso subsystem.AutoRangeEnabled.HasValue Then
                     Me._SenseAutoRangeToggle.SafeCheckedSetter(subsystem.AutoRangeEnabled.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCycles)
+            Case NameOf(K34980.SenseResistanceSubsystem.PowerLineCycles)
                 If Me.Device IsNot Nothing AndAlso subsystem.PowerLineCycles.HasValue Then
                     Me._PowerLineCyclesNumeric.SafeValueSetter(subsystem.PowerLineCycles.Value)
                 End If
-            Case NameOf(subsystem.PowerLineCyclesRange)
+            Case NameOf(K34980.SenseResistanceSubsystem.PowerLineCyclesRange)
                 With Me._PowerLineCyclesNumeric
                     .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
                     .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
                     .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
                 End With
-            Case NameOf(subsystem.Range)
+            Case NameOf(K34980.SenseResistanceSubsystem.Range)
                 If Me.Device IsNot Nothing AndAlso subsystem.Range.HasValue Then
                     Me._SenseRangeNumeric.SafeValueSetter(subsystem.Range.Value)
                 End If
-            Case NameOf(subsystem.FunctionRange)
+            Case NameOf(K34980.SenseResistanceSubsystem.FunctionRange)
                 With Me._SenseRangeNumeric
                     .Maximum = CDec(subsystem.FunctionRange.Max)
                     .Minimum = CDec(subsystem.FunctionRange.Min)
                 End With
-            Case NameOf(subsystem.FunctionRangeDecimalPlaces)
+            Case NameOf(K34980.SenseResistanceSubsystem.FunctionRangeDecimalPlaces)
                 Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
-            Case NameOf(subsystem.FunctionUnit)
+            Case NameOf(K34980.SenseResistanceSubsystem.FunctionUnit)
                 Me._SenseRangeNumericLabel.Text = $"Range [{subsystem.FunctionUnit}]:"
                 Me._SenseRangeNumericLabel.Left = Me._SenseRangeNumeric.Left - Me._SenseRangeNumericLabel.Width
         End Select
@@ -742,18 +744,18 @@ Public Class K34980Control
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
         MyBase.OnPropertyChanged(subsystem, propertyName)
         Select Case propertyName
-            Case NameOf(subsystem.DeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
                 onLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 onLastError(subsystem.LastDeviceError)
-            Case NameOf(subsystem.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors Then
                     ' if no errors, this clears the error queue.
                     subsystem.QueryDeviceErrors()
                 End If
-            Case NameOf(subsystem.ServiceRequestStatus)
+            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
                 Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(subsystem.StandardEventStatus)
+            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
                 Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
@@ -1553,14 +1555,11 @@ Public Class K34980Control
     Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(sender.ReceivedMessage)
-                Case NameOf(sender.SentMessage)
-                Case NameOf(sender.StatusMessage)
+                Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
                     Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
                     Me._StatusLabel.ToolTipText = sender.StatusMessage
-                Case NameOf(sender.ServiceRequestValue)
+                Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
                     Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
-                Case NameOf(sender.ElapsedTime)
             End Select
         End If
     End Sub

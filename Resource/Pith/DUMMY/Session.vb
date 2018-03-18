@@ -40,7 +40,7 @@ Public Class DummySession
         Try
             If Not Me.IsDisposed AndAlso disposing Then
                 Try
-                    Me.DiscardSession()
+                    Me.DiscardSessionEvents()
                     Me._LastNativeError = Nothing
                 Catch ex As Exception
                     Debug.Assert(Not Debugger.IsAttached, "Failed discarding enabled events.",
@@ -83,7 +83,7 @@ Public Class DummySession
     End Sub
 
     ''' <summary> Discards session. </summary>
-    Protected Overrides Sub DiscardSession()
+    Protected Overrides Sub DiscardSessionEvents()
         Me._LastNativeError = DummyNativeError.Success
         Me.DisableServiceRequest()
     End Sub

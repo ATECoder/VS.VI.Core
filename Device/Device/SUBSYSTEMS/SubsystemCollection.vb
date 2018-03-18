@@ -20,7 +20,7 @@ Public Class SubsystemCollection
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
-        Me.ConstructorSafeTalkerSetter(New TraceMessageTalker)
+        Me.ConstructorSafeSetter(New TraceMessageTalker)
     End Sub
 
 #End Region
@@ -58,6 +58,22 @@ Public Class SubsystemCollection
         For Each element As IPresettable In Me.Items
             element.ResetKnownState()
         Next
+    End Sub
+
+#End Region
+
+#Region " ADD "
+
+    ''' <summary>
+    ''' Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
+    ''' </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="item"> The object to add to the
+    '''                     <see cref="T:System.Collections.Generic.ICollection`1" />. </param>
+    Public Overloads Sub Add(ByVal item As SubsystemBase)
+        If item Is Nothing Then Throw New ArgumentNullException(NameOf(item))
+        MyBase.Add(item)
+        If Me.Talker IsNot Nothing Then item.AssignTalker(Me.Talker)
     End Sub
 
 #End Region

@@ -141,11 +141,12 @@ Public Class SimpleReadWriteControl
         End Get
         Protected Set(value As String)
             Me._SentMessage = value
-            Me.SafePostPropertyChanged(NameOf(Me.SentMessage))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
     Private _ReceivedMessage As String
+
 
     ''' <summary> Gets or sets a message describing the received. </summary>
     ''' <value> A message describing the received. </value>
@@ -156,11 +157,12 @@ Public Class SimpleReadWriteControl
         End Get
         Protected Set(value As String)
             Me._ReceivedMessage = value
-            Me.SafePostPropertyChanged(NameOf(Me.ReceivedMessage))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
 
     Private _StatusMessage As String
+
 
     ''' <summary> Gets or sets a message describing the Status. </summary>
     ''' <value> A message describing the Status. </value>
@@ -171,9 +173,10 @@ Public Class SimpleReadWriteControl
         End Get
         Protected Set(value As String)
             Me._StatusMessage = value
-            Me.SafePostPropertyChanged(NameOf(Me.StatusMessage))
+            Me.SafePostPropertyChanged()
         End Set
     End Property
+
 
     Private _ReadEnabled As Boolean
 
@@ -191,9 +194,10 @@ Public Class SimpleReadWriteControl
                 Me._ReadButton.Enabled = value
                 Me._QueryButton.Enabled = value
                 Me._ClearSessionButton.Enabled = value
-                Me.SafePostPropertyChanged(NameOf(Me.ReadEnabled))
+                Me.SafePostPropertyChanged()
             End If
         End Set
+
     End Property
 
     Private _ElapsedTime As TimeSpan
@@ -208,8 +212,9 @@ Public Class SimpleReadWriteControl
         Protected Set(value As TimeSpan)
             Me._ElapsedTime = value
             Me._TimingTextBox.Text = value.TotalMilliseconds.ToString("0.0", Globalization.CultureInfo.CurrentCulture)
-            Me.SafePostPropertyChanged(NameOf(Me.ReadEnabled))
+            Me.SafePostPropertyChanged(NameOf(Instrument.SimpleReadWriteControl.ReadEnabled))
         End Set
+
     End Property
 
 #End Region
@@ -400,13 +405,15 @@ Public Class SimpleReadWriteControl
     Private Sub OnServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
         Dim requester As SessionBase = TryCast(sender, SessionBase)
         If requester Is Nothing Then Return
+        Dim action As String = "reading service request"
         Try
             Dim sb As ServiceRequests = requester.ReadStatusByte()
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Servicing events: 0x{CInt(sb):X2}")
+            action = $"servicing events: 0x{CInt(sb):X2}"
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
             Me.HandleMessageService(requester, sb)
             sb = requester.ReadStatusByte()
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling session service request;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
