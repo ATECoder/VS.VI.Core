@@ -101,13 +101,13 @@ Public Class SessionTests
     End Sub
 
     ''' <summary> (Unit Test Method) tests open close session. </summary>
-    <TestMethod()>
+    <TestMethod(), TestCategory("VI")>
     Public Sub OpenCloseSessionTest()
         SessionTests.OpenCloseSession()
     End Sub
 
     ''' <summary> (Unit Test Method) tests open close session twice. </summary>
-    <TestMethod()>
+    <TestMethod(), TestCategory("VI")>
     Public Sub OpenCloseSessionTwiceTest()
         SessionTests.OpenCloseSession()
         SessionTests.OpenCloseSession()

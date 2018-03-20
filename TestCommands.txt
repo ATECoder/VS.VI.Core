@@ -1,0 +1,3 @@
+Open the Developer command window with a default folder at the solution folder.
+The following commands run tests on each project.
+Vstest.console.exe .\Tests\Device\bin\Debug\isr.VI.Device.Tests.dll  /Settings:Local.RunSettings /inIsolation 
