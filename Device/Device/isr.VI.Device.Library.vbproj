@@ -79,12 +79,14 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="DEVICE\DeviceError.vb" />
     <Compile Include="DEVICE\ExceptionExtensions.vb" />
-    <Compile Include="DEVICE\DeviceBase-ITalker.vb" />
     <Compile Include="DEVICE\SessionFactoryNational.vb" />
     <Compile Include="DEVICE\SessionFactoryNS.vb" />
     <Compile Include="LIMITS\ContactCheckLimitBase.vb" />
@@ -92,16 +94,17 @@
     <Compile Include="LIMITS\UpperLowerLimitBase.vb" />
     <Compile Include="LIMITS\CompositeLimitBase.vb" />
     <Compile Include="LIMITS\ComplianceLimitBase.vb" />
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
     <Compile Include="DEVICE\DeviceBase.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
+    <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="PAYLOAD\RealValuePayload.vb" />
-    <Compile Include="PRIMITIVES\BinningInfo.vb" />
     <Compile Include="PRIMITIVES\ChannelListBuilder.vb" />
+    <Compile Include="PRIMITIVES\Dictionaries.vb" />
     <Compile Include="PRIMITIVES\Extensions.vb" />
     <Compile Include="PRIMITIVES\InsulationResistance.vb" />
     <Compile Include="PRIMITIVES\InterlockInfo.vb" />
@@ -119,6 +122,7 @@
     <Compile Include="DEVICE\SessionFactory.vb" />
     <Compile Include="SUBSYSTEMS\ArmLayerSubsystemBase.vb" />
     <Compile Include="READING\BufferReading.vb" />
+    <Compile Include="SUBSYSTEMS\ChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ChannelTriggerSusystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ChannelTraceSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ChannelMarkerSubsystemBase.vb" />
@@ -129,15 +133,30 @@
     <Compile Include="SUBSYSTEMS\AccessSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\DigitalOutputBase.vb" />
     <Compile Include="SUBSYSTEMS\InstrumentSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\ChannelMarkerSubsystemBase_Readings.vb" />
+    <Compile Include="SUBSYSTEMS\MeasureVoltageSubsystemBase_Readings.vb" />
+    <Compile Include="SUBSYSTEMS\MeasureCurrentSubsystemBase_Readings.vb" />
+    <Compile Include="SUBSYSTEMS\SenseFunctionSubsystemBase_Function.vb" />
+    <Compile Include="SUBSYSTEMS\SenseFunctionSubsystemBase_Readings.vb" />
+    <Compile Include="SUBSYSTEMS\SourceSubsystemBase_Function.vb" />
+    <Compile Include="SUBSYSTEMS\SenseSubsystemBase_Function.vb" />
+    <Compile Include="SUBSYSTEMS\MeasureSubsystemBase_Function.vb" />
+    <Compile Include="SUBSYSTEMS\MultimeterSubsystemBase_Function.vb" />
+    <Compile Include="SUBSYSTEMS\SenseSubsystemBase_Readings.vb" />
+    <Compile Include="SUBSYSTEMS\MultimeterSubsystemBase_Readings.vb" />
+    <Compile Include="SUBSYSTEMS\MeasureSubsystemBase_Readings.vb" />
+    <Compile Include="SUBSYSTEMS\MultimeterSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SlotsSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SlotSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\StatusSubsystemBase_SCPI.vb" />
     <Compile Include="SUBSYSTEMS\SenseFunctionSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SenseChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SourceFunctionSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SourceChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ThermoStreamSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SubsystemBase-ITalker.vb" />
     <Compile Include="SUBSYSTEMS\SubsystemCollection.vb" />
-    <Compile Include="SUBSYSTEMS\SubsystemCollection-ITalker.vb" />
+    <Compile Include="SUBSYSTEMS\SubsystemCollection_ITalker.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ProberSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\BufferSubsystemBase.vb" />
@@ -148,13 +167,8 @@
     <Compile Include="SUBSYSTEMS\MeasureVoltageSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\OutputSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\RouteSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SenseCurrentSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SenseResistanceSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SenseSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SenseVoltageSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SourceCurrentSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SourceSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SourceVoltageSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\StatusSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SubsystemPlusStatusBase.vb" />
     <Compile Include="SUBSYSTEMS\SystemSubsystemBase.vb" />
@@ -196,7 +210,9 @@
       <Name>isr.VI.Pith.Library</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="~Removed\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

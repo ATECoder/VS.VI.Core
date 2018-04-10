@@ -17,7 +17,7 @@ Public MustInherit Class LocalNodeSubsystemBase
     ''' <summary> Initializes a new instance of the <see cref="SystemSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystem">TSP status
     ''' Subsystem</see>. </param>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me._InitializeTimeout = TimeSpan.FromMilliseconds(30000)
         Me.showErrorsStack = New System.Collections.Generic.Stack(Of Boolean?)
@@ -101,7 +101,7 @@ Public MustInherit Class LocalNodeSubsystemBase
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Data discarded after turning prompts and errors off;. Data: {0}.", Me.Session.DiscardedData)
             End If
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
@@ -113,7 +113,7 @@ Public MustInherit Class LocalNodeSubsystemBase
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Unread data discarded after discarding unset data;. Data: {0}.", Me.Session.DiscardedData)
             End If
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
@@ -147,29 +147,39 @@ Public MustInherit Class LocalNodeSubsystemBase
 
 #Region " SESSION "
 
-    ''' <summary> Handles the Session property changed event. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property Changed event information. </param>
-    Private Sub SessionPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        If sender IsNot Nothing AndAlso e IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(e.PropertyName) Then
-            Me.OnSessionPropertyChanged(e)
-        End If
+    ''' <summary> Handles Session property change. </summary>
+    ''' <param name="sender">       Source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Overloads Sub HandlePropertyChange(ByVal sender As Vi.Pith.SessionBase, ByVal propertyName As String)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(VI.Pith.SessionBase.LastMessageReceived)
+                ' parse the command to get the TSP execution state.
+                Me.ParseExecutionState(Me.Session.LastMessageReceived, TspExecutionState.IdleReady)
+            Case NameOf(VI.Pith.SessionBase.LastMessageSent)
+                ' set the TSP status
+                Me.ExecutionState = TspExecutionState.Processing
+        End Select
+        ' this will report changes in the resource name and title
+        Me.SafeSendPropertyChanged(propertyName)
     End Sub
 
-
-    ''' <summary> Handles the property changed event. </summary>
-    ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Sub OnSessionPropertyChanged(ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        If Me.ProcessExecutionStateEnabled AndAlso e IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(e.PropertyName) Then
-            Select Case e.PropertyName
-                Case NameOf(VI.SessionBase.LastMessageReceived)
-                    ' parse the command to get the TSP execution state.
-                    Me.ParseExecutionState(Me.Session.LastMessageReceived, TspExecutionState.IdleReady)
-                Case NameOf(VI.SessionBase.LastMessageSent)
-                    ' set the TSP status
-                    Me.ExecutionState = TspExecutionState.Processing
-            End Select
-        End If
+    ''' <summary> Handles Session property change. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SessionPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.Pith.SessionBase)}.{e.PropertyName} change"
+        Try
+            Me.HandlePropertyChange(TryCast(sender, VI.Pith.SessionBase), e.PropertyName)
+        Catch ex As Exception
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
+        End Try
     End Sub
 
 #End Region
@@ -344,7 +354,7 @@ Public MustInherit Class LocalNodeSubsystemBase
     End Function
 
     ''' <summary> Sets the condition for showing errors. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
     ''' <param name="value"> true to value. </param>
     ''' <returns> <c>True</c> to show errors; otherwise <c>False</c>. </returns>
     Public Function WriteShowErrors(ByVal value As Boolean) As Boolean?
@@ -416,7 +426,7 @@ Public MustInherit Class LocalNodeSubsystemBase
     End Function
 
     ''' <summary> Sets the condition for showing prompts. Controls prompting. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
     ''' <param name="value"> true to value. </param>
     ''' <returns> <c>True</c> to show prompts; otherwise <c>False</c>. </returns>
     Public Function WriteShowPrompts(ByVal value As Boolean) As Boolean?
@@ -472,9 +482,9 @@ Public MustInherit Class LocalNodeSubsystemBase
 
         ' now validate
         If Me.QueryShowErrors.GetValueOrDefault(True) Then
-            Throw New OperationFailedException(Me.ResourceName, showErrorsCommand, "turning off automatic error display--still on.")
+            Throw New VI.Pith.OperationFailedException(Me.ResourceNameCaption, showErrorsCommand, "turning off automatic error display--still on.")
         ElseIf Me.QueryShowPrompts.GetValueOrDefault(True) Then
-            Throw New OperationFailedException(Me.ResourceName, showPromptsCommand, "turning off test script prompts--still on.")
+            Throw New VI.Pith.OperationFailedException(Me.ResourceNameCaption, showPromptsCommand, "turning off test script prompts--still on.")
         End If
 
     End Sub

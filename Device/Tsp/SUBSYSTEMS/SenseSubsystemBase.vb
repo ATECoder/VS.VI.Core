@@ -18,7 +18,7 @@ Public MustInherit Class SenseSubsystemBase
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp.StatusSubsystemBase">status subsystem</see>. </param>
-    Protected Sub New(ByVal statusSubsystem As VI.Tsp.StatusSubsystemBase)
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 

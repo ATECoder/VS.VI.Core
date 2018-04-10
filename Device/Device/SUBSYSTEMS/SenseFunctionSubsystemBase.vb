@@ -14,7 +14,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseFunctionSubsystemBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
@@ -99,8 +99,8 @@ Public MustInherit Class SenseFunctionSubsystemBase
     Private _AverageCount As Integer?
 
     ''' <summary> Gets or sets the cached average count. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property AverageCount As Integer?
         Get
@@ -148,67 +148,14 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #End Region
 
-#Region " AVERAGE FILTER TYPE "
-
-    Private _AverageFilterType As AverageFilterType?
-    ''' <summary> Gets or sets the cached Average Filter Type. </summary>
-    ''' <value> The <see cref="AverageFilterType">Average Filter Type</see> or none if not set or
-    ''' unknown. </value>
-    Public Overloads Property AverageFilterType As AverageFilterType?
-        Get
-            Return Me._AverageFilterType
-        End Get
-        Protected Set(ByVal value As AverageFilterType?)
-            If Not Me.AverageFilterType.Equals(value) Then
-                Me._AverageFilterType = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the Average Filter Type. </summary>
-    ''' <param name="value"> The  Average Filter Type. </param>
-    ''' <returns> The <see cref="AverageFilterType">Average Filter Type</see> or none if unknown. </returns>
-    Public Function ApplyAverageFilterType(ByVal value As AverageFilterType) As AverageFilterType?
-        Me.WriteAverageFilterType(value)
-        Return Me.QueryAverageFilterType()
-    End Function
-
-    ''' <summary> Gets the Trigger AverageFilterType query command. </summary>
-    ''' <value> The Trigger AverageFilterType query command. </value>
-    ''' <remarks> SCPI: ":TRIG:DIR" </remarks>
-    Protected Overridable ReadOnly Property AverageFilterTypeQueryCommand As String
-
-    ''' <summary> Queries the Trigger AverageFilterType. </summary>
-    ''' <returns> The <see cref="AverageFilterType">Trigger AverageFilterType</see> or none if unknown. </returns>
-    Public Function QueryAverageFilterType() As AverageFilterType?
-        Me.AverageFilterType = Me.Query(Of AverageFilterType)(Me.AverageFilterTypeQueryCommand, Me.AverageFilterType)
-        Return Me.AverageFilterType
-    End Function
-
-    ''' <summary> Gets the Trigger AverageFilterType command format. </summary>
-    ''' <value> The Trigger AverageFilterType command format. </value>
-    ''' <remarks> SCPI: ":TRIG:DIR {0}" </remarks>
-    Protected Overridable ReadOnly Property AverageFilterTypeCommandFormat As String
-
-    ''' <summary> Writes the Trigger AverageFilterType without reading back the value from the device. </summary>
-    ''' <param name="value"> The Trigger AverageFilterType. </param>
-    ''' <returns> The <see cref="AverageFilterType">Trigger AverageFilterType</see> or none if unknown. </returns>
-    Public Function WriteAverageFilterType(ByVal value As AverageFilterType) As AverageFilterType?
-        Me.AverageFilterType = Me.Write(Of AverageFilterType)(Me.AverageFilterTypeCommandFormat, value)
-        Return Me.AverageFilterType
-    End Function
-
-#End Region
-
 #Region " AVERAGE PERCENT WINDOW "
 
     ''' <summary> The Average Percent Window. </summary>
     Private _AveragePercentWindow As Double?
 
     ''' <summary> Gets or sets the cached Average Percent Window. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property AveragePercentWindow As Double?
         Get
@@ -515,7 +462,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
     Public ReadOnly Property IntegrationPeriod As TimeSpan?
         Get
             If Me.PowerLineCycles.HasValue Then
-                Return VI.StatusSubsystemBase.FromPowerLineCycles(Me.PowerLineCycles.Value)
+                Return StatusSubsystemBase.FromPowerLineCycles(Me.PowerLineCycles.Value)
             Else
                 Return New TimeSpan?
             End If
@@ -523,8 +470,8 @@ Public MustInherit Class SenseFunctionSubsystemBase
     End Property
 
     ''' <summary> Gets or sets the cached sense PowerLineCycles. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property PowerLineCycles As Double?
         Get
@@ -571,78 +518,14 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #End Region
 
-#Region " FUNCTION MODE RANGE "
-
-    ''' <summary> Gets or sets the default function range. </summary>
-    ''' <value> The default function range. </value>
-    Public Property DefaultFunctionRange As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
-
-    Private _FunctionRange As Core.Pith.RangeR
-    ''' <summary> The Range of the range. </summary>
-    Public Property FunctionRange As Core.Pith.RangeR
-        Get
-            Return Me._FunctionRange
-        End Get
-        Set(value As Core.Pith.RangeR)
-            ' force a unit change as the value needs to be updated when the subsystem is switched.
-            Me._FunctionRange = value
-            Me.SafePostPropertyChanged()
-        End Set
-    End Property
-
-    ''' <summary> Gets or sets the default decimal places. </summary>
-    ''' <value> The default decimal places. </value>
-    Public Property DefaultFunctionModeDecimalPlaces As Integer = 3
-
-    Private _FunctionRangeDecimalPlaces As Integer
-
-    ''' <summary> Gets or sets the function range decimal places. </summary>
-    ''' <value> The function range decimal places. </value>
-    Public Property FunctionRangeDecimalPlaces As Integer
-        Get
-            Return Me._FunctionRangeDecimalPlaces
-        End Get
-        Set(value As Integer)
-            ' force a unit change as the value needs to be updated when the subsystem is switched.
-            Me._FunctionRangeDecimalPlaces = value
-            Me.SafePostPropertyChanged()
-        End Set
-    End Property
-
-    ''' <summary> Gets or sets the default unit. </summary>
-    ''' <value> The default unit. </value>
-    Public Property DefaultFunctionUnit As Arebis.TypedUnits.Unit = Arebis.StandardUnits.ElectricUnits.Volt
-
-    Private _FunctionUnit As Arebis.TypedUnits.Unit
-    ''' <summary> Gets or sets the function mode unit. </summary>
-    ''' <value> The function unit. </value>
-    Public Property FunctionUnit As Arebis.TypedUnits.Unit
-        Get
-            Return Me._FunctionUnit
-        End Get
-        Set(value As Arebis.TypedUnits.Unit)
-            ' force a unit change as the value needs to be updated when the subsystem is switched.
-            Me._FunctionUnit = value
-            Me.SafePostPropertyChanged()
-        End Set
-    End Property
-
-#If False Then
-    ''' <summary> Gets or sets the amount. </summary>
-    ''' <value> The amount. </value>
-    Public ReadOnly Property Amount As MeasuredAmount
-#End If
-
-#End Region
-
 #Region " RANGE "
 
     ''' <summary> The range. </summary>
     Private _Range As Double?
 
     ''' <summary> Gets or sets the cached range. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property Range As Double?
         Get
@@ -689,10 +572,120 @@ Public MustInherit Class SenseFunctionSubsystemBase
 
 #End Region
 
-End Class
+#Region " PROTECTION LEVEL "
 
-''' <summary> Values that represent average filter types. </summary>
-Public Enum AverageFilterType
-    <ComponentModel.Description("Repeat (REP)")> Repeat
-    <ComponentModel.Description("Moving (MOV)")> Moving
-End Enum
+    ''' <summary> The Current Limit. </summary>
+    Private _ProtectionLevel As Double?
+
+    ''' <summary> Gets or sets the cached source current Limit for a voltage source. Set to
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <value> <c>null</c> if value is not known. </value>
+    Public Overloads Property ProtectionLevel As Double?
+        Get
+            Return Me._ProtectionLevel
+        End Get
+        Protected Set(ByVal value As Double?)
+            If Not Nullable.Equals(Me.ProtectionLevel, value) Then
+                Me._ProtectionLevel = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the protection level. </summary>
+    ''' <param name="value"> the protection level. </param>
+    ''' <returns> the protection level. </returns>
+    Public Function ApplyProtectionLevel(ByVal value As Double) As Double?
+        Me.WriteProtectionLevel(value)
+        Return Me.QueryProtectionLevel
+    End Function
+
+    ''' <summary> Gets or sets the protection level query command. </summary>
+    ''' <value> the protection level query command. </value>
+    Protected Overridable ReadOnly Property ProtectionLevelQueryCommand As String
+
+    ''' <summary> Queries the protection level. </summary>
+    ''' <returns> the protection level or none if unknown. </returns>
+    Public Function QueryProtectionLevel() As Double?
+        Me.ProtectionLevel = Me.Query(Me.ProtectionLevel, Me.ProtectionLevelQueryCommand)
+        Return Me.ProtectionLevel
+    End Function
+
+    ''' <summary> Gets or sets the protection level command format. </summary>
+    ''' <value> the protection level command format. </value>
+    Protected Overridable ReadOnly Property ProtectionLevelCommandFormat As String
+
+    ''' <summary> Writes the protection level without reading back the value from the device. </summary>
+    ''' <remarks> This command sets the protection level. </remarks>
+    ''' <param name="value"> the protection level. </param>
+    ''' <returns> the protection level. </returns>
+    Public Function WriteProtectionLevel(ByVal value As Double) As Double?
+        Me.ProtectionLevel = Me.Write(value, Me.ProtectionLevelCommandFormat)
+        Return Me.ProtectionLevel
+    End Function
+
+#End Region
+
+#Region " PROTECTION ENABLED "
+
+    ''' <summary> Protection enabled. </summary>
+    Private _ProtectionEnabled As Boolean?
+
+    ''' <summary> Gets or sets a cached value indicating whether Sense Voltage protection is enabled. </summary>
+    ''' <remarks> :SENSE:VOLT:PROT:STAT The setter enables or disables the over-Voltage protection (OCP)
+    ''' function. The enabled state is On (1); the disabled state is Off (0). If the over-Voltage
+    ''' protection function is enabled and the output goes into constant Voltage operation, the
+    ''' output is disabled and OCP is set in the Questionable Condition status register. The *RST
+    ''' value = Off. </remarks>
+    ''' <value> <c>null</c> if state is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property ProtectionEnabled As Boolean?
+        Get
+            Return Me._ProtectionEnabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.ProtectionEnabled, value) Then
+                Me._ProtectionEnabled = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Protection Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyProtectionEnabled(ByVal value As Boolean) As Boolean?
+        Me.WriteProtectionEnabled(value)
+        Return Me.QueryProtectionEnabled()
+    End Function
+
+    ''' <summary> Gets the Protection enabled query command. </summary>
+    ''' <value> The Protection enabled query command. </value>
+    ''' <remarks> SCPI: "system:RANG:AUTO?" </remarks>
+    Protected Overridable ReadOnly Property ProtectionEnabledQueryCommand As String
+
+    ''' <summary> Queries the Protection Enabled sentinel. Also sets the
+    ''' <see cref="ProtectionEnabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryProtectionEnabled() As Boolean?
+        Me.ProtectionEnabled = Me.Query(Me.ProtectionEnabled, Me.ProtectionEnabledQueryCommand)
+        Return Me.ProtectionEnabled
+    End Function
+
+    ''' <summary> Gets the Protection enabled command Format. </summary>
+    ''' <value> The Protection enabled query command. </value>
+    ''' <remarks> SCPI: "system:RANGE:AUTO {0:'ON';'ON';'OFF'}" </remarks>
+    Protected Overridable ReadOnly Property ProtectionEnabledCommandFormat As String
+
+    ''' <summary> Writes the Protection Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteProtectionEnabled(ByVal value As Boolean) As Boolean?
+        Me.ProtectionEnabled = Me.Write(value, Me.ProtectionEnabledCommandFormat)
+        Return Me.ProtectionEnabled
+    End Function
+
+#End Region
+
+End Class

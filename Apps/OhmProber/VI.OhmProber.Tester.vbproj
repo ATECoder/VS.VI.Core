@@ -83,8 +83,11 @@
     <Compile Include="..\..\..\..\Share\Core\ShareCommandLineInfo.vb">
       <Link>My\CommandLineInfo.vb</Link>
     </Compile>
-    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplicationEvents.vb">
-      <Link>My\MyApplicationEvents.vb</Link>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplication_BlueEvents.vb">
+      <Link>My\ShareMyApplication_BlueEvents.vb</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplication_Log.vb">
+      <Link>My\ShareMyApplication_Log.vb</Link>
     </Compile>
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
@@ -110,8 +113,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="My\MyApplicationInfo.vb" />
-    <Compile Include="My\MyCustomApplicationEvents.vb" />
+    <Compile Include="My\MyApplication_Events.vb" />
+    <Compile Include="My\MyApplication_Info.vb" />
+    <Compile Include="My\MyApplication_Log.vb" />
     <Compile Include="My\MySuppressions.vb" />
   </ItemGroup>
   <ItemGroup>

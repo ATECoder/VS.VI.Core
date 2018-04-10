@@ -71,10 +71,14 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
+    <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="PANELS\ThermoStreamControl.Designer.vb">
       <DependentUpon>ThermoStreamControl.vb</DependentUpon>
     </Compile>

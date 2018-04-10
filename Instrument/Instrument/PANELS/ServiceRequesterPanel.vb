@@ -71,7 +71,7 @@ Public Class ServiceRequesterPanel
 
 #Region " SESSION "
 
-    Private _Session As SessionBase
+    Private _Session As Vi.Pith.SessionBase
 
     ''' <summary> Queries if a session is open. </summary>
     ''' <returns> <c>true</c> if a session is open; otherwise <c>false</c> </returns>
@@ -173,7 +173,7 @@ Public Class ServiceRequesterPanel
                     End If
                 End If
             End If
-        Catch exp As NativeException
+        Catch exp As VI.Pith.NativeException
             MessageBox.Show(exp.ToString, "Exception Occurred", MessageBoxButtons.OK,
                             MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly)
         Catch exp As Exception
@@ -245,7 +245,7 @@ Public Class ServiceRequesterPanel
     ''' <summary> Raises the service requested event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub HandleMessageService(ByVal sender As SessionBase, value As ServiceRequests)
+    Private Sub HandleMessageService(ByVal sender As Vi.Pith.SessionBase, value As VI.Pith.ServiceRequests)
         If sender Is Nothing Then Throw New ArgumentNullException(NameOf(sender))
         If (value And CInt(Me._MessageStatusBitValueNumeric.Value)) <> 0 Then
             Dim textRead As String = sender.ReadFiniteLine()
@@ -262,10 +262,10 @@ Public Class ServiceRequesterPanel
     ''' <param name="e">      Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub OnServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
-        Dim requester As SessionBase = TryCast(sender, SessionBase)
+        Dim requester As VI.Pith.SessionBase = TryCast(sender, VI.Pith.SessionBase)
         If requester Is Nothing Then Return
         Try
-            Dim sb As ServiceRequests = requester.ReadStatusByte()
+            Dim sb As VI.Pith.ServiceRequests = requester.ReadStatusByte()
             Me._ServiceRequestStatusLabel.Text = $"0x{CInt(sb):X2}"
             Me._ServiceRequestStatusLabel.BackColor = System.Drawing.Color.Aqua
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Servicing events: {0}", Me._ServiceRequestStatusLabel.Text)
@@ -283,7 +283,7 @@ Public Class ServiceRequesterPanel
 #Region " RESOURCES "
 
     Sub ListResources()
-        Using rm As ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager
+        Using rm As VI.Pith.ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager
             _ResourceNamesComboBox.DataSource = Nothing
             _ResourceNamesComboBox.Items.Clear()
             _ResourceNamesComboBox.DataSource = rm.FindInstruments()
@@ -331,7 +331,7 @@ Public Class ServiceRequesterPanel
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
+    Private Overloads Sub HandlePropertyChange(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         If String.Equals(propertyName, NameOf(isr.Core.Pith.TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
@@ -339,24 +339,28 @@ Public Class ServiceRequesterPanel
         End If
     End Sub
 
-    ''' <summary> Trace messages box property changed. </summary>
+    ''' <summary> Handles Trace messages box property changed event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
+        If sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Core.Pith.TraceMessagesBox)}.{e.PropertyName} change"
         Try
-            ' there was a cross thread exception because this event is invoked from the control thread.
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._TraceMessagesBox_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, Core.Pith.TraceMessagesBox), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
-	
+
 #End Region
 
 End Class

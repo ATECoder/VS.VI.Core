@@ -17,9 +17,25 @@ Public Class StatusSubsystem
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
     ''' <param name="session"> The session. </param>
-    Public Sub New(ByVal session As isr.VI.SessionBase)
+    Public Sub New(ByVal session As VI.Pith.SessionBase)
         MyBase.New(session)
     End Sub
+
+    ''' <summary> Creates a new StatusSubsystem. </summary>
+    ''' <returns> A StatusSubsystem. </returns>
+    Public Shared Function Create() As StatusSubsystem
+        Dim subsystem As StatusSubsystem = Nothing
+        Try
+            subsystem = New StatusSubsystem(isr.VI.SessionFactory.Get.Factory.CreateSession())
+        Catch
+            If subsystem IsNot Nothing Then
+                subsystem.Dispose()
+                subsystem = Nothing
+            End If
+            Throw
+        End Try
+        Return subsystem
+    End Function
 
 #End Region
 
@@ -63,31 +79,39 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = TspSyntax.ErrorQueueQueryCommand
+    Protected Overrides ReadOnly Property NextDeviceErrorQueryCommand As String = TspSyntax.ErrorQueueQueryCommand
+
+    ''' <summary> Gets or sets the last error query command. </summary>
+    ''' <value> The last error query command. </value>
+    Protected Overrides ReadOnly Property DeviceErrorQueryCommand As String = ""
+
+    ''' <summary> Gets or sets the 'Next Error' query command. </summary>
+    ''' <value> The error queue query command. </value>
+    Protected Overrides ReadOnly Property DequeueErrorQueryCommand As String = ""
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>
-    Public Overrides ReadOnly Property ErrorAvailableBits As isr.VI.ServiceRequests    =ServiceRequests.ErrorAvailable
+    Public Overrides ReadOnly Property ErrorAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.ErrorAvailable
 
     ''' <summary> Gets the identity query command. </summary>
     ''' <value> The identity query command. </value>
-    Protected Overrides ReadOnly Property IdentityQueryCommand As String = Ieee488.Syntax.IdentityQueryCommand & " " & Ieee488.Syntax.WaitCommand
+    Protected Overrides ReadOnly Property IdentityQueryCommand As String = VI.Pith.Ieee488.Syntax.IdentityQueryCommand & " " & VI.Pith.Ieee488.Syntax.WaitCommand
 
     ''' <summary> Gets the bits that would be set for detecting if an Measurement is available. </summary>
     ''' <value> The Measurement available bits. </value>
-    Public Overrides ReadOnly Property MeasurementAvailableBits As ServiceRequests = ServiceRequests.MeasurementEvent
+    Public Overrides ReadOnly Property MeasurementAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MeasurementEvent
 
     ''' <summary> Gets the bits that would be set for detecting if an Message is available. </summary>
     ''' <value> The Message available bits. </value>
-    Public Overrides ReadOnly Property MessageAvailableBits As ServiceRequests = ServiceRequests.MessageAvailable
+    Public Overrides ReadOnly Property MessageAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MessageAvailable
 
     ''' <summary> Gets the operation completed query command. </summary>
     ''' <value> The operation completed query command. </value>
-    Protected Overrides ReadOnly Property OperationCompletedQueryCommand As String = Ieee488.Syntax.OperationCompletedQueryCommand
+    Protected Overrides ReadOnly Property OperationCompletedQueryCommand As String = Vi.Pith.Ieee488.Syntax.OperationCompletedQueryCommand
 
     ''' <summary> Gets the bits that would be set for detecting if a Standard Event is available. </summary>
     ''' <value> The Standard Event available bits. </value>
-    Public Overrides ReadOnly Property StandardEventAvailableBits As ServiceRequests = ServiceRequests.StandardEvent
+    Public Overrides ReadOnly Property StandardEventAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.StandardEvent
 
     ''' <summary> Gets the standard event status query command. </summary>
     ''' <value> The standard event status query command. </value>
@@ -111,7 +135,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the wait command. </summary>
     ''' <value> The wait command. </value>
-    Protected Overrides ReadOnly Property WaitCommand As String = Ieee488.Syntax.WaitCommand
+    Protected Overrides ReadOnly Property WaitCommand As String = Vi.Pith.Ieee488.Syntax.WaitCommand
 
 #End Region
 

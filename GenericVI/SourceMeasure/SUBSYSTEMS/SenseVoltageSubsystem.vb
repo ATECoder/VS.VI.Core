@@ -9,12 +9,12 @@
 ''' </para> </license>
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
 Public Class SenseVoltageSubsystem
-    Inherits VI.Scpi.SenseVoltageSubsystemBase
+    Inherits VI.Scpi.SenseFunctionSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseVoltageSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)

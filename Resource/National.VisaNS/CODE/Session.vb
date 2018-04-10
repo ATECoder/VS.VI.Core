@@ -10,7 +10,7 @@
 ''' </license>
 ''' <history date="11/20/2015" by="David" revision=""> Created. </history>
 Public Class Session
-    Inherits SessionBase
+    Inherits VI.Pith.SessionBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
@@ -54,7 +54,7 @@ Public Class Session
 #Region " SESSION "
 
     ''' <summary> Gets the sentinel indicating weather this is a dummy session. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <value> The dummy sentinel. </value>
     Public Overrides ReadOnly Property IsDummy As Boolean = False
 
@@ -81,7 +81,7 @@ Public Class Session
 
     ''' <summary>
     ''' Gets the session open sentinel. When open, the session is capable of addressing the hardware.
-    ''' See also <see cref="P:isr.VI.SessionBase.IsDeviceOpen" />.
+    ''' See also <see cref="P:VI.Pith.SessionBase.IsDeviceOpen" />.
     ''' </summary>
     ''' <value> The is session open. </value>
     Public Overrides ReadOnly Property IsSessionOpen As Boolean
@@ -97,7 +97,7 @@ Public Class Session
     ''' This method does not lock the resource. Rev 4.1 and 5.0 of VISA did not support this call and
     ''' could not verify the resource.
     ''' </remarks>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <param name="timeout">      The open timeout. </param>
     Protected Overrides Sub CreateSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
@@ -105,13 +105,13 @@ Public Class Session
             Me._LastNativeError = NativeError.Success
             If Me.Enabled Then
                 Select Case ResourceManager.ParseResource(resourceName).InterfaceType
-                    Case HardwareInterfaceType.Gpib
+                    Case VI.Pith.HardwareInterfaceType.Gpib
                         Me.VisaSession = New NationalInstruments.VisaNS.GpibSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
                                                                                     CInt(timeout.TotalMilliseconds), True)
-                    Case HardwareInterfaceType.Tcpip
+                    Case VI.Pith.HardwareInterfaceType.Tcpip
                         Me.VisaSession = New NationalInstruments.VisaNS.TcpipSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
                                                                                      CInt(timeout.TotalMilliseconds), True)
-                    Case VI.HardwareInterfaceType.Usb
+                    Case VI.Pith.HardwareInterfaceType.Usb
                         Me.VisaSession = New NationalInstruments.VisaNS.UsbSession(resourceName, NationalInstruments.VisaNS.AccessModes.NoLock,
                                                                                    CInt(timeout.TotalMilliseconds), True)
                     Case Else
@@ -120,11 +120,11 @@ Public Class Session
                 End Select
                 Me._IsVisaSessionDisposed = Not Me.VisaSession Is Nothing
             End If
-            If Not Me.KeepAlive OrElse Not Me.IsAlive Then Throw New OperationFailedException($"Resource not found;. {resourceName}")
+            If Not Me.KeepAlive OrElse Not Me.IsAlive Then Throw New VI.Pith.OperationFailedException($"Resource not found;. {resourceName}")
         Catch ex As NationalInstruments.VisaNS.VisaException
             Me.DisposeSession()
             Me._LastNativeError = New NativeError(ex.ErrorCode, resourceName, "@opening", "opening session")
-            Throw New NativeException(Me._LastNativeError, ex)
+            Throw New VI.Pith.NativeException(Me._LastNativeError, ex)
         Catch
             Me.DisposeSession()
             Throw
@@ -141,7 +141,7 @@ Public Class Session
     End Sub
 
     ''' <summary> Discards the session. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     Protected Overrides Sub DiscardSessionEvents()
         If Me.IsSessionOpen Then
             Try
@@ -150,7 +150,7 @@ Public Class Session
                 Me.DisableServiceRequest()
             Catch ex As NationalInstruments.VisaNS.VisaException
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, "@discarding", "discarding session")
-                Throw New NativeException(Me._LastNativeError, ex)
+                Throw New VI.Pith.NativeException(Me._LastNativeError, ex)
             Finally
                 Me.DisposeSession()
             End Try
@@ -158,22 +158,19 @@ Public Class Session
     End Sub
 
     ''' <summary>
-    ''' Searches for a listeners for the specified <see cref="ResourceName">reasource name</see>.
+    ''' Searches for a listeners for the specified
+    ''' <see cref="VI.Pith.ResourceNameInfo.ResourceName">reasource name</see>.
     ''' </summary>
     ''' <remarks>
-    ''' David, 11/27/2015. Updates <see cref="ResourceFound">Resource Exists</see>
-    ''' This could return a false positive because the resource manager does not always rely on
-    ''' physical check of existence. The NI VISA Manager returns affirmative if the resource is
-    ''' listed in the configuration file.
+    ''' David, 11/27/2015. Updates <see cref="VI.Pith.ResourceNameInfo.ResourceLocated ">Resource
+    ''' Exists</see>.
     ''' </remarks>
     ''' <returns> <c>true</c> if it the resource exists; otherwise <c>false</c> </returns>
     Public Overrides Function FindResource() As Boolean
-        Dim result As Boolean = True
-        If Me.Enabled Then
-            result = ResourceManager.Exists(Me.ResourceName)
+        If ResourceManager.Exists(Me.ResourceName) Then
+            Me.ResourceNameInfo.FoundResourceName = Me.ResourceName
         End If
-        Me.ResourceFound = result
-        Return result
+        Return Me.ResourceNameInfo.ResourceLocated
     End Function
 
     ''' <summary>
@@ -213,7 +210,7 @@ Public Class Session
     Private _LastNativeError As NativeError
     ''' <summary> Gets the last native error. </summary>
     ''' <value> The last native error. </value>
-    Protected Overrides ReadOnly Property LastNativeError As NativeErrorBase
+    Protected Overrides ReadOnly Property LastNativeError As VI.Pith.NativeErrorBase
         Get
             Return Me._LastNativeError
         End Get
@@ -263,7 +260,7 @@ Public Class Session
 
     ''' <summary>
     ''' Synchronously reads ASCII-encoded string data. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
     Public Overrides Function ReadFreeLine() As String
         Try
@@ -280,7 +277,7 @@ Public Class Session
             Else
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, Me.LastMessageSent, Me.LastAction)
             End If
-            Throw New NativeException(Me._LastNativeError, ex)
+            Throw New VI.Pith.NativeException(Me._LastNativeError, ex)
         Finally
             Me.LastInputOutputTime = DateTime.UtcNow
         End Try
@@ -290,7 +287,7 @@ Public Class Session
     ''' Synchronously reads ASCII-encoded string data. Reads up to the
     ''' <see cref="TerminationCharacter">termination character</see>.
     ''' </summary>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
     Public Overrides Function ReadFiniteLine() As String
         Try
@@ -307,7 +304,7 @@ Public Class Session
             Else
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, Me.LastMessageSent, Me.LastAction)
             End If
-            Throw New NativeException(Me._LastNativeError, ex)
+            Throw New VI.Pith.NativeException(Me._LastNativeError, ex)
         Finally
             Me.LastInputOutputTime = DateTime.UtcNow
         End Try
@@ -317,7 +314,7 @@ Public Class Session
     ''' Synchronously writes ASCII-encoded string data to the device or interface. Terminates the
     ''' data with the <see cref="TerminationCharacter">termination character</see>.
     ''' </summary>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <param name="dataToWrite"> The data to write. </param>
     Public Overrides Sub Write(ByVal dataToWrite As String)
         If Not String.IsNullOrWhiteSpace(dataToWrite) Then
@@ -333,7 +330,7 @@ Public Class Session
                 Else
                     Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, dataToWrite, Me.LastAction)
                 End If
-                Throw New NativeException(Me._LastNativeError, ex)
+                Throw New VI.Pith.NativeException(Me._LastNativeError, ex)
             Finally
                 Me.LastInputOutputTime = DateTime.UtcNow
             End Try
@@ -375,13 +372,13 @@ Public Class Session
 
     ''' <summary> Reads status byte. </summary>
     ''' <returns> The status byte. </returns>
-    Public Overrides Function ReadStatusByte() As ServiceRequests
+    Public Overrides Function ReadStatusByte() As VI.Pith.ServiceRequests
         Try
             Me._LastNativeError = NativeError.Success
-            Dim value As ServiceRequests = Me.EmulatedStatusByte
+            Dim value As VI.Pith.ServiceRequests = Me.EmulatedStatusByte
             Me.EmulatedStatusByte = 0
             If Me.IsSessionOpen Then
-                value = CType(Me.VisaSession.ReadStatusByte, ServiceRequests)
+                value = CType(Me.VisaSession.ReadStatusByte, VI.Pith.ServiceRequests)
             End If
             Return value
         Catch ex As NationalInstruments.VisaNS.VisaException
@@ -390,7 +387,7 @@ Public Class Session
             Else
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, "@STB", Me.LastAction)
             End If
-            Throw New NativeException(Me._LastNativeError, ex)
+            Throw New VI.Pith.NativeException(Me._LastNativeError, ex)
         Finally
             Me.LastInputOutputTime = DateTime.UtcNow
         End Try
@@ -407,7 +404,7 @@ Public Class Session
             Else
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, "@DCL", Me.LastAction)
             End If
-            Throw New NativeException(Me._LastNativeError, ex)
+            Throw New VI.Pith.NativeException(Me._LastNativeError, ex)
         Finally
             Me.LastInputOutputTime = DateTime.UtcNow
         End Try
@@ -428,7 +425,7 @@ Public Class Session
     End Sub
 
     ''' <summary> Gets the type of the enabled event. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <value> The type of the enabled event. </value>
     Private Property EnabledEventType As NationalInstruments.VisaNS.MessageBasedSessionEventType = NationalInstruments.VisaNS.MessageBasedSessionEventType.Custom
 
@@ -459,7 +456,7 @@ Public Class Session
             Else
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, "@Enable SRQ", Me.LastAction)
             End If
-            Throw New NativeException(Me._LastNativeError, ex)
+            Throw New VI.Pith.NativeException(Me._LastNativeError, ex)
         End Try
     End Sub
 
@@ -483,7 +480,7 @@ Public Class Session
             Else
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, "@Disable SRQ", Me.LastAction)
             End If
-            Throw New NativeException(Me._LastNativeError, ex)
+            Throw New VI.Pith.NativeException(Me._LastNativeError, ex)
         End Try
     End Sub
 
@@ -502,7 +499,7 @@ Public Class Session
             Else
                 Me._LastNativeError = New NativeError(ex.ErrorCode, Me.ResourceName, "@TRG", Me.LastAction)
             End If
-            Throw New NativeException(Me._LastNativeError, ex)
+            Throw New VI.Pith.NativeException(Me._LastNativeError, ex)
         Finally
             Me.LastInputOutputTime = DateTime.UtcNow
         End Try
@@ -517,11 +514,11 @@ Public Class Session
     Public Overrides Sub ClearInterface()
         If Me.SupportsClearInterface AndAlso Me.Enabled Then
             Using gi As GpibInterfaceSession = New GpibInterfaceSession()
-                gi.OpenSession(Me.ResourceInfo.InterfaceResourceName)
+                gi.OpenSession(Me.ResourceNameParseInfo.InterfaceResourceName)
                 If gi.IsOpen Then
                     gi.SendInterfaceClear()
                 Else
-                    Throw New OperationFailedException($"Failed opening GPIB Interface Session {Me.ResourceInfo.InterfaceResourceName}")
+                    Throw New VI.Pith.OperationFailedException($"Failed opening GPIB Interface Session {Me.ResourceNameParseInfo.InterfaceResourceName}")
                 End If
             End Using
         End If
@@ -532,11 +529,11 @@ Public Class Session
         Me.Clear()
         If Me.SupportsClearInterface AndAlso Me.Enabled Then
             Using gi As GpibInterfaceSession = New GpibInterfaceSession()
-                gi.OpenSession(Me.ResourceInfo.InterfaceResourceName)
+                gi.OpenSession(Me.ResourceNameParseInfo.InterfaceResourceName)
                 If gi.IsOpen Then
                     gi.SelectiveDeviceClear(Me.VisaSession.ResourceName)
                 Else
-                    Throw New OperationFailedException($"Failed opening GPIB Interface Session {Me.ResourceInfo.InterfaceResourceName}")
+                    Throw New VI.Pith.OperationFailedException($"Failed opening GPIB Interface Session {Me.ResourceNameParseInfo.InterfaceResourceName}")
                 End If
             End Using
         End If

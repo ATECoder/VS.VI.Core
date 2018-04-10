@@ -66,7 +66,8 @@ Public Class DeviceTests
     <TestMethod()>
     Public Sub DeviceResourceTest()
         Using target As Device = Device.Create
-            Assert.IsTrue(target.Find(TestInfo.ResourceName), $"VISA Resource {TestInfo.ResourceName} not found")
+            target.ResourceName = TestInfo.ResourceName
+            Assert.IsTrue(target.Find(), $"VISA Resource {TestInfo.ResourceName} not found")
         End Using
     End Sub
 
@@ -91,7 +92,7 @@ Public Class DeviceTests
         Assert.AreEqual(expectedErrorAvailableBits, actualErrorAvailableBits, $"Error available bits on creating device.")
 
         device.Session.ResourceTitle = TestInfo.ResourceTitle
-        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        Dim e As New isr.Core.Pith.ActionEventArgs
         Dim actualBoolean As Boolean = device.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
         Assert.IsTrue(actualBoolean, $"Failed to open session: {e.Details}")
 

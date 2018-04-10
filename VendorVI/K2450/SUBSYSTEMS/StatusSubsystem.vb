@@ -9,15 +9,31 @@
 ''' SOFTWARE.</para> </license>
 ''' <history date="12/14/2013" by="David" revision=""> Created. </history>
 Public Class StatusSubsystem
-    Inherits StatusSubsystemBase
+    Inherits VI.StatusSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
     ''' <param name="session"> The session. </param>
-    Public Sub New(ByVal session As isr.VI.SessionBase)
+    Public Sub New(ByVal session As VI.Pith.SessionBase)
         MyBase.New(session)
     End Sub
+
+    ''' <summary> Creates a new StatusSubsystem. </summary>
+    ''' <returns> A StatusSubsystem. </returns>
+    Public Shared Function Create() As StatusSubsystem
+        Dim subsystem As StatusSubsystem = Nothing
+        Try
+            subsystem = New StatusSubsystem(isr.VI.SessionFactory.Get.Factory.CreateSession())
+        Catch
+            If subsystem IsNot Nothing Then
+                subsystem.Dispose()
+                subsystem = Nothing
+            End If
+            Throw
+        End Try
+        Return subsystem
+    End Function
 
 #End Region
 

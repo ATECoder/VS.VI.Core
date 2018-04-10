@@ -4,7 +4,9 @@
     <Recognized>
       <Word>ieee</Word>
       <Word>isr</Word>
+      <Word>lan</Word>
       <Word>Scpi</Word>
+      <Word>susceptance</Word>
       <Word>Thermostream</Word>
     </Recognized>
     <Deprecated>

@@ -23,7 +23,6 @@ Public Class R2D2Panel
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private _InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
@@ -34,9 +33,9 @@ Public Class R2D2Panel
     ''' <param name="device"> The device. </param>
     Public Sub New(ByVal device As Device)
         MyBase.New(device)
-        Me._InitializingComponents = True
+        Me.InitializingComponents = True
         Me.InitializeComponent()
-        Me._InitializingComponents = False
+        Me.InitializingComponents = False
         Me._AssignDevice(device)
         With Me._ServiceRequestEnableNumeric.NumericUpDownControl
             .Hexadecimal = True
@@ -60,6 +59,7 @@ Public Class R2D2Panel
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                Me.InitializingComponents = True
                 Try
                     Me.Device?.RemovePrivateListener(Me.TraceMessagesBox)
                     If Me.Device IsNot Nothing Then Me.DeviceClosing(Me, New System.ComponentModel.CancelEventArgs)
@@ -128,7 +128,9 @@ Public Class R2D2Panel
 #Region " DEVICE EVENT HANDLERS "
 
     ''' <summary> Executes the device open changed action. </summary>
-    Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
+    ''' <param name="device"> The device. </param>
+    Protected Overrides Sub OnDeviceOpenChanged(ByVal device As VI.DeviceBase)
+        MyBase.OnDeviceOpenChanged(device)
         If Me.IsDeviceOpen Then
             Me._SimpleReadWriteControl.Connect(device?.Session)
         Else
@@ -144,16 +146,16 @@ Public Class R2D2Panel
     ''' <summary> Handles the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overrides Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
+    Protected Overrides Sub HandlePropertyChange(ByVal device As VI.DeviceBase, ByVal propertyName As String)
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        MyBase.OnDevicePropertyChanged(device, propertyName)
+        MyBase.HandlePropertyChange(device, propertyName)
         Select Case propertyName
             Case NameOf(isr.VI.DeviceBase.SessionServiceRequestEventEnabled)
                 Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
             Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
-            Case NameOf(isr.VI.DeviceBase.SessionMessagesTraceEnabled)
-                Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
+            Case NameOf(isr.VI.DeviceBase.MessageNotificationLevel)
+                Me._SessionTraceEnabledMenuItem.Checked = device.MessageNotificationLevel <> NotifySyncLevel.None
             Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
                 Me._ServiceRequestEnableNumeric.Value = device.ServiceRequestEnableBitmask
                 Me._ServiceRequestEnableNumeric.ToolTipText = $"SRE:0b{Convert.ToString(device.ServiceRequestEnableBitmask, 2),8}".Replace(" ", "0")
@@ -205,7 +207,7 @@ Public Class R2D2Panel
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         Try
-            Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, StatusSubsystem), e?.PropertyName)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
@@ -220,7 +222,7 @@ Public Class R2D2Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
         End Select
@@ -231,11 +233,20 @@ Public Class R2D2Panel
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(R2D2.Instrument.SystemSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.SystemSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, R2D2.Instrument.SystemSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -256,12 +267,12 @@ Public Class R2D2Panel
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me.ErrorProvider.Clear()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 Me.Device.SystemSubsystem.ClearInterface()
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -280,12 +291,12 @@ Public Class R2D2Panel
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me.ErrorProvider.Clear()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 Me.Device.SystemSubsystem.ClearDevice()
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -305,12 +316,12 @@ Public Class R2D2Panel
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me.ErrorProvider.Clear()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 Me.Device.SystemSubsystem.ClearExecutionState()
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -330,13 +341,13 @@ Public Class R2D2Panel
             Me.ErrorProvider.Clear()
             If menuItem IsNot Nothing Then
                 If Me.IsDeviceOpen Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                     Me.Device.ResetKnownState()
                 End If
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -356,16 +367,16 @@ Public Class R2D2Panel
             Me.ErrorProvider.Clear()
             If menuItem IsNot Nothing Then
                 If Me.IsDeviceOpen Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                     Me.Device.ResetKnownState()
                     activity = "initializing known state"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                     Me.Device.InitKnownState()
                 End If
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -404,7 +415,7 @@ Public Class R2D2Panel
                                             TalkerControlBase.SelectedValue(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel))
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -426,7 +437,7 @@ Public Class R2D2Panel
                                             TalkerControlBase.SelectedValue(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel))
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -443,7 +454,7 @@ Public Class R2D2Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SessionTraceEnabledMenuItem_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "toggling instrument message tracing"
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         If menuItem IsNot Nothing Then
@@ -452,12 +463,18 @@ Public Class R2D2Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             If menuItem IsNot Nothing Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.Device.SessionMessagesTraceEnabled = menuItem.Checked
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                If menuItem.Checked Then
+                    ' TODO: Change menu item to a drop down.
+                    Me.Device.MessageNotificationLevel = NotifySyncLevel.Async
+                Else
+                    Me.Device.MessageNotificationLevel = NotifySyncLevel.None
+                End If
+
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -468,30 +485,30 @@ Public Class R2D2Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SessionServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "Toggle session service request handling"
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.Session.ServiceRequestEventEnabled Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
                     Me.Device.Session.EnableServiceRequest()
                     If Me._ServiceRequestEnableNumeric.Value = 0 Then
-                        Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+                        Me.Device.StatusSubsystem.EnableServiceRequest(VI.Pith.ServiceRequests.All)
                     Else
-                        Me.Device.StatusSubsystem.EnableServiceRequest(CType(Me._ServiceRequestEnableNumeric.Value, ServiceRequests))
+                        Me.Device.StatusSubsystem.EnableServiceRequest(CType(Me._ServiceRequestEnableNumeric.Value, VI.Pith.ServiceRequests))
                     End If
                 Else
                     Me.Device.Session.DisableServiceRequest()
-                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
+                    Me.Device.StatusSubsystem.EnableServiceRequest(VI.Pith.ServiceRequests.None)
                 End If
                 Me.Device.StatusSubsystem.ReadEventRegisters()
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -502,14 +519,14 @@ Public Class R2D2Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _DeviceServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _DeviceServiceRequestHandlerEnabledMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "Toggle device service request handling"
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.DeviceServiceRequestHandlerAdded Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
                     Me.AddServiceRequestEventHandler()
                 Else
@@ -519,7 +536,7 @@ Public Class R2D2Panel
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -591,7 +608,7 @@ Public Class R2D2Panel
 
 
     Private Sub _ChannelListComboBox_SelectedValueChanged(sender As Object, e As EventArgs) Handles _ChannelListComboBox.SelectedValueChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
     End Sub
 
 #End Region

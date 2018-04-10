@@ -85,7 +85,7 @@ Public NotInheritable Class ResourceNamesManager
     Public Shared Function ParseInterfaceNumber(ByVal resourceName As String) As Integer
         If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
         Dim result As Integer = 0
-        Dim interfaceType As HardwareInterfaceType = ResourceNamesManager.ParseHardwareInterfaceType(resourceName)
+        Dim interfaceType As VI.Pith.HardwareInterfaceType = ResourceNamesManager.ParseHardwareInterfaceType(resourceName)
         Dim baseName As String = ResourceNamesManager.InterfaceResourceBaseName(interfaceType)
         Dim parts As String() = resourceName.Split(":"c)
         If parts.Count <= 0 OrElse parts(0).Length <= baseName.Length OrElse Not Integer.TryParse(parts(0).Substring(baseName.Length), result) Then
@@ -134,10 +134,10 @@ Public NotInheritable Class ResourceNamesManager
     ''' <summary> Parse hardware interface type. </summary>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A HardwareInterfaceType. </returns>
-    Public Shared Function ParseHardwareInterfaceType(ByVal resourceName As String) As HardwareInterfaceType
-        Dim result As HardwareInterfaceType = HardwareInterfaceType.Custom
+    Public Shared Function ParseHardwareInterfaceType(ByVal resourceName As String) As VI.Pith.HardwareInterfaceType
+        Dim result As VI.Pith.HardwareInterfaceType = HardwareInterfaceType.Custom
         If Not String.IsNullOrWhiteSpace(resourceName) Then
-            For Each v As HardwareInterfaceType In [Enum].GetValues(GetType(HardwareInterfaceType))
+            For Each v As VI.Pith.HardwareInterfaceType In [Enum].GetValues(GetType(HardwareInterfaceType))
                 If v <> HardwareInterfaceType.Custom AndAlso
                     resourceName.StartsWith(ResourceNamesManager.InterfaceResourceBaseName(v), StringComparison.OrdinalIgnoreCase) Then
                     result = v
@@ -153,21 +153,21 @@ Public NotInheritable Class ResourceNamesManager
     ''' illegal values. </exception>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The interface base name. </returns>
-    Public Shared Function InterfaceResourceBaseName(ByVal interfaceType As HardwareInterfaceType) As String
+    Public Shared Function InterfaceResourceBaseName(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As String
         Select Case interfaceType
-            Case HardwareInterfaceType.Gpib
+            Case VI.Pith.HardwareInterfaceType.Gpib
                 Return GpibResourceBaseName
-            Case HardwareInterfaceType.GpibVxi
+            Case VI.Pith.HardwareInterfaceType.GpibVxi
                 Return GpibVxiResourceBaseName
-            Case HardwareInterfaceType.Pxi
+            Case VI.Pith.HardwareInterfaceType.Pxi
                 Return PxiResourceBaseName
-            Case HardwareInterfaceType.Serial
+            Case VI.Pith.HardwareInterfaceType.Serial
                 Return SerialResourceBaseName
-            Case HardwareInterfaceType.Tcpip
+            Case VI.Pith.HardwareInterfaceType.Tcpip
                 Return TcpIPResourceBaseName
-            Case HardwareInterfaceType.Usb
+            Case VI.Pith.HardwareInterfaceType.Usb
                 Return UsbResourceBaseName
-            Case HardwareInterfaceType.Vxi
+            Case VI.Pith.HardwareInterfaceType.Vxi
                 Return VxiResourceBaseName
             Case Else
                 Throw New ArgumentException("Unhandled case", "interfaceType")
@@ -187,7 +187,7 @@ Public NotInheritable Class ResourceNamesManager
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <param name="boardNumber">   The board number. </param>
     ''' <returns> The Interface resource name, e.g., 'GPIB?*INTFC'. </returns>
-    Public Shared Function BuildInterfaceResourceName(ByVal interfaceType As HardwareInterfaceType, ByVal boardNumber As Integer) As String
+    Public Shared Function BuildInterfaceResourceName(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByVal boardNumber As Integer) As String
         Return ResourceNamesManager.BuildInterfaceResourceName(ResourceNamesManager.InterfaceResourceBaseName(interfaceType), boardNumber)
     End Function
 
@@ -200,7 +200,7 @@ Public NotInheritable Class ResourceNamesManager
     ''' <summary> Returns the Interface search pattern. </summary>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The Interface search pattern, e.g., 'GPIB?*INTFC'. </returns>
-    Public Shared Function BuildInterfaceFilter(ByVal interfaceType As HardwareInterfaceType) As String
+    Public Shared Function BuildInterfaceFilter(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As String
         Return String.Format(Globalization.CultureInfo.CurrentCulture, ResourceNamesManager.InterfaceFilterFormat,
                              ResourceNamesManager.InterfaceResourceBaseName(interfaceType))
     End Function
@@ -214,7 +214,7 @@ Public NotInheritable Class ResourceNamesManager
     ''' <summary> Returns the Instrument search pattern. </summary>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The Instrument search pattern, e.g., 'GPIB?*INSTR'. </returns>
-    Public Shared Function BuildInstrumentFilter(ByVal interfaceType As HardwareInterfaceType) As String
+    Public Shared Function BuildInstrumentFilter(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As String
         Return String.Format(Globalization.CultureInfo.CurrentCulture, ResourceNamesManager.InstrumentFilterFormat,
                              ResourceNamesManager.InterfaceResourceBaseName(interfaceType))
     End Function
@@ -222,17 +222,17 @@ Public NotInheritable Class ResourceNamesManager
     ''' <summary> Returns the Instrument search pattern. </summary>
     ''' <param name="interface1"> Type of the interface. </param>
     ''' <returns> The Instrument search pattern, e.g., '(GPIB|USB)?*INSTR'. </returns>
-    Public Shared Function BuildInstrumentFilter(ByVal interface1 As HardwareInterfaceType,
-                                                 ByVal interface2 As HardwareInterfaceType) As String
-        Return $"({ResourceNamesManager.InterfaceResourceBaseName(interface1)}|{ResourceNamesManager.InterfaceResourceBaseName(interface2)})?*{InstrumentBaseName}"
+    Public Shared Function BuildInstrumentFilter(ByVal interface1 As VI.Pith.HardwareInterfaceType,
+                                                 ByVal interface2 As VI.Pith.HardwareInterfaceType) As String
+        Return $"({VI.Pith.ResourceNamesManager.InterfaceResourceBaseName(interface1)}|{VI.Pith.ResourceNamesManager.InterfaceResourceBaseName(interface2)})?*{InstrumentBaseName}"
     End Function
     ''' <summary> Returns the Instrument search pattern. </summary>
     ''' <param name="interface1"> Type of the interface. </param>
     ''' <returns> The Instrument search pattern, e.g., '(GPIB|USB)?*INSTR'. </returns>
-    Public Shared Function BuildInstrumentFilter(ByVal interface1 As HardwareInterfaceType,
-                                                 ByVal interface2 As HardwareInterfaceType,
-                                                 ByVal interface3 As HardwareInterfaceType) As String
-        Return $"({ResourceNamesManager.InterfaceResourceBaseName(interface1)}|{ResourceNamesManager.InterfaceResourceBaseName(interface2)}|{ResourceNamesManager.InterfaceResourceBaseName(interface3)})?*{InstrumentBaseName}"
+    Public Shared Function BuildInstrumentFilter(ByVal interface1 As VI.Pith.HardwareInterfaceType,
+                                                 ByVal interface2 As VI.Pith.HardwareInterfaceType,
+                                                 ByVal interface3 As VI.Pith.HardwareInterfaceType) As String
+        Return $"({VI.Pith.ResourceNamesManager.InterfaceResourceBaseName(interface1)}|{VI.Pith.ResourceNamesManager.InterfaceResourceBaseName(interface2)}|{VI.Pith.ResourceNamesManager.InterfaceResourceBaseName(interface3)})?*{InstrumentBaseName}"
     End Function
 
 
@@ -240,7 +240,7 @@ Public NotInheritable Class ResourceNamesManager
     ''' <param name="interfaceType">   Type of the interface. </param>
     ''' <param name="interfaceNumber"> The interface number (e.g., board or port number). </param>
     ''' <returns> The Instrument search pattern, e.g., 'GPIB0?*INSTR'. </returns>
-    Public Shared Function BuildInstrumentFilter(ByVal interfaceType As HardwareInterfaceType, ByVal interfaceNumber As Integer) As String
+    Public Shared Function BuildInstrumentFilter(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByVal interfaceNumber As Integer) As String
         Return String.Format(Globalization.CultureInfo.CurrentCulture, ResourceNamesManager.InstrumentBoardFilterFormat,
                              ResourceNamesManager.InterfaceResourceBaseName(interfaceType), interfaceNumber)
     End Function

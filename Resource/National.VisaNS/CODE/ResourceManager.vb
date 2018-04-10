@@ -27,7 +27,7 @@ Public NotInheritable Class ResourceManager
     ''' <summary> Parse resource. </summary>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
-    Public Shared Function ParseResource(ByVal resourceName As String) As VI.ResourceParseResult
+    Public Shared Function ParseResource(ByVal resourceName As String) As VI.Pith.ResourceNameParseInfo
         Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.ParseResource(resourceName)
     End Function
 
@@ -106,7 +106,7 @@ Public NotInheritable Class ResourceManager
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The found interface resource names. </returns>
-    Public Shared Function FindInterfaces(ByVal interfaceType As HardwareInterfaceType) As IEnumerable(Of String)
+    Public Shared Function FindInterfaces(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
         Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindInterfaces(interfaceType)
     End Function
 
@@ -118,7 +118,7 @@ Public NotInheritable Class ResourceManager
     ''' located. If exception occurred, the exception details are returned in the first element of the
     ''' <paramref name="resources"/>. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
-    Public Shared Function TryFindInterfaces(ByVal interfaceType As HardwareInterfaceType, ByRef resources As IEnumerable(Of String)) As Boolean
+    Public Shared Function TryFindInterfaces(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByRef resources As IEnumerable(Of String)) As Boolean
         Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInterfaces(interfaceType, resources)
     End Function
 
@@ -153,7 +153,7 @@ Public NotInheritable Class ResourceManager
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The found instrument resource names. </returns>
-    Public Shared Function FindInstruments(ByVal interfaceType As HardwareInterfaceType) As IEnumerable(Of String)
+    Public Shared Function FindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
         Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindInstruments(interfaceType)
     End Function
 
@@ -166,7 +166,7 @@ Public NotInheritable Class ResourceManager
     ''' <paramref name="resources"/>. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#",
         Justification:="This is the normative implementation of this method.")>
-    Public Shared Function TryFindInstruments(ByVal interfaceType As HardwareInterfaceType,
+    Public Shared Function TryFindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                                   ByRef resources As IEnumerable(Of String)) As Boolean
         Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInstruments(interfaceType, resources)
     End Function
@@ -176,7 +176,7 @@ Public NotInheritable Class ResourceManager
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <param name="boardNumber">   The board number. </param>
     ''' <returns> The found instrument resource names. </returns>
-    Public Shared Function FindInstruments(ByVal interfaceType As HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
+    Public Shared Function FindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
         Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindInstruments(interfaceType, boardNumber)
     End Function
 
@@ -190,7 +190,7 @@ Public NotInheritable Class ResourceManager
     ''' <paramref name="resources"/>. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="2#",
         Justification:="This is the normative implementation of this method.")>
-    Public Shared Function TryFindInstruments(ByVal interfaceType As HardwareInterfaceType,
+    Public Shared Function TryFindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                                   ByVal interfaceNumber As Integer, ByRef resources As IEnumerable(Of String)) As Boolean
         Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInstruments(interfaceType, interfaceNumber, resources)
     End Function

@@ -8,8 +8,8 @@
     ''' </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="payload"> The payload. </param>
-    ''' <returns> <c>True</c> if <see cref="PayloadStatus"/> is <see cref="PayloadStatus.Okay"/>; otherwise <c>False</c>. </returns>
-    Public Overloads Function Query(ByVal payload As PayloadBase) As Boolean
+    ''' <returns> <c>True</c> if <see cref="VI.Pith.PayloadStatus"/> is <see cref="VI.Pith.PayloadStatus.Okay"/>; otherwise <c>False</c>. </returns>
+    Public Overloads Function Query(ByVal payload As VI.Pith.PayloadBase) As Boolean
         If payload Is Nothing Then Throw New ArgumentNullException(NameOf(payload))
         Me.EmulatedReply = payload.SimulatedPayload
         payload.QueryStatus = PayloadStatus.Okay Or PayloadStatus.Sent
@@ -27,8 +27,8 @@
     ''' <summary> Writes the payload to the device. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="payload"> The payload. </param>
-    ''' <returns> <c>True</c> if <see cref="PayloadStatus"/> is <see cref="PayloadStatus.Okay"/>; otherwise <c>False</c>. </returns>
-    Public Function Write(ByVal payload As PayloadBase) As Boolean
+    ''' <returns> <c>True</c> if <see cref="VI.Pith.PayloadStatus"/> is <see cref="VI.Pith.PayloadStatus.Okay"/>; otherwise <c>False</c>. </returns>
+    Public Function Write(ByVal payload As VI.Pith.PayloadBase) As Boolean
         If payload Is Nothing Then Throw New ArgumentNullException(NameOf(payload))
         payload.CommandStatus = PayloadStatus.Okay Or PayloadStatus.Sent
         payload.SentMessage = payload.BuildCommand

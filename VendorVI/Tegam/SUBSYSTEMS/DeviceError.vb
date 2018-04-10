@@ -14,7 +14,7 @@ Public Class DeviceError
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()
-        MyBase.New(Scpi.Syntax.NoErrorCompoundMessage)
+        MyBase.New(VI.Pith.Scpi.Syntax.NoErrorCompoundMessage)
     End Sub
 
     ''' <summary> Constructor. </summary>

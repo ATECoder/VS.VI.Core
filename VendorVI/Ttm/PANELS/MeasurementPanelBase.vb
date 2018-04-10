@@ -730,13 +730,13 @@ Public Class MeasurementPanelBase
 
 #Region " TRACE LEVEL "
 
-    Private _MasterDevice As isr.VI.Tsp.K2600.Device
+    Private _MasterDevice As VI.Tsp.K2600.Device
     <Browsable(False), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
-    Public Property MasterDevice As isr.VI.Tsp.K2600.Device
+    Public Property MasterDevice As VI.Tsp.K2600.Device
         Get
             Return Me._MasterDevice
         End Get
-        Set(value As isr.VI.Tsp.K2600.Device)
+        Set(value As VI.Tsp.K2600.Device)
             Me._MasterDevice = value
             If value Is Nothing Then
                 Me.DisableTraceLevelControls()

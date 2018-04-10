@@ -14,7 +14,7 @@ Public Class TriggerSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="TriggerSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -30,12 +30,12 @@ Public Class TriggerSubsystem
     '''           </para></remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me.SupportedTriggerSources = VI.TriggerSources.Immediate Or VI.TriggerSources.TriggerLink
+        Me.SupportedTriggerSources = Scpi.TriggerSources.Immediate Or Scpi.TriggerSources.TriggerLink
     End Sub
 
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.TriggerSource = VI.TriggerSources.Immediate
+        Me.TriggerSource = Scpi.TriggerSources.Immediate
     End Sub
 
 #End Region

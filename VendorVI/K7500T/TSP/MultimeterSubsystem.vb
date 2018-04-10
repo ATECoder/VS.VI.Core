@@ -1,6 +1,4 @@
-﻿Imports isr.Core.Pith
-Imports isr.Core.Pith.EnumExtensions
-''' <summary> Measure subsystem. </summary>
+﻿''' <summary> Measure subsystem. </summary>
 ''' <license> (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
 ''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
@@ -18,7 +16,7 @@ Public Class MultimeterSubsystem
     ''' <summary> Initializes a new instance of the <see cref="MultimeterSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 
@@ -26,12 +24,21 @@ Public Class MultimeterSubsystem
 
 #Region " I PRESETTABLE "
 
+    ''' <summary>
+    ''' Sets subsystem values to their known execution clear state.
+    ''' </summary>
+    Public Overrides Sub ClearExecutionState()
+        MyBase.ClearExecutionState()
+        Me.Readings?.Reset()
+    End Sub
+
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
     ''' <remarks> Use this method to customize the reset. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me.FilterCountRange = New isr.Core.Pith.RangeI(1, 100)
-        Me.FilterWindowRange = New isr.Core.Pith.RangeR(0, 0.1)
+        ' TO_DO: the readings are initialized when the format system is reset.
+        Me.Readings = New Readings
+        MyBase.InitKnownState()
         Dim lineFrequency As Double = Me.StatusSubsystem.LineFrequency.GetValueOrDefault(60)
         If lineFrequency = 50 Then
             Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.0005, 12)
@@ -44,6 +51,8 @@ Public Class MultimeterSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
+        Me.FilterCountRange = New isr.Core.Pith.RangeI(1, 100)
+        Me.FilterWindowRange = New isr.Core.Pith.RangeR(0, 0.1)
         Me.PowerLineCycles = 0.5
         Me.AutoZeroEnabled = True
         Me.FilterCount = 10
@@ -51,26 +60,26 @@ Public Class MultimeterSubsystem
         Me.MovingAverageFilterEnabled = False
         Me.OpenDetectorEnabled = False
         Me.FilterWindow = 0.001
-        For Each fm As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
-            Select Case fm
+        For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+            Select Case fmode
                 Case MultimeterFunctionMode.CurrentDC, MultimeterFunctionMode.CurrentAC
-                    Me.FunctionModeRanges(fm).SetRange(0, 10)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 10)
                 Case MultimeterFunctionMode.VoltageDC
-                    Me.FunctionModeRanges(fm).SetRange(0, 1000)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 1000)
                 Case MultimeterFunctionMode.VoltageAC
-                    Me.FunctionModeRanges(fm).SetRange(0, 700)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 700)
                 Case MultimeterFunctionMode.ResistanceTwoWire
-                    Me.FunctionModeRanges(fm).SetRange(0, 1000000000.0)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 1000000000.0)
                 Case MultimeterFunctionMode.ResistanceFourWire
-                    Me.FunctionModeRanges(fm).SetRange(0, 1000000000.0)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 1000000000.0)
                 Case MultimeterFunctionMode.Continuity
-                    Me.FunctionModeRanges(fm).SetRange(0, 1000)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 1000)
                 Case MultimeterFunctionMode.Diode
-                    Me.FunctionModeRanges(fm).SetRange(0, 10)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 10)
                 Case MultimeterFunctionMode.Capacitance
-                    Me.FunctionModeRanges(fm).SetRange(0, 0.001)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 0.001)
                 Case MultimeterFunctionMode.Ratio
-                    Me.FunctionModeRanges(fm).SetRange(0, 1000)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 1000)
             End Select
         Next
         Me.FunctionMode = MultimeterFunctionMode.VoltageDC
@@ -234,28 +243,11 @@ Public Class MultimeterSubsystem
 
     ''' <summary> Gets or sets the front terminals selected query command. </summary>
     ''' <value> The front terminals selected query command. </value>
-    Protected Overrides ReadOnly Property FrontTerminalsSelectedPrintCommand As String = "_G.print(_G.dmm.terminals==dmm.TERMINALS_FRONT)"
+    Protected Overrides ReadOnly Property FrontTerminalsSelectedQueryCommand As String = "_G.print(_G.dmm.terminals==dmm.TERMINALS_FRONT)"
 
 #End Region
 
 #Region " FUNCTION MODE "
-
-    ''' <summary> Converts a function Mode to a decimal places. </summary>
-    ''' <param name="functionMode"> The function mode. </param>
-    ''' <returns> FunctionMode as an Integer. </returns>
-    Public Overrides Function ToDecimalPlaces(functionMode As MultimeterFunctionMode) As Integer
-        Dim result As Integer = MyBase.ToDecimalPlaces(functionMode)
-        Select Case functionMode
-            Case MultimeterFunctionMode.CurrentDC, MultimeterFunctionMode.CurrentAC
-                result = 3
-            Case MultimeterFunctionMode.VoltageDC, MultimeterFunctionMode.VoltageAC
-                result = 3
-            Case MultimeterFunctionMode.ResistanceFourWire, MultimeterFunctionMode.ResistanceTwoWire,
-                 MultimeterFunctionMode.Frequency, MultimeterFunctionMode.Temperature
-                result = 0
-        End Select
-        Return result
-    End Function
 
     ''' <summary> Gets or sets the function mode query command. </summary>
     ''' <value> The function mode query command. </value>
@@ -263,7 +255,7 @@ Public Class MultimeterSubsystem
 
     ''' <summary> Gets or sets the function mode command format. </summary>
     ''' <value> The function mode command format. </value>
-    ''' <remarks> Query command uses <see cref="SessionBase.QueryPrintTrimEnd"/></remarks>
+    ''' <remarks> Query command uses <see cref="VI.Pith.SessionBase.QueryPrintTrimEnd"/></remarks>
     Protected Overrides ReadOnly Property FunctionModeCommandFormat As String = "_G.dmm.measure.func={0}"
 
 #Region " UNIT "
@@ -271,7 +263,7 @@ Public Class MultimeterSubsystem
     ''' <summary> Gets or sets the Measure Unit query command. </summary>
     ''' <remarks>
     ''' The query command uses the
-    ''' <see cref="M:isr.VI.SessionBase.QueryPrintTrimEnd(System.Int32,System.String)" />
+    ''' <see cref="M:VI.Pith.SessionBase.QueryPrintTrimEnd(System.Int32,System.String)" />
     ''' </remarks>
     ''' <value> The Unit query command. </value>
     Protected Overrides ReadOnly Property MultimeterMeasurementUnitQueryCommand As String = "_G.smu.measure.unit"
@@ -428,10 +420,43 @@ Public Class MultimeterSubsystem
 
     ''' <summary> Gets the Measure query command. </summary>
     ''' <value> The Aperture query command. </value>
-    Protected Overrides ReadOnly Property ReadQueryCommand As String = "_G.print(_G.dmm.measure.read())"
+    Protected Overrides ReadOnly Property MeasureQueryCommand As String = "_G.print(_G.dmm.measure.read())"
 
 #End Region
 
 #End Region
+
+#Region " MEASURE "
+
+    Public Overrides Function Measure() As Double?
+        Me.Session.MakeEmulatedReplyIfEmpty(Me.Readings.Reading.Generator.Value.ToString)
+        Return MyBase.Measure()
+    End Function
+
+#End Region
+
+#Region " PARSE READING "
+
+    Private _Readings As Readings
+    ''' <summary> Gets or sets the readings. </summary>
+    ''' <value> The readings. </value>
+    Public Property Readings As Readings
+        Get
+            Return Me._Readings
+        End Get
+        Private Set(value As Readings)
+            Me._Readings = value
+            MyBase.AssignReadingAmounts(value)
+        End Set
+    End Property
+
+    ''' <summary> Parses a new set of reading elements. </summary>
+    ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
+    Public Overrides Function ParseReading(ByVal reading As String) As Double?
+        Return MyBase.ParseReadingAmounts(reading)
+    End Function
+
+#End Region
+
 
 End Class

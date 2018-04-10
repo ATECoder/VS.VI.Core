@@ -9,16 +9,32 @@
 ''' </para> </license>
 ''' <history date="9/10/2013" by="David" revision="3.0.5001"> Created. </history>
 Public Class StatusSubsystem
-    Inherits Vi.Scpi.StatusSubsystemBase
+    Inherits VI.Scpi.StatusSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal visaSession As Vi.SessionBase)
+    Public Sub New(ByVal visaSession As VI.Pith.SessionBase)
         MyBase.New(visaSession)
     End Sub
+
+    ''' <summary> Creates a new StatusSubsystem. </summary>
+    ''' <returns> A StatusSubsystem. </returns>
+    Public Shared Function Create() As StatusSubsystem
+        Dim subsystem As StatusSubsystem = Nothing
+        Try
+            subsystem = New StatusSubsystem(isr.VI.SessionFactory.Get.Factory.CreateSession())
+        Catch
+            If subsystem IsNot Nothing Then
+                subsystem.Dispose()
+                subsystem = Nothing
+            End If
+            Throw
+        End Try
+        Return subsystem
+    End Function
 
 #End Region
 

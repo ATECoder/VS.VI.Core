@@ -42,9 +42,7 @@ Partial Class BridgeMeterControl
         '_ResourceSelectorConnector
         '
         Me._ResourceSelectorConnector.BackColor = System.Drawing.Color.Transparent
-        Me._ResourceSelectorConnector.ClearToolTipText = "Clear device state"
         Me._ResourceSelectorConnector.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._ResourceSelectorConnector.EnteredResourceName = ""
         Me._ResourceSelectorConnector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ResourceSelectorConnector.Location = New System.Drawing.Point(3, 21)
         Me._ResourceSelectorConnector.Margin = New System.Windows.Forms.Padding(0)

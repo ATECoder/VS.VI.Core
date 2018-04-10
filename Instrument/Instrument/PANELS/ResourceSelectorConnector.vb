@@ -24,15 +24,18 @@ Public Class ResourceSelectorConnector
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
-
+        Me.InitializingComponents = True
         ' This call is required by the Windows Form Designer.
         Me.InitializeComponent()
-        Me._Clearable = True
+        Me.InitializingComponents = False
+        Me._clearable = True
         Me._Connectable = True
         Me._Searchable = True
         Me._ToggleConnectionButton.Enabled = False
         Me._ClearButton.Enabled = False
         Me._FindButton.Enabled = True
+        Me._SessionFactory = New VI.SessionFactory
+        Me._SessionFactory.CaptureSyncContext(Windows.Forms.WindowsFormsSynchronizationContext.Current)
     End Sub
 
     ''' <summary> Creates a new ResourceSelectorConnector. </summary>
@@ -152,46 +155,42 @@ Public Class ResourceSelectorConnector
         End Get
         Set(value As Boolean)
             If value <> Me.IsConnected Then
-                Me._ApplyConnectionState(value)
+                ' enable or disable based on the connection status.
+                Me._ResourceNamesComboBox.Enabled = Not value
+                Me._ClearButton.Enabled = Me.Clearable AndAlso value
+                Me._FindButton.Enabled = Me.Searchable AndAlso Not value
+                Me._ToggleConnectionButton.ToolTipText = $"Click to {If(value, "Disconnect", "Connect")}"
+                ' turning off visibility is required -- otherwise, control overflows and both search and toggle disappear 
+                Me._ToggleConnectionButton.Visible = False
+                Me._ToggleConnectionButton.Image = If(value, My.Resources.Connect_22x22, My.Resources.Disconnect_22x22)
+                Me._ToggleConnectionButton.Visible = Me.Connectable
+                Me._ToggleConnectionButton.Enabled = Me.Connectable
+                Me._ToolStrip.Invalidate()
+                Me._IsConnected = value
+                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
-
-    ''' <summary> Toggle connection. </summary>
-    ''' <param name="affirmative"> The value. </param>
-    Private Sub _ApplyConnectionState(ByVal affirmative As Boolean)
-        ' enable or disable based on the connection status.
-        Me._ResourceNamesComboBox.Enabled = Not affirmative
-        Me._ClearButton.Enabled = Me.Clearable AndAlso affirmative
-        Me._FindButton.Enabled = Me.Searchable AndAlso Not affirmative
-        Me._ToggleConnectionButton.ToolTipText = $"Click to {If(affirmative, "Disconnect", "Connect")}"
-        ' turning off visibility is required -- otherwise, control overflows and both search and toggle disappear 
-        Me._ToggleConnectionButton.Visible = False
-        Me._ToggleConnectionButton.Image = If(affirmative, My.Resources.Connect_22x22, My.Resources.Disconnect_22x22)
-        Me._ToggleConnectionButton.Visible = Me.Connectable
-        Me._ToggleConnectionButton.Enabled = Me.Connectable
-        Me._ToolStrip.Invalidate()
-        Me._IsConnected = affirmative
-        Me.SafePostPropertyChanged(NameOf(Instrument.ResourceSelectorConnector.IsConnected))
-    End Sub
 
     ''' <summary> Executes the toggle connection action. </summary>
     ''' <param name="sender"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification:="OK")>
     Private Sub OnToggleConnection(ByVal sender As ToolStripItem)
         If sender Is Nothing Then Return
+        Dim activity As String = ""
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._ErrorProvider.Clear()
             If Me.IsConnected Then
+                activity = $"connecting '{Me.SessionFactory.EnteredResourceName}'"
                 Me.OnDisconnect(New System.ComponentModel.CancelEventArgs)
             Else
+                activity = $"disconnecting '{Me.SessionFactory.EnteredResourceName}'"
                 Me.OnConnect(New System.ComponentModel.CancelEventArgs)
             End If
         Catch ex As Exception
             Me._ErrorProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception connecting resource '{Me.SelectedResourceName}';. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -256,179 +255,190 @@ Public Class ResourceSelectorConnector
 
 #End Region
 
+#Region " SESSION FACTORY "
+
+    Private WithEvents _SessionFactory As VI.SessionFactory
+
+    ''' <summary> Gets the session factory. </summary>
+    ''' <value> The session factory. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Public ReadOnly Property SessionFactory As VI.SessionFactory
+        Get
+            Return Me._SessionFactory
+        End Get
+    End Property
+
+    ''' <summary> Handles the property changed. </summary>
+    ''' <param name="sender">       Source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Protected Overridable Overloads Sub HandlePropertyChanged(sender As VI.SessionFactory, ByVal propertyName As String)
+        If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
+            Select Case propertyName
+                Case NameOf(VI.SessionFactory.HasResources)
+                    ' if No resources, issues alerts
+                    Me.DisplayEnumeratedResourceNames()
+                Case NameOf(VI.SessionFactory.ResourcesFilter)
+                    Me._FindButton.ToolTipText = $"Search using the search pattern '{sender.ResourcesFilter}'"
+                Case NameOf(VI.SessionFactory.SelectedResourceExists)
+                    sender.OpenResourceSessionEnabled = Me.Connectable AndAlso sender.SelectedResourceExists
+                Case NameOf(VI.SessionFactory.SelectedResourceName)
+                    If Not String.Equals(Me._ResourceNamesComboBox.Text, sender.SelectedResourceName) Then
+                        Me._ResourceNamesComboBox.Text = sender.SelectedResourceName
+                    End If
+                Case NameOf(VI.SessionFactory.OpenResourceSessionEnabled)
+                    Me._ToggleConnectionButton.Enabled = sender.OpenResourceSessionEnabled
+            End Select
+            Me._ToolStrip.Invalidate()
+            Me.SafePostPropertyChanged(propertyName)
+        End If
+    End Sub
+
+    ''' <summary> Session factory property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _SessionFactory_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _SessionFactory.PropertyChanged
+        If sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.SessionFactory)}.{e.PropertyName} change"
+        Try
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._SessionFactory_PropertyChanged), New Object() {sender, e})
+            Else
+                If sender IsNot Nothing AndAlso e IsNot Nothing Then
+                    Me.HandlePropertyChanged(TryCast(sender, VI.SessionFactory), e.PropertyName)
+                End If
+            End If
+        Catch ex As Exception
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
+        End Try
+    End Sub
+
+
+#End Region
+
 #Region " RESOURCE NAMES "
 
-    Private _HasResources As Boolean
-    ''' <summary> Gets or sets the has resources. </summary>
-    ''' <value> The has resources. </value>
-    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property HasResources As Boolean
-        Get
-            Return _HasResources
-        End Get
-        Set(ByVal value As Boolean)
-            If Not Me.HasResources.Equals(value) Then
-                Me._HasResources = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    Private _ResourcesFilter As String
-    ''' <summary> Gets or sets the resources search pattern. </summary>
-    ''' <value> The resources search pattern. </value>
-    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property ResourcesFilter As String
-        Get
-            Return Me._ResourcesFilter
-        End Get
-        Set(ByVal value As String)
-            If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.ResourcesFilter) Then
-                Me._ResourcesFilter = value
-                Me._FindButton.ToolTipText = $"Search using the search pattern '{value}'"
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary>
-    ''' Gets or sets the Ping Filter enabled sentinel. When enabled, Tcp/IP resources are added only
-    ''' if they can be pinged.
-    ''' </summary>
-    ''' <value> The ping filter enabled. </value>
-    Public Property PingFilterEnabled As Boolean = True
-
-    ''' <summary> Displays the resource names based on the <see cref="ResourcesFilter">search pattern</see>. </summary>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Sub DisplayResourceNames()
-        Dim resources As IEnumerable(Of String) = New String() {}
+    ''' <summary> Displays an enumerated resource names. </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub DisplayEnumeratedResourceNames()
         Me._ToggleConnectionButton.Enabled = False
+        Dim activity As String = $"displaying {NameOf(VI.SessionFactory.EnumeratedResources)}"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._ErrorProvider.Clear()
-            Using rm As ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
-                If String.IsNullOrWhiteSpace(Me.ResourcesFilter) Then
-                    resources = rm.FindResources()
-                Else
-                    resources = rm.FindResources(Me.ResourcesFilter).ToArray
-                End If
-            End Using
-            If Me.PingFilterEnabled Then resources = ResourceNamesManager.PingFilter(resources)
-            If resources.Count = 0 Then
-                Me.HasResources = False
-                Me._ResourceNamesComboBox.ToolTipText = isr.VI.My.Resources.LocalResourceNotFoundSynopsis
-                Dim message As String = $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}."
-                Me._ErrorProvider.Annunciate(Me._FindButton, message)
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, message)
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, activity)
+            If Me.SessionFactory.HasResources Then
+                VI.SessionFactory.DisplayResourceNames(Me._ResourceNamesComboBox.ComboBox, Me.SessionFactory.EnumeratedResources)
+                Me._ResourceNamesComboBox.ToolTipText = VI.Pith.My.Resources.LocalResourceSelectorTip
             Else
-                Me._ResourceNamesComboBox.ComboBox.DataSource = Nothing
-                Me._ResourceNamesComboBox.Items.Clear()
-                    Me._ResourceNamesComboBox.ComboBox.DataSource = resources
-                    Me.HasResources = True
-                    Me._ResourceNamesComboBox.ToolTipText = isr.VI.My.Resources.LocalResourceSelectorTip
-                End If
+                Me._ResourceNamesComboBox.ToolTipText = VI.Pith.My.Resources.LocalResourceNotFoundSynopsis
+                activity = $"{VI.Pith.My.Resources.LocalResourceNotFoundSynopsis};. {VI.Pith.My.Resources.LocalResourcesNotFoundHint}"
+                Me._ErrorProvider.Annunciate(Me._FindButton, activity)
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, activity)
+            End If
         Catch ex As Exception
-            Me.HasResources = False
             Me._ErrorProvider.Annunciate(Me._FindButton, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{isr.VI.My.Resources.LocalResourceNotFoundSynopsis};. {isr.VI.My.Resources.LocalResourcesNotFoundHint}.{Environment.NewLine}{ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                isr.VI.Instrument.My.MyLibrary.LogUnpublishedMessage(New TraceMessage(TraceEventType.Error, My.MyLibrary.TraceEventId,
+$"Exception {activity};. 
+logged to: {My.Application.Log.DefaultFileLogWriter.FullLogFileName};
+{ex.ToFullBlownString}"))
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"{VI.Pith.My.Resources.LocalResourceNotFoundSynopsis};. {VI.Pith.My.Resources.LocalResourcesNotFoundHint}
+{ex.ToFullBlownString}")
+            End If
         Finally
             Me._ToolStrip.Invalidate()
             Me.Cursor = Cursors.Default
         End Try
     End Sub
 
-    ''' <summary> Displays the search patters. </summary>
+    ''' <summary> Displays the resource names based on the <see cref="vi.SessionFactory.ResourcesFilter">search pattern</see>. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Sub DisplayResourceNamePatterns()
+    Private Sub DisplayResourceNames()
+        Dim resources As IEnumerable(Of String) = New String() {}
+        Me._ToggleConnectionButton.Enabled = False
+        Dim activity As String = $"displaying {NameOf(VI.SessionFactory.EnumeratedResources)}"
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me._ErrorProvider.Clear()
+            Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, activity)
+            Me.SessionFactory.DisplayResourceNames(Me._ResourceNamesComboBox.ComboBox)
+            If Me.SessionFactory.HasResources Then
+                Me._ResourceNamesComboBox.ToolTipText = VI.Pith.My.Resources.LocalResourceSelectorTip
+            Else
+                Me._ResourceNamesComboBox.ToolTipText = VI.Pith.My.Resources.LocalResourceNotFoundSynopsis
+                activity = $"{VI.Pith.My.Resources.LocalResourceNotFoundSynopsis};. {VI.Pith.My.Resources.LocalResourcesNotFoundHint}."
+                Me._ErrorProvider.Annunciate(Me._FindButton, activity)
+                Me.Talker?.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, activity)
+            End If
+            If resources.Count = 0 Then
+            Else
+            End If
+        Catch ex As Exception
+            Me._ErrorProvider.Annunciate(Me._FindButton, ex.Message)
+            If Me.Talker Is Nothing Then
+                isr.VI.Instrument.My.MyLibrary.LogUnpublishedMessage(New TraceMessage(TraceEventType.Error, My.MyLibrary.TraceEventId,
+$"Exception {activity};. 
+logged to: {My.Application.Log.DefaultFileLogWriter.FullLogFileName};
+{ex.ToFullBlownString}"))
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
+        Finally
+            Me._ToolStrip.Invalidate()
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
 
+    ''' <summary> Displays the search patterns. </summary>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Protected Sub DisplayResourceNamePatterns()
         ' clear the interface names
         Me._ResourceNamesComboBox.ComboBox.DataSource = Nothing
         Me._ResourceNamesComboBox.Items.Clear()
-
-        Dim resourceList As New List(Of String) From {
-            "GPIB[board]::number[::INSTR]",
-            "GPIB[board]::INTFC",
-            "TCPIP[board]::host address[::LAN device name][::INSTR]",
-            "TCPIP[board]::host address::port::SOCKET"
-        }
-
-        ' set the list of available names
-        Me._ResourceNamesComboBox.ComboBox.DataSource = resourceList.ToArray
-
+        Me._ResourceNamesComboBox.ComboBox.DataSource = SessionFactory.EnumerateDefaultResourceNamePatterns
     End Sub
 
-    ''' <summary> Gets the name of the entered resource. </summary>
-    ''' <value> The name of the entered resource. </value>
-    Public Property EnteredResourceName As String
-        Get
-            Return Me._ResourceNamesComboBox.Text.Trim
-        End Get
-        Set(value As String)
-            Me._ResourceNamesComboBox.Text = value
-            Me.SafePostPropertyChanged()
-        End Set
-    End Property
-
-    Private _SelectedResourceName As String
-    ''' <summary> Returns the selected resource name. </summary>
-    ''' <value> The name of the selected. </value>
-    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)>
-    Public Property SelectedResourceName() As String
-        Get
-            Return Me._SelectedResourceName
-        End Get
-        <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification:="OK")>
-        Set(ByVal Value As String)
-            If String.IsNullOrWhiteSpace(Value) Then Value = ""
-            If Not String.Equals(Value, Me.SelectedResourceName, StringComparison.OrdinalIgnoreCase) OrElse
-                Not Me.SelectedResourceExists OrElse Not Me._ToggleConnectionButton.Enabled Then
-                If Not String.IsNullOrWhiteSpace(Value) Then
-                    Me._SelectedResourceName = Value
-                    Me.SafePostPropertyChanged()
-                    Try
-                        Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-                        Me._ErrorProvider.Clear()
-                        Using rm As ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
-                            Me.SelectedResourceExists = rm.Exists(Value)
-                        End Using
-                    Catch ex As Exception
-                        Me._ErrorProvider.Annunciate(Me._ResourceNamesComboBox, ex.Message)
-                        Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception setting selected resource;. Details:{0}", ex.ToFullBlownString)
-                    Finally
-                        Me.Cursor = System.Windows.Forms.Cursors.Default
-                    End Try
-                    If Not Value.Equals(Me.EnteredResourceName) Then Me.EnteredResourceName = Value
-                End If
+    ''' <summary> Attempts to select resource from the given data. </summary>
+    ''' <param name="resourceName"> The value. </param>
+    ''' <param name="e">     Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification:="OK")>
+    Private Function TrySelectResource(ByVal resourceName As String, ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If String.IsNullOrWhiteSpace(resourceName) Then resourceName = ""
+        Dim activity As String = ""
+        Try
+            Me._ErrorProvider.Clear()
+            Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
+            activity = "selecting resource"
+            If Not Me.SessionFactory.TrySelectResource(resourceName, e) Then
+                Me._ErrorProvider.Annunciate(Me._ResourceNamesComboBox, e.Details)
+                activity = Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {activity};. {e.Details}")
             End If
-        End Set
-    End Property
-
-    Private _SelectedResourceExists As Boolean
-    ''' <summary> Gets or sets the has resources. </summary>
-    ''' <value> The has resources. </value>
-    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property SelectedResourceExists As Boolean
-        Get
-            Return _SelectedResourceExists
-        End Get
-        Private Set(ByVal value As Boolean)
-            ' not checking for changed value here because this needs to be refreshed if a new
-            ' resource was selected.
-            Me._ToggleConnectionButton.Enabled = Me.Connectable AndAlso value
-            Me._ToolStrip.Invalidate()
-            Me._SelectedResourceExists = value
-            Me.SafePostPropertyChanged()
-        End Set
-    End Property
+        Catch ex As Exception
+            Me._ErrorProvider.Annunciate(Me._ResourceNamesComboBox, ex.Message)
+            Dim message As New TraceMessage(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            activity = Me.Talker?.Publish(message)
+            e.RegisterCancellation(activity)
+        Finally
+            Me.Cursor = System.Windows.Forms.Cursors.Default
+        End Try
+        Return Not e.Cancel
+    End Function
 
     ''' <summary> Event handler. Called by _ResourceNamesComboBox for validated events. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     Private Sub _ResourceNamesComboBox_Validated(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceNamesComboBox.Validated
-        Me._ErrorProvider.Clear()
-        Me.SelectedResourceName = Me.EnteredResourceName
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Me.TrySelectResource(Me._ResourceNamesComboBox.Text, New isr.Core.Pith.ActionEventArgs)
     End Sub
 
     ''' <summary> Selects a resource. </summary>
@@ -436,8 +446,8 @@ Public Class ResourceSelectorConnector
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification:="OK")>
     Private Sub _ResourceNamesComboBox_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ResourceNamesComboBox.SelectedIndexChanged
-        Me._ErrorProvider.Clear()
-        Me.SelectedResourceName = Me.EnteredResourceName
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Me.TrySelectResource(Me._ResourceNamesComboBox.Text, New isr.Core.Pith.ActionEventArgs)
     End Sub
 
 #End Region
@@ -465,7 +475,6 @@ Public Class ResourceSelectorConnector
     Protected Sub OnFindNames(ByVal e As EventArgs)
         ' clear the selected resource to make sure a new selection is 
         ' made after find.
-        Me._SelectedResourceName = ""
         Me._ResourceNamesComboBox.Text = ""
         Dim evt As EventHandler(Of EventArgs) = Me.FindNamesEvent
         evt?.Invoke(Me, e)
@@ -497,6 +506,7 @@ Public Class ResourceSelectorConnector
 
     ''' <summary> Gets or sets the clear tool tip text. </summary>
     ''' <value> The clear tool tip text. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Public Property ClearToolTipText As String
         Get
             Return Me._ClearButton.ToolTipText
@@ -513,17 +523,23 @@ Public Class ResourceSelectorConnector
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification:="OK")>
     Private Sub _ClearButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ClearButton.Click
+        Dim activity As String = "clearing"
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
             Me._ErrorProvider.Clear()
-            Me.OnClear(New EventArgs)
+            If String.IsNullOrWhiteSpace(Me.SessionFactory.SelectedResourceName) OrElse Not Me.SessionFactory.SelectedResourceExists Then
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
+                               $"{activity} ignore; resource not selected or does not exists")
+            Else
+                activity = $"clearing {Me.SessionFactory.SelectedResourceName}"
+                Me.OnClear(New EventArgs)
+            End If
         Catch ex As Exception
             Dim c As ToolStripItem = TryCast(sender, ToolStripItem)
             If c IsNot Nothing Then
                 Me._ErrorProvider.Annunciate(c, ex.Message)
             End If
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception clearing resource '{Me.SelectedResourceName}';. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = System.Windows.Forms.Cursors.Default
         End Try
@@ -570,6 +586,28 @@ Public Class ResourceSelectorConnector
         MyBase.IdentifyTalkers()
         My.MyLibrary.Identify(Talker)
     End Sub
+
+#End Region
+
+#Region " UNIT TESTS INTERNALS "
+
+    Friend ReadOnly Property InternalResourceNamesCount As Integer
+        Get
+            Return Me._ResourceNamesComboBox.Items.Count
+        End Get
+    End Property
+
+    Friend ReadOnly Property InternalConnected As Boolean
+        Get
+            Return Me.IsConnected
+        End Get
+    End Property
+
+    Friend ReadOnly Property InternalSelectedResourceName As String
+        Get
+            Return Me._ResourceNamesComboBox.Text
+        End Get
+    End Property
 
 #End Region
 

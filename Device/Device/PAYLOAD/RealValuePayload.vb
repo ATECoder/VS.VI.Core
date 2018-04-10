@@ -3,7 +3,7 @@
 ''' </summary>
 ''' <remarks></remarks>
 Public Class RealValuePayload
-    Inherits PayloadBase
+    Inherits VI.Pith.PayloadBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
@@ -13,8 +13,8 @@ Public Class RealValuePayload
     Public Sub New()
         MyBase.New()
         Me.Range = isr.Core.Pith.RangeR.Full
-        Me.PositiveOverflow = Scpi.Syntax.Infinity
-        Me.NegativeOverflow = Scpi.Syntax.NegativeInfinity
+        Me.PositiveOverflow = VI.Pith.Scpi.Syntax.Infinity
+        Me.NegativeOverflow = VI.Pith.Scpi.Syntax.NegativeInfinity
         Me.Format = "0.00"
         Me.Unit = Arebis.StandardUnits.ElectricUnits.Volt
     End Sub
@@ -109,9 +109,9 @@ Public Class RealValuePayload
     Public Overrides Sub FromReading(reading As String)
         MyBase.FromReading(reading)
         If Double.TryParse(reading, Me.RealValue) Then
-            Me.QueryStatus = Me.QueryStatus Or PayloadStatus.QueryParsed And Not PayloadStatus.QueryParseFailed
+            Me.QueryStatus = Me.QueryStatus Or VI.Pith.PayloadStatus.QueryParsed And Not VI.Pith.PayloadStatus.QueryParseFailed
         Else
-            Me.QueryStatus = Me.QueryStatus Or PayloadStatus.QueryParseFailed And Not PayloadStatus.QueryParsed And Not PayloadStatus.Okay
+            Me.QueryStatus = Me.QueryStatus Or VI.Pith.PayloadStatus.QueryParseFailed And Not VI.Pith.PayloadStatus.QueryParsed And Not VI.Pith.PayloadStatus.Okay
         End If
     End Sub
 

@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{AC4FDBF7-8AAB-4FD5-92D7-EF49DBAF3604}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>isr.VI</RootNamespace>
+    <RootNamespace>isr.VI.Pith</RootNamespace>
     <AssemblyName>isr.VI.Pith</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
@@ -69,16 +69,22 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="DUMMY\GpibInterfaceSession.vb" />
     <Compile Include="DUMMY\LocalResourcesManager.vb" />
     <Compile Include="DUMMY\NativeError.vb" />
     <Compile Include="DUMMY\ResourceManager.vb" />
     <Compile Include="DUMMY\Session.vb" />
     <Compile Include="DUMMY\SessionFactory.vb" />
+    <Compile Include="My\MyLibrary_Identities.vb" />
+    <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="My\SolutionInfo.vb" />
     <Compile Include="PAYLOAD\PayloadSessionBase.vb" />
     <Compile Include="SESSION\ExceptionExtensions.vb" />
     <Compile Include="PAYLOAD\PayloadBase.vb" />
+    <Compile Include="CODE\ResourceNameInfo.vb" />
     <Compile Include="SESSION\TspSessionBase.vb" />
     <Compile Include="SESSION\Parsers.vb" />
     <Compile Include="CODE\ResourceParseResult.vb" />
@@ -107,7 +113,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
     <Compile Include="SESSION\StandardRegister.vb" />
     <Compile Include="EXCEPTIONS\DeviceException.vb" />
     <Compile Include="EXCEPTIONS\ExceptionBase.vb" />

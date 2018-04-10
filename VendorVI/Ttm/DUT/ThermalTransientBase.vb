@@ -97,7 +97,7 @@ Public MustInherit Class ThermalTransientBase
     End Function
 
     ''' <summary> Check throw unequal configuration. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="other"> The thermal transient configuration to compare to this object. </param>
     Public Overloads Sub CheckThrowUnequalConfiguration(ByVal other As ThermalTransientBase)
         If other IsNot Nothing Then
@@ -105,15 +105,15 @@ Public MustInherit Class ThermalTransientBase
             If Not Me.ConfigurationEquals(other) Then
                 Dim format As String = "Unequal configuring--instrument {0}={1}.NE.{2}"
                 If Not Me.AllowedVoltageChange.Approximates(other.AllowedVoltageChange, 0.0001) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Allowed Voltage Change", Me.AllowedVoltageChange, other.AllowedVoltageChange))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Allowed Voltage Change", Me.AllowedVoltageChange, other.AllowedVoltageChange))
                 ElseIf Not Me.MedianFilterSize.Equals(other.MedianFilterSize) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Median Filter Size", Me.MedianFilterSize, other.MedianFilterSize))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Median Filter Size", Me.MedianFilterSize, other.MedianFilterSize))
                 ElseIf Not Me.PostTransientDelay.Approximates(other.PostTransientDelay, 0.001) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Post Transient Delay", Me.PostTransientDelay, other.PostTransientDelay))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Post Transient Delay", Me.PostTransientDelay, other.PostTransientDelay))
                 ElseIf Not Me.SamplingInterval.Approximates(other.SamplingInterval, 0.000001) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Sampling Interval", Me.SamplingInterval, other.SamplingInterval))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Sampling Interval", Me.SamplingInterval, other.SamplingInterval))
                 ElseIf Not Me.TracePoints.Equals(other.TracePoints) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Trace Points", Me.TracePoints, other.TracePoints))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Trace Points", Me.TracePoints, other.TracePoints))
                 Else
                     Debug.Assert(Not Debugger.IsAttached, "Failed logic")
                 End If

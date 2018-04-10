@@ -16,7 +16,7 @@ Public MustInherit Class Calculate2SubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="Calculate2SubsystemBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
@@ -128,8 +128,8 @@ Public MustInherit Class Calculate2SubsystemBase
     Private _Limit1LowerLevel As Double?
 
     ''' <summary> Gets or sets the cached Limit1 Lower Level. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property Limit1LowerLevel As Double?
         Get
@@ -183,8 +183,8 @@ Public MustInherit Class Calculate2SubsystemBase
     Private _Limit1UpperLevel As Double?
 
     ''' <summary> Gets or sets the cached Limit1 Upper Level. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property Limit1UpperLevel As Double?
         Get
@@ -354,8 +354,8 @@ Public MustInherit Class Calculate2SubsystemBase
     Private _Limit2LowerLevel As Double?
 
     ''' <summary> Gets or sets the cached Limit2 Lower Level. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property Limit2LowerLevel As Double?
         Get
@@ -409,8 +409,8 @@ Public MustInherit Class Calculate2SubsystemBase
     Private _Limit2UpperLevel As Double?
 
     ''' <summary> Gets or sets the cached Limit2 Upper Level. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property Limit2UpperLevel As Double?
         Get

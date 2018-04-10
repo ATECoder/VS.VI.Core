@@ -103,7 +103,7 @@
     <Compile Include="History\Panels1\Form1.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TOOLS\GlobalSuppressions.vb" />
+    <Compile Include="My\MySuppressions.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -117,7 +117,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DOCS\isr.VI.SimpleReadWrite.History.rtf" />
+    <Content Include="My\isr.VI.SimpleReadWrite.History.rtf" />
     <Content Include="RESOURCES\isr new logo.ico" />
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>
@@ -133,14 +133,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CodeAnalysisDictionary Include="TOOLS\CustomDictionary.xml" />
+    <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Core\Diagnosis\isr.Core.Diagnosis.Library.vbproj">
       <Project>{90e01089-7256-4336-9b10-28fca47c52f2}</Project>
       <Name>isr.Core.Diagnosis.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Core\Core\Forms\isr.Core.Forms.Library.vbproj">
+    <ProjectReference Include="..\..\..\..\Core\Core\Forms\isr.Core.Forms.Library.vbproj">
       <Project>{b501f643-ebc5-4096-86f6-43a2173066ca}</Project>
       <Name>isr.Core.Forms.Library</Name>
     </ProjectReference>

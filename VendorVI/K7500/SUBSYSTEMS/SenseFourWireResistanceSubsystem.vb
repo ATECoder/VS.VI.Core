@@ -1,20 +1,21 @@
-''' <summary> Defines a SCPI Four Wire Sense Resistance Subsystem for a Keithley 7500 Meter. </summary>
-''' <license> (c) 2014 Integrated Scientific Resources, Inc.<para>
-''' Licensed under The MIT License. </para><para>
-''' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' <summary> A sense four wire resistance subsystem. </summary>
+''' <license>
+''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
+''' Licensed under The MIT License.</para><para>
+''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
 ''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 ''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 ''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-''' </para> </license>
-''' <history date="03/01/2014" by="David" revision="3.0.5173"> Created. </history>
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+''' </license>
+''' <history date="4/8/2018" by="David" revision=""> Created. </history>
 Public Class SenseFourWireResistanceSubsystem
     Inherits VI.Scpi.SenseResistanceSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)

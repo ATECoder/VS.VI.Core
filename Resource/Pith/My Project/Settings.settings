@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="My" GeneratedClassName="MySettings" UseMySettingsClassName="true">
   <Profiles />
   <Settings>
-    <Setting Name="FoundationSystemFileVersion" Type="System.String" Scope="User">
+    <Setting Name="FoundationSystemFileVersion64" Type="System.String" Scope="User">
       <Value Profile="(Default)">5.9.2008.0</Value>
     </Setting>
     <Setting Name="FoundationVisaAssemblyVersion" Type="System.String" Scope="User">
@@ -10,6 +10,24 @@
     </Setting>
     <Setting Name="NatioalInsrumentVisaVersion" Type="System.String" Scope="User">
       <Value Profile="(Default)">17.5.0</Value>
+    </Setting>
+    <Setting Name="DefaultResourceTitle" Type="System.String" Scope="User">
+      <Value Profile="(Default)">INSTR</Value>
+    </Setting>
+    <Setting Name="DefaultClosedResourceCaption" Type="System.String" Scope="User">
+      <Value Profile="(Default)">&lt;closed&gt;</Value>
+    </Setting>
+    <Setting Name="SessionClosureRefractoryPeriod" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:00:00.1000000</Value>
+    </Setting>
+    <Setting Name="DefaultOpenResourceTitleFormat" Type="System.String" Scope="User">
+      <Value Profile="(Default)">{0}.{1}</Value>
+    </Setting>
+    <Setting Name="DefaultClosedResourceTitleFormat" Type="System.String" Scope="User">
+      <Value Profile="(Default)">{0}</Value>
+    </Setting>
+    <Setting Name="FoundationSystemFileVersion32" Type="System.String" Scope="User">
+      <Value Profile="(Default)">17.5.0f0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

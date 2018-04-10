@@ -75,6 +75,9 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="..\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
@@ -85,6 +88,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
+    <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="My\MySuppressions.vb" />
     <Compile Include="CODE\GpibInterfaceExtensions.vb" />
     <Compile Include="CODE\GpibInterfaceSession.vb" />
@@ -93,7 +97,7 @@
     <Compile Include="CODE\ResourceManager.vb" />
     <Compile Include="CODE\ResourceManagerExtensions.vb" />
     <Compile Include="CODE\Session.vb" />
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="My\isr.VI.National.Visa.Library.rtf" />

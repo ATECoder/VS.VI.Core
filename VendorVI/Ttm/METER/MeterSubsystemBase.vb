@@ -17,7 +17,7 @@ Public MustInherit Class MeterSubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SubsystemPlusStatusBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId:="0")>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -219,7 +219,7 @@ Public MustInherit Class MeterSubsystemBase
 
     ''' <summary> Queries the Source Measure Unit. Also sets the <see cref="SourceMeasureUnit">Source
     ''' Measure Unit</see>. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <returns> The Source Measure Unit. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId:="smuI")>
     Public Function QuerySourceMeasureUnit() As String
@@ -231,7 +231,7 @@ Public MustInherit Class MeterSubsystemBase
                 Me.SourceMeasureUnit = "smub"
             Else
                 Me.SourceMeasureUnit = "unknown"
-                Throw New OperationFailedException($"Failed reading Source Measure Unit;. {Me.EntityName}.smuI is neither smua or smub.")
+                Throw New VI.Pith.OperationFailedException($"Failed reading Source Measure Unit;. {Me.EntityName}.smuI is neither smua or smub.")
             End If
         End If
         Return Me.SourceMeasureUnit
@@ -367,7 +367,7 @@ Public MustInherit Class MeterSubsystemBase
 
     ''' <summary> Queries the Current Level. </summary>
     ''' <returns> The Current Level or none if unknown. </returns>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     Public Function QueryCurrentLevel() As Double?
         Const printFormat As Decimal = 9.6D
         Me.CurrentLevel = Me.Session.QueryPrint(Me.CurrentLevel.GetValueOrDefault(0.27), printFormat, "{0}.level", Me.EntityName)
@@ -435,7 +435,7 @@ Public MustInherit Class MeterSubsystemBase
 
     ''' <summary> Queries the Voltage Limit. </summary>
     ''' <returns> The Voltage Limit or none if unknown. </returns>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     Public Function QueryVoltageLimit() As Double?
         Const printFormat As Decimal = 9.6D
         Me.VoltageLimit = Me.Session.QueryPrint(Me.VoltageLimit.GetValueOrDefault(0.1), printFormat, "{0}.limit", Me.EntityName)
@@ -503,7 +503,7 @@ Public MustInherit Class MeterSubsystemBase
 
     ''' <summary> Queries the High Limit. </summary>
     ''' <returns> The High Limit or none if unknown. </returns>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     Public Function QueryHighLimit() As Double?
         Const printFormat As Decimal = 9.6D
         Me.HighLimit = Me.Session.QueryPrint(Me.HighLimit.GetValueOrDefault(0.1), printFormat, "{0}.highLimit", Me.EntityName)
@@ -734,7 +734,7 @@ Public MustInherit Class MeterSubsystemBase
 #Region " MEASURE "
 
     ''' <summary> Measures the Final resistance and returns. </summary>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     Public Sub Measure()
         Me.ClearExecutionState()
         Me.Session.EnableWaitComplete()

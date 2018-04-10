@@ -26,9 +26,11 @@ Public Class ResourcePanelBase
 
     ''' <summary> Specialized default constructor for use only by derived classes. </summary>
     ''' <param name="device"> The connectable resource. </param>
-    Protected Sub New(ByVal device As DeviceBase)
+    Protected Sub New(ByVal device As VI.DeviceBase)
         MyBase.New()
+        Me.InitializingComponents = True
         Me.InitializeComponent()
+        Me.InitializingComponents = False
         Me._ElapsedTimeStopwatch = New Stopwatch
         Me._AssignDevice(device)
         Me.Connector.Connectable = True
@@ -205,7 +207,7 @@ Public Class ResourcePanelBase
 
     ''' <summary> Displays the standard register status. Uses Hex format. </summary>
     ''' <param name="value"> The register value. </param>
-    Public Sub DisplayStandardRegisterStatus(ByVal value As StandardEvents?)
+    Public Sub DisplayStandardRegisterStatus(ByVal value As VI.Pith.StandardEvents?)
         If value.HasValue Then Me.DisplayStatusRegisterStatus(CInt(value.Value))
     End Sub
 
@@ -248,7 +250,7 @@ Public Class ResourcePanelBase
                 ResourcePanelBase.SafeToolTipTextSetter(Me.IdentityLabel, Me.ResourceName)
                 Me.SafePostPropertyChanged()
             End If
-            Me.Connector.SelectedResourceName = value
+            Me.Connector.SessionFactory.TrySelectResource(value, New isr.Core.Pith.ActionEventArgs)
         End Set
     End Property
 
@@ -309,7 +311,29 @@ Public Class ResourcePanelBase
 
     ''' <summary> Gets or sets the elapsed time stop watch. </summary>
     ''' <value> The elapsed time stop watch. </value>
-    Protected ReadOnly Property ElapsedTimeStopwatch As Stopwatch
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Private ReadOnly Property ElapsedTimeStopwatch As Stopwatch
+
+    ''' <summary> Reads elapsed time. </summary>
+    ''' <param name="stopRequested"> True if stop requested. </param>
+    ''' <returns> The elapsed time. </returns>
+    Protected Function ReadElapsedTime(ByVal stopRequested As Boolean) As TimeSpan
+        If stopRequested AndAlso Me.ElapsedTimeStopwatch.IsRunning Then
+            Me._ElapsedTimeCount -= 1
+            If Me.ElapsedTimeCount <= 0 Then Me.ElapsedTimeStopwatch.Stop()
+        End If
+        Return Me.ElapsedTimeStopwatch.Elapsed
+    End Function
+
+    ''' <summary> Gets the number of elapsed times. Some action require two cycles to get the full elapsed time. </summary>
+    ''' <value> The number of elapsed times. </value>
+    Public ReadOnly Property ElapsedTimeCount As Integer
+
+    ''' <summary> Starts elapsed stopwatch. </summary>
+    Protected Sub StartElapsedStopwatch(ByVal count As Integer)
+        Me._ElapsedTimeCount = count
+        Me.StartElapsedStopwatch(0)
+    End Sub
 
     ''' <summary> Gets or sets the sentinel indicating if this panel owns the device and, therefore, needs to 
     '''           dispose of this device. </summary>
@@ -321,6 +345,7 @@ Public Class ResourcePanelBase
     Private Sub _ReleaseDevice()
         If Me.Device IsNot Nothing Then
             Me.Device.Talker.Listeners.Clear()
+            RemoveHandler Me.Device.Session.ResourceNameInfo.PropertyChanged, AddressOf Me.ResourceNameInfoPropertyChanged
             RemoveHandler Me.Device.PropertyChanged, AddressOf Me.DevicePropertyChanged
             RemoveHandler Me.Device.Opening, AddressOf Me.DeviceOpening
             RemoveHandler Me.Device.Opened, AddressOf Me.DeviceOpened
@@ -328,7 +353,7 @@ Public Class ResourcePanelBase
             RemoveHandler Me.Device.Closed, AddressOf Me.DeviceClosed
             RemoveHandler Me.Device.Initialized, AddressOf Me.DeviceInitialized
             RemoveHandler Me.Device.Initializing, AddressOf Me.DeviceInitializing
-            Me.Connector.ResourcesFilter = ""
+            Me.Connector.SessionFactory.ResourcesFilter = ""
             ' note that service request is released when device closes.
         End If
     End Sub
@@ -345,6 +370,7 @@ Public Class ResourcePanelBase
         Me._Device = value
         If value IsNot Nothing Then
             Me.Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
+            AddHandler Me.Device.Session.ResourceNameInfo.PropertyChanged, AddressOf Me.ResourceNameInfoPropertyChanged
             AddHandler Me.Device.PropertyChanged, AddressOf Me.DevicePropertyChanged
             AddHandler Me.Device.Opening, AddressOf Me.DeviceOpening
             AddHandler Me.Device.Opened, AddressOf Me.DeviceOpened
@@ -352,11 +378,11 @@ Public Class ResourcePanelBase
             AddHandler Me.Device.Closed, AddressOf Me.DeviceClosed
             AddHandler Me.Device.Initialized, AddressOf Me.DeviceInitialized
             AddHandler Me.Device.Initializing, AddressOf Me.DeviceInitializing
-            If Me.Device.ResourcesFilter IsNot Nothing Then
-                Me.Connector.ResourcesFilter = Me.Device.ResourcesFilter
+            If Me.Device.Session.ResourceNameInfo.ResourcesFilter IsNot Nothing Then
+                Me.Connector.SessionFactory.ResourcesFilter = Me.Device.Session.ResourceNameInfo.ResourcesFilter
             End If
-            Me.ResourceName = Me.Device.ResourceName
-			Me._Device.AddPrivateListener(Me.TraceMessagesBox)
+            Me.ResourceName = Me.Device.Session.ResourceName
+            Me._Device.AddPrivateListener(Me.TraceMessagesBox)
         End If
     End Sub
 
@@ -440,13 +466,53 @@ Public Class ResourcePanelBase
 #Region " PROPERTY CHANGE "
 
     ''' <summary> Executes the device open changed action. </summary>
-    Protected Overridable Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
+    Protected Overridable Sub OnDeviceOpenChanged(ByVal device As VI.DeviceBase)
+    End Sub
+
+    ''' <summary> Handle the device property changed event. </summary>
+    ''' <param name="resourceNameInfo"> The resource name info. </param>
+    ''' <param name="propertyName">     Name of the property. </param>
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal resourceNameInfo As VI.Pith.ResourceNameInfo, ByVal propertyName As String)
+        If resourceNameInfo Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(VI.Pith.ResourceNameInfo.ResourcesFilter)
+                Me.Connector.SessionFactory.ResourcesFilter = resourceNameInfo.ResourcesFilter
+            Case NameOf(VI.Pith.ResourceNameInfo.ResourceTitle)
+                Me.ResourceTitle = resourceNameInfo.ResourceTitle
+                Me.OnTitleChanged(Me.BuildTitle)
+            Case NameOf(VI.Pith.ResourceNameInfo.ResourceName)
+                Me.ResourceName = resourceNameInfo.ResourceName
+                Me.OnTitleChanged(Me.BuildTitle)
+        End Select
+    End Sub
+
+    ''' <summary> Event handler. Called for property changed events. </summary>
+    ''' <param name="sender"> <see cref="Object"/> instance of this
+    ''' <see cref="Windows.Forms.Control"/> </param>
+    ''' <param name="e">      Event information to send to registered event handlers. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub ResourceNameInfoPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.Pith.ResourceNameInfo)}.{e.PropertyName} change"
+        Try
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.DevicePropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, VI.Pith.ResourceNameInfo), e.PropertyName)
+            End If
+        Catch ex As Exception
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
+        End Try
     End Sub
 
     ''' <summary> Handle the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overridable Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal device As VI.DeviceBase, ByVal propertyName As String)
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(isr.VI.DeviceBase.IsDeviceOpen)
@@ -454,8 +520,6 @@ Public Class ResourcePanelBase
             Case NameOf(isr.VI.DeviceBase.Enabled)
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    $"{device.ResourceTitle} {device.Enabled.GetHashCode:enabled;enabled;disabled};. ")
-            Case NameOf(isr.VI.DeviceBase.ResourcesFilter)
-                Me.Connector.ResourcesFilter = device.ResourcesFilter
             Case NameOf(isr.VI.DeviceBase.ServiceRequestFailureMessage)
                 If Not String.IsNullOrWhiteSpace(device.ServiceRequestFailureMessage) Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, device.ServiceRequestFailureMessage)
@@ -475,41 +539,48 @@ Public Class ResourcePanelBase
     ''' <param name="e">      Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub DevicePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.DeviceBase)}.{e.PropertyName} change"
         Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnDevicePropertyChanged(TryCast(sender, DeviceBase), e.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.DevicePropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, VI.DeviceBase), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling Device.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
-    ''' <summary> Executes the subsystem property changed action. </summary>
+    ''' <summary> Handles the subsystem property change. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overridable Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
+            Case NameOf(StatusSubsystemBase.ErrorAvailable)
                 If Not subsystem.ReadingDeviceErrors AndAlso subsystem.ErrorAvailable Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Error available;. ")
                 End If
-            Case NameOf(VI.StatusSubsystemBase.MessageAvailable)
+            Case NameOf(StatusSubsystemBase.MessageAvailable)
                 If subsystem.MessageAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
                 End If
-            Case NameOf(VI.StatusSubsystemBase.MeasurementAvailable)
+            Case NameOf(StatusSubsystemBase.MeasurementAvailable)
                 If subsystem.MeasurementAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
                 End If
-            Case NameOf(VI.StatusSubsystemBase.ReadingDeviceErrors)
+            Case NameOf(StatusSubsystemBase.ReadingDeviceErrors)
                 If subsystem.ReadingDeviceErrors Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
                 End If
-            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
+            Case NameOf(StatusSubsystemBase.ServiceRequestStatus)
                 Me.DisplayStatusRegisterStatus(subsystem.ServiceRequestStatus)
-            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
+            Case NameOf(StatusSubsystemBase.StandardEventStatus)
                 Me.DisplayStandardRegisterStatus(subsystem.StandardEventStatus)
         End Select
     End Sub
@@ -530,7 +601,7 @@ Public Class ResourcePanelBase
             Else
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Open {0} Failed;. ", resourceName)
             End If
-        Catch ex As OperationFailedException
+        Catch ex As vi.Pith.OperationFailedException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed opening {resourceName};. {ex.ToFullBlownString}")
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception opening {resourceName};. {ex.ToFullBlownString}")
@@ -543,7 +614,7 @@ Public Class ResourcePanelBase
     ''' <param name="sender"> Specifies the object where the call originated. </param>
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub Connector_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles Connector.Connect
-        Me.OpenSession(Me.Connector.SelectedResourceName, Me.ResourceTitle)
+        Me.OpenSession(Me.Connector.SessionFactory.SelectedResourceName, Me.ResourceTitle)
         ' cancel if failed to open
         If Not Me.IsDeviceOpen Then e.Cancel = True
     End Sub
@@ -563,7 +634,6 @@ Public Class ResourcePanelBase
     ''' <param name="e">      Event information. </param>
     Protected Overridable Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
         Me.ResourceName = Me.Device.ResourceName
-        If Not String.IsNullOrEmpty(Me.ResourceTitle) Then Me.Device.Session.ResourceTitle = Me.ResourceTitle
         Dim outcome As TraceEventType = TraceEventType.Information
         If Me.Device.Session.Enabled And Not Me.Device.Session.IsSessionOpen Then outcome = TraceEventType.Warning
         Me.Talker.Publish(outcome, My.MyLibrary.TraceEventId,
@@ -620,9 +690,9 @@ Public Class ResourcePanelBase
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Releasing {0};. ", Me.Device.ResourceName)
         End If
         If Me.Device.TryCloseSession() Then
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Released {0};. ", Me.Connector.SelectedResourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Released {0};. ", Me.Connector.SessionFactory.SelectedResourceName)
         Else
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed releasing {0};. ", Me.Connector.SelectedResourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed releasing {0};. ", Me.Connector.SessionFactory.SelectedResourceName)
         End If
     End Sub
 
@@ -680,12 +750,10 @@ Public Class ResourcePanelBase
     ''' <summary> Displays the resource names based on the device resource search pattern. </summary>
     Public Sub DisplayNames()
         ' get the list of available resources
-        If Me.Device IsNot Nothing AndAlso Me.Device.ResourcesFilter IsNot Nothing Then
-            Me.Connector.ResourcesFilter = Me.Device.ResourcesFilter
-        ElseIf String.IsNullOrWhiteSpace(Me.Connector.ResourcesFilter) Then
-            Me.Connector.ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter
-        End If
-        Me.Connector.DisplayResourceNames()
+        ' this enumerates the resources and sets the resource exists sentinel to tell the control to display 
+        ' the enumerated resources.
+        Me.Connector.SessionFactory.ResourcesFilter = Me.Device.Session.ResourceNameInfo.ResourcesFilter
+        Me.Connector.SessionFactory.EnumerateResources()
     End Sub
 
     ''' <summary> Clears the instrument by calling a propagating clear command. </summary>
@@ -693,10 +761,10 @@ Public Class ResourcePanelBase
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub Connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles Connector.Clear
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                           "Resetting, clearing and initializing resource to know state;. {0}", Me.Connector.SelectedResourceName)
+                           "Resetting, clearing and initializing resource to know state;. {0}", Me.Connector.SessionFactory.SelectedResourceName)
         Me.Device.ResetClearInit()
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                           "Resource reset, cleared and initialized;. {0}", Me.Connector.SelectedResourceName)
+                           "Resource reset, cleared and initialized;. {0}", Me.Connector.SessionFactory.SelectedResourceName)
     End Sub
 
     ''' <summary> Displays available instrument names. </summary>
@@ -709,16 +777,15 @@ Public Class ResourcePanelBase
     ''' <summary> Executes the property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnPropertyChanged(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(ResourceSelectorConnector.SelectedResourceName)
-                If String.IsNullOrWhiteSpace(sender.SelectedResourceName) OrElse
-                    String.Equals(sender.SelectedResourceName, VI.DeviceBase.ResourceNameClosed) Then
-                    Me.ResourceName = ""
+            Case NameOf(VI.SessionFactory.SelectedResourceName)
+                Me.ResourceName = sender.SessionFactory.SelectedResourceName
+                If sender.IsConnected Then
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Resource connected;. {Me.ResourceName}")
                 Else
-                    Me.ResourceName = sender.SelectedResourceName
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceName} selected;. ")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Resource selected;. {Me.ResourceName}")
                 End If
         End Select
     End Sub
@@ -729,15 +796,20 @@ Public Class ResourcePanelBase
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub Connector_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles Connector.PropertyChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Instrument.ResourceSelectorConnector)}.{e.PropertyName} change"
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.Connector_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, Instrument.ResourceSelectorConnector), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling Connector.{e?.PropertyName} change Event;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -777,7 +849,7 @@ Public Class ResourcePanelBase
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
+    Private Overloads Sub HandlePropertyChange(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         If String.Equals(propertyName, NameOf(isr.Core.Pith.TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
@@ -785,21 +857,25 @@ Public Class ResourcePanelBase
         End If
     End Sub
 
-    ''' <summary> Trace messages box property changed. </summary>
+    ''' <summary> Handles Trace messages box property changed event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles TraceMessagesBox.PropertyChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Core.Pith.TraceMessagesBox)}.{e.PropertyName} change"
         Try
-            ' there was a cross thread exception because this event is invoked from the control thread.
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._TraceMessagesBox_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, Core.Pith.TraceMessagesBox), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 

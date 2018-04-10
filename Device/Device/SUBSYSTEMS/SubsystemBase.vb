@@ -12,18 +12,17 @@ Imports isr.VI.National.Visa
 ''' </para> </license>
 ''' <history date="01/15/2005" by="David" revision="1.0.1841.x"> Created. </history>
 Public MustInherit Class SubsystemBase
-    Inherits PropertyPublisherBase
-    Implements IPresettablePropertyPublisher, ITalker
+    Inherits PropertyPublisherTalkerBase
+    Implements IPresettablePropertyPublisher
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SubsystemBase" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Protected Sub New(ByVal visaSession As VI.SessionBase)
+    Protected Sub New(ByVal visaSession As VI.Pith.SessionBase)
         MyBase.New()
         Me._ApplySession(visaSession)
-        Me.ConstructorSafeSetter(New TraceMessageTalker)
         Me._PresetRefractoryPeriod = TimeSpan.FromMilliseconds(100)
     End Sub
 
@@ -94,44 +93,57 @@ Public MustInherit Class SubsystemBase
 
     ''' <summary> Applies the session described by value. </summary>
     ''' <param name="value"> The value. </param>
-    Public Sub ApplySession(ByVal value As SessionBase)
+    Public Sub ApplySession(ByVal value As VI.Pith.SessionBase)
         Me._ApplySession(value)
-        Me.SafePostPropertyChanged(NameOf(VI.SessionBase.ResourceName))
+        Me.SafePostPropertyChanged(NameOf(VI.Pith.SessionBase.ResourceName))
     End Sub
 
     ''' <summary> Applies the session described by value. </summary>
     ''' <param name="value"> The value. </param>
-    Private Sub _ApplySession(ByVal value As SessionBase)
+    Private Sub _ApplySession(ByVal value As VI.Pith.SessionBase)
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Me._Session = value
-        If Me._Session.IsDeviceOpen Then
-            Me._ResourceName = Me.Session.ResourceName
-        Else
-            Me._ResourceName = DeviceBase.ResourceNameClosed
-        End If
     End Sub
+
+    ''' <summary>
+    ''' Gets or sets a value indicating whether a session to the device is open. See also
+    ''' <see cref="VI.Pith.SessionBase.IsDeviceOpen"/>.
+    ''' </summary>
+    ''' <value> <c>True</c> if the device has an open session; otherwise, <c>False</c>. </value>
+    Public ReadOnly Property IsDeviceOpen As Boolean
+        Get
+            Return Me.Session IsNot Nothing AndAlso Me.Session.IsDeviceOpen
+        End Get
+    End Property
 
     ''' <summary> Gets the session. </summary>
     ''' <value> The session. </value>
-    Public ReadOnly Property Session As SessionBase
+    Public ReadOnly Property Session As VI.Pith.SessionBase
 
-    Private _ResourceName As String
-    ''' <summary> Gets the name of the resource. </summary>
-    ''' <value> The name of the resource or &lt;closed&gt; if not open. </value>
-    Public Property ResourceName As String
+    ''' <summary> Gets the resource title. </summary>
+    ''' <value> The resource title. </value>
+    Public ReadOnly Property ResourceTitle As String
         Get
-            If Me._Session.IsDeviceOpen AndAlso (String.IsNullOrWhiteSpace(Me._ResourceName) OrElse
-                  Me._ResourceName.StartsWith(DeviceBase.ResourceNameClosed, StringComparison.OrdinalIgnoreCase)) Then
-                Me.ResourceName = Me.Session.ResourceName
-            ElseIf Not Me._Session.IsDeviceOpen AndAlso Not String.IsNullOrWhiteSpace(Me._ResourceName) Then
-                Me.ResourceName = DeviceBase.ResourceNameClosed
+            If Me.Session Is Nothing Then
+                Return VI.Pith.My.MySettings.Default.DefaultResourceTitle
+            Else
+                Return Me.Session.ResourceNameInfo.ResourceTitle
             End If
-            Return Me._ResourceName
         End Get
-        Set(ByVal value As String)
-            Me._ResourceName = value
-            Me.SafePostPropertyChanged()
-        End Set
+    End Property
+    ''' <summary> Gets the resource name caption. </summary>
+    ''' <value>
+    ''' The <see cref="VI.Pith.SessionBase.ResourceName"/> resource <see cref="VI.Pith.ResourceNameInfo.ResourceNameCaption">closed
+    ''' caption</see> if not open.
+    ''' </value>
+    Public ReadOnly Property ResourceNameCaption As String
+        Get
+            If Me.Session Is Nothing Then
+                Return VI.Pith.My.MySettings.Default.DefaultClosedResourceCaption
+            Else
+                Return Me.Session.ResourceNameCaption
+            End If
+        End Get
     End Property
 
 #End Region
@@ -276,12 +288,12 @@ Public MustInherit Class SubsystemBase
     ''' <returns> The value. </returns>
     Public Function Write(ByVal value As Double, ByVal commandFormat As String) As Double?
         If Not String.IsNullOrWhiteSpace(commandFormat) Then
-            If value >= (Scpi.Syntax.Infinity - 1) Then
+            If value >= (VI.Pith.Scpi.Syntax.Infinity - 1) Then
                 Me.Session.WriteLine(commandFormat, "MAX")
-                value = Scpi.Syntax.Infinity
-            ElseIf value <= (Scpi.Syntax.NegativeInfinity + 1) Then
+                value = VI.Pith.Scpi.Syntax.Infinity
+            ElseIf value <= (VI.Pith.Scpi.Syntax.NegativeInfinity + 1) Then
                 Me.Session.WriteLine(commandFormat, "MIN")
-                value = Scpi.Syntax.NegativeInfinity
+                value = VI.Pith.Scpi.Syntax.NegativeInfinity
             Else
                 Me.Session.WriteLine(commandFormat, value)
             End If
@@ -355,8 +367,8 @@ Public MustInherit Class SubsystemBase
     ''' </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="payload"> The payload. </param>
-    ''' <returns> <c>True</c> if <see cref="PayloadStatus"/> is <see cref="PayloadStatus.Okay"/>; otherwise <c>False</c>. </returns>
-    Public Function Query(ByVal payload As PayloadBase) As Boolean
+    ''' <returns> <c>True</c> if <see cref="VI.Pith.PayloadStatus"/> is <see cref="VI.Pith.PayloadStatus.Okay"/>; otherwise <c>False</c>. </returns>
+    Public Function Query(ByVal payload As VI.Pith.PayloadBase) As Boolean
         If payload Is Nothing Then Throw New ArgumentNullException(NameOf(payload))
         Dim result As Boolean = True
         If Not String.IsNullOrWhiteSpace(payload.QueryCommand) Then
@@ -365,11 +377,11 @@ Public MustInherit Class SubsystemBase
         Return result
     End Function
 
-    ''' <summary> Write the payload. A <see cref="Query(PayloadBase)"/> must be issued to get the value from the device. </summary>
+    ''' <summary> Write the payload. A <see cref="Query(vi.Pith.PayloadBase)"/> must be issued to get the value from the device. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="payload"> The payload. </param>
-    ''' <returns> <c>True</c> if <see cref="PayloadStatus"/> is <see cref="PayloadStatus.Okay"/>; otherwise <c>False</c>. </returns>
-    Public Function Write(ByVal payload As PayloadBase) As Boolean
+    ''' <returns> <c>True</c> if <see cref="VI.Pith.PayloadStatus"/> is <see cref="VI.Pith.PayloadStatus.Okay"/>; otherwise <c>False</c>. </returns>
+    Public Function Write(ByVal payload As VI.Pith.PayloadBase) As Boolean
         If payload Is Nothing Then Throw New ArgumentNullException(NameOf(payload))
         Dim result As Boolean = True
         If Not String.IsNullOrWhiteSpace(payload.CommandFormat) Then
@@ -389,6 +401,25 @@ Public MustInherit Class SubsystemBase
     End Sub
 
 #End Region
+
+#End Region
+
+#Region " ELAPSED TIME "
+
+    Private _LastActionElapsedTime As TimeSpan
+    ''' <summary> Gets or sets the last reading. </summary>
+    ''' <value> The last reading. </value>
+    Public Property LastActionElapsedTime As TimeSpan
+        Get
+            Return Me._LastActionElapsedTime
+        End Get
+        Set(value As TimeSpan)
+            If value <> Me.LastActionElapsedTime Then
+                Me._LastActionElapsedTime = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
 #End Region
 

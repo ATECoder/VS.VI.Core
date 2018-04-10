@@ -10,23 +10,23 @@
 ''' </license>
 ''' <history date="11/29/2015" by="David" revision=""> Created. </history>
 Public Class DummySessionFactory
-    Inherits SessionFactoryBase
+    Inherits VI.Pith.SessionFactoryBase
 
     ''' <summary> Creates gpib interface session. </summary>
     ''' <returns> The new gpib interface session. </returns>
-    Public Overrides Function CreateGpibInterfaceSession() As InterfaceSessionBase
+    Public Overrides Function CreateGpibInterfaceSession() As VI.Pith.InterfaceSessionBase
         Return New DummyGpibInterfaceSession()
     End Function
 
     ''' <summary> Creates resources manager. </summary>
     ''' <returns> The new resources manager. </returns>
-    Public Overrides Function CreateResourcesManager() As ResourcesManagerBase
+    Public Overrides Function CreateResourcesManager() As VI.Pith.ResourcesManagerBase
         Return New DummyLocalResourcesManager()
     End Function
 
     ''' <summary> Creates a session. </summary>
     ''' <returns> The new session. </returns>
-    Public Overrides Function CreateSession() As SessionBase
+    Public Overrides Function CreateSession() As Vi.Pith.SessionBase
         Return New DummySession()
     End Function
 

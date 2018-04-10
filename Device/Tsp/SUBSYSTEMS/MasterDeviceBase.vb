@@ -24,7 +24,7 @@ Public MustInherit Class MasterDeviceBase
                                                                            HardwareInterfaceType.Usb)
     End Sub
 
-#Region " I Disposable Support"
+#Region " I Disposable Support "
 
     ''' <summary>
     ''' Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control" />

@@ -15,7 +15,7 @@ Public Class ProberSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -133,14 +133,14 @@ Public Class ProberSubsystem
     End Function
 
     ''' <summary> Writes the Response Mode and reads back a reply from the instrument. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="mode">           The mode. </param>
     ''' <param name="raiseException"> true to raise exception. </param>
     Public Function TryWriteResponseMode(mode As ResponseModes, ByVal raiseException As Boolean) As Boolean
         Dim affirmative As Boolean = False
         Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Setting response mode to 0x{0:X4};. ", CInt(mode))
         If Me.WriteResponseMode(mode).HasValue Then
-            Dim bit As ServiceRequests = Me.StatusSubsystem.MessageAvailableBits
+            Dim bit As VI.Pith.ServiceRequests = Me.StatusSubsystem.MessageAvailableBits
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Awaiting SQR equal to 0x{0:X2};. ", CInt(bit))
             ' emulate return value is session not open.
             Me.Session.EmulatedStatusByte = bit
@@ -152,14 +152,14 @@ Public Class ProberSubsystem
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Response mode set to 0x{0:X4};. ", CInt(Me.ResponseMode))
                 ElseIf Me.MessageFailed Then
                     If raiseException Then
-                        Throw New OperationFailedException("Message Failed initializing response mode to 0x{0:X4};.", CInt(mode))
+                        Throw New VI.Pith.OperationFailedException("Message Failed initializing response mode to 0x{0:X4};.", CInt(mode))
                     Else
                         Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                           "Message Failed initializing response mode to 0x{0:X4};. ", CInt(mode))
                     End If
                 Else
                     If raiseException Then
-                        Throw New OperationFailedException("Unexpected reply '{0}' initializing response mode;. ", Me.LastReading)
+                        Throw New VI.Pith.OperationFailedException("Unexpected reply '{0}' initializing response mode;. ", Me.LastReading)
                     Else
                         Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                           "Unexpected reply '{0}' initializing response mode;. ", Me.LastReading)
@@ -167,7 +167,7 @@ Public Class ProberSubsystem
                 End If
             Else
                 If raiseException Then
-                    Throw New OperationFailedException("Timeout waiting SRQ 0x{0:X2} after setting response mode;. ", CInt(bit))
+                    Throw New VI.Pith.OperationFailedException("Timeout waiting SRQ 0x{0:X2} after setting response mode;. ", CInt(bit))
                 Else
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                       "Timeout waiting SRQ 0x{0:X2} after setting response mode;. ", CInt(bit))
@@ -175,7 +175,7 @@ Public Class ProberSubsystem
             End If
         Else
             If raiseException Then
-                Throw New OperationFailedException("Failed initializing response mode.")
+                Throw New VI.Pith.OperationFailedException("Failed initializing response mode.")
             Else
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Failed initializing response mode.")
             End If

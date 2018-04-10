@@ -16,7 +16,7 @@
 
         Public Const LineFrequencyPrintCommand As String = "_G.print(localnode.linefreq)"
 
-        Public ReadOnly Property IdentityQueryCommand As String = $"{Ieee488.Syntax.IdentityQueryCommand} {Ieee488.Syntax.WaitCommand}"
+        Public ReadOnly Property IdentityQueryCommand As String = $"{VI.Pith.Ieee488.Syntax.IdentityQueryCommand} {VI.Pith.Ieee488.Syntax.WaitCommand}"
 
         ''' <summary> The serial number print command. </summary>
         Public Const SerialNumberPrintCommand As String = "_G.print(G.localnode.serialno)"

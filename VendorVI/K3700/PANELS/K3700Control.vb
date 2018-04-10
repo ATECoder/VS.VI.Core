@@ -6,6 +6,7 @@ Imports isr.Core.Controls.ToolStripExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
+Imports isr.Core.Pith.TimeSpanExtensions
 Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a user interface for a Keithley 37XX Device. </summary>
 ''' <license> (c) 2005 Integrated Scientific Resources, Inc.<para>
@@ -27,26 +28,22 @@ Public Class K3700Control
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private Property InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
-        MyBase.New()
-        Me._New(Device.Create)
-        Me.IsDeviceOwner = True
+        Me.New(Device.Create, True)
     End Sub
 
     ''' <summary> Constructor. </summary>
     ''' <param name="device"> The device. </param>
-    Public Sub New(ByVal device As Device)
+    Public Sub New(ByVal device As Device, ByVal isDeviceOwner As Boolean)
         MyBase.New()
-        Me._New(device)
-        Me.IsDeviceOwner = False
+        Me._New(device, isDeviceOwner)
     End Sub
 
     ''' <summary> Constructor. </summary>
     ''' <param name="device"> The device. </param>
-    Private Sub _New(ByVal device As Device)
+    Private Sub _New(ByVal device As Device, ByVal isDeviceOwner As Boolean)
 
         Me.InitializingComponents = True
         ' This call is required by the designer.
@@ -54,9 +51,9 @@ Public Class K3700Control
         Me.InitializingComponents = False
 
         Me._ToolStripPanel.Renderer = New CustomProfessionalRenderer
-        MyBase.Connector = Me._ResourceSelectorConnector
+        MyBase.AssignConnector(Me._ResourceSelectorConnector, True)
 
-        Me._AssignDevice(device)
+        Me._AssignDevice(device, isDeviceOwner)
         ' note that the caption is not set if this is run inside the On Load function.
         With Me._TraceMessagesBox
             ' set defaults for the messages box.
@@ -84,6 +81,7 @@ Public Class K3700Control
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                Me.InitializingComponents = True
                 ' the device gets disposed in the base class!
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
             End If
@@ -116,20 +114,19 @@ Public Class K3700Control
     ''' <summary> Gets or sets the device. </summary>
     ''' <value> The device. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property Device As Device
+    Public ReadOnly Property Device As Device
         Get
             Return Me._Device
         End Get
-        Set(value As Device)
-            Me._AssignDevice(value)
-        End Set
     End Property
 
     ''' <summary> Assign device. </summary>
     ''' <param name="value"> The value. </param>
-    Private Sub _AssignDevice(ByVal value As Device)
-        If Me._Device IsNot Nothing Then
+    Private Sub _AssignDevice(ByVal value As Device, ByVal isDeviceOwner As Boolean)
+        If Me._Device IsNot Nothing OrElse MyBase.DeviceBase IsNot Nothing Then
             ' the device base already clears all or only the private listeners. 
+            ' Me._Device.RemovePrivateListeners()
+            Me._ReleaseDevice()
         End If
         Me._Device = value
         If value IsNot Nothing Then
@@ -137,21 +134,30 @@ Public Class K3700Control
             value.AddPrivateListener(Me._TraceMessagesBox)
         End If
         ' the device base class addresses the device open state.
-        MyBase.DeviceBase = value
+        MyBase.AssignDevice(value, isDeviceOwner)
     End Sub
 
     ''' <summary> Assigns a device. </summary>
     ''' <param name="value"> True to show or False to hide the control. </param>
-    Public Overloads Sub AssignDevice(ByVal value As Device)
-        Me.IsDeviceOwner = False
-        Me.Device = value
+    Public Overloads Sub AssignDevice(ByVal value As Device, ByVal isDeviceOwner As Boolean)
+        Me._AssignDevice(value, isDeviceOwner)
+    End Sub
+
+    Private Sub _ReleaseDevice()
+        MyBase.ReleaseDevice()
+        Me._Device = Nothing
     End Sub
 
     ''' <summary> Releases the device. </summary>
     ''' <remarks> Called from the base device to release the reference to the device. </remarks>
-    Protected Overrides Sub ReleaseDevice()
-        MyBase.ReleaseDevice()
-        Me._Device = Nothing
+    Public Overrides Sub ReleaseDevice()
+        Me._ReleaseDevice()
+    End Sub
+
+    ''' <summary> Releases the device and reassigns the default device. </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Public Overrides Sub RestoreDevice()
+        Me.AssignDevice(Device.Create, True)
     End Sub
 
 #End Region
@@ -159,8 +165,10 @@ Public Class K3700Control
 #Region " DEVICE EVENT HANDLERS "
 
     ''' <summary> Executes the device open changed action. </summary>
-    Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
+    Protected Overrides Sub OnDeviceOpenChanged(ByVal device As VI.DeviceBase)
+        MyBase.OnDeviceOpenChanged(device)
         If Me.IsDeviceOpen Then
+            Me.DisplayFunctionModes(VI.Tsp.MultimeterFunctionMode.VoltageDC)
             Me._SimpleReadWriteControl.Connect(device?.Session)
         Else
             Me._SimpleReadWriteControl.Disconnect()
@@ -173,19 +181,20 @@ Public Class K3700Control
     ''' <summary> Handles the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overrides Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
+    Protected Overrides Sub HandlePropertyChange(ByVal device As VI.DeviceBase, ByVal propertyName As String)
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        MyBase.OnDevicePropertyChanged(device, propertyName)
+        MyBase.HandlePropertyChange(device, propertyName)
         Select Case propertyName
             Case NameOf(isr.VI.DeviceBase.SessionServiceRequestEventEnabled)
                 Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
             Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
-            Case NameOf(isr.VI.DeviceBase.SessionMessagesTraceEnabled)
-                Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
+            Case NameOf(isr.VI.DeviceBase.MessageNotificationLevel)
+                Me._SessionTraceEnabledMenuItem.Checked = device.MessageNotificationLevel <> NotifySyncLevel.None
             Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
-                Me._ServiceRequestEnableBitmaskNumeric.Value = device.ServiceRequestEnableBitmask
-                Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = $"SRE:0b{Convert.ToString(device.ServiceRequestEnableBitmask, 2),8}".Replace(" ", "0")
+                Dim value As VI.Pith.ServiceRequests = device.ServiceRequestEnableBitmask
+                Me._ServiceRequestEnableBitmaskNumeric.Value = value
+                Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = $"SRE:0b{Convert.ToString(value, 2),8}".Replace(" ", "0")
         End Select
     End Sub
 
@@ -193,7 +202,7 @@ Public Class K3700Control
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
-    Protected Overrides Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
+    Protected Overrides Sub DeviceOpened(ByVal sender As VI.DeviceBase, ByVal e As System.EventArgs)
         AddHandler Me.Device.MultimeterSubsystem.PropertyChanged, AddressOf Me.MultimeterSubsystemPropertyChanged
         AddHandler Me.Device.ChannelSubsystem.PropertyChanged, AddressOf Me.ChannelSubsystemPropertyChanged
         AddHandler Me.Device.DisplaySubsystem.PropertyChanged, AddressOf Me.DisplaySubsystemPropertyChanged
@@ -207,9 +216,6 @@ Public Class K3700Control
     Protected Overrides Sub OnTitleChanged(ByVal value As String)
         Me._TitleLabel.Text = value
         Me._TitleLabel.Visible = Not String.IsNullOrWhiteSpace(value)
-        If String.IsNullOrWhiteSpace(value) Then
-            Stop
-        End If
         MyBase.OnTitleChanged(value)
     End Sub
 
@@ -217,7 +223,7 @@ Public Class K3700Control
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
-    Protected Overrides Sub DeviceClosing(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs)
+    Protected Overrides Sub DeviceClosing(ByVal sender As VI.DeviceBase, ByVal e As System.ComponentModel.CancelEventArgs)
         MyBase.DeviceClosing(sender, e)
         If e?.Cancel Then Return
         If Me.IsDeviceOpen Then
@@ -235,47 +241,11 @@ Public Class K3700Control
 
 #Region " MUTLIMETER "
 
-    ''' <summary> Displays a reading described by subsystem. </summary>
-    ''' <param name="subsystem"> The subsystem. </param>
-    Private Sub DisplayReading(ByVal subsystem As MultimeterSubsystem)
-
-        Const clear As String = "    "
-        Const compliance As String = "..C.."
-        Const rangeCompliance As String = ".RC."
-        Const levelCompliance As String = ".LC."
-
-        If Not subsystem.Reading.HasValue Then
-            Me._ReadingToolStripStatusLabel.Text = "-.------- V"
-            Me._ComplianceToolStripStatusLabel.Text = clear
-            Me.LastReading = ""
-        Else
-            Me._ReadingToolStripStatusLabel.SafeTextSetter($"{subsystem.Amount.ToString} {subsystem.Amount.Unit.ToString}")
-            Me.LastReading = subsystem.Amount.ToString
-            If subsystem.Amount.MetaStatus.HitCompliance Then
-                Me._ComplianceToolStripStatusLabel.Text = compliance
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Real Compliance;. Instrument sensed an output overflow of the measured value.")
-            ElseIf subsystem.Amount.MetaStatus.HitRangeCompliance Then
-                Me._ComplianceToolStripStatusLabel.Text = rangeCompliance
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Range Compliance;. Instrument sensed an output overflow of the measured value.")
-            ElseIf subsystem.Amount.MetaStatus.HitLevelCompliance Then
-                Me._ComplianceToolStripStatusLabel.Text = levelCompliance
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Level Compliance;. Instrument sensed an output overflow of the measured value.")
-            Else
-                Me._ComplianceToolStripStatusLabel.Text = clear
-                ' Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Parsed {0}", Me.LastReading)
-            End If
-        End If
-
-    End Sub
-
     ''' <summary> Handles the Multimeter subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As MultimeterSubsystem, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As MultimeterSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(K3700.MultimeterSubsystem.AutoDelayMode)
@@ -307,8 +277,12 @@ Public Class K3700Control
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._MovingAverageRadioButton.Checked = subsystem.MovingAverageFilterEnabled.Value
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._RepeatingAverageRadioButton.Checked = Not subsystem.MovingAverageFilterEnabled.Value
             Case NameOf(K3700.MultimeterSubsystem.FunctionMode)
-                If Me._SenseFunctionComboBox.DataSource Is Nothing Then Me.DisplayFunctionModes()
-                Me._SenseFunctionComboBox.SelectedItem = subsystem.FunctionMode.GetValueOrDefault(VI.Tsp.MultimeterFunctionMode.VoltageDC).ValueDescriptionPair()
+                Dim value As VI.Tsp.MultimeterFunctionMode = subsystem.FunctionMode.GetValueOrDefault(VI.Tsp.MultimeterFunctionMode.VoltageDC)
+                If Me._SenseFunctionComboBox.DataSource Is Nothing Then
+                    Me.DisplayFunctionModes(value)
+                Else
+                    Me._SenseFunctionComboBox.SelectedItem = subsystem.FunctionMode.GetValueOrDefault(VI.Tsp.MultimeterFunctionMode.VoltageDC).ValueDescriptionPair()
+                End If
             Case NameOf(K3700.MultimeterSubsystem.FunctionRange)
                 With Me._SenseRangeNumeric
                     .Maximum = CDec(subsystem.FunctionRange.Max)
@@ -331,8 +305,19 @@ Public Class K3700Control
                 End With
             Case NameOf(K3700.MultimeterSubsystem.Range)
                 If subsystem.Range.HasValue Then Me.SenseRangeSetter(subsystem.Range.Value)
-            Case NameOf(K3700.MultimeterSubsystem.Reading)
-                Me.DisplayReading(subsystem)
+            Case NameOf(K3700.MultimeterSubsystem.LastReading)
+                Dim value As String = subsystem.LastReading
+                Me._LastReadingTextBox.Text = If(String.IsNullOrWhiteSpace(value), "<last reading>", value)
+                subsystem.LastActionElapsedTime = Me.ReadElapsedTime(True)
+            Case NameOf(K3700.MultimeterSubsystem.LastActionElapsedTime)
+                Dim value As String = subsystem.LastReading
+                Me._LastReadingTextBox.Text = $"{If(String.IsNullOrWhiteSpace(value), "<last reading>", value)} @{subsystem.LastActionElapsedTime.ToExactMilliseconds:0.0}ms"
+            Case NameOf(K3700.MultimeterSubsystem.FailureCode)
+                Me._FailureToolStripStatusLabel.Text = subsystem.FailureCode
+            Case NameOf(K3700.MultimeterSubsystem.FailureLongDescription)
+                Me._FailureToolStripStatusLabel.ToolTipText = subsystem.FailureLongDescription
+            Case NameOf(K3700.MultimeterSubsystem.ReadingCaption)
+                Me._ReadingToolStripStatusLabel.Text = subsystem.ReadingCaption
         End Select
     End Sub
 
@@ -341,14 +326,20 @@ Public Class K3700Control
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub MultimeterSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Dim subsystem As MultimeterSubsystem = TryCast(sender, MultimeterSubsystem)
-        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(K3700.MultimeterSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.MultimeterSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, K3700.MultimeterSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Multimeter subsystem {1} property change;. {2}",
-                               Me.Name, e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -359,11 +350,14 @@ Public Class K3700Control
     ''' <summary> Handles the Channel subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As ChannelSubsystem, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As ChannelSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(K3700.ChannelSubsystem.ClosedChannels)
+                subsystem.LastActionElapsedTime = Me.ReadElapsedTime(True)
                 Me.ClosedChannels = subsystem.ClosedChannels
+            Case NameOf(K3700.ChannelSubsystem.LastActionElapsedTime)
+                Me._ChannelListTextBox.Text = $"{subsystem.ClosedChannels} @{subsystem.LastActionElapsedTime.ToExactMilliseconds:0.0}ms"
         End Select
     End Sub
 
@@ -372,14 +366,20 @@ Public Class K3700Control
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ChannelSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Dim subsystem As ChannelSubsystem = TryCast(sender, ChannelSubsystem)
-        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(ChannelSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.ChannelSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, ChannelSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Channel subsystem {1} property change;. {2}",
-                               Me.Name, e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -391,7 +391,7 @@ Public Class K3700Control
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As DisplaySubsystem, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As DisplaySubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(K3700.DisplaySubsystem.DisplayScreen)
@@ -403,14 +403,20 @@ Public Class K3700Control
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub DisplaySubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Dim subsystem As DisplaySubsystem = TryCast(sender, DisplaySubsystem)
-        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(K3700.DisplaySubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(subsystem, e.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.DisplaySubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, K3700.DisplaySubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Display subsystem {1} property change;. {2}",
-                               Me.Name, e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -429,19 +435,15 @@ Public Class K3700Control
     ''' <summary> Handle the Status subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overrides Sub OnPropertyChanged(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
+    Protected Overrides Sub HandlePropertyChange(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        MyBase.OnPropertyChanged(subsystem, propertyName)
+        MyBase.HandlePropertyChange(subsystem, propertyName)
         Select Case propertyName
-            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
+            Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
+            Case NameOf(StatusSubsystemBase.LastDeviceError)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
-                If Not subsystem.ReadingDeviceErrors Then
-                    ' if no errors, this clears the error queue.
-                    subsystem.QueryDeviceErrors()
-                End If
+            Case NameOf(StatusSubsystemBase.ErrorAvailable)
         End Select
     End Sub
 
@@ -450,14 +452,20 @@ Public Class K3700Control
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)
-        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(K3700.StatusSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(subsystem, e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.StatusSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, K3700.StatusSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling Status subsystem {1} property change;. {2}",
-                               Me.Name, e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -469,7 +477,7 @@ Public Class K3700Control
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
         End Select
@@ -480,14 +488,20 @@ Public Class K3700Control
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Dim subsystem As SystemSubsystem = TryCast(sender, SystemSubsystem)
-        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(SystemSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(subsystem, e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.SystemSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, SystemSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "{0} exception handling System subsystem {1} property change;. {2}",
-                               Me.Name, e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -497,82 +511,105 @@ Public Class K3700Control
 
 #Region " STATUS DISPLAY "
 
+    Private _Status As String
     ''' <summary> Gets or sets the status. </summary>
     ''' <value> The status. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected Overrides Property Status As String
         Get
-            Return Me._StatusLabel.Text
+            Return Me._Status
         End Get
         Set(value As String)
-            Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._StatusLabel)
-            Me._StatusLabel.ToolTipText = value
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.Status) Then
+                Me._Status = value
+                Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._StatusLabel)
+                Me._StatusLabel.ToolTipText = value
+                Me.SafePostPropertyChanged()
+            End If
         End Set
     End Property
 
+    Private _Identity As String
     ''' <summary> Gets or sets the identity. </summary>
     ''' <value> The identity. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected Overrides Property Identity As String
         Get
-            Return Me._IdentityLabel.Text
+            Return Me._Identity
         End Get
         Set(value As String)
-            Me._IdentityLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._IdentityLabel)
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.Identity) Then
+                Me._Identity = value
+                Me._IdentityLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._IdentityLabel)
+                Me.SafePostPropertyChanged()
+            End If
         End Set
     End Property
 
+    Private _StatusRegisterCaption As String
     ''' <summary> Gets or sets the status register caption. </summary>
     ''' <value> The status register caption. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected Overrides Property StatusRegisterCaption As String
         Get
-            Return Me._StatusRegisterLabel.Text
+            Return Me._StatusRegisterCaption
         End Get
         Set(value As String)
-            Me._StatusRegisterLabel.Text = value
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.StatusRegisterCaption) Then
+                Me._StatusRegisterCaption = value
+                Me._StatusRegisterLabel.Text = value
+                Me.SafePostPropertyChanged()
+            End If
         End Set
     End Property
 
+    Private _StandardRegisterCaption As String
     ''' <summary> Gets or sets the standard register caption. </summary>
     ''' <value> The status register caption. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected Overrides Property StandardRegisterCaption As String
         Get
-            Return Me._StandardRegisterLabel.Text
+            Return Me._StandardRegisterCaption
         End Get
         Set(value As String)
-            Me._StandardRegisterLabel.Text = value
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.StandardRegisterCaption) Then
+                Me._StandardRegisterCaption = value
+                Me._StandardRegisterLabel.Text = value
+                Me.SafePostPropertyChanged()
+            End If
         End Set
     End Property
 
-#End Region
-
-#Region " LAST READING "
-
-    Private _LastReading As String
-
-    ''' <summary> Gets or sets the last reading. </summary>
-    ''' <value> The last reading. </value>
+    ''' <summary> Gets or sets the standard register status. </summary>
+    ''' <value> The standard register status. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property LastReading As String
+    Protected Overrides Property ServiceRequestEnableBitmask As Integer
         Get
-            Return Me._LastReading
+            Return CInt(Me._ServiceRequestEnableBitmaskNumeric.Value)
+        End Get
+        Set(value As Integer)
+            Me._ServiceRequestEnableBitmaskNumeric.Value = value
+        End Set
+    End Property
+
+    Private _ServiceRequestEnableBitmaskCaption As String
+    ''' <summary> Gets or sets the standard register caption. </summary>
+    ''' <value> The standard register caption. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property ServiceRequestEnableBitmaskCaption As String
+        Get
+            Return Me._ServiceRequestEnableBitmaskCaption
         End Get
         Set(value As String)
-            If value Is Nothing Then value = ""
-            If String.IsNullOrWhiteSpace(value) Then
-                Me._LastReadingTextBox.SafeTextSetter("<last reading>")
-            Else
-                Me._LastReading = value
-                If Me.ElapsedTimeStopwatch.IsRunning Then
-                    Me.ElapsedTimeStopwatch.Stop()
-                    Me._LastReadingTextBox.SafeTextSetter($"{value} @{Me.ElapsedTimeStopwatch.ElapsedMilliseconds}ms")
-                Else
-                    Me._LastReadingTextBox.SafeTextSetter(value)
-                End If
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.ServiceRequestEnableBitmaskCaption) Then
+                Me._ServiceRequestEnableBitmaskCaption = value
+                Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = value
             End If
-            Me.SafePostPropertyChanged()
         End Set
     End Property
 
@@ -581,35 +618,38 @@ Public Class K3700Control
 #Region " DEVICE SETTINGS: FUNCTION MODE "
 
     ''' <summary> Displays a function modes. </summary>
-    Private Sub DisplayFunctionModes()
+    Private Sub DisplayFunctionModes(ByVal selectedValue As VI.Tsp.MultimeterFunctionMode)
         With Me._SenseFunctionComboBox
-            .DataSource = Nothing
-            .Items.Clear()
-            .DataSource = GetType(VI.Tsp.MultimeterFunctionMode).ValueDescriptionPairs()
-            .DisplayMember = "Value"
-            .ValueMember = "Key"
+            If .DataSource Is Nothing OrElse .Items.Count <= 0 Then
+                .DataSource = Nothing
+                .Items.Clear()
+                .DataSource = GetType(VI.Tsp.MultimeterFunctionMode).ValueDescriptionPairs()
+                .DisplayMember = "Value"
+                .ValueMember = "Key"
+            End If
             If .Items.Count > 0 Then
-                .SelectedItem = VI.Tsp.MultimeterFunctionMode.VoltageDC.ValueDescriptionPair()
+                .SelectedItem = selectedValue.ValueDescriptionPair
             End If
         End With
-    End Sub
-
-    ''' <summary> Selects a new sense mode. </summary>
-    ''' <param name="value"> True to show or False to hide the control. </param>
-    Friend Sub ApplyFunctionMode(ByVal value As VI.Tsp.MultimeterFunctionMode)
-        Me._Device.MultimeterSubsystem.ApplyFunctionMode(value)
     End Sub
 
     ''' <summary>
     ''' Gets or sets the selected function mode.
     ''' </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Private ReadOnly Property SelectedFunctionMode() As VI.Tsp.MultimeterFunctionMode
-        Get
-            Return CType(CType(Me._SenseFunctionComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(
+    Private Function SelectedFunctionMode() As VI.Tsp.MultimeterFunctionMode
+        Dim activity As String = $"Selecting function mode {Me._SenseFunctionComboBox.SelectedItem}"
+        Dim result As VI.Tsp.MultimeterFunctionMode = MultimeterFunctionMode.CurrentAC
+        Try
+            result = CType(CType(Me._SenseFunctionComboBox.SelectedItem, System.Collections.Generic.KeyValuePair(
                   Of [Enum], String)).Key, VI.Tsp.MultimeterFunctionMode)
-        End Get
-    End Property
+        Catch ex As Exception
+            Me._InfoProvider.Annunciate(Me._SenseFunctionComboBox, ex.ToString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+        End Try
+        Return result
+    End Function
 
 #End Region
 
@@ -628,14 +668,7 @@ Public Class K3700Control
             ElseIf String.IsNullOrWhiteSpace(value) Then
                 value = "all open"
             End If
-            Me._ClosedChannelsTextBox.SafeTextSetter(value)
-            If Me.ElapsedTimeStopwatch.IsRunning Then
-                Me._ChannelListTextBox.SafeTextSetter($"{value} @{Me.ElapsedTimeStopwatch.ElapsedMilliseconds}ms")
-                elapsedTimeCounter -= 1
-                If elapsedTimeCounter < 0 Then Me.ElapsedTimeStopwatch.Stop()
-            Else
-                Me._ChannelListTextBox.SafeTextSetter(value)
-            End If
+            Me._ClosedChannelsTextBox.Text = value
         End Set
     End Property
 
@@ -651,12 +684,12 @@ Public Class K3700Control
         End If
     End Sub
 
-    Private elapsedTimeCounter As Integer
     ''' <summary> Event handler. Called by _closeChannelsButton for click events. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _CloseChannelsButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _CloseChannelsButton.Click
+        Dim activity As String = "closing channels"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
@@ -665,14 +698,13 @@ Public Class K3700Control
             Me.Device.ClearExecutionState()
             ' must be reabled after clearing execution state.
             Me.Device.StatusSubsystem.EnableWaitComplete()
-            elapsedTimeCounter = 2
-            Me.ElapsedTimeStopwatch.Restart()
+            Me.StartElapsedStopwatch(2)
             Me.Device.ChannelSubsystem.ApplyClosedChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(2))
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
+
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
@@ -683,6 +715,7 @@ Public Class K3700Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _OpenChannelsButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _OpenChannelsButton.Click
+        Dim activity As String = "opening channels"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
@@ -691,14 +724,13 @@ Public Class K3700Control
             Me.Device.ClearExecutionState()
             ' must be reabled after clearing execution state.
             Me.Device.StatusSubsystem.EnableWaitComplete()
-            elapsedTimeCounter = 2
-            Me.ElapsedTimeStopwatch.Restart()
+            Me.StartElapsedStopwatch(2)
             Me.Device.ChannelSubsystem.ApplyOpenChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(2))
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
+
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
@@ -709,6 +741,7 @@ Public Class K3700Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _CloseOnlyButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _CloseOnlyButton.Click
+        Dim activity As String = "closing only channels"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
@@ -717,17 +750,16 @@ Public Class K3700Control
             Me.Device.ClearExecutionState()
             ' must be reabled after clearing execution state.
             Me.Device.StatusSubsystem.EnableWaitComplete()
-            elapsedTimeCounter = 3
-            Me.ElapsedTimeStopwatch.Restart()
+            Me.StartElapsedStopwatch(3)
             Me.Device.ChannelSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(2))
             Me.Device.ChannelSubsystem.ApplyClosedChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(2))
             ' this works only if a single channel:
             ' VI.ChannelSubsystem.CloseChannels(Me.Device, Me._channelListComboBox.Text)
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
+
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
@@ -738,6 +770,8 @@ Public Class K3700Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _OpenAllButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _OpenAllButton.Click
+
+        Dim activity As String = "opening all channels"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
@@ -745,14 +779,13 @@ Public Class K3700Control
             Me.Device.ClearExecutionState()
             ' must be reabled after clearing execution state.
             Me.Device.StatusSubsystem.EnableWaitComplete()
-            Me.ElapsedTimeStopwatch.Restart()
-            elapsedTimeCounter = 2
+            Me.StartElapsedStopwatch(2)
             Me.Device.ChannelSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(2))
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
+
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
@@ -789,7 +822,7 @@ Public Class K3700Control
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _InitiateButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    Private Sub _InitiateButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _InitiateButton.Click
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
@@ -800,11 +833,11 @@ Public Class K3700Control
 
             ' set the service request
             Me.Device.StatusSubsystem.ApplyMeasurementEventEnableBitmask(MeasurementEvents.All)
-            Me.Device.StatusSubsystem.EnableServiceRequest(VI.ServiceRequests.All And Not VI.ServiceRequests.MessageAvailable)
+            Me.Device.StatusSubsystem.EnableServiceRequest(VI.Pith.ServiceRequests.All And Not VI.Pith.ServiceRequests.MessageAvailable)
 
             ' trigger the initiation of the measurement letting the service request do the rest.
             Me.Device.ClearExecutionState()
-            Me.ElapsedTimeStopwatch.Restart()
+            Me.StartElapsedStopwatch(0)
             ' Me.Device.TriggerSubsystem.Initiate()
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
@@ -821,34 +854,14 @@ Public Class K3700Control
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ReadingComboBox_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-        If _InitializingComponents Then Return
+    Private Sub _ReadingComboBox_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ReadingComboBox.SelectedIndexChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
             If Me._ReadingComboBox.Enabled AndAlso Me._ReadingComboBox.SelectedIndex >= 0 AndAlso
                     Not String.IsNullOrWhiteSpace(Me._ReadingComboBox.Text) Then
-                Me.DisplayReading(Me.Device.MultimeterSubsystem)
+                ' Me.DisplayReading(Me.Device.MultimeterSubsystem)
             End If
-        Catch ex As Exception
-            Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
-
-    End Sub
-
-    ''' <summary> Event handler. Called by _ReadButton for click events. Query the Device for a
-    ''' reading. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ReadButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me._InfoProvider.Clear()
-            Me.ElapsedTimeStopwatch.Restart()
-            Me.Device.MultimeterSubsystem.Measure()
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
@@ -859,66 +872,26 @@ Public Class K3700Control
 
     End Sub
 
-    ''' <summary> Toggles the session service request handler . </summary>
+    ''' <summary> Event handler. Called by _ReadButton for click events. Query the Device for a
+    ''' reading. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _SessionServiceRequestHandlerEnabledCheckBox_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-        If Me._InitializingComponents Then Return
-        Dim checkBox As CheckBox = TryCast(sender, CheckBox)
+    Private Sub _ReadButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ReadButton.Click
         Try
             Me.Cursor = Cursors.WaitCursor
-            If checkBox IsNot Nothing AndAlso checkBox.Checked <> Me.Device.SessionServiceRequestEventEnabled Then
-                If checkBox IsNot Nothing AndAlso checkBox.Checked Then
-                    Me.Device.Session.EnableServiceRequest()
-                    If Me._ServiceRequestEnableBitmaskNumeric.Value = 0 Then
-                        If Me._ServiceRequestEnableBitmaskNumeric.Value = 0 Then
-                            Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
-                        Else
-                            Me.Device.StatusSubsystem.EnableServiceRequest(CType(Me._ServiceRequestEnableBitmaskNumeric.Value, ServiceRequests))
-                        End If
-                    Else
-                        Me.Device.StatusSubsystem.EnableServiceRequest(CType(Me._ServiceRequestEnableBitmaskNumeric.Value, ServiceRequests))
-                    End If
-                Else
-                    Me.Device.Session.DisableServiceRequest()
-                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
-                End If
-                Me.Device.StatusSubsystem.ReadEventRegisters()
-            End If
+            Me._InfoProvider.Clear()
+            Me.StartElapsedStopwatch(0)
+            Me.Device.MultimeterSubsystem.Measure()
         Catch ex As Exception
-            Me._InfoProvider.Annunciate(sender, "Failed toggling session service request")
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred toggling session service request;. {0}", ex.ToFullBlownString)
+            Me._InfoProvider.Annunciate(sender, ex.ToString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
         Finally
+            Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
         End Try
-    End Sub
 
-    ''' <summary> Toggles the Device service request handler . </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Event information. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _DeviceServiceRequestHandlerEnabledCheckBox_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-        If Me._InitializingComponents Then Return
-        Dim checkBox As CheckBox = TryCast(sender, CheckBox)
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            If checkBox IsNot Nothing AndAlso checkBox.Checked <> Me.Device.DeviceServiceRequestHandlerAdded Then
-                If checkBox IsNot Nothing AndAlso checkBox.Checked Then
-                    Me.AddServiceRequestEventHandler()
-                Else
-                    Me.RemoveServiceRequestEventHandler()
-                End If
-                Me.Device.StatusSubsystem.ReadEventRegisters()
-            End If
-        Catch ex As Exception
-            Me._InfoProvider.Annunciate(sender, "Failed toggling device service request")
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred toggling service request;. {0}", ex.ToFullBlownString)
-        Finally
-            Me.Cursor = Cursors.Default
-        End Try
     End Sub
-
 
 #End Region
 
@@ -936,7 +909,7 @@ Public Class K3700Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId:="degC")>
     Private Sub _SenseFunctionComboBox_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _SenseFunctionComboBox.SelectedIndexChanged
-        If _InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim control As Windows.Forms.Control = TryCast(sender, Windows.Forms.Control)
         If control IsNot Nothing AndAlso control.Enabled Then
             Dim functionMode As MultimeterFunctionMode = Me.SelectedFunctionMode
@@ -954,7 +927,7 @@ Public Class K3700Control
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
-            Me.ApplyFunctionMode(Me.SelectedFunctionMode)
+            Me._Device.MultimeterSubsystem.ApplyFunctionMode(Me.SelectedFunctionMode)
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, "Exception occurred initiating a measurement;. {0}", ex.ToFullBlownString)
@@ -1081,13 +1054,13 @@ Public Class K3700Control
     ''' <param name="e">      Event information. </param>
     Private Sub _AutoDelayCheckBox_CheckedChanged(sender As Object, e As EventArgs) Handles _AutoDelayCheckBox.CheckedChanged
         If Me._AutoDelayCheckBox.CheckState = CheckState.Checked Then
-            AutoDelayMode = MultimeterAutoDelayMode.On
+            Me.AutoDelayMode = MultimeterAutoDelayMode.On
             Me._AutoDelayCheckBox.Text = "Auto Delay ON"
         ElseIf Me._AutoDelayCheckBox.CheckState = CheckState.Indeterminate Then
-            AutoDelayMode = MultimeterAutoDelayMode.Once
+            Me.AutoDelayMode = MultimeterAutoDelayMode.Once
             Me._AutoDelayCheckBox.Text = "Auto Delay ONCE"
         Else
-            AutoDelayMode = MultimeterAutoDelayMode.Off
+            Me.AutoDelayMode = MultimeterAutoDelayMode.Off
             Me._AutoDelayCheckBox.Text = "Auto Delay OFF"
         End If
     End Sub
@@ -1107,12 +1080,12 @@ Public Class K3700Control
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me._InfoProvider.Clear()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 Me.Device.SystemSubsystem.ClearInterface()
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1124,19 +1097,19 @@ Public Class K3700Control
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ClearDeviceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs)
+    Private Sub _ClearDeviceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearDeviceMenuItem.Click
         Dim activity As String = "clearing selective device"
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me._InfoProvider.Clear()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 Me.Device.SystemSubsystem.ClearDevice()
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1156,12 +1129,12 @@ Public Class K3700Control
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me._InfoProvider.Clear()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 Me.Device.SystemSubsystem.ClearExecutionState()
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1181,13 +1154,13 @@ Public Class K3700Control
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
                 If Me.IsDeviceOpen Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                     Me.Device.ResetKnownState()
                 End If
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1207,16 +1180,16 @@ Public Class K3700Control
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
                 If Me.IsDeviceOpen Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                     Me.Device.ResetKnownState()
                     activity = "initializing known state"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                     Me.Device.InitKnownState()
                 End If
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1229,10 +1202,10 @@ Public Class K3700Control
     Private Sub EnableTraceLevelControls()
 
         TalkerControlBase.ListTraceEventLevels(Me._LogTraceLevelComboBox.ComboBox)
-        AddHandler Me._LogTraceLevelComboBox.ComboBox.SelectedValueChanged, AddressOf Me._LogTraceLevelComboBox_SelectedValueChanged
+        AddHandler Me._LogTraceLevelComboBox.ComboBox.SelectedIndexChanged, AddressOf Me._LogTraceLevelComboBox_SelectedIndexChanged
 
         TalkerControlBase.ListTraceEventLevels(Me._DisplayTraceLevelComboBox.ComboBox)
-        AddHandler Me._DisplayTraceLevelComboBox.ComboBox.SelectedValueChanged, AddressOf Me._DisplayTraceLevelComboBox_SelectedValueChanged
+        AddHandler Me._DisplayTraceLevelComboBox.ComboBox.SelectedIndexChanged, AddressOf Me._DisplayTraceLevelComboBox_SelectedIndexChanged
 
         TalkerControlBase.SelectItem(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel)
         TalkerControlBase.SelectItem(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel)
@@ -1246,7 +1219,8 @@ Public Class K3700Control
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _LogTraceLevelComboBox_SelectedValueChanged(sender As Object, e As EventArgs)
+    Private Sub _LogTraceLevelComboBox_SelectedIndexChanged(sender As Object, e As EventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "selecting log trace level on this instrument only"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -1255,7 +1229,7 @@ Public Class K3700Control
                                             TalkerControlBase.SelectedValue(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel))
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1268,7 +1242,8 @@ Public Class K3700Control
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _DisplayTraceLevelComboBox_SelectedValueChanged(sender As Object, e As EventArgs)
+    Private Sub _DisplayTraceLevelComboBox_SelectedIndexChanged(sender As Object, e As EventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "selecting Display trace level on this instrument only"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -1277,7 +1252,7 @@ Public Class K3700Control
                                             TalkerControlBase.SelectedValue(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel))
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1294,7 +1269,7 @@ Public Class K3700Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SessionTraceEnabledMenuItem_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "toggling instrument message tracing"
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         If menuItem IsNot Nothing Then
@@ -1303,12 +1278,17 @@ Public Class K3700Control
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.Device.SessionMessagesTraceEnabled = menuItem.Checked
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                If menuItem.Checked Then
+                    ' TODO: Change menu item to a drop down.
+                    Me.Device.MessageNotificationLevel = NotifySyncLevel.Async
+                Else
+                    Me.Device.MessageNotificationLevel = NotifySyncLevel.None
+                End If
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1319,34 +1299,34 @@ Public Class K3700Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SessionServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "Toggle session service request handling"
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.Session.ServiceRequestEventEnabled Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
                     Me.Device.Session.EnableServiceRequest()
                     If Me._ServiceRequestEnableBitmaskNumeric.Value = 0 Then
                         If Me._ServiceRequestEnableBitmaskNumeric.Value = 0 Then
-                            Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+                            Me.Device.StatusSubsystem.EnableServiceRequest(VI.Pith.ServiceRequests.All)
                         Else
-                            Me.Device.StatusSubsystem.EnableServiceRequest(CType(Me._ServiceRequestEnableBitmaskNumeric.Value, ServiceRequests))
+                            Me.Device.StatusSubsystem.EnableServiceRequest(CType(Me._ServiceRequestEnableBitmaskNumeric.Value, VI.Pith.ServiceRequests))
                         End If
                     Else
-                        Me.Device.StatusSubsystem.EnableServiceRequest(CType(Me._ServiceRequestEnableBitmaskNumeric.Value, ServiceRequests))
+                        Me.Device.StatusSubsystem.EnableServiceRequest(CType(Me._ServiceRequestEnableBitmaskNumeric.Value, VI.Pith.ServiceRequests))
                     End If
                 Else
                     Me.Device.Session.DisableServiceRequest()
-                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
+                    Me.Device.StatusSubsystem.EnableServiceRequest(VI.Pith.ServiceRequests.None)
                 End If
                 Me.Device.StatusSubsystem.ReadEventRegisters()
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1357,14 +1337,14 @@ Public Class K3700Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _DeviceServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _DeviceServiceRequestHandlerEnabledMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "Toggle device service request handling"
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.DeviceServiceRequestHandlerAdded Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
                     Me.AddServiceRequestEventHandler()
                 Else
@@ -1374,7 +1354,7 @@ Public Class K3700Control
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1387,7 +1367,7 @@ Public Class K3700Control
     ''' <summary> Executes the property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
                 Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
@@ -1405,18 +1385,23 @@ Public Class K3700Control
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SimpleReadWriteControl_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Instrument.SimpleReadWriteControl)}.{e.PropertyName} change"
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._SimpleReadWriteControl_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, Instrument.SimpleReadWriteControl), e?.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, Instrument.SimpleReadWriteControl), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling {0} property change;. {1}",
-                               e?.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
+
 
 #End Region
 

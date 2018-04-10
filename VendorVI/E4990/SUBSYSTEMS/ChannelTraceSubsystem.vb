@@ -17,7 +17,7 @@ Public Class ChannelTraceSubsystem
     ''' Initializes a new instance of the <see cref="SourceChannelSubsystem" /> class.
     ''' </summary>
     ''' <param name="traceNumber">     The Trace number. </param>
-    ''' <param name="channelNumber">   A reference to a <see cref="VI.StatusSubsystemBase">message
+    ''' <param name="channelNumber">   A reference to a <see cref="StatusSubsystemBase">message
     '''                                based session</see>. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>
     Public Sub New(ByVal traceNumber As Integer, ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
@@ -44,11 +44,11 @@ Public Class ChannelTraceSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.SupportedParameters = CType(-1 + (TraceParameters.ComplexAdmittance << 1), TraceParameters)
+        Me.SupportedParameters = CType(-1 + (Scpi.TraceParameters.ComplexAdmittance << 1), Scpi.TraceParameters)
         If Me.TraceNumber = 1 Then
-            Me.Parameter = TraceParameters.AbsoluteImpedance
+            Me.Parameter = Scpi.TraceParameters.AbsoluteImpedance
         Else
-            Me.Parameter = TraceParameters.ImpedancePhase
+            Me.Parameter = Scpi.TraceParameters.ImpedancePhase
         End If
     End Sub
 

@@ -125,8 +125,8 @@ Namespace Scpi
             ''' <summary> The preset command. </summary>
             Public Const SystemPresetCommand As String = ":SYST:PRES"
 
-            ''' <summary> The scpi revision query command. </summary>
-            Public Const ScpiRevisionQueryCommand As String = ":SYST:VERS?"
+            ''' <summary> The language (SCPI) revision query command. </summary>
+            Public Const LanguageRevisionQueryCommand As String = ":SYST:VERS?"
 
 #End Region
 

@@ -14,9 +14,9 @@ Option Explicit On
 Namespace My
 
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
-     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.6.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Partial Public NotInheritable Class MySettings
+    Partial Friend NotInheritable Class MySettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
 
         Private Shared defaultInstance As MySettings = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New MySettings()), MySettings)
@@ -76,67 +76,85 @@ Namespace My
                 Me("TraceShowLevel") = Value
             End Set
         End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:10")>  _
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:10")>
         Public Property InitializeTimeout() As Global.System.TimeSpan
             Get
-                Return CType(Me("InitializeTimeout"),Global.System.TimeSpan)
+                Return CType(Me("InitializeTimeout"), Global.System.TimeSpan)
             End Get
             Set
-                Me("InitializeTimeout") = value
+                Me("InitializeTimeout") = Value
             End Set
         End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:01.0500000")>  _
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.5000000")>
         Public Property DeviceClearRefractoryPeriod() As Global.System.TimeSpan
             Get
-                Return CType(Me("DeviceClearRefractoryPeriod"),Global.System.TimeSpan)
+                Return CType(Me("DeviceClearRefractoryPeriod"), Global.System.TimeSpan)
             End Get
             Set
-                Me("DeviceClearRefractoryPeriod") = value
+                Me("DeviceClearRefractoryPeriod") = Value
             End Set
         End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.2000000")>  _
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.2000000")>
         Public Property ResetRefractoryPeriod() As Global.System.TimeSpan
             Get
-                Return CType(Me("ResetRefractoryPeriod"),Global.System.TimeSpan)
+                Return CType(Me("ResetRefractoryPeriod"), Global.System.TimeSpan)
             End Get
             Set
-                Me("ResetRefractoryPeriod") = value
+                Me("ResetRefractoryPeriod") = Value
             End Set
         End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>  _
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>
         Public Property InitRefractoryPeriod() As Global.System.TimeSpan
             Get
-                Return CType(Me("InitRefractoryPeriod"),Global.System.TimeSpan)
+                Return CType(Me("InitRefractoryPeriod"), Global.System.TimeSpan)
             End Get
             Set
-                Me("InitRefractoryPeriod") = value
+                Me("InitRefractoryPeriod") = Value
             End Set
         End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>  _
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>
         Public Property ClearRefractoryPeriod() As Global.System.TimeSpan
             Get
-                Return CType(Me("ClearRefractoryPeriod"),Global.System.TimeSpan)
+                Return CType(Me("ClearRefractoryPeriod"), Global.System.TimeSpan)
             End Get
             Set
-                Me("ClearRefractoryPeriod") = value
+                Me("ClearRefractoryPeriod") = Value
             End Set
         End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("0")>
+        Public Property SessionMessageNotificationLevel() As Integer
+            Get
+                Return CType(Me("SessionMessageNotificationLevel"), Integer)
+            End Get
+            Set
+                Me("SessionMessageNotificationLevel") = Value
+            End Set
+        End Property
+
     End Class
+
+End Namespace
+
+
+Namespace My
 
     <Global.Microsoft.VisualBasic.HideModuleNameAttribute(),
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),

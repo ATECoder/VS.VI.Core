@@ -9,14 +9,14 @@
 ''' </para> </license>
 ''' <history date="01/13/2016" by="David" revision=""> Created. </history>
 Public Class ChannelSubsystem
-    Inherits isr.VI.Tsp.ChannelSubsystemBase
+    Inherits isr.VI.ChannelSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="ChannelSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 #End Region

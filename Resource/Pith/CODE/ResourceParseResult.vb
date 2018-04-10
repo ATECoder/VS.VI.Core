@@ -1,5 +1,5 @@
 ﻿
-''' <summary> Encapsulates the result of a resource parse. </summary>
+''' <summary> Encapsulates the result of parsing a resource name. </summary>
 ''' <license>
 ''' (c) 2015 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -10,7 +10,7 @@
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
 ''' </license>
 ''' <history date="11/23/2015" by="David" revision=""> Created. </history>
-Public Class ResourceParseResult
+Public Class ResourceNameParseInfo
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()
@@ -25,17 +25,17 @@ Public Class ResourceParseResult
     End Sub
 
     ''' <summary> Default constructor. </summary>
-    Public Sub New(ByVal resourceName As String, ByVal interfaceType As HardwareInterfaceType, ByVal interfaceNumber As Integer)
+    Public Sub New(ByVal resourceName As String, ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByVal interfaceNumber As Integer)
         MyBase.New()
         Me._ResourceName = resourceName
         Me._InterfaceType = interfaceType
         Me._InterfaceNumber = interfaceNumber
-        Me._InterfaceBaseName = VI.ResourceNamesManager.InterfaceResourceBaseName(Me._InterfaceType)
-        Me._InterfaceResourceName = VI.ResourceNamesManager.BuildInterfaceResourceName(Me._InterfaceBaseName, Me._InterfaceNumber)
-        Me._ResourceType = VI.ResourceNamesManager.ParseResourceType(resourceName)
+        Me._InterfaceBaseName = ResourceNamesManager.InterfaceResourceBaseName(Me._InterfaceType)
+        Me._InterfaceResourceName = ResourceNamesManager.BuildInterfaceResourceName(Me._InterfaceBaseName, Me._InterfaceNumber)
+        Me._ResourceType = ResourceNamesManager.ParseResourceType(resourceName)
         Me._ResourceAddress = ""
         If Me.ResourceType = ResourceType.Instrument Then
-            Me._ResourceAddress = VI.ResourceNamesManager.ParseAddress(resourceName)
+            Me._ResourceAddress = ResourceNamesManager.ParseAddress(resourceName)
         End If
         If Me._InterfaceType = HardwareInterfaceType.Gpib Then
             If Not Integer.TryParse(Me._ResourceAddress, Me._GpibAddress) Then
@@ -48,14 +48,14 @@ Public Class ResourceParseResult
     ''' <param name="resourceName"> The name of the resource. </param>
     Private Sub _Parse(ByVal resourceName As String)
         Me._ResourceName = resourceName
-        Me._InterfaceType = VI.ResourceNamesManager.ParseHardwareInterfaceType(resourceName)
-        Me._InterfaceNumber = VI.ResourceNamesManager.ParseInterfaceNumber(resourceName)
-        Me._InterfaceBaseName = VI.ResourceNamesManager.InterfaceResourceBaseName(Me._InterfaceType)
-        Me._InterfaceResourceName = VI.ResourceNamesManager.BuildInterfaceResourceName(Me._InterfaceBaseName, Me._InterfaceNumber)
-        Me._ResourceType = VI.ResourceNamesManager.ParseResourceType(resourceName)
+        Me._InterfaceType = ResourceNamesManager.ParseHardwareInterfaceType(resourceName)
+        Me._InterfaceNumber = ResourceNamesManager.ParseInterfaceNumber(resourceName)
+        Me._InterfaceBaseName = ResourceNamesManager.InterfaceResourceBaseName(Me._InterfaceType)
+        Me._InterfaceResourceName = ResourceNamesManager.BuildInterfaceResourceName(Me._InterfaceBaseName, Me._InterfaceNumber)
+        Me._ResourceType = ResourceNamesManager.ParseResourceType(resourceName)
         Me._ResourceAddress = ""
         If Me.ResourceType = ResourceType.Instrument Then
-            Me._ResourceAddress = VI.ResourceNamesManager.ParseAddress(resourceName)
+            Me._ResourceAddress = ResourceNamesManager.ParseAddress(resourceName)
         End If
         If Me._InterfaceType = HardwareInterfaceType.Gpib Then
             If Not Integer.TryParse(Me._ResourceAddress, Me._GpibAddress) Then
@@ -81,7 +81,7 @@ Public Class ResourceParseResult
 
     ''' <summary> Gets or sets the type of the interface. </summary>
     ''' <value> The type of the interface. </value>
-    Public Property InterfaceType As HardwareInterfaceType
+    Public Property InterfaceType As VI.Pith.HardwareInterfaceType
 
     ''' <summary> Gets or sets the interface number. </summary>
     ''' <value> The interface number. </value>
@@ -115,7 +115,7 @@ Public Class ResourceParseResult
     ''' <summary> Gets the name of the interface resource. </summary>
     ''' <returns> The name of the interface resource. </returns>
     Public Function InterfaceResourceName() As String
-        If Me.InterfaceType = VI.HardwareInterfaceType.Gpib Then
+        If Me.InterfaceType = HardwareInterfaceType.Gpib Then
             Return Me._InterfaceResourceName
         Else
             Throw New NotImplementedException("Interface resource name is available only for GPIB interfaces at this time")

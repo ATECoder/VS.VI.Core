@@ -9,12 +9,12 @@
 ''' </para> </license>
 ''' <history date="9/10/2013" by="David" revision="3.0.5001"> Created. </history>
 Public Class SystemSubsystem
-    Inherits VI.Scpi.SystemSubsystemBase
+    Inherits VI.SystemSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SystemSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -39,7 +39,7 @@ Public Class SystemSubsystem
 
     ''' <summary> Gets the preset command. </summary>
     ''' <value> The preset command. </value>
-    Protected Overrides ReadOnly Property PresetCommand As String = VI.Scpi.Syntax.SystemPresetCommand
+    Protected Overrides ReadOnly Property PresetCommand As String = VI.Pith.Scpi.Syntax.SystemPresetCommand
 
 #End Region
 

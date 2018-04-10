@@ -85,8 +85,11 @@
     <Compile Include="..\..\..\..\Share\Core\ShareCommandLineInfo.vb">
       <Link>My\CommandLineInfo.vb</Link>
     </Compile>
-    <Compile Include="..\..\..\..\Share\Pith\ShareBlueApplicationEvents.vb">
-      <Link>My\BlueApplicationEvents.vb</Link>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplication_BlueEvents.vb">
+      <Link>My\ShareMyApplication_BlueEvents.vb</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplication_Log.vb">
+      <Link>My\ShareMyApplication_Log.vb</Link>
     </Compile>
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
@@ -101,11 +104,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="My\BlueMyApplication.vb" />
+    <Compile Include="My\MyApplication_Events.vb" />
     <Compile Include="My\Console1.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="My\MyApplicationInfo.vb" />
+    <Compile Include="My\MyApplication_Info.vb" />
+    <Compile Include="My\MyApplication_Log.vb" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="My\logo.ico" />
@@ -145,6 +149,10 @@
     <ProjectReference Include="..\..\Instrument\Instrument\isr.VI.Instrument.Library.vbproj">
       <Project>{c3b279e2-f2f4-4387-bd05-82b8d3976ac5}</Project>
       <Name>isr.VI.Instrument.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Resource\Pith\isr.VI.Pith.Library.vbproj">
+      <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
+      <Name>isr.VI.Pith.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\VendorVI\K3700\isr.VI.K3700.Library.vbproj">
       <Project>{259f39e6-9c5b-45ea-bdcf-b34c397cb172}</Project>

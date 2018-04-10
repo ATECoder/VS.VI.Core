@@ -170,17 +170,17 @@ Public MustInherit Class ResistanceMeasureBase
             If Not Me.ConfigurationEquals(other) Then
                 Dim format As String = "Unequal configuring--instrument {0} value of {1} is not {2}"
                 If Not String.Equals(Me.SourceMeasureUnit, other.SourceMeasureUnit) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Source Measure Unit", Me.SourceMeasureUnit, other.SourceMeasureUnit))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Source Measure Unit", Me.SourceMeasureUnit, other.SourceMeasureUnit))
                 ElseIf Not Me.Aperture.Approximates(other.Aperture, 0.00001) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Aperture", Me.Aperture, other.Aperture))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Aperture", Me.Aperture, other.Aperture))
                 ElseIf Not Me.CurrentLevel.Approximates(other.CurrentLevel, 0.00001) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Current Level", Me.CurrentLevel, other.CurrentLevel))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Current Level", Me.CurrentLevel, other.CurrentLevel))
                 ElseIf Not Me.HighLimit.Approximates(other.HighLimit, 0.00001) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "High Limit", Me.HighLimit, other.HighLimit))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "High Limit", Me.HighLimit, other.HighLimit))
                 ElseIf Not Me.LowLimit.Approximates(other.LowLimit, 0.00001) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Low Limit", Me.LowLimit, other.LowLimit))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Low Limit", Me.LowLimit, other.LowLimit))
                 ElseIf Not Me.VoltageLimit.Approximates(other.VoltageLimit, 0.0001) Then
-                    Throw New OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Voltage Limit", Me.VoltageLimit, other.VoltageLimit))
+                    Throw New VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format, "Voltage Limit", Me.VoltageLimit, other.VoltageLimit))
                 Else
                     Debug.Assert(Not Debugger.IsAttached, "Failed logic")
                 End If
@@ -201,7 +201,7 @@ Public MustInherit Class ResistanceMeasureBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.ResistanceDisplayFormat) Then
+            If Not String.Equals(value, Me.ResistanceDisplayFormat, StringComparison.OrdinalIgnoreCase) Then
                 Me._ResistanceDisplayFormat = value
                 Me.SafePostPropertyChanged()
             End If
@@ -217,7 +217,7 @@ Public MustInherit Class ResistanceMeasureBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.VoltageDisplayFormat) Then
+            If Not String.Equals(value, Me.VoltageDisplayFormat, StringComparison.OrdinalIgnoreCase) Then
                 Me._VoltageDisplayFormat = value
                 Me.SafePostPropertyChanged()
             End If
@@ -237,8 +237,8 @@ Public MustInherit Class ResistanceMeasureBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.LastReading) Then
-                Me._lastReading = value
+            If Not String.Equals(value, Me.LastReading, StringComparison.OrdinalIgnoreCase) Then
+                Me._LastReading = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -253,8 +253,8 @@ Public MustInherit Class ResistanceMeasureBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.LastOutcome) Then
-                Me._lastOutcome = value
+            If Not String.Equals(value, Me.LastOutcome, StringComparison.OrdinalIgnoreCase) Then
+                Me._LastOutcome = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -269,8 +269,8 @@ Public MustInherit Class ResistanceMeasureBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.LastStatus) Then
-                Me._lastStatus = value
+            If Not String.Equals(value, Me.LastStatus, StringComparison.OrdinalIgnoreCase) Then
+                Me._LastStatus = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -407,8 +407,8 @@ Public MustInherit Class ResistanceMeasureBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.Reading) Then
-                Me._reading = value
+            If Not String.Equals(value, Me.Reading, StringComparison.OrdinalIgnoreCase) Then
+                Me._Reading = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -445,7 +445,7 @@ Public MustInherit Class ResistanceMeasureBase
         End Get
         Protected Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.ResistanceCaption) Then
+            If Not String.Equals(value, Me.ResistanceCaption, StringComparison.OrdinalIgnoreCase) Then
                 Me._ResistanceCaption = value
                 Me.SafePostPropertyChanged()
             End If
@@ -516,7 +516,7 @@ Public MustInherit Class ResistanceMeasureBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.VoltageCaption) Then
+            If Not String.Equals(value, Me.VoltageCaption, StringComparison.OrdinalIgnoreCase) Then
                 Me._VoltageCaption = value
                 Me.SafePostPropertyChanged()
             End If

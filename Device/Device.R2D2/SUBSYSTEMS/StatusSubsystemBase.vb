@@ -15,10 +15,10 @@ Public MustInherit Class StatusSubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Protected Sub New(ByVal visaSession As VI.SessionBase)
-        MyBase.New(visaSession, Scpi.Syntax.NoErrorCompoundMessage)
+    Protected Sub New(ByVal visaSession As VI.Pith.SessionBase)
+        MyBase.New(visaSession, VI.Pith.Scpi.Syntax.NoErrorCompoundMessage)
     End Sub
 
 #End Region
@@ -32,21 +32,21 @@ Public MustInherit Class StatusSubsystemBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Dim action As String = "enabling wait completion"
+        Dim activity As String = "enabling wait completion"
         Try
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{activity};. ")
             Me.EnableWaitComplete()
         Catch ex As Exception
             ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
         End Try
         Try
-            Action = "querying identity"
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            activity = "querying identity"
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{activity};. ")
             Me.QueryIdentity()
         Catch ex As Exception
             ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
         End Try
     End Sub
 

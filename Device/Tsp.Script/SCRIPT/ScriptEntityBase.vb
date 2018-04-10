@@ -260,7 +260,7 @@ Public MustInherit Class ScriptEntityBase
 
     ''' <summary> Checks if the firmware version command exists. </summary>
     ''' <returns> <c>True</c> if the firmware version command exists; otherwise, <c>False</c>. </returns>
-    Public Function FirmwareVersionQueryCommandExists(ByVal session As SessionBase) As Boolean
+    Public Function FirmwareVersionQueryCommandExists(ByVal session As Vi.Pith.SessionBase) As Boolean
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Return Not session.IsNil(Me.FirmwareVersionQueryCommand.TrimEnd("()".ToCharArray))
     End Function
@@ -268,7 +268,7 @@ Public MustInherit Class ScriptEntityBase
     ''' <summary> Checks if the firmware version command exists. </summary>
     ''' <param name="session">Specifies reference to the Tsp Session</param>
     ''' <returns> <c>True</c> if the firmware version command exists; otherwise, <c>False</c>. </returns>
-    Public Function FirmwareVersionQueryCommandExists(ByVal nodeNumber As Integer, ByVal session As SessionBase) As Boolean
+    Public Function FirmwareVersionQueryCommandExists(ByVal nodeNumber As Integer, ByVal session As Vi.Pith.SessionBase) As Boolean
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Return Not session.IsNil(nodeNumber, Me.FirmwareVersionQueryCommand.TrimEnd("()".ToCharArray))
     End Function
@@ -277,7 +277,7 @@ Public MustInherit Class ScriptEntityBase
     ''' <param name="node">Specifies the node.</param>
     ''' <param name="session">Specifies reference to the Tsp Session</param>
     ''' <returns> <c>True</c> if the firmware version command exists; otherwise, <c>False</c>. </returns>
-    Public Function FirmwareVersionQueryCommandExists(ByVal node As NodeEntityBase, ByVal session As SessionBase) As Boolean
+    Public Function FirmwareVersionQueryCommandExists(ByVal node As NodeEntityBase, ByVal session As Vi.Pith.SessionBase) As Boolean
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         If node.IsController Then
@@ -292,7 +292,7 @@ Public MustInherit Class ScriptEntityBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="session"> Specifies reference to the Tsp Session. </param>
     ''' <returns> The firmware version. </returns>
-    Public Function QueryFirmwareVersion(ByVal session As SessionBase) As String
+    Public Function QueryFirmwareVersion(ByVal session As Vi.Pith.SessionBase) As String
         If session Is Nothing Then            Throw New ArgumentNullException(NameOf(session))
         If Me.FirmwareVersionQueryCommandExists(session) Then
             Me._EmbeddedFirmwareVersion = session.QueryPrintTrimEnd(Me.FirmwareVersionQueryCommand)
@@ -308,7 +308,7 @@ Public MustInherit Class ScriptEntityBase
     ''' <param name="nodeNumber"> The node number. </param>
     ''' <param name="session">    Specifies reference to the Tsp Session. </param>
     ''' <returns> The firmware version. </returns>
-    Public Function QueryFirmwareVersion(ByVal nodeNumber As Integer, ByVal session As SessionBase) As String
+    Public Function QueryFirmwareVersion(ByVal nodeNumber As Integer, ByVal session As Vi.Pith.SessionBase) As String
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         If Me.FirmwareVersionQueryCommandExists(nodeNumber, session) Then
             Me._EmbeddedFirmwareVersion = session.QueryPrintTrimEnd(nodeNumber, Me.FirmwareVersionQueryCommand)
@@ -324,7 +324,7 @@ Public MustInherit Class ScriptEntityBase
     ''' <param name="node">    Specifies the node. </param>
     ''' <param name="session"> Specifies reference to the Tsp Session. </param>
     ''' <returns> The firmware version. </returns>
-    Public Function QueryFirmwareVersion(ByVal node As NodeEntityBase, ByVal session As SessionBase) As String
+    Public Function QueryFirmwareVersion(ByVal node As NodeEntityBase, ByVal session As Vi.Pith.SessionBase) As String
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         If node.IsController Then
@@ -780,7 +780,7 @@ Public Class ScriptEntityBaseCollection(Of TItem As ScriptEntityBase)
     ''' <param name="node">    Specified the node. </param>
     ''' <param name="session"> Specifies the TSP session. </param>
     ''' <returns> <c>True</c> if okay; <c>False</c> if any exception had occurred. </returns>
-    Public Function ReadFirmwareVersions(ByVal node As NodeEntityBase, ByVal session As SessionBase) As Boolean
+    Public Function ReadFirmwareVersions(ByVal node As NodeEntityBase, ByVal session As Vi.Pith.SessionBase) As Boolean
 
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
@@ -962,31 +962,31 @@ Public Class ScriptEntityBaseCollection(Of TItem As ScriptEntityBase)
                     If Me._outcomeDetails.Length > 0 Then
                         Me._outcomeDetails.AppendLine()
                     End If
-                    Me._outcomeDetails.AppendFormat(Globalization.CultureInfo.CurrentCulture,
+                    Me._OutcomeDetails.AppendFormat(Globalization.CultureInfo.CurrentCulture,
                                                  "custom firmware '{0}' not found on '{1}' on node {2}.",
-                                                 script.Name, tspScriptSubsystem.ResourceName, node.Number)
+                                                 script.Name, tspScriptSubsystem.ResourceNameCaption, node.Number)
                     ' if script did not run, do not run subsequent scripts.
                     Return False
                 ElseIf tspScriptSubsystem.Session.IsNil(node.IsController, node.Number, script.Namespaces) Then
 
-                    tspScriptSubsystem.Session.LastAction = $"{tspScriptSubsystem.ResourceName} running {script.Name} On node {node.Number}."
+                    tspScriptSubsystem.Session.LastAction = $"{tspScriptSubsystem.ResourceNameCaption} running {script.Name} On node {node.Number}."
                     tspScriptSubsystem.Session.LastNodeNumber = node.Number
                     ' if script not ran, run it now. Throw exception on failure.
                     tspScriptSubsystem.RunScript(script, node)
 
                     If tspScriptSubsystem.Session.IsNil(node.IsController, node.Number, script.Name) Then
 
-                        Me._outcomeDetails.AppendFormat(Globalization.CultureInfo.CurrentCulture,
+                        Me._OutcomeDetails.AppendFormat(Globalization.CultureInfo.CurrentCulture,
                                                      "Instrument '{0}' script {1} not found after running on node {2}.",
-                                                     tspScriptSubsystem.ResourceName, script.Name, node.Number)
+                                                     tspScriptSubsystem.ResourceNameCaption, script.Name, node.Number)
 
                         ' if script did not run, do not run subsequent scripts.
                         Return False
                     ElseIf tspScriptSubsystem.Session.IsNil(node.IsController, node.Number, script.Namespaces) Then
 
-                        Me._outcomeDetails.AppendFormat(Globalization.CultureInfo.CurrentCulture,
+                        Me._OutcomeDetails.AppendFormat(Globalization.CultureInfo.CurrentCulture,
                                                      "some of the namespace(s) {0} are nil after running {1} on '{2}' node {3}",
-                                                     script.NamespaceList, script.Name, tspScriptSubsystem.ResourceName, node.Number)
+                                                     script.NamespaceList, script.Name, tspScriptSubsystem.ResourceNameCaption, node.Number)
 
                         ' if script did not run, do not run subsequent scripts.
                         Return False
@@ -1001,10 +1001,10 @@ Public Class ScriptEntityBaseCollection(Of TItem As ScriptEntityBase)
     ''' <summary> Checks if all scripts exist. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="node">    Specifies the node. </param>
-    ''' <param name="session"> Specifies the <see cref="SessionBase">TSP session.</see> </param>
+    ''' <param name="session"> Specifies the <see cref="VI.Pith.SessionBase">TSP session.</see> </param>
     ''' <returns> <c>True</c> if okay; otherwise, <c>False</c> if any script does not exist. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification:="Requires instrument interface method")>
-    Public Function FindScripts(ByVal node As NodeEntityBase, ByVal session As SessionBase) As Boolean
+    Public Function FindScripts(ByVal node As NodeEntityBase, ByVal session As Vi.Pith.SessionBase) As Boolean
 
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
@@ -1053,9 +1053,9 @@ Public Class ScriptEntityBaseCollection(Of TItem As ScriptEntityBase)
                     If Me._outcomeDetails.Length > 0 Then
                         Me._outcomeDetails.AppendLine()
                     End If
-                    Me._outcomeDetails.AppendFormat(Globalization.CultureInfo.CurrentCulture,
-                                                 "saved custom firmware '{0}' not found on '{1}' on node {2}.",
-                                                 script.Name, tspScriptSubsystem.ResourceName, node.Number)
+                    Me._OutcomeDetails.AppendFormat(Globalization.CultureInfo.CurrentCulture,
+                                                    "saved custom firmware '{0}' not found on '{1}' on node {2}.",
+                                                    script.Name, tspScriptSubsystem.ResourceNameCaption, node.Number)
                     ' if script not found return false
                     Return False
                 End If
@@ -1067,11 +1067,11 @@ Public Class ScriptEntityBaseCollection(Of TItem As ScriptEntityBase)
 
     ''' <summary> Checks if any script exists on the specified instrument and node. </summary>
     ''' <param name="node">    Specifies the node. </param>
-    ''' <param name="session"> Specifies the <see cref="SessionBase">TSP session.</see> </param>
+    ''' <param name="session"> Specifies the <see cref="VI.Pith.SessionBase">TSP session.</see> </param>
     ''' <returns> <c>True</c> if okay; otherwise, <c>False</c> if any exception had occurred. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters",
         justification:="Uses the TSP Session Methods. Not sure why this is reported as a violation.")>
-    Public Function FindAnyScript(ByVal node As NodeEntityBase, ByVal session As SessionBase) As Boolean
+    Public Function FindAnyScript(ByVal node As NodeEntityBase, ByVal session As Vi.Pith.SessionBase) As Boolean
 
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
@@ -1098,10 +1098,10 @@ Public Class ScriptEntityBaseCollection(Of TItem As ScriptEntityBase)
 
     ''' <summary> Checks if any script exists on all nodes from the specified session. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <param name="session">   Specifies the <see cref="SessionBase">TSP session.</see> </param>
+    ''' <param name="session">   Specifies the <see cref="VI.Pith.SessionBase">TSP session.</see> </param>
     ''' <param name="nodeEntities"> The node entities. </param>
     ''' <returns> <c>True</c> if any script exists. </returns>
-    Public Function FindAnyScript(ByVal session As SessionBase, ByVal nodeEntities As NodeEntityBase()) As Boolean
+    Public Function FindAnyScript(ByVal session As Vi.Pith.SessionBase, ByVal nodeEntities As NodeEntityBase()) As Boolean
 
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         If nodeEntities Is Nothing Then Throw New ArgumentNullException(NameOf(nodeEntities))
@@ -1119,10 +1119,10 @@ Public Class ScriptEntityBaseCollection(Of TItem As ScriptEntityBase)
 
     ''' <summary> Checks if any script exists on all nodes from the specified session. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <param name="session">   Specifies the <see cref="SessionBase">TSP session.</see> </param>
+    ''' <param name="session">   Specifies the <see cref="VI.Pith.SessionBase">TSP session.</see> </param>
     ''' <param name="nodeEntities"> The node entities. </param>
     ''' <returns> <c>True</c> if any script exists. </returns>
-    Public Function FindAnyScript(ByVal session As SessionBase, ByVal nodeEntities As NodeEntityCollection) As Boolean
+    Public Function FindAnyScript(ByVal session As Vi.Pith.SessionBase, ByVal nodeEntities As NodeEntityCollection) As Boolean
 
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         If nodeEntities Is Nothing Then Throw New ArgumentNullException(NameOf(nodeEntities))

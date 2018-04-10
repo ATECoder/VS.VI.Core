@@ -33,7 +33,6 @@ Public MustInherit Class ChannelMarkerSubsystemBase
     ''' <summary> Sets subsystem values to their known execution clear state. </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me.MeasurementAvailable = False
     End Sub
 
 #End Region
@@ -54,32 +53,18 @@ Public MustInherit Class ChannelMarkerSubsystemBase
 
 #End Region
 
-#Region " FETCH; DATA; READ "
+#Region " LATEST DATA "
 
-    ''' <summary> Gets or sets the last reading. </summary>
-    ''' <value> The last reading. </value>
-    Public Property LastReading As String
+    ''' <summary> Gets or sets the latest data query command. </summary>
+    ''' <value> The latest data query command. </value>
+    ''' <remarks> SCPI: ":SENSE:DATA:LAT?" </remarks>
+    Protected Overridable ReadOnly Property LatestDataQueryCommand As String
 
-    ''' <summary> Parses the reading into the data elements. </summary>
-    Public MustOverride Sub ParseReading(ByVal reading As String)
-
-    ''' <summary> Fetches the latest data </summary>
-    Public MustOverride Sub FetchLatestData()
-
-    ''' <summary> <c>True</c> if Measurement available. </summary>
-    Private _MeasurementAvailable As Boolean
-
-    ''' <summary> Gets or sets a value indicating whether [Measurement available]. </summary>
-    ''' <value> <c>True</c> if [Measurement available]; otherwise, <c>False</c>. </value>
-    Public Property MeasurementAvailable As Boolean
-        Get
-            Return Me._MeasurementAvailable
-        End Get
-        Protected Set(ByVal value As Boolean)
-            Me._MeasurementAvailable = value
-            Me.SafeSendPropertyChanged()
-        End Set
-    End Property
+    ''' <summary> Fetches the latest data and parses it. </summary>
+    ''' <remarks> Issues the ':SENSE:DATA:LAT?' query, which reads data stored in the Sample Buffer.. </remarks>
+    Public Function FetchLatestData() As Double?
+        Return Me.Measure(Me.LatestDataQueryCommand)
+    End Function
 
 #End Region
 
@@ -138,7 +123,7 @@ Public MustInherit Class ChannelMarkerSubsystemBase
 
 #End Region
 
-#Region "  ENABLED "
+#Region " ENABLED "
 
     Private _Enabled As Boolean?
     ''' <summary> Gets or sets the cached Enabled sentinel. </summary>
@@ -194,3 +179,22 @@ Public MustInherit Class ChannelMarkerSubsystemBase
 
 End Class
 
+#Region " UNUSED "
+#If False Then
+    ''' <summary> <c>True</c> if Measurement available. </summary>
+    Private _MeasurementAvailable As Boolean
+
+    ''' <summary> Gets or sets a value indicating whether [Measurement available]. </summary>
+    ''' <value> <c>True</c> if [Measurement available]; otherwise, <c>False</c>. </value>
+    Public Property MeasurementAvailable As Boolean
+        Get
+            Return Me._MeasurementAvailable
+        End Get
+        Protected Set(ByVal value As Boolean)
+            Me._MeasurementAvailable = value
+            Me.SafeSendPropertyChanged()
+        End Set
+    End Property
+
+#End If
+#End Region

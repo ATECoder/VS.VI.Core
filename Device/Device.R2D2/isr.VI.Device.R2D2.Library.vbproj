@@ -68,6 +68,9 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
@@ -76,9 +79,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
+    <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="SUBSYSTEMS\MeasureSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\ProberSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\StatusSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SystemSubsystemBase.vb" />
@@ -109,6 +112,9 @@
       <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
       <Name>isr.VI.Pith.Library</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="~Empty\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

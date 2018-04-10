@@ -68,7 +68,7 @@ Public Class ReadingAmount
         If MyBase.TryApplyReading(valueReading, unitsReading) Then
             Return Me.TryApplyReading(valueReading)
         Else
-            Me.Amount = New Arebis.TypedUnits.Amount(Scpi.Syntax.NotANumber, Me.Unit)
+            Me.Amount = New Arebis.TypedUnits.Amount(VI.Pith.Scpi.Syntax.NotANumber, Me.Unit)
             Return False
         End If
     End Function
@@ -83,7 +83,7 @@ Public Class ReadingAmount
             End If
             Return True
         Else
-            Me.Amount = New Arebis.TypedUnits.Amount(Scpi.Syntax.NotANumber, Me.Unit)
+            Me.Amount = New Arebis.TypedUnits.Amount(VI.Pith.Scpi.Syntax.NotANumber, Me.Unit)
             Return False
         End If
     End Function

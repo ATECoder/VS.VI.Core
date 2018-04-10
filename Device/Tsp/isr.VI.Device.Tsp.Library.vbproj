@@ -67,7 +67,6 @@
     <DefineDebug>False</DefineDebug>
     <DefineTrace>True</DefineTrace>
     <DefineConstants>DebugBuildCompile = -1 : Win32=True</DefineConstants>
-    <PlatformTarget>x86</PlatformTarget>
     <NoWarn>42353,42354,42355</NoWarn>
     <DebugType>none</DebugType>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -75,6 +74,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="~Empty\" />
+    <Folder Include="~Removed\" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="System" />
@@ -84,19 +85,23 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="ENTITIES\BufferElement.vb" />
     <Compile Include="ENTITIES\DeviceError.vb" />
     <Compile Include="My Project\Application.Designer.vb" />
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
+    <Compile Include="My\MyLibrary_Log.vb" />
+    <Compile Include="SUBSYSTEMS\LinkStatusSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\MeasureVoltageSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SenseSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SlotSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SlotsSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\MultimeterSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\ChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\LocalNodeSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\MeasureResistanceSubsystemBase.vb" />
     <Compile Include="ENTITIES\TspMessage.vb" />
@@ -149,10 +154,6 @@
     <ProjectReference Include="..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
       <Project>{d2c9a599-79dd-4cfa-8614-be3c444eb347}</Project>
       <Name>Arebis.TypedUnits.Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Device.Scpi\isr.VI.Device.Scpi.Library.vbproj">
-      <Project>{f6e68ae1-a1b8-43ce-bf8b-d1b8df65c366}</Project>
-      <Name>isr.VI.Device.Scpi.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\Device\isr.VI.Device.Library.vbproj">
       <Project>{0C14C4A7-D574-4F9B-A2D9-989B71CC7DE4}</Project>

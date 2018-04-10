@@ -82,12 +82,12 @@ Public Class ResourceManager
     ''' <summary> Parse resource. </summary>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
-    Public Function ParseResource(ByVal resourceName As String) As VI.ResourceParseResult
-        Dim action As String = $"parsing resource {resourceName}"
+    Public Function ParseResource(ByVal resourceName As String) As VI.Pith.ResourceNameParseInfo
+        Dim activity As String = $"parsing resource {resourceName}"
         Try
             Return Me.VisaResourceManager.ParseResource(resourceName)
         Catch ex As System.MissingMethodException
-            Throw New OperationFailedException($"Failed {action}; Please verify using IVI.Visa version {isr.VI.My.MySettings.Default.FoundationVisaAssemblyVersion} with NI VISA {isr.VI.My.MySettings.Default.FoundationSystemFileVersion}", ex)
+            Throw New VI.Pith.OperationFailedException($"Failed {activity}; Please verify using IVI.Visa version {VI.Pith.My.MySettings.Default.FoundationVisaAssemblyVersion} with NI VISA {VI.Pith.My.MySettings.Default.FoundationSystemFileVersion64}", ex)
         Catch
             Throw
         End Try
@@ -168,7 +168,7 @@ Public Class ResourceManager
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The found interface resource names. </returns>
-    Public Function FindInterfaces(ByVal interfaceType As HardwareInterfaceType) As IEnumerable(Of String)
+    Public Function FindInterfaces(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
         Return Me.VisaResourceManager.FindInterfaces(interfaceType)
     End Function
 
@@ -180,7 +180,7 @@ Public Class ResourceManager
     ''' located. If exception occurred, the exception details are returned in the first element of the
     ''' <paramref name="resources"/>. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
-    Public Function TryFindInterfaces(ByVal interfaceType As HardwareInterfaceType, ByRef resources As IEnumerable(Of String)) As Boolean
+    Public Function TryFindInterfaces(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByRef resources As IEnumerable(Of String)) As Boolean
         Return Me.VisaResourceManager.TryFindInterfaces(interfaceType, resources)
     End Function
 
@@ -215,7 +215,7 @@ Public Class ResourceManager
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The found instrument resource names. </returns>
-    Public Function FindInstruments(ByVal interfaceType As HardwareInterfaceType) As IEnumerable(Of String)
+    Public Function FindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
         Return Me.VisaResourceManager.FindInstruments(interfaceType)
     End Function
 
@@ -228,7 +228,7 @@ Public Class ResourceManager
     ''' <paramref name="resources"/>. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#",
         Justification:="This is the normative implementation of this method.")>
-    Public Function TryFindInstruments(ByVal interfaceType As HardwareInterfaceType,
+    Public Function TryFindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                                   ByRef resources As IEnumerable(Of String)) As Boolean
         Return Me.VisaResourceManager.TryFindInstruments(interfaceType, resources)
     End Function
@@ -238,7 +238,7 @@ Public Class ResourceManager
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <param name="boardNumber">   The board number. </param>
     ''' <returns> The found instrument resource names. </returns>
-    Public Function FindInstruments(ByVal interfaceType As HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
+    Public Function FindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
         Return Me.VisaResourceManager.FindInstruments(interfaceType, boardNumber)
     End Function
 
@@ -252,7 +252,7 @@ Public Class ResourceManager
     ''' <paramref name="resources"/>. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="2#",
         Justification:="This is the normative implementation of this method.")>
-    Public Function TryFindInstruments(ByVal interfaceType As HardwareInterfaceType,
+    Public Function TryFindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                                   ByVal interfaceNumber As Integer, ByRef resources As IEnumerable(Of String)) As Boolean
         Return Me.VisaResourceManager.TryFindInstruments(interfaceType, interfaceNumber, resources)
     End Function

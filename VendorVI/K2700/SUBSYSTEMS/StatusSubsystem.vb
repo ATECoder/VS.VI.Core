@@ -14,12 +14,28 @@ Public Class StatusSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal visaSession As VI.SessionBase)
+    Public Sub New(ByVal visaSession As VI.Pith.SessionBase)
         MyBase.New(visaSession)
         Me._VersionInfo = New VersionInfo
     End Sub
+
+    ''' <summary> Creates a new StatusSubsystem. </summary>
+    ''' <returns> A StatusSubsystem. </returns>
+    Public Shared Function Create() As StatusSubsystem
+        Dim subsystem As StatusSubsystem = Nothing
+        Try
+            subsystem = New StatusSubsystem(isr.VI.SessionFactory.Get.Factory.CreateSession())
+        Catch
+            If subsystem IsNot Nothing Then
+                subsystem.Dispose()
+                subsystem = Nothing
+            End If
+            Throw
+        End Try
+        Return subsystem
+    End Function
 
 #End Region
 

@@ -67,50 +67,39 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="LIMITS\ContactCheckLimitBase.vb" />
-    <Compile Include="LIMITS\UpperLowerLimitBase.vb" />
-    <Compile Include="LIMITS\CompositeLimitBase.vb" />
-    <Compile Include="LIMITS\ComplianceLimitBase.vb" />
+    <Compile Include="My\MyLibrary_Log.vb" />
+    <Compile Include="PRIMITIVES\BinningInfo.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="SUBSYSTEMS\ArmLayerSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\ChannelTriggerSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\ChannelTraceSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\ChannelMarkerSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\CompensateChannelSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\CalculateChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\Calculate2SubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\DigitalOutputBase.vb" />
-    <Compile Include="SUBSYSTEMS\InstrumentSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\DisplaySubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\FormatSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\MeasureCurrentSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\MeasureSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\MeasureVoltageSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\OutputSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\RouteSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SenseCurrentSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SenseResistanceSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SenseFunctionSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SenseChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SenseSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SenseVoltageSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SourceCurrentSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SourceChannelSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SourceSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\SourceVoltageSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\StatusSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\SystemSubsystemBase.vb" />
-    <Compile Include="SUBSYSTEMS\ThermoStreamSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\TraceSubsystemBase.vb" />
     <Compile Include="SUBSYSTEMS\TriggerSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\ArmLayerSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\ChannelTraceSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\CompensateChannelSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\DigitalOutputBase.vb" />
+    <Compile Include="SUBSYSTEMS\SenseResistanceSubsystemBase.vb" />
+    <Compile Include="SUBSYSTEMS\SourceChannelSubsystemBase.vb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
@@ -146,6 +135,9 @@
       <Project>{ac4fdbf7-8aab-4fd5-92d7-ef49dbaf3604}</Project>
       <Name>isr.VI.Pith.Library</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="~Empty\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

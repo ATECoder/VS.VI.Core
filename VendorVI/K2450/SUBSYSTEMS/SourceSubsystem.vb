@@ -16,7 +16,7 @@ Public Class SourceSubsystem
     ''' <summary> Initializes a new instance of the <see cref="SourceSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 
@@ -32,14 +32,8 @@ Public Class SourceSubsystem
         Me.Range = New Double?
         Me.AutoRangeEnabled = True
         Me.AutoDelayEnabled = True
-        For Each fm As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
-            Select Case fm
-                Case SourceFunctionMode.CurrentDC
-                    Me.FunctionModeRanges(fm).SetRange(-1.05, 1.05)
-                Case SourceFunctionMode.VoltageDC
-                    Me.FunctionModeRanges(fm).SetRange(-210, 210)
-            End Select
-        Next
+        Me.FunctionModeRanges(SourceFunctionMode.CurrentDC).SetRange(-1.05, 1.05)
+        Me.FunctionModeRanges(SourceFunctionMode.VoltageDC).SetRange(-210, 210)
         Me.FunctionMode = SourceFunctionMode.VoltageDC
         Me.Range = 0.02
         Me.LimitTripped = False
@@ -71,7 +65,7 @@ Public Class SourceSubsystem
 
     ''' <summary> Gets the automatic Delay enabled query command. </summary>
     ''' <value> The automatic Delay enabled query command. </value>
-    Protected Overrides ReadOnly Property AutoDelayEnabledPrintCommand As String = "_G.print(_G.smu.source.autodelay==smu.ON)"
+    Protected Overrides ReadOnly Property AutoDelayEnabledQueryCommand As String = "_G.print(_G.smu.source.autodelay==smu.ON)"
 
 #End Region
 
@@ -95,7 +89,7 @@ Public Class SourceSubsystem
 
     ''' <summary> Gets the automatic Range enabled query command. </summary>
     ''' <value> The automatic Range enabled query command. </value>
-    Protected Overrides ReadOnly Property AutoRangeEnabledPrintCommand As String = "_G.print(_G.smu.source.autorange==smu.ON)"
+    Protected Overrides ReadOnly Property AutoRangeEnabledQueryCommand As String = "_G.print(_G.smu.source.autorange==smu.ON)"
 
 #End Region
 
@@ -149,7 +143,7 @@ Public Class SourceSubsystem
 
     ''' <summary> Gets or sets the Output enabled query print command. </summary>
     ''' <value> The Output enabled query command. </value>
-    Protected Overrides ReadOnly Property OutputEnabledPrintCommand As String = "_G.print(_G.smu.source.output==smu.ON)"
+    Protected Overrides ReadOnly Property OutputEnabledQueryCommand As String = "_G.print(_G.smu.source.output==smu.ON)"
 
 #End Region
 
@@ -157,7 +151,7 @@ Public Class SourceSubsystem
 
     ''' <summary> Gets the Range query command. </summary>
     ''' <value> The Range query command. </value>
-    Protected Overrides ReadOnly Property RangePrintCommand As String = "_G.print(_G.smu.source.range)"
+    Protected Overrides ReadOnly Property RangeQueryCommand As String = "_G.print(_G.smu.source.range)"
 
     ''' <summary> Gets the Range command format. </summary>
     ''' <value> The Range command format. </value>

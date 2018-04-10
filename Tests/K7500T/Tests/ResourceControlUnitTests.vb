@@ -100,7 +100,7 @@ Public Class ResourceControlUnitTests
             control.DeviceBase = device
             control.ResourceName = TestInfo.ResourceName
 
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            Dim e As New isr.Core.Pith.ActionEventArgs
             control.TryOpenSession(e)
             actualBoolean = e.Cancel
             expectedBoolean = False
@@ -172,7 +172,7 @@ Public Class ResourceControlUnitTests
 
         device.ResourceTitle = TestInfo.ResourceTitle
         device.ResourceName = TestInfo.ResourceName
-        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        Dim e As New isr.Core.Pith.ActionEventArgs
 
         If openFirst Then
             device.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)

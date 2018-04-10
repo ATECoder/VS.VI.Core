@@ -65,7 +65,6 @@
     <DefineDebug>False</DefineDebug>
     <DefineTrace>True</DefineTrace>
     <DefineConstants>CODE_ANALYSIS</DefineConstants>
-    <PlatformTarget>x86</PlatformTarget>
     <NoWarn>42353,42354,42355</NoWarn>
     <DebugType>none</DebugType>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -100,20 +99,24 @@
     <Compile Include="..\..\..\..\Share\Core\ShareCommandLineInfo.vb">
       <Link>My\CommandLineInfo.vb</Link>
     </Compile>
-    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplicationEvents.vb">
-      <Link>My\MyApplicationEvents.vb</Link>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplication_BlueEvents.vb">
+      <Link>My\ShareMyApplication_BlueEvents.vb</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplication_Log.vb">
+      <Link>My\ShareMyApplication_Log.vb</Link>
     </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="My\MyCustomApplicationEvents.vb" />
-    <Compile Include="My\MyApplicationInfo.vb" />
+    <Compile Include="My\MyApplication_Events.vb" />
+    <Compile Include="My\MyApplication_Info.vb" />
     <Compile Include="FORMS\TestPanel.Designer.vb">
       <DependentUpon>TestPanel.vb</DependentUpon>
     </Compile>
     <Compile Include="FORMS\TestPanel.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="My\MyApplication_Log.vb" />
     <Compile Include="My\MySuppressions.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

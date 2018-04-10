@@ -31,18 +31,16 @@ Public Class SimpleReadWriteControl
         Dim escape As String = isr.Core.Pith.EscapeSequencesExtensions.NewLineEscape
         With Me._WriteComboBox
             .Items.Clear()
-            .Items.Add(Ieee488.Syntax.ClearExecutionStateCommand & escape)
-            .Items.Add(Ieee488.Syntax.IdentityQueryCommand & escape)
-            .Items.Add(Ieee488.Syntax.OperationCompletedCommand & escape)
-            .Items.Add(Ieee488.Syntax.OperationCompletedQueryCommand & escape)
-            .Items.Add(Ieee488.Syntax.ResetKnownStateCommand & escape)
-            .Items.Add(String.Format(Globalization.CultureInfo.CurrentCulture,
-                                     Ieee488.Syntax.ServiceRequestEnableCommandFormat, 255) & escape)
-            .Items.Add(Ieee488.Syntax.ServiceRequestEnableQueryCommand & escape)
-            .Items.Add(String.Format(Globalization.CultureInfo.CurrentCulture,
-                                     Ieee488.Syntax.StandardEventEnableCommandFormat, 255) & escape)
-            .Items.Add(Ieee488.Syntax.StandardEventEnableQueryCommand & escape)
-            .Items.Add(Ieee488.Syntax.WaitCommand & escape)
+            .Items.Add(VI.Pith.Ieee488.Syntax.ClearExecutionStateCommand & escape)
+            .Items.Add(VI.Pith.Ieee488.Syntax.IdentityQueryCommand & escape)
+            .Items.Add(VI.Pith.Ieee488.Syntax.OperationCompletedCommand & escape)
+            .Items.Add(VI.Pith.Ieee488.Syntax.OperationCompletedQueryCommand & escape)
+            .Items.Add(VI.Pith.Ieee488.Syntax.ResetKnownStateCommand & escape)
+            .Items.Add(String.Format(Globalization.CultureInfo.CurrentCulture, VI.Pith.Ieee488.Syntax.ServiceRequestEnableCommandFormat, 255) & escape)
+            .Items.Add(VI.Pith.Ieee488.Syntax.ServiceRequestEnableQueryCommand & escape)
+            .Items.Add(String.Format(Globalization.CultureInfo.CurrentCulture, VI.Pith.Ieee488.Syntax.StandardEventEnableCommandFormat, 255) & escape)
+            .Items.Add(VI.Pith.Ieee488.Syntax.StandardEventEnableQueryCommand & escape)
+            .Items.Add(VI.Pith.Ieee488.Syntax.WaitCommand & escape)
             .SelectedIndex = 1
         End With
 
@@ -70,11 +68,11 @@ Public Class SimpleReadWriteControl
 
     ''' <summary> Gets the session. </summary>
     ''' <value> The session. </value>
-    Protected ReadOnly Property Session As SessionBase
+    Protected ReadOnly Property Session As Vi.Pith.SessionBase
 
     ''' <summary> Connects the given session. </summary>
     ''' <param name="session"> The session to connect. </param>
-    Public Sub Connect(ByVal session As SessionBase)
+    Public Sub Connect(ByVal session As Vi.Pith.SessionBase)
         Me.Erase()
         Me._Session = session
         If Me.IsSessionOpen Then
@@ -296,7 +294,7 @@ Public Class SimpleReadWriteControl
     Public Sub Write(ByVal textToWrite As String)
         Windows.Forms.Cursor.Current = Cursors.WaitCursor
         Try
-            If Me._Session.IsServiceRequestEnabled(ServiceRequests.MessageAvailable) And Not Me.ServiceRequestRegistered Then
+            If Me._Session.IsServiceRequestEnabled(VI.Pith.ServiceRequests.MessageAvailable) And Not Me.ServiceRequestRegistered Then
                 Me.StatusMessage = "Establishing service request handling."
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Establishing service request handling")
                 ' checks if service requests are enabled for the MAV bit is enabled on the service request register.
@@ -389,9 +387,9 @@ Public Class SimpleReadWriteControl
 
     ''' <summary> Raises the service requested event. </summary>
     ''' <param name="sender"> Source of the event. </param>
-    Private Sub HandleMessageService(ByVal sender As SessionBase, value As ServiceRequests)
+    Private Sub HandleMessageService(ByVal sender As Vi.Pith.SessionBase, value As VI.Pith.ServiceRequests)
         If sender Is Nothing Then Throw New ArgumentNullException(NameOf(sender))
-        If (value And CInt(ServiceRequests.MessageAvailable)) <> 0 Then
+        If (value And CInt(VI.Pith.ServiceRequests.MessageAvailable)) <> 0 Then
             Me.Read()
         Else
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Nothing to read; SRQ=0x{CInt(value):X2};. ")
@@ -403,17 +401,17 @@ Public Class SimpleReadWriteControl
     ''' <param name="e">      Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub OnServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
-        Dim requester As SessionBase = TryCast(sender, SessionBase)
+        Dim requester As VI.Pith.SessionBase = TryCast(sender, VI.Pith.SessionBase)
         If requester Is Nothing Then Return
-        Dim action As String = "reading service request"
+        Dim activity As String = "reading service request"
         Try
-            Dim sb As ServiceRequests = requester.ReadStatusByte()
-            action = $"servicing events: 0x{CInt(sb):X2}"
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            Dim sb As VI.Pith.ServiceRequests = requester.ReadStatusByte()
+            activity = $"servicing events: 0x{CInt(sb):X2}"
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{activity};. ")
             Me.HandleMessageService(requester, sb)
             sb = requester.ReadStatusByte()
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
         End Try
     End Sub
 

@@ -43,10 +43,12 @@ Public Class ResourceTests
     ''' <summary> Initializes before each test runs. </summary>
     <TestInitialize()> Public Sub MyTestInitialize()
         Assert.IsTrue(TestInfo.Exists, "App.Config not found")
+        TestInfo.ClearMessageQueue()
     End Sub
 
     ''' <summary> Cleans up after each test has run. </summary>
     <TestCleanup()> Public Sub MyTestCleanup()
+        TestInfo.AssertMessageQueue()
     End Sub
 
     '''<summary>
@@ -110,12 +112,12 @@ Public Class ResourceTests
         Dim expectedResult As Boolean = False
         Dim actualResult As Boolean = True
         Dim successParsing As Boolean = False
-        successParsing = isr.VI.SessionBase.TryParse(reading, actualResult)
+        successParsing = VI.Pith.SessionBase.TryParse(reading, actualResult)
         Assert.AreEqual(expectedResult, actualResult, "Value set to {0}", actualResult)
         Assert.AreEqual(True, successParsing, "Success set to {0}", actualResult)
         reading = "1"
         expectedResult = True
-        successParsing = isr.VI.SessionBase.TryParse(reading, actualResult)
+        successParsing = VI.Pith.SessionBase.TryParse(reading, actualResult)
         Assert.AreEqual(expectedResult, actualResult, "Value set to {0}", actualResult)
         Assert.AreEqual(True, successParsing, "Success set to {0}", actualResult)
     End Sub
@@ -158,20 +160,20 @@ Public Class ResourceTests
         Dim varsionString As Object = My.Computer.Registry.GetValue("HKEY_LOCAL_MACHINE\SOFTWARE\National Instruments\NI-VISA\", "CurrentVersion", "0.0.0.0")
         Assert.AreEqual("17.0.0", varsionString, $"Value set to {varsionString}")
 #End If
-        Dim version As Version = VI.ResourcesManagerBase.ReadVendorVersion
+        Dim version As Version = VI.Pith.ResourcesManagerBase.ReadVendorVersion
         Dim expectedVersion As Version = New Version(NationalInstrumentVisaVersion)
         Assert.IsTrue(version.Equals(expectedVersion), $"Vendor version {version.ToString} equals to {expectedVersion}")
 
         Dim FoundationVisaFileVersion32 As String = "5.8.908"
         Dim FoundationVisaFileVersion64 As String = "5.9.2008"
-        Dim fileVersionInfo As FileVersionInfo = VI.ResourcesManagerBase.ReadFoundationSystemFileVersionInfo
+        Dim fileVersionInfo As FileVersionInfo = VI.Pith.ResourcesManagerBase.ReadFoundationSystemFileVersionInfo
         If Environment.Is64BitOperatingSystem Then
             expectedVersion = New Version(FoundationVisaFileVersion64)
         Else
             expectedVersion = New Version(FoundationVisaFileVersion32)
         End If
         Assert.AreEqual(expectedVersion.ToString, $"{fileVersionInfo.FileMajorPart}.{fileVersionInfo.FileMinorPart}.{fileVersionInfo.FileBuildPart}",
-                        $"Foundation file {VI.ResourcesManagerBase.FoundationSystemFileFullName} version set to {fileVersionInfo.FileVersion}")
+                        $"Foundation file {VI.Pith.ResourcesManagerBase.FoundationSystemFileFullName} version set to {fileVersionInfo.FileVersion}")
 
     End Sub
 

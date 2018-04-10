@@ -19,7 +19,7 @@ Public MustInherit Class LocalNodeSubsystemBase
     ''' <summary> Initializes a new instance of the <see cref="SystemSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystem">TSP status
     ''' Subsystem</see>. </param>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me._InitializeTimeout = TimeSpan.FromMilliseconds(30000)
         Me.showEventsStack = New System.Collections.Generic.Stack(Of EventLogModes?)
@@ -102,7 +102,7 @@ Public MustInherit Class LocalNodeSubsystemBase
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Data discarded after turning prompts and errors off;. Data: {0}.", Me.Session.DiscardedData)
             End If
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
@@ -114,7 +114,7 @@ Public MustInherit Class LocalNodeSubsystemBase
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Unread data discarded after discarding unset data;. Data: {0}.", Me.Session.DiscardedData)
             End If
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
@@ -163,10 +163,10 @@ Public MustInherit Class LocalNodeSubsystemBase
     Protected Sub OnSessionPropertyChanged(ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         If Me.ProcessExecutionStateEnabled AndAlso e IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(e.PropertyName) Then
             Select Case e.PropertyName
-                Case NameOf(VI.SessionBase.LastMessageReceived)
+                Case NameOf(VI.Pith.SessionBase.LastMessageReceived)
                     ' parse the command to get the TSP execution state.
                     Me.ParseExecutionState(Me.Session.LastMessageReceived, TspExecutionState.IdleReady)
-                Case NameOf(VI.SessionBase.LastMessageSent)
+                Case NameOf(VI.Pith.SessionBase.LastMessageSent)
                     ' set the TSP status
                     Me.ExecutionState = TspExecutionState.Processing
             End Select
@@ -456,7 +456,7 @@ Public MustInherit Class LocalNodeSubsystemBase
     Protected Overridable ReadOnly Property PromptsStateCommandFormat As String = "_G.localnode.prompts={0}"
 
     ''' <summary> Sets the condition for showing prompts. Controls prompting. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
     ''' <param name="value"> true to value. </param>
     ''' <returns> <c>True</c> to prompts state; otherwise <c>False</c>. </returns>
     Public Function WritePromptsState(ByVal value As PromptsState) As PromptsState
@@ -513,9 +513,9 @@ Public MustInherit Class LocalNodeSubsystemBase
         ' now validate
         Me.QueryShowEvents()
         If Not Me.ShowEvents.HasValue Then
-            Throw New OperationFailedException(Me.ResourceName, showErrorsCommand, "turning off automatic event display failed; value not set.")
+            Throw New VI.Pith.OperationFailedException(Me.ResourceNameCaption, showErrorsCommand, "turning off automatic event display failed; value not set.")
         ElseIf Me.ShowEvents.Value <> events Then
-            Throw New OperationFailedException(Me.ResourceName, showPromptsCommand, $"turning off test script prompts failed; showing {Me.ShowEvents} expected {events}.")
+            Throw New VI.Pith.OperationFailedException(Me.ResourceNameCaption, showPromptsCommand, $"turning off test script prompts failed; showing {Me.ShowEvents} expected {events}.")
         End If
 
     End Sub

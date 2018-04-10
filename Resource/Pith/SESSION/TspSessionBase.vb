@@ -465,7 +465,7 @@ Partial Public Class SessionBase
     ''' <param name="value"> Specifies the global which to look for. </param>
     ''' <returns> <c>true</c> if equals nil; otherwise <c>false</c> </returns>
     Public Shared Function EqualsNil(ByVal value As String) As Boolean
-        Return String.Equals(SessionBase.NilValue, value, StringComparison.OrdinalIgnoreCase)
+        Return String.IsNullOrWhiteSpace(value) OrElse String.Equals(SessionBase.NilValue, value, StringComparison.OrdinalIgnoreCase)
     End Function
 
     ''' <summary> Returns <c>True</c> if the specified global exists. </summary>
@@ -533,7 +533,7 @@ Partial Public Class SessionBase
         Catch ex As FormatException
             Throw
         Catch ex As Exception
-            Throw New OperationFailedException(String.Format("Statement '{0}' failed. Last message = '{1}'",
+            Throw New VI.Pith.OperationFailedException(String.Format("Statement '{0}' failed. Last message = '{1}'",
                                                              String.Format(format, args), Me.LastMessageSent))
         End Try
         Return value

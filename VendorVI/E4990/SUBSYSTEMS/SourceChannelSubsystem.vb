@@ -14,12 +14,11 @@ Public Class SourceChannelSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SourceChannelSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(channelNumber, statusSubsystem)
-        Me.SupportedFunctionModes = VI.SourceFunctionModes.Current Or
-                                        VI.SourceFunctionModes.Voltage
+        Me.SupportedFunctionModes = Scpi.SourceFunctionModes.Current Or Scpi.SourceFunctionModes.Voltage
     End Sub
 
 #End Region
@@ -42,9 +41,9 @@ Public Class SourceChannelSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.FunctionMode = SourceFunctionModes.Voltage
+        Me.FunctionMode = Scpi.SourceFunctionModes.Voltage
         Me.Level = 0.5 ' volt RMS
-        Me.SupportedFunctionModes = SourceFunctionModes.Current Or SourceFunctionModes.Voltage
+        Me.SupportedFunctionModes = Scpi.SourceFunctionModes.Current Or Scpi.SourceFunctionModes.Voltage
     End Sub
 
 #End Region
@@ -52,31 +51,6 @@ Public Class SourceChannelSubsystem
 #Region " COMMAND SYNTAX "
 
 #Region " FUNCTION MODE "
-
-    ''' <summary> Gets or sets the cached source Function Mode. </summary>
-    ''' <value> The <see cref="SourceFunctionModes">source Function Mode</see> or none if not set or
-    ''' unknown. </value>
-    Public Overrides Property FunctionMode As SourceFunctionModes?
-        Get
-            Return MyBase.FunctionMode
-        End Get
-        Protected Set(ByVal value As SourceFunctionModes?)
-            If Not Nullable.Equals(Me.FunctionMode, value) Then
-                If value.HasValue Then
-                    If value.Value = SourceFunctionModes.Voltage Then
-                        Me.LevelRange = New Core.Pith.RangeR(0.005, 1, 0.001)
-                    ElseIf value.Value = SourceFunctionModes.Current Then
-                        Me.LevelRange = New Core.Pith.RangeR(0.0002, 0.02, 0.00002)
-                    Else
-                        Me.LevelRange = New Core.Pith.RangeR(0, 0)
-                    End If
-                Else
-                    Me.LevelRange = New Core.Pith.RangeR(0, 0)
-                End If
-                MyBase.FunctionMode = value
-            End If
-        End Set
-    End Property
 
     ''' <summary> Gets or sets the function mode query command. </summary>
     ''' <value> The function mode query command, e.g., :SOUR:FUNC? </value>

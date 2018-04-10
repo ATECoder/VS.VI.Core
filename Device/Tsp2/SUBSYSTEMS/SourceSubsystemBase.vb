@@ -11,26 +11,25 @@ Imports isr.Core.Pith.EnumExtensions
 ''' </para> </license>
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
 Public Class SourceSubsystemBase
-    Inherits SourceMeasureUnitBase
+    Inherits VI.SourceSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SourceSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp2.StatusSubsystemBase">status subsystem</see>. </param>
-    Public Sub New(ByVal statusSubsystem As VI.Tsp2.StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me.NewAmount()
-        Me._FunctionModeRanges = New SourceFunctionRangeDictionary
-        For Each fm As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
-            Me._FunctionModeRanges.Add(fm, New Core.Pith.RangeR(0, 1))
-        Next
-        Me.FunctionRange = Me.DefaultFunctionRange
-        Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
     End Sub
 
 #End Region
 
 #Region " I PRESETTABLE "
+
+    ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
+    ''' <remarks> Use this method to customize the reset. </remarks>
+    Public Overrides Sub InitKnownState()
+        MyBase.InitKnownState()
+    End Sub
 
     ''' <summary> Sets values to their known execution reset state. </summary>
     Public Overrides Sub ResetKnownState()
@@ -40,19 +39,32 @@ Public Class SourceSubsystemBase
         Me.Range = New Double?
         Me.AutoRangeEnabled = True
         Me.AutoDelayEnabled = True
-        For Each fm As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
-            Select Case fm
-                Case SourceFunctionMode.CurrentDC
-                    Me.FunctionModeRanges(fm).SetRange(-1.05, 1.05)
-                Case SourceFunctionMode.VoltageDC
-                    Me.FunctionModeRanges(fm).SetRange(-210, 210)
-            End Select
-        Next
+        With Me.FunctionModeDecimalPlaces
+            .Clear()
+            For Each fmode As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
+                .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
+            Next
+        End With
+        With Me.FunctionModeRanges
+            .Clear()
+            For Each fmode As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
+                .Add(fmode, Core.Pith.RangeR.Full)
+            Next
+            .Item(SourceFunctionMode.CurrentDC).SetRange(-1.05, 1.05)
+            .Item(SourceFunctionMode.VoltageDC).SetRange(-210, 210)
+        End With
+        With Me.FunctionModeUnits
+            .Clear()
+            For Each fmode As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
+                .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
+            Next
+            .Item(SourceFunctionMode.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(SourceFunctionMode.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+        End With
         Me.FunctionMode = SourceFunctionMode.VoltageDC
         Me.Range = 0.02
         Me.LimitTripped = False
         Me.OutputEnabled = False
-        Me.NewAmount()
     End Sub
 
 #End Region
@@ -70,123 +82,26 @@ Public Class SourceSubsystemBase
 
 #End Region
 
-#Region " AUTO DELAY ENABLED "
-
-    ''' <summary> Auto Delay enabled. </summary>
-    Private _AutoDelayEnabled As Boolean?
-
-    ''' <summary> Gets or sets the cached Auto Delay Enabled sentinel. </summary>
-    ''' <value> <c>null</c> if Auto Delay Enabled is not known; <c>True</c> if output is on; otherwise,
-    ''' <c>False</c>. </value>
-    Public Property AutoDelayEnabled As Boolean?
-        Get
-            Return Me._AutoDelayEnabled
-        End Get
-        Protected Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.AutoDelayEnabled, value) Then
-                Me._AutoDelayEnabled = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the Auto Delay Enabled sentinel. </summary>
-    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function ApplyAutoDelayEnabled(ByVal value As Boolean) As Boolean?
-        Me.WriteAutoDelayEnabled(value)
-        Return Me.QueryAutoDelayEnabled()
-    End Function
-
-    ''' <summary> Gets or sets the automatic Delay enabled query print command. </summary>
-    ''' <value> The automatic Delay enabled query command. </value>
-    Protected Overridable ReadOnly Property AutoDelayEnabledPrintCommand As String
-
-    ''' <summary> Queries the Auto Delay Enabled sentinel. Also sets the
-    ''' <see cref="AutoDelayEnabled">Enabled</see> sentinel. </summary>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function QueryAutoDelayEnabled() As Boolean?
-        Me.AutoDelayEnabled = Me.Query(Me.AutoDelayEnabled, Me.AutoDelayEnabledPrintCommand)
-        Return Me.AutoDelayEnabled
-    End Function
-
-    ''' <summary> Gets or sets the automatic Delay enabled command Format. </summary>
-    ''' <value> The automatic Delay enabled query command. </value>
-    ''' <remarks> SCPI: "system:Delay:AUTO {0:'ON';'ON';'OFF'}" </remarks>
-    Protected Overridable ReadOnly Property AutoDelayEnabledCommandFormat As String
-
-    ''' <summary> Writes the Auto Delay Enabled sentinel. Does not read back from the instrument. </summary>
-    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function WriteAutoDelayEnabled(ByVal value As Boolean) As Boolean?
-        Me.AutoDelayEnabled = Me.Write(value, Me.AutoDelayEnabledCommandFormat)
-        Return Me.AutoDelayEnabled
-    End Function
-
-#End Region
-
-#Region " AUTO RANGE ENABLED "
-
-    ''' <summary> Auto Range enabled. </summary>
-    Private _AutoRangeEnabled As Boolean?
+#Region " AUTO RANGE STATE "
 
     ''' <summary> Gets or sets the cached Auto Range Enabled sentinel. </summary>
     ''' <value> <c>null</c> if Auto Range Enabled is not known; <c>True</c> if output is on; otherwise,
     ''' <c>False</c>. </value>
-    Public Property AutoRangeEnabled As Boolean?
+    Public Overrides Property AutoRangeEnabled As Boolean?
         Get
-            Return Me._AutoRangeEnabled
+            Return MyBase.AutoRangeEnabled
         End Get
         Protected Set(ByVal value As Boolean?)
             If Not Boolean?.Equals(Me.AutoRangeEnabled, value) Then
-                Me._AutoRangeEnabled = value
+                MyBase.AutoRangeEnabled = value
                 If value.HasValue Then
                     Me.AutoRangeState = If(value.Value, OnOffState.On, OnOffState.Off)
                 Else
                     Me.AutoRangeState = New OnOffState?
                 End If
-                Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
-
-    ''' <summary> Writes and reads back the Auto Range Enabled sentinel. </summary>
-    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function ApplyAutoRangeEnabled(ByVal value As Boolean) As Boolean?
-        Me.WriteAutoRangeEnabled(value)
-        Return Me.QueryAutoRangeEnabled()
-    End Function
-
-    ''' <summary> Gets or sets the automatic Range enabled print query command. </summary>
-    ''' <value> The automatic Range enabled query command. </value>
-    ''' <remarks> SCPI: "system:RANG:AUTO?" </remarks>
-    Protected Overridable ReadOnly Property AutoRangeEnabledPrintCommand As String
-
-    ''' <summary> Queries the Auto Range Enabled sentinel. Also sets the
-    ''' <see cref="AutoRangeEnabled">Enabled</see> sentinel. </summary>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function QueryAutoRangeEnabled() As Boolean?
-        Me.AutoRangeEnabled = Me.Query(Me.AutoRangeEnabled, Me.AutoRangeEnabledPrintCommand)
-        Return Me.AutoRangeEnabled
-    End Function
-
-    ''' <summary> Gets or sets the automatic Range enabled command Format. </summary>
-    ''' <value> The automatic Range enabled query command. </value>
-    ''' <remarks> SCPI: "system:RANGE:AUTO {0:'ON';'ON';'OFF'}" </remarks>
-    Protected Overridable ReadOnly Property AutoRangeEnabledCommandFormat As String
-
-    ''' <summary> Writes the Auto Range Enabled sentinel. Does not read back from the instrument. </summary>
-    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function WriteAutoRangeEnabled(ByVal value As Boolean) As Boolean?
-        Me.AutoRangeEnabled = Me.Write(value, Me.AutoRangeEnabledCommandFormat)
-        Return Me.AutoRangeEnabled
-    End Function
-
-#End Region
-
-#Region " AUTO RANGE STATE "
 
     Private _AutoRangeState As OnOffState?
 
@@ -283,7 +198,6 @@ Public Class SourceSubsystemBase
                     Me.FunctionUnit = Me.ToUnit(value.Value)
                     Me.FunctionRange = Me.ToRange(value.Value)
                 Else
-                    Me.NewAmount()
                     Me.FunctionRange = Me.DefaultFunctionRange
                     Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
                 End If
@@ -328,216 +242,9 @@ Public Class SourceSubsystemBase
 
 #End Region
 
-#Region " FUNCTION MODE RANGE "
-
-    ''' <summary> Gets or sets the function mode ranges. </summary>
-    ''' <value> The function mode ranges. </value>
-    Public ReadOnly Property FunctionModeRanges As SourceFunctionRangeDictionary
-
-    ''' <summary> Gets or sets the default function range. </summary>
-    ''' <value> The default function range. </value>
-    Public Property DefaultFunctionRange As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
-
-    ''' <summary> Converts a functionMode to a range. </summary>
-    ''' <param name="functionMode"> The function mode. </param>
-    ''' <returns> FunctionMode as an isr.Core.Pith.RangeR. </returns>
-    Public Overridable Function ToRange(ByVal functionMode As SourceFunctionMode) As isr.Core.Pith.RangeR
-        Return Me.FunctionModeRanges(functionMode)
-    End Function
-
-    Private _FunctionRange As Core.Pith.RangeR
-    ''' <summary> The Range of the range. </summary>
-    Public Property FunctionRange As Core.Pith.RangeR
-        Get
-            Return Me._FunctionRange
-        End Get
-        Set(value As Core.Pith.RangeR)
-            If Me.FunctionRange <> value Then
-                Me._FunctionRange = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Gets or sets the default decimal places. </summary>
-    ''' <value> The default decimal places. </value>
-    Public Property DefaultFunctionModeDecimalPlaces As Integer = 3
-
-    ''' <summary> Converts a function Mode to a decimal places. </summary>
-    ''' <param name="functionMode"> The function mode. </param>
-    ''' <returns> FunctionMode as an Integer. </returns>
-    Public Overridable Function ToDecimalPlaces(ByVal functionMode As SourceFunctionMode) As Integer
-        Return Me.DefaultFunctionModeDecimalPlaces
-    End Function
-
-    Private _FunctionRangeDecimalPlaces As Integer
-
-    ''' <summary> Gets or sets the function range decimal places. </summary>
-    ''' <value> The function range decimal places. </value>
-    Public Property FunctionRangeDecimalPlaces As Integer
-        Get
-            Return Me._FunctionRangeDecimalPlaces
-        End Get
-        Set(value As Integer)
-            If Me.FunctionRangeDecimalPlaces <> value Then
-                Me._FunctionRangeDecimalPlaces = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Gets or sets the default unit. </summary>
-    ''' <value> The default unit. </value>
-    Public Property DefaultFunctionUnit As Arebis.TypedUnits.Unit = Arebis.StandardUnits.ElectricUnits.Volt
-
-    ''' <summary> Parse units. </summary>
-    ''' <param name="functionMode"> The  Multimeter Function Mode. </param>
-    ''' <returns> An Arebis.TypedUnits.Unit. </returns>
-    Public Overridable Function ToUnit(ByVal functionMode As SourceFunctionMode) As Arebis.TypedUnits.Unit
-        Dim result As Arebis.TypedUnits.Unit = Me.DefaultFunctionUnit
-        Select Case functionMode
-            Case SourceFunctionMode.CurrentDC
-                result = Arebis.StandardUnits.ElectricUnits.Ampere
-            Case SourceFunctionMode.VoltageDC
-                result = Arebis.StandardUnits.ElectricUnits.Volt
-        End Select
-        Return result
-    End Function
-
-    ''' <summary> Gets or sets the function unit. </summary>
-    ''' <value> The function unit. </value>
-    Public Property FunctionUnit As Arebis.TypedUnits.Unit
-        Get
-            Return Me.Amount.Unit
-        End Get
-        Set(value As Arebis.TypedUnits.Unit)
-            If Me.FunctionUnit <> value Then
-                Me.NewAmount(value)
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-#End Region
-
-#Region " LEVEL "
-
-    ''' <summary> Gets or sets the amount. </summary>
-    ''' <value> The amount. </value>
-    Public ReadOnly Property Amount As Arebis.TypedUnits.Amount
-
-    ''' <summary> Creates a new amount. </summary>
-    Private Sub NewAmount()
-        If Me.FunctionMode.HasValue AndAlso Me.Level.HasValue Then
-            Me.NewAmount(Me.ToUnit(Me.FunctionMode.Value))
-        Else
-            Me.NewAmount(Me.DefaultFunctionUnit)
-        End If
-    End Sub
-
-    ''' <summary> Creates a new amount. </summary>
-    ''' <param name="unit"> The unit. </param>
-    Private Sub NewAmount(ByVal unit As Arebis.TypedUnits.Unit)
-        If Me.Level.HasValue Then
-            Me._Amount = New Arebis.TypedUnits.Amount(Me.Level.Value, unit)
-        Else
-            Me._Amount = New Arebis.TypedUnits.Amount(0, unit)
-        End If
-        Me.SafePostPropertyChanged(NameOf(SourceSubsystemBase.Amount))
-        Me.SafePostPropertyChanged(NameOf(SourceSubsystemBase.FunctionUnit))
-    End Sub
-
-    ''' <summary> The level. </summary>
-    Private _Level As Double?
-
-    ''' <summary> Gets or sets the cached Source Current Level. </summary>
-    ''' <value> The Source Current Level. Actual current depends on the power supply mode. </value>
-    Public Overloads Property Level As Double?
-        Get
-            Return Me._Level
-        End Get
-        Protected Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.Level, value) Then
-                Me._Level = value
-                Me.NewAmount()
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the source current level. </summary>
-    ''' <remarks> This command set the immediate output current level. The value is in Amperes. The
-    ''' immediate level is the output current setting. At *RST, the current values = 0. </remarks>
-    ''' <param name="value"> The current level. </param>
-    ''' <returns> The Source Current Level. </returns>
-    Public Function ApplyLevel(ByVal value As Double) As Double?
-        Me.WriteLevel(value)
-        Return Me.QueryLevel
-    End Function
-
-    ''' <summary> Gets or sets The Level query print command. </summary>
-    ''' <value> The Level query command. </value>
-    Protected Overridable ReadOnly Property LevelQueryCommand As String
-
-    ''' <summary> Queries the current level. </summary>
-    ''' <returns> The current level or none if unknown. </returns>
-    Public Function QueryLevel() As Double?
-        Const printFormat As Decimal = 9.6D
-        Me.Level = Me.Session.QueryPrint(Me.Level.GetValueOrDefault(0), printFormat, Me.LevelQueryCommand)
-        Return Me.Level
-    End Function
-
-    ''' <summary> Gets or sets The Level command format. </summary>
-    ''' <value> The Level command format. </value>
-    Protected Overridable ReadOnly Property LevelCommandFormat As String
-
-    ''' <summary> Writes the source current level without reading back the value from the device. </summary>
-    ''' <remarks> This command sets the immediate output current level. The value is in Amperes. The
-    ''' immediate level is the output current setting. At *RST, the current values = 0. </remarks>
-    ''' <param name="value"> The current level. </param>
-    ''' <returns> The Source Current Level. </returns>
-    Public Function WriteLevel(ByVal value As Double) As Double?
-        Me.Session.WriteLine(LevelCommandFormat, value)
-        Me.Level = value
-        Return Me.Level
-    End Function
-
-#End Region
+#Region " SYNTAX "
 
 #Region " LIMIT "
-
-    ''' <summary> The Limit. </summary>
-    Private _Limit As Double?
-
-    ''' <summary> Gets or sets the cached source Limit for a Current Source. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
-    ''' <value> <c>null</c> if value is not known. </value>
-    Public Overloads Property Limit As Double?
-        Get
-            Return Me._Limit
-        End Get
-        Protected Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.Limit, value) Then
-                Me._Limit = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the source Limit. </summary>
-    ''' <remarks> This command set the immediate output Limit. The value is in Amperes. The
-    ''' immediate Limit is the output Voltage setting. At *RST, the Voltage values = 0. </remarks>
-    ''' <param name="value"> The Limit. </param>
-    ''' <returns> The Source Limit. </returns>
-    Public Function ApplyLimit(ByVal value As Double) As Double?
-        Me.WriteLimit(value)
-        Return Me.QueryLimit()
-    End Function
-
-    ''' <summary> Gets or sets the limit query command. </summary>
-    ''' <value> The limit query command. </value>
-    Protected Overridable ReadOnly Property LimitQueryCommandFormat As String
 
     Private Const currentLimitFunction As String = "i"
     Private Const voltageLimitFunction As String = "v"
@@ -548,178 +255,50 @@ Public Class SourceSubsystemBase
         Return If(Me.FunctionMode.Value = SourceFunctionMode.CurrentDC, SourceSubsystemBase.voltageLimitFunction, SourceSubsystemBase.currentLimitFunction)
     End Function
 
-    ''' <summary> Queries the Limit. </summary>
-    ''' <returns> The Limit or none if unknown. </returns>
-    Public Function QueryLimit() As Double?
-        Const printFormat As Decimal = 9.6D
-        Me.Limit = Me.Session.QueryPrint(Me.Limit.GetValueOrDefault(0.099), printFormat, Me.LimitQueryCommandFormat, Me.LimitFunctionMode)
-        Return Me.Limit
-    End Function
+    ''' <summary> Gets the limit query command format. </summary>
+    ''' <value> The limit query command format. </value>
+    Protected Overridable ReadOnly Property LimitQueryCommandFormat As String
 
+    ''' <summary> Gets the limit query command. </summary>
+    ''' <value> The limit query command. </value>
+    Protected Overrides ReadOnly Property ModalityLimitQueryCommandFormat As String
+        Get
+            Const printFormat As Decimal = 9.6D
+            Dim tspCommand As String = String.Format(LimitQueryCommandFormat, Me.LimitFunctionMode)
+            Return String.Format(LuaSyntax.PrintCommandStringFormat, printFormat, tspCommand)
+        End Get
+    End Property
+
+    ''' <summary> Gets the limit command format. </summary>
+    ''' <value> The limit command format. </value>
     Protected Overridable ReadOnly Property LimitCommandFormat As String
 
-    ''' <summary> Writes the source Limit without reading back the value from the device. </summary>
-    ''' <remarks> This command set the immediate output Limit. The value is in Amperes. The
-    ''' immediate Limit is the output Voltage setting. At *RST, the Voltage values = 0. </remarks>
-    ''' <param name="value"> The Limit. </param>
-    ''' <returns> The Source Limit. </returns>
-    Public Function WriteLimit(ByVal value As Double) As Double?
-        Me.Session.WriteLine(Me.LimitCommandFormat, Me.LimitFunctionMode, Me.SourceMeasureUnitReference, value)
-        Me.Limit = value
-        Return Me.Limit
-    End Function
+    ''' <summary> Gets the modality limit command format. </summary>
+    ''' <value> The modality limit command format. </value>
+    Protected Overrides ReadOnly Property ModalityLimitCommandFormat As String
+        Get
+            Return String.Format(Me.LimitCommandFormat, Me.LimitFunctionMode, "{0}")
+        End Get
+    End Property
 
 #End Region
 
 #Region " LIMIT TRIPPED "
 
-    ''' <summary> Limit Tripped. </summary>
-    Private _LimitTripped As Boolean?
-
-    ''' <summary> Gets or sets the cached Limit Tripped sentinel. </summary>
-    ''' <value> <c>null</c> if Limit Tripped is not known; <c>True</c> if output is on; otherwise,
-    ''' <c>False</c>. </value>
-    Public Property LimitTripped As Boolean?
-        Get
-            Return Me._LimitTripped
-        End Get
-        Protected Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.LimitTripped, value) Then
-                Me._LimitTripped = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Gets the limit tripped print command format. </summary>
-    ''' <value> The limit tripped print command format. </value>
+    ''' <summary> Gets the limit tripped query command format. </summary>
+    ''' <value> The limit tripped query command format. </value>
     Protected Overridable ReadOnly Property LimitTrippedPrintCommandFormat As String
 
     ''' <summary> Gets the limit tripped print command. </summary>
     ''' <value> The limit tripped print command. </value>
-    Protected Overridable ReadOnly Property LimitTrippedPrintCommand As String
+    Protected Overrides ReadOnly Property LimitTrippedQueryCommand As String
         Get
             Return String.Format(Me.LimitTrippedPrintCommandFormat, Me.LimitFunctionMode)
         End Get
     End Property
 
-    ''' <summary> Queries the Limit Tripped sentinel. Also sets the
-    ''' <see cref="LimitTripped">Enabled</see> sentinel. </summary>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function QueryLimitTripped() As Boolean?
-        Me.LimitTripped = Me.Query(Me.LimitTripped, Me.LimitTrippedPrintCommand)
-        Return Me.LimitTripped
-    End Function
-
 #End Region
 
-#Region " OUTPUT ENABLED "
-
-    ''' <summary> Output enabled. </summary>
-    Private _OutputEnabled As Boolean?
-
-    ''' <summary> Gets or sets the cached Output Enabled sentinel. </summary>
-    ''' <value> <c>null</c> if Output Enabled is not known; <c>True</c> if output is on; otherwise,
-    ''' <c>False</c>. </value>
-    Public Property OutputEnabled As Boolean?
-        Get
-            Return Me._OutputEnabled
-        End Get
-        Protected Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.OutputEnabled, value) Then
-                Me._OutputEnabled = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the Output Enabled sentinel. </summary>
-    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function ApplyOutputEnabled(ByVal value As Boolean) As Boolean?
-        Me.WriteOutputEnabled(value)
-        Return Me.QueryOutputEnabled()
-    End Function
-
-    ''' <summary> Gets or sets the Output enabled query print command. </summary>
-    ''' <value> The Output enabled query command. </value>
-    Protected Overridable ReadOnly Property OutputEnabledPrintCommand As String
-
-    ''' <summary> Queries the Output Enabled sentinel. Also sets the
-    ''' <see cref="OutputEnabled">Enabled</see> sentinel. </summary>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function QueryOutputEnabled() As Boolean?
-        Me.OutputEnabled = Me.Query(Me.OutputEnabled, Me.OutputEnabledPrintCommand)
-        Return Me.OutputEnabled
-    End Function
-
-    ''' <summary> Gets or sets the Output enabled command Format. </summary>
-    ''' <value> The Output enabled query command. </value>
-    Protected Overridable ReadOnly Property OutputEnabledCommandFormat As String
-
-    ''' <summary> Writes the Output Enabled sentinel. Does not read back from the instrument. </summary>
-    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function WriteOutputEnabled(ByVal value As Boolean) As Boolean?
-        Me.OutputEnabled = Me.Write(value, Me.OutputEnabledCommandFormat)
-        Return Me.OutputEnabled
-    End Function
-
-#End Region
-
-#Region " RANGE "
-
-    ''' <summary> The Range. </summary>
-    Private _Range As Double?
-
-    ''' <summary> Gets or sets the cached sense Range. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
-    ''' <value> <c>null</c> if value is not known. </value>
-    Public Overloads Property Range As Double?
-        Get
-            Return Me._Range
-        End Get
-        Protected Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.Range, value) Then
-                Me._Range = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the sense Range. </summary>
-    ''' <param name="value"> The Range. </param>
-    ''' <returns> The Range. </returns>
-    Public Function ApplyRange(ByVal value As Double) As Double?
-        Me.WriteRange(value)
-        Return Me.QueryRange
-    End Function
-
-    ''' <summary> Gets or sets The Range query print command. </summary>
-    ''' <value> The Range query command. </value>
-    Protected Overridable ReadOnly Property RangePrintCommand As String
-
-    ''' <summary> Queries The Range. </summary>
-    ''' <returns> The Range or none if unknown. </returns>
-    Public Function QueryRange() As Double?
-        Me.Range = Me.Query(Me.Range, Me.RangePrintCommand)
-        Return Me.Range
-    End Function
-
-    ''' <summary> Gets or sets The Range command format. </summary>
-    ''' <value> The Range command format. </value>
-    Protected Overridable ReadOnly Property RangeCommandFormat As String
-
-    ''' <summary> Writes The Range without reading back the value from the device. </summary>
-    ''' <remarks> This command sets The Range. </remarks>
-    ''' <param name="value"> The Range. </param>
-    ''' <returns> The Range. </returns>
-    Public Function WriteRange(ByVal value As Double) As Double?
-        value = If(value > FunctionRange.Max, FunctionRange.Max, If(value < FunctionRange.Min, FunctionRange.Min, value))
-        Me.Range = Me.Write(value, Me.RangeCommandFormat)
-        Return Me.Range
-    End Function
 
 #End Region
 
@@ -732,34 +311,3 @@ Public Enum SourceFunctionMode
     <ComponentModel.Description("DC Current (smu.FUNC_DC_CURRENT)")> CurrentDC
 End Enum
 
-''' <summary> Dictionary of Source function ranges. </summary>
-''' <license>
-''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
-''' Licensed under The MIT License.</para><para>
-''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
-''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
-''' </license>
-''' <history date="1/16/2016" by="David" revision=""> Created. </history>
-<CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable")>
-Public Class SourceFunctionRangeDictionary
-    Inherits Collections.Generic.Dictionary(Of SourceFunctionMode, Core.Pith.RangeR)
-End Class
-
-''' <summary> Dictionary of function-related enabled functionality. </summary>
-''' <license>
-''' (c) 2016 Integrated Scientific Resources, Inc. All rights reserved.<para>
-''' Licensed under The MIT License.</para><para>
-''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
-''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
-''' </license>
-''' <history date="2/8/2016" by="David" revision=""> Created. </history>
-<CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable")>
-Public Class SourceFunctionEnabledDictionary
-    Inherits Collections.Generic.Dictionary(Of SourceFunctionMode, Boolean)
-End Class

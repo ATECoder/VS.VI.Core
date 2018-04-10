@@ -20,15 +20,14 @@ Public Class MovingWindowMeter
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private _InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
 
-        Me._initializingComponents = True
+        Me.InitializingComponents = True
         ' This call is required by the designer.
         Me.InitializeComponent()
-        Me._initializingComponents = False
+        Me.InitializingComponents = False
 
         Me._MeasurementFormatString = "G8"
         Me._MovingWindow = New isr.Core.Engineering.MovingWindow
@@ -763,7 +762,7 @@ Public Class MovingWindowMeter
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _StartMovingWindowButton_CheckStateChanged(sender As Object, e As EventArgs) Handles _StartMovingWindowButton.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim button As ToolStripButton = TryCast(sender, ToolStripButton)
         If button Is Nothing Then Return
         Try

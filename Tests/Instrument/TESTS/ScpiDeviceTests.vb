@@ -75,7 +75,7 @@ Public Class ScpiDeviceTests
         Dim expectedShort As Short = 0
         Dim usingInterfaceType As HardwareInterfaceType = HardwareInterfaceType.Gpib
         Using target As Device = New Device()
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            Dim e As New isr.Core.Pith.ActionEventArgs
             actualBoolean = target.TryOpenSession(SelectResourceName(usingInterfaceType), "GPIB", e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; details: {e.Details}")
             target.Session.Clear()

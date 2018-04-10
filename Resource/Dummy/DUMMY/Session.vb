@@ -10,7 +10,7 @@
 ''' </license>
 ''' <history date="11/20/2015" by="David" revision=""> Created. </history>
 Public Class Session
-    Inherits SessionBase
+    Inherits VI.Pith.SessionBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
@@ -60,13 +60,13 @@ Public Class Session
 #Region " SESSION "
 
     ''' <summary> Gets the sentinel indicating weather this is a dummy session. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <value> The dummy sentinel. </value>
     Public Overrides ReadOnly Property IsDummy As Boolean = True
 
     ''' <summary>
     ''' Gets the session open sentinel. When open, the session is capable of addressing the hardware.
-    ''' See also <see cref="P:isr.VI.SessionBase.IsDeviceOpen" />.
+    ''' See also <see cref="P:VI.Pith.SessionBase.IsDeviceOpen" />.
     ''' </summary>
     ''' <value> The is session open. </value>
     Public Overrides ReadOnly Property IsSessionOpen As Boolean
@@ -89,13 +89,15 @@ Public Class Session
     End Sub
 
     ''' <summary> Searches for a listeners for the specified <see cref="ResourceName">reasource name</see>. </summary>
-    ''' <remarks> David, 11/27/2015. Updates <see cref="ResourceFound ">Resource Exists</see>. </remarks>
+    ''' <remarks> David, 11/27/2015. Updates <see cref="Pith.ResourceNameInfo.ResourceLocated">Resource Exists</see>. </remarks>
     ''' <returns> <c>true</c> if it the resource exists; otherwise <c>false</c> </returns>
     Public Overrides Function FindResource() As Boolean
-        Using rm As New DummyResourceManager
-            Me.ResourceFound = rm.Exists(Me.ResourceName)
+        Using rm As New Dummy.ResourceManager
+            If rm.Exists(Me.ResourceName) Then
+                Me.ResourceNameInfo.FoundResourceName = Me.ResourceName
+            End If
         End Using
-        Return Me.ResourceFound
+        Return Me.ResourceNameInfo.ResourceLocated
     End Function
 
     ''' <summary>
@@ -122,7 +124,7 @@ Public Class Session
     Private _LastNativeError As NativeError
     ''' <summary> Gets the last native error. </summary>
     ''' <value> The last native error. </value>
-    Protected Overrides ReadOnly Property LastNativeError As NativeErrorBase
+    Protected Overrides ReadOnly Property LastNativeError As VI.Pith.NativeErrorBase
         Get
             Return Me._LastNativeError
         End Get
@@ -153,7 +155,7 @@ Public Class Session
     ''' <summary>
     ''' Synchronously reads ASCII-encoded string data. 
     ''' </summary>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
     Public Overrides Function ReadFreeLine() As String
         Me._LastNativeError = NativeError.Success
@@ -166,7 +168,7 @@ Public Class Session
     ''' Synchronously reads ASCII-encoded string data. Reads up to the
     ''' <see cref="TerminationCharacter">termination character</see>.
     ''' </summary>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <returns> The received message. </returns>
     Public Overrides Function ReadFiniteLine() As String
         Me._LastNativeError = NativeError.Success
@@ -178,7 +180,7 @@ Public Class Session
     ''' Synchronously writes ASCII-encoded string data to the device or interface. Terminates the
     ''' data with the <see cref="TerminationCharacter">termination character</see>.
     ''' </summary>
-    ''' <exception cref="NativeException"> Thrown when a Native error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Native error condition occurs. </exception>
     ''' <param name="dataToWrite"> The data to write. </param>
     Public Overrides Sub Write(ByVal dataToWrite As String)
         If Not String.IsNullOrWhiteSpace(dataToWrite) Then
@@ -207,7 +209,7 @@ Public Class Session
 
     ''' <summary> Reads status byte. </summary>
     ''' <returns> The status byte. </returns>
-    Public Overrides Function ReadStatusByte() As ServiceRequests
+    Public Overrides Function ReadStatusByte() As VI.Pith.ServiceRequests
         Me._LastNativeError = NativeError.Success
         Return Me.EmulatedStatusByte
     End Function
@@ -264,11 +266,11 @@ Public Class Session
     Public Overrides Sub ClearInterface()
         If Me.SupportsClearInterface AndAlso Me.IsSessionOpen Then
             Using gi As GpibInterfaceSession = New GpibInterfaceSession()
-                gi.OpenSession(Me.ResourceInfo.InterfaceResourceName)
+                gi.OpenSession(Me.ResourceNameParseInfo.InterfaceResourceName)
                 If gi.IsOpen Then
                     gi.SelectiveDeviceClear(Me.ResourceName)
                 Else
-                    Throw New OperationFailedException($"Failed opening GPIB Interface Session {Me.ResourceInfo.InterfaceResourceName}")
+                    Throw New VI.Pith.OperationFailedException($"Failed opening GPIB Interface Session {Me.ResourceNameParseInfo.InterfaceResourceName}")
                 End If
             End Using
         End If
@@ -279,11 +281,11 @@ Public Class Session
         Me.Clear()
         If Me.SupportsClearInterface AndAlso Me.IsSessionOpen Then
             Using gi As GpibInterfaceSession = New GpibInterfaceSession()
-                gi.OpenSession(Me.ResourceInfo.InterfaceResourceName)
+                gi.OpenSession(Me.ResourceNameParseInfo.InterfaceResourceName)
                 If gi.IsOpen Then
                     gi.SelectiveDeviceClear(Me.ResourceName)
                 Else
-                    Throw New OperationFailedException($"Failed opening GPIB Interface Session {Me.ResourceInfo.InterfaceResourceName}")
+                    Throw New VI.Pith.OperationFailedException($"Failed opening GPIB Interface Session {Me.ResourceNameParseInfo.InterfaceResourceName}")
                 End If
             End Using
         End If

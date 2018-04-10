@@ -31,18 +31,22 @@ Public Class K7000Control
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private Property InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
-        Me.New(Device.Create)
-        Me.IsDeviceOwner = True
+        Me.New(Device.Create, True)
     End Sub
 
     ''' <summary> Constructor. </summary>
     ''' <param name="device"> The device. </param>
-    Public Sub New(ByVal device As Device)
+    Public Sub New(ByVal device As Device, ByVal isDeviceOwner As Boolean)
         MyBase.New()
+        Me._New(device, isDeviceOwner)
+    End Sub
+
+    ''' <summary> Constructor. </summary>
+    ''' <param name="device"> The device. </param>
+    Private Sub _New(ByVal device As Device, ByVal isDeviceOwner As Boolean)
 
         Me.InitializingComponents = True
         ' This call is required by the designer.
@@ -50,9 +54,9 @@ Public Class K7000Control
         Me.InitializingComponents = False
 
         Me._ToolStripPanel.Renderer = New CustomProfessionalRenderer
-        MyBase.Connector = Me._ResourceSelectorConnector
+        MyBase.AssignConnector(Me._ResourceSelectorConnector, True)
 
-        Me._AssignDevice(device)
+        Me._AssignDevice(device, isDeviceOwner)
         ' note that the caption is not set if this is run inside the On Load function.
         With Me._TraceMessagesBox
             ' set defaults for the messages box.
@@ -63,7 +67,7 @@ Public Class K7000Control
         With Me._ServiceRequestFlagsComboBox
             .DataSource = Nothing
             .Items.Clear()
-            .DataSource = [Enum].GetNames(GetType(isr.VI.ServiceRequests))
+            .DataSource = [Enum].GetNames(GetType(isr.VI.Pith.ServiceRequests))
         End With
         With Me._ServiceRequestEnableBitmaskNumeric.NumericUpDownControl
             .Hexadecimal = True
@@ -85,6 +89,7 @@ Public Class K7000Control
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
+                Me.InitializingComponents = True
                 Try
                     If Me._ChannelListBuilder IsNot Nothing Then Me._ChannelListBuilder.Dispose() : Me._ChannelListBuilder = Nothing
                 Catch ex As Exception
@@ -119,40 +124,50 @@ Public Class K7000Control
     ''' <summary> Gets or sets the device. </summary>
     ''' <value> The device. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public Property Device As Device
+    Public ReadOnly Property Device As Device
         Get
             Return Me._Device
         End Get
-        Set(value As Device)
-            Me._AssignDevice(value)
-        End Set
     End Property
 
     ''' <summary> Assign device. </summary>
     ''' <param name="value"> The value. </param>
-    Private Sub _AssignDevice(ByVal value As Device)
-        If Me._Device IsNot Nothing Then
+    Private Sub _AssignDevice(ByVal value As Device, ByVal isDeviceOwner As Boolean)
+        If Me._Device IsNot Nothing OrElse MyBase.DeviceBase IsNot Nothing Then
             ' the device base already clears all or only the private listeners. 
+            ' Me._Device.RemovePrivateListeners()
+            Me._ReleaseDevice()
         End If
         Me._Device = value
         If value IsNot Nothing Then
             value.CaptureSyncContext(WindowsFormsSynchronizationContext.Current)
             value.AddPrivateListener(Me._TraceMessagesBox)
         End If
-        MyBase.DeviceBase = value
+        ' the device base class addresses the device open state.
+        MyBase.AssignDevice(value, isDeviceOwner)
     End Sub
 
     ''' <summary> Assigns a device. </summary>
     ''' <param name="value"> True to show or False to hide the control. </param>
-    Public Overloads Sub AssignDevice(ByVal value As Device)
-        Me.IsDeviceOwner = False
-        Me.Device = value
+    Public Overloads Sub AssignDevice(ByVal value As Device, ByVal isDeviceOwner As Boolean)
+        Me._AssignDevice(value, isDeviceOwner)
+    End Sub
+
+    Private Sub _ReleaseDevice()
+        MyBase.ReleaseDevice()
+        Me._Device = Nothing
     End Sub
 
     ''' <summary> Releases the device. </summary>
-    Protected Overrides Sub ReleaseDevice()
-        MyBase.ReleaseDevice()
-        Me._Device = Nothing
+    ''' <remarks> Called from the base device to release the reference to the device. </remarks>
+    Public Overrides Sub ReleaseDevice()
+        Me._ReleaseDevice()
+    End Sub
+
+    ''' <summary> Releases the device and reassigns the default device. </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Public Overrides Sub RestoreDevice()
+        Me.AssignDevice(Device.Create, True)
     End Sub
 
 #End Region
@@ -160,7 +175,9 @@ Public Class K7000Control
 #Region " DEVICE EVENT HANDLERS "
 
     ''' <summary> Executes the device open changed action. </summary>
-    Protected Overrides Sub OnDeviceOpenChanged(ByVal device As DeviceBase)
+    ''' <param name="device"> The device. </param>
+    Protected Overrides Sub OnDeviceOpenChanged(ByVal device As VI.DeviceBase)
+        MyBase.OnDeviceOpenChanged(device)
         If Me.IsDeviceOpen Then
             Me._SimpleReadWriteControl.Connect(device?.Session)
         Else
@@ -174,19 +191,20 @@ Public Class K7000Control
     ''' <summary> Handles the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overrides Sub OnDevicePropertyChanged(ByVal device As DeviceBase, ByVal propertyName As String)
+    Protected Overrides Sub HandlePropertyChange(ByVal device As VI.DeviceBase, ByVal propertyName As String)
         If device Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        MyBase.OnDevicePropertyChanged(device, propertyName)
+        MyBase.HandlePropertyChange(device, propertyName)
         Select Case propertyName
             Case NameOf(isr.VI.DeviceBase.SessionServiceRequestEventEnabled)
                 Me._SessionServiceRequestHandlerEnabledMenuItem.Checked = device.SessionServiceRequestEventEnabled
             Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
-            Case NameOf(isr.VI.DeviceBase.SessionMessagesTraceEnabled)
-                Me._SessionTraceEnabledMenuItem.Checked = device.SessionMessagesTraceEnabled
+            Case NameOf(isr.VI.DeviceBase.MessageNotificationLevel)
+                Me._SessionTraceEnabledMenuItem.Checked = device.MessageNotificationLevel <> NotifySyncLevel.None
             Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
-                Me._ServiceRequestEnableBitmaskNumeric.Value = device.ServiceRequestEnableBitmask
-                Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = $"SRE:0b{Convert.ToString(device.ServiceRequestEnableBitmask, 2),8}".Replace(" ", "0")
+                Dim value As VI.Pith.ServiceRequests = device.ServiceRequestEnableBitmask
+                Me._ServiceRequestEnableBitmaskNumeric.Value = value
+                Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = $"SRE:0b{Convert.ToString(value, 2),8}".Replace(" ", "0")
         End Select
     End Sub
 
@@ -194,7 +212,7 @@ Public Class K7000Control
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
-    Protected Overrides Sub DeviceOpened(ByVal sender As Object, ByVal e As System.EventArgs)
+    Protected Overrides Sub DeviceOpened(ByVal sender As VI.DeviceBase, ByVal e As System.EventArgs)
         AddHandler Me.Device.TriggerSubsystem.PropertyChanged, AddressOf Me.TriggerSubsystemPropertyChanged
         AddHandler Me.Device.RouteSubsystem.PropertyChanged, AddressOf Me.RouteSubsystemPropertyChanged
         AddHandler Me.Device.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
@@ -202,12 +220,17 @@ Public Class K7000Control
         MyBase.DeviceOpened(sender, e)
     End Sub
 
-    Protected Overrides Sub DeviceInitialized(ByVal sender As Object, ByVal e As System.EventArgs)
+    ''' <summary> Device initialized. </summary>
+    ''' <param name="sender"> <see cref="T:System.Object" /> instance of this
+    '''                                          <see cref="T:System.Windows.Forms.Control" /> </param>
+    ''' <param name="e">      Cancel event information. </param>
+    Protected Overrides Sub DeviceInitialized(ByVal sender As VI.DeviceBase, ByVal e As System.EventArgs)
+        MyBase.DeviceInitialized(sender, e)
         ' must be done after the device base opens where the subsystem gets initialized.
         With Me._ArmLayer1SourceComboBox.ComboBox
             .DataSource = Nothing
             .Items.Clear()
-            .DataSource = GetType(ArmSources).ValueNamePairs(Me.Device.ArmLayer1Subsystem.SupportedArmSources)
+            .DataSource = GetType(Scpi.ArmSources).ValueNamePairs(Me.Device.ArmLayer1Subsystem.SupportedArmSources)
             .DisplayMember = "Value"
             .ValueMember = "Key"
         End With
@@ -226,7 +249,7 @@ Public Class K7000Control
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
-    Protected Overrides Sub DeviceClosing(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs)
+    Protected Overrides Sub DeviceClosing(ByVal sender As VI.DeviceBase, ByVal e As System.ComponentModel.CancelEventArgs)
         MyBase.DeviceClosing(sender, e)
         If e?.Cancel Then Return
         If Me.IsDeviceOpen Then
@@ -246,14 +269,11 @@ Public Class K7000Control
     ''' <summary> Handle the Route subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As RouteSubsystem, ByVal propertyName As String)
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As RouteSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(VI.K7000.RouteSubsystem.ScanList)
-                If Not String.IsNullOrWhiteSpace(subsystem.ScanList) Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                       "{0} scan list changed to {1}.", Me.ResourceName, subsystem.ScanList)
-                End If
         End Select
     End Sub
 
@@ -262,14 +282,20 @@ Public Class K7000Control
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub RouteSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(RouteSubsystem)}.{e.PropertyName} change"
         Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnSubsystemPropertyChanged(TryCast(sender, RouteSubsystem), e.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.RouteSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, RouteSubsystem), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling Route Subsystem property changed Event;. Failed property {0}. {1}",
-                               e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -288,22 +314,18 @@ Public Class K7000Control
     ''' <summary> Handle the Status subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overrides Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
+    Protected Overrides Sub HandlePropertyChange(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        MyBase.OnPropertyChanged(subsystem, propertyName)
+        MyBase.HandlePropertyChange(subsystem, propertyName)
         Select Case propertyName
-            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
+            Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
+            Case NameOf(StatusSubsystemBase.LastDeviceError)
                 OnLastError(subsystem.LastDeviceError)
-            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
-                If Not subsystem.ReadingDeviceErrors Then
-                    ' if no errors, this clears the error queue.
-                    subsystem.QueryDeviceErrors()
-                End If
-            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
+            Case NameOf(StatusSubsystemBase.ErrorAvailable)
+            Case NameOf(StatusSubsystemBase.ServiceRequestStatus)
                 Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
+            Case NameOf(StatusSubsystemBase.StandardEventStatus)
                 Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
@@ -313,11 +335,20 @@ Public Class K7000Control
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(StatusSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.StatusSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, StatusSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling property '{e?.PropertyName}' change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -329,7 +360,7 @@ Public Class K7000Control
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
         End Select
@@ -340,11 +371,20 @@ Public Class K7000Control
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(SystemSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.SystemSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, SystemSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling property '{e?.PropertyName}' change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -355,7 +395,7 @@ Public Class K7000Control
     ''' <summary> Handle the Trigger subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As TriggerSubsystem, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As TriggerSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(VI.K7000.TriggerSubsystem.ContinuousEnabled)
@@ -370,14 +410,20 @@ Public Class K7000Control
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub TriggerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(TriggerSubsystem)}.{e.PropertyName} change"
         Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.OnSubsystemPropertyChanged(TryCast(sender, TriggerSubsystem), e.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.TriggerSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, TriggerSubsystem), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling Trigger Subsystem property changed Event;. Failed property {0}. {1}",
-                               e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -387,52 +433,104 @@ Public Class K7000Control
 
 #Region " STATUS DISPLAY "
 
+    Private _Status As String
     ''' <summary> Gets or sets the status. </summary>
     ''' <value> The status. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected Overrides Property Status As String
         Get
-            Return Me._StatusLabel.Text
+            Return Me._Status
         End Get
         Set(value As String)
-            Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._StatusLabel)
-            Me._StatusLabel.ToolTipText = value
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.Status) Then
+                Me._Status = value
+                Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._StatusLabel)
+                Me._StatusLabel.ToolTipText = value
+                Me.SafePostPropertyChanged()
+            End If
         End Set
     End Property
 
+    Private _Identity As String
     ''' <summary> Gets or sets the identity. </summary>
     ''' <value> The identity. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected Overrides Property Identity As String
         Get
-            Return Me._IdentityLabel.Text
+            Return Me._Identity
         End Get
         Set(value As String)
-            Me._IdentityLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._IdentityLabel)
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.Identity) Then
+                Me._Identity = value
+                Me._IdentityLabel.Text = isr.Core.Pith.CompactExtensions.Compact(value, Me._IdentityLabel)
+                Me.SafePostPropertyChanged()
+            End If
         End Set
     End Property
 
+    Private _StatusRegisterCaption As String
     ''' <summary> Gets or sets the status register caption. </summary>
     ''' <value> The status register caption. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected Overrides Property StatusRegisterCaption As String
         Get
-            Return Me._StatusRegisterLabel.Text
+            Return Me._StatusRegisterCaption
         End Get
         Set(value As String)
-            Me._StatusRegisterLabel.Text = value
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.StatusRegisterCaption) Then
+                Me._StatusRegisterCaption = value
+                Me._StatusRegisterLabel.Text = value
+                Me.SafePostPropertyChanged()
+            End If
         End Set
     End Property
-
+    Private _StandardRegisterCaption As String
     ''' <summary> Gets or sets the standard register caption. </summary>
     ''' <value> The status register caption. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected Overrides Property StandardRegisterCaption As String
         Get
-            Return Me._StandardRegisterLabel.Text
+            Return Me._StandardRegisterCaption
         End Get
         Set(value As String)
-            Me._StandardRegisterLabel.Text = value
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.StandardRegisterCaption) Then
+                Me._StandardRegisterCaption = value
+                Me._StandardRegisterLabel.Text = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the standard register status. </summary>
+    ''' <value> The standard register status. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property ServiceRequestEnableBitmask As Integer
+        Get
+            Return CInt(Me._ServiceRequestEnableBitmaskNumeric.Value)
+        End Get
+        Set(value As Integer)
+            Me._ServiceRequestEnableBitmaskNumeric.Value = value
+        End Set
+    End Property
+
+    Private _ServiceRequestEnableBitmaskCaption As String
+    ''' <summary> Gets or sets the standard register caption. </summary>
+    ''' <value> The standard register caption. </value>
+    <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
+    Protected Overrides Property ServiceRequestEnableBitmaskCaption As String
+        Get
+            Return Me._ServiceRequestEnableBitmaskCaption
+        End Get
+        Set(value As String)
+            If String.IsNullOrWhiteSpace(value) Then value = ""
+            If Not String.Equals(value, Me.ServiceRequestEnableBitmaskCaption) Then
+                Me._ServiceRequestEnableBitmaskCaption = value
+                Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = value
+            End If
         End Set
     End Property
 
@@ -443,8 +541,8 @@ Public Class K7000Control
     ''' <summary>Enables or disables service requests.</summary>
     ''' <param name="turnOn">True to turn on or false to turn off the service request.</param>
     ''' <param name="serviceRequestMask">Specifies the 
-    '''   <see cref="isr.Vi.ServiceRequests">service request flags</see></param>
-    Private Sub ToggleEndServiceRequest(ByVal turnOn As Boolean, ByVal serviceRequestMask As isr.VI.ServiceRequests)
+    '''   <see cref="isr.VI.Pith.ServiceRequests">service request flags</see></param>
+    Private Sub ToggleEndServiceRequest(ByVal turnOn As Boolean, ByVal serviceRequestMask As VI.Pith.ServiceRequests)
         If Me.Visible Then
             Me._ServiceRequestMaskTextBox.Text = serviceRequestMask.ToString()
             Me._EnableEndOfSettlingRequestToggle.Enabled = False
@@ -458,8 +556,8 @@ Public Class K7000Control
     ''' <summary>Enables or disables service requests.</summary>
     ''' <param name="turnOn">True to turn on or false to turn off the service request.</param>
     ''' <param name="serviceRequestMask">Specifies the 
-    '''   <see cref="isr.Vi.ServiceRequests">service request flags</see></param>
-    Private Sub ToggleServiceRequest(ByVal turnOn As Boolean, ByVal serviceRequestMask As isr.VI.ServiceRequests)
+    '''   <see cref="isr.VI.Pith.ServiceRequests">service request flags</see></param>
+    Private Sub ToggleServiceRequest(ByVal turnOn As Boolean, ByVal serviceRequestMask As VI.Pith.ServiceRequests)
         If Me.Visible Then
             Me._ServiceRequestMaskTextBox.Text = serviceRequestMask.ToString()
             Me._EnableServiceRequestToggle.Enabled = False
@@ -494,7 +592,7 @@ Public Class K7000Control
 #Region " CHANNEL "
 
     ''' <summary>Gets or sets the channel list.</summary>
-    Private _ChannelListBuilder As isr.VI.ChannelListBuilder
+    Private _ChannelListBuilder As VI.ChannelListBuilder
 
     ''' <summary>Adds new items to the combo box.</summary>
     Private Sub UpdateChannelListComboBox()
@@ -786,7 +884,7 @@ Public Class K7000Control
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
-            Dim selectedFlag As isr.VI.ServiceRequests = CType(Me._ServiceRequestFlagsComboBox.SelectedItem, isr.VI.ServiceRequests)
+            Dim selectedFlag As VI.Pith.ServiceRequests = CType(Me._ServiceRequestFlagsComboBox.SelectedItem, isr.VI.Pith.ServiceRequests)
             Dim serviceByte As Byte = Byte.Parse(Me._ServiceRequestMaskTextBox.Text, Globalization.CultureInfo.CurrentCulture)
             serviceByte = Convert.ToByte(serviceByte Or selectedFlag)
             Me._ServiceRequestMaskTextBox.Text = serviceByte.ToString(Globalization.CultureInfo.CurrentCulture)
@@ -803,7 +901,7 @@ Public Class K7000Control
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
-            Dim selectedFlag As isr.VI.ServiceRequests = CType(Me._ServiceRequestFlagsComboBox.SelectedItem, isr.VI.ServiceRequests)
+            Dim selectedFlag As VI.Pith.ServiceRequests = CType(Me._ServiceRequestFlagsComboBox.SelectedItem, isr.VI.Pith.ServiceRequests)
             Dim serviceByte As Byte = Byte.Parse(Me._ServiceRequestMaskTextBox.Text, Globalization.CultureInfo.CurrentCulture)
             serviceByte = Convert.ToByte(serviceByte And (Not selectedFlag))
             Me._ServiceRequestMaskTextBox.Text = serviceByte.ToString(Globalization.CultureInfo.CurrentCulture)
@@ -817,13 +915,13 @@ Public Class K7000Control
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _EnableEndOfSettlingRequestCheckBox_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _EnableEndOfSettlingRequestToggle.CheckedChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If Me.Visible AndAlso Me._EnableEndOfSettlingRequestToggle.Enabled Then
                 Me.Device.ToggleEndOfScanService(Me._EnableEndOfSettlingRequestToggle.Checked,
-                                                 CType(Me._ServiceRequestMaskTextBox.Text, isr.VI.ServiceRequests))
+                                                 CType(Me._ServiceRequestMaskTextBox.Text, isr.VI.Pith.ServiceRequests))
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
@@ -871,12 +969,12 @@ Public Class K7000Control
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me._InfoProvider.Clear()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 Me.Device.SystemSubsystem.ClearInterface()
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -895,12 +993,12 @@ Public Class K7000Control
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me._InfoProvider.Clear()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 Me.Device.SystemSubsystem.ClearDevice()
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -920,12 +1018,12 @@ Public Class K7000Control
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me._InfoProvider.Clear()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 Me.Device.SystemSubsystem.ClearExecutionState()
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -945,13 +1043,13 @@ Public Class K7000Control
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
                 If Me.IsDeviceOpen Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                     Me.Device.ResetKnownState()
                 End If
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -971,16 +1069,16 @@ Public Class K7000Control
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
                 If Me.IsDeviceOpen Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                     Me.Device.ResetKnownState()
                     activity = "initializing known state"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                     Me.Device.InitKnownState()
                 End If
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1019,7 +1117,7 @@ Public Class K7000Control
                                             TalkerControlBase.SelectedValue(Me._LogTraceLevelComboBox, My.Settings.TraceLogLevel))
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1041,7 +1139,7 @@ Public Class K7000Control
                                             TalkerControlBase.SelectedValue(Me._DisplayTraceLevelComboBox, My.Settings.TraceShowLevel))
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1058,7 +1156,7 @@ Public Class K7000Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SessionTraceEnabledMenuItem_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "toggling instrument message tracing"
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         If menuItem IsNot Nothing Then
@@ -1067,12 +1165,18 @@ Public Class K7000Control
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
-                Me.Device.SessionMessagesTraceEnabled = menuItem.Checked
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                If menuItem.Checked Then
+                    ' TODO: Change menu item to a drop down.
+                    Me.Device.MessageNotificationLevel = NotifySyncLevel.Async
+                Else
+                    Me.Device.MessageNotificationLevel = NotifySyncLevel.None
+                End If
+
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1083,30 +1187,30 @@ Public Class K7000Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SessionServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "Toggle session service request handling"
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.Session.ServiceRequestEventEnabled Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
                     Me.Device.Session.EnableServiceRequest()
                     If Me._ServiceRequestEnableBitmaskNumeric.Value = 0 Then
-                        Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+                        Me.Device.StatusSubsystem.EnableServiceRequest(VI.Pith.ServiceRequests.All)
                     Else
-                        Me.Device.StatusSubsystem.EnableServiceRequest(CType(Me._ServiceRequestEnableBitmaskNumeric.Value, ServiceRequests))
+                        Me.Device.StatusSubsystem.EnableServiceRequest(CType(Me._ServiceRequestEnableBitmaskNumeric.Value, VI.Pith.ServiceRequests))
                     End If
                 Else
                     Me.Device.Session.DisableServiceRequest()
-                    Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
+                    Me.Device.StatusSubsystem.EnableServiceRequest(VI.Pith.ServiceRequests.None)
                 End If
                 Me.Device.StatusSubsystem.ReadEventRegisters()
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1117,14 +1221,14 @@ Public Class K7000Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _DeviceServiceRequestHandlerEnabledMenuItem_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _DeviceServiceRequestHandlerEnabledMenuItem.CheckStateChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "Toggle device service request handling"
         Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing AndAlso menuItem.Checked <> Me.Device.DeviceServiceRequestHandlerAdded Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 If menuItem IsNot Nothing AndAlso menuItem.Checked Then
                     Me.AddServiceRequestEventHandler()
                 Else
@@ -1134,7 +1238,7 @@ Public Class K7000Control
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.Cursor = Cursors.Default
         End Try
@@ -1147,18 +1251,18 @@ Public Class K7000Control
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _AbortButton_Click(sender As Object, e As EventArgs) Handles _AbortButton.Click
 
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "aborting trigger plan"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If Me.IsDeviceOpen Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
                 Me.Device.TriggerSubsystem.Abort()
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1167,14 +1271,14 @@ Public Class K7000Control
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ApplyTriggerPlanButton_Click(sender As Object, e As EventArgs) Handles _ApplyTriggerPlanButton.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If Not Me.DesignMode AndAlso sender IsNot Nothing Then
                 Me.Device.RouteSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(1))
                 Me.Device.TriggerSubsystem.ApplyTriggerCount(CInt(Me._ChannelLayerCountNumeric.Value))
-                Me.Device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.External)
+                Me.Device.TriggerSubsystem.ApplyTriggerSource(Scpi.TriggerSources.External)
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
@@ -1186,17 +1290,17 @@ Public Class K7000Control
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InitiateButton_Click(sender As Object, e As EventArgs) Handles _InitiateButton.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "Initiating trigger plan"
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             Me.Device.ClearExecutionState()
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
             Me.Device.TriggerSubsystem.Initiate()
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default
@@ -1206,7 +1310,7 @@ Public Class K7000Control
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ConfigureExternalScan_Click(sender As Object, e As EventArgs) Handles _ConfigureExternalScan.Click
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "Configuring external scan trigger plan"
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -1214,9 +1318,9 @@ Public Class K7000Control
             Me.Device.ClearExecutionState()
             ' enable service requests
             'Me.EnableServiceRequestEventHandler()
-            'Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.All)
+            'Me.Device.StatusSubsystem.EnableServiceRequest(VI.Pith.ServiceRequests.All)
 
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} {activity};. {Me.ResourceName}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
             Me.Device.TriggerSubsystem.ApplyContinuousEnabled(False)
             Me.Device.TriggerSubsystem.Abort()
             Me.Device.StatusSubsystem.EnableWaitComplete()
@@ -1226,19 +1330,19 @@ Public Class K7000Control
             Me.Device.RouteSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(1))
             Me.Device.RouteSubsystem.QueryClosedChannels()
             Me.Device.RouteSubsystem.ApplyScanList(Me._ChannelListComboBox.Text) ' "(@1!1:1!10)"
-            Me.Device.ArmLayer1Subsystem.ApplyArmSource(ArmSources.Immediate)
+            Me.Device.ArmLayer1Subsystem.ApplyArmSource(Scpi.ArmSources.Immediate)
             Me.Device.ArmLayer1Subsystem.ApplyArmCount(1)
-            Me.Device.ArmLayer2Subsystem.ApplyArmSource(ArmSources.Immediate)
+            Me.Device.ArmLayer2Subsystem.ApplyArmSource(Scpi.ArmSources.Immediate)
             Me.Device.ArmLayer2Subsystem.ApplyArmCount(1)
             Me.Device.ArmLayer2Subsystem.ApplyDelay(TimeSpan.Zero)
-            Me.Device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.External)
+            Me.Device.TriggerSubsystem.ApplyTriggerSource(Scpi.TriggerSources.External)
             Me.Device.TriggerSubsystem.ApplyTriggerCount(9999) ' in place of infinite
             Me.Device.TriggerSubsystem.ApplyDelay(TimeSpan.Zero)
-            Me.Device.TriggerSubsystem.ApplyDirection(Direction.Source)
+            Me.Device.TriggerSubsystem.ApplyDirection(Scpi.Direction.Source)
             Me._StatusLabel.Text = "Ready: Initiate 7001 and then meter"
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.Message)
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.ResourceTitle} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Me.Cursor = Cursors.Default

@@ -83,17 +83,12 @@
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="TESTS\ScpiDeviceTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Instrument\Scpi\isr.VI.Instrument.Scpi.Library.vbproj">
-      <Project>{42a956c2-1b65-4f5b-ac47-29433ac2d884}</Project>
-      <Name>isr.VI.Instrument.Scpi.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
       <Project>{0C14C4A7-D574-4F9B-A2D9-989B71CC7DE4}</Project>
@@ -112,6 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TESTS\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

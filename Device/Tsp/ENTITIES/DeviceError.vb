@@ -124,7 +124,6 @@ Public Class DeviceError
 
 #End Region
 
-
 End Class
 
 ''' <summary> Enumerates the TSP error levels. </summary>

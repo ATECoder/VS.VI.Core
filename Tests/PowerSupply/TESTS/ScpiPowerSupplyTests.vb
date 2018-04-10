@@ -51,13 +51,13 @@ Public Class ScpiPowerSupplyTests
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> . </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Friend Function SelectResourceName(ByVal interfaceType As HardwareInterfaceType) As String
+    Friend Function SelectResourceName(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As String
         Select Case interfaceType
-            Case HardwareInterfaceType.Gpib
+            Case VI.Pith.HardwareInterfaceType.Gpib
                 Return "GPIB0::5::INSTR"
-            Case HardwareInterfaceType.Tcpip
+            Case VI.Pith.HardwareInterfaceType.Tcpip
                 Return "TCPIP0::A-N5767A-K4381"
-            Case HardwareInterfaceType.Usb
+            Case VI.Pith.HardwareInterfaceType.Usb
                 Return "USB0::0x0957::0x0807::N5767A-US11K4381H::0::INSTR"
             Case Else
                 Return "GPIB0::5::INSTR"
@@ -71,9 +71,9 @@ Public Class ScpiPowerSupplyTests
     Public Sub OpenSessionTest()
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
-        Dim usingInterfaceType As HardwareInterfaceType = HardwareInterfaceType.Usb
+        Dim usingInterfaceType As VI.Pith.HardwareInterfaceType = VI.Pith.HardwareInterfaceType.Usb
         Using target As PowerSupply.Device = New PowerSupply.Device()
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            Dim e As New isr.Core.Pith.ActionEventArgs
             actualBoolean = target.TryOpenSession(SelectResourceName(usingInterfaceType), "Power Supply", e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             target.Session.Clear()
@@ -91,17 +91,20 @@ Public Class ScpiPowerSupplyTests
         Dim actualBoolean As Boolean
         Dim actualString As String = ""
         Using target As PowerSupply.Device = New PowerSupply.Device()
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply", e)
+            Dim e As New isr.Core.Pith.ActionEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(VI.Pith.HardwareInterfaceType.Gpib), "Power Supply", e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             actualBoolean = target.OutputSubsystem.ApplyOutputOnState(False).GetValueOrDefault(True)
             Assert.AreEqual(expectedBoolean, actualBoolean, "Output Off;")
             expectedBoolean = False
             actualBoolean = target.OutputSubsystem.QueryOutputOnState.GetValueOrDefault(True)
             Assert.AreEqual(expectedBoolean, actualBoolean, "Output State")
+
             expectedString = "no error"
-            actualString = target.StatusSubsystem.QueryLastError.ErrorMessage
-            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
+            target.StatusSubsystem.TrySafeQueryDeviceErrors(e)
+            Assert.IsFalse(e.Cancel, "Device error query failed")
+            actualString = target.StatusSubsystem.LastDeviceError.ErrorMessage
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture, "Device error mismatch")
         End Using
     End Sub
 
@@ -119,8 +122,8 @@ Public Class ScpiPowerSupplyTests
         Dim expectedDouble As Double = 0
         Dim actualDouble As Double = 0
         Using target As PowerSupply.Device = New PowerSupply.Device()
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply", e)
+            Dim e As New isr.Core.Pith.ActionEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(VI.Pith.HardwareInterfaceType.Gpib), "Power Supply", e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             target.ResetClearInit()
             actualBoolean = True
@@ -141,9 +144,12 @@ Public Class ScpiPowerSupplyTests
             If actualDouble < expectedDouble Then
                 Assert.AreEqual(expectedDouble, actualDouble, 0.1, "Actual must be greater")
             End If
+
             expectedString = "no error"
-            actualString = target.StatusSubsystem.QueryLastError.ErrorMessage
-            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
+            target.StatusSubsystem.TrySafeQueryDeviceErrors(e)
+            Assert.IsFalse(e.Cancel, "Device error query failed")
+            actualString = target.StatusSubsystem.LastDeviceError.ErrorMessage
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture, "Device error mismatch")
         End Using
     End Sub
 
@@ -161,8 +167,8 @@ Public Class ScpiPowerSupplyTests
         Dim expectedDouble As Double = 0
         Dim actualDouble As Double = 0
         Using target As PowerSupply.Device = New PowerSupply.Device()
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply", e)
+            Dim e As New isr.Core.Pith.ActionEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(VI.Pith.HardwareInterfaceType.Gpib), "Power Supply", e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             target.ResetClearInit()
             actualBoolean = True
@@ -188,9 +194,13 @@ Public Class ScpiPowerSupplyTests
             expectedBoolean = False
             actualBoolean = target.OutputSubsystem.QueryOutputOnState.GetValueOrDefault(True)
             Assert.AreEqual(expectedBoolean, actualBoolean, "Output State;")
+
             expectedString = "no error"
-            actualString = target.StatusSubsystem.QueryLastError.ErrorMessage
-            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
+            target.StatusSubsystem.TrySafeQueryDeviceErrors(e)
+            Assert.IsFalse(e.Cancel, "Device error query failed")
+            actualString = target.StatusSubsystem.LastDeviceError.ErrorMessage
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture, "Device error mismatch")
+
         End Using
     End Sub
 
@@ -204,8 +214,8 @@ Public Class ScpiPowerSupplyTests
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
         Using target As PowerSupply.Device = New PowerSupply.Device()
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Power Supply", e)
+            Dim e As New isr.Core.Pith.ActionEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(VI.Pith.HardwareInterfaceType.Gpib), "Power Supply", e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             actualDouble = target.MeasureCurrentSubsystem.Measure.GetValueOrDefault(0)
             Assert.AreEqual(expectedDouble, actualDouble)

@@ -475,7 +475,7 @@
         Me.Device.Session.Write(":STAT:OPER:ENAB 16")
         ' Me.Device.StatusSubsystem.ApplyOperationEventEnableBitmask(16)
         Me.Device.Session.Write("*SRE 128")
-        ' Me.Device.StatusSubsystem.EnableServiceRequest(ServiceRequests.OperationEvent) ' 128
+        ' Me.Device.StatusSubsystem.EnableServiceRequest(VI.Pith.ServiceRequests.OperationEvent) ' 128
 
     End Sub
 
@@ -550,7 +550,7 @@
             Me.Device.DisplaySubsystem.ClearCautionMessages()
             ' Me.Device.Session.WriteLine(":TRIG")
             Me.Device.TriggerSubsystem.Initiate()
-            If Me.Device.StatusSubsystem.TryAwaitServiceRequest(ServiceRequests.RequestingService, TimeSpan.FromSeconds(10),
+            If Me.Device.StatusSubsystem.TryAwaitServiceRequest(VI.Pith.ServiceRequests.RequestingService, TimeSpan.FromSeconds(10),
                                                                 TimeSpan.FromMilliseconds(100)) Then
                 ' auto scale after measurement completes
                 Me.AutoScale(1, 1)

@@ -17,7 +17,7 @@ Public MustInherit Class SlotSubsystemBase
     ''' <summary> Initializes a new instance of the <see cref="DisplaySubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystemBase">status
     ''' Subsystem</see>. </param>
-    Protected Sub New(ByVal slotNumber As Integer, ByVal statusSubsystem As StatusSubsystemBase)
+    Protected Sub New(ByVal slotNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me._SlotNumber = slotNumber
         Me._EnumerateInterlocks(2)

@@ -117,13 +117,13 @@ Public Class MeasuredAmount
         If Me.MetaStatus.IsValid Then
             Dim newValue As Double = Me.Value.Value
 
-            Me.MetaStatus.ToggleBit(MetaStatusBit.Infinity, Math.Abs(newValue - Scpi.Syntax.Infinity) < 1)
+            Me.MetaStatus.ToggleBit(MetaStatusBit.Infinity, Math.Abs(newValue - VI.Pith.Scpi.Syntax.Infinity) < 1)
             If Me.MetaStatus.IsBit(MetaStatusBit.Infinity) Then Return Me.MetaStatus.IsValid
 
-            Me.MetaStatus.ToggleBit(MetaStatusBit.NegativeInfinity, Math.Abs(newValue - Scpi.Syntax.NegativeInfinity) < 1)
+            Me.MetaStatus.ToggleBit(MetaStatusBit.NegativeInfinity, Math.Abs(newValue - VI.Pith.Scpi.Syntax.NegativeInfinity) < 1)
             If Me.MetaStatus.IsBit(MetaStatusBit.NegativeInfinity) Then Return Me.MetaStatus.IsValid
 
-            Me.MetaStatus.ToggleBit(MetaStatusBit.NotANumber, Math.Abs(newValue - Scpi.Syntax.NotANumber) < 1)
+            Me.MetaStatus.ToggleBit(MetaStatusBit.NotANumber, Math.Abs(newValue - VI.Pith.Scpi.Syntax.NotANumber) < 1)
             If Me.MetaStatus.IsBit(MetaStatusBit.NotANumber) Then Return Me.MetaStatus.IsValid
 
             Me.MetaStatus.HitLevelCompliance = Not (newValue >= Me._ComplianceLimit) Xor (Me._ComplianceLimit > 0)

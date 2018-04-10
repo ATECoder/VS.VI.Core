@@ -21,7 +21,7 @@ Public MustInherit Class SlotsSubsystemBase
     ''' <param name="maxSlotCount">    Number of maximum slots. </param>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystemBase">status
     '''                                Subsystem</see>. </param>
-    Protected Sub New(ByVal maxSlotCount As Integer, ByVal statusSubsystem As StatusSubsystemBase)
+    Protected Sub New(ByVal maxSlotCount As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me._MaximumSlotCount = maxSlotCount
         Me._Slots = New SlotCollection

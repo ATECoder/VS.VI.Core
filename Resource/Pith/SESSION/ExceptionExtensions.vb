@@ -21,7 +21,7 @@ Friend Module Methods
     ''' <param name="value">     The value. </param>
     ''' <param name="exception"> The exception. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Private Function AddExceptionData(ByVal value As System.Exception, ByVal exception As DeviceException) As Boolean
+    Private Function AddExceptionData(ByVal value As System.Exception, ByVal exception As VI.Pith.DeviceException) As Boolean
         If exception IsNot Nothing Then
             exception.AddExceptionData(value)
         End If
@@ -32,7 +32,7 @@ Friend Module Methods
     ''' <param name="value">     The value. </param>
     ''' <param name="exception"> The exception. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Private Function AddExceptionData(ByVal value As System.Exception, ByVal exception As NativeException) As Boolean
+    Private Function AddExceptionData(ByVal value As System.Exception, ByVal exception As VI.Pith.NativeException) As Boolean
         If exception IsNot Nothing AndAlso Not exception.InnerError Is Nothing Then
             exception.AddExceptionData(value)
         End If
@@ -46,8 +46,8 @@ Friend Module Methods
     Public Function AddExceptionData(ByVal exception As System.Exception) As Boolean
         Dim affirmative As Boolean = False
         affirmative = affirmative OrElse isr.Core.Pith.ExceptionExtensions.AddExceptionData(exception)
-        affirmative = affirmative OrElse Methods.AddExceptionData(exception, TryCast(exception, NativeException))
-        affirmative = affirmative OrElse Methods.AddExceptionData(exception, TryCast(exception, DeviceException))
+        affirmative = affirmative OrElse Methods.AddExceptionData(exception, TryCast(exception, VI.Pith.NativeException))
+        affirmative = affirmative OrElse Methods.AddExceptionData(exception, TryCast(exception, VI.Pith.DeviceException))
         Return affirmative
     End Function
 

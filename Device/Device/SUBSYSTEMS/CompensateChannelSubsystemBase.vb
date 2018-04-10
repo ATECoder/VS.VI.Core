@@ -18,13 +18,11 @@ Public MustInherit Class CompensateChannelSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="Calculate2SubsystemBase" /> class.
     ''' </summary>
-    ''' <param name="compensationType"> The Compensation Type. </param>
     ''' <param name="channelNumber">    The channel number. </param>
     ''' <param name="statusSubsystem">  The status subsystem. </param>
-    Protected Sub New(ByVal compensationType As CompensationTypes, ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
+    Protected Sub New(ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me.ChannelNumber = channelNumber
-        Me.ApplyCompensationType(compensationType)
     End Sub
 
 #End Region
@@ -179,59 +177,6 @@ Public MustInherit Class CompensateChannelSubsystemBase
 
 #End Region
 
-#Region " COMPENSATION TYPE "
-
-    Private _SupportedCompensationTypes As CompensationTypes
-    ''' <summary>
-    ''' Gets or sets the supported Compensation Type.
-    ''' This is a subset of the functions supported by the instrument.
-    ''' </summary>
-    Public Property SupportedCompensationTypes() As CompensationTypes
-        Get
-            Return _SupportedCompensationTypes
-        End Get
-        Set(ByVal value As CompensationTypes)
-            If Not Me.SupportedCompensationTypes.Equals(value) Then
-                Me._SupportedCompensationTypes = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Gets or sets the compensation type code. </summary>
-    ''' <value> The compensation type code. </value>
-    Protected ReadOnly Property CompensationTypeCode As String
-
-    ''' <summary> The Compensation Type. </summary>
-    Private _CompensationType As CompensationTypes?
-
-    Private Sub ApplyCompensationType(ByVal value As CompensationTypes)
-        Me._CompensationType = value
-        Me._CompensationTypeCode = value.ExtractBetween
-    End Sub
-
-    ''' <summary> Gets or sets the cached source CompensationType. </summary>
-    ''' <value> The <see cref="CompensationTypes">source Compensation Type</see> or none if not set or
-    ''' unknown. </value>
-    Public Overridable Property CompensationType As CompensationTypes?
-        Get
-            Return Me._CompensationType
-        End Get
-        Protected Set(ByVal value As CompensationTypes?)
-            If Not Nullable.Equals(Me.CompensationType, value) Then
-                Me._CompensationType = value
-                If value.HasValue Then
-                    Me.ApplyCompensationType(value.Value)
-                Else
-                    Me._CompensationTypeCode = ""
-                End If
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-#End Region
-
 #Region " ENABLED "
 
     Private _Enabled As Boolean?
@@ -292,8 +237,8 @@ Public MustInherit Class CompensateChannelSubsystemBase
     Private _FrequencyStimulusPoints As Integer?
 
     ''' <summary> Gets or sets the cached Frequency Stimulus Points. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property FrequencyStimulusPoints As Integer?
         Get
@@ -351,8 +296,8 @@ Public MustInherit Class CompensateChannelSubsystemBase
     Private _FrequencyArray As IEnumerable(Of Double)
 
     ''' <summary> Gets or sets the cached Frequency Array. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property FrequencyArray As IEnumerable(Of Double)
         Get
@@ -427,8 +372,8 @@ Public MustInherit Class CompensateChannelSubsystemBase
     Private _ImpedanceArray As IEnumerable(Of Double)
 
     ''' <summary> Gets or sets the cached Impedance Array. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property ImpedanceArray As IEnumerable(Of Double)
         Get
@@ -515,8 +460,8 @@ Public MustInherit Class CompensateChannelSubsystemBase
     Private _ModelResistance As Double?
 
     ''' <summary> Gets or sets the cached Model Resistance. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property ModelResistance As Double?
         Get
@@ -572,8 +517,8 @@ Public MustInherit Class CompensateChannelSubsystemBase
     Private _ModelCapacitance As Double?
 
     ''' <summary> Gets or sets the cached Model Capacitance. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property ModelCapacitance As Double?
         Get
@@ -629,8 +574,8 @@ Public MustInherit Class CompensateChannelSubsystemBase
     Private _ModelConductance As Double?
 
     ''' <summary> Gets or sets the cached Model Conductance. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property ModelConductance As Double?
         Get
@@ -686,8 +631,8 @@ Public MustInherit Class CompensateChannelSubsystemBase
     Private _ModelInductance As Double?
 
     ''' <summary> Gets or sets the cached Model Inductance. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property ModelInductance As Double?
         Get
@@ -738,13 +683,3 @@ Public MustInherit Class CompensateChannelSubsystemBase
 #End Region
 
 End Class
-
-''' <summary> A bit-field of flags for specifying compensation types. </summary>
-<Flags>
-Public Enum CompensationTypes
-    <ComponentModel.Description("None")> None = 0
-    <ComponentModel.Description("Open (OPEN)")> OpenCircuit = 1
-    <ComponentModel.Description("Short (SHOR)")> ShortCircuit = OpenCircuit << 1
-    <ComponentModel.Description("Load (LOAD)")> Load = ShortCircuit << 1
-End Enum
-

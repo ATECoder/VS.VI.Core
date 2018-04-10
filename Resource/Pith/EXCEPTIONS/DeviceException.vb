@@ -14,18 +14,18 @@
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    ''' <summary> Initializes a new instance of the <see cref="DeviceException"/> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="VI.Pith.DeviceException"/> class. </summary>
     Public Sub New()
         Me.New("Device Exception")
     End Sub
 
-    ''' <summary> Initializes a new instance of the <see cref="DeviceException" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="VI.Pith.DeviceException" /> class. </summary>
     ''' <param name="message"> The message. </param>
     Public Sub New(ByVal message As String)
         MyBase.New(message)
     End Sub
 
-    ''' <summary> Initializes a new instance of the <see cref="DeviceException" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="VI.Pith.DeviceException" /> class. </summary>
     ''' <param name="message">        The message. </param>
     ''' <param name="innerException"> The inner exception. </param>
     Public Sub New(ByVal message As String, ByVal innerException As System.Exception)

@@ -14,7 +14,7 @@ Public MustInherit Class SubsystemPlusStatusBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SubsystemPlusStatusBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId:="0")>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem.Session)
@@ -64,7 +64,7 @@ Public MustInherit Class SubsystemPlusStatusBase
 
     ''' <summary> Checks and throws an exception if device errors occurred.
     ''' Can only be used after receiving a full reply from the device. </summary>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="flushReadFirst"> Flushes the read buffer before processing the error. </param>
     ''' <param name="format">         Describes the format to use. </param>
     ''' <param name="args">           A variable-length parameters list containing arguments. </param>
@@ -122,7 +122,7 @@ Public MustInherit Class SubsystemPlusStatusBase
     '''           Can be used with queries. </summary>
     ''' <param name="format">   Describes the format to use. </param>
     ''' <param name="args">     A variable-length parameters list containing arguments. </param>
-    Public Sub TraceVisaOperation(ByVal ex As NativeException, ByVal format As String, ByVal ParamArray args() As Object)
+    Public Sub TraceVisaOperation(ByVal ex As VI.Pith.NativeException, ByVal format As String, ByVal ParamArray args() As Object)
         Me.StatusSubsystem.TraceVisaOperation(ex, format, args)
     End Sub
 
@@ -146,7 +146,7 @@ Public MustInherit Class SubsystemPlusStatusBase
     ''' <param name="nodeNumber">   Specifies the remote node number to validate. </param>
     ''' <param name="format"> Describes the format to use. </param>
     ''' <param name="args">   A variable-length parameters list containing arguments. </param>
-    Public Sub TraceVisaOperation(ByVal ex As NativeException, ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
+    Public Sub TraceVisaOperation(ByVal ex As VI.Pith.NativeException, ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
         Me.StatusSubsystem.TraceVisaOperation(ex, nodeNumber, format, args)
     End Sub
 

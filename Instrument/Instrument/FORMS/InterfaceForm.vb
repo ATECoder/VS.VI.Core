@@ -20,12 +20,13 @@ Public Class InterfaceForm
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
-
+        Me.InitializingComponents = True
         ' Initialize user components that might be affected by resize or paint actions
         'onInitialize()
 
         ' This method is required by the Windows Form Designer.
         InitializeComponent()
+        Me.InitializingComponents = False
 
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
         Me.AddPrivateListeners()
@@ -183,7 +184,7 @@ Public Class InterfaceForm
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
+    Private Overloads Sub HandlePropertyChange(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         If String.Equals(propertyName, NameOf(TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
@@ -197,16 +198,23 @@ Public Class InterfaceForm
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.DeviceBase)}.{e?.PropertyName} change event"
         Try
-            ' there was a cross thread exception because this event is invoked from the control thread.
             If Me.InvokeRequired Then
-                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._TraceMessagesBox_PropertyChanged), New Object() {sender, e})
-            Else
-                Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf _TraceMessagesBox_PropertyChanged), New Object() {sender, e})
+            ElseIf Not Me.InitializingComponents AndAlso sender IsNot Nothing AndAlso e IsNot Nothing Then
+                Me.HandlePropertyChange(TryCast(sender, Core.Pith.TraceMessagesBox), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                ' used for figuring out what events are raised to cause this. 
+                ' possibly the device is sending messages after the control is disposed indicating that the device needs to 
+                ' be disposed before the control is disposed. 
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 

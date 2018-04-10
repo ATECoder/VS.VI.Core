@@ -15,9 +15,9 @@ Public Class StatusSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal visaSession As VI.SessionBase)
+    Public Sub New(ByVal visaSession As VI.Pith.SessionBase)
         MyBase.New(visaSession)
 
         Me._VersionInfo = New VersionInfo
@@ -26,6 +26,22 @@ Public Class StatusSubsystem
         Me.OperationCompleted = True
 
     End Sub
+
+    ''' <summary> Creates a new StatusSubsystem. </summary>
+    ''' <returns> A StatusSubsystem. </returns>
+    Public Shared Function Create() As StatusSubsystem
+        Dim subsystem As StatusSubsystem = Nothing
+        Try
+            subsystem = New StatusSubsystem(isr.VI.SessionFactory.Get.Factory.CreateSession())
+        Catch
+            If subsystem IsNot Nothing Then
+                subsystem.Dispose()
+                subsystem = Nothing
+            End If
+            Throw
+        End Try
+        Return subsystem
+    End Function
 
 #End Region
 
@@ -68,15 +84,15 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>
-    Public Overrides ReadOnly Property ErrorAvailableBits As ServiceRequests = ServiceRequests.ErrorAvailable
+    Public Overrides ReadOnly Property ErrorAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.ErrorAvailable
 
     ''' <summary> Gets the bits that would be set for detecting if an Measurement is available. </summary>
     ''' <value> The Measurement available bits. </value>
-    Public Overrides ReadOnly Property MeasurementAvailableBits As ServiceRequests = ServiceRequests.MeasurementEvent
+    Public Overrides ReadOnly Property MeasurementAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MeasurementEvent
 
     ''' <summary> Gets the bits that would be set for detecting if an Message is available. </summary>
     ''' <value> The Message available bits. </value>
-    Public Overrides ReadOnly Property MessageAvailableBits As ServiceRequests = ServiceRequests.RequestingService
+    Public Overrides ReadOnly Property MessageAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.RequestingService
 
     ''' <summary> Gets the operation completed query command. </summary>
     ''' <value> The operation completed query command. </value>
@@ -84,7 +100,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the bits that would be set for detecting if a Standard Event is available. </summary>
     ''' <value> The Standard Event available bits. </value>
-    Public Overrides ReadOnly Property StandardEventAvailableBits As ServiceRequests = ServiceRequests.StandardEvent
+    Public Overrides ReadOnly Property StandardEventAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.StandardEvent
 
     ''' <summary> Gets the standard event status query command. </summary>
     ''' <value> The standard event status query command. </value>
@@ -158,11 +174,11 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = ""
+    Protected Overrides ReadOnly Property NextDeviceErrorQueryCommand As String = ""
 
     ''' <summary> Gets the last error query command. </summary>
     ''' <value> The last error query command. </value>
-    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = "?E"
+    Protected Overrides ReadOnly Property DeviceErrorQueryCommand As String = "?E"
 
     ''' <summary> Queues device error. </summary>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
@@ -183,7 +199,7 @@ Public Class StatusSubsystem
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="0#")>
     Public Function TryRead(ByRef value As String) As Boolean
-        Dim bits As ServiceRequests = Me.MessageAvailableBits
+        Dim bits As VI.Pith.ServiceRequests = Me.MessageAvailableBits
         Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Awaiting SQR bits {0:X2};. ", CInt(bits))
         If Me.TryAwaitServiceRequest(bits, TimeSpan.FromMilliseconds(1000), TimeSpan.FromMilliseconds(10)) Then
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Fetching;. ")

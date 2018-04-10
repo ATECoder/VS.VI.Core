@@ -22,7 +22,7 @@ Friend Module GpibInterfaceExtensions
             Throw New ArgumentNullException(NameOf(value))
         End If
         ' Transmit the DCL command to the interface.
-        value.SendCommand(Ieee488.Syntax.BuildDeviceClear.ToArray)
+        value.SendCommand(VI.Pith.Ieee488.Syntax.BuildDeviceClear.ToArray)
     End Sub
 
     ''' <summary> Clears the specified device. </summary>
@@ -32,7 +32,7 @@ Friend Module GpibInterfaceExtensions
     <Extension()>
     Public Sub SelectiveDeviceClear(ByVal value As NationalInstruments.Visa.GpibInterface, ByVal gpibAddress As Integer)
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
-        value.SendCommand(Ieee488.Syntax.BuildSelectiveDeviceClear(CByte(gpibAddress)).ToArray)
+        value.SendCommand(VI.Pith.Ieee488.Syntax.BuildSelectiveDeviceClear(CByte(gpibAddress)).ToArray)
     End Sub
 
     ''' <summary> Clears the specified device. </summary>
@@ -44,7 +44,7 @@ Friend Module GpibInterfaceExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
         Using rc As ResourceManager = New ResourceManager()
-            Dim parseResult As VI.ResourceParseResult = rc.ParseResource(resourceName)
+            Dim parseResult As VI.Pith.ResourceNameParseInfo = rc.ParseResource(resourceName)
             If parseResult.GpibAddress > 0 Then value.SelectiveDeviceClear(parseResult.GpibAddress)
         End Using
     End Sub

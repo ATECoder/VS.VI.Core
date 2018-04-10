@@ -1,3 +1,10 @@
-Open the Developer command window with a default folder at the solution folder.
-The following commands run tests on each project.
+Test Categories:
+VI - Requires the instrument shown in the test file name,., e.g., K3700 for the Keithley 3706A
+UI - Requires user interaction
+
+Running Tests:
+Open the Developer command window with a default folder at the solution folder and enter the following commands:
+
 Vstest.console.exe .\Tests\Device\bin\Debug\isr.VI.Device.Tests.dll  /Settings:Local.RunSettings /inIsolation 
+
+Vstest.console.exe C:\My\LIBRARIES\VS\IO\VI\Tests\K3700\bin\Debug\isr.VI.K3700.Tests.dll  /Settings:Local.RunSettings /inIsolation

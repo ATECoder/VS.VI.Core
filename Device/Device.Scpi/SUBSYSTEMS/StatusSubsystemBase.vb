@@ -17,75 +17,18 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary>
     ''' Initializes a new instance of the <see cref="StatusSubsystemBase" /> class.
     ''' </summary>
-    ''' <param name="visaSession">            A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession">            A reference to a <see cref="VI.Pith.SessionBase">message based
     '''                                       session</see>. </param>
     ''' <param name="noErrorCompoundMessage"> Message describing the no error compound. </param>
-    Protected Sub New(ByVal visaSession As VI.SessionBase, ByVal noErrorCompoundMessage As String)
+    Protected Sub New(ByVal visaSession As VI.Pith.SessionBase, ByVal noErrorCompoundMessage As String)
         MyBase.New(visaSession, noErrorCompoundMessage)
-        Me._VersionInfo = New VersionInfo
-        ' check for query and other errors reported by the standard event register
-        Me.StandardDeviceErrorAvailableBits = StandardEvents.CommandError Or StandardEvents.DeviceDependentError Or
-                                                  StandardEvents.ExecutionError Or StandardEvents.QueryError
-        ' Me.StandardServiceEnableCommandFormat = Ieee488.Syntax.StandardServiceEnableCommandFormat
-        ' Me.StandardServiceEnableCompleteCommandFormat = Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat
-        Me._OperationEventMap = New Dictionary(Of Integer, String)
     End Sub
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Protected Sub New(ByVal visaSession As VI.SessionBase)
-        Me.New(visaSession, Scpi.Syntax.NoErrorCompoundMessage)
-    End Sub
-
-#End Region
-
-#Region " I PRESETTABLE "
-
-    ''' <summary> Sets the subsystem to its initial post reset state. </summary>
-    ''' <remarks> Additional Actions: <para>
-    '''           Clears Error Queue.
-    '''           </para></remarks>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Overrides Sub InitKnownState()
-        MyBase.InitKnownState()
-        Dim action As String = "enabling wait completion"
-        Try
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
-            Me.EnableWaitComplete()
-        Catch ex As Exception
-            ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
-        End Try
-        Try
-            action = "querying identity"
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
-            Me.QueryIdentity()
-        Catch ex As Exception
-            ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
-        End Try
-    End Sub
-
-    ''' <summary> Sets the subsystem to its preset state. </summary>
-    Public Overrides Sub PresetKnownState()
-        MyBase.PresetKnownState()
-        Me.OperationEventEnableBitmask = 0
-        Me.QuestionableEventEnableBitmask = 0
-        Me._OperationEventMap.Clear()
-    End Sub
-
-    ''' <summary> Sets the subsystem to its reset state. </summary>
-    Public Overrides Sub ResetKnownState()
-        MyBase.ResetKnownState()
-        Me.MeasurementEventEnableBitmask = 0
-        Me.MeasurementEventStatus = 0
-        Me.OperationEventEnableBitmask = 0
-        Me.OperationEventStatus = 0
-        Me.QuestionableEventEnableBitmask = 0
-        Me.QuestionableEventStatus = 0
-        Me.StandardEventStatus = 0
-        Me.StandardEventEnableBitmask = 0
+    Protected Sub New(ByVal visaSession As VI.Pith.SessionBase)
+        Me.New(visaSession, VI.Pith.Scpi.Syntax.NoErrorCompoundMessage)
     End Sub
 
 #End Region
@@ -96,7 +39,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the wait command. </summary>
     ''' <value> The wait command. </value>
-    Protected Overrides ReadOnly Property WaitCommand As String = Ieee488.Syntax.WaitCommand
+    Protected Overrides ReadOnly Property WaitCommand As String = VI.Pith.Ieee488.Syntax.WaitCommand
 
 #End Region
 
@@ -105,15 +48,15 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary> Gets the preset command. </summary>
     ''' <value> The preset command. </value>
     ''' <remarks> No preset command for the TSP system. </remarks>
-    Protected Overrides ReadOnly Property PresetCommand As String = VI.Scpi.Syntax.StatusPresetCommand
+    Protected Overrides ReadOnly Property PresetCommand As String = VI.Pith.Scpi.Syntax.StatusPresetCommand
 
     ''' <summary> Gets the clear execution state command. </summary>
     ''' <value> The clear execution state command. </value>
-    Protected Overrides ReadOnly Property ClearExecutionStateCommand As String = Ieee488.Syntax.ClearExecutionStateCommand
+    Protected Overrides ReadOnly Property ClearExecutionStateCommand As String = VI.Pith.Ieee488.Syntax.ClearExecutionStateCommand
 
     ''' <summary> Gets the reset known state command. </summary>
     ''' <value> The reset known state command. </value>
-    Protected Overrides ReadOnly Property ResetKnownStateCommand As String = Ieee488.Syntax.ResetKnownStateCommand
+    Protected Overrides ReadOnly Property ResetKnownStateCommand As String = VI.Pith.Ieee488.Syntax.ResetKnownStateCommand
 
 #End Region
 
@@ -121,35 +64,35 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>
-    Public Overrides ReadOnly Property ErrorAvailableBits As ServiceRequests = ServiceRequests.ErrorAvailable
+    Public Overrides ReadOnly Property ErrorAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.ErrorAvailable
 
     ''' <summary> Gets the bits that would be set for detecting if an Measurement is available. </summary>
     ''' <value> The Measurement available bits. </value>
-    Public Overrides ReadOnly Property MeasurementAvailableBits As ServiceRequests = ServiceRequests.MeasurementEvent
+    Public Overrides ReadOnly Property MeasurementAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MeasurementEvent
 
     ''' <summary> Gets the bits that would be set for detecting if an Message is available. </summary>
     ''' <value> The Message available bits. </value>
-    Public Overrides ReadOnly Property MessageAvailableBits As ServiceRequests = ServiceRequests.MessageAvailable
+    Public Overrides ReadOnly Property MessageAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MessageAvailable
 
     ''' <summary> Gets the bits that would be set for detecting if a Standard Event is available. </summary>
     ''' <value> The Standard Event available bits. </value>
-    Public Overrides ReadOnly Property StandardEventAvailableBits As ServiceRequests = ServiceRequests.StandardEvent
+    Public Overrides ReadOnly Property StandardEventAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.StandardEvent
 
     ''' <summary> Gets or sets the operation completed query command. </summary>
     ''' <value> The operation completed query command. </value>
-    Protected Overrides ReadOnly Property OperationCompletedQueryCommand As String = Ieee488.Syntax.OperationCompletedQueryCommand
+    Protected Overrides ReadOnly Property OperationCompletedQueryCommand As String = VI.Pith.Ieee488.Syntax.OperationCompletedQueryCommand
 
     ''' <summary> Gets the standard service enable command format. </summary>
     ''' <value> The standard service enable command format. </value>
-    Protected Overrides ReadOnly Property StandardServiceEnableCommandFormat As String = Ieee488.Syntax.StandardServiceEnableCommandFormat
+    Protected Overrides ReadOnly Property StandardServiceEnableCommandFormat As String = VI.Pith.Ieee488.Syntax.StandardServiceEnableCommandFormat
 
     ''' <summary> Gets or sets the standard service enable and complete command format. </summary>
     ''' <value> The standard service enable command and complete format. </value>
-    Protected Overrides ReadOnly Property StandardServiceEnableCompleteCommandFormat As String = Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat
+    Protected Overrides ReadOnly Property StandardServiceEnableCompleteCommandFormat As String = VI.Pith.Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat
 
     ''' <summary> Gets the service request enable command format. </summary>
     ''' <value> The service request enable command format. </value>
-    Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = Ieee488.Syntax.ServiceRequestEnableCommandFormat
+    Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = VI.Pith.Ieee488.Syntax.ServiceRequestEnableCommandFormat
 
 #End Region
 
@@ -157,27 +100,31 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the standard event status query command. </summary>
     ''' <value> The standard event status query command. </value>
-    Protected Overrides ReadOnly Property StandardEventStatusQueryCommand As String = Ieee488.Syntax.StandardEventQueryCommand
+    Protected Overrides ReadOnly Property StandardEventStatusQueryCommand As String = VI.Pith.Ieee488.Syntax.StandardEventQueryCommand
 
     ''' <summary> Gets the standard event enable query command. </summary>
     ''' <value> The standard event enable query command. </value>
-    Protected Overrides ReadOnly Property StandardEventEnableQueryCommand As String = Ieee488.Syntax.StandardEventEnableQueryCommand
+    Protected Overrides ReadOnly Property StandardEventEnableQueryCommand As String = VI.Pith.Ieee488.Syntax.StandardEventEnableQueryCommand
 
 #End Region
 
 #Region " DEVICE ERRORS "
 
-    ''' <summary> Gets the last error query command. </summary>
-    ''' <value> The last error query command. </value>
-    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = VI.Scpi.Syntax.LastSystemErrorQueryCommand
-
     ''' <summary> Gets the clear error queue command. </summary>
     ''' <value> The clear error queue command. </value>
-    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = VI.Scpi.Syntax.ClearSystemErrorQueueCommand
+    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = VI.Pith.Scpi.Syntax.ClearSystemErrorQueueCommand
+
+    ''' <summary> Gets or sets the 'Next Error' query command. </summary>
+    ''' <value> The error queue query command. </value>
+    Protected Overrides ReadOnly Property DequeueErrorQueryCommand As String = "" ' VI.Pith.Scpi.Syntax.LastSystemErrorQueryCommand
+
+    ''' <summary> Gets the last error query command. </summary>
+    ''' <value> The last error query command. </value>
+    Protected Overrides ReadOnly Property DeviceErrorQueryCommand As String = ""  ' VI.Pith.Scpi.Syntax.LastSystemErrorQueryCommand
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = "" ' = VI.Scpi.Syntax.ErrorQueueQueryCommand
+    Protected Overrides ReadOnly Property NextDeviceErrorQueryCommand As String = "" ' = VI.Pith.Scpi.Syntax.ErrorQueueQueryCommand
 
 #End Region
 
@@ -185,31 +132,65 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets line frequency query command. </summary>
     ''' <value> The line frequency query command. </value>
-    Protected Overrides ReadOnly Property LineFrequencyQueryCommand As String = VI.Scpi.Syntax.ReadLineFrequencyCommand
+    Protected Overrides ReadOnly Property LineFrequencyQueryCommand As String = VI.Pith.Scpi.Syntax.ReadLineFrequencyCommand
 
 #End Region
+
+#Region " IDENTITY "
+
+    ''' <summary> Gets the identity query command. </summary>
+    ''' <value> The identity query command. </value>
+    Protected Overrides ReadOnly Property IdentityQueryCommand As String = VI.Pith.Ieee488.Syntax.IdentityQueryCommand
+
 #End Region
 
-#Region " DEVICE REGISTERS "
+#End Region
 
-    ''' <summary> Reads the event registers based on the service request register status. </summary>
-    Public Overrides Sub ReadEventRegisters()
-        MyBase.ReadEventRegisters()
-        If Me.StandardEventAvailable Then
-            Me.QueryStandardEventStatus()
-        End If
-        If Me.MeasurementAvailable Then
-            Me.QueryMeasurementEventStatus()
-        End If
-        If (Me.ServiceRequestStatus And ServiceRequests.OperationEvent) <> 0 Then
-            Me.QueryOperationEventStatus()
-        End If
-        If (Me.ServiceRequestStatus And ServiceRequests.QuestionableEvent) <> 0 Then
-            Me.QueryQuestionableEventStatus()
-        End If
+#Region " TALKER "
+
+    ''' <summary> Identifies the talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        Mybase.IdentifyTalkers()
+        My.MyLibrary.Identify(Me.Talker)
     End Sub
 
 #End Region
+
+End Class
+
+#Region " UNUSED "
+#If False Then
+MOVED TO THE BASE CLASS as ..._SCPI
+
+#Region " I PRESETTABLE "
+
+    ''' <summary> Sets the subsystem to its initial post reset state. </summary>
+    ''' <remarks> Additional Actions: <para>
+    '''           Clears Error Queue.
+    '''           </para></remarks>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Overrides Sub InitKnownState()
+        MyBase.InitKnownState()
+        Dim activity As String = "enabling wait completion"
+        Try
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{activity};. ")
+            Me.EnableWaitComplete()
+        Catch ex As Exception
+            ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+        End Try
+        Try
+            activity = "querying identity"
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{activity};. ")
+            Me.QueryIdentity()
+        Catch ex As Exception
+            ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+        End Try
+    End Sub
+
+#End Region
+
 
 #Region " MEASUREMENT REGISTER "
 
@@ -248,7 +229,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary> Gets the Measurement event enable query command. </summary>
     ''' <remarks> SCPI: ":STAT:OPER:ENAB?". </remarks>
     ''' <value> The Measurement event enable command format. </value>
-    Protected Overridable ReadOnly Property MeasurementEventEnableQueryCommand As String = VI.Scpi.Syntax.MeasurementEventEnableQueryCommand
+    Protected Overridable ReadOnly Property MeasurementEventEnableQueryCommand As String = VI.Pith.Scpi.Syntax.MeasurementEventEnableQueryCommand
 
     ''' <summary> Queries the Measurement register event enable bit mask. </summary>
     ''' <remarks> The returned value could be cast to the Measurement events type that is specific to the
@@ -266,9 +247,9 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the Measurement event enable command format. </summary>
     ''' <remarks> SCPI: ":STAT:OPER:ENAB {0:D}".
-    ''' <see cref="Scpi.Syntax.MeasurementEventEnableCommandFormat"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.MeasurementEventEnableCommandFormat"> </see> </remarks>
     ''' <value> The Measurement event enable command format. </value>
-    Protected Overridable ReadOnly Property MeasurementEventEnableCommandFormat As String = VI.Scpi.Syntax.MeasurementEventEnableCommandFormat
+    Protected Overridable ReadOnly Property MeasurementEventEnableCommandFormat As String = VI.Pith.Scpi.Syntax.MeasurementEventEnableCommandFormat
 
     ''' <summary> Programs the Measurement register event enable bit mask. </summary>
     ''' <remarks> When an event bit is set and the corresponding enable bit is set, the output
@@ -306,9 +287,9 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the measurement event condition query command. </summary>
     ''' <remarks> SCPI: ":STAT:MEAS:COND?".
-    ''' <see cref="Scpi.Syntax.MeasurementEventConditionQueryCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.MeasurementEventConditionQueryCommand"> </see> </remarks>
     ''' <value> The measurement event condition query command. </value>
-    Protected Overridable ReadOnly Property MeasurementEventConditionQueryCommand As String = VI.Scpi.Syntax.MeasurementEventConditionQueryCommand
+    Protected Overridable ReadOnly Property MeasurementEventConditionQueryCommand As String = VI.Pith.Scpi.Syntax.MeasurementEventConditionQueryCommand
 
     ''' <summary> Reads the condition of the measurement register event. </summary>
     ''' <returns> System.Nullable{System.Int32}. </returns>
@@ -340,9 +321,9 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the measurement status query command. </summary>
     ''' <remarks> SCPI: ":STAT:MEAS:EVEN?".
-    ''' <see cref="Scpi.Syntax.MeasurementEventQueryCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.MeasurementEventQueryCommand"> </see> </remarks>
     ''' <value> The measurement status query command. </value>
-    Protected Overridable ReadOnly Property MeasurementStatusQueryCommand As String = VI.Scpi.Syntax.MeasurementEventQueryCommand
+    Protected Overridable ReadOnly Property MeasurementStatusQueryCommand As String = VI.Pith.Scpi.Syntax.MeasurementEventQueryCommand
 
     ''' <summary> Reads the status of the measurement register events. </summary>
     ''' <returns> System.Nullable{System.Int32}. </returns>
@@ -405,7 +386,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary> Gets the operation event enable query command. </summary>
     ''' <remarks> SCPI: ":STAT:OPER:ENAB?". </remarks>
     ''' <value> The operation event enable command format. </value>
-    Protected Overridable ReadOnly Property OperationEventEnableQueryCommand As String = VI.Scpi.Syntax.OperationEventEnableQueryCommand
+    Protected Overridable ReadOnly Property OperationEventEnableQueryCommand As String = VI.Pith.Scpi.Syntax.OperationEventEnableQueryCommand
 
     ''' <summary> Queries the Operation register event enable bit mask. </summary>
     ''' <remarks> The returned value could be cast to the Operation events type that is specific to the
@@ -423,9 +404,9 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the operation event enable command format. </summary>
     ''' <remarks> SCPI: ":STAT:OPER:ENAB {0:D}".
-    ''' <see cref="Scpi.Syntax.OperationEventEnableCommandFormat"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.OperationEventEnableCommandFormat"> </see> </remarks>
     ''' <value> The operation event enable command format. </value>
-    Protected Overridable ReadOnly Property OperationEventEnableCommandFormat As String = VI.Scpi.Syntax.OperationEventEnableCommandFormat
+    Protected Overridable ReadOnly Property OperationEventEnableCommandFormat As String = VI.Pith.Scpi.Syntax.OperationEventEnableCommandFormat
 
     ''' <summary> Programs the Operation register event enable bit mask. </summary>
     ''' <remarks> When an event bit is set and the corresponding enable bit is set, the output
@@ -578,7 +559,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary> Gets the operation event enable query command. </summary>
     ''' <remarks> SCPI: ":STAT:OPER:ENAB?". </remarks>
     ''' <value> The operation event enable command format. </value>
-    Protected Overridable ReadOnly Property OperationEventConditionQueryCommand As String = VI.Scpi.Syntax.OperationEventEnableQueryCommand
+    Protected Overridable ReadOnly Property OperationEventConditionQueryCommand As String = VI.Pith.Scpi.Syntax.OperationEventEnableQueryCommand
 
 
     ''' <summary> Queries the Operation event register condition from the instrument. </summary>
@@ -619,9 +600,9 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the operation event status query command. </summary>
     ''' <remarks> SCPI: ":STAT:OPER:EVEN?".
-    ''' <see cref="Scpi.Syntax.OperationEventQueryCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.OperationEventQueryCommand"> </see> </remarks>
     ''' <value> The operation event status query command. </value>
-    Protected Overridable ReadOnly Property OperationEventStatusQueryCommand As String = VI.Scpi.Syntax.OperationEventQueryCommand
+    Protected Overridable ReadOnly Property OperationEventStatusQueryCommand As String = VI.Pith.Scpi.Syntax.OperationEventQueryCommand
 
     ''' <summary> Queries the status of the Operation Register events. </summary>
     ''' <remarks> This query commands Queries the contents of the status event register. This value
@@ -671,9 +652,9 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the operation event Map query command. </summary>
     ''' <remarks> SCPI: ":STAT:OPER:MAP? {0:D}".
-    ''' <see cref="Scpi.Syntax.OperationEventQueryCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.OperationEventQueryCommand"> </see> </remarks>
     ''' <value> The operation event Map query command. </value>
-    Protected Overridable ReadOnly Property OperationEventMapQueryCommand As String = VI.Scpi.Syntax.OperationEventMapQueryCommandFormat
+    Protected Overridable ReadOnly Property OperationEventMapQueryCommand As String = VI.Pith.Scpi.Syntax.OperationEventMapQueryCommandFormat
 
     ''' <summary> Queries the Map of the Operation Register events. </summary>
     ''' <remarks> This query commands Queries the contents of the Map event register. This value
@@ -690,9 +671,9 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the operation event Map command format. </summary>
     ''' <remarks> SCPI: ":STAT:OPER:MAP {0:D},{1:D},{2:D}".
-    ''' <see cref="Scpi.Syntax.OperationEventMapCommandFormat"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.OperationEventMapCommandFormat"> </see> </remarks>
     ''' <value> The operation event Map command format. </value>
-    Protected Overridable ReadOnly Property OperationEventMapCommandFormat As String = VI.Scpi.Syntax.OperationEventMapCommandFormat
+    Protected Overridable ReadOnly Property OperationEventMapCommandFormat As String = VI.Pith.Scpi.Syntax.OperationEventMapCommandFormat
 
     ''' <summary> Programs the Operation register event Map bit mask. </summary>
     ''' <remarks> When an event bit is set and the corresponding Map bit is set, the output
@@ -825,9 +806,9 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the questionable status query command. </summary>
     ''' <remarks> SCPI: ":STAT:QUES:EVEN?"
-    ''' <see cref="Scpi.Syntax.QuestionableEventQueryCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.QuestionableEventQueryCommand"> </see> </remarks>
     ''' <value> The questionable status query command. </value>
-    Protected Overridable ReadOnly Property QuestionableStatusQueryCommand As String = VI.Scpi.Syntax.QuestionableEventQueryCommand
+    Protected Overridable ReadOnly Property QuestionableStatusQueryCommand As String = VI.Pith.Scpi.Syntax.QuestionableEventQueryCommand
 
     ''' <summary> Reads the status of the Questionable register events. </summary>
     ''' <returns> System.Nullable{System.Int32}. </returns>
@@ -874,9 +855,9 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the Questionable event Map query command. </summary>
     ''' <remarks> SCPI: ":STAT:QUES:MAP? {0:D}".
-    ''' <see cref="Scpi.Syntax.QuestionableEventQueryCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.QuestionableEventQueryCommand"> </see> </remarks>
     ''' <value> The Questionable event Map query command. </value>
-    Protected Overridable ReadOnly Property QuestionableEventMapQueryCommand As String = VI.Scpi.Syntax.QuestionableEventMapQueryCommandFormat
+    Protected Overridable ReadOnly Property QuestionableEventMapQueryCommand As String = VI.Pith.Scpi.Syntax.QuestionableEventMapQueryCommandFormat
 
     ''' <summary> Queries the Map of the Questionable Register events. </summary>
     ''' <remarks> This query commands Queries the contents of the Map event register. This value
@@ -893,9 +874,9 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the Questionable event Map command format. </summary>
     ''' <remarks> SCPI: ":STAT:QUES:MAP {0:D},{1:D},{2:D}".
-    ''' <see cref="Scpi.Syntax.QuestionableEventMapCommandFormat"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.QuestionableEventMapCommandFormat"> </see> </remarks>
     ''' <value> The Questionable event Map command format. </value>
-    Protected Overridable ReadOnly Property QuestionableEventMapCommandFormat As String = VI.Scpi.Syntax.QuestionableEventMapCommandFormat
+    Protected Overridable ReadOnly Property QuestionableEventMapCommandFormat As String = VI.Pith.Scpi.Syntax.QuestionableEventMapCommandFormat
 
     ''' <summary> Programs the Questionable register event Map bit mask. </summary>
     ''' <remarks> When an event bit is set and the corresponding Map bit is set, the output
@@ -914,34 +895,7 @@ Public MustInherit Class StatusSubsystemBase
 
 #End Region
 
-#Region " IDENTITY "
 
-    ''' <summary> Gets the identity query command. </summary>
-    ''' <value> The identity query command. </value>
-    Protected Overrides ReadOnly Property IdentityQueryCommand As String = Ieee488.Syntax.IdentityQueryCommand
-
-    ''' <summary> Parse version information. </summary>
-    ''' <param name="value"> The value. </param>
-    Protected Overrides Sub ParseVersionInfo(ByVal value As String)
-        MyBase.ParseVersionInfo(value)
-        Me._VersionInfo = New VersionInfo
-        Me.VersionInfo.Parse(value)
-    End Sub
-
-    ''' <summary> Gets or sets the information describing the version. </summary>
-    ''' <value> Information describing the version. </value>
-    Public Overloads ReadOnly Property VersionInfo As VersionInfo
+#End If
 
 #End Region
-
-#Region " TALKER "
-
-    ''' <summary> Identifies the talkers. </summary>
-    Protected Overrides Sub IdentifyTalkers()
-        Mybase.IdentifyTalkers()
-        My.MyLibrary.Identify(Me.Talker)
-    End Sub
-
-#End Region
-
-End Class

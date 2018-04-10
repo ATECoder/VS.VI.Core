@@ -708,7 +708,7 @@ Public Class Meter
     ''' loops until trigger or external *TRG command. </summary>
     ''' <param name="isStarting"> When true, displays the title and locks the local key. </param>
     Private Sub _PrepareForTrigger(ByVal isStarting As Boolean)
-        Me.MasterDevice.Session.MessageAvailableBits = VI.ServiceRequests.MessageAvailable
+        Me.MasterDevice.Session.MessageAvailableBits = VI.Pith.ServiceRequests.MessageAvailable
         Me.MasterDevice.Session.EnableWaitComplete()
         Me.MasterDevice.Session.WriteLine("prepareForTrigger({0},'{1}') waitcomplete() ", IIf(isStarting, "true", "false"), "OPC")
     End Sub
@@ -769,9 +769,9 @@ Public Class Meter
     Public Sub CheckContacts(ByVal threshold As Integer)
         Me.MasterDevice.ContactSubsystem.CheckContacts(threshold)
         If Not Me.MasterDevice.ContactSubsystem.ContactCheckOkay.HasValue Then
-            Throw New OperationFailedException("Failed Measuring contacts;. ")
+            Throw New VI.Pith.OperationFailedException("Failed Measuring contacts;. ")
         ElseIf Not Me.MasterDevice.ContactSubsystem.ContactCheckOkay.Value Then
-            Throw New OperationFailedException("High contact resistances;. Values: '{0}'", Me.MasterDevice.ContactSubsystem.ContactResistances)
+            Throw New VI.Pith.OperationFailedException("High contact resistances;. Values: '{0}'", Me.MasterDevice.ContactSubsystem.ContactResistances)
         End If
     End Sub
 
@@ -1186,14 +1186,14 @@ Public Class Meter
     ''' <summary> Applies the settings. </summary>
     Protected Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
-        Me.OnSettingsPropertyChanged(settings, NameOf(My.MySettings.TraceLogLevel))
-        Me.OnSettingsPropertyChanged(settings, NameOf(My.MySettings.TraceShowLevel))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.TraceLogLevel))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.TraceShowLevel))
     End Sub
 
     ''' <summary> Handle the Platform property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSettingsPropertyChanged(ByVal sender As My.MySettings, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal sender As My.MySettings, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(My.MySettings.TraceLogLevel)
@@ -1210,12 +1210,16 @@ Public Class Meter
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Settings_PropertyChanged(sender As Object, e As ComponentModel.PropertyChangedEventArgs)
-        Dim settings As My.MySettings = TryCast(sender, My.MySettings)
-        If settings Is Nothing OrElse e Is Nothing Then Return
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(My.MySettings)}.{e.PropertyName} change"
         Try
-            Me.OnSettingsPropertyChanged(settings, e.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, My.MySettings), e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling Settings.{e.PropertyName} property;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 

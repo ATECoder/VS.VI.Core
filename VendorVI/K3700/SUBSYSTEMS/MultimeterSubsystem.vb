@@ -17,9 +17,9 @@ Public Class MultimeterSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="ChannelSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 #End Region
@@ -49,16 +49,20 @@ Public Class MultimeterSubsystem
         Me.OpenDetectorEnabled = False
         Me.OpenDetectorKnownStates(MultimeterFunctionMode.ResistanceFourWire) = True
         Me.FilterWindow = 0.001
-        For Each fm As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
-            Select Case fm
+        For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+            Select Case fmode
                 Case MultimeterFunctionMode.CurrentAC, MultimeterFunctionMode.CurrentAC
-                    Me.FunctionModeRanges(fm).SetRange(0, 3.1)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 3.1)
                 Case MultimeterFunctionMode.VoltageAC, MultimeterFunctionMode.VoltageDC
-                    Me.FunctionModeRanges(fm).SetRange(0, 303)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 303)
                 Case MultimeterFunctionMode.ResistanceCommonWire, MultimeterFunctionMode.ResistanceTwoWire, MultimeterFunctionMode.ResistanceFourWire
-                    Me.FunctionModeRanges(fm).SetRange(0, 120000000.0)
+                    Me.FunctionModeRanges(fmode).SetRange(0, 120000000.0)
             End Select
         Next
+        Me.FunctionModeDecimalPlaces(MultimeterFunctionMode.ResistanceCommonWire) = 0
+        Me.FunctionModeDecimalPlaces(MultimeterFunctionMode.ResistanceFourWire) = 0
+        Me.FunctionModeDecimalPlaces(MultimeterFunctionMode.ResistanceTwoWire) = 0
+
         Me.FunctionMode = MultimeterFunctionMode.VoltageDC
         Me.Range = 303 'defaults volts range
     End Sub
@@ -213,22 +217,6 @@ Public Class MultimeterSubsystem
 #End Region
 
 #Region " FUNCTION MODE "
-
-    ''' <summary> Converts a function Mode to a decimal places. </summary>
-    ''' <param name="functionMode"> The function mode. </param>
-    ''' <returns> FunctionMode as an Integer. </returns>
-    Public Overrides Function ToDecimalPlaces(functionMode As MultimeterFunctionMode) As Integer
-        Dim result As Integer = MyBase.ToDecimalPlaces(functionMode)
-        Select Case functionMode
-            Case MultimeterFunctionMode.CurrentAC, MultimeterFunctionMode.CurrentDC
-                result = 3
-            Case MultimeterFunctionMode.VoltageAC, MultimeterFunctionMode.VoltageDC
-                result = 3
-            Case MultimeterFunctionMode.ResistanceCommonWire, MultimeterFunctionMode.ResistanceFourWire, MultimeterFunctionMode.ResistanceTwoWire
-                result = 0
-        End Select
-        Return result
-    End Function
 
     ''' <summary> Queries the Multimeter Function Mode. </summary>
     ''' <returns> The <see cref="MultimeterFunctionMode">Multimeter Function Mode</see> or none if unknown. </returns>

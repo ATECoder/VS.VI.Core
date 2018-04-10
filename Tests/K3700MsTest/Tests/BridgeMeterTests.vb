@@ -94,7 +94,7 @@ Public Class BridgeMeterTests
         control.ResourceTitle = TestInfo.ResourceTitle
         control.ResourceName = TestInfo.ResourceName
 
-        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        Dim e As New isr.Core.Pith.ActionEventArgs
         control.TryOpenSession(e)
         actualBoolean = e.Cancel
         expectedBoolean = False
@@ -119,7 +119,7 @@ Public Class BridgeMeterTests
         control.ResourceTitle = TestInfo.ResourceTitle
         control.ResourceName = TestInfo.ResourceName
 
-        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        Dim e As New isr.Core.Pith.ActionEventArgs
         control.TryCloseSession(e)
         actualBoolean = e.Cancel
         expectedBoolean = False
@@ -150,7 +150,7 @@ Public Class BridgeMeterTests
     Public Sub BridgeMeterConfigureTest()
         Using control As isr.VI.Tsp.K3700.BridgeMeterControl = New isr.VI.Tsp.K3700.BridgeMeterControl
             BridgeMeterTests.OpenSession(1, control)
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            Dim e As New isr.Core.Pith.ActionEventArgs
             control.TryConfigureMeter(e)
             Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
             BridgeMeterTests.CloseSession(1, control)
@@ -165,7 +165,7 @@ Public Class BridgeMeterTests
     ''' <param name="device"> The device. </param>
     Private Shared Sub OpenSession(ByVal device As Device)
         device.Session.ResourceTitle = TestInfo.ResourceTitle
-        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        Dim e As New isr.Core.Pith.ActionEventArgs
         Dim actualBoolean As Boolean = device.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
         Assert.IsTrue(actualBoolean, $"Failed to open session: {e.Details}")
     End Sub
@@ -185,7 +185,7 @@ Public Class BridgeMeterTests
     ''' <summary> Bridge meter measure resistor. </summary>
     ''' <param name="control"> The control. </param>
     Private Shared Sub BridgeMeterMeasureResistor(control As isr.VI.Tsp.K3700.BridgeMeterControl)
-        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        Dim e As New isr.Core.Pith.ActionEventArgs
         control.TryConfigureMeter(e)
         Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
         Dim resistor As Resistor = control.Bridge(0)
@@ -206,7 +206,7 @@ Public Class BridgeMeterTests
     ''' <summary> Bridge meter measure. </summary>
     ''' <param name="control"> The control. </param>
     Private Shared Sub BridgeMeterMeasure(control As isr.VI.Tsp.K3700.BridgeMeterControl)
-        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        Dim e As New isr.Core.Pith.ActionEventArgs
         control.TryConfigureMeter(e)
         Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
         control.TryMeasureBridge(e)

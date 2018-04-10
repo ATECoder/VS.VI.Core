@@ -58,10 +58,10 @@ Public Class ResourceChooserDialog
     ''' <value> The name of the selected resource. </value>
     Public Property SelectedResourceName() As String
         Get
-            Return Me._ResourceNameSelectorConnector.SelectedResourceName
+            Return Me._ResourceNameSelectorConnector.SessionFactory.SelectedResourceName
         End Get
         Set(ByVal Value As String)
-            Me._ResourceNameSelectorConnector.SelectedResourceName = Value
+            Me._ResourceNameSelectorConnector.SessionFactory.TrySelectResource(Value, New isr.Core.Pith.ActionEventArgs)
         End Set
     End Property
 
@@ -127,8 +127,8 @@ Public Class ResourceChooserDialog
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     Private Sub Form_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown
-        Me._ResourceNameSelectorConnector.ResourcesFilter = Me.ResourcesFilter
-        Me._ResourceNameSelectorConnector.DisplayResourceNames()
+        Me._ResourceNameSelectorConnector.SessionFactory.ResourcesFilter = Me.ResourcesFilter
+        Me._ResourceNameSelectorConnector.SessionFactory.EnumerateResources()
     End Sub
 
     ''' <summary> Event handler. Called by _nameSelector for double click events. </summary>
@@ -148,18 +148,18 @@ Public Class ResourceChooserDialog
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     Private Sub _ResourceNameSelectorConnector_FindNames(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceNameSelectorConnector.FindNames
-        Me._ResourceNameSelectorConnector.ResourcesFilter = Me.ResourcesFilter
-        Me._ResourceNameSelectorConnector.DisplayResourceNames()
+        Me._ResourceNameSelectorConnector.SessionFactory.ResourcesFilter = Me.ResourcesFilter
+        Me._ResourceNameSelectorConnector.SessionFactory.EnumerateResources()
     End Sub
 
     ''' <summary> Executes the property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnPropertyChanged(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal sender As ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(ResourceSelectorConnector.SelectedResourceName)
-                Me._AcceptButton.Enabled = sender.SelectedResourceName.Length > 0
+            Case NameOf(VI.SessionFactory.SelectedResourceName)
+                Me._AcceptButton.Enabled = sender.SessionFactory.SelectedResourceName.Length > 0
         End Select
     End Sub
 
@@ -169,14 +169,16 @@ Public Class ResourceChooserDialog
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ResourceNameSelectorConnector_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _ResourceNameSelectorConnector.PropertyChanged
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(ResourceSelectorConnector)}.{e.PropertyName} change"
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._ResourceNameSelectorConnector_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, ResourceSelectorConnector), e?.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, ResourceSelectorConnector), e.PropertyName)
             End If
         Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
+            My.MyLibrary.LogUnpublishedException(activity, ex)
         End Try
     End Sub
 

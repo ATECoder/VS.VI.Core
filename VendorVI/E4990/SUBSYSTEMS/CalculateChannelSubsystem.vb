@@ -9,14 +9,14 @@
 ''' </para> </license>
 ''' <history date="7/6/2016" by="David" revision="4.0.6031"> Created. </history>
 Public Class CalculateChannelSubsystem
-    Inherits VI.Scpi.CalculateChannelSubsystemBase
+    Inherits VI.CalculateChannelSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary>
     ''' Initializes a new instance of the <see cref="SourceChannelSubsystem" /> class.
     ''' </summary>
-    ''' <param name="channelNumber">   A reference to a <see cref="VI.StatusSubsystemBase">message
+    ''' <param name="channelNumber">   A reference to a <see cref="StatusSubsystemBase">message
     '''                                based session</see>. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>
     Public Sub New(ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)

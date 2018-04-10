@@ -144,6 +144,38 @@ Public MustInherit Class ReadingAmounts
         Me.Readings.Reset()
     End Sub
 
+    ''' <summary> Attempts to parse from the given data. </summary>
+    ''' <remarks>
+    ''' Parsing takes two steps. First all values are assigned. Then the status is used to evaluate
+    ''' the measured amounts.
+    ''' </remarks>
+    ''' <param name="readings"> The readings. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Function TryParse(ByVal readings As String) As Boolean
+        Dim affirmative As Boolean = True
+        If Me.TryApplyReadings(readings) Then
+            Dim statusValue As Long = 0
+            affirmative = Me.TryEvaluate(statusValue)
+        Else
+            affirmative = False
+        End If
+        Return affirmative
+    End Function
+
+    ''' <summary> Attempts to parse from the given data. </summary>
+    ''' <param name="values">  A queue of reading values. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Function TryParse(ByVal values As Queue(Of String)) As Boolean
+        Dim affirmative As Boolean = True
+        If Me.TryApplyReadings(values) Then
+            Dim statusValue As Long = 0
+            affirmative = Me.TryEvaluate(statusValue)
+        Else
+            affirmative = False
+        End If
+        Return affirmative
+    End Function
+
 #End Region
 
 #Region " UNITS "
@@ -259,20 +291,20 @@ Public MustInherit Class ReadingAmounts
 
     ''' <summary> Gets the reading elements. </summary>
     ''' <value> The elements. </value>
-    Public ReadOnly Property Elements() As isr.VI.ReadingTypes
+    Public ReadOnly Property Elements() As VI.ReadingTypes
 
     ''' <summary> Initializes this object. </summary>
     ''' <remarks> Adds reading elements in the order they are returned by the instrument so as to
     ''' automate parsing of these data. </remarks>
     ''' <param name="value"> The value. </param>
-    Public Overridable Sub Initialize(ByVal value As isr.VI.ReadingTypes)
+    Public Overridable Sub Initialize(ByVal value As VI.ReadingTypes)
         Me._Elements = value
         Me._Readings = New ReadingEntityCollection
     End Sub
 
     ''' <summary> Gets or sets the reading type of the active reading entity. </summary>
     ''' <value> The active element. </value>
-    Public Property ActiveReadingType As isr.VI.ReadingTypes
+    Public Property ActiveReadingType As VI.ReadingTypes
 
     ''' <summary> Returns the meta status of the active reading. </summary>
     ''' <returns> The MetaStatus. </returns>

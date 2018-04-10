@@ -15,7 +15,7 @@ Public Class MeasureVoltageSubsystemBase
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp.StatusSubsystemBase">status subsystem</see>. </param>
-    Public Sub New(ByVal statusSubsystem As VI.Tsp.StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 
@@ -144,8 +144,8 @@ Public Class MeasureVoltageSubsystemBase
         End Get
         Protected Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.Reading) Then
-                Me._Reading = value
+            If Not String.Equals(value, Me.Reading, StringComparison.OrdinalIgnoreCase) OrElse
+                Me._Reading = value Then
                 Me.SafePostPropertyChanged()
             End If
         End Set

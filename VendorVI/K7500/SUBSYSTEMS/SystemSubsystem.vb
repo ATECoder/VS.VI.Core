@@ -10,12 +10,12 @@ Imports System.ComponentModel
 ''' </para> </license>
 ''' <history date="9/22/2013" by="David" revision="3.0.5013"> Created. </history>
 Public Class SystemSubsystem
-    Inherits VI.Scpi.SystemSubsystemBase
+    Inherits VI.SystemSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SystemSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -63,9 +63,9 @@ Public Class SystemSubsystem
     ''' <value> The preset command. </value>
     Protected Overrides ReadOnly Property PresetCommand As String = ""
 
-    ''' <summary> Gets the scpi revision query command. </summary>
-    ''' <value> The scpi revision query command. </value>
-    Protected Overrides ReadOnly Property ScpiRevisionQueryCommand As String = Scpi.Syntax.ScpiRevisionQueryCommand
+    ''' <summary> Gets the language revision query command. </summary>
+    ''' <value> The language revision query command. </value>
+    Protected Overrides ReadOnly Property LanguageRevisionQueryCommand As String = VI.Pith.Scpi.Syntax.LanguageRevisionQueryCommand
 
 #End Region
 

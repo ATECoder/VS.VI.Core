@@ -50,13 +50,13 @@ Public Class DeviceTests
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> . </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Friend Function SelectResourceName(ByVal interfaceType As HardwareInterfaceType) As String
+    Friend Function SelectResourceName(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As String
         Select Case interfaceType
-            Case HardwareInterfaceType.Gpib
+            Case VI.Pith.HardwareInterfaceType.Gpib
                 Return "GPIB0::24::INSTR"
-            Case HardwareInterfaceType.Tcpip
+            Case VI.Pith.HardwareInterfaceType.Tcpip
                 Return "TCPIP0::A-N5767A-K4381"
-            Case HardwareInterfaceType.Usb
+            Case VI.Pith.HardwareInterfaceType.Usb
                 Return "USB0::0x0957::0x0807::N5767A-US11K4381H::0::INSTR"
             Case Else
                 Return "GPIB0::24::INSTR"
@@ -68,9 +68,9 @@ Public Class DeviceTests
     Public Sub OpenSessionTest()
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
-        Dim usingInterfaceType As HardwareInterfaceType = HardwareInterfaceType.Gpib
+        Dim usingInterfaceType As VI.Pith.HardwareInterfaceType = VI.Pith.HardwareInterfaceType.Gpib
         Using target As SourceMeasure.Device = New SourceMeasure.Device()
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            Dim e As New isr.Core.Pith.ActionEventArgs
             actualBoolean = target.TryOpenSession(SelectResourceName(usingInterfaceType), "Source Measure", e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             target.Session.Clear()
@@ -86,8 +86,8 @@ Public Class DeviceTests
         Dim actualBoolean As Boolean
         Dim actualString As String = ""
         Using target As SourceMeasure.Device = New SourceMeasure.Device()
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Source Measure", e)
+            Dim e As New isr.Core.Pith.ActionEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(VI.Pith.HardwareInterfaceType.Gpib), "Source Measure", e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             ' do a device clear and reset.
             target.ResetClearInit()
@@ -112,8 +112,10 @@ Public Class DeviceTests
                             "Output {0:'ON';'ON';'OFF'};", CInt(expectedBoolean))
 
             expectedString = "no error"
-            actualString = target.StatusSubsystem.QueryLastError.ErrorMessage
-            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
+            target.StatusSubsystem.TrySafeQueryDeviceErrors(e)
+            Assert.IsFalse(e.Cancel, "Device error query failed")
+            actualString = target.StatusSubsystem.LastDeviceError.ErrorMessage
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture, "Device error mismatch")
         End Using
 
     End Sub
@@ -131,8 +133,8 @@ Public Class DeviceTests
         Dim actualString As String = ""
         Dim expectedDouble As Double = 0
         Using target As SourceMeasure.Device = New SourceMeasure.Device()
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
-            actualBoolean = target.TryOpenSession(SelectResourceName(HardwareInterfaceType.Gpib), "Source Measure", e)
+            Dim e As New isr.Core.Pith.ActionEventArgs
+            actualBoolean = target.TryOpenSession(SelectResourceName(VI.Pith.HardwareInterfaceType.Gpib), "Source Measure", e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Open Session; {e.Details}")
             ' do a device clear
             target.Session.Clear()
@@ -174,8 +176,10 @@ Public Class DeviceTests
                             "Output {0:'ON';'ON';'OFF'};", CInt(expectedBoolean))
 
             expectedString = "no error"
-            actualString = target.StatusSubsystem.QueryLastError.ErrorMessage
-            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture)
+            target.StatusSubsystem.TrySafeQueryDeviceErrors(e)
+            Assert.IsFalse(e.Cancel, "Device error query failed")
+            actualString = target.StatusSubsystem.LastDeviceError.ErrorMessage
+            Assert.AreEqual(expectedString, actualString, True, Globalization.CultureInfo.CurrentCulture, "Device error mismatch")
         End Using
     End Sub
 

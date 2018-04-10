@@ -14,12 +14,28 @@ Public Class StatusSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal visaSession As VI.SessionBase)
+    Public Sub New(ByVal visaSession As VI.Pith.SessionBase)
         MyBase.New(visaSession)
         Me._VersionInfo = New VersionInfo
     End Sub
+
+    ''' <summary> Creates a new StatusSubsystem. </summary>
+    ''' <returns> A StatusSubsystem. </returns>
+    Public Shared Function Create() As StatusSubsystem
+        Dim subsystem As StatusSubsystem = Nothing
+        Try
+            subsystem = New StatusSubsystem(isr.VI.SessionFactory.Get.Factory.CreateSession())
+        Catch
+            If subsystem IsNot Nothing Then
+                subsystem.Dispose()
+                subsystem = Nothing
+            End If
+            Throw
+        End Try
+        Return subsystem
+    End Function
 
 #End Region
 
@@ -33,26 +49,6 @@ Public Class StatusSubsystem
             Next
         End If
     End Sub
-
-#End Region
-
-#Region " SYNTAX "
-
-#Region " LINE FREQUENCY "
-
-    ''' <summary> Gets the DMM installed sentinel. </summary>
-    ''' <value> The DMM installed sentinel. </value>
-    Public Property DmmInstalled As Boolean
-
-    ''' <summary> Gets line frequency query command. </summary>
-    ''' <value> The line frequency query command. </value>
-    Protected Overrides ReadOnly Property LineFrequencyQueryCommand As String
-        Get
-            Return If(Me.DmmInstalled, "CAL:LFR?", "")
-        End Get
-    End Property
-
-#End Region
 
 #End Region
 
@@ -71,33 +67,53 @@ Public Class StatusSubsystem
 
 #End Region
 
-#Region " DEVICE ERRORS "
-
-    ''' <summary> Reads the device errors. </summary>
-    ''' <returns> The device errors. </returns>
-    Public Overrides Function QueryDeviceErrors() As String
-        ' the 7510 does not support reading the entire error queue.
-        Return Me.QueryErrorQueue
-    End Function
-
-#End Region
-
-
 #Region " COMMAND SYNTAX "
+
+#Region " DEVICE ERRORS "
 
     ''' <summary> Gets the clear error queue command. </summary>
     ''' <value> The clear error queue command. </value>
     Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = "*CLS"
 
+    ''' <summary> Gets or sets the 'Next Error' query command. </summary>
+    ''' <value> The error queue query command. </value>
+    Protected Overrides ReadOnly Property DequeueErrorQueryCommand As String = VI.Pith.Scpi.Syntax.LastSystemErrorQueryCommand
+
+    ''' <summary> Gets the last error query command. </summary>
+    ''' <value> The last error query command. </value>
+    Protected Overrides ReadOnly Property DeviceErrorQueryCommand As String = ""  ' VI.Pith.Scpi.Syntax.LastSystemErrorQueryCommand
+
+    ''' <summary> Gets the error queue query command. </summary>
+    ''' <value> The error queue query command. </value>
+    Protected Overrides ReadOnly Property NextDeviceErrorQueryCommand As String = "" ' = VI.Pith.Scpi.Syntax.ErrorQueueQueryCommand
+
+#End Region
+
+#Region " LINE FREQUENCY "
+
+    ''' <summary> Gets the DMM installed sentinel. </summary>
+    ''' <value> The DMM installed sentinel. </value>
+    Public Property DmmInstalled As Boolean
+
+    ''' <summary> Gets line frequency query command. </summary>
+    ''' <value> The line frequency query command. </value>
+    Protected Overrides ReadOnly Property LineFrequencyQueryCommand As String
+        Get
+            Return If(Me.DmmInstalled, "CAL:LFR?", "")
+        End Get
+    End Property
+
+#End Region
+
 #Region " MEASUREMENT REGISTER EVENTS "
 
     ''' <summary> Gets the measurement status query command. </summary>
     ''' <value> The measurement status query command. </value>
-    Protected Overrides ReadOnly Property MeasurementStatusQueryCommand As String = "" ' VI.Scpi.Syntax.MeasurementEventQueryCommand
+    Protected Overrides ReadOnly Property MeasurementStatusQueryCommand As String = "" ' VI.Pith.Scpi.Syntax.MeasurementEventQueryCommand
 
     ''' <summary> Gets the measurement event condition query command. </summary>
     ''' <value> The measurement event condition query command. </value>
-    Protected Overrides ReadOnly Property MeasurementEventConditionQueryCommand As String = "" '  VI.Scpi.Syntax.MeasurementEventConditionQueryCommand
+    Protected Overrides ReadOnly Property MeasurementEventConditionQueryCommand As String = "" '  VI.Pith.Scpi.Syntax.MeasurementEventConditionQueryCommand
 
 #End Region
 

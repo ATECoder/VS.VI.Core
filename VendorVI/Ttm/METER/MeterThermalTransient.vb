@@ -18,7 +18,7 @@ Public Class MeterThermalTransient
 
     ''' <summary> Default constructor. </summary>
     ''' <param name="thermalTransient"> The thermal transient element. </param>
-    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase, ByVal thermalTransient As ThermalTransient)
+    Public Sub New(ByVal statusSubsystem As StatusSubsystemBase, ByVal thermalTransient As ThermalTransient)
         MyBase.New(statusSubsystem)
         Me.MeterEntity = ThermalTransientMeterEntity.Transient
         Me.ThermalTransient = thermalTransient
@@ -172,7 +172,7 @@ Public Class MeterThermalTransient
 
     ''' <summary> Queries the Median Filter Size. </summary>
     ''' <returns> The Median Filter Size or none if unknown. </returns>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     Public Function QueryMedianFilterSize() As Integer?
         Const printFormat As Integer = 1
         Me.MedianFilterSize = Me.Session.QueryPrint(Me.MedianFilterSize.GetValueOrDefault(5), printFormat, "{0}.medianFilterSize", Me.EntityName)

@@ -1,4 +1,5 @@
-﻿Imports System.Timers
+﻿Imports System.ComponentModel
+Imports System.Timers
 Imports isr.Core.Pith.EventHandlerExtensions
 ''' <summary> Base class for SessionBase. </summary>
 ''' <license>
@@ -12,17 +13,16 @@ Imports isr.Core.Pith.EventHandlerExtensions
 ''' </license>
 Public MustInherit Class SessionBase
     Inherits isr.Core.Pith.PropertyNotifyBase
-    Implements IDisposable
 
 #Region " CONSTRUCTORS "
 
     ''' <summary> Specialized constructor for use only by derived class. </summary>
     Protected Sub New()
         MyBase.New()
-        Me._ResourceInfo = New ResourceParseResult
+        Me._ResourceNameParseInfo = New ResourceNameParseInfo
         Me._Enabled = True
-        Me._ResourceName = ""
-        Me._ResourceTitle = ""
+        Me._ResourceNameInfo = New ResourceNameInfo
+        Me._ResourceNameInfo.ResumePublishing()
         Me._LastMessageReceived = ""
         Me._LastMessageSent = ""
         Me._UseDefaultTermination()
@@ -55,6 +55,8 @@ Public MustInherit Class SessionBase
                     End If
                     Me.RemoveEventHandler(Me.ServiceRequestedEvent)
                     Me.Timeouts?.Clear() : Me._Timeouts = Nothing
+                    If Me.ResourceNameInfo IsNot Nothing Then Me._ResourceNameInfo.Dispose() :
+                    Me._ResourceNameInfo = Nothing
                 Else
                     ' put finalize code here
                 End If
@@ -88,44 +90,41 @@ Public MustInherit Class SessionBase
     ''' <value> The is session open. </value>
     Public MustOverride ReadOnly Property IsSessionOpen As Boolean
 
+    Private _IsDeviceOpen As Boolean
     ''' <summary>
     ''' Gets or sets the Device Open sentinel. When open, the device is capable of addressing real
     ''' hardware if the session is open. See also <see cref="IsSessionOpen"/>.
     ''' </summary>
     ''' <value> The is device open. </value>
-    Public ReadOnly Property IsDeviceOpen As Boolean
+    Public Property IsDeviceOpen As Boolean
+        Get
+            Return Me._IsDeviceOpen
+        End Get
+        Protected Set(value As Boolean)
+            If value <> Me.IsDeviceOpen Then
+                Me._IsDeviceOpen = value
+                Me.SafeSendPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> Gets the sentinel indicating weather this is a dummy session. </summary>
     ''' <value> The dummy sentinel. </value>
     Public MustOverride ReadOnly Property IsDummy As Boolean
 
-
-    ''' <summary> Executes the opening session action. </summary>
-    ''' <param name="resourceName">  The name of the resource. </param>
-    ''' <param name="resourceTitle"> The short title of the device. </param>
-    Private Sub OnOpeningSession(ByVal resourceName As String, ByVal resourceTitle As String)
-        Me._ResourceName = resourceName
-        Me._ResourceTitle = resourceTitle
-        Me.ResourceInfo.Parse(resourceName)
-        Me._LastAction = $"Opening {resourceName};. "
-        Me._Timeouts.Clear()
-    End Sub
-
     ''' <summary> Executes the session open action. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
-    Private Sub OnSessionOpen()
-        If Me.ResourceInfo.InterfaceType = HardwareInterfaceType.Tcpip AndAlso Me.KeepAliveInterval > TimeSpan.Zero Then
+    Private Sub OnSessionOpen(ByVal resourceName As String, ByVal resourceTitle As String)
+        If Me.ResourceNameParseInfo.InterfaceType = HardwareInterfaceType.Tcpip AndAlso Me.KeepAliveInterval > TimeSpan.Zero Then
             Me._KeepAliveTimer = New Timers.Timer With {
                 .Interval = Me.KeepAliveInterval.TotalMilliseconds,
                 .Enabled = True
             }
         End If
-        Me._IsDeviceOpen = True
-        Me.SafePostPropertyChanged(NameOf(SessionBase.IsDeviceOpen))
+        Me.IsDeviceOpen = True
         Me.SafePostPropertyChanged(NameOf(SessionBase.IsSessionOpen))
-        Me.SafePostPropertyChanged(NameOf(SessionBase.ResourceName))
-        Me.SafePostPropertyChanged(NameOf(SessionBase.ResourceTitle))
-        Me._Timeouts.Push(Me.Timeout)
+        Me.ResourceNameInfo.HandleSessionOpen(resourceName, resourceTitle)
+        Me.Timeouts.Push(Me.Timeout)
     End Sub
 
     ''' <summary> Creates a session. </summary>
@@ -134,20 +133,22 @@ Public MustInherit Class SessionBase
     ''' <param name="timeout">      The timeout. </param>
     Protected MustOverride Sub CreateSession(ByVal resourceName As String, ByVal timeout As TimeSpan)
 
-    ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
+    ''' <summary> Opens a <see cref="VI.Pith.SessionBase">Session</see>. </summary>
     ''' <remarks> Call this first. </remarks>
     Public Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal timeout As TimeSpan, ByVal syncContext As Threading.SynchronizationContext)
         Try
             Me.CaptureSyncContext(syncContext)
-            Me.OnOpeningSession(resourceName, resourceTitle)
+            Me.ResourceNameParseInfo.Parse(resourceName)
+            Me.LastAction = $"Opening {resourceName}"
+            Me.Timeouts.Clear()
             Me.CreateSession(resourceName, timeout)
-            Me.OnSessionOpen()
+            Me.OnSessionOpen(resourceName, resourceTitle)
         Catch ex As Exception
             Throw
         End Try
     End Sub
 
-    ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
+    ''' <summary> Opens a <see cref="VI.Pith.SessionBase">Session</see>. </summary>
     ''' <remarks> Call this first. </remarks>
     ''' <param name="resourceName">  The name of the resource. </param>
     ''' <param name="resourceTitle"> The short title of the device. </param>
@@ -155,13 +156,13 @@ Public MustInherit Class SessionBase
         Me.OpenSession(resourceName, resourceTitle, Me.DefaultOpenTimeout, syncContext)
     End Sub
 
-    ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
+    ''' <summary> Opens a <see cref="VI.Pith.SessionBase">Session</see>. </summary>
     ''' <param name="resourceName"> The name of the resource. </param>
     Public Sub OpenSession(ByVal resourceName As String, ByVal syncContext As Threading.SynchronizationContext)
         Me.OpenSession(resourceName, resourceName, Me.DefaultOpenTimeout, syncContext)
     End Sub
 
-    ''' <summary> Opens a <see cref="SessionBase">Session</see>. </summary>
+    ''' <summary> Opens a <see cref="VI.Pith.SessionBase">Session</see>. </summary>
     ''' <param name="timeout"> The timeout. </param>
     Public Sub OpenSession(ByVal resourceName As String, ByVal timeout As TimeSpan, ByVal syncContext As Threading.SynchronizationContext)
         Me.OpenSession(resourceName, resourceName, timeout, syncContext)
@@ -170,7 +171,7 @@ Public MustInherit Class SessionBase
     ''' <summary> Discards the session events. </summary>
     Protected MustOverride Sub DiscardSessionEvents()
 
-    ''' <summary> Closes the <see cref="SessionBase">Session</see>. </summary>
+    ''' <summary> Closes the <see cref="VI.Pith.SessionBase">Session</see>. </summary>
     Public Sub CloseSession()
         If Me._KeepAliveTimer IsNot Nothing Then
             Me._KeepAliveTimer.Enabled = False
@@ -180,64 +181,46 @@ Public MustInherit Class SessionBase
         Me._Timeouts = New Collections.Generic.Stack(Of TimeSpan)
         If Me.IsDeviceOpen Then
             Me.DiscardSessionEvents()
-            Me._IsDeviceOpen = False
+            Me.IsDeviceOpen = False
+            Me.ResourceNameInfo.IsDeviceOpen = False
             ' must use sync notification to prevent race condition if disposing the session.
-            Me.SafeSendPropertyChanged(NameOf(SessionBase.IsDeviceOpen))
             Me.SafeSendPropertyChanged(NameOf(SessionBase.IsSessionOpen))
         End If
     End Sub
 
-    ''' <summary> Searches for a listeners for the specified <see cref="ResourceName">reasource name</see>. </summary>
-    ''' <remarks> David, 11/27/2015. Updates <see cref="ResourceFound">ResourceExists</see></remarks>
-    ''' <returns> <c>true</c> if it the resource exists; otherwise <c>false</c> </returns>
-    Public MustOverride Function FindResource() As Boolean
-
-    Private _ResourceFound As Boolean
-    ''' <summary> Gets the sentinel indicating if the session resource exists. </summary>
-    ''' <value> The sentinel indicating if the session resource exists. </value>
-    ''' <remarks> Use <see cref="FindResource"/> to update. </remarks>
-    Public Property ResourceFound As Boolean
+    Private _LastAction As String
+    ''' <summary> Gets the last action. </summary>
+    ''' <value> The last action. </value>
+    Public Property LastAction As String
         Get
-            Return Me._ResourceFound
+            Return Me._LastAction
         End Get
-        Protected Set(value As Boolean)
-            If Me.ResourceFound <> value Then
-                Me._ResourceFound = value
-                Me.SafePostPropertyChanged()
+        Set(ByVal value As String)
+            If Not String.Equals(Me.LastAction, value) Then
+                Me._LastAction = value
+                Me.SafeSendPropertyChanged()
             End If
         End Set
     End Property
 
-    ''' <summary> Gets the last action. </summary>
-    ''' <value> The last action. </value>
-    Public Property LastAction As String
-
+    Private _LastNodeNumber As Integer?
     ''' <summary> Gets or sets the last node. </summary>
     ''' <value> The last node. </value>
     Public Property LastNodeNumber As Integer?
-
-    ''' <summary> Gets the name of the resource. </summary>
-    ''' <value> The name of the resource. </value>
-    Public ReadOnly Property ResourceName As String
-
-    Private _ResourceTitle As String
-    ''' <summary> Gets or sets a short title for the device. </summary>
-    ''' <value> The short title of the device. </value>
-    Public Property ResourceTitle As String
         Get
-            Return Me._ResourceTitle
+            Return Me._LastNodeNumber
         End Get
-        Set(value As String)
-            If Not String.Equals(Me.ResourceTitle, value) Then
-                Me._ResourceTitle = value
-                Me.SafePostPropertyChanged()
+        Set(value As Integer?)
+            If Not Nullable.Equals(Me.LastNodeNumber, value) Then
+                Me._LastNodeNumber = value
+                Me.SafeSendPropertyChanged()
             End If
         End Set
     End Property
 
     ''' <summary> Gets or sets the last native error. </summary>
     ''' <value> The last native error. </value>
-    Protected MustOverride ReadOnly Property LastNativeError As NativeErrorBase
+    Protected MustOverride ReadOnly Property LastNativeError As VI.Pith.NativeErrorBase
 
     ''' <summary>
     ''' Gets or sets the sentinel indicating if call backs are performed in a specific
@@ -248,42 +231,104 @@ Public MustInherit Class SessionBase
     ''' </value>
     Public Overridable Property SynchronizeCallbacks As Boolean
 
-    ''' <summary> Gets or sets information describing the resource. </summary>
+#Region " RESOURCE NAME INFO "
+
+    ''' <summary> Gets or sets information describing the parsed resource name. </summary>
     ''' <value> Information describing the resource. </value>
-    Public ReadOnly Property ResourceInfo As ResourceParseResult
+    Public ReadOnly Property ResourceNameParseInfo As ResourceNameParseInfo
+
+#Region " RESOURCE NAME INFO EVENT "
+#If False Then
+    ''' <summary> Handles the property change. </summary>
+    ''' <param name="sender">       Source of the event. </param>
+    ''' <param name="propertyName"> Name of the property. </param>
+    Private Overloads Sub HandlePropertyChange(ByVal sender As VI.Pith.ResourceNameInfo, ByVal propertyName As String)
+        If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
+            Select Case propertyName
+                Case NameOf(VI.Pith.SessionBase.IsDeviceOpen)
+                Case NameOf(VI.Pith.SessionBase.ResourceTitle)
+                Case NameOf(VI.Pith.SessionBase.ResourceName)
+                Case Else
+                    Me.SafeSendPropertyChanged($"{NameOf(SessionBase.ResourceNameInfo)}.{propertyName}")
+            End Select
+        End If
+    End Sub
+
+    ''' <summary> Resource name information property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property changed event information. </param>
+    Private Sub _ResourceNameInfo_PropertyChanged(sender As Object, e As PropertyChangedEventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.Pith.ResourceNameInfo)}.{e.PropertyName} change"
+        Try
+            Me.HandlePropertyChange(TryCast(sender, VI.Pith.ResourceNameInfo), e.PropertyName)
+        Catch ex As Exception
+            My.MyLibrary.LogUnpublishedException(activity, ex)
+        End Try
+
+    End Sub
+#End If
+#End Region
+
+    ''' <summary> Gets the name of the resource. </summary>
+    ''' <value> The name of the resource. </value>
+    Public ReadOnly Property ResourceName As String
+        Get
+            Return Me.ResourceNameInfo.ResourceName
+        End Get
+    End Property
+
+    ''' <summary> Gets the resource name caption. </summary>
+    ''' <value> The resource name caption. </value>
+    Public ReadOnly Property ResourceNameCaption As String
+        Get
+            Return Me.ResourceNameInfo.ResourceNameCaption
+        End Get
+    End Property
+
+    Private _ResourceNameInfo As VI.Pith.ResourceNameInfo
+
+    ''' <summary> Gets information describing the resource name. </summary>
+    ''' <value> Information describing the resource name. </value>
+    Public ReadOnly Property ResourceNameInfo As VI.Pith.ResourceNameInfo
+        Get
+            Return Me._ResourceNameInfo
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Checks if the resource name exists. Use for checking if the instrument is turned on.
+    ''' </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public MustOverride Function FindResource() As Boolean
+
+    ''' <summary>
+    ''' Checks if the resource name exists. Use for checking if the instrument is turned on.
+    ''' </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="manager"> The manager. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Function FindResource(ByVal manager As VI.Pith.ResourcesManagerBase) As Boolean
+        If manager Is Nothing Then Throw New ArgumentNullException(NameOf(manager))
+        Return Me.ResourceNameInfo.Find(manager)
+    End Function
+
+#End Region
 
 #Region " MESSAGE EVENTS "
 
-    Private _SyncNotifyLastMessageReceivedEnabled As Boolean
+    Private _MessageNotificationLevel As isr.Core.Pith.NotifySyncLevel
 
-    ''' <summary> Gets or sets the synchronous last message received enabled sentinel. </summary>
-    ''' <remarks> Enable synchronous reporting of last received when messages are needed to be parsed
-    ''' to determine the instrument state such as with TSP. This ensures that the parser works on the
-    ''' relevant message that was received from the instrument. </remarks>
-    ''' <value> The synchronous last message received enabled. </value>
-    Public Property SyncNotifyLastMessageReceivedEnabled As Boolean
+    ''' <summary> Gets or sets the message notification level. </summary>
+    ''' <value> The message notification level. </value>
+    Public Property MessageNotificationLevel As isr.Core.Pith.NotifySyncLevel
         Get
-            Return Me._SyncNotifyLastMessageReceivedEnabled
+            Return Me._MessageNotificationLevel
         End Get
-        Set(value As Boolean)
-            If value <> Me.SyncNotifyLastMessageReceivedEnabled Then
-                Me._SyncNotifyLastMessageReceivedEnabled = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    Private _SessionMessagesTraceEnabled As Boolean
-
-    ''' <summary> Gets or sets the session messages trace enabled. </summary>
-    ''' <value> The session messages trace enabled. </value>
-    Public Property SessionMessagesTraceEnabled As Boolean
-        Get
-            Return Me._SessionMessagesTraceEnabled
-        End Get
-        Set(value As Boolean)
-            If Not value.Equals(Me.SessionMessagesTraceEnabled) Then
-                Me._SessionMessagesTraceEnabled = value
+        Set(value As isr.Core.Pith.NotifySyncLevel)
+            If value <> Me.MessageNotificationLevel Then
+                Me._MessageNotificationLevel = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -300,12 +345,10 @@ Public MustInherit Class SessionBase
         End Get
         Protected Set(ByVal value As String)
             Me._LastMessageReceived = value
-            If Me.SessionMessagesTraceEnabled Then
-                If Me.SyncNotifyLastMessageReceivedEnabled Then
-                    Me.SafeSendPropertyChanged()
-                Else
-                    Me.SafePostPropertyChanged()
-                End If
+            If Me.MessageNotificationLevel = Core.Pith.NotifySyncLevel.Async Then
+                Me.SafePostPropertyChanged()
+            ElseIf Me.MessageNotificationLevel = Core.Pith.NotifySyncLevel.Sync Then
+                Me.SafeSendPropertyChanged()
             End If
         End Set
     End Property
@@ -320,8 +363,10 @@ Public MustInherit Class SessionBase
         End Get
         Protected Set(ByVal value As String)
             Me._LastMessageSent = value
-            If Me.SessionMessagesTraceEnabled Then
+            If Me.MessageNotificationLevel = Core.Pith.NotifySyncLevel.Async Then
                 Me.SafePostPropertyChanged()
+            ElseIf Me.MessageNotificationLevel = Core.Pith.NotifySyncLevel.Sync Then
+                Me.SafeSendPropertyChanged()
             End If
         End Set
     End Property
@@ -357,7 +402,7 @@ Public MustInherit Class SessionBase
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Function IsAlive() As Boolean
         Dim affirmative As Boolean = True
-        If Me.IsSessionOpen AndAlso Me.ResourceInfo.UsingLanController Then
+        If Me.IsSessionOpen AndAlso Me.ResourceNameParseInfo.UsingLanController Then
             Try
                 If Not String.IsNullOrWhiteSpace(Me.IsAliveCommand) Then
                     Me.Write(Me.IsAliveCommand)
@@ -434,7 +479,7 @@ Public MustInherit Class SessionBase
 
     ''' <summary> Reads status byte. </summary>
     ''' <returns> The status byte. </returns>
-    Public MustOverride Function ReadStatusByte() As ServiceRequests
+    Public MustOverride Function ReadStatusByte() As VI.Pith.ServiceRequests
 
     ''' <summary> Gets or sets the size of the input buffer. </summary>
     ''' <value> The size of the input buffer. </value>
@@ -533,18 +578,18 @@ Public MustInherit Class SessionBase
 
     ''' <summary> Gets or sets the emulated status byte. </summary>
     ''' <value> The emulated status byte. </value>
-    Public Property EmulatedStatusByte As ServiceRequests
+    Public Property EmulatedStatusByte As VI.Pith.ServiceRequests
 
     ''' <summary> Makes emulated status byte. </summary>
     ''' <param name="value"> The emulated value. </param>
-    Public Sub MakeEmulatedReply(ByVal value As ServiceRequests)
+    Public Sub MakeEmulatedReply(ByVal value As VI.Pith.ServiceRequests)
         Me.EmulatedStatusByte = value
     End Sub
 
     ''' <summary> Makes emulated status byte if none. </summary>
     ''' <param name="value"> The emulated value. </param>
-    Public Sub MakeEmulatedReplyIfEmpty(ByVal value As ServiceRequests)
-        If Me.EmulatedStatusByte = ServiceRequests.None Then
+    Public Sub MakeEmulatedReplyIfEmpty(ByVal value As VI.Pith.ServiceRequests)
+        If Me.EmulatedStatusByte = VI.Pith.ServiceRequests.None Then
             Me.MakeEmulatedReply(value)
         End If
     End Sub
@@ -552,20 +597,20 @@ Public MustInherit Class SessionBase
     ''' <summary> Queries if a service request is enabled. </summary>
     ''' <param name="bitmask"> The bit mask. </param>
     ''' <returns> <c>true</c> if a service request is enabled; otherwise <c>false</c> </returns>
-    Public Function IsServiceRequestEnabled(ByVal bitmask As ServiceRequests) As Boolean
+    Public Function IsServiceRequestEnabled(ByVal bitmask As VI.Pith.ServiceRequests) As Boolean
         Return Me.ServiceRequestEventEnabled AndAlso (Me.ServiceRequestEnableBitmask And bitmask) <> 0
     End Function
 
     ''' <summary> Gets or sets the service request enable bitmask. </summary>
     ''' <value> The service request enable bitmask. </value>
-    Public ReadOnly Property ServiceRequestEnableBitmask As ServiceRequests
+    Public ReadOnly Property ServiceRequestEnableBitmask As VI.Pith.ServiceRequests
 
     ''' <summary>
     ''' Applies the service request bitmask. Disables service request if bitmask is 0.
     ''' </summary>
     ''' <param name="commandFormat"> The service request enable command format. </param>
     ''' <param name="bitmask">       The bitmask. </param>
-    Public Sub ApplyServiceRequestEnableBitmask(ByVal commandFormat As String, ByVal bitmask As ServiceRequests)
+    Public Sub ApplyServiceRequestEnableBitmask(ByVal commandFormat As String, ByVal bitmask As VI.Pith.ServiceRequests)
         Me._ServiceRequestEnableBitmask = bitmask
         Me.WriteLine(commandFormat, CInt(bitmask))
         Me.SafePostPropertyChanged(NameOf(ServiceRequestEnableBitmask))
@@ -589,7 +634,7 @@ Public MustInherit Class SessionBase
 
     ''' <summary> Emulate service request. </summary>
     ''' <param name="statusByte"> The status byte. </param>
-    Public Sub EmulateServiceRequest(ByVal statusByte As ServiceRequests)
+    Public Sub EmulateServiceRequest(ByVal statusByte As VI.Pith.ServiceRequests)
         Me.EmulatedStatusByte = statusByte
         If Me.ServiceRequestEventEnabled Then Me.OnServiceRequested()
     End Sub
@@ -624,13 +669,13 @@ Public MustInherit Class SessionBase
     ''' <summary> Determines if we can requires keep alive. </summary>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function RequiresKeepAlive() As Boolean
-        Return Me.ResourceInfo.InterfaceType = VI.HardwareInterfaceType.Tcpip
+        Return Me.ResourceNameParseInfo.InterfaceType = HardwareInterfaceType.Tcpip
     End Function
 
     ''' <summary> Supports clear interface. </summary>
     ''' <returns> <c>True</c> if supports clearing the interface. </returns>
     Public Function SupportsClearInterface() As Boolean
-        Return Me.ResourceInfo.InterfaceType = VI.HardwareInterfaceType.Gpib
+        Return Me.ResourceNameParseInfo.InterfaceType = HardwareInterfaceType.Gpib
     End Function
 
     ''' <summary> Clears the interface. </summary>
@@ -816,7 +861,7 @@ Public MustInherit Class SessionBase
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
     ''' read. </summary>
     ''' <param name="dataToWrite"> The data to write. </param>
-    ''' <returns> The  <see cref="SessionBase.LastMessageReceived">last received data</see>. </returns>
+    ''' <returns> The  <see cref="VI.Pith.SessionBase.LastMessageReceived">last received data</see>. </returns>
     Public Overloads Function Query(ByVal dataToWrite As String) As String
         If Not String.IsNullOrWhiteSpace(dataToWrite) Then
             Me.WriteLine(dataToWrite)
@@ -829,7 +874,7 @@ Public MustInherit Class SessionBase
     ''' read. </summary>
     ''' <param name="format"> The format of the data to write. </param>
     ''' <param name="args">   The format arguments. </param>
-    ''' <returns> The  <see cref="SessionBase.LastMessageReceived">last received data</see>. </returns>
+    ''' <returns> The  <see cref="VI.Pith.SessionBase.LastMessageReceived">last received data</see>. </returns>
     Public Overloads Function Query(ByVal format As String, ByVal ParamArray args() As Object) As String
         If Not String.IsNullOrWhiteSpace(format) Then
             Me.WriteLine(format, args)
@@ -841,7 +886,7 @@ Public MustInherit Class SessionBase
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
     ''' read. </summary>
     ''' <param name="dataToWrite"> The data to write. </param>
-    ''' <returns> The <see cref="SessionBase.LastMessageReceived">last received data</see> without the
+    ''' <returns> The <see cref="VI.Pith.SessionBase.LastMessageReceived">last received data</see> without the
     ''' <see cref="Termination">termination characters</see>. </returns>
     Public Overloads Function QueryTrimTermination(ByVal dataToWrite As String) As String
         Return Me.Query(dataToWrite).TrimEnd(Me.Termination.ToArray)
@@ -850,7 +895,7 @@ Public MustInherit Class SessionBase
     ''' <summary> Performs a synchronous write of ASCII-encoded string data, followed by a synchronous
     ''' read. </summary>
     ''' <param name="dataToWrite"> The data to write. </param>
-    ''' <returns> The <see cref="SessionBase.LastMessageReceived">last received data</see> without the
+    ''' <returns> The <see cref="VI.Pith.SessionBase.LastMessageReceived">last received data</see> without the
     ''' <see cref="Termination">termination characters</see>. </returns>
     Public Overloads Function QueryTrimEnd(ByVal dataToWrite As String) As String
         Return Me.Query(dataToWrite).TrimEnd(Me.Termination.ToArray)
@@ -860,7 +905,7 @@ Public MustInherit Class SessionBase
     '''           Expects terminated query command. </summary>
     ''' <param name="format"> The format of the data to write. </param>
     ''' <param name="args">   The format arguments. </param>
-    ''' <returns> The <see cref="SessionBase.LastMessageReceived">last received data</see> without the
+    ''' <returns> The <see cref="VI.Pith.SessionBase.LastMessageReceived">last received data</see> without the
     ''' <see cref="Termination">termination characters</see>. </returns>
     Public Overloads Function QueryTrimEnd(ByVal format As String, ByVal ParamArray args() As Object) As String
         Return Me.Query(format, args).TrimEnd(Me.Termination.ToArray)
@@ -870,7 +915,7 @@ Public MustInherit Class SessionBase
     ''' read. </summary>
     ''' <param name="format"> The format of the data to write. </param>
     ''' <param name="args">   The format arguments. </param>
-    ''' <returns> The <see cref="SessionBase.LastMessageReceived">last received data</see> without the
+    ''' <returns> The <see cref="VI.Pith.SessionBase.LastMessageReceived">last received data</see> without the
     ''' <see cref="Termination">termination characters</see>. </returns>
     Public Overloads Function QueryTrimTermination(ByVal format As String, ByVal ParamArray args() As Object) As String
         Return Me.Query(format, args).TrimEnd(Me.Termination.ToArray)
@@ -1101,3 +1146,77 @@ Public MustInherit Class SessionBase
 
 End Class
 
+#Region " UNUSED "
+#If False Then
+    Private _SyncNotifyLastMessageReceivedEnabled As Boolean
+
+    ''' <summary> Gets or sets the synchronous last message received enabled sentinel. </summary>
+    ''' <remarks> Enable synchronous reporting of last received when messages are needed to be parsed
+    ''' to determine the instrument state such as with TSP. This ensures that the parser works on the
+    ''' relevant message that was received from the instrument. </remarks>
+    ''' <value> The synchronous last message received enabled. </value>
+    Public Property SyncNotifyLastMessageReceivedEnabled As Boolean
+        Get
+            Return Me._SyncNotifyLastMessageReceivedEnabled
+        End Get
+        Set(value As Boolean)
+            If value <> Me.SyncNotifyLastMessageReceivedEnabled Then
+                Me._SyncNotifyLastMessageReceivedEnabled = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+    Private _SessionMessagesTraceEnabled As Boolean
+
+    ''' <summary> Gets or sets the session messages trace enabled. </summary>
+    ''' <value> The session messages trace enabled. </value>
+    Public Property SessionMessagesTraceEnabled As Boolean
+        Get
+            Return Me._SessionMessagesTraceEnabled
+        End Get
+        Set(value As Boolean)
+            If Not value.Equals(Me.SessionMessagesTraceEnabled) Then
+                Me._SessionMessagesTraceEnabled = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+    Private _DefaultResourceTitle As String
+    ''' <summary> Gets or sets the default resource title. </summary>
+    Public Property DefaultResourceTitle As String
+        Get
+            Return Me._DefaultResourceTitle
+        End Get
+        Set(value As String)
+            If value Is Nothing Then value = ""
+            If Not String.Equals(value, Me.DefaultResourceTitle) Then
+                Me._DefaultResourceTitle = value
+                Me.SafeSendPropertyChanged()
+                Me.SafeSendPropertyChanged(NameOf(SessionBase.ResourceTitle))
+            End If
+        End Set
+    End Property
+
+    Private _ResourceTitle As String
+    ''' <summary> Gets or sets a short title for the device. </summary>
+    ''' <value> The short title of the device. </value>
+    Public Property ResourceTitle As String
+        Get
+            If Me.IsDeviceOpen Then
+                Return Me._ResourceTitle
+            Else
+                Return Me.DefaultResourceTitle
+            End If
+        End Get
+        Set(value As String)
+            If value Is Nothing Then value = ""
+            If Not String.Equals(Me.ResourceTitle, value) Then
+                Me._ResourceTitle = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+
+#End If
+#End Region

@@ -19,13 +19,12 @@ Public Class InstrumentInterfaceForm
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private _InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
-        Me._InitializingComponents = True
+        Me.InitializingComponents = True
         Me.InitializeComponent()
-        Me._InitializingComponents = False
+        Me.InitializingComponents = False
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
         Me.AddPrivateListeners()
     End Sub
@@ -41,17 +40,17 @@ Public Class InstrumentInterfaceForm
         Try
             If Not Me.IsDisposed AndAlso disposing Then
 
-				' removes the private text box listener
-				Me.RemovePrivateListener(Me._TraceMessagesBox)
+                ' removes the private text box listener
+                Me.RemovePrivateListener(Me._TraceMessagesBox)
 
-				' removes the private listeners of the interface panel hosted in this form.
-				Me._InterfacePanel?.RemovePrivateListeners()
-				
+                ' removes the private listeners of the interface panel hosted in this form.
+                Me._InterfacePanel?.RemovePrivateListeners()
+
                 ' Free managed resources when explicitly called
                 If Me.Session IsNot Nothing Then
                     Me.CloseInstrumentSession()
                 End If
-                If Me._instrumentChooser IsNot Nothing Then Me._instrumentChooser.Dispose() : Me._instrumentChooser = Nothing
+                If Me._InstrumentChooser IsNot Nothing Then Me._InstrumentChooser.Dispose() : Me._InstrumentChooser = Nothing
 
                 ' unable to use null conditional because it is not seen by code analysis
                 If Me.components IsNot Nothing Then Me.components.Dispose() : Me.components = Nothing
@@ -70,10 +69,10 @@ Public Class InstrumentInterfaceForm
 #Region " MODULE DATA MEMBERS "
 
     ''' <summary> Gets reference to the
-    ''' <see cref="VI.SessionBase">message based session</see>.
+    ''' <see cref="VI.Pith.SessionBase">message based session</see>.
     ''' Was Ivi.VI.Interop.IGpib. </summary>
     ''' <value> The session. </value>
-    Private Property Session As VI.SessionBase
+    Private Property Session As VI.Pith.SessionBase
 
     ''' <summary> Gets the last message that was received from the instrument. </summary>
     ''' <value> A Buffer for receive data. </value>
@@ -111,25 +110,24 @@ Public Class InstrumentInterfaceForm
         Try
 
             ' clear values
-            Me.receiveBuffer = String.Empty
-            Me.transmitBuffer = String.Empty
+            Me.ReceiveBuffer = String.Empty
+            Me.TransmitBuffer = String.Empty
 
-            lastAction = "Initializing driver"
+            LastAction = "Initializing driver"
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                $"{lastAction};. ".ToString(Globalization.CultureInfo.CurrentCulture))
-            Dim resourceName As String = ""
-            resourceName = Me._InterfacePanel.InstrumentChooser.SelectedResourceName
+            Dim resourceName As String = Me._InterfacePanel.InstrumentChooser.SessionFactory.SelectedResourceName
 
-            lastAction = $"Opening a VISA Session to {resourceName}"
+            LastAction = $"Opening a VISA Session to {resourceName}"
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.Session = isr.VI.SessionFactory.Get.Factory.CreateSession()
             Me.Session.OpenSession(resourceName, Threading.SynchronizationContext.Current)
 
             If Me.IsOpen Then
-                lastAction = "Clearing the device"
+                LastAction = "Clearing the device"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.Clear()
-                lastAction = $"Connected to {Me.Session.ResourceName}"
+                LastAction = $"Connected to {Me.Session.ResourceName}"
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Else
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
@@ -164,14 +162,14 @@ Public Class InstrumentInterfaceForm
 
         Dim wasOpen As Boolean
         wasOpen = Me.IsOpen
-        stopPollTimer()
+        StopPollTimer()
 
         Dim lastAction As String = "N/A"
         Try
 
             If Me.IsOpen Then
 
-                lastAction = "Disconnecting Instrument"
+                LastAction = "Disconnecting Instrument"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
 
                 If _SendDisconnectCommandsCheckBox.Checked Then
@@ -180,11 +178,11 @@ Public Class InstrumentInterfaceForm
                         For Each command As String In Me._DisconnectCommandsTextBox.Lines
                             command = command.Trim
                             If Not String.IsNullOrWhiteSpace(command) Then
-                                lastAction = $"Sending '{command}'"
+                                LastAction = $"Sending '{command}'"
                                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                                 Try
                                     Me.Session.WriteLine(command)
-                                Catch ex As NativeException
+                                Catch ex As VI.Pith.NativeException
                                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                                        $"{lastAction} failed;. {ex.ToFullBlownString}")
                                 End Try
@@ -193,15 +191,15 @@ Public Class InstrumentInterfaceForm
                     End If
                 End If
 
-                lastAction = "Clearing the device"
+                LastAction = "Clearing the device"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.Clear()
 
-                lastAction = "Disabling service request events if any"
+                LastAction = "Disabling service request events if any"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.DisableServiceRequestEventHandler()
 
-                lastAction = "Ending the VISA session"
+                LastAction = "Ending the VISA session"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.Dispose()
                 Try
@@ -212,7 +210,7 @@ Public Class InstrumentInterfaceForm
                     Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                 End Try
 
-                lastAction = "Session closed"
+                LastAction = "Session closed"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
 
             End If
@@ -237,13 +235,13 @@ Public Class InstrumentInterfaceForm
     Private Sub OnConnectionChanged()
 
         If Not Me.IsOpen Then
-            Me.stopPollTimer()
+            Me.StopPollTimer()
         End If
 
         Me._SendButton.Enabled = Me.IsOpen
         Me._ReadStatusRegisterButton.Enabled = Me.IsOpen
         Me._SendComboCommandButton.Enabled = Me.IsOpen
-        Me._sendReceiveControlPanel.Enabled = Me.IsOpen
+        Me._SendReceiveControlPanel.Enabled = Me.IsOpen
 
         ' enable by reading SRQ
         Me._ReceiveButton.Enabled = False
@@ -322,8 +320,8 @@ Public Class InstrumentInterfaceForm
             If Not Me.DesignMode Then
 
                 ' allow connecting the resource.
-                Me._instrumentChooser = _InterfacePanel.InstrumentChooser
-                Me._instrumentChooser.AddListeners(Me.Talker)
+                Me._InstrumentChooser = _InterfacePanel.InstrumentChooser
+                Me._InstrumentChooser.AddListeners(Me.Talker)
                 Me._InterfacePanel.InstrumentChooser.Connectable = True
 
                 ' allow form rendering time to complete: process all messages currently in the queue.
@@ -358,28 +356,28 @@ Public Class InstrumentInterfaceForm
 
     Private WithEvents _PollTimer As Timer
 
-    Private WithEvents _InstrumentChooser As isr.VI.Instrument.ResourceSelectorConnector
+    Private WithEvents _InstrumentChooser As VI.Instrument.ResourceSelectorConnector
 
-    Private Sub _InstrumentChooser_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _instrumentChooser.Clear
+    Private Sub _InstrumentChooser_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InstrumentChooser.Clear
         Dim lastAction As String = "N/A"
         Try
-            lastAction = "Clearing the device"
+            LastAction = "Clearing the device"
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.Session.Clear()
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                $"{lastAction} failed;. {ex.ToFullBlownString}")
         End Try
     End Sub
 
-    Private Sub _InstrumentChooser_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _instrumentChooser.Connect
+    Private Sub _InstrumentChooser_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _InstrumentChooser.Connect
         ' exception handling is done in the resource connector.
         Me.OpenInstrumentSession()
         ' cancel if failed to open
         If Not Me.IsOpen Then e.Cancel = True
     End Sub
 
-    Private Sub _InstrumentChooser_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _instrumentChooser.Disconnect
+    Private Sub _InstrumentChooser_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _InstrumentChooser.Disconnect
         ' exception handling is done in the resource connector.
         Me.CloseInstrumentSession()
         ' cancel if failed to close.
@@ -389,14 +387,11 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Executes the property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnPropertyChanged(ByVal sender As InterfacePanel, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal sender As InterfacePanel, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(InterfacePanel.InterfaceResourceName)
-                If Not String.IsNullOrWhiteSpace(sender.InterfaceResourceName) AndAlso
-                    Not String.Equals(sender.InterfaceResourceName, VI.DeviceBase.ResourceNameClosed) Then
-                    Me._StatusLabel.Text = $"Resource {sender.InterfaceResourceName} selected"
-                End If
+                Me._StatusLabel.Text = $"Resource {sender.InterfaceResourceName} selected"
             Case NameOf(InterfacePanel.IsInterfaceOpen)
                 If sender.IsInterfaceOpen Then
                     Me._StatusLabel.Text = "Select Instrument Resource"
@@ -411,16 +406,20 @@ Public Class InstrumentInterfaceForm
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InterfacePanel_PropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs) Handles _InterfacePanel.PropertyChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Instrument.InterfacePanel)}.{e.PropertyName} change"
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._InterfacePanel_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, InterfacePanel), e?.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, Instrument.InterfacePanel), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling InterfacePanel.{e.PropertyName} change event;. {ex.ToFullBlownString}")
-
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -441,7 +440,7 @@ Public Class InstrumentInterfaceForm
                 Me._ServiceRequestBits = value
                 Me._StatusRegisterLabel.Text = $"0x{value And &HFF:X2}"
                 Dim mAV As Integer = CInt(Me._MessageAvailableBitsNumeric.Value)
-                Me.MessageAvailable = (value And MAV) <> 0
+                Me.MessageAvailable = (value And mAV) <> 0
             End If
         End Set
     End Property
@@ -469,11 +468,11 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Stops poll timer. </summary>
     Private Sub StopPollTimer()
 
-        If Me._pollTimer IsNot Nothing Then
-            Me._pollTimer.Enabled = False
-            RemoveHandler Me._pollTimer.Tick, AddressOf Me.onPollTimerTick
-            Me._pollTimer.Dispose()
-            Me._pollTimer = Nothing
+        If Me._PollTimer IsNot Nothing Then
+            Me._PollTimer.Enabled = False
+            RemoveHandler Me._PollTimer.Tick, AddressOf Me.PollTimerTick
+            Me._PollTimer.Dispose()
+            Me._PollTimer = Nothing
         End If
 
         ' wait for timer to terminate all is actions
@@ -507,7 +506,7 @@ Public Class InstrumentInterfaceForm
         Dim lastAction As String = "N/A"
         Try
 
-            lastAction = "Reading SRQ"
+            LastAction = "Reading SRQ"
             Me._StatusRegisterLabel.Text = ""
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.ServiceRequestBits = Me.Session.ReadServiceRequestStatus
@@ -522,7 +521,7 @@ Public Class InstrumentInterfaceForm
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     Private Sub ReadStatusRegisterButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _ReadStatusRegisterButton.Click
-        Me.readStatusRegister()
+        Me.ReadStatusRegister()
     End Sub
 
     ''' <summary> Builds a message for the message log appending a line. </summary>
@@ -538,30 +537,30 @@ Public Class InstrumentInterfaceForm
 
         Dim lastAction As String = "N/A"
         Try
-            lastAction = "Receiving data"
+            LastAction = "Receiving data"
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
 
-            receiveBuffer = Me.Session.ReadLine()
+            ReceiveBuffer = Me.Session.ReadLine()
 
-            If Not String.IsNullOrWhiteSpace(receiveBuffer) Then
-                receiveBuffer = receiveBuffer.InsertCommonEscapeSequences
+            If Not String.IsNullOrWhiteSpace(ReceiveBuffer) Then
+                ReceiveBuffer = ReceiveBuffer.InsertCommonEscapeSequences
             End If
 
-            If Not String.IsNullOrWhiteSpace(receiveBuffer) Then
+            If Not String.IsNullOrWhiteSpace(ReceiveBuffer) Then
                 With Me._OutputTextBox
                     .SelectionStart = .Text.Length
                     .SelectionLength = 0
-                    .SelectedText = InstrumentInterfaceForm.BuildTimeStampLine(receiveBuffer)
+                    .SelectedText = InstrumentInterfaceForm.BuildTimeStampLine(ReceiveBuffer)
                     .SelectionStart = .Text.Length
                 End With
                 Me._ReceiveButton.Enabled = False
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Received '{0}'.", receiveBuffer)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Received '{0}'.", ReceiveBuffer)
             End If
 
             ' update the status register information
-            lastAction = "Reading status register"
+            LastAction = "Reading status register"
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
-            Me.readStatusRegister()
+            Me.ReadStatusRegister()
 
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
@@ -573,7 +572,7 @@ Public Class InstrumentInterfaceForm
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     Private Sub ReceiveButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _ReceiveButton.Click
-        Me.receive()
+        Me.Receive()
     End Sub
 
     ''' <summary> Send this message. </summary>
@@ -585,11 +584,11 @@ Public Class InstrumentInterfaceForm
         Try
 
             If Not String.IsNullOrWhiteSpace(value) Then
-                transmitBuffer = value.ReplaceCommonEscapeSequences
-                If Not String.IsNullOrWhiteSpace(transmitBuffer) Then
-                    lastAction = $"Sending '{transmitBuffer}'"
+                TransmitBuffer = value.ReplaceCommonEscapeSequences
+                If Not String.IsNullOrWhiteSpace(TransmitBuffer) Then
+                    LastAction = $"Sending '{TransmitBuffer}'"
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction };. ")
-                    Me.Session.WriteLine(transmitBuffer)
+                    Me.Session.WriteLine(TransmitBuffer)
                 End If
             End If
         Catch ex As Exception
@@ -601,7 +600,7 @@ Public Class InstrumentInterfaceForm
     ''' <param name="eventSender"> The event sender. </param>
     ''' <param name="eventArgs">   Event information. </param>
     Private Sub SendButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _SendButton.Click
-        Me.send(_InputTextBox.Text.Trim)
+        Me.Send(_InputTextBox.Text.Trim)
     End Sub
 
     ''' <summary> Event handler. Called by sendComboCommandButton for click events. </summary>
@@ -613,11 +612,11 @@ Public Class InstrumentInterfaceForm
         Dim lastAction As String = "N/A"
         Try
 
-            transmitBuffer = Me._CommandsComboBox.Text.Trim
-            If Not String.IsNullOrWhiteSpace(transmitBuffer) Then
-                lastAction = $"Sending '{transmitBuffer}'"
+            TransmitBuffer = Me._CommandsComboBox.Text.Trim
+            If Not String.IsNullOrWhiteSpace(TransmitBuffer) Then
+                LastAction = $"Sending '{TransmitBuffer}'"
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction};. ")
-                Me.Session.WriteLine(transmitBuffer)
+                Me.Session.WriteLine(TransmitBuffer)
             End If
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. failed: {ex.ToFullBlownString}")
@@ -630,7 +629,7 @@ Public Class InstrumentInterfaceForm
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ReadManualRadioButton_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ReadManualRadioButton.CheckedChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         If Not Me._ReadManualRadioButton.Checked Then
             Exit Sub
         End If
@@ -638,9 +637,9 @@ Public Class InstrumentInterfaceForm
             Me._ReceiveButton.Enabled = False
             Me._ReadStatusRegisterButton.Enabled = True
             If Me.Session IsNot Nothing Then
-                RemoveHandler Me.Session.ServiceRequested, AddressOf Me.OnSessionServiceRequested
+                RemoveHandler Me.Session.ServiceRequested, AddressOf Me.SessionServiceRequested
             End If
-            stopPollTimer()
+            StopPollTimer()
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. failed: {ex.ToFullBlownString}")
         End Try
@@ -653,7 +652,7 @@ Public Class InstrumentInterfaceForm
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _PollRadioButton_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _PollRadioButton.CheckedChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         If Not Me._PollRadioButton.Checked Then
             Exit Sub
         End If
@@ -668,8 +667,8 @@ Public Class InstrumentInterfaceForm
                 .Enabled = False,
                 .Interval = CInt(Me._PollIntervalNumericUpDown.Value)
             }
-            AddHandler Me._pollTimer.Tick, AddressOf Me.onPollTimerTick
-            Me._pollTimer.Enabled = True
+            AddHandler Me._PollTimer.Tick, AddressOf Me.PollTimerTick
+            Me._PollTimer.Enabled = True
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
         End Try
@@ -679,41 +678,50 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Raises the system. event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information to send to registered event handlers. </param>
-    Private Sub OnPollTimerTick(ByVal sender As Object, ByVal e As System.EventArgs)
-        Static pollTimerLocker As New Object
-        SyncLock pollTimerLocker
-            Me.readStatusRegister()
-            If Me.MessageAvailable Then
-                Me.receive()
-            End If
-        End SyncLock
-
-    End Sub
-
-    ''' <summary> Raises the message based session event. </summary>
-    ''' <param name="sender"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub OnSessionServiceRequested(ByVal sender As SessionBase)
-        If sender IsNot Nothing Then
-            Try
-                Me.readStatusRegister()
-                If Me.MessageAvailable Then
-                    Me.receive()
-                End If
-            Catch ex As Exception
-                ex.Data.Add("@isr", "failed service request")
-                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"exception occurred;. {ex.ToFullBlownString}")
-            End Try
-        Else
-            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Sender is not a message-based session")
-        End If
+    Private Sub PollTimerTick(ByVal sender As Object, ByVal e As System.EventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Timer)} tick event"
+        Try
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.EventArgs)(AddressOf Me.PollTimerTick), New Object() {sender, e})
+            Else
+                Static pollTimerLocker As New Object
+                SyncLock pollTimerLocker
+                    Me.ReadStatusRegister()
+                    If Me.MessageAvailable Then
+                        Me.Receive()
+                    End If
+                End SyncLock
+            End If
+        Catch ex As Exception
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
+        End Try
     End Sub
 
     ''' <summary> Raises the message based session event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information to send to registered event handlers. </param>
-    Private Sub OnSessionServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
-        Me.OnSessionServiceRequested(TryCast(sender, SessionBase))
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SessionServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.Pith.SessionBase)} service request"
+        Try
+            Me.ReadStatusRegister()
+            If Me.MessageAvailable Then
+                Me.Receive()
+            End If
+        Catch ex As Exception
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
+        End Try
     End Sub
 
     Private _ServiceRequestEventHandlerEnabled As Boolean
@@ -722,7 +730,7 @@ Public Class InstrumentInterfaceForm
     Public Sub EnableServiceRequestEventHandler()
         If Me.IsOpen AndAlso Not Me._ServiceRequestEventHandlerEnabled Then
             Me._ServiceRequestEventHandlerEnabled = True
-            AddHandler Me.Session.ServiceRequested, AddressOf Me.OnSessionServiceRequested
+            AddHandler Me.Session.ServiceRequested, AddressOf Me.SessionServiceRequested
             Me.Session.EnableServiceRequest()
         End If
     End Sub
@@ -732,7 +740,7 @@ Public Class InstrumentInterfaceForm
         If Me.IsOpen AndAlso Me._ServiceRequestEventHandlerEnabled Then
             Me._ServiceRequestEventHandlerEnabled = False
             Me.Session.DisableServiceRequest()
-            RemoveHandler Me.Session.ServiceRequested, AddressOf Me.OnSessionServiceRequested
+            RemoveHandler Me.Session.ServiceRequested, AddressOf Me.SessionServiceRequested
         End If
     End Sub
 
@@ -742,21 +750,18 @@ Public Class InstrumentInterfaceForm
     ''' <param name="e">      Event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ServiceRequestReceiveOptionRadioButton_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ServiceRequestReceiveOptionRadioButton.CheckedChanged
-        If Me._InitializingComponents Then Return
-        If Not Me._ServiceRequestReceiveOptionRadioButton.Checked Then
-            Exit Sub
-        End If
+        If Me.InitializingComponents OrElse Not Me._ServiceRequestReceiveOptionRadioButton.Checked Then Return
         Try
-            If Me._pollTimer IsNot Nothing Then
-                Me._pollTimer.Enabled = False
-                RemoveHandler Me._pollTimer.Tick, AddressOf Me.onPollTimerTick
-                Me._pollTimer.Dispose()
-                Me._pollTimer = Nothing
+            If Me._PollTimer IsNot Nothing Then
+                Me._PollTimer.Enabled = False
+                RemoveHandler Me._PollTimer.Tick, AddressOf Me.PollTimerTick
+                Me._PollTimer.Dispose()
+                Me._PollTimer = Nothing
             End If
             If Me.Session IsNot Nothing Then
                 Me.EnableServiceRequestEventHandler()
                 If Not String.IsNullOrWhiteSpace(Me._SreCommandComboBox.Text) Then
-                    Me.send(Me._SreCommandComboBox.Text & "\n")
+                    Me.Send(Me._SreCommandComboBox.Text & "\n")
                 End If
                 Me._ReceiveButton.Enabled = False
                 Me._ReadStatusRegisterButton.Enabled = False
@@ -836,30 +841,33 @@ Public Class InstrumentInterfaceForm
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
+    Private Overloads Sub HandlePropertyChange(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        If String.Equals(propertyName, NameOf(TraceMessagesBox.StatusPrompt)) Then
+        If String.Equals(propertyName, NameOf(isr.Core.Pith.TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
             Me._StatusLabel.ToolTipText = sender.StatusPrompt
         End If
-
     End Sub
 
-    ''' <summary> Trace messages box property changed. </summary>
+    ''' <summary> Handles Trace messages box property changed event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
+        If sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Core.Pith.TraceMessagesBox)}.{e.PropertyName} change"
         Try
-            ' there was a cross thread exception because this event is invoked from the control thread.
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._TraceMessagesBox_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, Core.Pith.TraceMessagesBox), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 

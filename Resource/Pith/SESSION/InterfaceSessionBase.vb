@@ -81,7 +81,7 @@ Public MustInherit Class InterfaceSessionBase
 
     ''' <summary> Gets the type of the hardware interface. </summary>
     ''' <value> The type of the hardware interface. </value>
-    Public MustOverride ReadOnly Property HardwareInterfaceType As HardwareInterfaceType
+    Public MustOverride ReadOnly Property HardwareInterfaceType As VI.Pith.HardwareInterfaceType
 
     ''' <summary> Gets the hardware interface number. </summary>
     ''' <value> The hardware interface number. </value>

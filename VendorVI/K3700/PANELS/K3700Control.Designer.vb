@@ -74,7 +74,7 @@ Partial Class K3700Control
         Me._TraceMessagesBox = New isr.Core.Pith.TraceMessagesBox()
         Me._LastErrorTextBox = New System.Windows.Forms.TextBox()
         Me._ReadingStatusStrip = New System.Windows.Forms.StatusStrip()
-        Me._ComplianceToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me._FailureToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._ReadingToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._StatusRegisterLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._StandardRegisterLabel = New System.Windows.Forms.ToolStripStatusLabel()
@@ -337,9 +337,7 @@ Partial Class K3700Control
         '_ResourceSelectorConnector
         '
         Me._ResourceSelectorConnector.BackColor = System.Drawing.Color.Transparent
-        Me._ResourceSelectorConnector.ClearToolTipText = "Clear device state"
         Me._ResourceSelectorConnector.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._ResourceSelectorConnector.EnteredResourceName = ""
         Me._ResourceSelectorConnector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ResourceSelectorConnector.Location = New System.Drawing.Point(0, 265)
         Me._ResourceSelectorConnector.Margin = New System.Windows.Forms.Padding(0)
@@ -565,7 +563,6 @@ Partial Class K3700Control
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._SenseFunctionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me._SenseFunctionComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._SenseFunctionComboBox.Items.AddRange(New Object() {"I", "V"})
         Me._SenseFunctionComboBox.Location = New System.Drawing.Point(105, 6)
         Me._SenseFunctionComboBox.Name = "_SenseFunctionComboBox"
         Me._SenseFunctionComboBox.Size = New System.Drawing.Size(199, 25)
@@ -777,24 +774,24 @@ Partial Class K3700Control
         Me._ReadingStatusStrip.Dock = System.Windows.Forms.DockStyle.Top
         Me._ReadingStatusStrip.Font = New System.Drawing.Font("Segoe UI", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ReadingStatusStrip.GripMargin = New System.Windows.Forms.Padding(0)
-        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ComplianceToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._StatusRegisterLabel, Me._StandardRegisterLabel})
+        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._FailureToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._StatusRegisterLabel, Me._StandardRegisterLabel})
         Me._ReadingStatusStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingStatusStrip.Name = "_ReadingStatusStrip"
         Me._ReadingStatusStrip.Size = New System.Drawing.Size(364, 37)
         Me._ReadingStatusStrip.SizingGrip = False
         Me._ReadingStatusStrip.TabIndex = 1
         '
-        '_ComplianceToolStripStatusLabel
+        '_FailureToolStripStatusLabel
         '
-        Me._ComplianceToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ComplianceToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ComplianceToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
-        Me._ComplianceToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
-        Me._ComplianceToolStripStatusLabel.Name = "_ComplianceToolStripStatusLabel"
-        Me._ComplianceToolStripStatusLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
-        Me._ComplianceToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
-        Me._ComplianceToolStripStatusLabel.Text = "C"
-        Me._ComplianceToolStripStatusLabel.ToolTipText = "Compliance"
+        Me._FailureToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._FailureToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._FailureToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
+        Me._FailureToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
+        Me._FailureToolStripStatusLabel.Name = "_FailureToolStripStatusLabel"
+        Me._FailureToolStripStatusLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
+        Me._FailureToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
+        Me._FailureToolStripStatusLabel.Text = "-"
+        Me._FailureToolStripStatusLabel.ToolTipText = "Failure"
         '
         '_ReadingToolStripStatusLabel
         '
@@ -1005,7 +1002,7 @@ Partial Class K3700Control
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
-    Private WithEvents _ComplianceToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _FailureToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _LastReadingTextBox As System.Windows.Forms.TextBox
     Private WithEvents _FilterCountNumeric As System.Windows.Forms.NumericUpDown

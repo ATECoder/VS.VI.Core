@@ -94,6 +94,10 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
+    <Compile Include="Common\CommonFunctions.vb" />
+    <Compile Include="Common\CommonFunctions_Info.vb" />
+    <Compile Include="Device\DeviceTests.vb" />
+    <Compile Include="Device\ResourceControlTests.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -103,11 +107,10 @@
     <Compile Include="TestInfo\TestContextValidations.vb" />
     <Compile Include="TestInfo\TestInfo.vb" />
     <Compile Include="TestInfo\TestTrace.vb" />
-    <Compile Include="Tests\ResourceControlTests.vb" />
-    <Compile Include="Tests\DeviceConfigureTests.vb" />
-    <Compile Include="Tests\SessionTests.vb" />
+    <Compile Include="Measure\DeviceConfigureTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="Tests\DeviceTestInfo.vb" />
+    <Compile Include="Measure\DeviceConfigureTests_Info.vb" />
+    <Compile Include="TestInfo\TraceMessagesQueue.vb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">

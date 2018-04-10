@@ -14,7 +14,7 @@ Public MustInherit Class DisplaySubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="DisplaySubsystemBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
@@ -55,7 +55,7 @@ Public MustInherit Class DisplaySubsystemBase
         Try
             Me.ClearDisplay()
             affirmative = Me.TraceVisaDeviceOperationOkay(False, "clearing display;. ")
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TraceVisaOperation(ex, "clearing display;. ")
             affirmative = False
         Catch ex As Exception

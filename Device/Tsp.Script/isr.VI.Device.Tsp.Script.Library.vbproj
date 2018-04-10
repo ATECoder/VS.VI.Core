@@ -65,6 +65,9 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
@@ -73,7 +76,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
+    <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="My\MySuppressions.vb" />
     <Compile Include="SCRIPT\ScriptEntity.vb" />
     <Compile Include="SCRIPT\ScriptEntityBase.vb" />
@@ -94,10 +98,6 @@
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Device\Device.Scpi\isr.VI.Device.Scpi.Library.vbproj">
-      <Project>{f6e68ae1-a1b8-43ce-bf8b-d1b8df65c366}</Project>
-      <Name>isr.VI.Device.Scpi.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
       <Project>{0c14c4a7-d574-4f9b-a2d9-989b71cc7de4}</Project>

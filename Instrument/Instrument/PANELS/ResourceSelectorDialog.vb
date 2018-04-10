@@ -131,7 +131,7 @@ Public Class ResourceSelectorDialog
 
             Me._AvailableResourcesListBox.Items.Clear()
             Dim resources As IEnumerable(Of String) = New String() {}
-            Using rm As ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
+            Using rm As VI.Pith.ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
                 resources = rm.FindResources()
             End Using
 

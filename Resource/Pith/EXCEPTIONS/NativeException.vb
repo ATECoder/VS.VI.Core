@@ -15,12 +15,12 @@ Public Class NativeException
 
 #Region " STANDARD CONSTRUCTORS "
 
-    ''' <summary> Initializes a new instance of the <see cref="VI.NativeException"/> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="Pith.NativeException"/> class. </summary>
     Public Sub New()
         Me.New("Native VISA exception")
     End Sub
 
-    ''' <summary> Initializes a new instance of the <see cref="VI.NativeException" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="Pith.NativeException" /> class. </summary>
     ''' <param name="message"> The message. </param>
     Public Sub New(ByVal message As String)
 
@@ -28,7 +28,7 @@ Public Class NativeException
         Me._Timestamp = DateTime.UtcNow
     End Sub
 
-    ''' <summary> Initializes a new instance of the <see cref="VI.NativeException" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="Pith.NativeException" /> class. </summary>
     ''' <param name="message">        The message. </param>
     ''' <param name="innerException"> The inner exception. </param>
     Public Sub New(ByVal message As String, ByVal innerException As System.Exception)
@@ -72,7 +72,7 @@ Public Class NativeException
 
     ''' <summary> Constructor. </summary>
     ''' <param name="innerError">     The inner error. </param>
-    Public Sub New(ByVal innerError As NativeErrorBase)
+    Public Sub New(ByVal innerError As VI.Pith.NativeErrorBase)
         Me.New("Native VISA exception")
         Me._InnerError = innerError
     End Sub
@@ -80,7 +80,7 @@ Public Class NativeException
     ''' <summary> Constructor. </summary>
     ''' <param name="innerError">     The inner error. </param>
     ''' <param name="innerException"> The inner exception. </param>
-    Public Sub New(ByVal innerError As NativeErrorBase, ByVal innerException As System.Exception)
+    Public Sub New(ByVal innerError As VI.Pith.NativeErrorBase, ByVal innerException As System.Exception)
         Me.New("Native VISA exception", innerException)
         Me._InnerError = innerError
     End Sub
@@ -95,7 +95,7 @@ Public Class NativeException
 
     ''' <summary> Gets or sets the inner error. </summary>
     ''' <value> The inner error. </value>
-    Public ReadOnly Property InnerError As NativeErrorBase
+    Public ReadOnly Property InnerError As VI.Pith.NativeErrorBase
 
     ''' <summary> Convert this object into a string representation. </summary>
     ''' <returns> A String that represents this object. </returns>

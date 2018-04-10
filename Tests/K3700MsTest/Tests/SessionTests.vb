@@ -83,7 +83,7 @@ Public Class SessionTests
         Dim expectedBoolean As Boolean = True
         Dim actualBoolean As Boolean
         Using device As Device = Device.Create
-            Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+            Dim e As New isr.Core.Pith.ActionEventArgs
             device.Session.ResourceTitle = TestInfo.ResourceTitle
             actualBoolean = device.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"Failed to open session: {e.Details}")
@@ -91,7 +91,9 @@ Public Class SessionTests
             device.Session.Clear()
             device.QueryExistingDeviceErrors(e)
             Assert.IsFalse(e.Cancel, $"Device {TestInfo.ResourceName} failed reading existing errors {e.Details}")
-            Assert.IsTrue(String.IsNullOrWhiteSpace(device.StatusSubsystem.DeviceErrors), $"Device {TestInfo.ResourceName} has errors: {device.StatusSubsystem.DeviceErrors}")
+            Dim resport As String = device.StatusSubsystem.DeviceErrorsReport
+            Assert.IsTrue(String.IsNullOrWhiteSpace(resport), $"Device {TestInfo.ResourceName} has errors: {resport}")
+
             Assert.IsFalse(device.StatusSubsystem.LastDeviceError.IsError, $"Device {TestInfo.ResourceName} has last error: {device.StatusSubsystem.LastDeviceError?.ToString}")
             device.CloseSession()
             actualBoolean = device.IsDeviceOpen

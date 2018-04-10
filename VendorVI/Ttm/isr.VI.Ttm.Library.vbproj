@@ -79,14 +79,17 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="DUT\ColdResistance.vb" />
     <Compile Include="DUT\ColdResistanceBase.vb" />
     <Compile Include="DUT\ColdResistanceValidation.vb" />
     <Compile Include="DUT\DeviceUnderTest.vb" />
     <Compile Include="DUT\ResistanceMeasureBase.vb" />
-    <Compile Include="DUT\ResistanceMeasureBase-ITalker.vb" />
+    <Compile Include="DUT\ResistanceMeasureBase_ITalker.vb" />
     <Compile Include="DUT\ResistanceMeasureCollection.vb" />
-    <Compile Include="DUT\ResistanceMeasureCollection-ITalker.vb" />
+    <Compile Include="DUT\ResistanceMeasureCollection_ITalker.vb" />
     <Compile Include="DUT\ShuntResistance.vb" />
     <Compile Include="DUT\ShuntResistanceBase.vb" />
     <Compile Include="DUT\ShuntResistanceValidation.vb" />
@@ -118,7 +121,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
+    <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="PANELS\ConfigurationPanelBase.Designer.vb">
       <DependentUpon>ConfigurationPanelBase.vb</DependentUpon>
     </Compile>
@@ -173,7 +177,7 @@
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
     <Compile Include="METER\Meter.vb" />
-    <Compile Include="METER\Meter-ITalker.vb" />
+    <Compile Include="METER\Meter_ITalker.vb" />
     <Compile Include="My\SolutionInfo.vb" />
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,7 @@ Public Class SourceVoltageSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SourceVoltageSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -28,14 +28,14 @@ Public Class SourceVoltageSubsystem
     ''' <summary> Sets the subsystem to its initial post reset state. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overrides Sub InitKnownState()
-        Dim action As String = ""
+        Dim activity As String = ""
         MyBase.InitKnownState()
         Try
-            action = $"Setting {NameOf(SourceCurrentSubsystem)} level range"
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+            activity = $"Setting {NameOf(SourceCurrentSubsystem)} level range"
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{activity};. ")
             Me.LevelRangeSetter(StatusSubsystem.VersionInfo.Model)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action}; Ignored;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {activity}; Ignored;. {ex.ToFullBlownString}")
         End Try
     End Sub
 

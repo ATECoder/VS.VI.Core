@@ -18,8 +18,7 @@
         Tsp2.K2450.My.MySettings.Default.TraceLogLevel = TraceEventType.Verbose
         Tsp2.K2450.My.MySettings.Default.TraceShowLevel = TraceEventType.Verbose
         Me.AddTalkerControl("SourceMeter", New VI.Tsp2.K2450.K2450Control With {
-            .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}", .ResourceTitle = "2450"
-                                    }, True)
+            .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}"}, True)
         enabled = true
 #ElseIf K2400 Then
         Me.AddInstrumentPanel("SourceMeter", New VI.K2400.K2400Panel, True)
@@ -33,15 +32,13 @@
         VI.Tsp.K3700.My.MySettings.Default.TraceLogLevel = TraceEventType.Verbose
         VI.Tsp.K3700.My.MySettings.Default.TraceShowLevel = TraceEventType.Verbose
         Me.AddTalkerControl("DMM/Scanner", New VI.Tsp.K3700.K3700Control With {
-            .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}", .ResourceTitle = "3700"
-                                    }, True)
+            .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}"}, True)
         enabled = true
 #ElseIf K3700bm Then
         VI.Tsp.K3700.My.MySettings.Default.TraceLogLevel = TraceEventType.Verbose
         VI.Tsp.K3700.My.MySettings.Default.TraceShowLevel = TraceEventType.Verbose
         Me.AddTalkerControl("BridgeMeter", New VI.Tsp.K3700.BridgeMeterControl With {
-            .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}", .ResourceTitle = "3700"
-                                    }, True)
+            .OpenResourceTitleFormat = "{0}.{1}", .ClosedResourceTitleFormat = "{0}"}, True)
         enabled = true
 #ElseIf K7000 Then
         Me.AddInstrumentPanel("Scanner", New VI.K7000.K7000Panel, True)

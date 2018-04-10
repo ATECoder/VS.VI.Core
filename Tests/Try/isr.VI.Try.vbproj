@@ -97,7 +97,7 @@
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>MY\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="MY\MyLibraryInfo.vb" />
+    <Compile Include="MY\MyLibrary_Info.vb" />
     <Compile Include="MY\MySuppressions.vb" />
     <Compile Include="Resource\ResourceTests.vb" />
     <Compile Include="TestInfo\ConfigInfo.vb" />
@@ -109,6 +109,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
+    <Compile Include="TestInfo\TraceMessagesQueue.vb" />
     <Compile Include="Trace\TraceEventIdentities.vb" />
   </ItemGroup>
   <ItemGroup>

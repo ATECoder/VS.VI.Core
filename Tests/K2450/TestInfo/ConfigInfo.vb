@@ -20,14 +20,6 @@ Partial Public NotInheritable Class TestInfo
         End Get
     End Property
 
-    ''' <summary> Gets all. </summary>
-    ''' <value> all. </value>
-    Public Shared ReadOnly Property All As Boolean
-        Get
-            Return My.MyAppSettingsReader.AppSettingBoolean()
-        End Get
-    End Property
-
 #End Region
 
 End Class

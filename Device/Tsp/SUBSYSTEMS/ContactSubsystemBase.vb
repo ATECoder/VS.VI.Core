@@ -17,15 +17,8 @@ Public Class ContactSubsystemBase
 
     ''' <summary> Initializes a new instance of the <see cref="SourceSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp.StatusSubsystemBase">status subsystem</see>. </param>
-    Public Sub New(ByVal statusSubsystem As VI.Tsp.StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-#If False Then
-        Me.NewAmount()
-        Me._FunctionModeRanges = New SourceFunctionRangeDictionary
-        For Each fm As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
-            Me._FunctionModeRanges.Add(fm, New Core.Pith.RangeR(0, 1))
-        Next
-#End If
     End Sub
 
 #End Region
@@ -172,8 +165,8 @@ Public Class ContactSubsystemBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.ContactResistances) Then
-                Me._ContactResistances = value
+            If Not String.Equals(value, Me.ContactResistances, StringComparison.OrdinalIgnoreCase) OrElse
+                Me._ContactResistances = value Then
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -221,8 +214,8 @@ Public Class ContactSubsystemBase
 #Region " CONTACT CHECK "
 
     ''' <summary> Determines whether contact resistances are below the specified threshold. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="threshold"> The threshold. </param>
     ''' <returns> <c>True</c> if passed, <c>False</c> if failed, <c>True</c> if passed. Exception is
     ''' thrown if failed configuring contact check. </returns>

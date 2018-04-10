@@ -65,7 +65,7 @@ Public MustInherit Class LinkSubsystemBase
 #Region " ERROR QUEUE: NODE "
 
     ''' <summary> Queries error count on a remote node. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
     ''' <param name="node"> . </param>
     ''' <returns> The error count. </returns>
     Public Function QueryErrorQueueCount(ByVal node As NodeEntityBase) As Integer
@@ -115,8 +115,8 @@ Public MustInherit Class LinkSubsystemBase
     End Property
 
     ''' <summary> Returns the queued error. </summary>
-    ''' <exception cref="VI.NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="VI.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <remarks> Sends the error print format query and reads back and parses the error. </remarks>
     ''' <returns> The queued error. </returns>
     Public Shadows Function QueryQueuedError(ByVal node As NodeEntityBase) As DeviceError
@@ -152,14 +152,14 @@ Public MustInherit Class LinkSubsystemBase
         Loop While Me.StatusSubsystem.ErrorAvailable()
         Dim message As New System.Text.StringBuilder
         If Me.DeviceErrorQueue IsNot Nothing AndAlso Me.DeviceErrorQueue.Count > 0 Then
-            message.AppendFormat("Instrument {0} Node {1} Errors:", Me.ResourceName, node.Number)
+            message.AppendFormat("Instrument {0} Node {1} Errors:", Me.ResourceNameCaption, node.Number)
             message.AppendLine()
             For Each e As DeviceError In Me.DeviceErrorQueue
                 message.AppendLine(e.ErrorMessage)
             Next
         End If
         Me.StatusSubsystem.AppendDeviceErrorMessage(message.ToString)
-        Return Me.StatusSubsystem.DeviceErrors
+        Return Me.StatusSubsystem.DeviceErrorsReport
     End Function
 
     ''' <summary> Reads the device errors. </summary>
@@ -169,7 +169,7 @@ Public MustInherit Class LinkSubsystemBase
         For Each node As NodeEntityBase In Me.NodeEntities
             Me.QueryDeviceErrors(node)
         Next
-        Return Me.StatusSubsystem.DeviceErrors
+        Return Me.StatusSubsystem.DeviceErrorsReport
     End Function
 
 #End Region
@@ -185,8 +185,8 @@ Public MustInherit Class LinkSubsystemBase
     End Sub
 
     ''' <summary> Waits completion after command. </summary>
-    ''' <exception cref="VI.NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="VI.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="nodeNumber"> Specifies the node number. </param>
     ''' <param name="timeout">    The timeout. </param>
     ''' <param name="isQuery">    Specifies the condition indicating if the command that preceded the wait is a query, which
@@ -242,7 +242,7 @@ Public MustInherit Class LinkSubsystemBase
             Me.Session.WriteLine(TspSyntax.Node.CollectNodeGarbageFormat, node.Number)
             affirmative = Me.TraceVisaDeviceOperationOkay(node.Number, True, "collecting garbage after {0};. ",
                                                           String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TraceVisaOperation(ex, node.Number, "collecting garbage after {0};. ",
                                   String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
             affirmative = False
@@ -260,7 +260,7 @@ Public MustInherit Class LinkSubsystemBase
                 affirmative = Me.TraceVisaDeviceOperationOkay(True, "awaiting completion after collecting garbage after {0};. ",
                                                               String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
             End If
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TraceVisaOperation(ex, "awaiting completion after collecting garbage after {0};. ",
                                   String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
             affirmative = False
@@ -338,8 +338,8 @@ Public MustInherit Class LinkSubsystemBase
     End Function
 
     ''' <summary> Queries the capacity of the data queue. </summary>
-    ''' <exception cref="VI.NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="VI.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="nodeNumber"> The node number. </param>
     ''' <returns> Capacity. </returns>
     Public Function QueryDataQueueCapacity(ByVal nodeNumber As Integer) As Integer
@@ -364,8 +364,8 @@ Public MustInherit Class LinkSubsystemBase
     End Function
 
     ''' <summary> Queries the data queue count. </summary>
-    ''' <exception cref="VI.NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="VI.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="nodeNumber"> The node number. </param>
     ''' <returns> Count. </returns>
     Public Function QueryDataQueueCount(ByVal nodeNumber As Integer) As Integer
@@ -388,7 +388,7 @@ Public MustInherit Class LinkSubsystemBase
         Try
             Me.Session.WriteLine("localnode.reset()")
             affirmative = Me.TraceVisaDeviceOperationOkay(False, "resetting local TSP node;. ")
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TraceVisaOperation(ex, "resetting local TSP node;. ")
             affirmative = False
         Catch ex As Exception
@@ -413,7 +413,7 @@ Public MustInherit Class LinkSubsystemBase
             Try
                 Me.Session.WriteLine("node[{0}].reset()", node.Number)
                 affirmative = Me.TraceVisaDeviceOperationOkay(node.Number, "resetting TSP node {0};. ", node.Number)
-            Catch ex As NativeException
+            Catch ex As VI.Pith.NativeException
                 Me.TraceVisaOperation(ex, node.Number, "resetting TSP node {0};. ", node.Number)
                 affirmative = False
             Catch ex As Exception
@@ -443,8 +443,8 @@ Public MustInherit Class LinkSubsystemBase
     ''' <summary> Resets the TSP nodes. </summary>
     ''' <param name="timeout"> Specifies the time to wait for the instrument to return operation
     ''' completed. </param>
-    ''' <exception cref="VI.NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="VI.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <exception cref="TimeoutException"> Thrown when a Timeout error condition occurs. </exception>
     Public Sub ResetNodes(ByVal timeout As TimeSpan)
         If Not String.IsNullOrWhiteSpace(Me.ResetNodesCommand) Then
@@ -549,11 +549,11 @@ Public MustInherit Class LinkSubsystemBase
     End Property
 
     ''' <summary> Reads the Controller node number. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <exception cref="InvalidCastException">     Thrown when an object cannot be cast to a
     ''' required type. </exception>
-    ''' <exception cref="VI.NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="VI.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <returns> An Integer or Null of failed. </returns>
     Public Function QueryControllerNodeNumber() As Integer?
         Me.ControllerNodeNumber = Me.Session.QueryPrint(0I, 1, "_G.tsplink.node")
@@ -565,7 +565,7 @@ Public MustInherit Class LinkSubsystemBase
     Public Function TryQueryControllerNodeNumber() As Integer?
         Try
             Me.QueryControllerNodeNumber()
-        Catch ex As OperationFailedException
+        Catch ex As VI.Pith.OperationFailedException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, ex.ToString)
         Catch ex As InvalidCastException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, ex.ToString)
@@ -786,7 +786,7 @@ Public MustInherit Class LinkSubsystemBase
     End Sub
 
     ''' <summary> Reset the TSP Link or just the first node if TSP link not defined. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="timeout">          The timeout. </param>
     ''' <param name="maximumNodeCount"> Number of maximum nodes. </param>
     ''' <param name="displaySubsystem"> The display subsystem. </param>
@@ -799,14 +799,14 @@ Public MustInherit Class LinkSubsystemBase
         Me.ResetTspLinkWaitComplete(timeout, maximumNodeCount)
         If Me.NodeCount <= 0 Then
             If Me.UsingTspLink Then
-                Throw New VI.OperationFailedException("Instrument '{0}' failed resetting TSP Link--no nodes;. ",
+                Throw New VI.Pith.OperationFailedException("Instrument '{0}' failed resetting TSP Link--no nodes;. ",
                                                            Me.Session.ResourceName)
             Else
-                Throw New VI.OperationFailedException("Instrument '{0}' failed setting master node;. ",
+                Throw New VI.Pith.OperationFailedException("Instrument '{0}' failed setting master node;. ",
                                                            Me.Session.ResourceName)
             End If
         ElseIf Me.UsingTspLink AndAlso Not Me.IsTspLinkOnline Then
-            Throw New VI.OperationFailedException("Instrument '{0}' failed resetting TSP Link;. TSP Link is not on line.",
+            Throw New VI.Pith.OperationFailedException("Instrument '{0}' failed resetting TSP Link;. TSP Link is not on line.",
                                                        Me.Session.ResourceName)
         End If
     End Sub
@@ -837,8 +837,8 @@ Public MustInherit Class LinkSubsystemBase
 
     ''' <summary> Reads tsp link state. </summary>
     ''' <returns> The tsp link state. </returns>
-    ''' <exception cref="VI.NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="VI.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     Public Function QueryTspLinkState() As String
         Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading TSP Link state;. ")
         Me.Session.LastNodeNumber = New Integer?
@@ -868,7 +868,7 @@ Public MustInherit Class LinkSubsystemBase
                         Me.Session.WriteLine("localnode.tsplink.group = {0}", node.Number)
                     End If
                     affirmative = Me.TraceVisaDeviceOperationOkay(False, "assigning group to node number {0};. ", node.Number)
-                Catch ex As NativeException
+                Catch ex As VI.Pith.NativeException
                     Me.TraceVisaOperation(ex, "assigning group to node number {0};. ", node.Number)
                     affirmative = False
                 Catch ex As Exception
@@ -915,7 +915,7 @@ Public MustInherit Class LinkSubsystemBase
             Me.StatusSubsystem.EnableWaitComplete()
             Me.Session.WriteLine("tsplink.reset() waitcomplete(0)")
             affirmative = Me.TraceVisaDeviceOperationOkay(False, "resetting TSP Link;. ")
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TraceVisaOperation(ex, "resetting TSP Link;. ")
             affirmative = False
         Catch ex As Exception
@@ -924,9 +924,9 @@ Public MustInherit Class LinkSubsystemBase
         End Try
         If affirmative Then
             Try
-                Me.StatusSubsystem.AwaitServiceRequest(ServiceRequests.RequestingService, TimeSpan.FromMilliseconds(1000))
+                Me.StatusSubsystem.AwaitServiceRequest(VI.Pith.ServiceRequests.RequestingService, TimeSpan.FromMilliseconds(1000))
                 affirmative = Me.TraceVisaDeviceOperationOkay(False, "resetting TSP Link;. ")
-            Catch ex As NativeException
+            Catch ex As VI.Pith.NativeException
                 Me.TraceVisaOperation(ex, "awaiting completion after resetting TSP Link;. ")
                 affirmative = False
             Catch ex As Exception
@@ -935,8 +935,8 @@ Public MustInherit Class LinkSubsystemBase
             End Try
         Else
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' failed resetting TSP Link;. {1}{2}",
-                               Me.ResourceName, Environment.NewLine, New StackFrame(True).UserCallStack())
+                              "Instrument '{0}' failed resetting TSP Link;. {1}{2}",
+                              Me.ResourceNameCaption, Environment.NewLine, New StackFrame(True).UserCallStack())
         End If
         Return affirmative
 
@@ -990,11 +990,11 @@ Public MustInherit Class LinkSubsystemBase
             Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
             If success Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Instrument {0} node {1} done {2}", Me.ResourceName, nodeNumber, details)
+                                   "Instrument {0} node {1} done {2}", Me.ResourceNameCaption, nodeNumber, details)
             Else
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument {0} node {1} encountered errors {2}Details: {3}{4}{5}",
-                                   Me.ResourceName, nodeNumber, Me.StatusSubsystem.DeviceErrors, details,
+                                   Me.ResourceNameCaption, nodeNumber, Me.StatusSubsystem.DeviceErrorsReport, details,
                                    Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
         End If

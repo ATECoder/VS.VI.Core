@@ -16,10 +16,10 @@ Public Class CompensateChannelSubsystem
     ''' <summary>
     ''' Initializes a new instance of the <see cref="SourceChannelSubsystem" /> class.
     ''' </summary>
-    ''' <param name="channelNumber">   A reference to a <see cref="VI.StatusSubsystemBase">message
+    ''' <param name="channelNumber">   A reference to a <see cref="StatusSubsystemBase">message
     '''                                based session</see>. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>
-    Public Sub New(ByVal compensationType As CompensationTypes, ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
+    Public Sub New(ByVal compensationType As Scpi.CompensationTypes, ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(compensationType, channelNumber, statusSubsystem)
     End Sub
 
@@ -44,14 +44,14 @@ Public Class CompensateChannelSubsystem
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.Enabled = False
-        If Me.CompensationType = VI.CompensationTypes.Load Then
+        If Me.CompensationType = Scpi.CompensationTypes.Load Then
             Me.ModelResistance = 50
             Me.ModelInductance = 0
             Me.ModelCapacitance = 0
-        ElseIf Me.CompensationType = VI.CompensationTypes.OpenCircuit Then
+        ElseIf Me.CompensationType = Scpi.CompensationTypes.OpenCircuit Then
             Me.ModelInductance = 0
             Me.ModelConductance = 0
-        ElseIf Me.CompensationType = VI.CompensationTypes.ShortCircuit Then
+        ElseIf Me.CompensationType = Scpi.CompensationTypes.ShortCircuit Then
             Me.ModelResistance = 0
             Me.ModelCapacitance = 0
         End If

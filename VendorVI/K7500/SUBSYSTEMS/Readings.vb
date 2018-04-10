@@ -23,9 +23,9 @@ Public Class Readings
         Me._Reading = New isr.VI.MeasuredAmount(ReadingTypes.Reading)
         With Me._Reading
             .Unit = Arebis.StandardUnits.ElectricUnits.Ampere
-            .ComplianceLimit = VI.Scpi.Syntax.Infinity
-            .HighLimit = VI.Scpi.Syntax.Infinity
-            .LowLimit = VI.Scpi.Syntax.NegativeInfinity
+            .ComplianceLimit = VI.Pith.Scpi.Syntax.Infinity
+            .HighLimit = VI.Pith.Scpi.Syntax.Infinity
+            .LowLimit = VI.Pith.Scpi.Syntax.NegativeInfinity
             .ReadingLength = 15
         End With
 
@@ -61,38 +61,6 @@ Public Class Readings
             ' update the meta status based on the status reading.
         End If
         Return MyBase.TryEvaluate(metaStatus.Value)
-    End Function
-
-    ''' <summary> Attempts to parse from the given data. </summary>
-    ''' <remarks>
-    ''' Parsing takes two steps. First all values are assigned. Then the status is used to evaluate
-    ''' the measured amounts.
-    ''' </remarks>
-    ''' <param name="readings"> The readings. </param>
-    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Function TryParse(ByVal readings As String) As Boolean
-        Dim affirmative As Boolean = True
-        If MyBase.TryApplyReadings(readings) Then
-            Dim statusValue As Long = 0
-            affirmative = Me.TryEvaluate(statusValue)
-        Else
-            affirmative = False
-        End If
-        Return affirmative
-    End Function
-
-    ''' <summary> Attempts to parse from the given data. </summary>
-    ''' <param name="values">  A queue of reading values. </param>
-    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Function TryParse(ByVal values As Queue(Of String)) As Boolean
-        Dim affirmative As Boolean = True
-        If MyBase.TryApplyReadings(values) Then
-            Dim statusValue As Long = 0
-            affirmative = Me.TryEvaluate(statusValue)
-        Else
-            affirmative = False
-        End If
-        Return affirmative
     End Function
 
     ''' <summary> Parses reading data into a readings array. </summary>
@@ -137,14 +105,14 @@ Public Class Readings
     ''' automate parsing of these data. 
     ''' This could be exp[anded for this instrument to read the status and buffer name. </remarks>
     ''' <param name="value"> The value. </param>
-    Public Overrides Sub Initialize(ByVal value As isr.VI.ReadingTypes)
+    Public Overrides Sub Initialize(ByVal value As VI.ReadingTypes)
         MyBase.Initialize(value)
         Me.Readings.AddIf(value, Me.Reading)
         Me.Readings.IncludeUnitSuffixIf(value)
     End Sub
 
     ''' <summary>Gets or sets the DMM <see cref="isr.VI.MeasuredAmount">reading</see>.</summary>
-    Public Property Reading() As isr.VI.MeasuredAmount
+    Public Property Reading() As VI.MeasuredAmount
 
 #End Region
 

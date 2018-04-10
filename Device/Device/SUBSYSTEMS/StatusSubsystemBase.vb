@@ -17,13 +17,20 @@ Public MustInherit Class StatusSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
+    ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
+    ''' session</see>. </param>
+    Protected Sub New(ByVal visaSession As VI.Pith.SessionBase)
+        Me.New(visaSession, VI.Pith.Scpi.Syntax.NoErrorCompoundMessage)
+    End Sub
+
     ''' <summary>
     ''' Initializes a new instance of the <see cref="StatusSubsystemBase" /> class.
     ''' </summary>
     ''' <param name="visaSession">            A reference to a <see cref="Session">message based
     '''                                       session</see>. </param>
     ''' <param name="noErrorCompoundMessage"> A message describing the no error. </param>
-    Protected Sub New(ByVal visaSession As SessionBase, ByVal noErrorCompoundMessage As String)
+    Protected Sub New(ByVal visaSession As VI.Pith.SessionBase, ByVal noErrorCompoundMessage As String)
         MyBase.New(visaSession)
 
         Me._VersionInfo = New isr.VI.VersionInfo()
@@ -33,10 +40,10 @@ Public MustInherit Class StatusSubsystemBase
         Me._DeviceErrorQueue = New DeviceErrorQueue(noErrorCompoundMessage)
 
         ' check for query and other errors reported by the standard event register
-        Me.StandardDeviceErrorAvailableBits = StandardEvents.CommandError Or
-            StandardEvents.DeviceDependentError Or
-            StandardEvents.ExecutionError Or
-            StandardEvents.QueryError
+        Me.StandardDeviceErrorAvailableBits = VI.Pith.StandardEvents.CommandError Or
+            VI.Pith.StandardEvents.DeviceDependentError Or
+            VI.Pith.StandardEvents.ExecutionError Or
+            VI.Pith.StandardEvents.QueryError
 
         If visaSession IsNot Nothing Then AddHandler visaSession.PropertyChanged, AddressOf Me.SessionPropertyChanged
 
@@ -46,7 +53,23 @@ Public MustInherit Class StatusSubsystemBase
         Me._InitRefractoryPeriod = TimeSpan.FromMilliseconds(100)
         Me._ClearRefractoryPeriod = TimeSpan.FromMilliseconds(100)
 
+        ' check for query and other errors reported by the standard event register
+        Me.StandardDeviceErrorAvailableBits = VI.Pith.StandardEvents.CommandError Or
+                                              VI.Pith.StandardEvents.DeviceDependentError Or
+                                              VI.Pith.StandardEvents.ExecutionError Or VI.Pith.StandardEvents.QueryError
+        ' Me.StandardServiceEnableCommandFormat = Vi.Pith.Ieee488.Syntax.StandardServiceEnableCommandFormat
+        ' Me.StandardServiceEnableCompleteCommandFormat = Vi.Pith.Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat
+        Me._OperationEventMap = New Dictionary(Of Integer, String)
     End Sub
+
+    ''' <summary> Validated the given status subsystem base. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="statusSubsystemBase"> The status subsystem base. </param>
+    ''' <returns> A StatusSubsystemBase. </returns>
+    Public Shared Function Validated(ByVal statusSubsystemBase As VI.StatusSubsystemBase) As StatusSubsystemBase
+        If statusSubsystemBase Is Nothing Then Throw New ArgumentNullException(NameOf(statusSubsystemBase))
+        Return statusSubsystemBase
+    End Function
 
     ''' <summary>
     ''' Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control" />
@@ -96,7 +119,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the clear execution state command. </summary>
     ''' <remarks> SCPI: "*CLS".
-    ''' <see cref="Ieee488.Syntax.ClearExecutionStateCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Ieee488.Syntax.ClearExecutionStateCommand"> </see> </remarks>
     ''' <value> The clear execution state command. </value>
     Protected Overridable ReadOnly Property ClearExecutionStateCommand As String
 
@@ -116,7 +139,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Returns the instrument registers to there preset power on state. </summary>
     ''' <remarks> SCPI: "*CLS".<para>
-    ''' <see cref="Ieee488.Syntax.ClearExecutionStateCommand"> </see> </para><para>
+    ''' <see cref="VI.Pith.Ieee488.Syntax.ClearExecutionStateCommand"> </see> </para><para>
     ''' When this command is sent, the SCPI event registers are affected as follows:<p>
     '''   1. All bits of the positive transition filter registers are set to one (1).</p><p>
     '''   2. All bits of the negative transition filter registers are cleared to zero (0).</p><p>
@@ -130,6 +153,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' Note: Registers not included in the above list are not affected by this command.</p> </para></remarks>
     Public Overrides Sub PresetKnownState()
         MyBase.PresetKnownState()
+        Me.PresetRegistersKnownState()
     End Sub
 
     ''' <summary> Sets the subsystem to its initial post reset state. </summary>
@@ -140,18 +164,35 @@ Public MustInherit Class StatusSubsystemBase
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(Me.InitRefractoryPeriod)
+        Dim activity As String = "clearing error queue"
         Try
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Clearing error queue;. ")
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{activity};. ")
             Me.ClearErrorQueue()
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                $"Exception ignored clearing error queue;. {ex.ToFullBlownString}")
         End Try
+        activity = "enabling wait completion"
+        Try
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{activity};. ")
+            Me.EnableWaitComplete()
+        Catch ex As Exception
+            ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+        End Try
+        Try
+            activity = "querying identity"
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{activity};. ")
+            Me.QueryIdentity()
+        Catch ex As Exception
+            ex.Data.Add($"data{ex.Data.Count}.resource", Me.Session.ResourceName)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+        End Try
     End Sub
 
     ''' <summary> Gets or sets the reset known state command. </summary>
     ''' <remarks> SCPI: "*RST".
-    ''' <see cref="Ieee488.Syntax.ResetKnownStateCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Ieee488.Syntax.ResetKnownStateCommand"> </see> </remarks>
     ''' <value> The reset known state command. </value>
     Protected Overridable ReadOnly Property ResetKnownStateCommand As String
 
@@ -173,6 +214,7 @@ Public MustInherit Class StatusSubsystemBase
             Me.Session.TerminationCharacter = Me.TerminationCharacter
             Me.Session.ReadServiceRequestStatus()
         End If
+        Me.ResetRegistersKnownState()
         Me.Session.Execute(Me.ResetKnownStateCommand)
         If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(Me.ResetRefractoryPeriod)
         Me.QueryOperationCompleted()
@@ -275,25 +317,14 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary> Executes the session property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overridable Sub OnSessionPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal sender As VI.Pith.SessionBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(isr.VI.SessionBase.ServiceRequestStatus)
-                Me.SafeSendPropertyChanged(NameOf(isr.VI.SessionBase.ServiceRequestStatus))
-            Case NameOf(isr.VI.SessionBase.ErrorAvailable)
-                ' this event occurs if value changed or is still on.
-                Me.SafeSendPropertyChanged(NameOf(isr.VI.SessionBase.ErrorAvailable))
-            Case NameOf(isr.VI.SessionBase.MeasurementAvailable)
-                ' this event occurs if value changed or is still on.
-
-                Me.SafeSendPropertyChanged(NameOf(isr.VI.SessionBase.MeasurementAvailable))
-            Case NameOf(isr.VI.SessionBase.MessageAvailable)
-                ' this event occurs if value changed or is still on.
-                Me.SafeSendPropertyChanged(NameOf(isr.VI.SessionBase.MessageAvailable))
-            Case NameOf(isr.VI.SessionBase.StandardEventAvailable)
-                ' this event occurs if value changed or is still on.
-                Me.SafeSendPropertyChanged(NameOf(isr.VI.SessionBase.StandardEventAvailable))
+            Case NameOf(VI.Pith.SessionBase.ServiceRequestStatus)
+            Case NameOf(VI.Pith.SessionBase.ErrorAvailable)
+                Me.SafeQueryDeviceErrors()
         End Select
+        Me.SafeSendPropertyChanged(propertyName)
     End Sub
 
 
@@ -302,11 +333,16 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SessionPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.Pith.SessionBase)}.{e.PropertyName} change"
         Try
-            Me.OnSessionPropertyChanged(TryCast(sender, SessionBase), e?.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, VI.Pith.SessionBase), e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling property Session.{e.PropertyName} change event;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -338,19 +374,11 @@ Public MustInherit Class StatusSubsystemBase
 
 #End Region
 
-#Region " DEVICE ERRORS: QUEUE + LAST ERROR "
-
-    ''' <summary> Gets or sets the device errors queue. </summary>
-    ''' <value> The device errors. </value>
-    Public ReadOnly Property DeviceErrorQueue As DeviceErrorQueue
-
-    ''' <summary> Gets or sets a message describing the no error compound message. </summary>
-    ''' <value> A message describing the no error compound. </value>
-    Public Property NoErrorCompoundMessage As String
+#Region " DEVICE ERRORS: CLEAR "
 
     ''' <summary> Gets the clear error queue command. </summary>
     ''' <remarks> SCPI: ":STAT:QUE:CLEAR".
-    ''' <see cref="Scpi.Syntax.ClearErrorQueueCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Scpi.Syntax.ClearErrorQueueCommand"> </see> </remarks>
     ''' <value> The clear error queue command. </value>
     Protected Overridable ReadOnly Property ClearErrorQueueCommand As String
 
@@ -365,10 +393,9 @@ Public MustInherit Class StatusSubsystemBase
     Public Overridable Sub ClearErrorCache()
         Me.DeviceErrorQueue.Clear()
         Me.DeviceErrorBuilder = New System.Text.StringBuilder
-        Me.SafePostPropertyChanged(NameOf(isr.VI.statusSubsystemBase.DeviceErrors))
-        Me.SafePostPropertyChanged(NameOf(isr.VI.statusSubsystemBase.LastDeviceError))
+        Me.SafePostPropertyChanged(NameOf(VI.StatusSubsystemBase.DeviceErrorsReport))
+        Me.SafePostPropertyChanged(NameOf(VI.StatusSubsystemBase.LastDeviceError))
     End Sub
-
 
     ''' <summary> Gets the last message that was sent before the error. </summary>
     ''' <value> The message sent before error. </value>
@@ -378,61 +405,79 @@ Public MustInherit Class StatusSubsystemBase
     ''' <value> The message received before error. </value>
     Public ReadOnly Property MessageReceivedBeforeError As String
 
-    ''' <summary> The device errors. </summary>
-    Protected Property DeviceErrorBuilder As System.Text.StringBuilder
+#End Region
 
-    ''' <summary> Appends a device error message. </summary>
-    ''' <param name="value"> The value. </param>
-    Public Sub AppendDeviceErrorMessage(ByVal value As String)
-        If Not String.IsNullOrWhiteSpace(value) Then
-            If Me.DeviceErrorBuilder.Length > 0 Then Me.DeviceErrorBuilder.AppendLine()
-            Me.DeviceErrorBuilder.Append(value)
-        End If
-        Me.SafePostPropertyChanged(NameOf(VI.StatusSubsystemBase.DeviceErrors))
+#Region " DEVICE ERRORS: PUBLIC METHODS AND MEMBERS "
+
+    ''' <summary> Queries device errors. </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Sub SafeQueryDeviceErrors()
+        Dim activity As String = "reading device errors"
+        Try
+            activity = "reading device errors"
+            Dim e As New isr.Core.Pith.ActionEventArgs
+            If Not Me.TrySafeQueryDeviceErrors(e) Then
+                Dim message As New isr.Core.Pith.TraceMessage(TraceEventType.Warning, My.MyLibrary.TraceEventId, e.Details)
+                If Me.Talker Is Nothing Then
+                    isr.VI.My.MyLibrary.LogUnpublishedMessage(message)
+                Else
+                    Me.Talker.Publish(message)
+                End If
+            End If
+        Catch ex As Exception
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
+        End Try
     End Sub
 
-    ''' <summary> Gets or sets a report of the error stored in the cached error queue. </summary>
-    ''' <value> The cached device errors. </value>
-    Public ReadOnly Property DeviceErrors() As String
+    ''' <summary> Queries device errors. </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Public Function TrySafeQueryDeviceErrors(ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        Dim activity As String = "reading device errors"
+        Try
+            activity = "checking the error available bit and reading status"
+            If Me.IsErrorBitSet And Not Me.ReadingDeviceErrors Then
+                activity = "reading device errors"
+                Me.TryQueryExistingDeviceErrors(e)
+            End If
+        Catch ex As Exception
+            e.RegisterCancellation($"Exception {activity};. {ex.ToFullBlownString}")
+        End Try
+        Return Not e.Cancel
+    End Function
 
+    ''' <summary> Gets or sets the device errors queue. </summary>
+    ''' <value> The device errors. </value>
+    Public ReadOnly Property DeviceErrorQueue As DeviceErrorQueue
+
+    ''' <summary> Gets or sets a message describing the no error compound message. </summary>
+    ''' <value> A message describing the no error compound. </value>
+    Public Property NoErrorCompoundMessage As String
+
+    ''' <summary> Gets a report of the error stored in the cached error queue. </summary>
+    ''' <value> The cached device errors. </value>
+    Public ReadOnly Property DeviceErrorsReport() As String
         Get
             Dim builder As New System.Text.StringBuilder(Me.DeviceErrorBuilder.ToString)
             If Me.StandardEventStatus.GetValueOrDefault(0) <> 0 Then
                 Dim report As String = StatusSubsystemBase.BuildReport(Me.StandardEventStatus.Value, ";")
                 If Not String.IsNullOrWhiteSpace(report) Then
-                    If builder.Length > 0 Then builder.AppendLine()
-                    builder.Append(report)
+                    builder.AppendLine(report)
                 End If
                 If Not String.IsNullOrWhiteSpace(Me.MessageReceivedBeforeError) Then
-                    If builder.Length > 0 Then builder.AppendLine()
-                    builder.Append("Last received: ")
-                    builder.Append(Me.MessageReceivedBeforeError)
+                    builder.AppendLine($"Received: {Me.MessageReceivedBeforeError}")
                 End If
                 If Not String.IsNullOrWhiteSpace(Me.MessageSentBeforeError) Then
-                    If builder.Length > 0 Then builder.AppendLine()
-                    builder.Append("Last sent: ")
-                    builder.Append(Me.MessageSentBeforeError)
+                    builder.AppendLine($"Sent: {Me.MessageSentBeforeError}")
                 End If
             End If
-            Return builder.ToString
+            Return builder.ToString.TrimEnd(Environment.NewLine.ToCharArray)
         End Get
     End Property
-
-    ''' <summary> Gets the 'Next Error' query command. </summary>
-    ''' <remarks> SCPI: ":STAT:QUE?".
-    ''' <see cref="Scpi.Syntax.NextErrorQueryCommand"> </see> </remarks>
-    ''' <value> The error queue query command. </value>
-    Protected Overridable ReadOnly Property NextErrorQueryCommand As String
-
-    ''' <summary> Enqueues device error. </summary>
-    ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
-    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Protected Overridable Function EnqueueDeviceError(ByVal compoundErrorMessage As String) As DeviceError
-        Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
-        de.Parse(compoundErrorMessage)
-        If de.IsError Then Me.DeviceErrorQueue.Enqueue(de)
-        Return de
-    End Function
 
     Private _ReadingDeviceErrors As Boolean
     ''' <summary> Gets or sets the reading device errors. </summary>
@@ -456,46 +501,6 @@ Public MustInherit Class StatusSubsystemBase
         Return (Me.ErrorAvailableBits And Me.Session.ReadStatusByte) <> 0
     End Function
 
-    ''' <summary> Reads the device errors. </summary>
-    ''' <returns> The device errors. </returns>
-    Public Overridable Function QueryDeviceErrors() As String
-        If Me.ReadingDeviceErrors Then Return ""
-        Dim notifyLastError As Boolean = False
-        Try
-            Me._MessageSentBeforeError = Me.Session.LastMessageSent
-            Me._MessageReceivedBeforeError = Me.Session.LastMessageReceived
-            Me.ReadingDeviceErrors = True
-            Me.ClearErrorCache()
-            If Not String.IsNullOrWhiteSpace(Me.NextErrorQueryCommand) AndAlso Me.IsErrorBitSet() Then
-                Dim builder As New System.Text.StringBuilder
-                Dim de As DeviceError = DeviceError.NoError
-                Do
-                    de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.NextErrorQueryCommand))
-                    If de.IsError Then
-                        notifyLastError = True
-                        If builder.Length > 0 Then builder.AppendLine()
-                        builder.Append(de.CompoundErrorMessage)
-                    End If
-                Loop While Me.IsErrorBitSet AndAlso de.IsError
-                ' this is a kludge because the 7510 does not clear the error queue.
-                If Not de.IsError AndAlso Me.IsErrorBitSet Then Me.Session.Execute(Me.ClearErrorQueueCommand)
-                If builder.Length > 0 Then
-                    Me.QueryStandardEventStatus()
-                    Me.AppendDeviceErrorMessage(builder.ToString)
-                End If
-            End If
-            If notifyLastError Then Me.SafePostPropertyChanged(NameOf(isr.VI.statusSubsystemBase.LastDeviceError))
-            Return Me.DeviceErrors
-        Catch
-
-            Throw
-        Finally
-            Me.ReadingDeviceErrors = False
-        End Try
-    End Function
-
-#Region " LAST ERROR "
-
     ''' <summary> Gets the last device error. </summary>
     ''' <value> The last device error. </value>
     Public ReadOnly Property LastDeviceError As DeviceError
@@ -504,23 +509,99 @@ Public MustInherit Class StatusSubsystemBase
         End Get
     End Property
 
-    ''' <summary> Gets the last error query command. </summary>
-    ''' <value> The last error query command. </value>
-    Protected Overridable ReadOnly Property LastErrorQueryCommand As String
+#End Region
 
-    ''' <summary> Queries the next error from the device error queue. </summary>
-    ''' <returns> The <see cref="DeviceError">Device Error structure.</see> </returns>
-    Public Function QueryNextError() As DeviceError
+#Region " DEVICE ERRORS: PROTECTED QUERY METHODS AND MEMBERS "
+
+    ''' <summary> Safe query existing device errors. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="e"> Cancel details event information. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Protected Overridable Function TryQueryExistingDeviceErrors(ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
+        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
+        If Me.MessageAvailable Then
+            ' if the device has message with an error state, the message must be fetched before the device
+            ' errors can be fetched. The system requesting the message must:
+            ' (1) fetch the message;
+            ' (2) fetch the device errors.
+            e.RegisterCancellation($"{Me.ResourceNameCaption} as a message available in the presence of a device error; the message needs to be fetched before fetching the device errors")
+        Else
+            ' There are currently two queue reading commands and two single error reading commands.
+            If Not String.IsNullOrWhiteSpace(Me.NextDeviceErrorQueryCommand) Then
+                Me.QueryDeviceErrors()
+            ElseIf Not String.IsNullOrWhiteSpace(Me.DequeueErrorQueryCommand) Then
+                Me.QueryErrorQueue()
+            End If
+            If Not String.IsNullOrWhiteSpace(Me.DeviceErrorQueryCommand) Then
+                If String.IsNullOrWhiteSpace(Me.NextDeviceErrorQueryCommand) AndAlso
+                    String.IsNullOrWhiteSpace(Me.DequeueErrorQueryCommand) Then
+                    ' If No Queue reading commands, 
+                    ' clear the cache as this device reports only the last error 
+                    Me.ClearErrorCache()
+                End If
+                Me.QueryLastError()
+            ElseIf Not String.IsNullOrWhiteSpace(Me.LastSystemErrorQueryCommand) Then
+                If String.IsNullOrWhiteSpace(Me.NextDeviceErrorQueryCommand) AndAlso
+                    String.IsNullOrWhiteSpace(Me.DequeueErrorQueryCommand) Then
+                    ' If No Queue reading commands, 
+                    ' clear the cache as this device reports only the last error 
+                    Me.ClearErrorCache()
+                End If
+                Me.WriteLastSystemErrorQueryCommand()
+                Windows.Forms.Application.DoEvents()
+                Me.ReadLastSystemError()
+            End If
+        End If
+        Return Not e.Cancel
+    End Function
+
+    ''' <summary> The device errors. </summary>
+    Protected Property DeviceErrorBuilder As System.Text.StringBuilder
+
+    ''' <summary> Appends a device error message. </summary>
+    ''' <param name="value"> The value. </param>
+    Public Sub AppendDeviceErrorMessage(ByVal value As String)
+        If Not String.IsNullOrWhiteSpace(value) Then Me.DeviceErrorBuilder.AppendLine(value)
+    End Sub
+
+    ''' <summary> Enqueues device error. </summary>
+    ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Protected Overridable Function EnqueueDeviceError(ByVal compoundErrorMessage As String) As DeviceError
         Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
-        If Not String.IsNullOrWhiteSpace(Me.LastErrorQueryCommand) Then
-            de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.LastErrorQueryCommand))
+        de.Parse(compoundErrorMessage)
+        If de.IsError Then Me.DeviceErrorQueue.Enqueue(de)
+        Return de
+    End Function
+
+
+    ''' <summary> Enqueue last error. </summary>
+    ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
+    ''' <returns> A DeviceError. </returns>
+    Public Function EnqueueLastError(ByVal compoundErrorMessage As String) As DeviceError
+        Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
+        de = Me.EnqueueDeviceError(compoundErrorMessage)
+        If de.IsError Then
+            Me.AppendDeviceErrorMessage($"{Me.ResourceNameCaption} Last Error:
+{de.ErrorMessage}")
+            Me.SafePostPropertyChanged(NameOf(VI.StatusSubsystemBase.LastDeviceError))
         End If
         Return de
     End Function
 
+#End Region
+
+#Region " QUERY DEVICE ERROR: USES NEXT ERROR COMMANDS :STAT:QUE? "
+
+    ''' <summary> Gets the 'Next Error' query command. </summary>
+    ''' <remarks> SCPI: ":STAT:QUE?".
+    ''' <see cref="VI.Pith.Scpi.Syntax.NextErrorQueryCommand"> </see> </remarks>
+    ''' <value> The error queue query command. </value>
+    Protected Overridable ReadOnly Property NextDeviceErrorQueryCommand As String
+
     ''' <summary> Reads the device errors. </summary>
     ''' <returns> The device errors. </returns>
-    Public Function QueryErrorQueue() As String
+    Protected Overridable Function QueryDeviceErrors() As String
         If Me.ReadingDeviceErrors Then Return ""
         Dim notifyLastError As Boolean = False
         Try
@@ -528,15 +609,69 @@ Public MustInherit Class StatusSubsystemBase
             Me._MessageReceivedBeforeError = Me.Session.LastMessageReceived
             Me.ReadingDeviceErrors = True
             Me.ClearErrorCache()
-            If Not String.IsNullOrWhiteSpace(Me.LastErrorQueryCommand) AndAlso Me.IsErrorBitSet() Then
+            If Not String.IsNullOrWhiteSpace(Me.NextDeviceErrorQueryCommand) AndAlso Me.IsErrorBitSet() Then
+                Dim builder As New System.Text.StringBuilder
+                Dim de As DeviceError = DeviceError.NoError
+                Do
+                    de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.NextDeviceErrorQueryCommand))
+                    If de.IsError Then
+                        notifyLastError = True
+                        builder.AppendLine(de.CompoundErrorMessage)
+                    End If
+                Loop While Me.IsErrorBitSet AndAlso de.IsError
+                ' this is a kludge because the 7510 does not clear the error queue.
+                If Not de.IsError AndAlso Me.IsErrorBitSet Then Me.Session.Execute(Me.ClearErrorQueueCommand)
+                If builder.Length > 0 Then
+                    Me.QueryStandardEventStatus()
+                    Me.AppendDeviceErrorMessage(builder.ToString)
+                End If
+            End If
+            If notifyLastError Then Me.SafePostPropertyChanged(NameOf(VI.StatusSubsystemBase.LastDeviceError))
+            Me.SafePostPropertyChanged(NameOf(StatusSubsystemBase.DeviceErrorsReport))
+            Return Me.DeviceErrorsReport
+        Catch
+            Throw
+        Finally
+            Me.ReadingDeviceErrors = False
+        End Try
+    End Function
+
+#End Region
+
+#Region " QUERY DEVICE ERROR: USES DEQUEUE COMMANDS ?? "
+
+    ''' <summary> Gets the 'Next Error' query command. </summary>
+    ''' <value> The error queue query command. </value>
+    Protected Overridable ReadOnly Property DequeueErrorQueryCommand As String
+
+    ''' <summary> Queries the next error from the device error queue. </summary>
+    ''' <returns> The <see cref="DeviceError">Device Error structure.</see> </returns>
+    Protected Function QueryNextError() As DeviceError
+        Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
+        If Not String.IsNullOrWhiteSpace(Me.DequeueErrorQueryCommand) Then
+            de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.DequeueErrorQueryCommand))
+        End If
+        Return de
+    End Function
+
+    ''' <summary> Reads the device errors. </summary>
+    ''' <returns> The device errors. </returns>
+    Protected Overridable Function QueryErrorQueue() As String
+        If Me.ReadingDeviceErrors Then Return ""
+        Dim notifyLastError As Boolean = False
+        Try
+            Me._MessageSentBeforeError = Me.Session.LastMessageSent
+            Me._MessageReceivedBeforeError = Me.Session.LastMessageReceived
+            Me.ReadingDeviceErrors = True
+            Me.ClearErrorCache()
+            If Not String.IsNullOrWhiteSpace(Me.DequeueErrorQueryCommand) AndAlso Me.IsErrorBitSet() Then
                 Dim builder As New System.Text.StringBuilder
                 Dim de As DeviceError = DeviceError.NoError
                 Do
                     de = Me.QueryNextError
                     If de.IsError Then
                         notifyLastError = True
-                        If builder.Length > 0 Then builder.AppendLine()
-                        builder.Append(de.CompoundErrorMessage)
+                        builder.AppendLine(de.CompoundErrorMessage)
                     End If
                 Loop While Me.IsErrorBitSet AndAlso de.IsError
 
@@ -548,9 +683,9 @@ Public MustInherit Class StatusSubsystemBase
                     Me.AppendDeviceErrorMessage(builder.ToString)
                 End If
             End If
-            If notifyLastError Then Me.SafePostPropertyChanged(NameOf(isr.VI.statusSubsystemBase.LastDeviceError))
-            Return Me.DeviceErrors
-
+            If notifyLastError Then Me.SafePostPropertyChanged(NameOf(VI.StatusSubsystemBase.LastDeviceError))
+            Me.SafePostPropertyChanged(NameOf(StatusSubsystemBase.DeviceErrorsReport))
+            Return Me.DeviceErrorsReport
         Catch
             Throw
         Finally
@@ -558,70 +693,92 @@ Public MustInherit Class StatusSubsystemBase
         End Try
     End Function
 
+#End Region
+
+#Region " LAST ERROR "
+
+    ''' <summary> Gets the last error query command. </summary>
+    ''' <value> The last error query command. </value>
+    Protected Overridable ReadOnly Property DeviceErrorQueryCommand As String
+
     ''' <summary> Queries the last error from the device. </summary>
     ''' <returns> The <see cref="DeviceError">Device Error structure.</see> </returns>
-    Public Function QueryLastError() As DeviceError
+    Protected Overridable Function QueryLastError() As DeviceError
         Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
-        If String.IsNullOrWhiteSpace(Me.NextErrorQueryCommand) Then Me.ClearErrorCache()
-        If Not String.IsNullOrWhiteSpace(Me.LastErrorQueryCommand) Then
-            de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.LastErrorQueryCommand))
+        If Not String.IsNullOrWhiteSpace(Me.DeviceErrorQueryCommand) Then
+            de = Me.EnqueueDeviceError(Me.Session.QueryTrimEnd(Me.DeviceErrorQueryCommand))
             If de.IsError Then
-                Me.AppendDeviceErrorMessage($"{Me.ResourceName} Last Error:
+                Me.AppendDeviceErrorMessage($"{Me.ResourceNameCaption} Last Error:
 {de.ErrorMessage}")
             End If
         End If
         Return de
     End Function
 
-    ''' <summary> Appends a device error message. </summary>
-    ''' <param name="value"> The value. </param>
-    Public Sub AppendLastDeviceErrorMessage(ByVal value As String)
-        Me.DeviceErrorBuilder.AppendLine(value)
-        Me.SafePostPropertyChanged(NameOf(isr.VI.statusSubsystemBase.LastDeviceError))
+#End Region
 
-    End Sub
+#Region " LAST SYSTEM ERROR "
 
-    ''' <summary> Enqueue last error. </summary>
-    ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>
-    ''' <returns> A DeviceError. </returns>
-    Public Function EnqueueLastError(ByVal compoundErrorMessage As String) As DeviceError
-        Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
-        If String.IsNullOrWhiteSpace(Me.NextErrorQueryCommand) Then Me.ClearErrorCache()
-        de = Me.EnqueueDeviceError(compoundErrorMessage)
-        If de.IsError Then
-            Me.AppendLastDeviceErrorMessage($"{Me.ResourceName} Last Error:
-{de.ErrorMessage}")
-        End If
-        Return de
-    End Function
+    ''' <summary> Gets the last system error query command. </summary>
+    ''' <value> The last error query command. </value>
+    Protected Overridable ReadOnly Property LastSystemErrorQueryCommand As String
 
     ''' <summary> Reads last error. </summary>
     ''' <returns> The last error. </returns>
-    Public Function ReadLastError() As DeviceError
+    Protected Function ReadLastSystemError() As DeviceError
         Dim de As DeviceError = New DeviceError(Me.NoErrorCompoundMessage)
-        If Not String.IsNullOrWhiteSpace(Me.LastErrorQueryCommand) Then
+        If Not String.IsNullOrWhiteSpace(Me.LastSystemErrorQueryCommand) Then
             de = Me.EnqueueLastError(Me.Session.ReadLine)
         End If
         Return de
     End Function
 
     ''' <summary> Writes the last error query command. </summary>
-    Public Sub WriteLastErrorQueryCommand()
-        If Not String.IsNullOrWhiteSpace(Me.LastErrorQueryCommand) Then
-            Me.Session.WriteLine(Me.LastErrorQueryCommand)
+    Protected Sub WriteLastSystemErrorQueryCommand()
+        If Not String.IsNullOrWhiteSpace(Me.LastSystemErrorQueryCommand) Then
+            Me.Session.WriteLine(Me.LastSystemErrorQueryCommand)
         End If
     End Sub
 
 #End Region
 
+#Region " ERROR QUEUE COUNT "
+
+    ''' <summary> The ErrorQueueCount. </summary>
+    Private _ErrorQueueCount As Integer?
+
+    ''' <summary> Gets or sets the cached error queue count. </summary>
+    ''' <value> <c>null</c> if value is not known. </value>
+    Public Overloads Property ErrorQueueCount As Integer?
+        Get
+            Return Me._ErrorQueueCount
+        End Get
+        Protected Set(ByVal value As Integer?)
+            If Not Nullable.Equals(Me.ErrorQueueCount, value) Then
+                Me._ErrorQueueCount = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+    ''' <summary> Gets or sets The ErrorQueueCount query command. </summary>
+    ''' <value> The ErrorQueueCount query command. </value>
+    Protected Overridable Property ErrorQueueCountQueryCommand As String
+
+    ''' <summary> Queries The ErrorQueueCount. </summary>
+    ''' <returns> The ErrorQueueCount or none if unknown. </returns>
+    Public Function QueryErrorQueueCount() As Integer?
+        Me.ErrorQueueCount = Me.Query(Me.ErrorQueueCount, Me.ErrorQueueCountQueryCommand)
+        Return Me.ErrorQueueCount
+    End Function
+
 #End Region
 
 #Region " DEVICE REGISTERS "
 
-    ''' <summary> Reads the service request register. Also reads the standard event register if 
-    '''           the service request register indicates the existence of a standard event. </summary>
+    ''' <summary> Reads event registers. </summary>
     Public Overridable Sub ReadEventRegisters()
         Me.ReadServiceRequestStatus()
+        Me._ReadEventRegisters()
     End Sub
 
 #End Region
@@ -650,7 +807,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the identity query command. </summary>
     ''' <remarks> SCPI: "*IDN?".
-    ''' <see cref="Ieee488.Syntax.IdentityQueryCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Ieee488.Syntax.IdentityQueryCommand"> </see> </remarks>
     ''' <value> The identity query command. </value>
     Protected Overridable ReadOnly Property IdentityQueryCommand As String
 
@@ -673,12 +830,11 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary> Parse version information. </summary>
     ''' <param name="value"> The value. </param>
     Protected Overridable Sub ParseVersionInfo(ByVal value As String)
-        If String.IsNullOrWhiteSpace(value) Then
-            Me._VersionInfo = New VersionInfo
-        Else
+        Me._VersionInfo = New VersionInfo
+        If Not String.IsNullOrWhiteSpace(value) Then
             Me.VersionInfo.Parse(value)
             Me.SerialNumberReading = Me.VersionInfo.SerialNumber
-            If Not String.IsNullOrWhiteSpace(Me.VersionInfo.Model) Then Me.Session.ResourceTitle = Me.VersionInfo.Model
+            If Not String.IsNullOrWhiteSpace(Me.VersionInfo.Model) Then Me.Session.ResourceNameInfo.ResourceTitle = Me.VersionInfo.Model
         End If
     End Sub
 
@@ -719,8 +875,8 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Reads and returns the instrument serial number. </summary>
     ''' <returns> The serial number. </returns>
-    ''' <exception cref="VI.NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="VI.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     Public Function QuerySerialNumber() As String
         If Not String.IsNullOrWhiteSpace(Me.SerialNumberQueryCommand) Then
             Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading serial number;. ")
@@ -845,7 +1001,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the wait command. </summary>
     ''' <value> The wait command. </value>
-    Protected Overridable ReadOnly Property WaitCommand As String = Ieee488.Syntax.WaitCommand
+    Protected Overridable ReadOnly Property WaitCommand As String = VI.Pith.Ieee488.Syntax.WaitCommand
 
     ''' <summary> Issues the wait command. </summary>
     Public Sub Wait()
@@ -870,7 +1026,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the operation completed query command. </summary>
     ''' <remarks> SCPI: "*OPC?".
-    ''' <see cref="Ieee488.Syntax.OperationCompletedQueryCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Ieee488.Syntax.OperationCompletedQueryCommand"> </see> </remarks>
     ''' <value> The operation completed query command. </value>
     Protected Overridable ReadOnly Property OperationCompletedQueryCommand As String
 
@@ -899,20 +1055,20 @@ Public MustInherit Class StatusSubsystemBase
     ''' <summary> Gets the standard event wait complete bitmask. </summary>
     ''' <exception cref="TimeoutException"> Thrown when a Timeout error condition occurs. </exception>
     ''' <value> The standard event wait complete bitmask. </value>
-    ''' <remarks> 3475. Add Or VI.Ieee4882.ServiceRequests.OperationEvent. </remarks>
-    Public Property StandardEventWaitCompleteBitmask As StandardEvents = StandardEvents.All And Not StandardEvents.RequestControl
+    ''' <remarks> 3475. Add Or VI.Pith.Ieee4882.ServiceRequests.OperationEvent. </remarks>
+    Public Property StandardEventWaitCompleteBitmask As VI.Pith.StandardEvents = VI.Pith.StandardEvents.All And Not VI.Pith.StandardEvents.RequestControl
 
     ''' <summary> Gets the service request wait complete bitmask. </summary>
     ''' <exception cref="TimeoutException"> Thrown when a Timeout error condition occurs. </exception>
     ''' <value> The service request wait complete bitmask. </value>
-    Public Property ServiceRequestWaitCompleteBitmask As ServiceRequests = ServiceRequests.StandardEvent
+    Public Property ServiceRequestWaitCompleteBitmask As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.StandardEvent
 
     ''' <summary> Enabled detection of completion. </summary>
     ''' <param name="standardEventEnableBitmask">  Specifies standard events will issue an SRQ. </param>
     ''' <param name="serviceRequestEnableBitmask"> Specifies which status registers will issue an
     '''                                            SRQ. </param>
-    Public Sub EnableWaitComplete(ByVal standardEventEnableBitmask As StandardEvents,
-                                  ByVal serviceRequestEnableBitmask As ServiceRequests)
+    Public Sub EnableWaitComplete(ByVal standardEventEnableBitmask As VI.Pith.StandardEvents,
+                                  ByVal serviceRequestEnableBitmask As VI.Pith.ServiceRequests)
         Me.EnableServiceRequestComplete(standardEventEnableBitmask, serviceRequestEnableBitmask)
     End Sub
 
@@ -927,7 +1083,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="statusByteBits"> Specifies the status byte which to check. </param>
     ''' <param name="timeout">        Specifies how long to wait for the service request before
     ''' throwing the timeout exception. Set to zero for an infinite (120 seconds) timeout. </param>
-    Public Sub AwaitServiceRequest(ByVal statusByteBits As ServiceRequests, ByVal timeout As TimeSpan)
+    Public Sub AwaitServiceRequest(ByVal statusByteBits As VI.Pith.ServiceRequests, ByVal timeout As TimeSpan)
         Me.AwaitServiceRequest(statusByteBits, timeout, TimeSpan.FromSeconds(Math.Min(0.01, timeout.TotalSeconds / 10)))
     End Sub
 
@@ -938,7 +1094,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="timeout">        Specifies how long to wait for the service request before
     ''' throwing the timeout exception. Set to zero for an infinite (120 seconds) timeout. </param>
     ''' <param name="pollDelay">      Specifies time between serial polls. </param>
-    Public Function TryAwaitServiceRequest(ByVal statusByteBits As ServiceRequests, ByVal timeout As TimeSpan, ByVal pollDelay As TimeSpan) As Boolean
+    Public Function TryAwaitServiceRequest(ByVal statusByteBits As VI.Pith.ServiceRequests, ByVal timeout As TimeSpan, ByVal pollDelay As TimeSpan) As Boolean
 
         ' emulate the reply for disconnected operations.
         Me.Session.MakeEmulatedReplyIfEmpty(statusByteBits)
@@ -977,7 +1133,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="timeout">        Specifies how long to wait for the service request before
     ''' throwing the timeout exception. Set to zero for an infinite (120 seconds) timeout. </param>
     ''' <param name="pollDelay">      Specifies time between serial polls. </param>
-    Public Sub AwaitServiceRequest(ByVal statusByteBits As ServiceRequests, ByVal timeout As TimeSpan, ByVal pollDelay As TimeSpan)
+    Public Sub AwaitServiceRequest(ByVal statusByteBits As VI.Pith.ServiceRequests, ByVal timeout As TimeSpan, ByVal pollDelay As TimeSpan)
         If Not Me.TryAwaitServiceRequest(statusByteBits, timeout, pollDelay) Then Throw New TimeoutException("Timeout awaiting service request.")
     End Sub
 
@@ -986,14 +1142,14 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="timeout"> Specifies the time to wait for the instrument to return operation
     ''' completed. </param>
     Public Sub AwaitOperationCompleted(ByVal timeout As TimeSpan)
-        Me.AwaitServiceRequest(ServiceRequests.RequestingService Or ServiceRequests.StandardEvent, timeout)
+        Me.AwaitServiceRequest(VI.Pith.ServiceRequests.RequestingService Or VI.Pith.ServiceRequests.StandardEvent, timeout)
     End Sub
 
     ''' <summary> Waits for completion of last operation. </summary>
     ''' <param name="value">   The value. </param>
     ''' <param name="timeout"> Specifies the time to wait for the instrument to return operation
     '''                        completed. </param>
-    Public Sub AwaitOperationCompleted(ByVal value As ServiceRequests, ByVal timeout As TimeSpan)
+    Public Sub AwaitOperationCompleted(ByVal value As VI.Pith.ServiceRequests, ByVal timeout As TimeSpan)
         Me.AwaitServiceRequest(value, timeout)
     End Sub
 
@@ -1003,7 +1159,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>
-    Public Overridable ReadOnly Property ErrorAvailableBits() As ServiceRequests
+    Public Overridable ReadOnly Property ErrorAvailableBits() As VI.Pith.ServiceRequests
 
     ''' <summary> Gets a value indicating whether [Error available]. </summary>
     ''' <value> <c>True</c> if [Error available]; otherwise, <c>False</c>. </value>
@@ -1019,7 +1175,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the bits that would be set for detecting if an Message is available. </summary>
     ''' <value> The Message available bits. </value>
-    Public Overridable ReadOnly Property MessageAvailableBits() As ServiceRequests
+    Public Overridable ReadOnly Property MessageAvailableBits() As VI.Pith.ServiceRequests
 
     ''' <summary> Gets a value indicating whether [Message available]. </summary>
     ''' <value> <c>True</c> if [Message available]; otherwise, <c>False</c>. </value>
@@ -1045,7 +1201,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the bits that would be set for detecting if an Measurement is available. </summary>
     ''' <value> The Measurement available bits. </value>
-    Public Overridable ReadOnly Property MeasurementAvailableBits() As ServiceRequests = ServiceRequests.MeasurementEvent
+    Public Overridable ReadOnly Property MeasurementAvailableBits() As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MeasurementEvent
 
     ''' <summary> Gets a value indicating whether [Measurement available]. </summary>
     ''' <value> <c>True</c> if [Measurement available]; otherwise, <c>False</c>. </value>
@@ -1061,7 +1217,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the bits that would be set for detecting if an Operation is available. </summary>
     ''' <value> The Operation available bits. </value>
-    Public Overridable ReadOnly Property OperationAvailableBits() As ServiceRequests = ServiceRequests.OperationEvent
+    Public Overridable ReadOnly Property OperationAvailableBits() As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.OperationEvent
 
     ''' <summary> Gets a value indicating whether [Operation available]. </summary>
     ''' <value> <c>True</c> if [Operation available]; otherwise, <c>False</c>. </value>
@@ -1077,7 +1233,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the bits that would be set for detecting if a Standard Event is available. </summary>
     ''' <value> The Standard Event available bits. </value>
-    Public Overridable ReadOnly Property StandardEventAvailableBits() As ServiceRequests
+    Public Overridable ReadOnly Property StandardEventAvailableBits() As VI.Pith.ServiceRequests
 
     ''' <summary> Gets a value indicating whether [StandardEvent available]. </summary>
     ''' <value> <c>True</c> if [StandardEvent available]; otherwise, <c>False</c>. </value>
@@ -1095,7 +1251,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="value">     Specifies the value that was read from the service request register. </param>
     ''' <param name="delimiter"> The delimiter. </param>
     ''' <returns> The structured report. </returns>
-    Public Shared Function BuildReport(ByVal value As ServiceRequests, ByVal delimiter As String) As String
+    Public Shared Function BuildReport(ByVal value As VI.Pith.ServiceRequests, ByVal delimiter As String) As String
 
         If String.IsNullOrWhiteSpace(delimiter) Then
             delimiter = "; "
@@ -1103,8 +1259,8 @@ Public MustInherit Class StatusSubsystemBase
 
         Dim builder As New System.Text.StringBuilder
 
-        For Each element As ServiceRequests In [Enum].GetValues(GetType(ServiceRequests))
-            If element <> ServiceRequests.None AndAlso element <> ServiceRequests.All AndAlso (element And value) <> 0 Then
+        For Each element As VI.Pith.ServiceRequests In [Enum].GetValues(GetType(VI.Pith.ServiceRequests))
+            If element <> VI.Pith.ServiceRequests.None AndAlso element <> VI.Pith.ServiceRequests.All AndAlso (element And value) <> 0 Then
                 If builder.Length > 0 Then
                     builder.Append(delimiter)
                 End If
@@ -1127,7 +1283,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the standard service enable command format. </summary>
     ''' <remarks> SCPI: "*CLS; *ESE {0:D}; *SRE {1:D}". 
-    ''' <see cref="Ieee488.Syntax.StandardServiceEnableCommandFormat"> </see> </remarks>
+    ''' <see cref="VI.Pith.Ieee488.Syntax.StandardServiceEnableCommandFormat"> </see> </remarks>
     ''' <value> The standard service enable command format. </value>
     Protected Overridable ReadOnly Property StandardServiceEnableCommandFormat As String
 
@@ -1137,8 +1293,8 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="standardEventEnableBitmask">  Specifies standard events will issue an SRQ. </param>
     ''' <param name="serviceRequestEnableBitmask"> Specifies which status registers will issue an
     ''' SRQ. </param>
-    Public Sub EnableServiceRequest(ByVal standardEventEnableBitmask As StandardEvents,
-                                    ByVal serviceRequestEnableBitmask As ServiceRequests)
+    Public Sub EnableServiceRequest(ByVal standardEventEnableBitmask As VI.Pith.StandardEvents,
+                                    ByVal serviceRequestEnableBitmask As VI.Pith.ServiceRequests)
         Me.Session.ReadServiceRequestStatus()
         Me.ServiceRequestEnableBitmask = serviceRequestEnableBitmask
         Me.StandardEventEnableBitmask = standardEventEnableBitmask
@@ -1149,7 +1305,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the standard service enable and complete command format. </summary>
     ''' <remarks> SCPI: "*CLS; *ESE {0:D}; *SRE {1:D}; *OPC".
-    ''' <see cref="Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat"> </see> </remarks>
+    ''' <see cref="VI.Pith.Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat"> </see> </remarks>
     ''' <value> The standard service enable command and complete format. </value>
     Protected Overridable ReadOnly Property StandardServiceEnableCompleteCommandFormat As String
 
@@ -1159,8 +1315,8 @@ Public MustInherit Class StatusSubsystemBase
     ''' entire command so as to save time. Also issues *OPC. </summary>
     ''' <param name="standardEventEnableBitmask">  Specifies standard events will issue an SRQ. </param>
     ''' <param name="serviceRequestEnableBitmask"> Specifies which status registers will issue an SRQ. </param>
-    Public Sub EnableServiceRequestComplete(ByVal standardEventEnableBitmask As StandardEvents,
-                                            ByVal serviceRequestEnableBitmask As ServiceRequests)
+    Public Sub EnableServiceRequestComplete(ByVal standardEventEnableBitmask As VI.Pith.StandardEvents,
+                                            ByVal serviceRequestEnableBitmask As VI.Pith.ServiceRequests)
         Me.Session.ReadServiceRequestStatus()
         Me.ServiceRequestEnableBitmask = serviceRequestEnableBitmask
         Me.StandardEventEnableBitmask = standardEventEnableBitmask
@@ -1171,24 +1327,24 @@ Public MustInherit Class StatusSubsystemBase
     End Sub
 
     ''' <summary> Queries the service request enable bit mask. </summary>
-    ''' <returns> <c>null</c> if value is not known; otherwise <see cref="ServiceRequests">Service
+    ''' <returns> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.ServiceRequests">Service
     ''' Requests</see>. </returns>
-    Public Function QueryServiceRequestEnableBitmask() As ServiceRequests?
-        Me.ServiceRequestEnableBitmask = CType(Me.Session.Query(0I, Ieee488.Syntax.ServiceRequestEnableQueryCommand), ServiceRequests?)
+    Public Function QueryServiceRequestEnableBitmask() As VI.Pith.ServiceRequests?
+        Me.ServiceRequestEnableBitmask = CType(Me.Session.Query(0I, VI.Pith.Ieee488.Syntax.ServiceRequestEnableQueryCommand), VI.Pith.ServiceRequests?)
         Return Me.ServiceRequestEnableBitmask
     End Function
 
     ''' <summary> The service request enable bitmask. </summary>
-    Private _ServiceRequestEnableBitmask As ServiceRequests?
+    Private _ServiceRequestEnableBitmask As VI.Pith.ServiceRequests?
 
     ''' <summary> Gets or sets the cached service request enable bit mask. </summary>
-    ''' <value> <c>null</c> if value is not known; otherwise <see cref="ServiceRequests">Service
+    ''' <value> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.ServiceRequests">Service
     ''' Requests</see>. </value>
-    Public Property ServiceRequestEnableBitmask() As ServiceRequests?
+    Public Property ServiceRequestEnableBitmask() As VI.Pith.ServiceRequests?
         Get
             Return Me._ServiceRequestEnableBitmask
         End Get
-        Protected Set(ByVal value As ServiceRequests?)
+        Protected Set(ByVal value As VI.Pith.ServiceRequests?)
             If Not Me.ServiceRequestEnableBitmask.Equals(value) Then
                 Me._ServiceRequestEnableBitmask = value
                 Me.SafePostPropertyChanged()
@@ -1198,7 +1354,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the service request enable command format. </summary>
     ''' <remarks> SCPI: "*SRE {0:D}". 
-    ''' <see cref="Ieee488.Syntax.ServiceRequestEnableCommandFormat"> </see> </remarks>
+    ''' <see cref="VI.Pith.Ieee488.Syntax.ServiceRequestEnableCommandFormat"> </see> </remarks>
     ''' <value> The service request enable command format. </value>
     Protected Overridable ReadOnly Property ServiceRequestEnableCommandFormat As String
 
@@ -1206,7 +1362,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' (mask) the event registers to be included in the bits that will issue an SRQ. </summary>
     ''' <param name="serviceRequestEnableBitmask"> Specifies which status registers will issue an
     ''' SRQ. </param>
-    Public Sub EnableServiceRequest(ByVal serviceRequestEnableBitmask As ServiceRequests)
+    Public Sub EnableServiceRequest(ByVal serviceRequestEnableBitmask As VI.Pith.ServiceRequests)
         Me.ServiceRequestEnableBitmask = serviceRequestEnableBitmask
         If Not String.IsNullOrWhiteSpace(Me.ServiceRequestEnableCommandFormat) Then
             Me.Session.ApplyServiceRequestEnableBitmask(Me.ServiceRequestEnableCommandFormat, Me.ServiceRequestEnableBitmask.GetValueOrDefault(0))
@@ -1214,20 +1370,20 @@ Public MustInherit Class StatusSubsystemBase
     End Sub
 
     ''' <summary> Gets or sets the cached service request Status. </summary>
-    ''' <value> <c>null</c> if value is not known; otherwise <see cref="ServiceRequests">Service
+    ''' <value> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.ServiceRequests">Service
     ''' Requests</see>. </value>
-    Public ReadOnly Property ServiceRequestStatus() As ServiceRequests
+    Public ReadOnly Property ServiceRequestStatus() As VI.Pith.ServiceRequests
         Get
             Return Me.Session.ServiceRequestStatus
         End Get
     End Property
 
     ''' <summary> Reads the service request Status. This method casts the
-    ''' <see cref="SessionBase.ReadStatusByte">Read Status Byte</see> to
-    ''' <see cref="ServiceRequests">Service Requests</see>. </summary>
-    ''' <returns> <c>null</c> if value is not known; otherwise <see cref="ServiceRequests">Service
+    ''' <see cref="VI.Pith.SessionBase.ReadStatusByte">Read Status Byte</see> to
+    ''' <see cref="VI.Pith.ServiceRequests">Service Requests</see>. </summary>
+    ''' <returns> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.ServiceRequests">Service
     ''' Requests</see>. </returns>
-    Public Function ReadServiceRequestStatus() As ServiceRequests
+    Public Function ReadServiceRequestStatus() As VI.Pith.ServiceRequests
         Me.Session.ReadServiceRequestStatus()
         Return Me.ServiceRequestStatus
     End Function
@@ -1238,7 +1394,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets bits that would be set for detecting if an Standard Device Error is available. </summary>
     ''' <value> The Standard Device Error available bits. </value>
-    Public Property StandardDeviceErrorAvailableBits() As StandardEvents
+    Public Property StandardDeviceErrorAvailableBits() As VI.Pith.StandardEvents
 
     ''' <summary> <c>True</c> if StandardDeviceError available. </summary>
     Private _StandardDeviceErrorAvailable As Boolean
@@ -1259,11 +1415,11 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="value">     Specifies the value that was read from the status register. </param>
     ''' <param name="delimiter"> The delimiter. </param>
     ''' <returns> Returns a detailed report of the event status register (ESR) byte. </returns>
-    Public Shared Function BuildReport(ByVal value As StandardEvents, ByVal delimiter As String) As String
+    Public Shared Function BuildReport(ByVal value As VI.Pith.StandardEvents, ByVal delimiter As String) As String
         If String.IsNullOrWhiteSpace(delimiter) Then delimiter = ";"
         Dim builder As New System.Text.StringBuilder
-        For Each eventValue As StandardEvents In [Enum].GetValues(GetType(StandardEvents))
-            If eventValue <> StandardEvents.None AndAlso eventValue <> StandardEvents.All AndAlso (eventValue And value) <> 0 Then
+        For Each eventValue As VI.Pith.StandardEvents In [Enum].GetValues(GetType(VI.Pith.StandardEvents))
+            If eventValue <> VI.Pith.StandardEvents.None AndAlso eventValue <> VI.Pith.StandardEvents.All AndAlso (eventValue And value) <> 0 Then
                 If builder.Length > 0 Then
                     builder.Append(delimiter)
                 End If
@@ -1274,16 +1430,16 @@ Public MustInherit Class StatusSubsystemBase
     End Function
 
     ''' <summary> The standard event status. </summary>
-    Private _StandardEventStatus As StandardEvents?
+    Private _StandardEventStatus As VI.Pith.StandardEvents?
 
     ''' <summary> Gets or sets the cached Standard Event enable bit mask. </summary>
-    ''' <value> <c>null</c> if value is not known; otherwise <see cref="StandardEvents">Standard
+    ''' <value> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.StandardEvents">Standard
     ''' Events</see>. </value>
-    Public Property StandardEventStatus() As StandardEvents?
+    Public Property StandardEventStatus() As VI.Pith.StandardEvents?
         Get
             Return Me._StandardEventStatus
         End Get
-        Set(ByVal value As StandardEvents?)
+        Set(ByVal value As VI.Pith.StandardEvents?)
             Me._StandardEventStatus = value
             If value.HasValue Then
                 Me.StandardDeviceErrorAvailable = (value.Value And Me.StandardDeviceErrorAvailableBits) <> 0
@@ -1296,31 +1452,31 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the standard event status query command. </summary>
     ''' <remarks> SCPI: "*ESR?".
-    ''' <see cref="Ieee488.Syntax.StandardEventQueryCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Ieee488.Syntax.StandardEventQueryCommand"> </see> </remarks>
     ''' <value> The standard event status query command. </value>
     Protected Overridable ReadOnly Property StandardEventStatusQueryCommand As String
 
     ''' <summary> Queries the Standard Event enable bit mask. </summary>
-    ''' <returns> <c>null</c> if value is not known; otherwise <see cref="StandardEvents">Standard
+    ''' <returns> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.StandardEvents">Standard
     ''' Events</see>. </returns>
-    Public Function QueryStandardEventStatus() As StandardEvents?
+    Public Function QueryStandardEventStatus() As VI.Pith.StandardEvents?
         If Not String.IsNullOrWhiteSpace(Me.StandardEventStatusQueryCommand) Then
-            Me.StandardEventStatus = CType(Me.Session.Query(0I, Me.StandardEventStatusQueryCommand), StandardEvents?)
+            Me.StandardEventStatus = CType(Me.Session.Query(0I, Me.StandardEventStatusQueryCommand), VI.Pith.StandardEvents?)
         End If
         Return Me.StandardEventStatus
     End Function
 
     ''' <summary> The standard event enable bitmask. </summary>
-    Private _StandardEventEnableBitmask As StandardEvents?
+    Private _StandardEventEnableBitmask As VI.Pith.StandardEvents?
 
     ''' <summary> Gets or sets the cached Standard Event enable bit mask. </summary>
-    ''' <value> <c>null</c> if value is not known; otherwise <see cref="StandardEvents">Standard
+    ''' <value> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.StandardEvents">Standard
     ''' Events</see>. </value>
-    Public Property StandardEventEnableBitmask() As StandardEvents?
+    Public Property StandardEventEnableBitmask() As VI.Pith.StandardEvents?
         Get
             Return Me._StandardEventEnableBitmask
         End Get
-        Set(ByVal value As StandardEvents?)
+        Set(ByVal value As VI.Pith.StandardEvents?)
             If Not Me.StandardEventEnableBitmask.Equals(value) Then
                 Me._StandardEventEnableBitmask = value
                 Me.SafePostPropertyChanged()
@@ -1330,16 +1486,16 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the standard event enable query command. </summary>
     ''' <remarks> SCPI: "*ESE?".
-    ''' <see cref="Ieee488.Syntax.StandardEventEnableQueryCommand"> </see> </remarks>
+    ''' <see cref="VI.Pith.Ieee488.Syntax.StandardEventEnableQueryCommand"> </see> </remarks>
     ''' <value> The standard event enable query command. </value>
     Protected Overridable ReadOnly Property StandardEventEnableQueryCommand As String
 
     ''' <summary> Queries the Standard Event enable bit mask. </summary>
-    ''' <returns> <c>null</c> if value is not known; otherwise <see cref="StandardEvents">Standard
+    ''' <returns> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.StandardEvents">Standard
     ''' Events</see>. </returns>
-    Public Function QueryStandardEventEnableBitmask() As StandardEvents?
+    Public Function QueryStandardEventEnableBitmask() As VI.Pith.StandardEvents?
         If Not String.IsNullOrWhiteSpace(Me.StandardEventEnableQueryCommand) Then
-            Me.StandardEventEnableBitmask = CType(Me.Session.Query(0I, Me.StandardEventEnableQueryCommand), StandardEvents?)
+            Me.StandardEventEnableBitmask = CType(Me.Session.Query(0I, Me.StandardEventEnableQueryCommand), VI.Pith.StandardEvents?)
         End If
         Return Me.StandardEventEnableBitmask
     End Function
@@ -1350,7 +1506,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Checks and throws an exception if device errors occurred. Can only be used after
     ''' receiving a full reply from the device. </summary>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="flushReadFirst"> Flushes the read buffer before processing the error. </param>
     ''' <param name="format">         Describes the format to use. </param>
     ''' <param name="args">           A variable-length parameters list containing arguments. </param>
@@ -1362,7 +1518,7 @@ Public MustInherit Class StatusSubsystemBase
             Me.QueryStandardEventStatus()
             Me.QueryDeviceErrors()
             Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
-            Throw New isr.VI.DeviceException(Me.ResourceName, "{0}. {1}.", details, Me.DeviceErrors)
+            Throw New isr.VI.Pith.DeviceException(Me.ResourceNameCaption, $"{details}. {Me.DeviceErrorsReport}.")
         End If
     End Sub
 
@@ -1398,15 +1554,15 @@ Public MustInherit Class StatusSubsystemBase
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
         If success Then
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                      "{0} node {1} done {2}", Me.ResourceName, nodeNumber, details)
+                              $"{Me.ResourceNameCaption} node {nodeNumber} done {details}")
         Else
             If flushReadFirst Then Me.Session.DiscardUnreadData()
             Me.QueryStandardEventStatus()
             Me.QueryDeviceErrors()
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                      "{0} node {1} had errors {2}. Details: {3}{4}{5}",
-                                      Me.ResourceName, nodeNumber, Me.DeviceErrors, details,
-                                      Environment.NewLine, New StackFrame(True).UserCallStack)
+                              $"{Me.ResourceNameCaption} node {nodeNumber} device errors: {Me.DeviceErrorsReport};. Details: 
+{details}
+{New StackFrame(True).UserCallStack}")
         End If
         Return success
     End Function
@@ -1424,16 +1580,15 @@ Public MustInherit Class StatusSubsystemBase
         Dim success As Boolean = Not Me.ErrorAvailable
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
         If success Then
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                      "{0} done {1}", Me.ResourceName, details)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} done {details}")
         Else
             If flushReadFirst Then Me.Session.DiscardUnreadData()
             Me.QueryStandardEventStatus()
             Me.QueryDeviceErrors()
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                      "{0} had errors {1}. Details: {2}{3}{4}",
-                                      Me.ResourceName, Me.DeviceErrors, details,
-                                      Environment.NewLine, New StackFrame(True).UserCallStack)
+                              $"{Me.ResourceNameCaption} device errors: {Me.DeviceErrorsReport};. Details: 
+{details}
+{New StackFrame(True).UserCallStack}")
         End If
         Return success
     End Function
@@ -1443,21 +1598,20 @@ Public MustInherit Class StatusSubsystemBase
     ''' <param name="args">     A variable-length parameters list containing arguments. </param>
     Public Sub TraceVisaOperation(ByVal format As String, ByVal ParamArray args() As Object)
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
-        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                  "{0} done {1}", Me.ResourceName, details)
+        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} done {details}")
     End Sub
 
     ''' <summary> Reports if a visa error occurred.
     '''           Can be used with queries. </summary>
     ''' <param name="format">   Describes the format to use. </param>
     ''' <param name="args">     A variable-length parameters list containing arguments. </param>
-    Public Sub TraceVisaOperation(ByVal ex As NativeException, ByVal format As String, ByVal ParamArray args() As Object)
+    Public Sub TraceVisaOperation(ByVal ex As VI.Pith.NativeException, ByVal format As String, ByVal ParamArray args() As Object)
         If ex Is Nothing Then Throw New ArgumentNullException(NameOf(ex))
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
         Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                  "{0} had a VISA error {1}. Details: {2}{3}{4}",
-                                  Me.ResourceName, ex.InnerError.BuildErrorCodeDetails(), details,
-                                  Environment.NewLine, New StackFrame(True).UserCallStack)
+                          $"{Me.ResourceNameCaption} VISA error: {ex.InnerError.BuildErrorCodeDetails()};. Details: 
+{details}
+{New StackFrame(True).UserCallStack}")
     End Sub
 
     ''' <summary> Reports if a visa error occurred.
@@ -1468,9 +1622,9 @@ Public MustInherit Class StatusSubsystemBase
         If ex Is Nothing Then Throw New ArgumentNullException(NameOf(ex))
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
         Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                  "{0} had an exception {1}. Details: {2}{3}{4}",
-                                  Me.ResourceName, ex.Message(), details,
-                                  Environment.NewLine, New StackFrame(True).UserCallStack)
+                          $"{Me.ResourceNameCaption} exception: {ex.Message};. Details: 
+{details}
+{New StackFrame(True).UserCallStack}")
     End Sub
 
     ''' <summary> Trace visa node operation. Can be used with queries. </summary>
@@ -1480,20 +1634,20 @@ Public MustInherit Class StatusSubsystemBase
     Public Sub TraceVisaOperation(ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
         Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                  "{0} node {1} done {2}", Me.ResourceName, nodeNumber, details)
+                              $"{Me.ResourceNameCaption} node {nodeNumber} done {details}")
     End Sub
 
     ''' <summary> Trace visa failed operation. Can be used with queries. </summary>
     ''' <param name="nodeNumber">   Specifies the remote node number to validate. </param>
     ''' <param name="format"> Describes the format to use. </param>
     ''' <param name="args">   A variable-length parameters list containing arguments. </param>
-    Public Sub TraceVisaOperation(ByVal ex As NativeException, ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
+    Public Sub TraceVisaOperation(ByVal ex As VI.Pith.NativeException, ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
         If ex Is Nothing Then Throw New ArgumentNullException(NameOf(ex))
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
         Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                  "{0} node {1} had a VISA error {2}. Details: {3}{4}{5}",
-                                  Me.ResourceName, nodeNumber, ex.InnerError.BuildErrorCodeDetails(), details,
-                                  Environment.NewLine, New StackFrame(True).UserCallStack)
+                          $"{Me.ResourceNameCaption} node {nodeNumber} VISA error: {ex.InnerError.BuildErrorCodeDetails()};. Details: 
+{details}
+{New StackFrame(True).UserCallStack}")
     End Sub
 
     ''' <summary> Trace failed operation. Can be used with queries. </summary>
@@ -1503,10 +1657,10 @@ Public MustInherit Class StatusSubsystemBase
     Public Sub TraceOperation(ByVal ex As Exception, ByVal nodeNumber As Integer, ByVal format As String, ByVal ParamArray args() As Object)
         If ex Is Nothing Then Throw New ArgumentNullException(NameOf(ex))
         Dim details As String = String.Format(Globalization.CultureInfo.CurrentCulture, format, args)
-        Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                  "{0} node {1} had a VISA error {2}. Details: {3}{4}{5}",
-                                  Me.ResourceName, nodeNumber, ex.Message(), details,
-                                  Environment.NewLine, New StackFrame(True).UserCallStack)
+        Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                          $"{Me.ResourceNameCaption} node {nodeNumber} exception: {ex.Message};. Details: 
+{details}
+{New StackFrame(True).UserCallStack}")
     End Sub
 
 #End Region
@@ -1552,7 +1706,7 @@ Public MustInherit Class StatusSubsystemBase
             Me.Write(Me.CollectGarbageWaitCompleteCommand)
             affirmative = Me.TraceVisaDeviceOperationOkay(True, "collecting garbage after {0};. ",
                                                           String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TraceVisaOperation(ex, "collecting garbage after {0};. ",
                                   String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
             affirmative = False
@@ -1566,7 +1720,7 @@ Public MustInherit Class StatusSubsystemBase
                 Me.AwaitOperationCompleted(timeout)
                 affirmative = Me.TraceVisaDeviceOperationOkay(True, "awaiting completion after collecting garbage after {0};. ",
                                                               String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
-            Catch ex As NativeException
+            Catch ex As VI.Pith.NativeException
                 Me.TraceVisaOperation(ex, "awaiting completion after collecting garbage after {0};. ",
                                       String.Format(Globalization.CultureInfo.CurrentCulture, format, args))
                 affirmative = False
@@ -1674,8 +1828,6 @@ Public MustInherit Class StatusSubsystemBase
     Public Shared Function FromSecondsPrecise(ByVal seconds As Double) As TimeSpan
         Return TimeSpan.FromTicks(CLng(TimeSpan.TicksPerSecond * seconds))
     End Function
-
-
 
 #End Region
 

@@ -11,10 +11,11 @@
 Option Strict On
 Option Explicit On
 
+
 Namespace My
     
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
-     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0"),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.6.0.0"),  _
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
     Partial Friend NotInheritable Class MySettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
@@ -78,62 +79,74 @@ Namespace My
         End Property
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:10")>  _
-        Public Property InitializeTimeout() As Global.System.TimeSpan
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:05")>
+        Public Property InitializeTimeout() As TimeSpan
             Get
-                Return CType(Me("InitializeTimeout"),Global.System.TimeSpan)
+                Return CType(Me("InitializeTimeout"), TimeSpan)
             End Get
             Set
-                Me("InitializeTimeout") = value
+                Me("InitializeTimeout") = Value
             End Set
         End Property
-        
+
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:01.0500000")>  _
-        Public Property DeviceClearRefractoryPeriod() As Global.System.TimeSpan
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:01.0500000")>
+        Public Property DeviceClearRefractoryPeriod() As TimeSpan
             Get
-                Return CType(Me("DeviceClearRefractoryPeriod"),Global.System.TimeSpan)
+                Return CType(Me("DeviceClearRefractoryPeriod"), TimeSpan)
             End Get
             Set
-                Me("DeviceClearRefractoryPeriod") = value
+                Me("DeviceClearRefractoryPeriod") = Value
             End Set
         End Property
-        
+
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.2000000")>  _
-        Public Property ResetRefractoryPeriod() As Global.System.TimeSpan
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.2000000")>
+        Public Property ResetRefractoryPeriod() As TimeSpan
             Get
-                Return CType(Me("ResetRefractoryPeriod"),Global.System.TimeSpan)
+                Return CType(Me("ResetRefractoryPeriod"), TimeSpan)
             End Get
             Set
-                Me("ResetRefractoryPeriod") = value
+                Me("ResetRefractoryPeriod") = Value
             End Set
         End Property
-        
+
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>  _
-        Public Property InitRefractoryPeriod() As Global.System.TimeSpan
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>
+        Public Property InitRefractoryPeriod() As TimeSpan
             Get
-                Return CType(Me("InitRefractoryPeriod"),Global.System.TimeSpan)
+                Return CType(Me("InitRefractoryPeriod"), TimeSpan)
             End Get
             Set
-                Me("InitRefractoryPeriod") = value
+                Me("InitRefractoryPeriod") = Value
             End Set
         End Property
-        
+
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>  _
-        Public Property ClearRefractoryPeriod() As Global.System.TimeSpan
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>
+        Public Property ClearRefractoryPeriod() As TimeSpan
             Get
-                Return CType(Me("ClearRefractoryPeriod"),Global.System.TimeSpan)
+                Return CType(Me("ClearRefractoryPeriod"), TimeSpan)
             End Get
             Set
-                Me("ClearRefractoryPeriod") = value
+                Me("ClearRefractoryPeriod") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("0")>
+        Public Property SessionMessageNotificationLevel() As Integer
+            Get
+                Return CType(Me("SessionMessageNotificationLevel"), Integer)
+            End Get
+            Set
+                Me("SessionMessageNotificationLevel") = Value
             End Set
         End Property
     End Class

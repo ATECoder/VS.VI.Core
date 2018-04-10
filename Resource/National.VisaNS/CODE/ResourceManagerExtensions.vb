@@ -18,11 +18,11 @@ Friend Module ResourceManagerExtensions
     '''                      <see cref="NationalInstruments.VisaNS.ResourceManager">resource
     '''                      manager</see>. </param>
     ''' <returns> A NationalInstruments.VisaNS.HardwareInterfaceType. </returns>
-    Friend Function ConvertInterfaceType(ByVal value As NationalInstruments.VisaNS.HardwareInterfaceType) As VI.HardwareInterfaceType
-        If [Enum].IsDefined(GetType(VI.HardwareInterfaceType), CInt(value)) Then
-            Return CType(CInt(value), VI.HardwareInterfaceType)
+    Friend Function ConvertInterfaceType(ByVal value As NationalInstruments.VisaNS.HardwareInterfaceType) As VI.Pith.HardwareInterfaceType
+        If [Enum].IsDefined(GetType(VI.Pith.HardwareInterfaceType), CInt(value)) Then
+            Return CType(CInt(value), VI.Pith.HardwareInterfaceType)
         Else
-            Return VI.HardwareInterfaceType.Gpib
+            Return VI.Pith.HardwareInterfaceType.Gpib
         End If
     End Function
 
@@ -32,7 +32,7 @@ Friend Module ResourceManagerExtensions
     '''                      manager</see>. </param>
     ''' <returns> A NationalInstruments.VisaNS.HardwareInterfaceType. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
-    Friend Function ConvertInterfaceType(ByVal value As VI.HardwareInterfaceType) As NationalInstruments.VisaNS.HardwareInterfaceType
+    Friend Function ConvertInterfaceType(ByVal value As VI.Pith.HardwareInterfaceType) As NationalInstruments.VisaNS.HardwareInterfaceType
         If [Enum].IsDefined(GetType(NationalInstruments.VisaNS.HardwareInterfaceType), CInt(value)) Then
             Return CType(CInt(value), NationalInstruments.VisaNS.HardwareInterfaceType)
         Else
@@ -75,18 +75,18 @@ Friend Module ResourceManagerExtensions
             Justification:="This is the normative implementation of this method.")>
     <Extension()>
     Public Function ParseResource(ByVal value As NationalInstruments.VisaNS.ResourceManager,
-                                      ByVal resourceName As String) As VI.ResourceParseResult
+                                      ByVal resourceName As String) As VI.Pith.ResourceNameParseInfo
 
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             Dim iNumber As Short = 0
             Dim iType As NationalInstruments.VisaNS.HardwareInterfaceType = 0
             value.ParseResource(resourceName, iType, iNumber)
-            Return New VI.ResourceParseResult(resourceName,
+            Return New VI.Pith.ResourceNameParseInfo(resourceName,
                                                   ResourceManagerExtensions.ConvertInterfaceType(iType), iNumber)
         Catch ex As NationalInstruments.VisaNS.VisaException
             Dim nativeError As New NativeError(ex.ErrorCode, resourceName, "@DM", "Parsing resource")
-            Throw New NativeException(nativeError, ex)
+            Throw New VI.Pith.NativeException(nativeError, ex)
         End Try
 
     End Function
@@ -104,11 +104,11 @@ Friend Module ResourceManagerExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim resources As String
         Try
-            resources = VI.ResourceNamesManager.AllResourcesFilter
+            resources = VI.Pith.ResourceNamesManager.AllResourcesFilter
             Return value.FindResources(resources)
         Catch ex As NationalInstruments.VisaNS.VisaException
-            Dim nativeError As New NativeError(ex.ErrorCode, VI.ResourceNamesManager.AllResourcesFilter, "@DM", "Finding resources")
-            Throw New NativeException(nativeError, ex)
+            Dim nativeError As New NativeError(ex.ErrorCode, VI.Pith.ResourceNamesManager.AllResourcesFilter, "@DM", "Finding resources")
+            Throw New VI.Pith.NativeException(nativeError, ex)
         End Try
     End Function
 
@@ -131,9 +131,9 @@ Friend Module ResourceManagerExtensions
         Try
             Return value.FindResources().Count > 0
         Catch ex As ArgumentException
-            resources = ResourceManagerExtensions.buildResourceMessage(ex)
+            resources = ResourceManagerExtensions.BuildResourceMessage(ex)
             Return False
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             resources = New String() {ex.Message}
             Return False
         End Try
@@ -158,7 +158,7 @@ Friend Module ResourceManagerExtensions
             resources = value.FindResources(filter)
             Return resources.Count > 0
         Catch ex As ArgumentException
-            resources = ResourceManagerExtensions.buildResourceMessage(ex)
+            resources = ResourceManagerExtensions.BuildResourceMessage(ex)
             Return False
         Catch ex As NationalInstruments.VisaNS.VisaException
             resources = New String() {ex.ToFullBlownString}
@@ -189,7 +189,7 @@ Friend Module ResourceManagerExtensions
     <Extension()>
     Public Function InterfaceExists(ByVal value As NationalInstruments.VisaNS.ResourceManager, ByVal resourceName As String) As Boolean
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
-        Dim parseResult As VI.ResourceParseResult = value.ParseResource(resourceName)
+        Dim parseResult As VI.Pith.ResourceNameParseInfo = value.ParseResource(resourceName)
         If parseResult.IsParsed Then
             Dim resources As IEnumerable(Of String) = New String() {}
             If value.TryFindInterfaces(parseResult.InterfaceType, resources) Then
@@ -206,14 +206,14 @@ Friend Module ResourceManagerExtensions
     ''' <returns> The found interface resource names. </returns>
     <Extension()>
     Public Function FindInterfaces(ByVal value As NationalInstruments.VisaNS.ResourceManager) As IEnumerable(Of String)
-        If value Is Nothing Then            Throw New ArgumentNullException(NameOf(value))
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim filter As String = ""
         Try
-            filter = VI.ResourceNamesManager.BuildInterfaceFilter()
+            filter = VI.Pith.ResourceNamesManager.BuildInterfaceFilter()
             Return value.FindResources(filter)
         Catch ex As NationalInstruments.VisaNS.VisaException
             Dim nativeError As New NativeError(ex.ErrorCode, filter, "@DM", "Finding interfaces")
-            Throw New NativeException(nativeError, ex)
+            Throw New VI.Pith.NativeException(nativeError, ex)
         End Try
     End Function
 
@@ -235,9 +235,9 @@ Friend Module ResourceManagerExtensions
             resources = value.FindInterfaces()
             Return resources.Count > 0
         Catch ex As ArgumentException
-            resources = ResourceManagerExtensions.buildResourceMessage(ex)
+            resources = ResourceManagerExtensions.BuildResourceMessage(ex)
             Return False
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             resources = New String() {ex.Message}
             Return False
         End Try
@@ -251,16 +251,16 @@ Friend Module ResourceManagerExtensions
     ''' <returns> The found interface resource names. </returns>
     <Extension()>
     Public Function FindInterfaces(ByVal value As NationalInstruments.VisaNS.ResourceManager,
-                                       ByVal interfaceType As VI.HardwareInterfaceType) As IEnumerable(Of String)
+                                       ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim filter As String = ""
         Try
-            filter = VI.ResourceNamesManager.BuildInterfaceFilter(interfaceType)
+            filter = VI.Pith.ResourceNamesManager.BuildInterfaceFilter(interfaceType)
             Return value.FindResources(filter)
         Catch ex As NationalInstruments.VisaNS.VisaException
             Dim nativeError As New NativeError(ex.ErrorCode, filter,
                                                    $"@DM.{interfaceType}", "Finding interfaces")
-            Throw New NativeException(nativeError, ex)
+            Throw New VI.Pith.NativeException(nativeError, ex)
         End Try
     End Function
 
@@ -276,16 +276,16 @@ Friend Module ResourceManagerExtensions
     <Extension(),
         System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="2#")>
     Public Function TryFindInterfaces(ByVal value As NationalInstruments.VisaNS.ResourceManager,
-                                          ByVal interfaceType As VI.HardwareInterfaceType,
+                                          ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                           ByRef resources As IEnumerable(Of String)) As Boolean
-        If value Is Nothing Then            Throw New ArgumentNullException(NameOf(value))
+        If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInterfaces(interfaceType)
             Return resources.Count > 0
         Catch ex As ArgumentException
-            resources = ResourceManagerExtensions.buildResourceMessage(ex)
+            resources = ResourceManagerExtensions.BuildResourceMessage(ex)
             Return False
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             resources = New String() {ex.Message}
             Return False
         End Try
@@ -300,11 +300,11 @@ Friend Module ResourceManagerExtensions
     <Extension()>
     Public Function InstrumentExists(ByVal value As NationalInstruments.VisaNS.ResourceManager, ByVal resourceName As String) As Boolean
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
-        Dim parseResult As VI.ResourceParseResult = value.ParseResource(resourceName)
+        Dim parseResult As VI.Pith.ResourceNameParseInfo = value.ParseResource(resourceName)
         If parseResult.IsParsed Then
 
         End If
-        Dim result As VI.ResourceParseResult = value.ParseResource(resourceName)
+        Dim result As VI.Pith.ResourceNameParseInfo = value.ParseResource(resourceName)
         If result.IsParsed Then
             Dim resources As IEnumerable(Of String) = New String() {}
             If value.TryFindInstruments(result.InterfaceType, result.InterfaceNumber, resources) Then
@@ -324,11 +324,11 @@ Friend Module ResourceManagerExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim filter As String = ""
         Try
-            filter = isr.VI.ResourceNamesManager.BuildInstrumentFilter()
+            filter = isr.VI.Pith.ResourceNamesManager.BuildInstrumentFilter()
             Return value.FindResources(filter)
         Catch ex As NationalInstruments.VisaNS.VisaException
             Dim nativeError As New NativeError(ex.ErrorCode, filter, "@DM", "Finding instruments")
-            Throw New NativeException(nativeError, ex)
+            Throw New VI.Pith.NativeException(nativeError, ex)
         End Try
     End Function
 
@@ -350,9 +350,9 @@ Friend Module ResourceManagerExtensions
             resources = value.FindInstruments()
             Return resources.Count > 0
         Catch ex As ArgumentException
-            resources = ResourceManagerExtensions.buildResourceMessage(ex)
+            resources = ResourceManagerExtensions.BuildResourceMessage(ex)
             Return False
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             resources = New String() {ex.Message}
             Return False
         End Try
@@ -366,15 +366,15 @@ Friend Module ResourceManagerExtensions
     ''' <returns> The found instrument resource names. </returns>
     <Extension()>
     Public Function FindInstruments(ByVal value As NationalInstruments.VisaNS.ResourceManager,
-                                        ByVal interfaceType As VI.HardwareInterfaceType) As IEnumerable(Of String)
+                                        ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim filter As String = ""
         Try
-            filter = isr.VI.ResourceNamesManager.BuildInstrumentFilter(interfaceType)
+            filter = isr.VI.Pith.ResourceNamesManager.BuildInstrumentFilter(interfaceType)
             Return value.FindResources(filter)
         Catch ex As NationalInstruments.VisaNS.VisaException
             Dim nativeError As New NativeError(ex.ErrorCode, filter, $"@DM.{interfaceType}", "Finding instruments")
-            Throw New NativeException(nativeError, ex)
+            Throw New VI.Pith.NativeException(nativeError, ex)
         End Try
     End Function
 
@@ -391,16 +391,16 @@ Friend Module ResourceManagerExtensions
             Justification:="This is the normative implementation of this method.")>
     <Extension()>
     Public Function TryFindInstruments(ByVal value As NationalInstruments.VisaNS.ResourceManager,
-                                           ByVal interfaceType As VI.HardwareInterfaceType,
+                                           ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                            ByRef resources As IEnumerable(Of String)) As Boolean
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             resources = value.FindInstruments(interfaceType)
             Return resources.Count > 0
         Catch ex As ArgumentException
-            resources = ResourceManagerExtensions.buildResourceMessage(ex)
+            resources = ResourceManagerExtensions.BuildResourceMessage(ex)
             Return False
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             resources = New String() {ex.Message}
             Return False
         End Try
@@ -415,15 +415,15 @@ Friend Module ResourceManagerExtensions
     ''' <returns> The found instrument resource names. </returns>
     <Extension()>
     Public Function FindInstruments(ByVal value As NationalInstruments.VisaNS.ResourceManager,
-                                        ByVal interfaceType As VI.HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
+                                        ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Dim filter As String = ""
         Try
-            filter = isr.VI.ResourceNamesManager.BuildInstrumentFilter(interfaceType, boardNumber)
+            filter = isr.VI.Pith.ResourceNamesManager.BuildInstrumentFilter(interfaceType, boardNumber)
             Return value.FindResources(filter)
         Catch ex As NationalInstruments.VisaNS.VisaException
             Dim nativeError As New NativeError(ex.ErrorCode, filter, $"@DM.{interfaceType}", "Finding instruments")
-            Throw New NativeException(nativeError, ex)
+            Throw New VI.Pith.NativeException(nativeError, ex)
         End Try
     End Function
 
@@ -441,7 +441,7 @@ Friend Module ResourceManagerExtensions
             Justification:="This is the normative implementation of this method.")>
     <Extension()>
     Public Function TryFindInstruments(ByVal value As NationalInstruments.VisaNS.ResourceManager,
-                                           ByVal interfaceType As VI.HardwareInterfaceType,
+                                           ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                            ByVal interfaceNumber As Integer, ByRef resources As IEnumerable(Of String)) As Boolean
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
@@ -450,7 +450,7 @@ Friend Module ResourceManagerExtensions
         Catch ex As ArgumentException
             resources = ResourceManagerExtensions.buildResourceMessage(ex)
             Return False
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             resources = New String() {ex.Message}
             Return False
         End Try

@@ -11,7 +11,7 @@
 ''' </license>
 ''' <history date="11/24/2015" by="David" revision=""> Created. </history>
 Public Class DummyNativeError
-    Inherits isr.VI.NativeErrorBase
+    Inherits NativeErrorBase
 
     ''' <summary> Constructor. </summary>
     ''' <param name="errorCode"> The error code. </param>

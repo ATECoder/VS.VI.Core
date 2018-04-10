@@ -18,7 +18,7 @@ Public Class SourceSubsystemBase
 
     ''' <summary> Initializes a new instance of the <see cref="SourceSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp.StatusSubsystemBase">status subsystem</see>. </param>
-    Public Sub New(ByVal statusSubsystem As VI.Tsp.StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 

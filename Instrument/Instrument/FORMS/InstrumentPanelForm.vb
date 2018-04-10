@@ -20,7 +20,9 @@ Public Class InstrumentPanelForm
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
+        Me.InitializingComponents = True
         Me.InitializeComponent()
+        Me.InitializingComponents = False
     End Sub
 
     ''' <summary>
@@ -169,7 +171,7 @@ Public Class InstrumentPanelForm
     ''' <summary> Executes the property change action. </summary>
     ''' <param name="sender">       The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnPropertyChange(sender As Instrument.ResourcePanelBase, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(sender As Instrument.ResourcePanelBase, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(Instrument.ResourcePanelBase.ResourceTitle)
@@ -184,17 +186,23 @@ Public Class InstrumentPanelForm
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InstrumentPanel_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _InstrumentPanel.PropertyChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Instrument.ResourcePanelBase)}.{e?.PropertyName} change event"
         Try
             If Me.InvokeRequired Then
-                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._InstrumentPanel_PropertyChanged), New Object() {sender, e})
-            Else
-                Me.OnPropertyChange(TryCast(sender, Instrument.ResourcePanelBase), e?.PropertyName)
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf _InstrumentPanel_PropertyChanged), New Object() {sender, e})
+            ElseIf Not Me.InitializingComponents AndAlso sender IsNot Nothing AndAlso e IsNot Nothing Then
+                Me.HandlePropertyChange(TryCast(sender, Instrument.ResourcePanelBase), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling IntstrumentPanel.{e?.PropertyName} change event;. {ex.ToFullBlownString}")
-
-
+            If Me.Talker Is Nothing Then
+                ' used for figuring out what events are raised to cause this. 
+                ' possibly the device is sending messages after the control is disposed indicating that the device needs to 
+                ' be disposed before the control is disposed. 
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 

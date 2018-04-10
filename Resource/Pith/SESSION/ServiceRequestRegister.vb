@@ -4,24 +4,24 @@ Partial Public Class SessionBase
 
     ''' <summary> Initializes the service request register bits. </summary>
     Private Sub _InitializeServiceRequestRegisterBits()
-        Me._MessageAvailableBits = ServiceRequests.MessageAvailable
-        Me._ErrorAvailableBits = ServiceRequests.ErrorAvailable
-        Me._MeasurementAvailableBits = ServiceRequests.MeasurementEvent
-        Me._OperationAvailableBits = ServiceRequests.OperationEvent
-        Me._QuestionableAvailableBits = ServiceRequests.QuestionableEvent
-        Me._StandardEventAvailableBits = ServiceRequests.StandardEvent
+        Me._MessageAvailableBits = VI.Pith.ServiceRequests.MessageAvailable
+        Me._ErrorAvailableBits = VI.Pith.ServiceRequests.ErrorAvailable
+        Me._MeasurementAvailableBits = VI.Pith.ServiceRequests.MeasurementEvent
+        Me._OperationAvailableBits = VI.Pith.ServiceRequests.OperationEvent
+        Me._QuestionableAvailableBits = VI.Pith.ServiceRequests.QuestionableEvent
+        Me._StandardEventAvailableBits = VI.Pith.ServiceRequests.StandardEvent
     End Sub
 
 #Region " SERVICE REQUEST REGISTER EVENTS: ERROR "
 
-    Private _ErrorAvailableBits As ServiceRequests
+    Private _ErrorAvailableBits As VI.Pith.ServiceRequests
     ''' <summary> Gets or sets bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>
-    Public Property ErrorAvailableBits() As ServiceRequests
+    Public Property ErrorAvailableBits() As VI.Pith.ServiceRequests
         Get
             Return Me._ErrorAvailableBits
         End Get
-        Set(ByVal value As ServiceRequests)
+        Set(ByVal value As VI.Pith.ServiceRequests)
             If Not value.Equals(Me.ErrorAvailableBits) Then
                 Me._ErrorAvailableBits = value
                 Me.SafePostPropertyChanged()
@@ -51,7 +51,7 @@ Partial Public Class SessionBase
     ''' <summary> Checks if message is available. </summary>
     ''' <returns> <c>True</c> if the message available bit is on; otherwise, <c>False</c>. </returns>
     Public Function IsMessageAvailable() As Boolean
-        Return Me.IsMessageAvailable(ServiceRequests.MessageAvailable)
+        Return Me.IsMessageAvailable(VI.Pith.ServiceRequests.MessageAvailable)
     End Function
 
     ''' <summary> Checks if message is available. </summary>
@@ -59,7 +59,7 @@ Partial Public Class SessionBase
     ''' <param name="timeout">      Specifies the time to wait for message available. </param>
     ''' <returns> <c>True</c> if the message available bit is on; otherwise, <c>False</c>. </returns>
     Public Function IsMessageAvailable(ByVal pollInterval As TimeSpan, ByVal timeout As TimeSpan) As Boolean
-        Return Me.IsMessageAvailable(ServiceRequests.MessageAvailable, pollInterval, timeout)
+        Return Me.IsMessageAvailable(VI.Pith.ServiceRequests.MessageAvailable, pollInterval, timeout)
     End Function
 
     ''' <summary> Checks if message is available. </summary>
@@ -82,14 +82,14 @@ Partial Public Class SessionBase
 
 #Region " SERVICE REQUEST REGISTER EVENTS: MESSAGE "
 
-    Private _MessageAvailableBits As ServiceRequests
+    Private _MessageAvailableBits As VI.Pith.ServiceRequests
     ''' <summary> Gets or sets bits that would be set for detecting if an Message is available. </summary>
     ''' <value> The Message available bits. </value>
-    Public Property MessageAvailableBits() As ServiceRequests
+    Public Property MessageAvailableBits() As VI.Pith.ServiceRequests
         Get
             Return Me._MessageAvailableBits
         End Get
-        Set(ByVal value As ServiceRequests)
+        Set(ByVal value As VI.Pith.ServiceRequests)
             If Not value.Equals(Me.MessageAvailableBits) Then
                 Me._MessageAvailableBits = value
                 Me.SafePostPropertyChanged()
@@ -144,14 +144,14 @@ Partial Public Class SessionBase
 
 #Region " SERVICE REQUEST REGISTER EVENTS: MEASUREMENT "
 
-    Private _MeasurementAvailableBits As ServiceRequests
+    Private _MeasurementAvailableBits As VI.Pith.ServiceRequests
     ''' <summary> Gets or sets bits that would be set for detecting if an Measurement is available. </summary>
     ''' <value> The Measurement available bits. </value>
-    Public Property MeasurementAvailableBits() As ServiceRequests
+    Public Property MeasurementAvailableBits() As VI.Pith.ServiceRequests
         Get
             Return Me._MeasurementAvailableBits
         End Get
-        Set(ByVal value As ServiceRequests)
+        Set(ByVal value As VI.Pith.ServiceRequests)
             If Not value.Equals(Me.MeasurementAvailableBits) Then
                 Me._MeasurementAvailableBits = value
                 Me.SafePostPropertyChanged()
@@ -178,14 +178,14 @@ Partial Public Class SessionBase
 
 #Region " SERVICE REQUEST REGISTER EVENTS: OPERATION "
 
-    Private _OperationAvailableBits As ServiceRequests
+    Private _OperationAvailableBits As VI.Pith.ServiceRequests
     ''' <summary> Gets or sets bits that would be set for detecting if an Operation is available. </summary>
     ''' <value> The Operation available bits. </value>
-    Public Property OperationAvailableBits() As ServiceRequests
+    Public Property OperationAvailableBits() As VI.Pith.ServiceRequests
         Get
             Return Me._OperationAvailableBits
         End Get
-        Set(ByVal value As ServiceRequests)
+        Set(ByVal value As VI.Pith.ServiceRequests)
             If Not value.Equals(Me.OperationAvailableBits) Then
                 Me._OperationAvailableBits = value
                 Me.SafePostPropertyChanged()
@@ -212,14 +212,14 @@ Partial Public Class SessionBase
 
 #Region " SERVICE REQUEST REGISTER EVENTS: QUESTIONABLE "
 
-    Private _QuestionableAvailableBits As ServiceRequests
+    Private _QuestionableAvailableBits As VI.Pith.ServiceRequests
     ''' <summary> Gets or sets bits that would be set for detecting if an Questionable is available. </summary>
     ''' <value> The Questionable available bits. </value>
-    Public Property QuestionableAvailableBits() As ServiceRequests
+    Public Property QuestionableAvailableBits() As VI.Pith.ServiceRequests
         Get
             Return Me._QuestionableAvailableBits
         End Get
-        Set(ByVal value As ServiceRequests)
+        Set(ByVal value As VI.Pith.ServiceRequests)
             If Not value.Equals(Me.QuestionableAvailableBits) Then
                 Me._QuestionableAvailableBits = value
                 Me.SafePostPropertyChanged()
@@ -246,14 +246,14 @@ Partial Public Class SessionBase
 
 #Region " SERVICE REQUEST REGISTER EVENTS: STANDARD EVENT "
 
-    Private _StandardEventAvailableBits As ServiceRequests
+    Private _StandardEventAvailableBits As VI.Pith.ServiceRequests
     ''' <summary> Gets or sets bits that would be set for detecting if an Standard Event is available. </summary>
     ''' <value> The Standard Event available bits. </value>
-    Public Property StandardEventAvailableBits() As ServiceRequests
+    Public Property StandardEventAvailableBits() As VI.Pith.ServiceRequests
         Get
             Return Me._StandardEventAvailableBits
         End Get
-        Set(ByVal value As ServiceRequests)
+        Set(ByVal value As VI.Pith.ServiceRequests)
             If Not value.Equals(Me.StandardEventAvailableBits) Then
                 Me._StandardEventAvailableBits = value
                 Me.SafePostPropertyChanged()
@@ -282,7 +282,7 @@ Partial Public Class SessionBase
 
     ''' <summary> Gets or sets the standard service enable command format. </summary>
     ''' <value> The standard service enable command format. </value>
-    ''' <remarks> <see cref="Ieee488.Syntax.StandardServiceEnableCommandFormat"></see></remarks>
+    ''' <remarks> <see cref="VI.Pith.Ieee488.Syntax.StandardServiceEnableCommandFormat"></see></remarks>
     Public Property StandardServiceEnableCommandFormat As String
 
     ''' <summary> Program the device to issue an SRQ upon any of the SCPI events. Uses *ESE to select
@@ -291,8 +291,8 @@ Partial Public Class SessionBase
     ''' <param name="standardEventEnableBitmask">  Specifies standard events will issue an SRQ. </param>
     ''' <param name="serviceRequestEnableBitmask"> Specifies which status registers will issue an
     ''' SRQ. </param>
-    Public Sub EnableServiceRequest(ByVal standardEventEnableBitmask As StandardEvents,
-                                    ByVal serviceRequestEnableBitmask As ServiceRequests)
+    Public Sub EnableServiceRequest(ByVal standardEventEnableBitmask As VI.Pith.StandardEvents,
+                                    ByVal serviceRequestEnableBitmask As VI.Pith.ServiceRequests)
         Me.ReadServiceRequestStatus()
         If Not String.IsNullOrWhiteSpace(Me.StandardServiceEnableCommandFormat) Then
             Me.WriteLine(Me.StandardServiceEnableCommandFormat, CInt(standardEventEnableBitmask), CInt(serviceRequestEnableBitmask))
@@ -300,27 +300,27 @@ Partial Public Class SessionBase
     End Sub
 
     ''' <summary> Enabled detection of completion. </summary>
-    ''' <remarks> 3475. Add Or VI.Ieee4882.ServiceRequests.OperationEvent. </remarks>
+    ''' <remarks> 3475. Add Or VI.Pith.Ieee4882.ServiceRequests.OperationEvent. </remarks>
     Public Sub EnableWaitComplete()
-        Me.EnableServiceRequest(StandardEvents.All And Not StandardEvents.RequestControl, ServiceRequests.StandardEvent)
+        Me.EnableServiceRequest(StandardEvents.All And Not VI.Pith.StandardEvents.RequestControl, VI.Pith.ServiceRequests.StandardEvent)
     End Sub
 
     ''' <summary> The service request status. </summary>
-    Private _ServiceRequestStatus As ServiceRequests
+    Private _ServiceRequestStatus As VI.Pith.ServiceRequests
 
     ''' <summary> Gets or sets the cached service request Status. </summary>
     ''' <remarks> The service request status is posted to be parsed by the status subsystem that is
     ''' specific to the instrument at hand. This is critical to the proper workings of the status
     ''' subsystem. The service request status is posted asynchronously. This may not be processed
     ''' fast enough to determine the next action. Not sure how to address this at this time. </remarks>
-    ''' <value> <c>null</c> if value is not known; otherwise <see cref="ServiceRequests">Service
+    ''' <value> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.ServiceRequests">Service
     ''' Requests</see>. </value>
-    Public Property ServiceRequestStatus() As ServiceRequests
+    Public Property ServiceRequestStatus() As VI.Pith.ServiceRequests
         Get
             Return Me._ServiceRequestStatus
         End Get
-        Set(ByVal value As ServiceRequests)
-            Dim isNewValue As Boolean = value <> ServiceRequests.None OrElse Not value.Equals(Me.ServiceRequestStatus)
+        Set(ByVal value As VI.Pith.ServiceRequests)
+            Dim isNewValue As Boolean = value <> VI.Pith.ServiceRequests.None OrElse Not value.Equals(Me.ServiceRequestStatus)
             Me._ServiceRequestStatus = value
             Me.ErrorAvailable = (value And Me.ErrorAvailableBits) <> 0
             Me.MessageAvailable = (value And Me.MessageAvailableBits) <> 0
@@ -333,9 +333,9 @@ Partial Public Class SessionBase
     End Property
 
     ''' <summary> Reads the service request Status. </summary>
-    ''' <returns> <c>null</c> if value is not known; otherwise <see cref="ServiceRequests">Service
+    ''' <returns> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.ServiceRequests">Service
     ''' Requests</see>. </returns>
-    Public Function ReadServiceRequestStatus() As ServiceRequests
+    Public Function ReadServiceRequestStatus() As VI.Pith.ServiceRequests
         Me.ServiceRequestStatus = Me.ReadStatusByte()
         Return Me.ServiceRequestStatus
     End Function

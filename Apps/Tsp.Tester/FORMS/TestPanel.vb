@@ -19,16 +19,15 @@ Public Class TestPanel
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private _InitializingComponents As Boolean
     ''' <summary>
     ''' Initializes a new instance of this class.
     ''' </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
         MyBase.New()
-        Me._InitializingComponents = True
+        Me.InitializingComponents = True
         Me.InitializeComponent()
-        Me._InitializingComponents = False
+        Me.InitializingComponents = False
         Me.queryCommand = ""
         Me.TimingStopwatch = System.Diagnostics.Stopwatch.StartNew
         Me.TspSystem = New TspSystem(New MasterDevice)
@@ -243,10 +242,10 @@ Public Class TestPanel
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.ResourceName) Then
+            If Not String.Equals(value, Me.ResourceName, StringComparison.OrdinalIgnoreCase) Then
                 Me._ResourceName = value
             End If
-            Me._ResourceSelectorConnector.SelectedResourceName = value
+            Me._ResourceSelectorConnector.SessionFactory.SelectedResourceName = value
         End Set
     End Property
 
@@ -254,12 +253,12 @@ Public Class TestPanel
     ''' <value> The Search Pattern of the resource. </value>
     Public Property ResourceFilter As String
         Get
-            Return Me._ResourceSelectorConnector.ResourcesFilter
+            Return Me._ResourceSelectorConnector.SessionFactory.ResourcesFilter
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.ResourceFilter) Then
-                Me._ResourceSelectorConnector.ResourcesFilter = value
+            If Not String.Equals(value, Me.ResourceFilter, StringComparison.OrdinalIgnoreCase) Then
+                Me._ResourceSelectorConnector.SessionFactory.ResourcesFilter = value
             End If
         End Set
     End Property
@@ -268,10 +267,10 @@ Public Class TestPanel
     Public Sub DisplayNames()
         ' get the list of available resources
         If Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.Device IsNot Nothing AndAlso
-            Me.TspSystem.Device.ResourcesFilter IsNot Nothing Then
-            Me._ResourceSelectorConnector.ResourcesFilter = Me.TspSystem.Device.ResourcesFilter
+            Me.TspSystem.Device.Session.ResourceNameInfo.ResourcesFilter IsNot Nothing Then
+            Me._ResourceSelectorConnector.SessionFactory.ResourcesFilter = Me.TspSystem.Device.Session.ResourceNameInfo.ResourcesFilter
         End If
-        Me._ResourceSelectorConnector.DisplayResourceNames()
+        Me._ResourceSelectorConnector.SessionFactory.EnumerateResources()
     End Sub
 
     ''' <summary> Clears the instrument by calling a propagating clear command. </summary>
@@ -279,10 +278,10 @@ Public Class TestPanel
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     Private Sub Connector_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResourceSelectorConnector.Clear
         Me.Talker.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
-                           "Resetting, clearing and initializing resource;. {0}", Me._ResourceSelectorConnector.SelectedResourceName)
+                           "Resetting, clearing and initializing resource;. {0}", Me._ResourceSelectorConnector.SessionFactory.SelectedResourceName)
         Me.TspSystem.Device.ResetClearInit()
         Me.Talker.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId,
-                           "Resource reset, initialized and cleared;. {0}", Me._ResourceSelectorConnector.SelectedResourceName)
+                           "Resource reset, initialized and cleared;. {0}", Me._ResourceSelectorConnector.SessionFactory.SelectedResourceName)
     End Sub
 
     ''' <summary> Connects the instrument by calling a propagating connect command. </summary>
@@ -293,21 +292,21 @@ Public Class TestPanel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
-                               "Connecting;. Opening VISA Session to {0}", Me._ResourceSelectorConnector.SelectedResourceName)
+                               "Connecting;. Opening VISA Session to {0}", Me._ResourceSelectorConnector.SessionFactory.SelectedResourceName)
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
             ' Me.TspSystem.Device.RegisterNotifier(Me._ResourceSelectorConnector.Talker)
-            Me.TspSystem.Device.OpenSession(Me._ResourceSelectorConnector.SelectedResourceName, "TSP")
+            Me.TspSystem.Device.OpenSession(Me.ResourceName, "TSP")
             Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
-                               "Connected;. Opened VISA Session to {0}", Me._ResourceSelectorConnector.SelectedResourceName)
+                               "Connected;. Opened VISA Session to {0}", Me.ResourceName)
             Me._clearInterfaceButton.Enabled = Me.TspSystem.IsDeviceOpen
-        Catch ex As OperationFailedException
+        Catch ex As VI.Pith.OperationFailedException
             Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                "Failed connecting;. Failed opening VISA Session to {0}.{1}",
-                               Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
+                               Me.ResourceName, ex.ToFullBlownString)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception occurred connecting;. {0}.{1}",
-                               Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
+                               Me.ResourceName, ex.ToFullBlownString)
         Finally
             ' cancel if failed to open
             If Not Me.TspSystem.IsDeviceOpen Then e.Cancel = True
@@ -324,25 +323,25 @@ Public Class TestPanel
         Try
             If Me.TspSystem.Device.IsDeviceOpen Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
-                                   "Disconnecting;. Ending access to {0}", Me._ResourceSelectorConnector.SelectedResourceName)
+                                   "Disconnecting;. Ending access to {0}", Me.ResourceName)
             End If
             Me.TspSystem.Device.CloseSession()
-        Catch ex As OperationFailedException
+        Catch ex As VI.Pith.OperationFailedException
             Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                "Failed disconnecting;. Failed closing VISA Session to {0}.{1}",
-                               Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
+                               Me.ResourceName, ex.ToFullBlownString)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception occurred disconnecting;. {0}.{1}",
-                               Me._ResourceSelectorConnector.SelectedResourceName, ex.ToFullBlownString)
+                               Me.ResourceName, ex.ToFullBlownString)
         Finally
             If Me.TspSystem.Device.IsDeviceOpen Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                    "Failed disconnecting;. Failed ending access to {0}",
-                                   Me._ResourceSelectorConnector.SelectedResourceName)
+                                   Me.ResourceName)
             Else
                 Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
-                                   "Disconnected;. Ended access to {0}", Me._ResourceSelectorConnector.SelectedResourceName)
+                                   "Disconnected;. Ended access to {0}", Me.ResourceName)
             End If
             Me._clearInterfaceButton.Enabled = Me.TspSystem.IsDeviceOpen
             Me.Cursor = Cursors.Default
@@ -366,9 +365,9 @@ Public Class TestPanel
     Private Sub OnPropertyChanged(ByVal sender As Instrument.ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(Instrument.ResourceSelectorConnector.SelectedResourceName)
-                Me.ResourceName = sender.SelectedResourceName
-                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Selected {0};. ", sender.SelectedResourceName)
+            Case NameOf(VI.SessionFactory.SelectedResourceName)
+                Me.ResourceName = sender.SessionFactory.SelectedResourceName
+                Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, $"Selected {sender.SessionFactory.SelectedResourceName};. ")
         End Select
     End Sub
 
@@ -435,17 +434,17 @@ Public Class TestPanel
                 If Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.IsDeviceOpen Then
 
                     If Me.TspSystem.IsSessionOpen Then
-                        Me._ResourceSelectorConnector.SelectedResourceName = Me.TspSystem.Device.ResourceName
+                        Me._ResourceSelectorConnector.SessionFactory.SelectedResourceName = Me.TspSystem.Device.ResourceName
                     End If
 
-                    AddHandler Me.TspSystem.Device.InteractiveSubsystem.PropertyChanged, AddressOf InteractiveSubsystemPropertyChanged
+                    AddHandler Me.TspSystem.Device.InteractiveSubsystem.PropertyChanged, AddressOf LocalNodeSubsystemPropertyChanged
                     AddHandler Me.TspSystem.Device.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
                     AddHandler Me.TspSystem.Device.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
 
                     ' flush the input buffer in case the instrument has some leftovers.
                     Me.TspSystem.Device.StatusSubsystem.ReadServiceRequestStatus()
                     If Me.TspSystem.Device.StatusSubsystem.MessageAvailable Then
-                        Me.receive(True)
+                        Me.Receive(True)
                     End If
 
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyApplication.TraceEventId, "Resetting, clearing and initializing the device;. ")
@@ -461,10 +460,10 @@ Public Class TestPanel
                     ' list any user scripts.
                     Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Listing user scripts;. ")
                     Try
-                        Me.listUserScripts()
+                        Me.ListUserScripts()
                     Catch ex As Exception
                         Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                                           "Exception occurred {0};. {1}", Me._statusLabel.Text, ex.ToFullBlownString)
+                                           "Exception occurred {0};. {1}", Me._StatusLabel.Text, ex.ToFullBlownString)
                     End Try
 
                     Me.StartRefreshTimer(TimeSpan.FromMilliseconds(500))
@@ -473,11 +472,11 @@ Public Class TestPanel
 
             Else
                 If Me.TspSystem IsNot Nothing AndAlso Not Me.TspSystem.IsDeviceOpen Then
-                    RemoveHandler Me.TspSystem.Device.InteractiveSubsystem.PropertyChanged, AddressOf InteractiveSubsystemPropertyChanged
+                    RemoveHandler Me.TspSystem.Device.InteractiveSubsystem.PropertyChanged, AddressOf LocalNodeSubsystemPropertyChanged
                     RemoveHandler Me.TspSystem.Device.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
                     RemoveHandler Me.TspSystem.Device.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
                 End If
-                Me._srqStatusLabel.Text = "0x.."
+                Me._SrqStatusLabel.Text = "0x.."
                 Me.StopRefreshTimer()
             End If
 
@@ -485,7 +484,7 @@ Public Class TestPanel
         Catch ex As Exception
 
             Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception occurred {0};. {1}", Me._statusLabel.Text, ex.ToFullBlownString)
+                               "Exception occurred {0};. {1}", Me._StatusLabel.Text, ex.ToFullBlownString)
 
         Finally
 
@@ -524,25 +523,26 @@ Public Class TestPanel
     ''' <summary> Handles the Status subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnPropertyChanged(ByVal subsystem As StatusSubsystem, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As StatusSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(VI.StatusSubsystemBase.Identity)
+            Case NameOf(StatusSubsystemBase.Identity)
                 If Not String.IsNullOrWhiteSpace(subsystem.Identity) Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "{0} is {1};. ", Me.ResourceName, subsystem.Identity)
+                    Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, $"{Me.ResourceName} is {subsystem.Identity};. ")
                 End If
-            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
-                If Not String.IsNullOrWhiteSpace(subsystem.DeviceErrors) Then
-                    Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId, "{0} error {1};. ", Me.ResourceName, subsystem.DeviceErrors)
+            Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
+                Dim report As String = subsystem.DeviceErrorsReport
+                If Not String.IsNullOrWhiteSpace(report) Then
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId, $"{Me.ResourceName} error {report};. ")
                 End If
-            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
+            Case NameOf(StatusSubsystemBase.LastDeviceError)
                 If subsystem.LastDeviceError?.IsError Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
-                                       "{0} error {1};. ", Me.ResourceName, subsystem.LastDeviceError.CompoundErrorMessage)
+                                       $"{Me.ResourceName} error {subsystem.LastDeviceError.CompoundErrorMessage};. ")
                 End If
-            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
+            Case NameOf(StatusSubsystemBase.ServiceRequestStatus)
                 'Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
+            Case NameOf(StatusSubsystemBase.StandardEventStatus)
                 'Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
@@ -552,11 +552,20 @@ Public Class TestPanel
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.Tsp.Instrument.StatusSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.StatusSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, VI.Tsp.Instrument.StatusSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -567,15 +576,15 @@ Public Class TestPanel
     ''' <summary> Handles the Status subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As Tsp.LocalNodeSubsystemBase, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As Tsp.LocalNodeSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(Tsp.LocalNodeSubsystemBase.ExecutionState)
-                Me._tspStatusLabel.Text = subsystem.ExecutionStateCaption
+                Me._TspStatusLabel.Text = subsystem.ExecutionStateCaption
             Case NameOf(Tsp.LocalNodeSubsystemBase.ShowErrors)
-                Me._showErrorsCheckBox.SafeSilentCheckStateSetter(subsystem.ShowErrors.ToCheckState)
+                Me._ShowErrorsCheckBox.SafeSilentCheckStateSetter(subsystem.ShowErrors.ToCheckState)
             Case NameOf(Tsp.LocalNodeSubsystemBase.ShowPrompts)
-                Me._showPromptsCheckBox.SafeSilentCheckStateSetter(subsystem.ShowPrompts.ToCheckState)
+                Me._ShowPromptsCheckBox.SafeSilentCheckStateSetter(subsystem.ShowPrompts.ToCheckState)
         End Select
     End Sub
 
@@ -583,12 +592,21 @@ Public Class TestPanel
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub InteractiveSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+    Private Sub LocalNodeSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Tsp.LocalNodeSubsystemBase)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, Tsp.LocalNodeSubsystemBase), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.LocalNodeSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, Tsp.LocalNodeSubsystemBase), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -600,7 +618,7 @@ Public Class TestPanel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
         End Select
@@ -611,11 +629,16 @@ Public Class TestPanel
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(SystemSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, SystemSubsystem), e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -806,7 +829,7 @@ Public Class TestPanel
 
             End If
 
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation(ex, "sending query/command;. '{0}'", sendBuffer)
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId, "Exception occurred sending;. {0}", ex.ToFullBlownString)
@@ -829,8 +852,8 @@ Public Class TestPanel
         Dim value As Integer
         If Integer.TryParse(address, System.Globalization.NumberStyles.Any, Globalization.CultureInfo.CurrentCulture, value) Then
             If Not Me._validatedGpibAddress.HasValue OrElse Me._validatedGpibAddress.Value <> value OrElse Not Me._ResourceSelectorConnector.Enabled Then
-                Dim resourceName As String = VI.ResourceNamesManager.BuildGpibInstrumentResource("0", address)
-                Using rm As ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
+                Dim resourceName As String = VI.Pith.ResourceNamesManager.BuildGpibInstrumentResource("0", address)
+                Using rm As VI.Pith.ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
                     Me._ResourceSelectorConnector.Enabled = rm.InstrumentExists(resourceName)
                 End Using
             End If
@@ -1108,7 +1131,7 @@ Public Class TestPanel
                 Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation("calling function '{0}({1})';. ", functionName, functionArgs)
             End If
 
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation(ex, "calling function '{0}({1})';. ", functionName, functionArgs)
         Catch ex As Exception
 
@@ -1318,7 +1341,7 @@ Public Class TestPanel
                 Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation("loading function code;. ")
             End If
 
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TspSystem.Device.StatusSubsystem.TraceVisaOperation(ex, "loading function code;. ")
         Catch ex As Exception
 
@@ -1498,22 +1521,22 @@ Public Class TestPanel
     End Sub
 
     ''' <summary> Event handler. Called by _showErrorsCheckBox for check state changed events. </summary>
-    ''' <param name="eventSender"> The event sender. </param>
-    ''' <param name="eventArgs">   Event information. </param>
+    ''' <param name="sender"> The event sender. </param>
+    ''' <param name="e">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ShowErrorsCheckBox_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _showErrorsCheckBox.CheckStateChanged
-        If Me._InitializingComponents Then Return
+    Private Sub _ShowErrorsCheckBox_CheckStateChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ShowErrorsCheckBox.CheckStateChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Try
             ' Turn on the form hourglass
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            If Me._showErrorsCheckBox.Enabled AndAlso Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.IsDeviceOpen Then
-                If Me.TspSystem.Device.InteractiveSubsystem.QueryShowErrors() <> Me._showErrorsCheckBox.Checked Then
+            If Me._ShowErrorsCheckBox.Enabled AndAlso Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.IsDeviceOpen Then
+                If Me.TspSystem.Device.InteractiveSubsystem.QueryShowErrors() <> Me._ShowErrorsCheckBox.Checked Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Toggling showing errors..;. ")
-                    Me.TspSystem.Device.InteractiveSubsystem.WriteShowErrors(Me._showErrorsCheckBox.Checked)
+                    Me.TspSystem.Device.InteractiveSubsystem.WriteShowErrors(Me._ShowErrorsCheckBox.Checked)
                     If Not Me.TspSystem.Device.InteractiveSubsystem.ShowErrors.HasValue Then
                         Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                            "Failed toggling showing errors--value not set;. ")
-                    ElseIf Me.TspSystem.Device.InteractiveSubsystem.ShowErrors.Value <> Me._showErrorsCheckBox.Checked Then
+                    ElseIf Me.TspSystem.Device.InteractiveSubsystem.ShowErrors.Value <> Me._ShowErrorsCheckBox.Checked Then
                         Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                            "Failed toggling showing errors--incorrect value;. ")
                     End If
@@ -1529,23 +1552,23 @@ Public Class TestPanel
     End Sub
 
     ''' <summary> Event handler. Called by _showPromptsCheckBox for check state changed events. </summary>
-    ''' <param name="eventSender"> The event sender. </param>
-    ''' <param name="eventArgs">   Event information. </param>
+    ''' <param name="sender"> The event sender. </param>
+    ''' <param name="e">   Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _ShowPromptsCheckBox_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles _showPromptsCheckBox.CheckStateChanged
-        If Me._InitializingComponents Then Return
+    Private Sub _ShowPromptsCheckBox_CheckStateChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _ShowPromptsCheckBox.CheckStateChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Try
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            If Me._showPromptsCheckBox.Enabled AndAlso Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.IsDeviceOpen Then
+            If Me._ShowPromptsCheckBox.Enabled AndAlso Me.TspSystem IsNot Nothing AndAlso Me.TspSystem.IsDeviceOpen Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId, "Toggling showing prompts..;. ")
 
-                If Me.TspSystem.Device.InteractiveSubsystem.QueryShowPrompts() <> Me._showPromptsCheckBox.Checked Then
-                    Me.TspSystem.Device.InteractiveSubsystem.WriteShowPrompts(Me._showPromptsCheckBox.Checked)
+                If Me.TspSystem.Device.InteractiveSubsystem.QueryShowPrompts() <> Me._ShowPromptsCheckBox.Checked Then
+                    Me.TspSystem.Device.InteractiveSubsystem.WriteShowPrompts(Me._ShowPromptsCheckBox.Checked)
 
                     If Not Me.TspSystem.Device.InteractiveSubsystem.ShowPrompts.HasValue Then
                         Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                            "Failed toggling showing Prompts--value not set;. ")
-                    ElseIf Me.TspSystem.Device.InteractiveSubsystem.ShowPrompts.Value <> Me._showPromptsCheckBox.Checked Then
+                    ElseIf Me.TspSystem.Device.InteractiveSubsystem.ShowPrompts.Value <> Me._ShowPromptsCheckBox.Checked Then
                         Me.Talker.Publish(TraceEventType.Warning, My.MyApplication.TraceEventId,
                                            "Failed toggling showing Prompts--incorrect value;. ")
                     End If

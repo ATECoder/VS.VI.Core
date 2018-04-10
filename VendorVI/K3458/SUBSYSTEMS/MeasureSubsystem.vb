@@ -10,12 +10,12 @@ Imports isr.Core.Pith.EnumExtensions
 ''' </para> </license>
 ''' <history date="10/7/2013" by="David" revision=""> Created. </history>
 Public Class MeasureSubsystem
-    Inherits VI.R2D2.MeasureSubsystemBase
+    Inherits VI.MeasureSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="MeasureSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -33,20 +33,37 @@ Public Class MeasureSubsystem
         Me.LastReading = ""
     End Sub
 
-    ''' <summary> Sets the subsystem to its initial post reset state. </summary>
-    ''' <remarks> Additional Actions: <para>
-    '''           Clears last reading.
-    '''           </para></remarks>
-    Public Overrides Sub InitKnownState()
-        MyBase.InitKnownState()
-        Me.LastReading = ""
-    End Sub
-
-    ''' <summary>
-    ''' Sets the subsystem values to their known execution reset state.
-    ''' </summary>
+    ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
+        Me.LastReading = ""
+        MyBase.InitKnownState()
+        Me.Readings = New Readings
+        With Me.FunctionModeDecimalPlaces
+            .Clear()
+            For Each fmode As SenseFunctionMode In [Enum].GetValues(GetType(SenseFunctionMode))
+                .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
+            Next
+        End With
+        With Me.FunctionModeRanges
+            .Clear()
+            For Each fmode As SenseFunctionMode In [Enum].GetValues(GetType(SenseFunctionMode))
+                .Add(fmode, Core.Pith.RangeR.Full)
+            Next
+        End With
+        With Me.FunctionModeUnits
+            .Clear()
+            For Each fmode As SenseFunctionMode In [Enum].GetValues(GetType(SenseFunctionMode))
+                .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
+            Next
+            .Item(K3458.SenseFunctionMode.CurrentDirect) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(K3458.SenseFunctionMode.CurrentDirectAlternating) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(K3458.SenseFunctionMode.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(K3458.SenseFunctionMode.ResistanceFourWire) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(K3458.SenseFunctionMode.VoltageAlternating) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(K3458.SenseFunctionMode.VoltageDirect) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(K3458.SenseFunctionMode.VoltageDirectAlternating) = Arebis.StandardUnits.ElectricUnits.Volt
+        End With
     End Sub
 
 #End Region
@@ -145,35 +162,39 @@ Public Class MeasureSubsystem
 
     ''' <summary> Fetches the data. </summary>
     ''' <remarks> the K3458 meter does not require issuing a read command. </remarks>
-    Public Overrides Sub Fetch()
-        Me.Read()
-    End Sub
+    Public Overrides Function Fetch() As Double?
+        Return Me.Read()
+    End Function
 
     ''' <summary> Fetches the data. </summary>
     ''' <remarks> the K3458 meter does not require issuing a read command. </remarks>
-    Public Overrides Sub Read()
-        Me.Read(False)
-    End Sub
-
-    ''' <summary> Fetches the data. </summary>
-    ''' <param name="syncNotifyMeasurementAvailable"> The synchronization notify measurement available
-    ''' to read. </param>
-    Public Overloads Sub Read(ByVal syncNotifyMeasurementAvailable As Boolean)
-        Me.LastReading = Me.Session.ReadLineTrimEnd
+    Public Overrides Function Read() As Double?
+        Dim value As String = Me.Session.ReadLineTrimEnd
         If Not String.IsNullOrWhiteSpace(Me.LastReading) Then
             ' the emulator will set the last reading. 
-            Me.ParseReading(Me.LastReading)
-            If syncNotifyMeasurementAvailable Then
-                Me.MeasurementAvailable = True
-            Else
-                Me.AsyncMeasurementAvailable(True)
-            End If
+            Me.ParseReading(value)
         End If
-    End Sub
+        Return Me.MeasuredValue
+    End Function
 
-    Public Overrides Sub ParseReading(reading As String)
-        Throw New NotImplementedException()
-    End Sub
+    Private _Readings As Readings
+    ''' <summary> Gets or sets the readings. </summary>
+    ''' <value> The readings. </value>
+    Public Property Readings As Readings
+        Get
+            Return Me._Readings
+        End Get
+        Private Set(value As Readings)
+            Me._Readings = value
+            MyBase.AssignReadingAmounts(value)
+        End Set
+    End Property
+
+    ''' <summary> Parses a new set of reading elements. </summary>
+    ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
+    Public Overrides Function ParseReading(ByVal reading As String) As Double?
+        Return MyBase.ParseReadingAmounts(reading)
+    End Function
 
 #End Region
 
@@ -281,105 +302,25 @@ Public Class MeasureSubsystem
 
 #Region " AUTO RANGE ENABLED "
 
-    ''' <summary> Auto Range enabled. </summary>
-    Private _AutoRangeEnabled As Boolean?
-
-    ''' <summary> Gets or sets the cached Auto Range Enabled sentinel. </summary>
-    ''' <value> <c>null</c> if Auto Range Enabled is not known; <c>True</c> if output is on; otherwise,
-    ''' <c>False</c>. </value>
-    Public Property AutoRangeEnabled As Boolean?
-        Get
-            Return Me._AutoRangeEnabled
-        End Get
-        Protected Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.AutoRangeEnabled, value) Then
-                Me._AutoRangeEnabled = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the Auto Range Enabled sentinel. </summary>
-    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function ApplyAutoRangeEnabled(ByVal value As Boolean) As Boolean?
-        Me.WriteAutoRangeEnabled(value)
-        Return Me.QueryAutoRangeEnabled()
-    End Function
-
     ''' <summary> Gets the automatic Range enabled query command. </summary>
     ''' <value> The automatic Range enabled query command. </value>
-    Protected Overridable ReadOnly Property AutoRangeEnabledQueryCommand As String = "ARANG?"
-
-    ''' <summary> Queries the Auto Range Enabled sentinel. Also sets the
-    ''' <see cref="AutoRangeEnabled">Enabled</see> sentinel. </summary>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function QueryAutoRangeEnabled() As Boolean?
-        Me.AutoRangeEnabled = Me.Query(Me.AutoRangeEnabled, Me.AutoRangeEnabledQueryCommand)
-        Return Me.AutoRangeEnabled
-    End Function
+    Protected Overrides ReadOnly Property AutoRangeEnabledQueryCommand As String = "ARANG?"
 
     ''' <summary> Gets the automatic Range enabled command Format. </summary>
     ''' <value> The automatic Range enabled query command. </value>
-    Protected Overridable ReadOnly Property AutoRangeEnabledCommandFormat As String = "ARANGE {0:'ON';'ON';'OFF'}"
-
-    ''' <summary> Writes the Auto Range Enabled sentinel. Does not read back from the instrument. </summary>
-    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function WriteAutoRangeEnabled(ByVal value As Boolean) As Boolean?
-        Me.AutoRangeEnabled = Me.Write(value, Me.AutoRangeEnabledCommandFormat)
-        Return Me.AutoRangeEnabled
-    End Function
+    Protected Overrides ReadOnly Property AutoRangeEnabledCommandFormat As String = "ARANGE {0:'ON';'ON';'OFF'}"
 
 #End Region
 
 #Region " POWER LINE CYCLES "
 
-    Private _PowerLineCycles As Double?
-    ''' <summary> Gets or sets the cached Power Line Cycles. </summary>
-    Public Overloads Property PowerLineCycles As Double?
-        Get
-            Return Me._PowerLineCycles
-        End Get
-        Protected Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.PowerLineCycles, value) Then
-                Me._PowerLineCycles = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the Power Line Cycles. </summary>
-    ''' <param name="value"> The current Power Line Cycles. </param>
-    ''' <returns> The Power Line Cycles or none if unknown. </returns>
-    Public Function ApplyPowerLineCycles(ByVal value As Double) As Double?
-        Me.WritePowerLineCycles(value)
-        Return Me.QueryPowerLineCycles()
-    End Function
-
     ''' <summary> Gets The Power Line Cycles query command. </summary>
     ''' <value> The Power Line Cycles query command. </value>
-    Protected Overridable ReadOnly Property PowerLineCyclesQueryCommand As String = "NPLC?"
-
-
-    ''' <summary> Queries the PowerLineCycles. </summary>
-    ''' <returns> The Power Line Cycles or none if unknown. </returns>
-    Public Function QueryPowerLineCycles() As Double?
-        Me.PowerLineCycles = Me.Query(Me.PowerLineCycles, Me.PowerLineCyclesQueryCommand)
-        Return Me.PowerLineCycles
-    End Function
+    Protected Overrides ReadOnly Property PowerLineCyclesQueryCommand As String = "NPLC?"
 
     ''' <summary> Gets The Power Line Cycles command format. </summary>
     ''' <value> The Power Line Cycles command format. </value>
-    Protected Overridable ReadOnly Property PowerLineCyclesCommandFormat As String = "NPLC {0}"
-
-    ''' <summary> Writes the Power Line Cycles without reading back the value from the device. </summary>
-    ''' <param name="value"> The current PowerLineCycles. </param>
-    ''' <returns> The Power Line Cycles or none if unknown. </returns>
-    Public Function WritePowerLineCycles(ByVal value As Double) As Double?
-        Me.PowerLineCycles = Me.Write(value, Me.PowerLineCyclesCommandFormat)
-        Return Me.PowerLineCycles
-    End Function
+    Protected Overrides ReadOnly Property PowerLineCyclesCommandFormat As String = "NPLC {0}"
 
 #End Region
 

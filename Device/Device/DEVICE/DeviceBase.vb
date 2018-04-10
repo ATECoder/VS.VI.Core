@@ -1,9 +1,10 @@
-﻿Imports System.Threading
-Imports System.ComponentModel
+﻿Imports System.ComponentModel
+Imports System.Threading
 Imports isr.Core.Pith
-Imports isr.Core.Pith.EventHandlerExtensions
 Imports isr.Core.Pith.EscapeSequencesExtensions
+Imports isr.Core.Pith.EventHandlerExtensions
 Imports isr.VI.ExceptionExtensions
+Imports isr.VI.Pith
 ''' <summary> Defines the contract that must be implemented by Devices. </summary>
 ''' <license> (c) 2012 Integrated Scientific Resources, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -15,34 +16,37 @@ Imports isr.VI.ExceptionExtensions
 ''' </para> </license>
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
 Public MustInherit Class DeviceBase
-    Inherits PropertyPublisherBase
+    Inherits PropertyPublisherTalkerBase
     Implements IPresettablePropertyPublisher
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="DeviceBase" /> class. </summary>
-    Protected Sub New()
-        Me.New(isr.VI.SessionFactory.Get.Factory.CreateSession())
+    Private Sub New()
+        Me.New(isr.VI.SessionFactory.Get.Factory.CreateSession(), New TraceMessageTalker, False)
         Me._IsSessionOwner = True
     End Sub
 
+    ''' <summary> Specialized constructor for use only by derived class. </summary>
+    ''' <param name="statusSubsystem"> The status subsystem. </param>
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
+        Me.New(StatusSubsystemBase.Validated(statusSubsystem).Session, New TraceMessageTalker, False)
+        Me.StatusSubsystemBase = statusSubsystem
+    End Sub
+
     ''' <summary> Initializes a new instance of the <see cref="DeviceBase" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Protected Sub New(ByVal visaSession As VI.SessionBase)
-        MyBase.New()
+    Private Sub New(ByVal visaSession As VI.Pith.SessionBase, ByVal talker As TraceMessageTalker, ByVal isAssignedTalker As Boolean)
+        MyBase.New(talker, isAssignedTalker)
         If visaSession Is Nothing Then
-            Me._Session = isr.VI.SessionFactory.Get.Factory.CreateSession()
-            Me._IsSessionOwner = True
+            Me.SafeAssignSession(isr.VI.SessionFactory.Get.Factory.CreateSession(), True)
         Else
-            Me._Session = visaSession
+            Me.SafeAssignSession(visaSession, False)
         End If
         Me._Subsystems = New SubsystemCollection
-        Me._ResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter
         Me._UsingSyncServiceRequestHandler = True
-        Me.ConstructorSafeSetter(New TraceMessageTalker)
-        Me._ResourceTitle = DeviceBase.DefaultResourceTitle
-        Me._ResourceName = DeviceBase.ResourceNameClosed
+        Me.ConstructorSafeSetter(talker)
     End Sub
 
 #Region " I Disposable Support "
@@ -58,7 +62,7 @@ Public MustInherit Class DeviceBase
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                Me.SessionMessagesTraceEnabled = False
+                Me.MessageNotificationLevel = NotifySyncLevel.None
                 Me.Session?.DisableServiceRequest()
                 Me.RemoveServiceRequestEventHandler()
                 Me.RemoveEventHandler(Me.ServiceRequestedEvent)
@@ -74,21 +78,13 @@ Public MustInherit Class DeviceBase
                 If Me._IsSessionOwner Then
                     Try
                         Me.CloseSession()
-                    Catch ex As Exception
-                        Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
-                    End Try
-                    Try
-                        If Me._Session IsNot Nothing Then
-                            Me.Session.Dispose()
-                        End If
-                        ' release the session
-                        ' Trying to null the session raises an ObjectDisposedException 
-                        ' if session service request handler was not released. 
-                        Me._Session = Nothing
+                        Me.SafeAssignSession(Nothing, True)
                     Catch ex As ObjectDisposedException
                         Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                     End Try
                 End If
+                Me.StatusSubsystemBase = Nothing
+                Me.Subsystems.DisposeItems()
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
@@ -105,10 +101,10 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Applies default settings and clears the Device. Issues <see cref="StatusSubsystemBase.ClearActiveState">Selective device clear</see>. </summary>
     Public Overridable Sub ClearActiveState()
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceName} Clearing active state")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} Clearing active state")
         Me.StatusSubsystemBase.ClearActiveState()
         ' 20180105: report any errors
-        Me.publishErrorEvent(TraceEventType.Warning)
+        Me.PublishErrorEvent(TraceEventType.Warning)
     End Sub
 
     ''' <summary> Clears the queues and resets all registers to zero. Sets the subsystem properties to
@@ -116,38 +112,38 @@ Public MustInherit Class DeviceBase
     ''' </para> </summary>
     ''' <remarks> *CLS. </remarks>
     Public Overridable Sub ClearExecutionState() Implements IPresettable.ClearExecutionState
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceName} Clearing execution state")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} Clearing execution state")
         Me.Subsystems.ClearExecutionState()
         ' 20180105: report any errors
-        Me.publishErrorEvent(TraceEventType.Warning)
+        Me.PublishErrorEvent(TraceEventType.Warning)
     End Sub
 
     ''' <summary> Initializes the Device. Used after reset to set a desired initial state. </summary>
     ''' <remarks> Use this to customize the reset. </remarks>
     Public Overridable Sub InitKnownState() Implements IPresettable.InitKnownState
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceName} Initializing known state")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} Initializing known state")
         Me.Subsystems.InitKnownState()
         Me.IsInitialized = True
         ' 20180105: report any errors
-        Me.publishErrorEvent(TraceEventType.Warning)
+        Me.PublishErrorEvent(TraceEventType.Warning)
     End Sub
 
     ''' <summary> Resets the Device to its known state. </summary>
     ''' <remarks> *RST. </remarks>
     Public Overridable Sub PresetKnownState() Implements IPresettable.PresetKnownState
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceName} Presetting known state")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} Presetting known state")
         Me.Subsystems.PresetKnownState()
         ' 20180105: report any errors
-        Me.publishErrorEvent(TraceEventType.Warning)
+        Me.PublishErrorEvent(TraceEventType.Warning)
     End Sub
 
     ''' <summary> Resets the Device to its known state. </summary>
     ''' <remarks> *RST. </remarks>
     Public Overridable Sub ResetKnownState() Implements IPresettable.ResetKnownState
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceName} Resetting known state")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} Resetting known state")
         Me.Subsystems.ResetKnownState()
         ' 20180105: report any errors
-        Me.publishErrorEvent(TraceEventType.Warning)
+        Me.PublishErrorEvent(TraceEventType.Warning)
     End Sub
 
     ''' <summary>
@@ -190,104 +186,143 @@ Public MustInherit Class DeviceBase
 
 #End Region
 
+#Region " PUBLISHER "
+
+    ''' <summary> Resumes the property events. </summary>
+    Public Overrides Sub ResumePublishing()
+        MyBase.ResumePublishing()
+        Me.Subsystems.ResumePublishing()
+    End Sub
+
+    ''' <summary> Suppresses the property events. </summary>
+    Public Overrides Sub SuspendPublishing()
+        MyBase.SuspendPublishing()
+        Me.Subsystems.SuspendPublishing()
+    End Sub
+
+#End Region
+
+#Region " RESOURCE NAME INFO "
+
+    ''' <summary>
+    ''' Checks if the specified resource name exists. Use for checking if the instrument is turned on.
+    ''' </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="resourceName">    Name of the resource. </param>
+    ''' <param name="resourcesFilter"> The resources search pattern. </param>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Shared Function Find(ByVal resourceName As String, ByVal resourcesFilter As String) As Boolean
+        If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
+        Using rm As VI.Pith.ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
+            If String.IsNullOrWhiteSpace(resourcesFilter) Then
+                Return rm.FindResources().ToArray.Contains(resourceName)
+            Else
+                Return rm.FindResources(resourcesFilter).ToArray.Contains(resourceName)
+            End If
+        End Using
+    End Function
+
+    ''' <summary>
+    ''' Checks if the specified resource name exists. Use for checking if the instrument is turned on.
+    ''' </summary>
+    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
+    Public Function Find() As Boolean
+        Return Me.Session.FindResource(isr.VI.SessionFactory.Get.Factory.CreateResourcesManager())
+    End Function
+
+#End Region
+
 #Region " SESSION "
 
     ''' <summary> Capture synchronization context. </summary>
     ''' <param name="syncContext"> Context for the synchronization. </param>
     Public Overrides Sub CaptureSyncContext(ByVal syncContext As Threading.SynchronizationContext)
         MyBase.CaptureSyncContext(syncContext)
-        Me.Session?.CaptureSyncContext(syncContext)
-        Me.Subsystems?.CaptureSyncContext(syncContext)
+        Me.Session?.CaptureSyncContext(Me.CapturedSyncContext)
+        Me.Subsystems?.CaptureSyncContext(Me.CapturedSyncContext)
     End Sub
 
     ''' <summary> true if this object is session owner. </summary>
-    Private _IsSessionOwner As Boolean
-
-    ''' <summary> Executes the property changed action. </summary>
-    ''' <param name="sender">       Source of the event. </param>
-    ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
-        If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
-        Select Case propertyName
-            Case NameOf(isr.VI.SessionBase.IsDeviceOpen)
-                If sender.IsDeviceOpen Then
-                    AddHandler Me.Session.PropertyChanged, AddressOf Me.SessionPropertyChanged
-                Else
-                    RemoveHandler Me.Session.PropertyChanged, AddressOf Me.SessionPropertyChanged
-                End If
-            Case NameOf(isr.VI.SessionBase.ResourceTitle)
-                Me.ResourceTitle = sender.ResourceTitle
-            Case NameOf(isr.VI.SessionBase.ResourceName)
-                Me.ResourceName = sender.ResourceName
-        End Select
-    End Sub
-
-    ''' <summary> Session property changed. </summary>
-    ''' <param name="sender"> Source of the event. </param>
-    ''' <param name="e">      Property Changed event information. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _Session_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _Session.PropertyChanged
-        Try
-            Me.OnPropertyChanged(TryCast(sender, SessionBase), e?.PropertyName)
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling property Session.{e.PropertyName} change event;. {ex.ToFullBlownString}")
-        End Try
-    End Sub
+    Private Property IsSessionOwner As Boolean
 
     ''' <summary> The session. </summary>
-    Private WithEvents _Session As SessionBase
+    Private WithEvents _Session As Vi.Pith.SessionBase
 
     ''' <summary> Gets the session. </summary>
     ''' <value> The session. </value>
-    Public ReadOnly Property Session As SessionBase
+    Public ReadOnly Property Session As Vi.Pith.SessionBase
         Get
             Return Me._Session
         End Get
     End Property
 
-    ''' <summary> Gets or sets the default resource title. </summary>
-    Public Const DefaultResourceTitle As String = "Device"
-
-    Private _ResourceTitle As String
-    ''' <summary> Gets the resource title. </summary>
-    ''' <value> The resource title. </value>
-    Public Property ResourceTitle As String
-        Get
-            Return Me._ResourceTitle
-        End Get
-        Set(value As String)
-            If Not String.Equals(Me.ResourceTitle, value) Then
-                Me._ResourceTitle = value
-                Me.SafePostPropertyChanged()
+    ''' <summary> Constructor safe session assignment. If session owner and session exists, must close first. </summary>
+    ''' <param name="value">          The value. </param>
+    ''' <param name="isSessionOwner"> true if this object is session owner. </param>
+    Private Sub SafeAssignSession(ByVal value As Vi.Pith.SessionBase, ByVal isSessionOwner As Boolean)
+        If Me._Session IsNot Nothing Then
+            Windows.Forms.Application.DoEvents()
+            RemoveHandler Me.Session.PropertyChanged, AddressOf Me.SessionPropertyChanged
+            If Me.IsSessionOwner Then
+                Me._Session.Dispose()
+                ' release the session
+                ' Trying to null the session raises an ObjectDisposedException 
+                ' if session service request handler was not released. 
+                Me._Session = Nothing
             End If
-            If Me.Session IsNot Nothing Then Me.Session.ResourceTitle = value
-        End Set
+        End If
+        Me._Session = value
+        If value IsNot Nothing Then
+            AddHandler Me.Session.PropertyChanged, AddressOf Me.SessionPropertyChanged
+            value.ResourceNameInfo.Publish()
+        End If
+        Me.IsSessionOwner = isSessionOwner
+    End Sub
+
+    ''' <summary> Gets the resource Name. </summary>
+    ''' <value> The resource Name. </value>
+    Public ReadOnly Property ResourceName As String
+        Get
+            If Me.Session Is Nothing Then
+                Return VI.Pith.My.MySettings.Default.DefaultClosedResourceCaption
+            Else
+                Return Me.Session.ResourceNameInfo.ResourceName
+            End If
+        End Get
     End Property
 
-    ''' <summary> Gets or sets the resource name closed. </summary>
-    Public Const ResourceNameClosed As String = "<closed>"
-
-    Private _ResourceName As String
-    ''' <summary> Gets the name of the resource. </summary>
-    ''' <value> The name of the resource or &lt;closed&gt; if not open. </value>
-    Public Property ResourceName As String
+    ''' <summary> Gets the resource title. </summary>
+    ''' <value> The resource title. </value>
+    Public ReadOnly Property ResourceTitle As String
         Get
-            Return Me._ResourceName
-        End Get
-        Set(ByVal value As String)
-            If Not String.Equals(Me.ResourceName, value) Then
-                Me._ResourceName = value
-                Me.SafePostPropertyChanged()
+            If Me.Session Is Nothing Then
+                Return VI.Pith.My.MySettings.Default.DefaultResourceTitle
+            Else
+                Return Me.Session.ResourceNameInfo.ResourceTitle
             End If
-        End Set
+        End Get
+    End Property
+
+    ''' <summary> Gets the resource name caption. </summary>
+    ''' <value>
+    ''' The <see cref="VI.Pith.SessionBase.ResourceName"/> resource <see cref="VI.Pith.ResourceNameInfo.ResourceNameCaption">closed
+    ''' caption</see> if not open.
+    ''' </value>
+    Public ReadOnly Property ResourceNameCaption As String
+        Get
+            If Me.Session Is Nothing Then
+                Return VI.Pith.My.MySettings.Default.DefaultClosedResourceCaption
+            Else
+                Return Me.Session.ResourceNameCaption
+            End If
+        End Get
     End Property
 
 #Region " SESSION INITIALIZATION PROPERTIES "
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>
-    Protected Overridable ReadOnly Property ErrorAvailableBits() As ServiceRequests = ServiceRequests.ErrorAvailable
+    Protected Overridable ReadOnly Property ErrorAvailableBits() As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.ErrorAvailable
 
     ''' <summary> Gets or sets the keep alive interval. </summary>
     ''' <value> The keep alive interval. </value>
@@ -305,82 +340,7 @@ Public MustInherit Class DeviceBase
 
 #End Region
 
-#Region " PUBLISHER "
-
-    ''' <summary> Resumes the property events. </summary>
-    Public Overrides Sub ResumePublishing()
-        MyBase.ResumePublishing()
-        Me.Subsystems.ResumePublishing()
-    End Sub
-
-    ''' <summary> Suppresses the property events. </summary>
-    Public Overrides Sub SuspendPublishing()
-        MyBase.SuspendPublishing()
-        Me.Subsystems.SuspendPublishing()
-    End Sub
-
-#End Region
-
-#Region " RESOURCE NAME PATTERN "
-
-    ''' <summary> Builds minimal resources filter. </summary>
-    ''' <returns> A String. </returns>
-    Public Shared Function BuildMinimalResourcesFilter() As String
-        Return VI.ResourceNamesManager.BuildInstrumentFilter(HardwareInterfaceType.Gpib,
-                                                             HardwareInterfaceType.Tcpip,
-                                                             HardwareInterfaceType.Usb)
-    End Function
-
-    Private Shared _DefaultResourcesFilter As String
-
-    ''' <summary> Gets or sets the default resource filter. </summary>
-    ''' <value> The default resource filter. </value>
-    Public Shared Property DefaultResourcesFilter As String
-        Get
-            If String.IsNullOrWhiteSpace(DeviceBase._DefaultResourcesFilter) Then
-                DeviceBase._DefaultResourcesFilter = VI.ResourceNamesManager.BuildInstrumentFilter
-
-            End If
-            Return DeviceBase._DefaultResourcesFilter
-        End Get
-        Set(value As String)
-            DeviceBase._DefaultResourcesFilter = value
-        End Set
-    End Property
-
-    Private _ResourcesFilter As String
-    ''' <summary> Gets or sets the resources search pattern. </summary>
-    ''' <value> The resources search pattern. </value>
-    Public Property ResourcesFilter As String
-        Get
-            Return Me._ResourcesFilter
-        End Get
-        Set(value As String)
-            If Not String.Equals(value, Me.ResourcesFilter) Then
-                Me._ResourcesFilter = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Checks if the specified resource name exists. Use for checking if the instrument is open. </summary>
-    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <param name="resourceName"> Name of the resource. </param>
-    ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Function Find(ByVal resourceName As String) As Boolean
-        If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
-        Using rm As ResourcesManagerBase = isr.VI.SessionFactory.Get.Factory.CreateResourcesManager()
-            If String.IsNullOrWhiteSpace(Me.ResourcesFilter) Then
-                Return rm.FindResources().ToArray.Contains(resourceName)
-            Else
-                Return rm.FindResources(Me.ResourcesFilter).ToArray.Contains(resourceName)
-            End If
-        End Using
-    End Function
-
-#End Region
-
-#Region " OPEN / CLOSE "
+#Region " SESSION: OPEN / CLOSE "
 
     Private _IsInitialized As Boolean
 
@@ -397,7 +357,7 @@ Public MustInherit Class DeviceBase
                 Me.SafePostPropertyChanged()
                 Windows.Forms.Application.DoEvents()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   $"{Me.ResourceTitle} {IIf(Me.IsInitialized, "initialized", "not ready")};. ")
+                                  $"{Me.ResourceNameCaption} {IIf(Me.IsInitialized, "initialized", "not ready")};. ")
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
@@ -413,18 +373,17 @@ Public MustInherit Class DeviceBase
         Set(ByVal value As Boolean)
             If Me.Enabled <> value Then
                 Me.Session.Enabled = value
-                Me.SafePostPropertyChanged()
+                Me.SafeSendPropertyChanged()
                 Windows.Forms.Application.DoEvents()
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   $"{Me.ResourceTitle} {IIf(Me.Enabled, "enabled", "disabled")};. ")
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} {Me.Enabled.GetHashCode:enabled;enabled;disabled};. ")
                 Windows.Forms.Application.DoEvents()
             End If
         End Set
     End Property
 
     ''' <summary>
-    ''' Gets or sets a value indicating whether the device is open. See also
-    ''' <see cref="SessionBase.IsDeviceOpen"/>.
+    ''' Gets or sets a value indicating whether a session to the device is open. See also
+    ''' <see cref="VI.Pith.SessionBase.IsDeviceOpen"/>.
     ''' </summary>
     ''' <value> <c>True</c> if the device has an open session; otherwise, <c>False</c>. </value>
     Public ReadOnly Property IsDeviceOpen As Boolean
@@ -434,7 +393,8 @@ Public MustInherit Class DeviceBase
     End Property
 
     ''' <summary> Initializes the session prior to opening access to the instrument. </summary>
-    Protected Overridable Sub OnCreated()
+    Protected Overridable Sub BeforeOpening()
+        Me.Session.MessageNotificationLevel = Me.MessageNotificationLevel
         Me.Session.KeepAliveInterval = Me.KeepAliveInterval
         Me.Session.IsAliveCommand = Me.IsAliveCommand
         Me.Session.IsAliveQueryCommand = Me.IsAliveQueryCommand
@@ -444,24 +404,36 @@ Public MustInherit Class DeviceBase
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     ''' <remarks> This override should occur as the first call of the overriding method.
     '''           After this call, the parent class adds the subsystems. </remarks>
-    Protected Overridable Sub OnOpening(ByVal e As CancelDetailsEventArgs)
+    Protected Overridable Sub OnOpening(ByVal e As CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        If Me.Subsystems?.Any Then
-            e.RegisterCancellation($"Aborting attempt to add subsystems on top of existing subsystems for resource '{ResourceName}'")
-            Debug.Assert(Not Debugger.IsAttached, e.Details)
-        Else
-            Me.IsInitialized = False
-            Me.SuspendPublishing()
-            Me.SyncNotifyOpening(e)
+        If Me.Subsystems.Count > 1 Then
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} subsystem count {Me.Subsystems.Count} on opening;. ")
+            Me.Subsystems.Clear()
+            Me.Subsystems.Add(Me.StatusSubsystemBase)
         End If
+        Me.IsInitialized = False
+        Me.SuspendPublishing()
+        Me.SyncNotifyOpening(e)
     End Sub
 
     ''' <summary> Allows the derived device to take actions after opening. </summary>
     ''' <remarks>
     ''' This override should occur as the last call of the overriding method.
-    ''' The subsystems are added as part of the <see cref="OnOpening(CancelDetailsEventArgs)"/> method.
+    ''' The subsystems are added as part of the <see cref="OnOpening(cancelEventArgs)"/> method.
     ''' </remarks>
     Protected Overridable Sub OnOpened()
+
+        Dim outcome As TraceEventType = TraceEventType.Information
+        If Me.Session.Enabled And Not Me.Session.IsSessionOpen Then outcome = TraceEventType.Warning
+        Me.Talker.Publish(outcome, My.MyLibrary.TraceEventId,
+                          "{0} {1:enabled;enabled;disabled} and {2:open;open;closed}; session {3:open;open;closed};. ",
+                          Me.ResourceNameCaption,
+                          Me.Session.Enabled.GetHashCode,
+                          Me.Session.IsDeviceOpen.GetHashCode,
+                          Me.Session.IsSessionOpen.GetHashCode)
+
+        ' send property change info up the ladder.
+        Me.Session.ResourceNameInfo.Publish()
 
         ' A talker is assigned to the subsystem when the device is constructed. 
         ' This talker is assigned to each subsystem when it is added.
@@ -483,7 +455,7 @@ Public MustInherit Class DeviceBase
     End Sub
 
     ''' <summary> Executes the initializing actions. </summary>
-    Protected Overridable Sub OnInitializing(ByVal e As CancelDetailsEventArgs)
+    Protected Overridable Sub OnInitializing(ByVal e As CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Me.SyncNotifyInitializing(e)
 
@@ -501,42 +473,42 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Opens the session. </summary>
     ''' <remarks> Register the device trace notifier before opening the session. </remarks>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="resourceName"> Name of the resource. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overridable Sub OpenSession(ByVal resourceName As String, ByVal resourceTitle As String)
         Dim success As Boolean = False
         Try
             If Me.Enabled Then Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Opening session to {resourceName};. ")
-            Me.Session.ResourceTitle = resourceTitle
-            Me.OnCreated()
+            ' initializes the session keep alive commands.
+            Me.BeforeOpening()
             Me.Session.OpenSession(resourceName, resourceTitle, Me.CapturedSyncContext)
             If Me.Session.IsSessionOpen Then
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Session open to {resourceName};. ")
             ElseIf Me.Session.Enabled Then
-                Throw New OperationFailedException($"Unable to open session to {resourceName};. ")
+                Throw New VI.Pith.OperationFailedException($"Unable to open session to {resourceName};. ")
             ElseIf Not Me.IsDeviceOpen Then
-                Throw New OperationFailedException($"Unable to emulate {resourceName};. ")
+                Throw New VI.Pith.OperationFailedException($"Unable to emulate {resourceName};. ")
             End If
             If Me.Session.IsSessionOpen OrElse (Me.IsDeviceOpen AndAlso Not Me.Session.Enabled) Then
 
-                Dim e As New CancelDetailsEventArgs
+                Dim e As New CancelEventArgs
                 Me.OnOpening(e)
 
-                If e.Cancel Then Throw New OperationCanceledException($"Opening {resourceTitle}:{resourceName} canceled;. Details: {e.Details}")
+                If e.Cancel Then Throw New OperationCanceledException($"Opening {resourceTitle}:{resourceName} canceled;. ")
 
                 Me.OnOpened()
 
                 If Me.IsDeviceOpen Then
                     Me.OnInitializing(e)
-                    If e.Cancel Then Throw New OperationCanceledException($"{resourceTitle}:{resourceName} initialization canceled;. Details: {e.Details}")
+                    If e.Cancel Then Throw New OperationCanceledException($"{resourceTitle}:{resourceName} initialization canceled;. ")
                     Me.OnInitialized()
                 Else
-                    Throw New OperationFailedException($"Opening {resourceTitle}:{resourceName} device failed;. ")
+                    Throw New VI.Pith.OperationFailedException($"Opening {resourceTitle}:{resourceName} device failed;. ")
                 End If
 
             Else
-                Throw New OperationFailedException($"Opening {resourceTitle}:{resourceName} session failed;. ")
+                Throw New VI.Pith.OperationFailedException($"Opening {resourceTitle}:{resourceName} session failed;. ")
             End If
             success = True
         Catch
@@ -555,13 +527,13 @@ Public MustInherit Class DeviceBase
     ''' <param name="e">             Cancel details event information. </param>
     ''' <returns> <c>True</c> if success; <c>False</c> otherwise. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Overridable Function TryOpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal e As CancelDetailsEventArgs) As Boolean
+    Public Overridable Function TryOpenSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal e As ActionEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        Dim action As String = $"opening {resourceTitle}:{resourceName}"
+        Dim activity As String = $"opening {resourceTitle}:{resourceName}"
         Try
             Me.OpenSession(resourceName, resourceTitle)
         Catch ex As Exception
-            e.RegisterCancellation($"Exception {action};. {ex.ToFullBlownString}")
+            e.RegisterCancellation($"Exception {activity};. {ex.ToFullBlownString}")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, e.Details)
         End Try
         Return Not e.Cancel AndAlso Me.IsDeviceOpen
@@ -570,7 +542,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Allows the derived device to take actions before closing. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     ''' <remarks> This override should occur as the first call of the overriding method. </remarks>
-    Protected Overridable Sub OnClosing(ByVal e As CancelDetailsEventArgs)
+    Protected Overridable Sub OnClosing(ByVal e As CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Not e.Cancel Then Me.SyncNotifyClosing(e)
         If Not e.Cancel Then
@@ -582,6 +554,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Allows the derived device to take actions after closing. </summary>
     ''' <remarks> This override should occur as the last call of the overriding method. </remarks>
     Protected Overridable Sub OnClosed()
+        Me.Session.ResourceNameInfo.Publish()
         Me.ResumePublishing()
         ' required to prevent property change errors when the device closes.
         Me.SafeSendPropertyChanged(NameOf(DeviceBase.IsDeviceOpen))
@@ -589,26 +562,26 @@ Public MustInherit Class DeviceBase
     End Sub
 
     ''' <summary> Closes the session. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overridable Sub CloseSession()
         Try
             ' check if already closed.
             If Me.IsDisposed OrElse Not Me.IsDeviceOpen Then Return
-            Dim e As New CancelDetailsEventArgs
+            Dim e As New CancelEventArgs
             Me.OnClosing(e)
             If e.Cancel Then
-                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Close session canceled;. {e.Details}")
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Close session canceled;. ")
             Else
                 Me.RemoveServiceRequestEventHandler()
                 Me.Session.DisableServiceRequest()
                 Me.Session.CloseSession()
                 Me.OnClosed()
             End If
-        Catch ex As NativeException
-            Throw New OperationFailedException("Failed closing the VISA session.", ex)
+        Catch ex As VI.Pith.NativeException
+            Throw New VI.Pith.OperationFailedException("Failed closing the VISA session.", ex)
         Catch ex As Exception
-            Throw New OperationFailedException("Exception occurred closing the session.", ex)
+            Throw New VI.Pith.OperationFailedException("Exception occurred closing the session.", ex)
         End Try
     End Sub
 
@@ -626,19 +599,18 @@ Public MustInherit Class DeviceBase
 
 #End Region
 
-#Region " OPEN / CLOSE STATUS SUBSYSTEM "
+#Region " SESSIOn: OPEN / CLOSE STATUS SUBSYSTEM ONLY"
 
     ''' <summary> Allows the derived device to take actions before opening the status subsystem. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     ''' <remarks> This override should occur as the first call of the overriding method.
     '''           After this call, the parent class adds the subsystems. </remarks>
-    Protected Overridable Sub OnStatusOpening(ByVal e As CancelDetailsEventArgs)
+    Protected Overridable Sub OnStatusOpening(ByVal e As CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        If Me.Subsystems?.Any Then
-            e.Cancel = True
-            Dim msg As String = Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                                   $"Aborting attempt to add a status on top of existing subsystems for resource '{ResourceName}';. ")
-            Debug.Assert(Not Debugger.IsAttached, msg)
+        If Me.Subsystems.Count > 1 Then
+            Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} subsystem count {Me.Subsystems.Count} on opening;. ")
+            Me.Subsystems.Clear()
+            Me.Subsystems.Add(Me.StatusSubsystemBase)
         Else
             Me.IsInitialized = False
         End If
@@ -647,7 +619,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Allows the derived device status to take actions after opening. </summary>
     ''' <remarks>
     ''' This override should occur as the last call of the overriding method.
-    ''' The subsystems are added as part of the <see cref="OnOpening(CancelDetailsEventArgs)"/> method.
+    ''' The subsystems are added as part of the <see cref="OnOpening(CancelEventArgs)"/> method.
     ''' </remarks>
     Protected Overridable Sub OnStatusOpened()
 
@@ -667,40 +639,39 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Opens the session. </summary>
     ''' <remarks> Register the device trace notifier before opening the session. </remarks>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="resourceName"> Name of the resource. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overridable Sub OpenStatusSession(ByVal resourceName As String, ByVal resourceTitle As String)
         Dim success As Boolean = False
         Try
             If Me.Enabled Then Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Opening session to {resourceName};. ")
-            Me.Session.ResourceTitle = resourceTitle
-            Me.OnCreated()
+            Me.BeforeOpening()
             Me.Session.OpenSession(resourceName, resourceTitle, Me.CapturedSyncContext)
             If Me.Session.IsSessionOpen Then
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"Session open to {resourceName};. ")
             ElseIf Me.Session.Enabled Then
-                Throw New OperationFailedException($"Unable to open session to {resourceName};. ")
+                Throw New VI.Pith.OperationFailedException($"Unable to open session to {resourceName};. ")
             ElseIf Not Me.IsDeviceOpen Then
-                Throw New OperationFailedException($"Unable to emulate {resourceName};. ")
+                Throw New VI.Pith.OperationFailedException($"Unable to emulate {resourceName};. ")
             End If
             If Me.Session.IsSessionOpen OrElse (Me.IsDeviceOpen AndAlso Not Me.Session.Enabled) Then
 
-                Dim e As New CancelDetailsEventArgs
+                Dim e As New CancelEventArgs
                 Me.OnStatusOpening(e)
 
                 If e.Cancel Then
-                    Throw New OperationCanceledException($"Opening {resourceTitle}:{resourceName} status canceled;. {e.Details}")
+                    Throw New OperationCanceledException($"Opening {resourceTitle}:{resourceName} status canceled;. ")
                 End If
 
                 Me.OnStatusOpened()
 
                 If Not Me.IsDeviceOpen Then
-                    Throw New OperationFailedException($"Opening {resourceTitle}:{resourceName} device status failed;. ")
+                    Throw New VI.Pith.OperationFailedException($"Opening {resourceTitle}:{resourceName} device status failed;. ")
                 End If
 
             Else
-                Throw New OperationFailedException($"Opening {resourceTitle}:{resourceName} status session failed;. ")
+                Throw New VI.Pith.OperationFailedException($"Opening {resourceTitle}:{resourceName} status session failed;. ")
             End If
             success = True
         Catch
@@ -719,13 +690,13 @@ Public MustInherit Class DeviceBase
     ''' <param name="e">             Cancel details event information. </param>
     ''' <returns> <c>True</c> if success; <c>False</c> otherwise. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Overridable Function TryOpenStatusSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal e As CancelDetailsEventArgs) As Boolean
+    Public Overridable Function TryOpenStatusSession(ByVal resourceName As String, ByVal resourceTitle As String, ByVal e As ActionEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        Dim action As String = $"opening {resourceTitle}:{resourceName}"
+        Dim activity As String = $"opening {resourceTitle}:{resourceName}"
         Try
             Me.OpenStatusSession(resourceName, resourceTitle)
         Catch ex As Exception
-            e.RegisterCancellation($"Exception {action};. {ex.ToFullBlownString}")
+            e.RegisterCancellation($"Exception {activity};. {ex.ToFullBlownString}")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, e.Details)
         End Try
         Return Not e.Cancel AndAlso Me.IsDeviceOpen
@@ -734,7 +705,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Allows the derived device status subsystem to take actions before closing. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     ''' <remarks> This override should occur as the first call of the overriding method. </remarks>
-    Protected Overridable Sub OnStatusClosing(ByVal e As CancelDetailsEventArgs)
+    Protected Overridable Sub OnStatusClosing(ByVal e As CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If Not e.Cancel Then Me.SyncNotifyClosing(e)
         If Not e.Cancel Then
@@ -751,24 +722,24 @@ Public MustInherit Class DeviceBase
     End Sub
 
     ''' <summary> Closes the session. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Overridable Sub CloseStatusSession()
         Try
             ' check if already closed.
             If Me.IsDisposed OrElse Not Me.IsDeviceOpen Then Return
-            Dim e As New CancelDetailsEventArgs
+            Dim e As New CancelEventArgs
             Me.OnStatusClosing(e)
             If e.Cancel Then
-                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Close status session canceled;. {e.Details}")
+                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Close status session canceled;. ")
             Else
                 Me.Session.CloseSession()
                 Me.OnStatusClosed()
             End If
-        Catch ex As NativeException
-            Throw New OperationFailedException("Failed closing the status session.", ex)
+        Catch ex As VI.Pith.NativeException
+            Throw New VI.Pith.OperationFailedException("Failed closing the status session.", ex)
         Catch ex As Exception
-            Throw New OperationFailedException("Exception occurred closing the status session.", ex)
+            Throw New VI.Pith.OperationFailedException("Exception occurred closing the status session.", ex)
         End Try
     End Sub
 
@@ -788,16 +759,22 @@ Public MustInherit Class DeviceBase
 
 #Region " SESSION: PROPERTY CHANGES AND MESSAGES EVENTS  "
 
-    ''' <summary> Gets or sets the session messages trace enabled. </summary>
-    ''' <value> The session messages trace enabled. </value>
-    Public Property SessionMessagesTraceEnabled As Boolean
+    Private _MessageNotificationLevel As isr.Core.Pith.NotifySyncLevel
+
+    ''' <summary> Gets or sets the message notification level. </summary>
+    ''' <value> The message notification level. </value>
+    Public Property MessageNotificationLevel As isr.Core.Pith.NotifySyncLevel
         Get
-            Return Me.IsDeviceOpen AndAlso Me.Session.SessionMessagesTraceEnabled
+            Return Me._MessageNotificationLevel
         End Get
-        Set(value As Boolean)
-            If Me.IsDeviceOpen AndAlso value <> Me.SessionMessagesTraceEnabled Then
-                Me.Session.SessionMessagesTraceEnabled = value
-                Me.SafePostPropertyChanged()
+        Set(value As isr.Core.Pith.NotifySyncLevel)
+            If value <> Me.MessageNotificationLevel Then
+                Me._MessageNotificationLevel = value
+                If Me.Session IsNot Nothing Then
+                    Me.Session.MessageNotificationLevel = value
+                Else
+                    Me.SafePostPropertyChanged()
+                End If
             End If
         End Set
     End Property
@@ -810,54 +787,46 @@ Public MustInherit Class DeviceBase
         End Get
     End Property
 
-    ''' <summary> Session property changed. </summary>
+    ''' <summary> Handles Session property change. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub SessionPropertyChanged(ByVal sender As SessionBase, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal sender As Vi.Pith.SessionBase, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(isr.VI.SessionBase.SessionMessagesTraceEnabled)
-                    Me.SafePostPropertyChanged(NameOf(isr.VI.SessionBase.SessionMessagesTraceEnabled))
-                Case NameOf(isr.VI.SessionBase.ServiceRequestEventEnabled)
-                    Me.SafePostPropertyChanged(NameOf(isr.VI.SessionBase.SessionMessagesTraceEnabled))
-                Case NameOf(isr.VI.SessionBase.ServiceRequestEnableBitmask)
-                    Me.SafePostPropertyChanged(NameOf(isr.VI.SessionBase.ServiceRequestEnableBitmask))
-                Case NameOf(isr.VI.SessionBase.LastMessageReceived)
-
+                Case NameOf(VI.Pith.SessionBase.LastMessageReceived)
                     Dim value As String = sender.LastMessageReceived
                     If Not String.IsNullOrWhiteSpace(value) Then
-                        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                               "{0} sent: '{1}'.", Me.ResourceName, value.InsertCommonEscapeSequences)
+                        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} sent: '{value.InsertCommonEscapeSequences}'")
+                        Me.SafeSendPropertyChanged(propertyName)
                     End If
-                Case NameOf(isr.VI.SessionBase.LastMessageSent)
+                Case NameOf(VI.Pith.SessionBase.LastMessageSent)
                     Dim value As String = sender.LastMessageSent
                     If Not String.IsNullOrWhiteSpace(value) Then
-                        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                               "{0} received: '{1}'.", Me.ResourceName, value)
+                        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} received: '{value}'")
+                        Me.SafeSendPropertyChanged(propertyName)
                     End If
+                Case NameOf(VI.Pith.SessionBase.IsDeviceOpen)
+                    Me.SafeSendPropertyChanged(propertyName)
+                Case Else
+                    Me.SafeSendPropertyChanged(propertyName)
             End Select
         End If
     End Sub
 
-    ''' <summary> Session property changed. </summary>
+    ''' <summary> Handles Session property change. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SessionPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.Pith.SessionBase)}.{e.PropertyName} change"
         Try
-            If sender IsNot Nothing AndAlso e IsNot Nothing Then
-                Me.SessionPropertyChanged(CType(sender, SessionBase), e.PropertyName)
-            End If
+            Me.HandlePropertyChange(TryCast(sender, VI.Pith.SessionBase), e.PropertyName)
         Catch ex As Exception
-            If e Is Nothing Then
-                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}",
-                         "Null event arguments", ex.ToFullBlownString)
-            ElseIf String.IsNullOrEmpty(e.PropertyName) Then
-                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}",
-                         "Empty", ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
             Else
-
-                Debug.Assert(Not Debugger.IsAttached, "Exception handling property", "Exception handling '{0}' property change. {1}.", e.PropertyName, ex.ToFullBlownString)
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
             End If
         End Try
     End Sub
@@ -884,9 +853,13 @@ Public MustInherit Class DeviceBase
 
     ''' <summary> Gets the service request enable bitmask. </summary>
     ''' <value> The service request enable bitmask. </value>
-    Public ReadOnly Property ServiceRequestEnableBitmask As ServiceRequests
+    Public ReadOnly Property ServiceRequestEnableBitmask As VI.Pith.ServiceRequests
         Get
-            Return Me.Session.ServiceRequestEnableBitmask
+            If Me.IsDeviceOpen Then
+                Return Me.Session.ServiceRequestEnableBitmask
+            Else
+                Return VI.Pith.ServiceRequests.None
+            End If
         End Get
     End Property
 
@@ -911,17 +884,17 @@ Public MustInherit Class DeviceBase
     ''' </remarks>
     Public Sub AddServiceRequestEventHandler()
         If Not Me.DeviceServiceRequestHandlerAdded Then
-            AddHandler Me.Session.ServiceRequested, AddressOf Me.OnSessionBaseServiceRequested
+            AddHandler Me.Session.ServiceRequested, AddressOf Me.SessionBaseServiceRequested
             Me.DeviceServiceRequestHandlerAdded = True
         End If
     End Sub
 
     ''' <summary> Removes the device service request event handler. </summary>
     Public Sub RemoveServiceRequestEventHandler()
-        If Me.DeviceServiceRequestHandlerAdded Then
-            RemoveHandler Me.Session.ServiceRequested, AddressOf Me.OnSessionBaseServiceRequested
-            Me.DeviceServiceRequestHandlerAdded = False
+        If Me.DeviceServiceRequestHandlerAdded AndAlso Me.Session IsNot Nothing Then
+            RemoveHandler Me.Session.ServiceRequested, AddressOf Me.SessionBaseServiceRequested
         End If
+        Me.DeviceServiceRequestHandlerAdded = False
     End Sub
 
 #End Region
@@ -958,57 +931,55 @@ Public MustInherit Class DeviceBase
         Get
             Return Me._StatusSubsystemBase
         End Get
-        Set(value As StatusSubsystemBase)
+        Private Set(value As VI.StatusSubsystemBase)
             If Me._StatusSubsystemBase IsNot Nothing Then
+                Me._Subsystems.Remove(Me._StatusSubsystemBase)
                 RemoveHandler Me._StatusSubsystemBase.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
             End If
             Me._StatusSubsystemBase = value
             If Me._StatusSubsystemBase IsNot Nothing Then
                 AddHandler Me._StatusSubsystemBase.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
+                Me._Subsystems.Add(Me._StatusSubsystemBase)
             End If
         End Set
     End Property
 
-    ''' <summary> Executes the subsystem property changed action. </summary>
+    ''' <summary> Handles the subsystem property change. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
-    Protected Overridable Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
-                If Not subsystem.ReadingDeviceErrors AndAlso subsystem.ErrorAvailable Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Error available;. ")
-                    subsystem.QueryDeviceErrors()
-                End If
-            Case NameOf(VI.StatusSubsystemBase.MessageAvailable)
+            Case NameOf(StatusSubsystemBase.ErrorAvailable)
+            Case NameOf(StatusSubsystemBase.MessageAvailable)
                 If subsystem.MessageAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
                 End If
-            Case NameOf(VI.StatusSubsystemBase.MeasurementAvailable)
+            Case NameOf(StatusSubsystemBase.MeasurementAvailable)
                 If subsystem.MeasurementAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
                 End If
-            Case NameOf(VI.StatusSubsystemBase.ReadingDeviceErrors)
+            Case NameOf(StatusSubsystemBase.ReadingDeviceErrors)
                 If subsystem.ReadingDeviceErrors Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
                 End If
 
-            Case NameOf(VI.StatusSubsystemBase.Identity)
+            Case NameOf(StatusSubsystemBase.Identity)
                 If Not String.IsNullOrWhiteSpace(subsystem.Identity) Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceName} identified;. as {subsystem.Identity}")
-                    If Not String.IsNullOrWhiteSpace(subsystem.VersionInfo?.Model) Then Me.ResourceTitle = subsystem.VersionInfo.Model
+                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} identified;. as {subsystem.Identity}")
+                    If Not String.IsNullOrWhiteSpace(subsystem.VersionInfo?.Model) Then Me.Session.ResourceNameInfo.ResourceTitle = subsystem.VersionInfo.Model
                 End If
 
-            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
-                If Not String.IsNullOrWhiteSpace(subsystem.DeviceErrors) Then
-                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{Me.ResourceName} errors;. {subsystem.DeviceErrors}")
+            Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
+                If Not String.IsNullOrWhiteSpace(subsystem.DeviceErrorsReport) Then
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} errors;. {subsystem.DeviceErrorsReport}")
                 End If
 
-            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
+            Case NameOf(StatusSubsystemBase.LastDeviceError)
                 If subsystem.LastDeviceError?.IsError Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                       $"{Me.ResourceName} last error;. {subsystem.LastDeviceError.CompoundErrorMessage}")
+                                       $"{Me.ResourceNameCaption} last error;. {subsystem.LastDeviceError.CompoundErrorMessage}")
                 End If
 
         End Select
@@ -1019,12 +990,16 @@ Public MustInherit Class DeviceBase
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        If e Is Nothing Then Return
-        Dim action As String = $"handling property {NameOf(VI.StatusSubsystemBase)}.{e.PropertyName} changed event"
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(StatusSubsystemBase)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, StatusSubsystemBase), e.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, StatusSubsystemBase), e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {action};. { ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -1034,38 +1009,12 @@ Public MustInherit Class DeviceBase
 
 #Region " EVENTS: READ EVENT REGISTERS "
 
-    ''' <summary> Safe query existing device errors. </summary>
-    Public Overridable Function QueryExistingDeviceErrors(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
-        If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        If Me.StatusSubsystemBase.MessageAvailable Then
-            ' if the device has message with an error state, the message must be fetched before the device
-            ' errors can be fetched. The system requesting the message must:
-            ' (1) fetch the message;
-            ' (2) fetch the device errors.
-            e.RegisterCancellation($"{Me.ResourceName} as a message available in the presence of a device error; the message needs to be fetched before fetching the device errors")
-        Else
-            Me.StatusSubsystemBase.QueryDeviceErrors()
-            Me.StatusSubsystemBase.QueryLastError()
-        End If
-        Return Not e.Cancel
-    End Function
-
-    ''' <summary> Queries device errors. </summary>
-    Protected Sub SafeQueryDeviceErrors()
-        If Me.StatusSubsystemBase.ErrorAvailable Then
-            Dim e As New CancelDetailsEventArgs
-            If Not Me.QueryExistingDeviceErrors(e) Then
-                Me.ServiceRequestFailureMessage = Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, e.Details)
-            End If
-        End If
-    End Sub
-
     ''' <summary> Publish last error. </summary>
     ''' <param name="eventType"> Type of the event. </param>
     Protected Overridable Sub PublishLastError(ByVal eventType As TraceEventType)
         If Me.StatusSubsystemBase.DeviceErrorQueue.Any Then
             Me.Talker.Publish(eventType, My.MyLibrary.TraceEventId,
-                              $"{Me.ResourceName} last Error {Me.StatusSubsystemBase.LastDeviceError}")
+                              $"{Me.ResourceNameCaption} last Error {Me.StatusSubsystemBase.LastDeviceError}")
         End If
     End Sub
 
@@ -1079,7 +1028,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Read service request and query device errors if errors. </summary>
     Protected Overridable Sub ProcessErrorEvent()
         Me.ReadServiceRequestRegister()
-        Me.SafeQueryDeviceErrors()
+        Me.StatusSubsystemBase.SafeQueryDeviceErrors()
     End Sub
 
     ''' <summary> Reads service request register. </summary>
@@ -1106,17 +1055,21 @@ Public MustInherit Class DeviceBase
         End Get
         Set(value As String)
             If String.IsNullOrEmpty(value) Then value = ""
-            Me._ServiceRequestFailureMessage = value
-            If Not String.IsNullOrWhiteSpace(Me.ServiceRequestFailureMessage) Then
-                Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, Me.ServiceRequestFailureMessage)
+            If Not String.Equals(value, Me.ServiceRequestFailureMessage) Then
+                Me._ServiceRequestFailureMessage = value
+                If Not String.IsNullOrWhiteSpace(Me.ServiceRequestFailureMessage) Then
+                    Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, Me.ServiceRequestFailureMessage)
+                End If
             End If
+            ' send every time
+            Me.SafeSendPropertyChanged()
         End Set
     End Property
 
     ''' <summary> Reads the event registers after receiving a service request. </summary>
     Protected Overridable Sub ProcessServiceRequest()
         Me.ReadEventRegisters()
-        Me.SafeQueryDeviceErrors()
+        Me.StatusSubsystemBase.SafeQueryDeviceErrors()
     End Sub
 
     ''' <summary> Reads the event registers after receiving a service request. </summary>
@@ -1153,23 +1106,30 @@ Public MustInherit Class DeviceBase
         Next
     End Sub
 
-#Region " EVENT HANDLERS "
-
-    ''' <summary> Synchronously handles the Service Request event of the <see cref="Session">session</see> control. </summary>
-    ''' <param name="sender"> The source of the event. </param>
-    ''' <param name="e">      The <see cref="EventArgs" /> instance
-    ''' containing the event data. </param>
-    Private Sub OnSessionBaseServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
-        Me.ApplyCapturedSyncContext()
-        Me.TryProcessServiceRequest()
-        If Me.UsingSyncServiceRequestHandler Then
-            Me.SafeSendPropertyChanged()
-        Else
-            Me.SafePostPropertyChanged()
-        End If
+    ''' <summary> Session base service requested. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub SessionBaseServiceRequested(ByVal sender As Object, ByVal e As EventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.Pith.SessionBase)} service request"
+        Try
+            Me.ApplyCapturedSyncContext()
+            Me.TryProcessServiceRequest()
+            Dim evt As EventHandler(Of EventArgs) = Me.ServiceRequestedEvent
+            If Me.UsingSyncServiceRequestHandler Then
+                evt?.SafeSend(Me)
+            Else
+                evt?.SafePost(Me)
+            End If
+        Catch ex As Exception
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
+        End Try
     End Sub
-
-#End Region
 
 #End Region
 
@@ -1347,5 +1307,186 @@ Public MustInherit Class DeviceBase
 
 #End Region
 
+#Region " I TALKER "
+
+    ''' <summary> Constructor-Safe talker setter. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Private Sub ConstructorSafeSetter(ByVal talker As ITraceMessageTalker)
+        Me.Subsystems.AssignTalker(talker)
+    End Sub
+
+    ''' <summary> Gets the trace message talker. </summary>
+    ''' <value> The trace message talker. </value>
+    Public Overrides Property Talker As ITraceMessageTalker
+        Get
+            Return MyBase.Talker
+        End Get
+        Protected Set(value As ITraceMessageTalker)
+            MyBase.Talker = value
+            Me.ConstructorSafeSetter(value)
+        End Set
+    End Property
+
+    ''' <summary> Identifies talkers. </summary>
+    Protected Overrides Sub IdentifyTalkers()
+        MyBase.IdentifyTalkers()
+        My.MyLibrary.Identify(Me.Talker)
+    End Sub
+
+    ''' <summary> Removes the listener described by listener. </summary>
+    ''' <param name="listener"> The listener. </param>
+    Public Overrides Sub RemoveListener(ByVal listener As IMessageListener)
+        MyBase.RemoveListener(listener)
+        Me.Subsystems?.RemoveListener(listener)
+    End Sub
+
+    ''' <summary> Adds a listener. </summary>
+    ''' <param name="listener"> The listener. </param>
+    Public Overrides Sub AddListener(ByVal listener As IMessageListener)
+        MyBase.AddListener(listener)
+        Me.Subsystems?.AddListener(listener)
+    End Sub
+
+    ''' <summary> Applies the trace level to all listeners to the specified type. </summary>
+    ''' <param name="listenerType"> Type of the listener. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyListenerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        Me.Subsystems?.ApplyListenerTraceLevel(listenerType, value)
+        MyBase.ApplyListenerTraceLevel(listenerType, value)
+    End Sub
+
+    ''' <summary> Applies the trace level type to all talkers. </summary>
+    ''' <param name="listenerType"> Type of the trace level. </param>
+    ''' <param name="value">        The value. </param>
+    Public Overrides Sub ApplyTalkerTraceLevel(ByVal listenerType As ListenerType, ByVal value As TraceEventType)
+        MyBase.ApplyTalkerTraceLevel(listenerType, value)
+        Me.Subsystems?.ApplyTalkerTraceLevel(listenerType, value)
+    End Sub
+
+    ''' <summary> Applies the talker trace levels described by talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub ApplyTalkerTraceLevels(ByVal talker As ITraceMessageTalker)
+        MyBase.ApplyTalkerTraceLevels(talker)
+        Me.Subsystems?.ApplyTalkerTraceLevels(talker)
+    End Sub
+
+    ''' <summary> Applies the talker listeners trace levels described by talker. </summary>
+    ''' <param name="talker"> The talker. </param>
+    Public Overrides Sub ApplyListenerTraceLevels(ByVal talker As ITraceMessageTalker)
+        MyBase.ApplyListenerTraceLevels(talker)
+        Me.Subsystems?.ApplyListenerTraceLevels(talker)
+    End Sub
+
+#End Region
+
 End Class
 
+#Region " UNUSED "
+#If False Then
+#Region " RESOURCE NAME PATTERN + FIND "
+
+    ''' <summary> Gets information describing the resource name. </summary>
+    ''' <value> Information describing the resource name. </value>
+    Public ReadOnly Property ResourceNameInfo As VI.Pith.ResourceNameInfo
+
+    ''' <summary> Builds minimal resources filter. </summary>
+    ''' <returns> A String. </returns>
+    Public Shared Function BuildMinimalResourcesFilter() As String
+        Return VI.Pith.ResourceNamesManager.BuildInstrumentFilter(HardwareInterfaceType.Gpib,
+                                                             HardwareInterfaceType.Tcpip,
+                                                             HardwareInterfaceType.Usb)
+    End Function
+
+    Private Shared _DefaultResourcesFilter As String
+
+    ''' <summary> Gets or sets the default resource filter. </summary>
+    ''' <value> The default resource filter. </value>
+    Public Shared Property DefaultResourcesFilter As String
+        Get
+            If String.IsNullOrWhiteSpace(DeviceBase._DefaultResourcesFilter) Then
+                DeviceBase._DefaultResourcesFilter = VI.Pith.ResourceNamesManager.BuildInstrumentFilter
+
+            End If
+            Return DeviceBase._DefaultResourcesFilter
+        End Get
+        Set(value As String)
+            DeviceBase._DefaultResourcesFilter = value
+        End Set
+    End Property
+
+    Private _ResourcesFilter As String
+    ''' <summary> Gets or sets the resources search pattern. </summary>
+    ''' <value> The resources search pattern. </value>
+    Public Property ResourcesFilter As String
+        Get
+            Return Me._ResourcesFilter
+        End Get
+        Set(value As String)
+            If Not String.Equals(value, Me.ResourcesFilter) Then
+                Me._ResourcesFilter = value
+                Me.SafeSendPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ResourceTitle As String
+    ''' <summary> Gets the resource title. </summary>
+    ''' <value> The resource title. </value>
+    Public Property ResourceTitle As String
+        Get
+            If Me.Session Is Nothing Then
+                If String.IsNullOrWhiteSpace(Me._ResourceTitle) Then
+                    Return My.MySettings.Default.DefaultResourceTitle
+                Else
+                    Return Me._ResourceTitle
+                End If
+            Else
+                Return Me.Session.ResourceTitle
+            End If
+        End Get
+        Protected Set(value As String)
+            If Not String.Equals(Me.ResourceTitle, value) Then
+                Me._ResourceTitle = value
+                Me.SafeSendPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ResourceName As String
+    ''' <summary> Gets the name of the resource. </summary>
+    Public Property ResourceName As String
+        Get
+            If Me.Session Is Nothing Then
+                Return Me._ResourceName
+            Else
+                Return Me.Session.ResourceName
+            End If
+        End Get
+        Protected Set(ByVal value As String)
+            If Not String.Equals(Me.ResourceName, value) Then
+                Me._ResourceName = value
+                Me.SafeSendPropertyChanged()
+                Me.SafeSendPropertyChanged(NameOf(DeviceBase.ResourceNameCaption))
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets the resource name caption. </summary>
+    ''' <value>
+    ''' The <see cref="ResourceName"/> resource <see cref="VI.Pith.SessionBase.ResourceNameClosedCaption">closed
+    ''' caption</see> if not open.
+    ''' </value>
+    Public ReadOnly Property ResourceNameCaption As String
+        Get
+            If Me.Session Is Nothing Then
+                Return My.MySettings.Default.DefaultClosedResourceCaption
+            Else
+                Return Me.Session.ResourceNameCaption
+            End If
+        End Get
+    End Property
+
+
+#End Region
+#End If
+#End Region

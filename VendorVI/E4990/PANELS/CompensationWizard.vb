@@ -21,7 +21,6 @@ Public Class CompensationWizard
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private Property InitializingComponents As Boolean
     ''' <summary>
     ''' Creates a new instance of the <see cref="CompensationWizard"/> class.
     ''' </summary>
@@ -125,7 +124,7 @@ Public Class CompensationWizard
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As CalculateChannelSubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As CalculateChannelSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(E4990.CalculateChannelSubsystem.AveragingEnabled)
@@ -140,11 +139,20 @@ Public Class CompensationWizard
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub CalculateChannelSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(CalculateChannelSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, CalculateChannelSubsystemBase), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.CalculateChannelSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, CalculateChannelSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -157,7 +165,7 @@ Public Class CompensationWizard
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As CompensateChannelSubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As Scpi.CompensateChannelSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(E4990.CompensateChannelSubsystem.HasCompleteCompensationValues)
@@ -165,24 +173,24 @@ Public Class CompensationWizard
                 If subsystem.HasCompleteCompensationValues Then
                     value = CompensateChannelSubsystem.Merge(subsystem.FrequencyArrayReading, subsystem.ImpedanceArrayReading)
                 End If
-                If subsystem.CompensationType = VI.CompensationTypes.OpenCircuit Then
+                If subsystem.CompensationType = Scpi.CompensationTypes.OpenCircuit Then
                     Me._OpenCompensationValuesTextBox.Text = value
-                ElseIf subsystem.CompensationType = VI.CompensationTypes.ShortCircuit Then
+                ElseIf subsystem.CompensationType = Scpi.CompensationTypes.ShortCircuit Then
                     Me._ShortCompensationValuesTextBox.Text = value
-                ElseIf subsystem.CompensationType = VI.CompensationTypes.Load Then
+                ElseIf subsystem.CompensationType = Scpi.CompensationTypes.Load Then
                     Me._LoadCompensationTextBox.Text = value
                 End If
         End Select
 
-        If subsystem.CompensationType = VI.CompensationTypes.OpenCircuit Then
+        If subsystem.CompensationType = Scpi.CompensationTypes.OpenCircuit Then
             Select Case propertyName
                 Case NameOf(E4990.CompensateChannelSubsystem.HasCompleteCompensationValues)
             End Select
-        ElseIf subsystem.CompensationType = VI.CompensationTypes.ShortCircuit Then
+        ElseIf subsystem.CompensationType = Scpi.CompensationTypes.ShortCircuit Then
             Select Case propertyName
                 Case NameOf(E4990.CompensateChannelSubsystem.FrequencyArrayReading)
             End Select
-        ElseIf subsystem.CompensationType = VI.CompensationTypes.Load Then
+        ElseIf subsystem.CompensationType = Scpi.CompensationTypes.Load Then
             Select Case propertyName
                 Case NameOf(E4990.CompensateChannelSubsystem.FrequencyArrayReading)
                 Case NameOf(E4990.CompensateChannelSubsystem.ModelResistance)
@@ -196,11 +204,20 @@ Public Class CompensationWizard
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub CompensateChannelSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(CompensateChannelSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, CompensateChannelSubsystemBase), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.CompensateChannelSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, CompensateChannelSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -212,13 +229,11 @@ Public Class CompensationWizard
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelMarkerSubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As ChannelMarkerSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(E4990.ChannelMarkerSubsystem.MeasurementAvailable)
-                If subsystem.MeasurementAvailable Then
-                    Me.UpdateYardstickValues()
-                End If
+            Case NameOf(E4990.ChannelMarkerSubsystem.LastReading)
+                Me.UpdateYardstickValues()
         End Select
     End Sub
 
@@ -226,12 +241,21 @@ Public Class CompensationWizard
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub ChannelmarkerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+    Private Sub ChannelMarkerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(ChannelMarkerSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, ChannelMarkerSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.ChannelMarkerSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, ChannelMarkerSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -243,7 +267,7 @@ Public Class CompensationWizard
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelTraceSubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As ChannelTraceSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             ' Case NameOf(VI.ChannelTraceSubsystemBase.ChannelNumber)
@@ -255,11 +279,20 @@ Public Class CompensationWizard
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ChannelTraceSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(ChannelTraceSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, ChannelTraceSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.ChannelTraceSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, ChannelTraceSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -271,7 +304,7 @@ Public Class CompensationWizard
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As ChannelTriggerSubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As ChannelTriggerSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             'Case NameOf(VI.ChannelTriggerSubsystemBase.ChannelNumber)
@@ -283,11 +316,20 @@ Public Class CompensationWizard
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ChannelTriggerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(ChannelTriggerSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, ChannelTriggerSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.ChannelTriggerSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, ChannelTriggerSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -299,7 +341,7 @@ Public Class CompensationWizard
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As DisplaySubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As DisplaySubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             ' Case NameOf(VI.DisplaySubsystemBase.Enabled)
@@ -311,11 +353,20 @@ Public Class CompensationWizard
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub DisplaySubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(DisplaySubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, DisplaySubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.DisplaySubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, DisplaySubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -325,9 +376,9 @@ Public Class CompensationWizard
 
     ''' <summary> Selects a new Adapter to display.
     ''' </summary>
-    Friend Function SelectAdapter(ByVal value As VI.AdapterType) As VI.AdapterType
-        If Me.InitializingComponents Then Return AdapterType.None
-        If (value <> VI.AdapterType.None) AndAlso (value <> Me.SelectedAdapterType) Then
+    Friend Function SelectAdapter(ByVal value As Scpi.AdapterType) As Scpi.AdapterType
+        If Me.InitializingComponents OrElse value = Scpi.AdapterType.None Then Return Scpi.AdapterType.None
+        If (value <> Scpi.AdapterType.None) AndAlso (value <> Me.SelectedAdapterType) Then
             Me._AdapterComboBox.SafeSelectItem(value.ValueDescriptionPair)
         End If
         Return Me.SelectedAdapterType
@@ -335,10 +386,10 @@ Public Class CompensationWizard
 
     ''' <summary> Gets the type of the selected Adapter. </summary>
     ''' <value> The type of the selected Adapter. </value>
-    Private ReadOnly Property SelectedAdapterType() As VI.AdapterType
+    Private ReadOnly Property SelectedAdapterType() As Scpi.AdapterType
         Get
             Return CType(CType(Me._AdapterComboBox.SelectedItem,
-                               System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, VI.AdapterType)
+                               System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, Scpi.AdapterType)
         End Get
     End Property
 
@@ -346,12 +397,12 @@ Public Class CompensationWizard
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As SenseChannelSubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As Scpi.SenseChannelSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(VI.SenseChannelSubsystemBase.AdapterType)
+            Case NameOf(Scpi.SenseChannelSubsystemBase.AdapterType)
                 If subsystem.AdapterType.HasValue Then Me.SelectAdapter(subsystem.AdapterType.Value)
-            Case NameOf(VI.SenseChannelSubsystemBase.Aperture)
+            Case NameOf(Scpi.SenseChannelSubsystemBase.Aperture)
                 If subsystem.Aperture.HasValue Then Me._ApertureNumeric.Value = CDec(subsystem.Aperture.Value)
         End Select
     End Sub
@@ -361,11 +412,20 @@ Public Class CompensationWizard
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SenseChannelSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(SenseChannelSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, SenseChannelSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.SenseChannelSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, SenseChannelSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -377,7 +437,7 @@ Public Class CompensationWizard
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As TriggerSubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As TriggerSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(VI.TriggerSubsystemBase.Delay)
@@ -389,11 +449,20 @@ Public Class CompensationWizard
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub TriggerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(TriggerSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, TriggerSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.TriggerSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, TriggerSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -410,17 +479,17 @@ Public Class CompensationWizard
     ''' <summary> Handle the Status subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As StatusSubsystemBase, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(VI.StatusSubsystemBase.DeviceErrors)
+            Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
                 onLastError(subsystem.LastDeviceError)
-            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
+            Case NameOf(StatusSubsystemBase.LastDeviceError)
                 onLastError(subsystem.LastDeviceError)
-            Case NameOf(VI.StatusSubsystemBase.OperationCompleted)
-            Case NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)
+            Case NameOf(StatusSubsystemBase.OperationCompleted)
+            Case NameOf(StatusSubsystemBase.ServiceRequestStatus)
                 'Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(VI.StatusSubsystemBase.StandardEventStatus)
+            Case NameOf(StatusSubsystemBase.StandardEventStatus)
                 'Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
         End Select
     End Sub
@@ -430,11 +499,20 @@ Public Class CompensationWizard
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(StatusSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, StatusSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.StatusSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, StatusSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -456,7 +534,7 @@ Public Class CompensationWizard
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Overloads Sub OnPropertyChanged(ByVal subsystem As SystemSubsystemBase, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As SystemSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Application.DoEvents()
     End Sub
@@ -466,11 +544,20 @@ Public Class CompensationWizard
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(SystemSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
+            If Me.InvokeRequired Then
+                Me.Invoke(New Action(Of Object, System.ComponentModel.PropertyChangedEventArgs)(AddressOf Me.SystemSubsystemPropertyChanged), New Object() {sender, e})
+            Else
+                Me.HandlePropertyChange(TryCast(sender, SystemSubsystem), e.PropertyName)
+            End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -539,7 +626,7 @@ Public Class CompensationWizard
     Private Sub AcquireOpenCompensation()
 
         ' Set user-specified frequencies
-        Me.Device.SenseChannelSubsystem.ApplyFrequencyPointsType(FrequencyPointsType.User)
+        Me.Device.SenseChannelSubsystem.ApplyFrequencyPointsType(Scpi.FrequencyPointsType.User)
 
         ' Acquire open fixture compensation
         Me.Device.CompensateOpenSubsystem.AcquireMeasurements()
@@ -569,7 +656,7 @@ Public Class CompensationWizard
             Me._InfoProvider.Clear()
             Me.Cursor = Cursors.WaitCursor
             Me.Device.ClearCompensations()
-            Me.Device.ChannelMarkerSubsystem.Readings.Reset()
+            Me.Device.ChannelMarkerSubsystem.MarkerReadings.Reset()
             Me.AcquireOpenCompensation()
             Me.ReadOpenCompensation()
         Catch ex As Exception
@@ -591,7 +678,7 @@ Public Class CompensationWizard
     Private Sub AcquireShortCompensation()
 
         ' Set user-specified frequencies
-        Me.Device.SenseChannelSubsystem.ApplyFrequencyPointsType(FrequencyPointsType.User)
+        Me.Device.SenseChannelSubsystem.ApplyFrequencyPointsType(Scpi.FrequencyPointsType.User)
 
         ' Acquire Short fixture compensation
         Me.Device.CompensateShortSubsystem.AcquireMeasurements()
@@ -640,7 +727,7 @@ Public Class CompensationWizard
     Private Sub AcquireLoadCompensation()
 
         ' Set user-specified frequencies
-        Me.Device.SenseChannelSubsystem.ApplyFrequencyPointsType(FrequencyPointsType.User)
+        Me.Device.SenseChannelSubsystem.ApplyFrequencyPointsType(Scpi.FrequencyPointsType.User)
 
         Me.Device.CompensateLoadSubsystem.ApplyModelResistance(Me._LoadResistanceNumeric.Value)
         Me.Device.CompensateLoadSubsystem.ApplyModelCapacitance(0)
@@ -690,12 +777,12 @@ Public Class CompensationWizard
 #Region " YARDSTICK "
 
     Private Sub _YardstickAcceptanceToleranceNumeric_ValueChanged(sender As Object, e As EventArgs) Handles _YardstickAcceptanceToleranceNumeric.ValueChanged
-        If Me.InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Me.AnnunciateYardstickResult()
     End Sub
 
     Private Sub _YardstickInductanceLimitNumeric_ValueChanged(sender As Object, e As EventArgs) Handles _YardstickInductanceLimitNumeric.ValueChanged
-        If Me.InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Me.AnnunciateYardstickResult()
     End Sub
 
@@ -703,8 +790,8 @@ Public Class CompensationWizard
     ''' <value> The yardstick resistance validated. </value>
     Private ReadOnly Property YardstickResistanceValidated As Boolean?
         Get
-            If Me.Device.ChannelMarkerSubsystem.Readings.PrimaryReading.Value.HasValue Then
-                Dim r As Double = Me.Device.ChannelMarkerSubsystem.Readings.PrimaryReading.Value.Value
+            If Me.Device.ChannelMarkerSubsystem.MarkerReadings.PrimaryReading.Value.HasValue Then
+                Dim r As Double = Me.Device.ChannelMarkerSubsystem.MarkerReadings.PrimaryReading.Value.Value
                 Dim delta As Double = 100 * (r / Me._YardstickResistanceNumeric.Value - 1)
                 Return Math.Abs(delta) <= Me._YardstickAcceptanceToleranceNumeric.Value
             Else
@@ -717,8 +804,8 @@ Public Class CompensationWizard
     ''' <value> The yardstick impedance validated. </value>
     Private ReadOnly Property YardstickInductanceValidated As Boolean?
         Get
-            If Me.Device.ChannelMarkerSubsystem.Readings.SecondaryReading.Value.HasValue Then
-                Dim l As Double = 1000000.0 * Me.Device.ChannelMarkerSubsystem.Readings.SecondaryReading.Value.Value
+            If Me.Device.ChannelMarkerSubsystem.MarkerReadings.SecondaryReading.Value.HasValue Then
+                Dim l As Double = 1000000.0 * Me.Device.ChannelMarkerSubsystem.MarkerReadings.SecondaryReading.Value.Value
                 Me._YardstickMeasuredInductanceTextBox.Text = String.Format("{0:0.###}", l)
                 Return Math.Abs(l) <= Me._YardstickInductanceLimitNumeric.Value
             Else
@@ -739,13 +826,13 @@ Public Class CompensationWizard
     Private Sub UpdateYardstickValues()
 
         Me._InfoProvider.Clear()
-        Me._YardstickValuesTextBox.Text = Me.Device.ChannelMarkerSubsystem.Readings.RawReading
-        Dim r As Double = Me.Device.ChannelMarkerSubsystem.Readings.PrimaryReading.Value.GetValueOrDefault(0)
+        Me._YardstickValuesTextBox.Text = Me.Device.ChannelMarkerSubsystem.MarkerReadings.RawReading
+        Dim r As Double = Me.Device.ChannelMarkerSubsystem.MarkerReadings.PrimaryReading.Value.GetValueOrDefault(0)
         Me._MeasuredYardstickResistanceTextBox.Text = String.Format("{0:0.###}", r)
         Dim delta As Double = 100 * (r / Me._YardstickResistanceNumeric.Value - 1)
         Me._YardstickResistanceDeviationTextBox.Text = String.Format("{0:0.##}", delta)
 
-        Dim l As Double = 1000000.0 * Me.Device.ChannelMarkerSubsystem.Readings.SecondaryReading.Value.GetValueOrDefault(0)
+        Dim l As Double = 1000000.0 * Me.Device.ChannelMarkerSubsystem.MarkerReadings.SecondaryReading.Value.GetValueOrDefault(0)
         Me._YardstickMeasuredInductanceTextBox.Text = String.Format("{0:0.###}", l)
 
         Me.AnnunciateYardstickResult()
@@ -791,7 +878,7 @@ Public Class CompensationWizard
     ''' </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Wizard_AfterSwitchPages(ByVal sender As Object, ByVal e As PageChangedEventArgs) Handles _Wizard.PageChanged
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Try
             Me._InfoProvider.Clear()
             Me.Cursor = Cursors.WaitCursor
@@ -825,7 +912,7 @@ Public Class CompensationWizard
     ''' </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Wizard_BeforeSwitchPages(ByVal sender As Object, ByVal e As PageChangingEventArgs) Handles _Wizard.PageChanging
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         If e Is Nothing Then Return
         Try
             Me._InfoProvider.Clear()
@@ -870,7 +957,7 @@ Public Class CompensationWizard
     ''' </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Wizard_Cancel(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _Wizard.Cancel
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Try
             Me._InfoProvider.Clear()
             ' check if task is running
@@ -904,7 +991,7 @@ Public Class CompensationWizard
     ''' </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Wizard_Finish(ByVal sender As Object, ByVal e As System.EventArgs) Handles _Wizard.Finish
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Try
             Me._InfoProvider.Clear()
             If Me.YardstickValidated Then
@@ -934,7 +1021,7 @@ Public Class CompensationWizard
     ''' </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Wizard_Help(ByVal sender As Object, ByVal e As System.EventArgs) Handles _Wizard.Help
-        If Me._InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Try
             Me._InfoProvider.Clear()
             Dim text As String = $"This is a really cool wizard control!{Environment.NewLine}:-)"
@@ -972,7 +1059,7 @@ Public Class CompensationWizard
     ''' Handles the CheckedChanged event of checkIAgree.
     ''' </summary>
     Private Sub _AgreeCheckBox_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles _AgreeCheckBox.CheckedChanged
-        If Me.InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         ' sync next button's state with check box
         Me._Wizard.NextEnabled = Me._AgreeCheckBox.Checked
     End Sub
@@ -981,7 +1068,7 @@ Public Class CompensationWizard
     ''' Handles the Tick event of timerTask.
     ''' </summary>
     Private Sub _LongTaskTimer_Tick(ByVal sender As Object, ByVal e As System.EventArgs) Handles _LongTaskTimer.Tick
-        If Me.InitializingComponents Then Return
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         ' check if task completed
         If Me._LongTaskProgressBar.Value = Me._LongTaskProgressBar.Maximum Then
             ' stop the timer & switch to next page

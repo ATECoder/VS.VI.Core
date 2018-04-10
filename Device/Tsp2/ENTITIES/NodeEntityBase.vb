@@ -40,7 +40,7 @@ Public MustInherit Class NodeEntityBase
     ''' <summary> Initializes the node properties . </summary>
     ''' <exception cref="FormatException"> Thrown when the format of the received message is incorrect. </exception>
     ''' <param name="session"> The session. </param>
-    Public Sub InitializeKnownState(ByVal session As SessionBase)
+    Public Sub InitializeKnownState(ByVal session As  VI.Pith.SessionBase)
         Me.QueryModelNumber(session)
         If Me.InstrumentModelFamily = InstrumentModelFamily.None Then
             Throw New FormatException(String.Format(Globalization.CultureInfo.CurrentCulture,
@@ -60,7 +60,7 @@ Public MustInherit Class NodeEntityBase
     ''' <param name="session">    The session. </param>
     ''' <param name="nodeNumber"> The node number. </param>
     ''' <returns> <c>True</c> is node exists; otherwise, <c>False</c>. </returns>
-    Public Shared Function NodeExists(ByVal session As SessionBase, ByVal nodeNumber As Integer) As Boolean
+    Public Shared Function NodeExists(ByVal session As  VI.Pith.SessionBase, ByVal nodeNumber As Integer) As Boolean
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Return Not session.IsNil("node[{0}]", nodeNumber)
     End Function
@@ -100,7 +100,7 @@ Public MustInherit Class NodeEntityBase
     ''' <summary> Queries the data queue capacity. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="session"> The session. </param>
-    Public Sub QueryDataQueueCapacity(ByVal session As SessionBase)
+    Public Sub QueryDataQueueCapacity(ByVal session As  VI.Pith.SessionBase)
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Me.DataQueueCapacity = session.QueryPrint(0I, 1, "node[{0}].dataqueue.capacity", Me.Number)
     End Sub
@@ -112,7 +112,7 @@ Public MustInherit Class NodeEntityBase
     ''' <summary> Queries the data queue Count. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="session"> The session. </param>
-    Public Sub QueryDataQueueCount(ByVal session As SessionBase)
+    Public Sub QueryDataQueueCount(ByVal session As  VI.Pith.SessionBase)
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Me.DataQueueCount = session.QueryPrint(0I, 1, "node[{0}].dataqueue.count", Me.Number)
     End Sub
@@ -124,7 +124,7 @@ Public MustInherit Class NodeEntityBase
     ''' <summary> Queries firmware version. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="session"> The session. </param>
-    Public Sub QueryFirmwareVersion(ByVal session As SessionBase)
+    Public Sub QueryFirmwareVersion(ByVal session As  VI.Pith.SessionBase)
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Me.FirmwareVersion = session.QueryPrintTrimEnd("node[{0}].revision", Me.Number)
     End Sub
@@ -164,14 +164,14 @@ Public MustInherit Class NodeEntityBase
     ''' <param name="session">    The session. </param>
     ''' <param name="nodeNumber"> The node number. </param>
     ''' <returns> The model number. </returns>
-    Public Shared Function QueryModelNumber(ByVal session As SessionBase, ByVal nodeNumber As Integer) As String
+    Public Shared Function QueryModelNumber(ByVal session As  VI.Pith.SessionBase, ByVal nodeNumber As Integer) As String
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Return session.QueryPrintTrimEnd("print(node[{0}].model)", nodeNumber)
     End Function
 
     ''' <summary> Queries controller node model. </summary>
     ''' <returns> The controller node model. </returns>
-    Public Shared Function QueryControllerNodeModel(ByVal session As SessionBase) As String
+    Public Shared Function QueryControllerNodeModel(ByVal session As  VI.Pith.SessionBase) As String
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Return session.QueryPrintTrimEnd("localnode.model")
     End Function
@@ -179,9 +179,9 @@ Public MustInherit Class NodeEntityBase
     ''' <summary> Queries the serial number. </summary>
     ''' <exception cref="ArgumentNullException">    Thrown when one or more required arguments are
     ''' null. </exception>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="vi.pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="session"> The session. </param>
-    Public Sub QueryModelNumber(ByVal session As SessionBase)
+    Public Sub QueryModelNumber(ByVal session As  VI.Pith.SessionBase)
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         If Me.Number = Me.ControllerNodeNumber Then
             Me._modelNumber = NodeEntityBase.QueryControllerNodeModel(session)
@@ -189,7 +189,7 @@ Public MustInherit Class NodeEntityBase
             Me._modelNumber = NodeEntityBase.QueryModelNumber(session, Me.Number)
         End If
         If String.IsNullOrWhiteSpace(Me.ModelNumber) Then
-            Throw New OperationFailedException("Failed reading node model--empty.")
+            Throw New VI.Pith.OperationFailedException("Failed reading node model--empty.")
         End If
         Me._instrumentModelFamily = NodeEntityBase.ParseModelNumber(Me.ModelNumber)
     End Sub
@@ -205,7 +205,7 @@ Public MustInherit Class NodeEntityBase
     ''' <summary> Queries the serial number. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="session"> The session. </param>
-    Public Sub QuerySerialNumber(ByVal session As SessionBase)
+    Public Sub QuerySerialNumber(ByVal session As  VI.Pith.SessionBase)
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         Me.SerialNumber = session.QueryPrintTrimEnd("node[{0}].serialno", Me.Number)
     End Sub

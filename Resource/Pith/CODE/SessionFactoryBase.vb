@@ -17,14 +17,14 @@ Public MustInherit Class SessionFactoryBase
 
     ''' <summary> Creates Gpib interface SessionBase. </summary>
     ''' <returns> The new Gpib interface SessionBase. </returns>
-    Public MustOverride Function CreateGpibInterfaceSession() As InterfaceSessionBase
+    Public MustOverride Function CreateGpibInterfaceSession() As VI.Pith.InterfaceSessionBase
 
     ''' <summary> Creates resources manager. </summary>
     ''' <returns> The new resources manager. </returns>
-    Public MustOverride Function CreateResourcesManager() As ResourcesManagerBase
+    Public MustOverride Function CreateResourcesManager() As VI.Pith.ResourcesManagerBase
 
     ''' <summary> Creates the SessionBase. </summary>
     ''' <returns> The new SessionBase. </returns>
-    Public MustOverride Function CreateSession() As SessionBase
+    Public MustOverride Function CreateSession() As Vi.Pith.SessionBase
 
 End Class

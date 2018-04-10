@@ -9,13 +9,13 @@
 ''' </para> </license>
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
 Public Class ContactCheckLimit
-    Inherits VI.Scpi.ContactCheckLimitBase
+    Inherits VI.ContactCheckLimitBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="ContactCheckLimit" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
-    Public Sub New(ByVal statusSubsystem As isr.VI.StatusSubsystemBase)
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(1, statusSubsystem)
     End Sub
 

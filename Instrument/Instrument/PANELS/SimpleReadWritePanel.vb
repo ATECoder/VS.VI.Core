@@ -20,7 +20,6 @@ Public Class SimpleReadWritePanel
 
 #Region " CONSTRUCTORS AND DESTRUCTORS "
 
-    Private Property InitializingComponents As Boolean
     ''' <summary> Constructor that prevents a default instance of this class from being created. </summary>
     Public Sub New()
         MyBase.New()
@@ -65,16 +64,16 @@ Public Class SimpleReadWritePanel
 
 #Region " SESSION "
 
-    Private _Session As VI.SessionBase
+    Private _Session As VI.Pith.SessionBase
 
     ''' <summary> Gets or sets the session. </summary>
     ''' <value> The session. </value>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Property Session As SessionBase
+    Private Property Session As Vi.Pith.SessionBase
         Get
             Return Me._Session
         End Get
-        Set(value As SessionBase)
+        Set(value As Vi.Pith.SessionBase)
             If Me._Session IsNot Nothing Then
                 RemoveHandler Me._Session.PropertyChanged, AddressOf Me._Session_PropertyChanged
                 Me._Session.Dispose()
@@ -95,14 +94,14 @@ Public Class SimpleReadWritePanel
     ''' <summary> Executes the property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Overloads Sub OnPropertyChanged(ByVal sender As VI.SessionBase, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal sender As VI.Pith.SessionBase, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
-                Case NameOf(VI.SessionBase.TerminationCharacter)
+                Case NameOf(VI.Pith.SessionBase.TerminationCharacter)
                     Me.UpdateTermination(sender)
-                Case NameOf(VI.SessionBase.TerminationCharacterEnabled)
+                Case NameOf(VI.Pith.SessionBase.TerminationCharacterEnabled)
                     Me.UpdateTermination(sender)
-                Case NameOf(VI.SessionBase.IsSessionOpen)
+                Case NameOf(VI.Pith.SessionBase.IsSessionOpen)
                     If sender.IsSessionOpen Then
                         Me.UpdateTermination(sender)
                     End If
@@ -116,15 +115,20 @@ Public Class SimpleReadWritePanel
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Session_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs)
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(VI.Pith.SessionBase)}.{e.PropertyName} change"
         Try
             If Me.InvokeRequired Then
-                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._SimpleReadWriteControl_PropertyChanged), New Object() {sender, e})
+                Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._Session_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, VI.SessionBase), e?.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, VI.Pith.SessionBase), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling {NameOf(SessionBase)}.{e?.PropertyName} change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -205,7 +209,7 @@ Public Class SimpleReadWritePanel
     ''' <summary> Executes the property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
                 Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
@@ -223,15 +227,20 @@ Public Class SimpleReadWritePanel
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _SimpleReadWriteControl_PropertyChanged(ByVal sender As Object, ByVal e As PropertyChangedEventArgs) Handles _SimpleReadWriteControl.PropertyChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Instrument.SimpleReadWriteControl)}.{e.PropertyName} change"
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._SimpleReadWriteControl_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, Instrument.SimpleReadWriteControl), e?.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, Instrument.SimpleReadWriteControl), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception handling SimpleReadWrite.{e?.PropertyName} change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -288,7 +297,7 @@ Public Class SimpleReadWritePanel
         Else
             statusByte = Me.Session.ReadServiceRequestStatus
             Me._ServiceRequestStatusLabel.Text = $"0x{statusByte:X2}"
-            Me._ServiceRequestStatusLabel.ToolTipText = VI.StatusSubsystemBase.BuildReport(CType(statusByte, VI.ServiceRequests), ";")
+            Me._ServiceRequestStatusLabel.ToolTipText = StatusSubsystemBase.BuildReport(CType(statusByte, VI.Pith.ServiceRequests), ";")
         End If
         Return statusByte
     End Function
@@ -349,7 +358,7 @@ Public Class SimpleReadWritePanel
 
     ''' <summary> Updates the termination described by session. </summary>
     ''' <param name="session"> The session. </param>
-    Private Sub UpdateTermination(ByVal session As VI.SessionBase)
+    Private Sub UpdateTermination(ByVal session As VI.Pith.SessionBase)
         If session.TerminationCharacterEnabled Then
             If session.TerminationCharacter = isr.Core.Pith.EscapeSequencesExtensions.NewLineValue Then
                 Me._ReadTerminationComboBox.SelectedIndex = NewLineTerminationIndex
@@ -363,8 +372,8 @@ Public Class SimpleReadWritePanel
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ReadTerminationComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles _ReadTerminationComboBox.SelectedIndexChanged
-        If Me.InitializingComponents Then Return
-        Dim action As String = "applying return termination"
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = "applying return termination"
         Try
             Select Case Me._ReadTerminationComboBox.SelectedIndex
                 Case NoTerminationIndex
@@ -377,7 +386,7 @@ Public Class SimpleReadWritePanel
                     Me.Session.TerminationCharacter = isr.Core.Pith.EscapeSequencesExtensions.ReturnValue
             End Select
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {activity};. {ex.ToFullBlownString}")
         Finally
             Me.ReadServiceRequestStatus()
             Windows.Forms.Cursor.Current = Cursors.Default
@@ -393,31 +402,31 @@ Public Class SimpleReadWritePanel
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _AppendReturnCheckBox_CheckedChanged(sender As Object, e As EventArgs) Handles _AppendReturnCheckBox.CheckedChanged
-        Dim action As String = "applying return termination"
+        Dim activity As String = "applying return termination"
         Try
             Me._SimpleReadWriteControl.AutoAppendTermination = Me.BuildAutoTermination
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {activity};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _AppendNewLineCheckBox_CheckedChanged(sender As Object, e As EventArgs) Handles _AppendNewLineCheckBox.CheckedChanged
-        Dim action As String = "applying new line termination"
+        Dim activity As String = "applying new line termination"
         Try
             Me._SimpleReadWriteControl.AutoAppendTermination = Me.BuildAutoTermination
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {activity};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ReadServiceRequestStatus()
-        Dim action As String = "reading service request status"
+        Dim activity As String = "reading service request status"
         Try
             Me._SimpleReadWriteControl.ReadServiceRequestStatus()
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {activity};. {ex.ToFullBlownString}")
         End Try
     End Sub
 
@@ -466,7 +475,7 @@ Public Class SimpleReadWritePanel
     ''' <summary> Handles the <see cref="_TraceMessagesBox"/> property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Overloads Sub OnPropertyChanged(sender As TraceMessagesBox, propertyName As String)
+    Private Overloads Sub HandlePropertyChange(sender As TraceMessagesBox, propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         If String.Equals(propertyName, NameOf(isr.Core.Pith.TraceMessagesBox.StatusPrompt)) Then
             Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusPrompt, Me._StatusLabel)
@@ -474,21 +483,25 @@ Public Class SimpleReadWritePanel
         End If
     End Sub
 
-    ''' <summary> Trace messages box property changed. </summary>
+    ''' <summary> Handles Trace messages box property changed event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _TraceMessagesBox_PropertyChanged(sender As Object, e As PropertyChangedEventArgs) Handles _TraceMessagesBox.PropertyChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Core.Pith.TraceMessagesBox)}.{e.PropertyName} change"
         Try
-            ' there was a cross thread exception because this event is invoked from the control thread.
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._TraceMessagesBox_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, TraceMessagesBox), e?.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, Core.Pith.TraceMessagesBox), e.PropertyName)
             End If
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Failed reporting Trace Message Property Change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 

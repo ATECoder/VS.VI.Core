@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{35e3acdc-0150-4391-8574-7056c544e740}</ProjectGuid>
+    <ProjectGuid>{35E3ACDC-0150-4391-8574-7056C544E740}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <StartupObject>isr.VI.Ttm.My.MyApplication</StartupObject>
     <RootNamespace>isr.VI.Ttm</RootNamespace>
@@ -93,19 +93,24 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplication_Log.vb">
+      <Link>My\ShareMyApplication_Log.vb</Link>
+    </Compile>
     <Compile Include="..\..\VendorVI\Ttm\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
+    <Compile Include="My\MyApplication_Events.vb" />
     <Compile Include="My\Console1.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="My\MyApplicationInfo.vb" />
-    <Compile Include="My\MyStartup.vb" />
+    <Compile Include="My\MyApplication_Info.vb" />
+    <Compile Include="My\MyApplication_Log.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
+    <Compile Include="My\ShareMyApplication_Events.vb" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />

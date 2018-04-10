@@ -63,7 +63,6 @@
     <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ivi.Visa, Version=5.8.0.0, Culture=neutral, PublicKeyToken=a128c98f1d7717c1, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -98,9 +97,9 @@
     <Compile Include="TestInfo\TestContextValidations.vb" />
     <Compile Include="TestInfo\TestInfo.vb" />
     <Compile Include="TestInfo\TestTrace.vb" />
-    <Compile Include="TESTS\ResourceTests.vb" />
-    <Compile Include="TESTS\SessionTests.vb" />
-    <Compile Include="TESTS\VersionTestInfo.vb" />
+    <Compile Include="Session\ResourceTests.vb" />
+    <Compile Include="Session\SessionTests.vb" />
+    <Compile Include="TestInfo\TraceMessagesQueue.vb" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">

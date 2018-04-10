@@ -15,7 +15,7 @@ Public MustInherit Class SystemSubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SystemSubsystemBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
@@ -139,6 +139,39 @@ Public MustInherit Class SystemSubsystemBase
             Me._FirmwareVersion = Me.Session.Query(0.0F, Me.FirmwareVersionQueryCommand)
         End If
         Return Me.FirmwareVersion
+    End Function
+
+#End Region
+
+#Region " LANGUAGE VERSION "
+
+    ''' <summary> The Language revision. </summary>
+    Private _LanguageRevision As Double?
+    ''' <summary> Gets the cached version level of the Language standard implemented by the device. </summary>
+    ''' <value> The Language revision. </value>
+    Public Property LanguageRevision As Double?
+        Get
+            Return Me._LanguageRevision
+        End Get
+        Protected Set(value As Double?)
+            Me._LanguageRevision = value
+            Me.SafePostPropertyChanged()
+        End Set
+    End Property
+
+    ''' <summary> Gets or sets the Language revision query command. </summary>
+    ''' <value> The Language revision query command. </value>
+    ''' <remarks> ':SYST:VERS?'</remarks>
+    Protected Overridable ReadOnly Property LanguageRevisionQueryCommand As String
+
+    ''' <summary> Queries the version level of the Language standard implemented by the device. </summary>
+    ''' <returns> System.Nullable{System.Double}. </returns>
+    ''' <remarks> Sends the ':SYST:VERS?' query. </remarks>
+    Public Function QueryLanguageRevision() As Double?
+        If Not String.IsNullOrWhiteSpace(Me.LanguageRevisionQueryCommand) Then
+            Me._LanguageRevision = Me.Session.Query(0.0F, Me.LanguageRevisionQueryCommand)
+        End If
+        Return Me.LanguageRevision
     End Function
 
 #End Region

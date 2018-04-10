@@ -12,6 +12,14 @@ Partial Public NotInheritable Class TestInfo
         End Get
     End Property
 
+    ''' <summary> Gets the verbose. </summary>
+    ''' <value> The verbose. </value>
+    Public Shared ReadOnly Property Verbose As Boolean
+        Get
+            Return My.MyAppSettingsReader.AppSettingBoolean()
+        End Get
+    End Property
+
 #End Region
 
 End Class

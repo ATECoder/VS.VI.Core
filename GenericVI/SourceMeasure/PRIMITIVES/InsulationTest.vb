@@ -22,12 +22,12 @@ Public Class InsulationTest
 #Region " I PRESETTABLE "
 
     Private Sub _ResetKnowState()
-        Me._Binning = New BinningInfo
+        Me._Binning = New Scpi.BinningInfo
         Me._Insulation = New InsulationResistance
         With Me._Binning
 
             ' not using upper limit
-            .UpperLimit = Scpi.Syntax.Infinity
+            .UpperLimit = VI.Pith.Scpi.Syntax.Infinity
             .UpperLimitFailureBits = 4
             ' using lower limit
             .LowerLimit = 10000000
@@ -35,15 +35,15 @@ Public Class InsulationTest
             .PassBits = 1
 
             .ArmCount = 0
-            .ArmDirection = VI.Direction.Source
+            .ArmDirection = Scpi.Direction.Source
             ' using SOT Line
             .InputLineNumber = 1
             ' USING EOT Line
             .OutputLineNumber = 2
-            .ArmSource = VI.ArmSources.StartTestBoth
-            .ArmDirection = VI.Direction.Acceptor
-            .TriggerDirection = VI.Direction.Source
-            .TriggerSource = VI.TriggerSources.Immediate
+            .ArmSource = Scpi.ArmSources.StartTestBoth
+            .ArmDirection = Scpi.Direction.Acceptor
+            .TriggerDirection = Scpi.Direction.Source
+            .TriggerSource = Scpi.TriggerSources.Immediate
         End With
 
         With Me._Insulation
@@ -88,7 +88,7 @@ Public Class InsulationTest
 
     ''' <summary> Gets or sets the binning. </summary>
     ''' <value> The binning. </value>
-    Public Property Binning As BinningInfo
+    Public Property Binning As Scpi.BinningInfo
 
     ''' <summary> Gets or sets the insulation. </summary>
     ''' <value> The insulation. </value>

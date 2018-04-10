@@ -16,7 +16,7 @@ Public MustInherit Class DisplaySubsystemBase
     ''' <summary> Initializes a new instance of the <see cref="DisplaySubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystemBase">status
     ''' Subsystem</see>. </param>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me.RestoreMainScreenWaitCompleteCommand = TspSyntax.Display.RestoreMainWaitCompleteCommand
     End Sub

@@ -38,5 +38,11 @@
     <Setting Name="R4ChannelList" Type="System.String" Scope="User">
       <Value Profile="(Default)">1004;1034;1912;1921</Value>
     </Setting>
+    <Setting Name="BridgeMeterPowerLineCycles" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="SessionMessageNotificationLevel" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

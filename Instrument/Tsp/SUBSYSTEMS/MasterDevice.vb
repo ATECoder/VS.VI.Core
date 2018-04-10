@@ -21,6 +21,29 @@ Public Class MasterDevice
         MyBase.new()
     End Sub
 
+    ''' <summary> Creates a new Device. </summary>
+    ''' <returns> A Device. </returns>
+    Public Shared Function Create() As MasterDevice
+        Dim device As MasterDevice = Nothing
+        Try
+            device = New MasterDevice
+        Catch
+            If device IsNot Nothing Then device.Dispose()
+            device = Nothing
+            Throw
+        End Try
+        Return device
+    End Function
+
+    ''' <summary> Validated the given device. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="device"> The device. </param>
+    ''' <returns> A Device. </returns>
+    Public Shared Function Validated(ByVal device As MasterDevice) As MasterDevice
+        If device Is Nothing Then Throw New ArgumentNullException(NameOf(device))
+        Return device
+    End Function
+
 #End Region
 
 #Region " I PRESETTABLE "
@@ -55,49 +78,27 @@ Public Class MasterDevice
     ''' <summary> Allows the derived device to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+    Protected Overrides Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnClosing(e)
         If Not e.Cancel Then
-            If Me.DisplaySubsystem IsNot Nothing Then
-                Me.DisplaySubsystem.RestoreDisplay(Me.StatusSubsystem.InitializeTimeout)
-            End If
-            If Me.SourceMeasureUnit IsNot Nothing Then
-                RemoveHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf SourceMeasureSubsystemPropertyChanged
-            End If
-            If Me.DisplaySubsystem IsNot Nothing Then
-                RemoveHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
-            End If
-            If Me.SystemSubsystem IsNot Nothing Then
-                RemoveHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
-            End If
-            Me.Subsystems.DisposeItems()
+            Me.DisplaySubsystem?.RestoreDisplay(Me.StatusSubsystem.InitializeTimeout)
+            Me.SystemSubsystem = Nothing
+            Me.DisplaySubsystem = Nothing
+            Me.SourceMeasureUnit = Nothing
         End If
     End Sub
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
-    Protected Overrides Sub OnOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+    Protected Overrides Sub OnOpening(ByVal e As ComponentModel.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnOpening(e)
         If Not e.Cancel Then
-            ' STATUS must be the first subsystem.
-            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
-            Me.AddSubsystem(Me.StatusSubsystem)
-            AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
-
             Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
-            Me.AddSubsystem(Me.SystemSubsystem)
-            AddHandler Me.SystemSubsystem.PropertyChanged, AddressOf SystemSubsystemPropertyChanged
-
             Me.DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
-            Me.AddSubsystem(Me.DisplaySubsystem)
-            AddHandler Me.DisplaySubsystem.PropertyChanged, AddressOf DisplaySubsystemPropertyChanged
-
             Me.SourceMeasureUnit = New SourceMeasureUnitDevice(Me.StatusSubsystem)
-            Me.AddSubsystem(Me.SourceMeasureUnit)
-            AddHandler Me.SourceMeasureUnit.PropertyChanged, AddressOf SourceMeasureSubsystemPropertyChanged
         End If
     End Sub
 
@@ -108,24 +109,20 @@ Public Class MasterDevice
     ''' <summary> Allows the derived device status subsystem to take actions before closing. Removes subsystems and
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
-    Protected Overrides Sub OnStatusClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+    Protected Overrides Sub OnStatusClosing(ByVal e As ComponentModel.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        MyBase.OnClosing(e)
+        MyBase.OnStatusClosing(e)
         If Not e.Cancel Then
-            Me.StatusSubsystem = Nothing
-            Me.Subsystems.DisposeItems()
         End If
     End Sub
 
     ''' <summary> Allows the derived device status subsystem to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
-    Protected Overrides Sub OnStatusOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+    Protected Overrides Sub OnStatusOpening(ByVal e As ComponentModel.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        MyBase.OnOpening(e)
+        MyBase.OnStatusOpening(e)
         If Not e.Cancel Then
-            ' check the language status. 
-            Me.StatusSubsystem = New StatusSubsystem(Me.Session)
         End If
     End Sub
 
@@ -138,8 +135,9 @@ Public Class MasterDevice
     ''' <summary> Handle the display subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As DisplaySubsystem, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As DisplaySubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
         End Select
@@ -148,13 +146,19 @@ Public Class MasterDevice
     ''' <summary> Display subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub DisplaySubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(DisplaySubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, DisplaySubsystem), e?.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, DisplaySubsystem), e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -167,13 +171,16 @@ Public Class MasterDevice
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Protected Overloads Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)
-        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(StatusSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(subsystem, e.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, StatusSubsystem), e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.ResourceName} exception handling {NameOf(StatusSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -184,8 +191,9 @@ Public Class MasterDevice
     ''' <summary> Handle the System subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As SystemSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
         End Select
@@ -194,13 +202,19 @@ Public Class MasterDevice
     ''' <summary> System subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SystemSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(SystemSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, SystemSubsystem), e?.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, SystemSubsystem), e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -211,8 +225,9 @@ Public Class MasterDevice
     ''' <summary> Handle the source measure unit subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Sub OnSubsystemPropertyChanged(ByVal subsystem As VI.Tsp.SourceMeasureUnitBase, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As VI.Tsp.SourceMeasureUnitBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
         End Select
@@ -221,13 +236,19 @@ Public Class MasterDevice
     ''' <summary> Source Measure Unit subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub SourceMeasureSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(SourceMeasureUnitBase)}.{e.PropertyName} change"
         Try
-            Me.OnSubsystemPropertyChanged(TryCast(sender, VI.Tsp.SourceMeasureUnitBase), e?.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, SourceMeasureUnitBase), e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               "Exception handling property '{0}' changed event;. {1}", e.PropertyName, ex.ToFullBlownString)
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 

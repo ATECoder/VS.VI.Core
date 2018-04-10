@@ -9,14 +9,14 @@
 ''' SOFTWARE.</para> </license>
 ''' <history date="12/14/2013" by="David" revision=""> Created. </history>
 Public Class SystemSubsystem
-    Inherits SystemSubsystemBase
+    Inherits VI.Tsp2.SystemSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SystemSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 

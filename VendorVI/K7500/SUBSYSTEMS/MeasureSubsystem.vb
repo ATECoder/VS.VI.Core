@@ -9,17 +9,15 @@
 ''' </para> </license>
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
 Public Class MeasureSubsystem
-    Inherits VI.Scpi.MeasureSubsystemBase
+    Inherits VI.MeasureSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="MeasureSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        ' the readings are initialized when the format system is reset.
-        Me._readings = New Readings
     End Sub
 
 #End Region
@@ -31,7 +29,43 @@ Public Class MeasureSubsystem
     ''' </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me._readings.Reset()
+        Me.Readings?.Reset()
+    End Sub
+
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        ' TO_DO: the readings are initialized when the format system is reset.
+        Me.Readings = New Readings
+        With Me.FunctionModeDecimalPlaces
+            .Clear()
+            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+                .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
+            Next
+        End With
+        With Me.FunctionModeRanges
+            .Clear()
+            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+                .Add(fmode, Core.Pith.RangeR.Full)
+            Next
+        End With
+        With Me.FunctionModeUnits
+            .Clear()
+            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+                .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
+            Next
+            .Item(Scpi.SenseFunctionModes.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(Scpi.SenseFunctionModes.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(Scpi.SenseFunctionModes.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(Scpi.SenseFunctionModes.Continuity) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(Scpi.SenseFunctionModes.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(Scpi.SenseFunctionModes.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(Scpi.SenseFunctionModes.Diode) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(Scpi.SenseFunctionModes.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
+            .Item(Scpi.SenseFunctionModes.Period) = Arebis.StandardUnits.TimeUnits.Second
+            .Item(Scpi.SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
+        End With
+
     End Sub
 
 #End Region
@@ -67,34 +101,38 @@ Public Class MeasureSubsystem
 
 #Region " READ  FETCH "
 
-    Public Overrides Sub Fetch()
+    Public Overrides Function Fetch() As Double?
         Me.Session.MakeEmulatedReplyIfEmpty(Me.Readings.Reading.Generator.Value.ToString)
-        MyBase.Fetch()
-    End Sub
+        Return MyBase.Fetch()
+    End Function
 
-    Public Overrides Sub Read()
+    Public Overrides Function Read() As Double?
         Me.Session.MakeEmulatedReplyIfEmpty(Me.Readings.Reading.Generator.Value.ToString)
-        MyBase.Read()
-    End Sub
+        Return MyBase.Read()
+    End Function
 
 #End Region
 
 #Region " PARSE READING "
 
     Private _Readings As Readings
-
-    ''' <summary> Returns the readings. </summary>
-    ''' <returns> The readings. </returns>
-    Public Function Readings() As Readings
-        Return Me._readings
-    End Function
+    ''' <summary> Gets or sets the readings. </summary>
+    ''' <value> The readings. </value>
+    Public Property Readings As Readings
+        Get
+            Return Me._Readings
+        End Get
+        Private Set(value As Readings)
+            Me._Readings = value
+            MyBase.AssignReadingAmounts(value)
+        End Set
+    End Property
 
     ''' <summary> Parses a new set of reading elements. </summary>
     ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
-    Public Overrides Sub ParseReading(ByVal reading As String)
-        If Me.Readings.TryParse(reading) Then
-        End If
-    End Sub
+    Public Overrides Function ParseReading(ByVal reading As String) As Double?
+        Return MyBase.ParseReadingAmounts(reading)
+    End Function
 
 #End Region
 

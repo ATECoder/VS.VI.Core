@@ -1,6 +1,4 @@
-﻿Imports isr.Core.Pith
-Imports isr.Core.Pith.EnumExtensions
-''' <summary> Measure subsystem. </summary>
+﻿''' <summary> Measure subsystem. </summary>
 ''' <license> (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
 ''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
@@ -18,7 +16,7 @@ Public Class MeasureSubsystem
     ''' <summary> Initializes a new instance of the <see cref="MeasureSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 
@@ -26,9 +24,20 @@ Public Class MeasureSubsystem
 
 #Region " I PRESETTABLE "
 
+    ''' <summary>
+    ''' Sets subsystem values to their known execution clear state.
+    ''' </summary>
+    Public Overrides Sub ClearExecutionState()
+        MyBase.ClearExecutionState()
+        Me.Readings?.Reset()
+    End Sub
+
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
     ''' <remarks> Use this method to customize the reset. </remarks>
     Public Overrides Sub InitKnownState()
+        MyBase.InitKnownState()
+        ' TO_DO: the readings are initialized when the format system is reset.
+        Me.Readings = New Readings
         MyBase.InitKnownState()
         Me.ApertureRange = New isr.Core.Pith.RangeR(0.000166667, 0.166667)
         Me.FilterCountRange = New isr.Core.Pith.RangeI(1, 100)
@@ -47,16 +56,10 @@ Public Class MeasureSubsystem
         Me.MovingAverageFilterEnabled = False
         Me.OpenDetectorEnabled = False
         Me.FilterWindow = 0.001
-        For Each fm As MeasureFunctionMode In [Enum].GetValues(GetType(MeasureFunctionMode))
-            Select Case fm
-                Case MeasureFunctionMode.CurrentDC
-                    Me.FunctionModeRanges(fm).SetRange(0, 1)
-                Case MeasureFunctionMode.VoltageDC
-                    Me.FunctionModeRanges(fm).SetRange(0, 200)
-                Case MeasureFunctionMode.Resistance
-                    Me.FunctionModeRanges(fm).SetRange(0, 200000000.0)
-            End Select
-        Next
+        Me.FunctionModeRanges(MeasureFunctionMode.CurrentDC).SetRange(0, 1)
+        Me.FunctionModeRanges(MeasureFunctionMode.VoltageDC).SetRange(0, 200)
+        Me.FunctionModeRanges(MeasureFunctionMode.Resistance).SetRange(0, 200000000.0)
+        Me.FunctionModeDecimalPlaces(MeasureFunctionMode.Resistance) = 0
         Me.FunctionMode = MeasureFunctionMode.CurrentDC
         Me.Range = 0.000001
     End Sub
@@ -110,7 +113,7 @@ Public Class MeasureSubsystem
 
     ''' <summary> Gets the automatic Range enabled query command. </summary>
     ''' <value> The automatic Range enabled query command. </value>
-    Protected Overrides ReadOnly Property AutoRangeEnabledPrintCommand As String = "_G.print(_G.smu.measure.autorange==smu.ON)"
+    Protected Overrides ReadOnly Property AutoRangeEnabledQueryCommand As String = "_G.print(_G.smu.measure.autorange==smu.ON)"
 
 #End Region
 
@@ -122,7 +125,7 @@ Public Class MeasureSubsystem
 
     ''' <summary> Gets the automatic Zero enabled query command. </summary>
     ''' <value> The automatic Zero enabled query command. </value>
-    Protected Overrides ReadOnly Property AutoZeroEnabledPrintCommand As String = "_G.print(_G.smu.measure.autozero.enable==smu.ON)"
+    Protected Overrides ReadOnly Property AutoZeroEnabledQueryCommand As String = "_G.print(_G.smu.measure.autozero.enable==smu.ON)"
 
 #End Region
 
@@ -194,27 +197,11 @@ Public Class MeasureSubsystem
 
     ''' <summary> Gets or sets the front terminals selected query command. </summary>
     ''' <value> The front terminals selected query command. </value>
-    Protected Overrides ReadOnly Property FrontTerminalsSelectedPrintCommand As String = "_G.print(_G.smu.measure.terminals==smu.TERMINALS_FRONT)"
+    Protected Overrides ReadOnly Property FrontTerminalsSelectedQueryCommand As String = "_G.print(_G.smu.measure.terminals==smu.TERMINALS_FRONT)"
 
 #End Region
 
 #Region " FUNCTION MODE "
-
-    ''' <summary> Converts a function Mode to a decimal places. </summary>
-    ''' <param name="functionMode"> The function mode. </param>
-    ''' <returns> FunctionMode as an Integer. </returns>
-    Public Overrides Function ToDecimalPlaces(functionMode As MeasureFunctionMode) As Integer
-        Dim result As Integer = MyBase.ToDecimalPlaces(functionMode)
-        Select Case functionMode
-            Case MeasureFunctionMode.CurrentDC
-                result = 3
-            Case MeasureFunctionMode.VoltageDC
-                result = 3
-            Case MeasureFunctionMode.Resistance
-                result = 0
-        End Select
-        Return result
-    End Function
 
     ''' <summary> Gets or sets the function mode query command. </summary>
     ''' <value> The function mode query command. </value>
@@ -262,7 +249,7 @@ Public Class MeasureSubsystem
 
     ''' <summary> Gets the Range query command. </summary>
     ''' <value> The Range query command. </value>
-    Protected Overrides ReadOnly Property RangePrintCommand As String = "_G.print(_G.smu.measure.range)"
+    Protected Overrides ReadOnly Property RangeQueryCommand As String = "_G.print(_G.smu.measure.range)"
 
     ''' <summary> Gets the Range command format. </summary>
     ''' <value> The Range command format. </value>
@@ -278,7 +265,7 @@ Public Class MeasureSubsystem
 
     ''' <summary> Gets or sets the remote sense selected query command. </summary>
     ''' <value> The remote sense selected query command. </value>
-    Protected Overrides ReadOnly Property RemoteSenseSelectedPrintCommand As String = "_G.print(_G.smu.measure.sense==smu.SENSE_4WIRE)"
+    Protected Overrides ReadOnly Property RemoteSenseSelectedQueryCommand As String = "_G.print(_G.smu.measure.sense==smu.SENSE_4WIRE)"
 
 #End Region
 
@@ -296,6 +283,36 @@ Public Class MeasureSubsystem
 
 #End Region
 
+#Region " MEASURE "
 
+    Public Overrides Function Measure() As Double?
+        Me.Session.MakeEmulatedReplyIfEmpty(Me.Readings.Reading.Generator.Value.ToString)
+        Return MyBase.Measure()
+    End Function
+
+#End Region
+
+#Region " PARSE READING "
+
+    Private _Readings As Readings
+    ''' <summary> Gets or sets the readings. </summary>
+    ''' <value> The readings. </value>
+    Public Property Readings As Readings
+        Get
+            Return Me._Readings
+        End Get
+        Private Set(value As Readings)
+            Me._Readings = value
+            MyBase.AssignReadingAmounts(value)
+        End Set
+    End Property
+
+    ''' <summary> Parses a new set of reading elements. </summary>
+    ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
+    Public Overrides Function ParseReading(ByVal reading As String) As Double?
+        Return MyBase.ParseReadingAmounts(reading)
+    End Function
+
+#End Region
 
 End Class

@@ -77,7 +77,7 @@ Public Class TtmCommandsTests
     <TestMethod()>
     Public Sub OpenSessionTest()
         Dim resourceName As String = "TCPIP0::192.168.1.134::inst0::INSTR"
-        Dim target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
+        Dim target As  VI.Pith.SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
         target.OpenSession(resourceName, Threading.SynchronizationContext.Current)
         Assert.AreEqual(TimeSpan.FromSeconds(58), target.KeepAliveInterval)
         Assert.AreEqual(resourceName, target.ResourceName)
@@ -85,8 +85,8 @@ Public Class TtmCommandsTests
     End Sub
 
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Public Function OpenSession(ByVal resourceName As String) As SessionBase
-        Dim target As SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
+    Public Function OpenSession(ByVal resourceName As String) As  VI.Pith.SessionBase
+        Dim target As  VI.Pith.SessionBase = isr.VI.SessionFactory.Get.Factory.CreateSession()
         target.OpenSession(resourceName, Threading.SynchronizationContext.Current)
         Assert.AreEqual(TimeSpan.FromSeconds(58), target.KeepAliveInterval)
         Assert.AreEqual(resourceName, target.ResourceName)
@@ -98,7 +98,7 @@ Public Class TtmCommandsTests
     '''A test for measure current.
     '''</summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Public Function MeasureCurrent(ByVal session As SessionBase) As String
+    Public Function MeasureCurrent(ByVal session As  VI.Pith.SessionBase) As String
         If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
         session.Write("_G.status.reset()")
         session.ReadStatusByte()
@@ -113,7 +113,7 @@ Public Class TtmCommandsTests
     <TestMethod()>
     Public Sub MeasureCurrentTest()
         Dim resourceName As String = "TCPIP0::192.168.1.134::inst0::INSTR"
-        Using target As SessionBase = Me.OpenSession(resourceName)
+        Using target As  VI.Pith.SessionBase = Me.OpenSession(resourceName)
             Dim value As String = Me.MeasureCurrent(target)
             Assert.AreEqual(False, String.IsNullOrWhiteSpace(value))
             My.Application.Log.WriteEntry(value)
@@ -123,7 +123,7 @@ Public Class TtmCommandsTests
     <TestMethod()>
     Public Sub MeasureCurrentManyTest()
         Dim resourceName As String = "TCPIP0::192.168.1.134::inst0::INSTR"
-        Using target As SessionBase = Me.OpenSession(resourceName)
+        Using target As  VI.Pith.SessionBase = Me.OpenSession(resourceName)
             For i As Integer = 1 To 100
                 Dim value As String = Me.MeasureCurrent(target)
                 My.Application.Log.WriteEntry($"{i} {value}")
@@ -140,7 +140,7 @@ Public Class TtmCommandsTests
     <TestMethod()>
     Public Sub StartCommandsTest()
         Dim resourceName As String = "TCPIP0::192.168.1.134::inst0::INSTR"
-        Using session As SessionBase = Me.OpenSession(resourceName)
+        Using session As  VI.Pith.SessionBase = Me.OpenSession(resourceName)
             Dim command As String = ""
             Dim value As String = ""
             Dim i As Integer = 0

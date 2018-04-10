@@ -20,7 +20,7 @@ Public MustInherit Class SourceMeasureUnitBase
     ''' a CLS and RST as necessary when adding an SMU. </remarks>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystem">TSP status
     ''' Subsystem</see>. </param>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         Me.New(statusSubsystem, 0, TspSyntax.SourceMeasureUnitNumberA)
     End Sub
 
@@ -31,9 +31,9 @@ Public MustInherit Class SourceMeasureUnitBase
     ''' Subsystem</see>. </param>
     ''' <param name="nodeNumber">      Specifies the node number. </param>
     ''' <param name="smuNumber">       Specifies the SMU (either 'a' or 'b'. </param>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase, ByVal nodeNumber As Integer, ByVal smuNumber As String)
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase, ByVal nodeNumber As Integer, ByVal smuNumber As String)
         MyBase.New(statusSubsystem)
-        Me._nodeNumber = nodeNumber
+        Me._NodeNumber = nodeNumber
         Me.UnitNumber = smuNumber
         Me._SourceMeasureBasedSubsystems = New SourceMeasureUnitSubsystemCollection With {
             .NodeNumber = (nodeNumber),
@@ -116,8 +116,8 @@ Public MustInherit Class SourceMeasureUnitBase
         End Get
         Protected Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.SourceMeasureUnitReference) Then
-                Me._SourceMeasureUnitReference = value
+            If Not String.Equals(value, Me.SourceMeasureUnitReference, StringComparison.OrdinalIgnoreCase) OrElse
+                Me._SourceMeasureUnitReference = value Then
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -133,8 +133,8 @@ Public MustInherit Class SourceMeasureUnitBase
         End Get
         Protected Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.SourceMeasureUnitName) Then
-                Me._SourceMeasureUnitName = value
+            If Not String.Equals(value, Me._SourceMeasureUnitName, StringComparison.OrdinalIgnoreCase) OrElse
+                Me._SourceMeasureUnitName = value Then
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -151,8 +151,8 @@ Public MustInherit Class SourceMeasureUnitBase
         End Get
         Set(ByVal Value As String)
             If String.IsNullOrWhiteSpace(Value) Then Value = ""
-            If Not Value.Equals(Me.UnitNumber) Then
-                Me._unitNumber = Value
+            If Not String.Equals(Value, Me.UnitNumber, StringComparison.OrdinalIgnoreCase) OrElse
+                Me._UnitNumber = Value Then
                 Me.SourceMeasureBasedSubsystems.UnitNumber = Value
                 Me.SafePostPropertyChanged()
             End If

@@ -14,7 +14,7 @@ Public MustInherit Class SourceFunctionSubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SourceFunctionSubsystemBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me.LevelRange = Core.Pith.RangeR.Full
@@ -42,8 +42,8 @@ Public MustInherit Class SourceFunctionSubsystemBase
     Private _Level As Double?
 
     ''' <summary> Gets or sets the cached Level. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property Level As Double?
         Get
@@ -97,8 +97,8 @@ Public MustInherit Class SourceFunctionSubsystemBase
     Private _Range As Double?
 
     ''' <summary> Gets or sets the cached range. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property Range As Double?
         Get
@@ -202,14 +202,70 @@ Public MustInherit Class SourceFunctionSubsystemBase
 
 #End Region
 
+#Region " PROTECTION LEVEL "
+
+    ''' <summary> The protection level. </summary>
+    Private _ProtectionLevel As Double?
+
+    ''' <summary> Gets or sets the cached Over Voltage Protection Level. </summary>
+    ''' <remarks> This command sets the over-voltage protection (OVP) level of the output. The values
+    ''' are programmed in volts. If the output voltage exceeds the OVP level, the output is disabled
+    ''' and OVP is set in the Questionable Condition status register. The*RST value = Max. </remarks>
+    ''' <value> <c>null</c> if value is not known. </value>
+    Public Overloads Property ProtectionLevel As Double?
+        Get
+            Return Me._ProtectionLevel
+        End Get
+        Protected Set(ByVal value As Double?)
+            If Not Nullable.Equals(Me.ProtectionLevel, value) Then
+                Me._ProtectionLevel = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the protection level. </summary>
+    ''' <param name="value"> the protection level. </param>
+    ''' <returns> the protection level. </returns>
+    Public Function ApplyProtectionLevel(ByVal value As Double) As Double?
+        Me.WriteProtectionLevel(value)
+        Return Me.QueryProtectionLevel
+    End Function
+
+    ''' <summary> Gets or sets the protection level query command. </summary>
+    ''' <value> the protection level query command. </value>
+    Protected Overridable ReadOnly Property ProtectionLevelQueryCommand As String
+
+    ''' <summary> Queries the protection level. </summary>
+    ''' <returns> the protection level or none if unknown. </returns>
+    Public Function QueryProtectionLevel() As Double?
+        Me.ProtectionLevel = Me.Query(Me.ProtectionLevel, Me.ProtectionLevelQueryCommand)
+        Return Me.ProtectionLevel
+    End Function
+
+    ''' <summary> Gets or sets the protection level command format. </summary>
+    ''' <value> the protection level command format. </value>
+    Protected Overridable ReadOnly Property ProtectionLevelCommandFormat As String
+
+    ''' <summary> Writes the protection level without reading back the value from the device. </summary>
+    ''' <remarks> This command sets the protection level. </remarks>
+    ''' <param name="value"> the protection level. </param>
+    ''' <returns> the protection level. </returns>
+    Public Function WriteProtectionLevel(ByVal value As Double) As Double?
+        Me.ProtectionLevel = Me.Write(value, Me.ProtectionLevelCommandFormat)
+        Return Me.ProtectionLevel
+    End Function
+
+#End Region
+
 #Region " SWEEP START LEVEL "
 
     ''' <summary> The Sweep Start Level. </summary>
     Private _SweepStartLevel As Double?
 
     ''' <summary> Gets or sets the cached Sweep Start Level. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property SweepStartLevel As Double?
         Get
@@ -263,8 +319,8 @@ Public MustInherit Class SourceFunctionSubsystemBase
     Private _SweepStopLevel As Double?
 
     ''' <summary> Gets or sets the cached Sweep Stop Level. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property SweepStopLevel As Double?
         Get
@@ -367,3 +423,11 @@ Public MustInherit Class SourceFunctionSubsystemBase
 
 End Class
 
+
+''' <summary>Specifies the source sweep modes.</summary>
+Public Enum SweepMode
+    <ComponentModel.Description("None")> None
+    <ComponentModel.Description("Fixed (FIX)")> Fixed
+    <ComponentModel.Description("Sweep (SWE)")> Sweep
+    <ComponentModel.Description("List (LIST)")> List
+End Enum

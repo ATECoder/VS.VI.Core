@@ -43,7 +43,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
-	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\debug\</OutputPath>
@@ -104,14 +104,17 @@
     <Compile Include="..\..\..\..\Share\Core\ShareCommandLineInfo.vb">
       <Link>My\CommandLineInfo.vb</Link>
     </Compile>
-    <Compile Include="..\..\..\..\Share\Pith\ShareBlueApplicationEvents.vb">
-      <Link>My\BlueApplicationEvents.vb</Link>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplication_BlueEvents.vb">
+      <Link>My\ShareMyApplication_BlueEvents.vb</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyApplication_Log.vb">
+      <Link>My\ShareMyApplication_Log.vb</Link>
     </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="My\BlueMyApplication.vb" />
-    <Compile Include="My\MyApplicationInfo.vb" />
+    <Compile Include="My\MyApplication_Events.vb" />
+    <Compile Include="My\MyApplication_Info.vb" />
     <Compile Include="FORMS\Switchboard.Designer.vb">
       <DependentUpon>Switchboard.vb</DependentUpon>
     </Compile>
@@ -128,6 +131,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="My\MyApplication_Log.vb" />
     <EmbeddedResource Include="FORMS\Switchboard.resx">
       <DependentUpon>Switchboard.vb</DependentUpon>
       <SubType>Designer</SubType>

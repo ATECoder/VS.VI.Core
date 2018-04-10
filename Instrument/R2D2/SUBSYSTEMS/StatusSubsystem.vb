@@ -14,12 +14,28 @@ Public Class StatusSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal visaSession As VI.SessionBase)
+    Public Sub New(ByVal visaSession As VI.Pith.SessionBase)
         MyBase.New(visaSession)
         Me.OperationCompleted = True
     End Sub
+
+    ''' <summary> Creates a new StatusSubsystem. </summary>
+    ''' <returns> A StatusSubsystem. </returns>
+    Public Shared Function Create() As StatusSubsystem
+        Dim subsystem As StatusSubsystem = Nothing
+        Try
+            subsystem = New StatusSubsystem(isr.VI.SessionFactory.Get.Factory.CreateSession())
+        Catch
+            If subsystem IsNot Nothing Then
+                subsystem.Dispose()
+                subsystem = Nothing
+            End If
+            Throw
+        End Try
+        Return subsystem
+    End Function
 
 #End Region
 
@@ -52,11 +68,11 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the clear execution state command. </summary>
     ''' <value> The clear execution state command. </value>
-    Protected Overrides ReadOnly Property ClearExecutionStateCommand As String = Ieee488.Syntax.ClearExecutionStateCommand
+    Protected Overrides ReadOnly Property ClearExecutionStateCommand As String = Vi.Pith.Ieee488.Syntax.ClearExecutionStateCommand
 
     ''' <summary> Gets the reset known state command. </summary>
     ''' <value> The reset known state command. </value>
-    Protected Overrides ReadOnly Property ResetKnownStateCommand As String = Ieee488.Syntax.ResetKnownStateCommand
+    Protected Overrides ReadOnly Property ResetKnownStateCommand As String = Vi.Pith.Ieee488.Syntax.ResetKnownStateCommand
 
 
     ''' <summary> Gets line frequency query command. </summary>
@@ -69,27 +85,27 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the clear error queue command. </summary>
     ''' <value> The clear error queue command. </value>
-    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = VI.Scpi.Syntax.ClearErrorQueueCommand
+    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = VI.Pith.Scpi.Syntax.ClearErrorQueueCommand
 
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = VI.Scpi.Syntax.NextErrorQueryCommand
+    Protected Overrides ReadOnly Property NextDeviceErrorQueryCommand As String = VI.Pith.Scpi.Syntax.NextErrorQueryCommand
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>
-    Public Overrides ReadOnly Property ErrorAvailableBits As ServiceRequests = ServiceRequests.ErrorAvailable
+    Public Overrides ReadOnly Property ErrorAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.ErrorAvailable
 
     ''' <summary> Gets the identity query command. </summary>
     ''' <value> The identity query command. </value>
-    Protected Overrides ReadOnly Property IdentityQueryCommand As String = Ieee488.Syntax.IdentityQueryCommand
+    Protected Overrides ReadOnly Property IdentityQueryCommand As String = Vi.Pith.Ieee488.Syntax.IdentityQueryCommand
 
     ''' <summary> Gets the bits that would be set for detecting if an Measurement is available. </summary>
     ''' <value> The Measurement available bits. </value>
-    Public Overrides ReadOnly Property MeasurementAvailableBits As ServiceRequests = ServiceRequests.MeasurementEvent
+    Public Overrides ReadOnly Property MeasurementAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MeasurementEvent
 
     ''' <summary> Gets the bits that would be set for detecting if an Message is available. </summary>
     ''' <value> The Message available bits. </value>
-    Public Overrides ReadOnly Property MessageAvailableBits As ServiceRequests = ServiceRequests.MessageAvailable
+    Public Overrides ReadOnly Property MessageAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MessageAvailable
 
     ''' <summary> Gets the operation completed query command. </summary>
     ''' <value> The operation completed query command. </value>
@@ -97,27 +113,27 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the bits that would be set for detecting if a Standard Event is available. </summary>
     ''' <value> The Standard Event available bits. </value>
-    Public Overrides ReadOnly Property StandardEventAvailableBits As ServiceRequests = ServiceRequests.StandardEvent
+    Public Overrides ReadOnly Property StandardEventAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.StandardEvent
 
     ''' <summary> Gets the standard event status query command. </summary>
     ''' <value> The standard event status query command. </value>
-    Protected Overrides ReadOnly Property StandardEventStatusQueryCommand As String = Ieee488.Syntax.StandardEventQueryCommand
+    Protected Overrides ReadOnly Property StandardEventStatusQueryCommand As String = Vi.Pith.Ieee488.Syntax.StandardEventQueryCommand
 
     ''' <summary> Gets the standard event enable query command. </summary>
     ''' <value> The standard event enable query command. </value>
-    Protected Overrides ReadOnly Property StandardEventEnableQueryCommand As String = Ieee488.Syntax.StandardEventEnableQueryCommand
+    Protected Overrides ReadOnly Property StandardEventEnableQueryCommand As String = Vi.Pith.Ieee488.Syntax.StandardEventEnableQueryCommand
 
     ''' <summary> Gets the standard service enable command format. </summary>
     ''' <value> The standard service enable command format. </value>
-    Protected Overrides ReadOnly Property StandardServiceEnableCommandFormat As String = Ieee488.Syntax.StandardServiceEnableCommandFormat
+    Protected Overrides ReadOnly Property StandardServiceEnableCommandFormat As String = Vi.Pith.Ieee488.Syntax.StandardServiceEnableCommandFormat
 
     ''' <summary> Gets the standard service enable and complete command format. </summary>
     ''' <value> The standard service enable command and complete format. </value>
-    Protected Overrides ReadOnly Property StandardServiceEnableCompleteCommandFormat As String = Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat
+    Protected Overrides ReadOnly Property StandardServiceEnableCompleteCommandFormat As String = Vi.Pith.Ieee488.Syntax.StandardServiceEnableCompleteCommandFormat
 
     ''' <summary> Gets the service request enable command format. </summary>
     ''' <value> The service request enable command format. </value>
-    Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = Ieee488.Syntax.ServiceRequestEnableCommandFormat
+    Protected Overrides ReadOnly Property ServiceRequestEnableCommandFormat As String = Vi.Pith.Ieee488.Syntax.ServiceRequestEnableCommandFormat
 
 #End Region
 

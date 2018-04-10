@@ -137,6 +137,18 @@ Namespace My
                 Me("ClearRefractoryPeriod") = value
             End Set
         End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("0")>
+        Public Property SessionMessageNotificationLevel() As Integer
+            Get
+                Return CType(Me("SessionMessageNotificationLevel"), Integer)
+            End Get
+            Set
+                Me("SessionMessageNotificationLevel") = Value
+            End Set
+        End Property
     End Class
 End Namespace
 

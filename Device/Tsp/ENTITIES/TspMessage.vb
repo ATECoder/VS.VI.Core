@@ -119,14 +119,14 @@ Public Class TspMessage
     Public Property NodeNumber() As Integer
 
     ''' <summary>Gets or sets the service request
-    ''' <see cref="VI.ServiceRequests">status bits</see>.
+    ''' <see cref="VI.Pith.ServiceRequests">status bits</see>.
     ''' </summary>
-    Public Property ServiceRequests() As VI.ServiceRequests
+    Public Property ServiceRequests() As VI.Pith.ServiceRequests
 
     ''' <summary>Gets or sets the standard event
-    ''' <see cref="VI.StandardEvents">status bits</see>.
+    ''' <see cref="VI.Pith.StandardEvents">status bits</see>.
     ''' </summary>
-    Public Property StandardEvents() As VI.StandardEvents
+    Public Property StandardEvents() As VI.Pith.StandardEvents
 
     ''' <summary>Gets or sets the unit number (a or b).
     ''' </summary>
@@ -143,10 +143,10 @@ Public Class TspMessage
         Me._NodeNumber = 0
         Me._MessageType = TspMessageTypes.None
         Me._InfoStatus = TspMessageInfoBits.None
-        Me._StandardEvents = VI.StandardEvents.None
-        Me._ServiceRequests = VI.ServiceRequests.None
+        Me._StandardEvents = VI.Pith.StandardEvents.None
+        Me._ServiceRequests = VI.Pith.ServiceRequests.None
         Me._Contents = ""
-        Me._failureMessage = ""
+        Me._FailureMessage = ""
     End Sub
 
     ''' <summary>
@@ -171,10 +171,10 @@ Public Class TspMessage
         Me._NodeNumber = 0
         Me._MessageType = TspMessageTypes.None
         Me._InfoStatus = TspMessageInfoBits.None
-        Me._StandardEvents = VI.StandardEvents.None
-        Me._ServiceRequests = VI.ServiceRequests.None
+        Me._StandardEvents = VI.Pith.StandardEvents.None
+        Me._ServiceRequests = VI.Pith.ServiceRequests.None
         Me._Contents = ""
-        Me._failureMessage = ""
+        Me._FailureMessage = ""
 
         If Not String.IsNullOrWhiteSpace(value) Then
 
@@ -194,9 +194,9 @@ Public Class TspMessage
                     Case 1
                         Me._UnitNumber = values(index)
                     Case 2
-                        Me._ServiceRequests = CType(CInt("&H" & values(index)), VI.ServiceRequests)
+                        Me._ServiceRequests = CType(CInt("&H" & values(index)), VI.Pith.ServiceRequests)
                     Case 3
-                        Me._StandardEvents = CType(CInt("&H" & values(index)), VI.StandardEvents)
+                        Me._StandardEvents = CType(CInt("&H" & values(index)), VI.Pith.StandardEvents)
                     Case 4
                         Me._InfoStatus = CType(CInt("&H" & values(index)), TspMessageInfoBits)
                     Case 5

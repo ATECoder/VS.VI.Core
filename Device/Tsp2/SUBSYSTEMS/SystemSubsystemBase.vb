@@ -9,14 +9,14 @@
 ''' </para> </license>
 ''' <history date="10/7/2013" by="David" revision=""> Created. </history>
 Public MustInherit Class SystemSubsystemBase
-    Inherits VI.Scpi.SystemSubsystemBase
+    Inherits VI.SystemSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SystemSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystem">TSP status
     ''' Subsystem</see>. </param>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 

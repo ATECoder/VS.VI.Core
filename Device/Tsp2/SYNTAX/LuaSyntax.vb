@@ -184,7 +184,7 @@
         ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
         ''' <param name="functionName"> Specifies the function name. </param>
         ''' <param name="args">         Specifies the function arguments. </param>
-        Public Sub CallFunction(ByVal session As SessionBase, ByVal functionName As String, ByVal args As String)
+        Public Sub CallFunction(ByVal session As VI.Pith.SessionBase, ByVal functionName As String, ByVal args As String)
             If session Is Nothing Then Throw New ArgumentNullException(NameOf(session))
             If String.IsNullOrWhiteSpace(functionName) Then Throw New ArgumentNullException(NameOf(functionName))
             Dim callStatement As String

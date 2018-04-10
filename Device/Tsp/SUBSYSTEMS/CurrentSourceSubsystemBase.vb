@@ -15,7 +15,7 @@ Public Class CurrentSourceSubsystemBase
 
     ''' <summary> Initializes a new instance of the <see cref="CurrentSourceSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp.StatusSubsystemBase">status subsystem</see>. </param>
-    Public Sub New(ByVal statusSubsystem As VI.Tsp.StatusSubsystemBase)
+    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 
@@ -170,8 +170,8 @@ Public Class CurrentSourceSubsystemBase
     Private _Range As Double?
 
     ''' <summary> Gets or sets the cached Source current range. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property Range As Double?
         Get
@@ -208,12 +208,12 @@ Public Class CurrentSourceSubsystemBase
     ''' <param name="value"> The Source current Range. </param>
     ''' <returns> The Source Current Range. </returns>
     Public Function WriteRange(ByVal value As Double) As Double?
-        If value >= (Scpi.Syntax.Infinity - 1) Then
+        If value >= (VI.Pith.Scpi.Syntax.Infinity - 1) Then
             Me.Session.WriteLine("{0}.source.rangei={0}.source.rangei.max", Me.SourceMeasureUnitReference)
-            value = Scpi.Syntax.Infinity
-        ElseIf value <= (Scpi.Syntax.NegativeInfinity + 1) Then
+            value = VI.Pith.Scpi.Syntax.Infinity
+        ElseIf value <= (VI.Pith.Scpi.Syntax.NegativeInfinity + 1) Then
             Me.Session.WriteLine("{0}.source.rangei={0}.source.rangei.min", Me.SourceMeasureUnitReference)
-            value = Scpi.Syntax.NegativeInfinity
+            value = VI.Pith.Scpi.Syntax.NegativeInfinity
         Else
             Me.Session.WriteLine("{0}.source.rangei={1}", Me.SourceMeasureUnitReference, value)
         End If
@@ -229,8 +229,8 @@ Public Class CurrentSourceSubsystemBase
     Private _VoltageLimit As Double?
 
     ''' <summary> Gets or sets the cached source Voltage Limit for a Current Source. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property VoltageLimit As Double?
         Get
@@ -268,12 +268,12 @@ Public Class CurrentSourceSubsystemBase
     ''' <param name="value"> The Voltage Limit. </param>
     ''' <returns> The Source Voltage Limit. </returns>
     Public Function WriteVoltageLimit(ByVal value As Double) As Double?
-        If value >= (Scpi.Syntax.Infinity - 1) Then
+        If value >= (VI.Pith.Scpi.Syntax.Infinity - 1) Then
             Me.Session.WriteLine("{0}.source.limitv={0}.source.limitv.max", Me.SourceMeasureUnitReference)
-            value = Scpi.Syntax.Infinity
-        ElseIf value <= (Scpi.Syntax.NegativeInfinity + 1) Then
+            value = VI.Pith.Scpi.Syntax.Infinity
+        ElseIf value <= (VI.Pith.Scpi.Syntax.NegativeInfinity + 1) Then
             Me.Session.WriteLine("{0}.source.limitv={0}.source.limitv.min", Me.SourceMeasureUnitReference)
-            value = Scpi.Syntax.NegativeInfinity
+            value = VI.Pith.Scpi.Syntax.NegativeInfinity
         Else
             Me.Session.WriteLine("{0}.source.limitv={1}", Me.SourceMeasureUnitReference, value)
         End If

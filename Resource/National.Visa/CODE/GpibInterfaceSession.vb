@@ -12,7 +12,7 @@ Imports isr.VI.National.Visa.GpibInterfaceExtensions
 ''' </license>
 ''' <history date="11/21/2015" by="David" revision=""> Created. </history>
 Public Class GpibInterfaceSession
-    Inherits InterfaceSessionBase
+    Inherits VI.Pith.InterfaceSessionBase
 
 #Region " CONSTRUCTOR "
 
@@ -114,7 +114,7 @@ Public Class GpibInterfaceSession
 
     ''' <summary> Gets the type of the hardware interface. </summary>
     ''' <value> The type of the hardware interface. </value>
-    Public Overrides ReadOnly Property HardwareInterfaceType As HardwareInterfaceType
+    Public Overrides ReadOnly Property HardwareInterfaceType As VI.Pith.HardwareInterfaceType
         Get
             Return ResourceManagerExtensions.ConvertInterfaceType(Me.GpibInterface.HardwareInterfaceType)
         End Get

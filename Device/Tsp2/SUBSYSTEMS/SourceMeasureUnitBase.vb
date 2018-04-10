@@ -20,7 +20,7 @@ Public MustInherit Class SourceMeasureUnitBase
     ''' a CLS and RST as necessary when adding an SMU. </remarks>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystem">TSP status
     ''' Subsystem</see>. </param>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         Me.New(statusSubsystem, 0, TspSyntax.SourceMeasureUnit.SourceMeasureUnitNumberA)
     End Sub
 
@@ -31,15 +31,24 @@ Public MustInherit Class SourceMeasureUnitBase
     ''' Subsystem</see>. </param>
     ''' <param name="nodeNumber">      Specifies the node number. </param>
     ''' <param name="smuNumber">       Specifies the SMU (either 'a' or 'b'. </param>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase, ByVal nodeNumber As Integer, ByVal smuNumber As String)
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase, ByVal nodeNumber As Integer, ByVal smuNumber As String)
         MyBase.New(statusSubsystem)
-        Me._nodeNumber = nodeNumber
+        Me._NodeNumber = nodeNumber
         Me.UnitNumber = smuNumber
         Me._SourceMeasureBasedSubsystems = New SourceMeasureUnitSubsystemCollection With {
             .NodeNumber = (nodeNumber),
             .UnitNumber = smuNumber
             }
     End Sub
+
+    ''' <summary> Validated the given source measure unit. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="sourceMeasureUnit"> Source measure unit. </param>
+    ''' <returns> A SourceMeasureUnitBase. </returns>
+    Public Shared Function Validated(ByVal sourceMeasureUnit As SourceMeasureUnitBase) As SourceMeasureUnitBase
+        If sourceMeasureUnit Is Nothing Then Throw New ArgumentNullException(NameOf(sourceMeasureUnit))
+        Return sourceMeasureUnit
+    End Function
 
     ''' <summary>
     ''' Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control" />
@@ -200,8 +209,8 @@ Public MustInherit Class SourceMeasureUnitBase
     Private _MaximumOutputPower As Double
 
     ''' <summary> Gets or sets the source measure unit maximum output power. Set to
-    ''' <see cref="Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
+    ''' <see cref="VI.Pith.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
+    ''' <see cref="VI.Pith.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
     ''' <value> <c>null</c> if value is not known. </value>
     Public Overloads Property MaximumOutputPower As Double
         Get

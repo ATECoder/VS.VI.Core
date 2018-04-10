@@ -66,6 +66,9 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
@@ -85,8 +88,15 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
+    <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="PANELS\BridgeMeterControl.Designer.vb">
+      <DependentUpon>BridgeMeterControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\BridgeMeterControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PANELS\K3700Control.Designer.vb">
       <DependentUpon>K3700Control.vb</DependentUpon>
     </Compile>
@@ -99,12 +109,6 @@
     <Compile Include="PANELS\K3700Panel.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PANELS\BridgeMeterControl.Designer.vb">
-      <DependentUpon>BridgeMeterControl.vb</DependentUpon>
-    </Compile>
-    <Compile Include="PANELS\BridgeMeterControl.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="PANELS\MovingWindowMeter.Designer.vb">
       <DependentUpon>MovingWindowMeter.vb</DependentUpon>
     </Compile>
@@ -114,7 +118,10 @@
     <Compile Include="PANELS\MovingWindowMeterWorker.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="SUBSYSTEMS\BridgeMeterDevice.vb" />
+    <Compile Include="SUBSYSTEMS\BridgeMeter.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystem.vb" />
+    <Compile Include="SUBSYSTEMS\BridgeMeterResistor.vb" />
     <Compile Include="SUBSYSTEMS\SlotsSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SlotSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\MultimeterSubsystem.vb" />
@@ -128,6 +135,9 @@
     <EmbeddedResource Include="FORMS\MovingWindowForm.resx">
       <DependentUpon>MovingWindowForm.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="PANELS\BridgeMeterControl.resx">
+      <DependentUpon>BridgeMeterControl.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PANELS\K3700Control.resx">
       <DependentUpon>K3700Control.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -135,9 +145,6 @@
     <EmbeddedResource Include="PANELS\K3700Panel.resx">
       <DependentUpon>K3700Panel.vb</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PANELS\BridgeMeterControl.resx">
-      <DependentUpon>BridgeMeterControl.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PANELS\MovingWindowMeter.resx">
       <DependentUpon>MovingWindowMeter.vb</DependentUpon>
@@ -148,7 +155,7 @@
     <CodeAnalysisDictionary Include="My\MyDictionary.xml">
       <SubType>Designer</SubType>
     </CodeAnalysisDictionary>
-    <EmbeddedResource Include="PANELS\BridgeMeterControl.bmp" />
+    <Content Include="PANELS\BridgeMeterControl.bmp" />
     <EmbeddedResource Include="PANELS\K3700Control.bmp" />
     <EmbeddedResource Include="PANELS\MovingWindowMeter.bmp" />
     <EmbeddedResource Include="PANELS\K3700Panel.bmp" />
@@ -187,10 +194,6 @@
     <ProjectReference Include="..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
       <Project>{d2c9a599-79dd-4cfa-8614-be3c444eb347}</Project>
       <Name>Arebis.TypedUnits.Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Device\Device.Scpi\isr.VI.Device.Scpi.Library.vbproj">
-      <Project>{f6e68ae1-a1b8-43ce-bf8b-d1b8df65c366}</Project>
-      <Name>isr.VI.Device.Scpi.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Device\Device\isr.VI.Device.Library.vbproj">
       <Project>{0c14c4a7-d574-4f9b-a2d9-989b71cc7de4}</Project>

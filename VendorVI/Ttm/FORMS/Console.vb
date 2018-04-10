@@ -20,7 +20,6 @@ Public Class Console
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
-    Private Property InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
@@ -28,7 +27,6 @@ Public Class Console
         Me.InitializeComponent()
         Me.InitializingComponents = False
         Me._TraceMessagesBox.ContainerPanel = Me._MessagesTabPage
-        Me.AddPrivateListeners()
     End Sub
 
     ''' <summary>
@@ -192,11 +190,14 @@ Public Class Console
 
             Trace.CorrelationManager.StartLogicalOperation(Reflection.MethodInfo.GetCurrentMethod.Name)
 
+	      Me.AddPrivateListeners()
+
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "loading...")
 
             ' hide the alerts
             Me._MeasurementsHeader.ShowAlerts(False, False)
             Me._MeasurementsHeader.ShowOutcome(False, False)
+
 
             With Me._TraceMessagesBox
                 ' set defaults for the messages box.
@@ -289,7 +290,7 @@ Public Class Console
             Application.DoEvents()
             Me.SelectNavigatorTreeViewNode(TreeViewNode.ConnectNode)
             Me._ResourceSelectorConnector.Focus()
-            Me._ResourceSelectorConnector.SelectedResourceName = My.Settings.ResourceName
+            Me._ResourceSelectorConnector.SessionFactory.SelectedResourceName = My.Settings.ResourceName
             Application.DoEvents()
 
         End Try
@@ -395,12 +396,12 @@ Public Class Console
     ''' <value> The name of the resource. </value>
     Public Property ResourceName As String
         Get
-            Return Me._ResourceSelectorConnector.SelectedResourceName
+            Return Me._ResourceSelectorConnector.SessionFactory.SelectedResourceName
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not String.Equals(value, Me.ResourceName) Then
-                Me._ResourceSelectorConnector.SelectedResourceName = value
+                Me._ResourceSelectorConnector.SessionFactory.SelectedResourceName = value
             End If
         End Set
     End Property
@@ -409,12 +410,12 @@ Public Class Console
     ''' <value> The Search Pattern of the resource. </value>
     Public Property ResourceFilter As String
         Get
-            Return Me._ResourceSelectorConnector.ResourcesFilter
+            Return Me._ResourceSelectorConnector.SessionFactory.ResourcesFilter
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
             If Not String.Equals(value, Me.ResourceFilter) Then
-                Me._ResourceSelectorConnector.ResourcesFilter = value
+                Me._ResourceSelectorConnector.SessionFactory.ResourcesFilter = value
             End If
         End Set
     End Property
@@ -423,10 +424,10 @@ Public Class Console
     Public Sub DisplayNames()
         ' get the list of available resources
         If Me.Meter IsNot Nothing AndAlso Me.Meter.MasterDevice IsNot Nothing AndAlso
-            Me.Meter.MasterDevice.ResourcesFilter IsNot Nothing Then
-            Me._ResourceSelectorConnector.ResourcesFilter = Me.Meter.MasterDevice.ResourcesFilter
+            Me.Meter.MasterDevice.Session.ResourceNameInfo.ResourcesFilter IsNot Nothing Then
+            Me._ResourceSelectorConnector.SessionFactory.ResourcesFilter = Me.Meter.MasterDevice.Session.ResourceNameInfo.ResourcesFilter
         End If
-        Me._ResourceSelectorConnector.DisplayResourceNames()
+        Me._ResourceSelectorConnector.SessionFactory.EnumerateResources()
     End Sub
 
     ''' <summary> Clears the instrument by calling a propagating clear command. </summary>
@@ -445,10 +446,10 @@ Public Class Console
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub Connector_Connect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ResourceSelectorConnector.Connect
-        Dim action As String = $"opening VISA Session to {Me.ResourceName}"
+        Dim activity As String = $"opening VISA Session to {Me.ResourceName}"
         Try
             Me.Cursor = Cursors.WaitCursor
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Connecting;. {action}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Connecting;. {activity}")
             Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.WaitCursor
             ' Me.Meter.MasterDevice.RegisterNotifier(Me._ResourceSelectorConnector.Talker)
             Me.Meter.CaptureSyncContext(Threading.SynchronizationContext.Current)
@@ -459,20 +460,20 @@ Public Class Console
             ' allow events to take shape before completion of actions -- there is an issue with the 
             ' meter elements not established 
             Application.DoEvents()
-        Catch ex As OperationFailedException
+        Catch ex As VI.Pith.OperationFailedException
             Me._ErrorProvider.SetError(Me._IdentityTextBox, "Connection failed")
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed connecting;. Failed {action}.{ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed connecting;. Failed {activity}.{ex.ToFullBlownString}")
         Catch ex As Exception
             Me._ErrorProvider.SetError(Me._IdentityTextBox, "Connection failed")
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed connecting;. Exception {action}.{ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed connecting;. Exception {activity}.{ex.ToFullBlownString}")
         Finally
             Try
-                action = $"preparing {Me.ResourceName}"
+                activity = $"preparing {Me.ResourceName}"
                 Me.OnConnectionChanged(Me.ResourceName)
             Catch ex As Exception
                 Me._ErrorProvider.SetError(Me._IdentityTextBox, "Connection failed")
-                Me._IdentityTextBox.Text = $"Failed {action}"
-                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred {action};. {ex.ToFullBlownString}")
+                Me._IdentityTextBox.Text = $"Failed {activity}"
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception occurred {activity};. {ex.ToFullBlownString}")
             Finally
                 ' cancel if failed to open
                 If Not Me.Meter.IsDeviceOpen Then e.Cancel = True
@@ -487,31 +488,31 @@ Public Class Console
     ''' <param name="e">      Specifies the event arguments provided with the call. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub Connector_Disconnect(ByVal sender As Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles _ResourceSelectorConnector.Disconnect
-        Dim action As String = $"closing VISA Session to {Me.ResourceName}"
+        Dim activity As String = $"closing VISA Session to {Me.ResourceName}"
         Try
             If Me.Meter.MasterDevice.IsDeviceOpen Then
                 ' stop publishing
                 Me.Part.SuspendPublishing()
 
-                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{action};. ")
+                Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{activity};. ")
 
-                Me._IdentityTextBox.Text = action
+                Me._IdentityTextBox.Text = activity
 
                 Me.Meter.CaptureSyncContext(Threading.SynchronizationContext.Current)
                 Me.Meter.MasterDevice.CloseSession()
 
             End If
 
-        Catch ex As OperationFailedException
-            Me._ErrorProvider.SetError(Me._IdentityTextBox, $"{action} failed")
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed {action};. {ex.ToFullBlownString}")
+        Catch ex As VI.Pith.OperationFailedException
+            Me._ErrorProvider.SetError(Me._IdentityTextBox, $"{activity} failed")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Failed {activity};. {ex.ToFullBlownString}")
         Catch ex As Exception
-            Me._ErrorProvider.SetError(Me._IdentityTextBox, $"{action} failed")
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {action};. {ex.ToFullBlownString}")
+            Me._ErrorProvider.SetError(Me._IdentityTextBox, $"{activity} failed")
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
         Finally
             If Me.Meter.MasterDevice.IsDeviceOpen Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Still open--{action}failed;. ")
-                Me._IdentityTextBox.Text = $"Still open; Failed {action}"
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Still open--{activity}failed;. ")
+                Me._IdentityTextBox.Text = $"Still open; Failed {activity}"
             Else
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Disconnected;. Ended access To {0}", Me.ResourceName)
@@ -547,10 +548,10 @@ Public Class Console
     Private Sub OnPropertyChanged(ByVal sender As Instrument.ResourceSelectorConnector, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(Instrument.ResourceSelectorConnector.SelectedResourceName)
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Selected {sender.SelectedResourceName};. ")
-            Case NameOf(Instrument.ResourceSelectorConnector.SelectedResourceExists)
-                If sender.SelectedResourceExists Then
+            Case NameOf(SessionFactory.SelectedResourceName)
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Selected {sender.SessionFactory.SelectedResourceName};. ")
+            Case NameOf(SessionFactory.SelectedResourceExists)
+                If sender.SessionFactory.SelectedResourceExists Then
                     If Me.Meter.IsDeviceOpen Then
                         Me._IdentityTextBox.Text = $"Resource {Me.ResourceName} connected"
                         Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"Resource connected;. {Me.ResourceName}")

@@ -9,18 +9,19 @@
 ''' </para> </license>
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
 Public Class SenseSubsystem
-    Inherits SourceMeasure.SenseSubsystemBase
+    Inherits VI.SourceMeasure.SenseSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         MyBase.SupportsMultiFunctions = True
-        Me.SupportedFunctionModes = VI.Scpi.SenseFunctionModes.Current Or VI.Scpi.SenseFunctionModes.Voltage Or
-                                    VI.Scpi.SenseFunctionModes.Resistance
+        Me.SupportedFunctionModes = VI.SourceMeasure.SenseFunctionModes.Current Or
+                                    VI.SourceMeasure.SenseFunctionModes.Voltage Or
+                                    VI.SourceMeasure.SenseFunctionModes.Resistance
     End Sub
 
 #End Region
@@ -31,8 +32,10 @@ Public Class SenseSubsystem
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.ConcurrentSenseEnabled = True
-        Me.FunctionModes = VI.Scpi.SenseFunctionModes.VoltageDC Or Scpi.SenseFunctionModes.CurrentDC
-        Me.SupportedFunctionModes = VI.Scpi.SenseFunctionModes.CurrentDC Or VI.Scpi.SenseFunctionModes.VoltageDC Or Scpi.SenseFunctionModes.Resistance
+        Me.FunctionModes = VI.SourceMeasure.SenseFunctionModes.Current Or VI.SourceMeasure.SenseFunctionModes.Voltage
+        Me.SupportedFunctionModes = VI.SourceMeasure.SenseFunctionModes.Current Or
+                                    VI.SourceMeasure.SenseFunctionModes.Voltage Or
+                                    VI.SourceMeasure.SenseFunctionModes.Resistance
         Me.ConcurrentSenseEnabled = True
         Me.Range = 0.105
         Me.PowerLineCycles = 5
@@ -75,6 +78,15 @@ Public Class SenseSubsystem
 
 #End Region
 
+#Region " FUNCTION MODE"
+
+    Protected Overrides ReadOnly Property FunctionModeQueryCommand As String = ":SENS:FUNC:CONC {0:'ON';'ON';'OFF'}"
+
+
+    Protected Overrides ReadOnly Property FunctionModeCommandFormat As String = ":SENS:FUNC:CONC {0:'ON';'ON';'OFF'}"
+
+#End Region
+
 #Region " POWER LINE CYCLES "
 
     ''' <summary> Gets The Power Line Cycles command format. </summary>
@@ -102,3 +114,4 @@ Public Class SenseSubsystem
 #End Region
 
 End Class
+

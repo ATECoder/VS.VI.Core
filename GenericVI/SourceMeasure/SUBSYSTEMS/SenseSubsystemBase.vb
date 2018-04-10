@@ -1,4 +1,5 @@
 Imports isr.Core.Pith.EnumExtensions
+Imports isr.VI.ComboBoxExtensions
 ''' <summary> Defines the contract that must be implemented by a Sense Subsystem. </summary>
 ''' <license> (c) 2012 Integrated Scientific ReSenses, Inc.<para>
 ''' Licensed under The MIT License. </para><para>
@@ -10,273 +11,150 @@ Imports isr.Core.Pith.EnumExtensions
 ''' </para> </license>
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
 Public MustInherit Class SenseSubsystemBase
-    Inherits VI.Scpi.SenseSubsystemBase
+    Inherits VI.SenseSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystemBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
 
 #End Region
 
-#Region " AUTO RANGE ENABLED "
+#Region " I PRESETTABLE "
 
-    ''' <summary> Auto Range enabled. </summary>
-    Private _AutoRangeEnabled As Boolean?
+    ''' <summary> Sets subsystem values to their known execution clear state. </summary>
+    Public Overrides Sub ClearExecutionState()
+        MyBase.ClearExecutionState()
+        Me.Readings?.Reset()
+    End Sub
 
-    ''' <summary> Gets or sets the cached Auto Range Enabled sentinel. </summary>
-    ''' <value> <c>null</c> if Auto Range Enabled is not known; <c>True</c> if output is on; otherwise,
-    ''' <c>False</c>. </value>
-    Public Property AutoRangeEnabled As Boolean?
-        Get
-            Return Me._AutoRangeEnabled
-        End Get
-        Protected Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.AutoRangeEnabled, value) Then
-                Me._AutoRangeEnabled = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        ' TO_DO: the readings are initialized when the format system is reset.
+        Me.Readings = New Readings
+        Me.FunctionMode = SenseFunctionModes.VoltageDC
+        With Me.FunctionModeDecimalPlaces
+            .Clear()
+            For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+                .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
+            Next
+        End With
+        With Me.FunctionModeRanges
+            .Clear()
+            For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+                .Add(fmode, Core.Pith.RangeR.Full)
+            Next
+        End With
+        With Me.FunctionModeUnits
+            .Clear()
+            For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+                .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
+            Next
+            .Item(SenseFunctionModes.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(SenseFunctionModes.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(SenseFunctionModes.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(SenseFunctionModes.Continuity) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(SenseFunctionModes.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(SenseFunctionModes.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(SenseFunctionModes.Diode) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(SenseFunctionModes.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
+            .Item(SenseFunctionModes.Period) = Arebis.StandardUnits.TimeUnits.Second
+            .Item(SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
+        End With
 
-    ''' <summary> Writes and reads back the Auto Range Enabled sentinel. </summary>
-    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function ApplyAutoRangeEnabled(ByVal value As Boolean) As Boolean?
-        Me.WriteAutoRangeEnabled(value)
-        Return Me.QueryAutoRangeEnabled()
-    End Function
+    End Sub
+
+
+#End Region
+
+
+#Region " CONCURRENT SENSE FUNCTION MODE "
 
     ''' <summary> Gets or sets the automatic Range enabled query command. </summary>
+    ''' <remarks> SCPI: "system:RANG:AUTO?". </remarks>
     ''' <value> The automatic Range enabled query command. </value>
-    ''' <remarks> SCPI: "system:RANG:AUTO?" </remarks>
-    Protected MustOverride ReadOnly Property AutoRangeEnabledQueryCommand As String
-
-    ''' <summary> Queries the Auto Range Enabled sentinel. Also sets the
-    ''' <see cref="AutoRangeEnabled">Enabled</see> sentinel. </summary>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function QueryAutoRangeEnabled() As Boolean?
-        Me.AutoRangeEnabled = MyBase.Query(Me.AutoRangeEnabled, Me.AutoRangeEnabledQueryCommand)
-        Return Me.AutoRangeEnabled
-    End Function
+    Protected Overrides ReadOnly Property ConcurrentSenseEnabledQueryCommand As String = ":SENS:FUNC:CONC?"
 
     ''' <summary> Gets or sets the automatic Range enabled command Format. </summary>
+    ''' <remarks> SCPI: "system:RANGE:AUTO {0:'ON';'ON';'OFF'}". </remarks>
     ''' <value> The automatic Range enabled query command. </value>
-    ''' <remarks> SCPI: "system:RANGE:AUTO {0:'ON';'ON';'OFF'}" </remarks>
-    Protected MustOverride ReadOnly Property AutoRangeEnabledCommandFormat As String
+    Protected Overrides ReadOnly Property ConcurrentSenseEnabledCommandFormat As String = ":SENS:FUNC:CONC {0:'ON';'ON';'OFF'}"
 
-    ''' <summary> Writes the Auto Range Enabled sentinel. Does not read back from the instrument. </summary>
-    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
-    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
-    Public Function WriteAutoRangeEnabled(ByVal value As Boolean) As Boolean?
-        Me.AutoRangeEnabled = MyBase.Write(value, Me.AutoRangeEnabledCommandFormat)
-        Return Me.AutoRangeEnabled
+#End Region
+
+#Region " LATEST DATA "
+
+    Private _Readings As Readings
+    ''' <summary> Gets or sets the readings. </summary>
+    ''' <value> The readings. </value>
+    Public Property Readings As Readings
+        Get
+            Return Me._Readings
+        End Get
+        Private Set(value As Readings)
+            Me._Readings = value
+            MyBase.AssignReadingAmounts(value)
+        End Set
+    End Property
+
+    ''' <summary> Parses a new set of reading elements. </summary>
+    ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
+    Public Overrides Function ParseReading(ByVal reading As String) As Double?
+        Return MyBase.ParseReadingAmounts(reading)
     End Function
 
 #End Region
 
-#Region " CONCURRENT FUNCTION MODE "
+#Region " LATEST DATA "
 
-    ''' <summary> State of the output on. </summary>
-    Private _ConcurrentSenseEnabled As Boolean?
-
-    ''' <summary> Gets or sets the cached Concurrent Function Mode Enabled sentinel. </summary>
-    ''' <value> <c>null</c> if mode is not known; <c>True</c> if concurrent; otherwise, <c>False</c>. </value>
-    Public Property ConcurrentSenseEnabled As Boolean?
-        Get
-            Return Me._ConcurrentSenseEnabled
-        End Get
-        Protected Set(ByVal value As Boolean?)
-            If Not Boolean?.Equals(Me.ConcurrentSenseEnabled, value) Then
-                Me._ConcurrentSenseEnabled = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Queries the Concurrent Function Mode Enabled sentinel. 
-    '''           Also sets the <see cref="ConcurrentSenseEnabled">Enabled</see> sentinel. </summary>
-    ''' <returns> <c>null</c> if mode is not known; <c>True</c> if concurrent; otherwise, <c>False</c>. </returns>
-    Public MustOverride Function QueryConcurrentSenseEnabled() As Boolean?
-
-    ''' <summary> Writes the Concurrent Function Mode Enabled sentinel. Does not read back from the instrument. </summary>
-    ''' <param name="value"> if set to <c>True</c> is concurrent. </param>
-    ''' <returns> <c>null</c> if mode is not known; <c>True</c> if concurrent; otherwise, <c>False</c>. </returns>
-    Public MustOverride Function WriteConcurrentSenseEnabled(ByVal value As Boolean) As Boolean?
-
-    ''' <summary> Writes and reads back the Concurrent Function Mode Enabled sentinel. </summary>
-    ''' <param name="value"> if set to <c>True</c> is concurrent. </param>
-    ''' <returns> <c>null</c> if mode is not known; <c>True</c> if concurrent; otherwise, <c>False</c>. </returns>
-    Public Function ApplyConcurrentSenseEnabled(ByVal value As Boolean) As Boolean?
-        Me.WriteConcurrentSenseEnabled(value)
-        Return Me.QueryConcurrentSenseEnabled()
-    End Function
+    ''' <summary> Gets or sets the latest data query command. </summary>
+    ''' <remarks> SCPI: ":SENSE:DATA:LAT?". </remarks>
+    ''' <value> The latest data query command. </value>
+    Protected Overrides ReadOnly Property LatestDataQueryCommand As String = ":SENSE:DATA:LAT?"
 
 #End Region
 
-#Region " POWER LINE CYCLES (NPLC) "
+#Region " FUNCTION MODE "
 
-    ''' <summary> The Power Line Cycles. </summary>
-    Private _PowerLineCycles As Double?
-
-    ''' <summary> Gets the integration period. </summary>
-    ''' <value> The integration period. </value>
-    Public ReadOnly Property IntegrationPeriod As TimeSpan?
-        Get
-            If Me.PowerLineCycles.HasValue Then
-                Return VI.StatusSubsystemBase.FromPowerLineCycles(Me.PowerLineCycles.Value)
-            Else
-                Return New TimeSpan?
-            End If
-        End Get
-    End Property
-
-    ''' <summary> Gets or sets the cached sense PowerLineCycles. </summary>
-    ''' <value> <c>null</c> if value is not known. </value>
-    Public Overloads Property PowerLineCycles As Double?
-        Get
-            Return Me._PowerLineCycles
-        End Get
-        Protected Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.PowerLineCycles, value) Then
-                Me._PowerLineCycles = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the sense PowerLineCycles. </summary>
-    ''' <param name="value"> The Power Line Cycles. </param>
-    ''' <returns> The Power Line Cycles. </returns>
-    Public Function ApplyPowerLineCycles(ByVal value As Double) As Double?
-        Me.WritePowerLineCycles(value)
-        Return Me.QueryPowerLineCycles
+    ''' <summary> Converts a functionMode to a range. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an isr.Core.Pith.RangeR. </returns>
+    Public Overrides Function ToRange(ByVal functionMode As Integer) As isr.Core.Pith.RangeR
+        Dim result As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
+        Select Case functionMode
+            Case VI.SourceMeasure.SenseFunctionModes.CurrentDC, VI.SourceMeasure.SenseFunctionModes.Current, VI.SourceMeasure.SenseFunctionModes.CurrentAC
+                result = New Core.Pith.RangeR(0, 10)
+            Case VI.SourceMeasure.SenseFunctionModes.VoltageDC, VI.SourceMeasure.SenseFunctionModes.Voltage, VI.SourceMeasure.SenseFunctionModes.VoltageAC
+                result = New Core.Pith.RangeR(0, 1000)
+            Case VI.SourceMeasure.SenseFunctionModes.FourWireResistance
+                result = New Core.Pith.RangeR(0, 2000000)
+            Case VI.SourceMeasure.SenseFunctionModes.Resistance
+                result = New Core.Pith.RangeR(0, 1000000000D)
+        End Select
+        Return result
     End Function
 
-    ''' <summary> Gets or sets The Power Line Cycles query command. </summary>
-    ''' <value> The Power Line Cycles query command. </value>
-    Protected MustOverride ReadOnly Property PowerLineCyclesQueryCommand As String
-
-    ''' <summary> Queries The Power Line Cycles. </summary>
-    ''' <returns> The Power Line Cycles or none if unknown. </returns>
-    Public Function QueryPowerLineCycles() As Double?
-        Me.PowerLineCycles = MyBase.Query(Me.PowerLineCycles, Me.PowerLineCyclesQueryCommand)
-        Return Me.PowerLineCycles
+    ''' <summary> Converts a functionMode to a decimal places. </summary>
+    ''' <param name="functionMode"> The function mode. </param>
+    ''' <returns> FunctionMode as an Integer. </returns>
+    Public Overrides Function ToDecimalPlaces(ByVal functionMode As Integer) As Integer
+        Dim result As Integer = 3
+        Select Case functionMode
+            Case VI.SourceMeasure.SenseFunctionModes.CurrentDC, VI.SourceMeasure.SenseFunctionModes.Current, VI.SourceMeasure.SenseFunctionModes.CurrentAC
+                result = 3
+            Case VI.SourceMeasure.SenseFunctionModes.VoltageDC, VI.SourceMeasure.SenseFunctionModes.Voltage, VI.SourceMeasure.SenseFunctionModes.VoltageAC
+                result = 3
+            Case VI.SourceMeasure.SenseFunctionModes.FourWireResistance
+                result = 0
+            Case VI.SourceMeasure.SenseFunctionModes.Resistance
+                result = 0
+        End Select
+        Return result
     End Function
-
-    ''' <summary> Gets or sets The Power Line Cycles command format. </summary>
-    ''' <value> The Power Line Cycles command format. </value>
-    Protected MustOverride ReadOnly Property PowerLineCyclesCommandFormat As String
-
-    ''' <summary> Writes The Power Line Cycles without reading back the value from the device. </summary>
-    ''' <remarks> This command sets The Power Line Cycles. </remarks>
-    ''' <param name="value"> The Power Line Cycles. </param>
-    ''' <returns> The Power Line Cycles. </returns>
-    Public Function WritePowerLineCycles(ByVal value As Double) As Double?
-        Me.PowerLineCycles = MyBase.Write(value, Me.PowerLineCyclesCommandFormat)
-        Return Me.PowerLineCycles
-    End Function
-
-#End Region
-
-#Region " PROTECTION LEVEL "
-
-    ''' <summary> The Current Limit. </summary>
-    Private _ProtectionLevel As Double?
-
-    ''' <summary> Gets or sets the cached source current Limit for a voltage source. Set to
-    ''' <see cref="isr.VI.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="isr.VI.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
-    ''' <value> <c>null</c> if value is not known. </value>
-    Public Overloads Property ProtectionLevel As Double?
-        Get
-            Return Me._ProtectionLevel
-        End Get
-        Protected Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.ProtectionLevel, value) Then
-                Me._ProtectionLevel = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the protection level. </summary>
-    ''' <param name="value"> the protection level. </param>
-    ''' <returns> the protection level. </returns>
-    Public Function ApplyProtectionLevel(ByVal value As Double) As Double?
-        Me.WriteProtectionLevel(value)
-        Return Me.QueryProtectionLevel
-    End Function
-
-    ''' <summary> Gets or sets the protection level query command. </summary>
-    ''' <value> the protection level query command. </value>
-    Protected MustOverride ReadOnly Property ProtectionLevelQueryCommand As String
-
-    ''' <summary> Queries the protection level. </summary>
-    ''' <returns> the protection level or none if unknown. </returns>
-    Public Function QueryProtectionLevel() As Double?
-        Me.ProtectionLevel = MyBase.Query(Me.ProtectionLevel, Me.ProtectionLevelQueryCommand)
-        Return Me.ProtectionLevel
-    End Function
-
-    ''' <summary> Gets or sets the protection level command format. </summary>
-    ''' <value> the protection level command format. </value>
-    Protected MustOverride ReadOnly Property ProtectionLevelCommandFormat As String
-
-    ''' <summary> Writes the protection level without reading back the value from the device. </summary>
-    ''' <remarks> This command sets the protection level. </remarks>
-    ''' <param name="value"> the protection level. </param>
-    ''' <returns> the protection level. </returns>
-    Public Function WriteProtectionLevel(ByVal value As Double) As Double?
-        Me.ProtectionLevel = MyBase.Write(value, Me.ProtectionLevelCommandFormat)
-        Return Me.ProtectionLevel
-    End Function
-
-#End Region
-
-#Region " RANGE "
-
-    ''' <summary> The Current Range. </summary>
-    Private _Range As Double?
-
-    ''' <summary> Gets or sets the cached sense current range. Set to
-    ''' <see cref="isr.VI.Scpi.Syntax.Infinity">infinity</see> to set to maximum or to
-    ''' <see cref="isr.VI.Scpi.Syntax.NegativeInfinity">negative infinity</see> for minimum. </summary>
-    ''' <value> <c>null</c> if value is not known. </value>
-    Public Overloads Property Range As Double?
-        Get
-            Return Me._Range
-        End Get
-        Protected Set(ByVal value As Double?)
-            If Not Nullable.Equals(Me.Range, value) Then
-                Me._Range = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Writes and reads back the sense current Range. </summary>
-    ''' <remarks> The value is in Amperes. At *RST, the range is set to Auto and the specific range is unknown. </remarks>
-    ''' <param name="value"> The current Range. </param>
-    ''' <returns> The Current Range. </returns>
-    Public Function ApplyRange(ByVal value As Double) As Double?
-        Me.WriteRange(value)
-        Return Me.QueryRange
-    End Function
-
-    ''' <summary> Queries the current Range. </summary>
-    ''' <returns> The current Range or none if unknown. </returns>
-    Public MustOverride Function QueryRange() As Double?
-
-    ''' <summary> Writes the current Range without reading back the value from the device. </summary>
-    ''' <remarks> This command sets the current Range. The value is in Amperes. 
-    '''           At *RST, the range is auto and the values is not known. </remarks>
-    ''' <param name="value"> The current Range. </param>
-    ''' <returns> The Current Range. </returns>
-    Public MustOverride Function WriteRange(ByVal value As Double) As Double?
 
 #End Region
 
@@ -285,14 +163,14 @@ Public MustInherit Class SenseSubsystemBase
     ''' <summary> Builds the Modes record for the specified Modes. </summary>
     ''' <param name="Modes"> Sense Function Modes. </param>
     ''' <returns> The record. </returns>
-    Public Shared Function BuildRecord(ByVal modes As VI.Scpi.SenseFunctionModes) As String
-        If modes = VI.Scpi.SenseFunctionModes.None Then
+    Public Shared Function BuildRecord(ByVal modes As VI.SourceMeasure.SenseFunctionModes) As String
+        If modes = VI.SourceMeasure.SenseFunctionModes.None Then
             Return String.Empty
         Else
             Dim reply As New System.Text.StringBuilder
-            For Each code As Integer In [Enum].GetValues(GetType(VI.Scpi.SenseFunctionModes))
+            For Each code As Integer In [Enum].GetValues(GetType(VI.SourceMeasure.SenseFunctionModes))
                 If (modes And code) <> 0 Then
-                    Dim value As String = CType(code, VI.Scpi.SenseFunctionModes).ExtractBetween()
+                    Dim value As String = CType(code, VI.SourceMeasure.SenseFunctionModes).ExtractBetween()
                     If Not String.IsNullOrWhiteSpace(value) Then
                         If reply.Length > 0 Then
                             reply.Append(",")
@@ -308,8 +186,8 @@ Public MustInherit Class SenseSubsystemBase
     ''' <summary> Get the composite Sense Function Modes based on the message from the instrument. </summary>
     ''' <param name="record"> Specifies the comma delimited Modes record. </param>
     ''' <returns> The sense function modes. </returns>
-    Public Shared Function ParseSenseFunctionModes(ByVal record As String) As VI.Scpi.SenseFunctionModes
-        Dim parsed As VI.Scpi.SenseFunctionModes = VI.Scpi.SenseFunctionModes.None
+    Public Shared Function ParseSenseFunctionModes(ByVal record As String) As SenseFunctionModes
+        Dim parsed As SenseFunctionModes = SenseFunctionModes.None
         If Not String.IsNullOrWhiteSpace(record) Then
             For Each modeValue As String In record.Split(","c)
                 parsed = parsed Or SenseSubsystemBase.ParseSenseFunctionMode(modeValue)
@@ -319,15 +197,15 @@ Public MustInherit Class SenseSubsystemBase
     End Function
 
     ''' <summary> The Sense Function Modes. </summary>
-    Private _FunctionModes As VI.Scpi.SenseFunctionModes?
+    Private _FunctionModes As VI.SourceMeasure.SenseFunctionModes?
 
     ''' <summary> Gets or sets the cached Sense Function Modes. </summary>
     ''' <value> The Function Modes or null if unknown. </value>
-    Public Property FunctionModes As VI.Scpi.SenseFunctionModes?
+    Public Property FunctionModes As VI.SourceMeasure.SenseFunctionModes?
         Get
             Return Me._FunctionModes
         End Get
-        Protected Set(ByVal value As VI.Scpi.SenseFunctionModes?)
+        Protected Set(ByVal value As VI.SourceMeasure.SenseFunctionModes?)
             If Not Nullable.Equals(Me.FunctionModes, value) Then
                 Me._FunctionModes = value
                 Me.SafePostPropertyChanged()
@@ -335,21 +213,33 @@ Public MustInherit Class SenseSubsystemBase
         End Set
     End Property
 
-    ''' <summary> Queries the Sense Function Modes. </summary>
-    ''' <returns> The Function Modes or null if unknown. </returns>
-    Public MustOverride Function QueryFunctionModes() As VI.Scpi.SenseFunctionModes?
-
-    ''' <summary> Writes the Sense Function Modes. Does not read back from the instrument. </summary>
-    ''' <param name="value"> The Sense Function Mode. </param>
-    ''' <returns> The Function Modes or null if unknown. </returns>
-    Public MustOverride Function WriteFunctionModes(ByVal value As VI.Scpi.SenseFunctionModes) As VI.Scpi.SenseFunctionModes?
-
     ''' <summary> Writes and reads back the Sense Function Modes. </summary>
-    ''' <param name="value"> The <see cref="VI.Scpi.SenseFunctionModes">Function Modes</see>. </param>
+    ''' <param name="value"> The <see cref="VI.SourceMeasure.SenseFunctionModes">Function Modes</see>. </param>
     ''' <returns> The Sense Function Modes or null if unknown. </returns>
-    Public Function ApplyFunctionModes(ByVal value As VI.Scpi.SenseFunctionModes) As VI.Scpi.SenseFunctionModes?
+    Public Function ApplyFunctionModes(ByVal value As VI.SourceMeasure.SenseFunctionModes) As VI.SourceMeasure.SenseFunctionModes?
         Me.WriteFunctionModes(value)
         Return Me.QueryFunctionModes()
+    End Function
+
+    Protected Overridable ReadOnly Property FunctionModeQueryCommand As String
+
+    ''' <summary> Queries the Sense Function Modes. Also sets the <see cref="FunctionModes"></see> cached value. </summary>
+    ''' <returns> The Sense Function Mode or null if unknown. </returns>
+    Public Function QueryFunctionModes() As VI.SourceMeasure.SenseFunctionModes?
+        ' the instrument expects single quotes when writing the value but sends back items delimited with double quotes.
+        Me.FunctionModes = SenseSubsystemBase.ParseSenseFunctionModes(Me.Session.QueryTrimEnd(":SENS:FUNC?").Replace(CChar(""""), "'"c))
+        Return Me.FunctionModes
+    End Function
+
+    Protected Overridable ReadOnly Property FunctionModeCommandFormat As String
+
+    ''' <summary> Writes the Sense Function Mode. Does not read back from the instrument. </summary>
+    ''' <param name="value"> The Function Mode. </param>
+    ''' <returns> The Sense Function Mode or null if unknown. </returns>
+    Public Function WriteFunctionModes(ByVal value As VI.SourceMeasure.SenseFunctionModes) As VI.SourceMeasure.SenseFunctionModes?
+        Me.Session.WriteLine(":SENS:FUNC {0}", SenseSubsystemBase.BuildRecord(value))
+        Me.FunctionModes = value
+        Return Me.FunctionModes
     End Function
 
     Private _SupportsMultiFunctions As Boolean
@@ -361,11 +251,11 @@ Public MustInherit Class SenseSubsystemBase
     <CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId:="Multi")>
     Public Property SupportsMultiFunctions() As Boolean
         Get
-            Return Me._supportsMultiFunctions
+            Return Me._SupportsMultiFunctions
         End Get
         Set(ByVal value As Boolean)
             If Not Me.SupportsMultiFunctions.Equals(value) Then
-                Me._supportsMultiFunctions = value
+                Me._SupportsMultiFunctions = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -373,31 +263,153 @@ Public MustInherit Class SenseSubsystemBase
 
 #End Region
 
-#Region " LATEST DATA "
+#Region " FUNCTION MODE "
 
-    Private _Readings As Readings
-
-    ''' <summary> Returns the readings. </summary>
-    ''' <returns> The readings. </returns>
-    Public Function Readings() As Readings
-        Return Me._readings
+    ''' <summary> Returns the <see cref="SenseFunctionModes"></see> from the specified value. </summary>
+    ''' <param name="value"> The Modes. </param>
+    ''' <returns> The sense function mode. </returns>
+    Public Shared Function ParseSenseFunctionMode(ByVal value As String) As SenseFunctionModes
+        If String.IsNullOrWhiteSpace(value) Then
+            Return SenseFunctionModes.None
+        Else
+            Dim se As New isr.Core.Pith.StringEnumerator(Of SenseFunctionModes)
+            Return se.ParseContained(value.BuildDelimitedValue)
+        End If
     End Function
 
-    ''' <summary> Parses a new set of reading elements. </summary>
-    ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
-    Public Overrides Sub ParseReading(ByVal reading As String)
+    ''' <summary> The Sense Function Mode. </summary>
+    Private _FunctionMode As SenseFunctionModes?
 
-        ' check if we have units suffixes.
-        If (Me._readings.Elements And ReadingTypes.Units) <> 0 Then
-            reading = ReadingEntity.TrimUnits(reading)
+    ''' <summary> Gets or sets the cached Sense Function Mode. </summary>
+    ''' <value> The Function Mode or null if unknown. </value>
+    Public Overridable Property FunctionMode As SenseFunctionModes?
+        Get
+            Return Me._FunctionMode
+        End Get
+        Protected Set(ByVal value As SenseFunctionModes?)
+            If Not Nullable.Equals(Me.FunctionMode, value) Then
+                Me._FunctionMode = value
+                Me.SafePostPropertyChanged()
+                If value.HasValue Then
+                    Me.FunctionUnit = Me.ToUnit(value.Value)
+                    Me.FunctionRange = Me.ToRange(value.Value)
+                    Me.FunctionRangeDecimalPlaces = Me.ToDecimalPlaces(value.Value)
+                End If
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Sense Function Mode. </summary>
+    ''' <param name="value"> The <see cref="SenseFunctionModes">Function Mode</see>. </param>
+    ''' <returns> The Sense Function Mode or null if unknown. </returns>
+    Public Function ApplyFunctionMode(ByVal value As SenseFunctionModes) As SenseFunctionModes?
+        Me.WriteFunctionMode(value)
+        Return Me.QueryFunctionMode()
+    End Function
+
+    ''' <summary> Queries the Sense Function Mode. Also sets the <see cref="FunctionMode"></see> cached value. </summary>
+    ''' <returns> The Sense Function Mode or null if unknown. </returns>
+    Public Function QueryFunctionMode() As SenseFunctionModes?
+        ' the instrument expects single quotes when writing the value but sends back items delimited with double quotes.
+        Me.FunctionMode = SenseSubsystemBase.ParseSenseFunctionMode(Me.Session.QueryTrimEnd(":SENS:FUNC?").Replace(CChar(""""), "'"c))
+        Return Me.FunctionMode
+    End Function
+
+    ''' <summary> Writes the Sense Function Mode. Does not read back from the instrument. </summary>
+    ''' <param name="value"> The Function Mode. </param>
+    ''' <returns> The Sense Function Mode or null if unknown. </returns>
+    Public Function WriteFunctionMode(ByVal value As SenseFunctionModes) As SenseFunctionModes?
+        Me.Session.WriteLine(":SENS:FUNC {0}", value.ExtractBetween())
+        Me.FunctionMode = value
+        Return Me.FunctionMode
+    End Function
+
+    Private _SupportedFunctionModes As SenseFunctionModes
+    ''' <summary>
+    ''' Gets or sets the supported Function Mode.
+    ''' This is a subset of the functions supported by the instrument.
+    ''' </summary>
+    Public Property SupportedFunctionModes() As SenseFunctionModes
+        Get
+            Return _SupportedFunctionModes
+        End Get
+        Set(ByVal value As SenseFunctionModes)
+            If Not Me.SupportedFunctionModes.Equals(value) Then
+                Me._SupportedFunctionModes = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Displays a supported function modes. </summary>
+    ''' <param name="listControl"> The list control. </param>
+    Public Sub DisplaySupportedFunctionModes(ByVal listControl As Windows.Forms.ComboBox)
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        With listControl
+            .DataSource = Nothing
+            .Items.Clear()
+            .DataSource = GetType(SenseFunctionModes).ValueDescriptionPairs(Me.SupportedFunctionModes)
+            .DisplayMember = "Value"
+            .ValueMember = "Key"
+            If .Items.Count > 0 AndAlso Me.FunctionMode.HasValue Then
+                .SelectedItem = Me.FunctionMode.Value.ValueDescriptionPair()
+            End If
+        End With
+    End Sub
+
+    ''' <summary> Returns the function mode selected by the list control. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    ''' <returns> The SenseFunctionModes. </returns>
+    Public Shared Function SelectedFunctionMode(ByVal listControl As Windows.Forms.ComboBox) As SenseFunctionModes
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        Return CType(CType(listControl.SelectedItem, System.Collections.Generic.KeyValuePair(Of [Enum], String)).Key, SenseFunctionModes)
+    End Function
+
+    ''' <summary> Safe select function mode. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="listControl"> The list control. </param>
+    Public Sub SafeSelectFunctionMode(ByVal listControl As Windows.Forms.ComboBox)
+        If listControl Is Nothing Then Throw New ArgumentNullException(NameOf(listControl))
+        If Me.FunctionMode.HasValue Then
+            listControl.SafeSelectItem(Me.FunctionMode.Value, Me.FunctionMode.Value.Description)
         End If
-
-        ' Take a reading and parse the results
-        Me.Readings.TryParse(reading)
-
     End Sub
 
 #End Region
 
+#Region " RANGE "
+
+    ''' <summary> Gets or sets The Range query command. </summary>
+    ''' <value> The Range query command. </value>
+    Protected Overrides ReadOnly Property RangeQueryCommand As String = ":SOUR:RANG?"
+
+    ''' <summary> Gets or sets The Range command format. </summary>
+    ''' <value> The Range command format. </value>
+    Protected Overrides ReadOnly Property RangeCommandFormat As String = ":SENS:RANG {0}"
+
+#End Region
+
 End Class
+
+''' <summary>Specifies the sense function modes.</summary>
+<System.Flags()> Public Enum SenseFunctionModes
+    <ComponentModel.Description("Not specified")> None = 0
+    <ComponentModel.Description("Voltage ('VOLT')")> Voltage = 1
+    <ComponentModel.Description("Current ('CURR')")> Current = SenseFunctionModes.Voltage << 1
+    <ComponentModel.Description("DC Voltage ('VOLT:DC')")> VoltageDC = SenseFunctionModes.Current << 1
+    <ComponentModel.Description("DC Current ('CURR:DC')")> CurrentDC = SenseFunctionModes.VoltageDC << 1
+    <ComponentModel.Description("AC Voltage ('VOLT:AC')")> VoltageAC = SenseFunctionModes.CurrentDC << 1
+    <ComponentModel.Description("AC Current ('CURR:AC')")> CurrentAC = SenseFunctionModes.VoltageAC << 1
+    <ComponentModel.Description("Resistance ('RES')")> Resistance = SenseFunctionModes.CurrentAC << 1
+    <ComponentModel.Description("Four-Wire Resistance ('FRES')")> FourWireResistance = SenseFunctionModes.Resistance << 1
+    <ComponentModel.Description("Temperature ('TEMP')")> Temperature = SenseFunctionModes.FourWireResistance << 1
+    <ComponentModel.Description("Frequency ('FREQ')")> Frequency = SenseFunctionModes.Temperature << 1
+    <ComponentModel.Description("Period ('PER')")> Period = SenseFunctionModes.Frequency << 1
+    <ComponentModel.Description("Continuity ('CONT')")> Continuity = SenseFunctionModes.Period << 1
+    <ComponentModel.Description("Timestamp element ('TIME')")> TimestampElement = SenseFunctionModes.Continuity << 1
+    <ComponentModel.Description("Status Element ('STAT')")> StatusElement = SenseFunctionModes.TimestampElement << 1
+    <ComponentModel.Description("Memory ('MEM')")> Memory = SenseFunctionModes.StatusElement << 1
+    <ComponentModel.Description("Diode ('DIOD')")> Diode = SenseFunctionModes.Memory << 1
+End Enum
 

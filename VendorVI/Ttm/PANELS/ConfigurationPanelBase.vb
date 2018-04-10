@@ -358,7 +358,7 @@ Public Class ConfigurationPanelBase
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Configuring Thermal Transient;. ")
                 Me.ConfigureChanged(Me.Part)
             End If
-        Catch ex As isr.VI.OperationFailedException
+        Catch ex As VI.Pith.OperationFailedException
             Me._ErrorProvider.SetError(Me._ApplyNewConfigurationButton,
                                        "failed configuring--most one configuration element did not succeed in setting the correct value. See messages for details.")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
@@ -404,7 +404,7 @@ Public Class ConfigurationPanelBase
             ' Me.Meter.ClearExecutionState()
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Configuring Thermal Transient;. ")
             Me.Configure(Me.Part)
-        Catch ex As isr.VI.OperationFailedException
+        Catch ex As VI.Pith.OperationFailedException
             Me._ErrorProvider.SetError(Me._ApplyNewConfigurationButton,
                                        "failed configuring--most one configuration element did not succeed in setting the correct value. See messages for details.")
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,

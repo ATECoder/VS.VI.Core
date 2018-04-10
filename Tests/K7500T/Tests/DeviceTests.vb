@@ -63,10 +63,10 @@ Public Class DeviceTests
 #Region " RESOURCE TEST "
 
     ''' <summary> (Unit Test Method) tests device resource. </summary>
-    <TestMethod()>
+    <TestMethod(), TestCategory("VI")>
     Public Sub DeviceResourceTest()
-        Using target As Device = Device.Create
-            Assert.IsTrue(target.Find(TestInfo.ResourceName), $"VISA Resource {TestInfo.ResourceName} not found")
+        Using device As Device = Device.Create
+            Assert.IsTrue(Device.Find(TestInfo.ResourceName, device.ResourcesFilter), $"VISA Resource {TestInfo.ResourceName} not found among {device.ResourcesFilter}")
         End Using
     End Sub
 
@@ -91,7 +91,7 @@ Public Class DeviceTests
         Assert.AreEqual(expectedErrorAvailableBits, actualErrorAvailableBits, $"Error available bits on creating device.")
 
         device.Session.ResourceTitle = TestInfo.ResourceTitle
-        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        Dim e As New isr.Core.Pith.ActionEventArgs
         Dim actualBoolean As Boolean = device.TryOpenSession(TestInfo.ResourceName, TestInfo.ResourceTitle, e)
         Assert.IsTrue(actualBoolean, $"Failed to open session: {e.Details}")
 

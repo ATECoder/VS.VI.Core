@@ -16,7 +16,7 @@ Public MustInherit Class ScriptManagerBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="ScriptManagerBase" /> class. </summary>
-    Protected Sub New(ByVal statusSubsystem As StatusSubsystemBase)
+    Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me._lastFetchedSavedScripts = ""
     End Sub
@@ -138,9 +138,9 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="value"> Specifies the script name. </param>
     Public Sub ScriptNameSetter(ByVal value As String)
         If String.IsNullOrWhiteSpace(value) Then value = ""
-        If Not value.Equals(Me.Name) Then
+        If Not String.Equals(value, Me.Name, StringComparison.OrdinalIgnoreCase) Then
             If ScriptEntityBase.IsValidScriptName(value) Then
-                Me._name = value
+                Me._Name = value
                 Me.SafePostPropertyChanged(NameOf(Script.ScriptManagerBase.Name))
             Else
                 ' now report the error to the calling module
@@ -161,7 +161,7 @@ Public MustInherit Class ScriptManagerBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.FilePath) Then
+            If Not String.Equals(value, Me.FilePath, StringComparison.OrdinalIgnoreCase) Then
                 Me._FilePath = value
                 Me.SafePostPropertyChanged()
             End If
@@ -182,11 +182,12 @@ Public MustInherit Class ScriptManagerBase
     End Function
 
     ''' <summary> Gets all users scripts from the instrument. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <exception cref="TimeoutException">         Thrown when a Timeout error condition occurs. </exception>
     ''' <returns> The user script names. </returns>
     Private Function _FetchUserScriptNames() As Integer
 
+        Dim activity As String = $"{Me.ResourceNameCaption} fetching scripts"
         ' load the function which to execute and get its name.
         Dim functionName As String
         functionName = Me.LoadPrintUserScriptNames()
@@ -195,11 +196,15 @@ Public MustInherit Class ScriptManagerBase
 
             ' now report the error to the calling module
             If (Me.StatusSubsystem.ReadServiceRequestStatus And Me.StatusSubsystem.ErrorAvailableBits) <> 0 Then
-                Me.StatusSubsystem.QueryStandardEventStatus()
-                Me.StatusSubsystem.QueryDeviceErrors()
-                Throw New OperationFailedException("{0} failed fetching scripts;. device errors: {1}.", Me.ResourceName, Me.StatusSubsystem.DeviceErrors)
+                ' this is called withing the device error query command. Me.StatusSubsystem.QueryStandardEventStatus()
+                Dim e As New isr.Core.Pith.ActionEventArgs
+                If Me.StatusSubsystem.TrySafeQueryDeviceErrors(e) Then
+                    Throw New VI.Pith.OperationFailedException($"Failed {activity};. Device errors: {Me.StatusSubsystem.DeviceErrorsReport}")
+                Else
+                    Throw New VI.Pith.OperationFailedException($"Failed {activity};. Failed fetching device errors because {e.Details}")
+                End If
             Else
-                Throw New OperationFailedException("{0} failed fetching scripts;. no device errors.", Me.ResourceName)
+                Throw New VI.Pith.OperationFailedException($"Failed {activity};. no device errors")
             End If
 
         End If
@@ -210,11 +215,11 @@ Public MustInherit Class ScriptManagerBase
         ' Turn off prompts
         Me.InteractiveSubsystem.WriteShowPrompts(False)
 
+        activity = $"{Me.ResourceNameCaption} executing {functionName} fetching user script names"
         ' run the function
         Dim delimiter As Char = ","c
         Dim callState As TspExecutionState
-        Me.StatusSubsystem.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                                                   "Fetching user script names")
+        Me.StatusSubsystem.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, activity)
         TspSyntax.CallFunction(Me.Session, functionName, "'" & delimiter & "'")
 
         ' wait till we get a reply from the instrument or timeout.
@@ -223,7 +228,7 @@ Public MustInherit Class ScriptManagerBase
             Threading.Thread.Sleep(50)
         Loop Until endTime < DateTime.Now Or Me.StatusSubsystem.IsMessageAvailable(TimeSpan.FromMilliseconds(1), 3)
         If Not Me.StatusSubsystem.MessageAvailable Then
-            Throw New TimeoutException("Timeout waiting for user script name response from the instrument.")
+            Throw New TimeoutException($"Timeout waiting for {activity}")
         End If
 
         ' read the names
@@ -251,26 +256,33 @@ Public MustInherit Class ScriptManagerBase
 
                 ' now report the error to the calling module
                 If (Me.StatusSubsystem.ReadServiceRequestStatus And Me.StatusSubsystem.ErrorAvailableBits) <> 0 Then
-                    Me.StatusSubsystem.QueryStandardEventStatus()
-                    Me.StatusSubsystem.QueryDeviceErrors()
-                    Throw New OperationFailedException("'{0}' Filed executing function '{1}';. device errors: {2}.",
-                                                               Me.ResourceName, functionName, Me.StatusSubsystem.DeviceErrors)
+                    ' down inside the device error query: Me.StatusSubsystem.QueryStandardEventStatus()
+                    ' this is called withing the device error query command. Me.StatusSubsystem.QueryStandardEventStatus()
+                    Dim e As New isr.Core.Pith.ActionEventArgs
+                    If Me.StatusSubsystem.TrySafeQueryDeviceErrors(e) Then
+                        Throw New VI.Pith.OperationFailedException($"Failed {activity};. Device errors: {Me.StatusSubsystem.DeviceErrorsReport}")
+                    Else
+                        Throw New VI.Pith.OperationFailedException($"Failed {activity};. Failed fetching device errors because {e.Details}")
+                    End If
                 Else
-                    Throw New OperationFailedException("'{0}' Filed executing function '{1}';. No device errors.", Me.ResourceName, functionName)
+                    Throw New VI.Pith.OperationFailedException($"Failed {activity};. No device errors")
                 End If
 
                 ' check if return value is false.  This will happen if the function failed.
             ElseIf names.Substring(0, 4) = TspSyntax.FalseValue Then
 
+                activity = $"{activity} w/ argument {names.Split(delimiter)(1)}"
                 ' if failure, get the failure message
                 If (Me.StatusSubsystem.ReadServiceRequestStatus And Me.StatusSubsystem.ErrorAvailableBits) <> 0 Then
-                    Me.StatusSubsystem.QueryStandardEventStatus()
-                    Me.StatusSubsystem.QueryDeviceErrors()
-                    Throw New OperationFailedException("'{0}' Filed executing function '{1}' with argument '{2}';. device errors: {3}.",
-                                   Me.ResourceName, functionName, names.Split(delimiter)(1), Me.StatusSubsystem.DeviceErrors)
+                    ' done inside the query Me.StatusSubsystem.QueryStandardEventStatus()
+                    Dim e As New isr.Core.Pith.ActionEventArgs
+                    If Me.StatusSubsystem.TrySafeQueryDeviceErrors(e) Then
+                        Throw New VI.Pith.OperationFailedException($"Failed {activity};. Device errors: {Me.StatusSubsystem.DeviceErrorsReport}")
+                    Else
+                        Throw New VI.Pith.OperationFailedException($"Failed {activity};. Failed fetching device errors because {e.Details}")
+                    End If
                 Else
-                    Throw New OperationFailedException("'{0}' Filed executing function '{1}' with argument '{2}';. no device errors.",
-                                   Me.ResourceName, functionName, names.Split(delimiter)(1))
+                    Throw New VI.Pith.OperationFailedException($"Failed {activity};. No device errors")
                 End If
 
             Else
@@ -299,7 +311,7 @@ Public MustInherit Class ScriptManagerBase
     End Function
 
     ''' <summary> Gets all users scripts from the instrument. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <exception cref="TimeoutException">         Thrown when a Timeout error condition occurs. </exception>
     ''' <returns> The number of user script names that were fetched. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
@@ -331,7 +343,7 @@ Public MustInherit Class ScriptManagerBase
             Threading.Thread.Sleep(100)
 
             ' flush the buffer until empty to completely reading the status.
-            Dim bits As ServiceRequests = Me.Session.MeasurementAvailableBits
+            Dim bits As VI.Pith.ServiceRequests = Me.Session.MeasurementAvailableBits
             Me.Session.MeasurementAvailableBits = Me.StatusSubsystem.MessageAvailableBits
             Me.Session.DiscardUnreadData()
             Me.Session.MeasurementAvailableBits = bits
@@ -343,7 +355,7 @@ Public MustInherit Class ScriptManagerBase
 
     ''' <summary> Loads the 'printUserScriptNames' function and return the function name. The function
     ''' is loaded only if it does not exists already. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <returns> The function name. </returns>
     Public Function LoadPrintUserScriptNames() As String
 
@@ -377,7 +389,7 @@ Public MustInherit Class ScriptManagerBase
             ' remove any remaining values.
             Me.Session.DiscardUnreadData()
 
-            Throw New OperationFailedException(ex, "Failed loading print user script names functions. Discarded: {0}.", Me.Session.DiscardedData)
+            Throw New VI.Pith.OperationFailedException(ex, "Failed loading print user script names functions. Discarded: {0}.", Me.Session.DiscardedData)
 
         Finally
 
@@ -397,13 +409,13 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Loads the binary script function for creating binary scripts. </summary>
     ''' <remarks> Non-A instruments requires having a special function for creating the binary scripts. </remarks>
     ''' <exception cref="ArgumentNullException">  Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="NativeException">          Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="OperationFailedException"> Thrown when a Script Loading error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">          Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when a Script Loading error condition occurs. </exception>
     ''' <param name="node"> Specifies the node. </param>
     Private Sub LoadBinaryScriptsFunction(ByVal node As NodeEntityBase)
 
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
-
+        Dim activity As String = $"{Me.ResourceNameCaption} loading Binary Scripts resource to node {node.Number}"
         Const scriptName As String = "CreateBinaries"
         Using script As New ScriptEntity(scriptName, Tsp.NodeEntity.ModelFamilyMask(Tsp.InstrumentModelFamily.K2600))
             script.Source = isr.Core.Pith.EmbeddedResourceManager.TryReadEmbeddedTextResource(System.Reflection.Assembly.GetExecutingAssembly,
@@ -411,10 +423,13 @@ Public MustInherit Class ScriptManagerBase
             Me.LoadRunUserScript(script, node)
         End Using
         If (Me.StatusSubsystem.ReadServiceRequestStatus And Me.StatusSubsystem.ErrorAvailableBits) <> 0 Then
-            Me.StatusSubsystem.QueryStandardEventStatus()
-            Me.StatusSubsystem.QueryDeviceErrors()
-            Throw New OperationFailedException("Instrument {0} failed;. loading Binary Scripts resource to node {1}.{3}Device errors: {2}.",
-                                               Me.ResourceName, node.Number, Me.StatusSubsystem.DeviceErrors, Environment.NewLine)
+            ' done inside the query Me.StatusSubsystem.QueryStandardEventStatus()
+            Dim e As New isr.Core.Pith.ActionEventArgs
+            If Me.StatusSubsystem.TrySafeQueryDeviceErrors(e) Then
+                Throw New VI.Pith.OperationFailedException($"Failed {activity};. Device errors: {Me.StatusSubsystem.DeviceErrorsReport}")
+            Else
+                Throw New VI.Pith.OperationFailedException($"Failed {activity};. Failed fetching device errors because {e.Details}")
+            End If
         End If
 
     End Sub
@@ -436,9 +451,9 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Converts the script to binary format. </summary>
     ''' <remarks> Waits for operation completion. </remarks>
     ''' <exception cref="ArgumentNullException">  Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
-    ''' <exception cref="OperationFailedException"> Thrown when a Script Loading error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when a Script Loading error condition occurs. </exception>
     ''' <param name="name"> Specifies the script name. </param>
     ''' <param name="node"> Specifies the node entity. </param>
     Public Sub ConvertBinaryScript(ByVal name As String, ByVal node As NodeEntityBase)
@@ -475,7 +490,7 @@ Public MustInherit Class ScriptManagerBase
             Me.CheckThrowDeviceException(False, "creating binary script '{0}' using '{1}';. ", name, message)
 
             Dim fullName As String = "script.user.scripts." & name
-            If Me.Session.WaitNotNil(node.Number, fullName, Me._saveTimeout) Then
+            If Me.Session.WaitNotNil(node.Number, fullName, Me._SaveTimeout) Then
 
                 Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                            "assigning binary script name to '{0}';. ", name)
@@ -484,25 +499,25 @@ Public MustInherit Class ScriptManagerBase
                 Me.LinkSubsystem.WaitComplete(node.Number, Me.SaveTimeout, False)
                 Me.CheckThrowDeviceException(False, "assigning binary script name to '{0}' using '{1}';. ", name, message)
 
-                If Me.Session.WaitNotNil(node.Number, name, Me._saveTimeout) Then
+                If Me.Session.WaitNotNil(node.Number, name, Me._SaveTimeout) Then
 
                     If Not Me.IsBinaryScript(name, node) Then
 
-                        Throw New OperationFailedException("{0} failed creating binary script '{1}';. reference to script '{2}' on node {3}--new script not found on the remote node.{4}{5}",
-                                                           Me.ResourceName, name, fullName, node.Number, Environment.NewLine,
+                        Throw New VI.Pith.OperationFailedException("{0} failed creating binary script '{1}';. reference to script '{2}' on node {3}--new script not found on the remote node.{4}{5}",
+                                                           Me.ResourceNameCaption, name, fullName, node.Number, Environment.NewLine,
                                                            New StackFrame(True).UserCallStack())
                     End If
 
                 Else
-                    Throw New OperationFailedException("{0} failed creating script '{1}';. reference to script '{2}' on node {3}--new script not found on the remote node.{4}{5}",
-                                                       Me.ResourceName, name, fullName, node.Number,
+                    Throw New VI.Pith.OperationFailedException("{0} failed creating script '{1}';. reference to script '{2}' on node {3}--new script not found on the remote node.{4}{5}",
+                                                       Me.ResourceNameCaption, name, fullName, node.Number,
                                                        Environment.NewLine, New StackFrame(True).UserCallStack())
 
                 End If
 
             Else
-                Throw New OperationFailedException("{0} failed creating script '{1}' using '{2}' on node {3}--new script not found on the remote node.{4}{5}",
-                                                   Me.ResourceName, fullName, name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
+                Throw New VI.Pith.OperationFailedException("{0} failed creating script '{1}' using '{2}' on node {3}--new script not found on the remote node.{4}{5}",
+                                                   Me.ResourceNameCaption, fullName, name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
 
         End If
@@ -512,8 +527,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Saves the specifies script to non-volatile memory. </summary>
     ''' <remarks> Waits for operation completion. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="name">           Specifies the script name. </param>
     ''' <param name="node">           Specifies the node entity. </param>
     ''' <param name="isSaveAsBinary"> Specifies the condition requesting clearing the source before
@@ -562,7 +577,7 @@ Public MustInherit Class ScriptManagerBase
 
     ''' <summary> Clears the <see cref="Name">specified</see> script source. </summary>
     Public Sub ClearScriptSource()
-        Me.ClearScriptSource(Me._name)
+        Me.ClearScriptSource(Me._Name)
     End Sub
 
     ''' <summary> Clears the <paramref name="value">specified</paramref> script source. </summary>
@@ -585,17 +600,17 @@ Public MustInherit Class ScriptManagerBase
 
         If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
-        Me._lastFetchScriptSource = ""
+        Me._LastFetchScriptSource = ""
 
         Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching script source;. ")
         Me.Session.WriteLine("isr.script.list({0})", name)
 
         Threading.Thread.Sleep(500)
-        Me._lastFetchScriptSource = Me.Session.ReadLines(TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(400), True)
+        Me._LastFetchScriptSource = Me.Session.ReadLines(TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(400), True)
 
         ' trap non-empty buffer.
         Try
-            If (Me.Session.ReadServiceRequestStatus And VI.ServiceRequests.MessageAvailable) <> 0 Then
+            If (Me.Session.ReadServiceRequestStatus And VI.Pith.ServiceRequests.MessageAvailable) <> 0 Then
                 Debug.Assert(Not Debugger.IsAttached, "Buffer Not empty")
             End If
             NodeEntity.NodeExists(Me.Session, 1)
@@ -611,8 +626,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Fetches the <paramref name="name">specified</paramref> script source. </summary>
     ''' <remarks> Requires setting the proper message available bits for the session. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="NativeException">         Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">         Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="nodeNumber"> Specifies the subsystem node. </param>
     ''' <param name="name">       Specifies the script name. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -620,7 +635,7 @@ Public MustInherit Class ScriptManagerBase
 
         If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
 
-        Me._lastFetchScriptSource = ""
+        Me._LastFetchScriptSource = ""
 
         ' clear data queue and report if not empty.
         Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "clearing data queue")
@@ -630,11 +645,11 @@ Public MustInherit Class ScriptManagerBase
         Me.Session.WriteLine("isr.script.list({0},{1})", name, nodeNumber)
 
         Threading.Thread.Sleep(500)
-        Me._lastFetchScriptSource = Me.Session.ReadLines(TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(400), True)
+        Me._LastFetchScriptSource = Me.Session.ReadLines(TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(400), True)
 
         ' trap non-empty buffer.
         Try
-            If (Me.Session.ReadServiceRequestStatus And VI.ServiceRequests.MessageAvailable) <> 0 Then
+            If (Me.Session.ReadServiceRequestStatus And VI.Pith.ServiceRequests.MessageAvailable) <> 0 Then
                 Debug.Assert(Not Debugger.IsAttached, "Buffer not empty")
             End If
             NodeEntity.NodeExists(Me.Session, 1)
@@ -689,15 +704,15 @@ Public MustInherit Class ScriptManagerBase
     ''' <value> The last fetch script source. </value>
     Public ReadOnly Property LastFetchScriptSource() As String
         Get
-            Return Me._lastFetchScriptSource
+            Return Me._LastFetchScriptSource
         End Get
     End Property
 
     ''' <summary> Runs the named script. </summary>
     ''' <param name="timeout"> Specifies the time to wait for the instrument to return operation
     ''' completed. </param>
-    ''' <exception cref="NativeException">            Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="OperationFailedException"> Thrown when a Script Call error condition
+    ''' <exception cref="Pith.NativeException">            Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when a Script Call error condition
     ''' occurs. </exception>
     ''' <exception cref="TimeoutException">         Thrown when a Timeout error condition occurs. </exception>
     Public Sub RunScript(ByVal timeout As TimeSpan)
@@ -716,20 +731,20 @@ Public MustInherit Class ScriptManagerBase
             Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "running script '{0}';. ", Name)
             Me.Session.LastNodeNumber = New Integer?
             Dim returnedValue As String = "1"
-            Me.Session.WriteLine("{0}.run() waitcomplete() print('{1}') ", Me._name, returnedValue)
+            Me.Session.WriteLine("{0}.run() waitcomplete() print('{1}') ", Me._Name, returnedValue)
             ' wait till we get a reply from the instrument or timeout.
             If Me.Session.IsMessageAvailable(TimeSpan.FromMilliseconds(40), timeout) Then
                 Dim value As String = Me.Session.ReadLineTrimEnd
                 If String.IsNullOrWhiteSpace(value) OrElse Not value.Trim.StartsWith(returnedValue, StringComparison.OrdinalIgnoreCase) Then
                     If String.IsNullOrWhiteSpace(value) Then
-                        Throw New OperationFailedException("Script '{0}' failed;. script returned no value.", Name)
+                        Throw New VI.Pith.OperationFailedException("Script '{0}' failed;. script returned no value.", Name)
                     Else
-                        Throw New OperationFailedException("Script '{0}' failed;. returned value '{1}' instead of the expected '{2}'.",
+                        Throw New VI.Pith.OperationFailedException("Script '{0}' failed;. returned value '{1}' instead of the expected '{2}'.",
                                                                Name, value, returnedValue)
                     End If
                 End If
             Else
-                Throw New TimeoutException("Timeout waiting operation completion running the script '" & Me._name & "'")
+                Throw New TimeoutException("Timeout waiting operation completion running the script '" & Me._Name & "'")
             End If
 
         Catch
@@ -764,11 +779,11 @@ Public MustInherit Class ScriptManagerBase
     ''' <value> The Nilify timeout. </value>
     Public Property NilifyTimeout() As TimeSpan
         Get
-            Return Me._nilifyTimeout
+            Return Me._NilifyTimeout
         End Get
         Set(ByVal Value As TimeSpan)
-            If Me._nilifyTimeout = Value Then
-                Me._nilifyTimeout = Value
+            If Me._NilifyTimeout = Value Then
+                Me._NilifyTimeout = Value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -777,9 +792,9 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Makes a script nil. Return <c>True</c> if the script is nil. </summary>
     ''' <remarks> Assumes the script is known to exist. Waits for operation completion. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="NativeException">         Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
-    ''' <exception cref="OperationFailedException"> Thrown when a Script Delete error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">         Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when a Script Delete error condition occurs. </exception>
     ''' <param name="name"> Specifies the script name. </param>
     Private Sub _NilifyScript(ByVal name As String)
 
@@ -791,7 +806,7 @@ Public MustInherit Class ScriptManagerBase
 
         Me.StatusSubsystem.AwaitOperationCompleted(Me.NilifyTimeout)
         If Not Me.Session.IsNil(name) Then
-            Throw New OperationFailedException("Instrument '{0}' script {1} still exists after nil.", Me.ResourceName, name)
+            Throw New VI.Pith.OperationFailedException("Instrument '{0}' script {1} still exists after nil.", Me.ResourceNameCaption, name)
         End If
 
     End Sub
@@ -802,14 +817,14 @@ Public MustInherit Class ScriptManagerBase
     Public Sub NilifyScript(ByVal name As String)
         If String.IsNullOrWhiteSpace(name) Then Throw New ArgumentNullException(NameOf(name))
         If Not Me.Session.IsNil(name) Then
-            Me._nilifyScript(name)
+            Me._NilifyScript(name)
         End If
     End Sub
 
     ''' <summary> Makes a script nil and returns <c>True</c> if the script was nilified. Does not check
     ''' if the script exists. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <remarks> Assumes the script is known to exist. Waits till completion. </remarks>
     ''' <param name="nodeNumber"> Specifies the remote node number. </param>
     ''' <param name="name">       Specifies the script name. </param>
@@ -848,7 +863,7 @@ Public MustInherit Class ScriptManagerBase
         If Me.Session.IsNil(nodeNumber, name) Then
             Return True
         Else
-            Return Me._nilifyScript(nodeNumber, name)
+            Return Me._NilifyScript(nodeNumber, name)
         End If
     End Function
 
@@ -886,8 +901,8 @@ Public MustInherit Class ScriptManagerBase
     ''' the script if delete command worked. Returns <c>True</c> if the script was deleted. </summary>
     ''' <remarks> Assumes the script is known to exist. Waits for operation completion. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="OperationFailedException"> Thrown when a Script Delete error condition occurs. </exception>
-    ''' <exception cref="NativeException">         Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when a Script Delete error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">         Thrown when a Visa error condition occurs. </exception>
     ''' <param name="name"> Specifies the script name. </param>
     Public Sub DeleteSavedScript(ByVal name As String)
 
@@ -908,8 +923,7 @@ Public MustInherit Class ScriptManagerBase
 
         ' make sure to re-check that script is gone.
         If Me.SavedScriptExists(name, True) Then
-            Throw New OperationFailedException("Instrument '{0}' script {1} still exists after nil.",
-                                               Me.ResourceName, name)
+            Throw New VI.Pith.OperationFailedException("Instrument '{0}' script {1} still exists after nil.", Me.ResourceNameCaption, name)
         End If
 
     End Sub
@@ -954,8 +968,8 @@ Public MustInherit Class ScriptManagerBase
     ''' Then checks if the script was deleted and if so returns true. 
     ''' Otherwise, returns false. 
     ''' </summary>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="name">Specifies the script name</param>
     ''' <remarks>Presumes the saved script exists.
     ''' Waits for operation completion.
@@ -982,7 +996,7 @@ Public MustInherit Class ScriptManagerBase
             If Me.SavedScriptExists(node, name, True) Then
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' saved script {1} still exists after nil on node {2};. {3}{4}",
-                                   Me.ResourceName, name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                   Me.ResourceNameCaption, name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
                 affirmative = False
             Else
                 affirmative = True
@@ -998,7 +1012,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="refreshScriptCatalog"> True to refresh the list of saved scripts. </param>
     ''' <returns> <c>True</c> if the script is nil; otherwise <c>False</c>. </returns>
     Public Function DeleteSavedScript(ByVal refreshScriptCatalog As Boolean) As Boolean
-        Me.DeleteSavedScript(Me._name, refreshScriptCatalog)
+        Me.DeleteSavedScript(Me._Name, refreshScriptCatalog)
         Return True
     End Function
 
@@ -1008,11 +1022,11 @@ Public MustInherit Class ScriptManagerBase
     ''' <value> The delete timeout. </value>
     Public Property DeleteTimeout() As TimeSpan
         Get
-            Return Me._deleteTimeout
+            Return Me._DeleteTimeout
         End Get
         Set(ByVal Value As TimeSpan)
             If Not Me.DeleteTimeout.Equals(Value) Then
-                Me._deleteTimeout = Value
+                Me._DeleteTimeout = Value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -1028,36 +1042,36 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Last fetched author scripts. </summary>
     ''' <returns> A list of strings. </returns>
     Public Function LastFetchedAuthorScripts() As ObjectModel.ReadOnlyCollection(Of String)
-        If _lastFetchedAuthorScripts Is Nothing Then
+        If _LastFetchedAuthorScripts Is Nothing Then
             Return New ObjectModel.ReadOnlyCollection(Of String)(New List(Of String))
         Else
-            Return New ObjectModel.ReadOnlyCollection(Of String)(_lastFetchedAuthorScripts)
+            Return New ObjectModel.ReadOnlyCollection(Of String)(_LastFetchedAuthorScripts)
         End If
     End Function
 
     ''' <summary> Fetches the list of saved scripts and saves it in the
     ''' <see cref="LastFetchedSavedScripts"></see> </summary>
-    ''' <exception cref="NativeException">       Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">       Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub FetchSavedScripts()
         Try
             Me.Session.StoreTimeout(Me.SaveTimeout)
-            Me._lastFetchedSavedScripts = ""
+            Me._LastFetchedSavedScripts = ""
             Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching saved scripts;. ")
             Me.Session.LastNodeNumber = New Integer?
             Me.Session.WriteLine("do {0} print( names ) end ", TspSyntax.ScriptCatalogGetterCommand)
-            Me._lastFetchedSavedScripts = Me.Session.ReadLineTrimEnd
-            If String.IsNullOrWhiteSpace(Me._lastFetchedSavedScripts) Then
-                Me._lastFetchedSavedScripts = ""
+            Me._LastFetchedSavedScripts = Me.Session.ReadLineTrimEnd
+            If String.IsNullOrWhiteSpace(Me._LastFetchedSavedScripts) Then
+                Me._LastFetchedSavedScripts = ""
                 Me.CheckThrowDeviceException(True, "fetching saved scripts;. last sent: '{0}'; last received: '{1}'.",
                                              Me.Session.LastMessageSent, Me.Session.LastMessageReceived)
             Else
-                Me._lastFetchedAuthorScripts = New List(Of String)
-                Dim scripts As String() = Me._lastFetchedSavedScripts.Split(","c)
+                Me._LastFetchedAuthorScripts = New List(Of String)
+                Dim scripts As String() = Me._LastFetchedSavedScripts.Split(","c)
                 For Each s As String In scripts
                     If s.StartsWith(AuthodPrefix, StringComparison.OrdinalIgnoreCase) Then
-                        Me._lastFetchedAuthorScripts.Add(s)
+                        Me._LastFetchedAuthorScripts.Add(s)
                     End If
                 Next
             End If
@@ -1070,19 +1084,19 @@ Public MustInherit Class ScriptManagerBase
 
     ''' <summary> Fetches the list of saved scripts and saves it in the
     ''' <see cref="LastFetchedSavedScripts"></see> </summary>
-    ''' <exception cref="NativeException">       Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">       Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="nodeNumber"> Specifies the subsystem node. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub FetchSavedScripts(ByVal nodeNumber As Integer)
         Try
-            Me.Session.StoreTimeout(Me._saveTimeout)
-            Me._lastFetchedSavedRemoteScripts = ""
+            Me.Session.StoreTimeout(Me._SaveTimeout)
+            Me._LastFetchedSavedRemoteScripts = ""
             Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching catalog;. ")
             Me.Session.LastNodeNumber = nodeNumber
             Me.Session.WriteLine(TspSyntax.NodeValueGetterCommandFormat2, nodeNumber, TspSyntax.ScriptCatalogGetterCommand, "names")
 
-            Me._lastFetchedSavedRemoteScripts = Me.Session.ReadLineTrimEnd
+            Me._LastFetchedSavedRemoteScripts = Me.Session.ReadLineTrimEnd
 
             Me.CheckThrowDeviceException(True, "fetching catalog;. last sent: '{0}'.", Me.Session.LastMessageSent)
 
@@ -1097,8 +1111,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Fetches the list of saved scripts and saves it in the
     ''' <see cref="LastFetchedSavedScripts"></see> </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="NativeException">         Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">         Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="node"> Specifies the node. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub FetchSavedScripts(ByVal node As NodeEntityBase)
@@ -1107,13 +1121,13 @@ Public MustInherit Class ScriptManagerBase
             FetchSavedScripts()
         Else
             Try
-                Me.Session.StoreTimeout(Me._saveTimeout)
-                Me._lastFetchedSavedRemoteScripts = ""
+                Me.Session.StoreTimeout(Me._SaveTimeout)
+                Me._LastFetchedSavedRemoteScripts = ""
                 Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "fetching catalog;. ")
                 Me.Session.LastNodeNumber = node.Number
                 Me.Session.WriteLine(TspSyntax.NodeValueGetterCommandFormat2, node.Number, TspSyntax.ScriptCatalogGetterCommand, "names")
                 Me.CheckThrowDeviceException(True, "fetching catalog using the command '{0}';. ", Me.Session.LastMessageSent)
-                Me._lastFetchedSavedRemoteScripts = Me.Session.ReadLineTrimEnd
+                Me._LastFetchedSavedRemoteScripts = Me.Session.ReadLineTrimEnd
             Catch
                 Throw
             Finally
@@ -1130,7 +1144,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <value> The last fetched saved scripts. </value>
     Public ReadOnly Property LastFetchedSavedScripts() As String
         Get
-            Return Me._lastFetchedSavedScripts
+            Return Me._LastFetchedSavedScripts
         End Get
     End Property
 
@@ -1141,7 +1155,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <value> The last fetched saved remote scripts. </value>
     Public ReadOnly Property LastFetchedSavedRemoteScripts() As String
         Get
-            Return Me._lastFetchedSavedRemoteScripts
+            Return Me._LastFetchedSavedRemoteScripts
         End Get
     End Property
 
@@ -1156,7 +1170,7 @@ Public MustInherit Class ScriptManagerBase
     ''' completed. </param>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are
     ''' null. </exception>
-    ''' <exception cref="NativeException">         Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">         Thrown when a Visa error condition occurs. </exception>
     ''' <exception cref="TimeoutException">      Thrown when a Timeout error condition occurs. </exception>
     Public Sub RunScript(ByVal name As String, ByVal timeout As TimeSpan)
 
@@ -1171,9 +1185,9 @@ Public MustInherit Class ScriptManagerBase
             Dim value As String = Me.Session.ReadLineTrimEnd
             If String.IsNullOrWhiteSpace(value) OrElse Not value.Trim.StartsWith(returnedValue, StringComparison.OrdinalIgnoreCase) Then
                 If String.IsNullOrWhiteSpace(value) Then
-                    Throw New OperationFailedException("Script '{0}' failed;. script returned no value.", name)
+                    Throw New VI.Pith.OperationFailedException("Script '{0}' failed;. script returned no value.", name)
                 Else
-                    Throw New OperationFailedException("Script '{0}' failed;. returned value {1} is not the same as expected '{2}'.",
+                    Throw New VI.Pith.OperationFailedException("Script '{0}' failed;. returned value {1} is not the same as expected '{2}'.",
                                                        name, value, returnedValue)
                 End If
             End If
@@ -1186,8 +1200,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Runs the named script. </summary>
     ''' <remarks> Waits for operation completion. </remarks>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="nodeNumber"> Specifies the subsystem node. </param>
     ''' <param name="name">       Specifies the script name. </param>
     ''' <param name="timeout">    Specifies the time to wait for the instrument to return operation
@@ -1215,8 +1229,8 @@ Public MustInherit Class ScriptManagerBase
     ''' <exception cref="ArgumentNullException">     Thrown when one or more required arguments are
     ''' null. </exception>
     ''' <exception cref="InvalidOperationException"> Thrown when the requested operation is invalid. </exception>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="script"> Specifies the script. </param>
     ''' <param name="node">   Specifies the subsystem node. </param>
     Public Sub RunScript(ByVal script As ScriptEntityBase, ByVal node As NodeEntityBase)
@@ -1250,18 +1264,18 @@ Public MustInherit Class ScriptManagerBase
     ''' <value> The save timeout. </value>
     Public Property SaveTimeout() As TimeSpan
         Get
-            Return Me._saveTimeout
+            Return Me._SaveTimeout
         End Get
         Set(ByVal Value As TimeSpan)
             If Not Me.SaveTimeout.Equals(Value) Then
-                Me._saveTimeout = Value
+                Me._SaveTimeout = Value
                 Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
 
     ''' <summary> Saves the specifies script to non-volatile memory. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
     ''' <param name="name"> Gets or sets the script name. </param>
     ''' <returns> <c>True</c> is script exist; otherwise, <c>False</c>. </returns>
     Public Function SaveScript(ByVal name As String) As Boolean
@@ -1296,7 +1310,7 @@ Public MustInherit Class ScriptManagerBase
         If String.IsNullOrWhiteSpace(name) Then
             Return False
         End If
-        Return Me._lastFetchedSavedRemoteScripts.IndexOf(name & ",", 0, StringComparison.OrdinalIgnoreCase) >= 0
+        Return Me._LastFetchedSavedRemoteScripts.IndexOf(name & ",", 0, StringComparison.OrdinalIgnoreCase) >= 0
     End Function
 
     ''' <summary>
@@ -1571,7 +1585,7 @@ Public MustInherit Class ScriptManagerBase
     Public Function OpenScriptFile() As System.IO.StreamReader
 
         ' Check name
-        If String.IsNullOrWhiteSpace(Me._name) OrElse String.IsNullOrWhiteSpace(Me._FilePath) OrElse Not System.IO.File.Exists(Me.FilePath) Then
+        If String.IsNullOrWhiteSpace(Me._Name) OrElse String.IsNullOrWhiteSpace(Me._FilePath) OrElse Not System.IO.File.Exists(Me.FilePath) Then
             Return Nothing
             Exit Function
         End If
@@ -1619,7 +1633,7 @@ Public MustInherit Class ScriptManagerBase
     ''' null. </exception>
     ''' <exception cref="System.IO.FileNotFoundException"> Thrown when the requested file is not
     ''' present. </exception>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="filePath">      Specifies the folder where scripts are stored. </param>
     ''' <param name="retainOutline"> Specifies if the code outline is retained or trimmed. </param>
     Public Shared Sub ReadParseWriteScript(ByVal filePath As String, ByVal retainOutline As Boolean)
@@ -1633,11 +1647,11 @@ Public MustInherit Class ScriptManagerBase
         Else
             scriptSource = ScriptManagerBase.ReadScript(filePath)
             If String.IsNullOrWhiteSpace(scriptSource) Then
-                Throw New OperationFailedException("Failed reading script;. file '{0}' includes no source.", filePath)
+                Throw New VI.Pith.OperationFailedException("Failed reading script;. file '{0}' includes no source.", filePath)
             Else
                 scriptSource = ScriptManagerBase.ParseScript(scriptSource, retainOutline)
                 If String.IsNullOrWhiteSpace(scriptSource) Then
-                    Throw New OperationFailedException("Failed reading script;. parsed script from '{0}' is empty.", filePath)
+                    Throw New VI.Pith.OperationFailedException("Failed reading script;. parsed script from '{0}' is empty.", filePath)
                 Else
                     filePath = filePath & ".debug"
                     ScriptManagerBase.WriteScript(scriptSource, filePath)
@@ -1684,7 +1698,7 @@ Public MustInherit Class ScriptManagerBase
 
     ''' <summary> Loads a named script into the instrument. </summary>
     ''' <exception cref="System.IO.FileNotFoundException"> Thrown when the requested file is not present. </exception>
-    ''' <exception cref="NativeException">         Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">         Thrown when a Visa error condition occurs. </exception>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId:="LoadScript")>
     Public Sub LoadScriptFileSimple()
         Me.LoadScriptFileSimple(Me.Name, Me.FilePath)
@@ -1694,8 +1708,8 @@ Public MustInherit Class ScriptManagerBase
     ''' are handled. For loading a script that does not includes functions, turn off errors and turn
     ''' on the prompt. </summary>
     ''' <exception cref="System.IO.FileNotFoundException">  Thrown when the requested file is not present. </exception>
-    ''' <exception cref="NativeException">          Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="OperationFailedException"> Thrown when a Script Loading error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">          Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when a Script Loading error condition occurs. </exception>
     ''' <param name="showErrors">      Specifies the condition for turning off or on error checking
     ''' while the script is loaded. </param>
     ''' <param name="showPrompts">     Specifies the condition for turning off or on the TSP prompts
@@ -1706,6 +1720,9 @@ Public MustInherit Class ScriptManagerBase
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Sub LoadScriptFile(ByVal showErrors As Boolean, ByVal showPrompts As Boolean, ByVal retainOutline As Boolean)
+
+        Dim activity As String = "loading script file"
+        Dim actionDetails As String = ""
 
         ' store the status
         Me.InteractiveSubsystem.StoreStatus()
@@ -1752,7 +1769,7 @@ Public MustInherit Class ScriptManagerBase
 
                     Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                                                "sending a 'loadscript' for script '{0}' from file '{1}'",
-                                                               Me._name, Me._FilePath)
+                                                               Me._Name, Me._FilePath)
                     Me.Session.LastNodeNumber = New Integer?
 
                     Do While Not tspFile.EndOfStream
@@ -1794,20 +1811,24 @@ Public MustInherit Class ScriptManagerBase
                             chunkLine &= " "
 
                             If isFirstLine Then
+                                activity = $"{Me.ResourceNameCaption} sending a 'loadscript'"
+                                actionDetails = $"sending a 'loadscript' for script '{Me.Name}' from file '{Me.FilePath}'"
                                 ' issue a start of script command.  The command
                                 ' 'loadscript' identifies the beginning of the named script.
-                                commandLine = "loadscript " & Me._name & " "
+                                commandLine = "loadscript " & Me._Name & " "
                                 Me.Session.WriteLine(commandLine)
                                 If Me.InteractiveSubsystem.ExecutionState <> TspExecutionState.IdleError Then
                                     isFirstLine = False
                                 ElseIf (Me.StatusSubsystem.ReadServiceRequestStatus And Me.StatusSubsystem.ErrorAvailableBits) <> 0 Then
-                                    Me.StatusSubsystem.QueryStandardEventStatus()
-                                    Me.StatusSubsystem.QueryDeviceErrors()
-                                    Throw New OperationFailedException("Instrument {0} failed;. sending a 'loadscript' for script '{1}' from file '{2}'.{4}Device errors: {3}.",
-                                                                       Me.ResourceName, Me._name, Me._FilePath, Me.StatusSubsystem.DeviceErrors, Environment.NewLine)
+                                    ' done inside the query Me.StatusSubsystem.QueryStandardEventStatus()
+                                    Dim e As New isr.Core.Pith.ActionEventArgs
+                                    If Me.StatusSubsystem.TrySafeQueryDeviceErrors(e) Then
+                                        Throw New VI.Pith.OperationFailedException($"{activity} failed;. {actionDetails}; Device errors: {Me.StatusSubsystem.DeviceErrorsReport}")
+                                    Else
+                                        Throw New VI.Pith.OperationFailedException($"{activity} failed;. {actionDetails}; Failed fetching device errors because {e.Details}")
+                                    End If
                                 Else
-                                    Throw New OperationFailedException("Instrument {0} failed;. sending a 'loadscript' for script '{1}' from file '{2}'.",
-                                                                           Me.ResourceName, Me._name, Me._FilePath)
+                                    Throw New VI.Pith.OperationFailedException($"{activity} failed;. {actionDetails}; No device errors")
                                 End If
                             End If
 
@@ -1822,17 +1843,24 @@ Public MustInherit Class ScriptManagerBase
                                 Case Else
                                     ' do nothing
                             End Select
+                            activity = $"{Me.ResourceNameCaption} sending a syntax line"
+                            actionDetails = $"sending a syntax line:
+{chunkLine} 
+for script {Me.Name} from file '{Me.FilePath}'"
+
                             Me.Session.WriteLine(chunkLine)
                             If Me.InteractiveSubsystem.ExecutionState = TspExecutionState.IdleError Then
                                 ' now report the error to the calling module
                                 If (Me.StatusSubsystem.ReadServiceRequestStatus And Me.StatusSubsystem.ErrorAvailableBits) <> 0 Then
-                                    Me.StatusSubsystem.QueryStandardEventStatus()
-                                    Me.StatusSubsystem.QueryDeviceErrors()
-                                    Throw New OperationFailedException("Instrument {0} failed;. sending a syntax line: {5}{1}{5} for script '{2}' from file '{3}'.{5}Device errors: {4}.",
-                                                                       Me.ResourceName, chunkLine, Me._name, Me._FilePath, Me.StatusSubsystem.DeviceErrors, Environment.NewLine)
+                                    ' done inside the query Me.StatusSubsystem.QueryStandardEventStatus()
+                                    Dim e As New isr.Core.Pith.ActionEventArgs
+                                    If Me.StatusSubsystem.TrySafeQueryDeviceErrors(e) Then
+                                        Throw New VI.Pith.OperationFailedException($"{activity} failed;. {actionDetails}; Device errors: {Me.StatusSubsystem.DeviceErrorsReport}")
+                                    Else
+                                        Throw New VI.Pith.OperationFailedException($"{activity} failed;. {actionDetails}; Failed fetching device errors because {e.Details}")
+                                    End If
                                 Else
-                                    Throw New OperationFailedException("Instrument {0} failed;. sending a syntax line: {4}{1}{4} for script '{2}' from file '{3}'.",
-                                                                       Me.ResourceName, chunkLine, Me._name, Me._FilePath, Environment.NewLine)
+                                    Throw New VI.Pith.OperationFailedException($"{activity} failed;. {actionDetails}; No device errors")
                                 End If
                             Else
                                 ' increment debug line number
@@ -1866,20 +1894,24 @@ Public MustInherit Class ScriptManagerBase
             Me.Session.LastAction = Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "ending loaded script '{0}';. ", Me.Name)
             Me.Session.LastNodeNumber = New Integer?
 
+            activity = $"{Me.ResourceNameCaption} sending an 'endscript'"
+            actionDetails = $"sending an 'endscript' for script '{Me.Name}' from file '{Me.FilePath}'"
+
             ' Tell TSP complete script has been downloaded.
             commandLine = "endscript waitcomplete() print('1') "
             Me.Session.WriteLine(commandLine)
 
             If Me.InteractiveSubsystem.ExecutionState = TspExecutionState.IdleError Then
                 If (Me.StatusSubsystem.ReadServiceRequestStatus And Me.StatusSubsystem.ErrorAvailableBits) <> 0 Then
-                    Me.StatusSubsystem.QueryStandardEventStatus()
-                    Me.StatusSubsystem.QueryDeviceErrors()
-                    Throw New OperationFailedException("Instrument {0} failed;. sending an 'endscript' for script '{1}' from file '{2}'.{4}Device errors: {3}.",
-                                                       Me.ResourceName, Me._name, Me._FilePath,
-                                                       Me.StatusSubsystem.DeviceErrors, Environment.NewLine)
+                    ' done inside the query Me.StatusSubsystem.QueryStandardEventStatus()
+                    Dim e As New isr.Core.Pith.ActionEventArgs
+                    If Me.StatusSubsystem.TrySafeQueryDeviceErrors(e) Then
+                        Throw New VI.Pith.OperationFailedException($"{activity} failed;. {actionDetails}; Device errors: {Me.StatusSubsystem.DeviceErrorsReport}")
+                    Else
+                        Throw New VI.Pith.OperationFailedException($"{activity} failed;. {actionDetails}; Failed fetching device errors because {e.Details}")
+                    End If
                 Else
-                    Throw New OperationFailedException("Instrument {0} failed;. sending an 'endscript' for script '{1}' from file '{2}'.",
-                                                       Me.ResourceName, Me._name, Me._FilePath)
+                    Throw New VI.Pith.OperationFailedException($"{activity} failed;. {actionDetails}; No device errors")
                 End If
             End If
 
@@ -1936,8 +1968,8 @@ Public MustInherit Class ScriptManagerBase
 
     ''' <summary> Loads a named script into the instrument. </summary>
     ''' <exception cref="system.IO.FileNotFoundException"> Thrown when the requested file is not present. </exception>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="name">     Specifies the script name. </param>
     ''' <param name="filePath"> The file path. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId:="LoadScript")>
@@ -1980,9 +2012,9 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Loads a named script into the instrument allowing control over how errors and prompts
     ''' are handled. For loading a script that does not includes functions, turn off errors and turn
     ''' on the prompt. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
-    ''' <exception cref="OperationFailedException"> Thrown when a Script Loading error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when a Script Loading error condition occurs. </exception>
     ''' <param name="name">            Specifies the script name. </param>
     ''' <param name="filePath">        Specifies the script file name. </param>
     ''' <param name="retainOutline">   Specifies if the code outline is retained or trimmed. </param>
@@ -2139,7 +2171,7 @@ Public MustInherit Class ScriptManagerBase
         If Not Me.Session.IsNil(script.Name) Then
             ' script already exists
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' script {1} already exists;. ", Me.ResourceName, script.Name)
+                              "Instrument '{0}' script {1} already exists;. ", Me.ResourceNameCaption, script.Name)
             Return
         End If
 
@@ -2160,12 +2192,11 @@ Public MustInherit Class ScriptManagerBase
         ' do a garbage collection
         If Not Me.StatusSubsystem.CollectGarbageWaitComplete(script.Timeout, "collecting garbage;. ") Then
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                               "Ignoring instrument '{0}' error(s) collecting garbage after loading {1};. {2}{3}",
-                               Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
+                              "Ignoring instrument '{0}' error(s) collecting garbage after loading {1};. {2}{3}",
+                              Me.ResourceNameCaption, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
         End If
 
-        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                           "Instrument '{0}' {1} script loaded;. ", Me.ResourceName, script.Name)
+        Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Instrument '{0}' {1} script loaded;. ", Me.ResourceNameCaption, script.Name)
 
         Me.DisplaySubsystem.DisplayLine(2, "Done loading {0} from file", script.Name)
 
@@ -2204,7 +2235,7 @@ Public MustInherit Class ScriptManagerBase
     End Sub
 
     ''' <summary> Loads the script embedded in the string. </summary>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
     ''' <param name="scriptLines"> Contains the script code line by line. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId:="LoadScript")>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -2237,7 +2268,7 @@ Public MustInherit Class ScriptManagerBase
 
     ''' <summary> Loads the script embedded in the string. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="NativeException">         Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException">         Thrown when a Visa error condition occurs. </exception>
     ''' <param name="name">        Contains the script name. </param>
     ''' <param name="scriptLines"> Contains the script code line by line. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId:="LoadScript")>
@@ -2308,7 +2339,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Gets the list of legacy scripts. </summary>
     ''' <returns> List of legacy scripts. </returns>
     Public Function LegacyScripts() As ScriptEntityCollection
-        Return Me._legacyScripts
+        Return Me._LegacyScripts
     End Function
 
     ''' <summary> Adds a new script to the list of legacy scripts. </summary>
@@ -2317,14 +2348,14 @@ Public MustInherit Class ScriptManagerBase
     Public Function AddLegacyScript(ByVal name As String) As ScriptEntityBase
 
         Dim script As New ScriptEntity(name, "")
-        Me._legacyScripts.Add(script)
+        Me._LegacyScripts.Add(script)
         Return script
 
     End Function
 
     ''' <summary> Create a new instance of the legacy scripts. </summary>
     Public Sub NewLegacyScripts()
-        Me._legacyScripts = New ScriptEntityCollection
+        Me._LegacyScripts = New ScriptEntityCollection
     End Sub
 
 #End Region
@@ -2336,7 +2367,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <summary> Gets the list of scripts. </summary>
     ''' <returns> List of scripts. </returns>
     Public Function Scripts() As ScriptEntityCollection
-        Return Me._scripts
+        Return Me._Scripts
     End Function
 
     ''' <summary> Adds a new script to the list of scripts. </summary>
@@ -2346,14 +2377,14 @@ Public MustInherit Class ScriptManagerBase
     Public Function AddScript(ByVal name As String, ByVal modelMask As String) As ScriptEntityBase
 
         Dim script As New ScriptEntity(name, modelMask)
-        Me._scripts.Add(script)
+        Me._Scripts.Add(script)
         Return script
 
     End Function
 
     ''' <summary> Create a new instance of the scripts. </summary>
     Public Sub NewScripts()
-        Me._scripts = New ScriptEntityCollection()
+        Me._Scripts = New ScriptEntityCollection()
     End Sub
 
 #End Region
@@ -2481,7 +2512,7 @@ Public MustInherit Class ScriptManagerBase
         If Me.LinkSubsystem.ControllerNode IsNot Nothing Then
             Return Me.FirmwareReleasedVersionGetter(Me.LinkSubsystem.ControllerNode)
         Else
-            Return Me._scripts.Item(0).ReleasedFirmwareVersion
+            Return Me._Scripts.Item(0).ReleasedFirmwareVersion
         End If
     End Function
 
@@ -2492,12 +2523,12 @@ Public MustInherit Class ScriptManagerBase
     Public Function FirmwareReleasedVersionGetter(ByVal node As NodeEntityBase) As String
 
         If Me.LinkSubsystem.ControllerNode Is Nothing Then
-            Return Me._scripts.Item(0).ReleasedFirmwareVersion
+            Return Me._Scripts.Item(0).ReleasedFirmwareVersion
         Else
             If node Is Nothing Then
                 Throw New ArgumentNullException(NameOf(node))
             End If
-            Return Me._scripts.SelectSerialNumberScript(node).ReleasedFirmwareVersion
+            Return Me._Scripts.SelectSerialNumberScript(node).ReleasedFirmwareVersion
         End If
     End Function
 
@@ -2517,7 +2548,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> The released main firmware version. </returns>
     Public Function FirmwareVersionGetter(ByVal node As NodeEntityBase) As String
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
-        Return Me._scripts.SelectSerialNumberScript(node).EmbeddedFirmwareVersion
+        Return Me._Scripts.SelectSerialNumberScript(node).EmbeddedFirmwareVersion
     End Function
 
     ''' <summary> Returns the main firmware name from the controller node. </summary>
@@ -2531,7 +2562,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> The node firmware name. </returns>
     Public Function FirmwareNameGetter(ByVal node As NodeEntityBase) As String
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
-        Return Me._scripts.SelectSerialNumberScript(node).Name
+        Return Me._Scripts.SelectSerialNumberScript(node).Name
     End Function
 
     Private _FirmwareExists As Boolean?
@@ -2562,7 +2593,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <param name="node"> Specifies the node. </param>
     ''' <returns> <c>True</c> if the firmware exists; otherwise, <c>False</c>. </returns>
     Public Function FindFirmware(ByVal node As NodeEntityBase) As Boolean
-        If node Is Nothing Then            Throw New ArgumentNullException(NameOf(node))
+        If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
         Me._FirmwareExists = Not Me.Session.IsNil(Me.FirmwareNameGetter(node))
         Return Me._FirmwareExists.Value
     End Function
@@ -2573,7 +2604,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if the support firmware exists; otherwise, <c>False</c>. </returns>
     Public Function SupportFirmwareNameGetter(ByVal node As NodeEntityBase) As String
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
-        Return Me._scripts.SelectSupportScript(node).Name
+        Return Me._Scripts.SelectSupportScript(node).Name
     End Function
 
     Private _SupportfirmwareExists As Boolean?
@@ -2612,7 +2643,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <returns> <c>True</c> if okay; otherwise, <c>False</c>. </returns>
     Public Function ReadFirmwareVersions() As Boolean
-        Return Me._scripts.ReadFirmwareVersions(Me.LinkSubsystem.ControllerNode, Me.Session)
+        Return Me._Scripts.ReadFirmwareVersions(Me.LinkSubsystem.ControllerNode, Me.Session)
     End Function
 
     ''' <summary> Reads the firmware versions of the controller node. </summary>
@@ -2621,7 +2652,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if okay; otherwise, <c>False</c>. </returns>
     Public Function ReadFirmwareVersions(ByVal node As NodeEntityBase) As Boolean
         If node Is Nothing Then Throw New ArgumentNullException(NameOf(node))
-        Return Me._scripts.ReadFirmwareVersions(node, Me.Session)
+        Return Me._Scripts.ReadFirmwareVersions(node, Me.Session)
     End Function
 
     ''' <summary> Checks if all scripts were saved. </summary>
@@ -2631,7 +2662,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if all scripts were saved; otherwise, <c>False</c>. </returns>
     Public Function AllScriptsSaved(ByVal refreshScriptCatalog As Boolean, ByVal node As NodeEntityBase) As Boolean
         If node IsNot Nothing Then
-            Return Me._scripts.FindSavedScripts(node, Me, refreshScriptCatalog)
+            Return Me._Scripts.FindSavedScripts(node, Me, refreshScriptCatalog)
         Else
             Return True
         End If
@@ -2642,7 +2673,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if all scripts exist; otherwise, <c>False</c>. </returns>
     Public Function AllScriptsExist(ByVal node As NodeEntityBase) As Boolean
         If node IsNot Nothing Then
-            Return Me._scripts.FindScripts(node, Me.Session)
+            Return Me._Scripts.FindScripts(node, Me.Session)
         Else
             Return True
         End If
@@ -2659,7 +2690,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if any script exists; otherwise, <c>False</c>. </returns>
     Public Function AnyScriptExists(ByVal node As NodeEntityBase) As Boolean
         If node IsNot Nothing Then
-            Return Me._scripts.FindAnyScript(node, Me.Session)
+            Return Me._Scripts.FindAnyScript(node, Me.Session)
         Else
             Return False
         End If
@@ -2676,7 +2707,7 @@ Public MustInherit Class ScriptManagerBase
     ''' <returns> <c>True</c> if any legacy script exists; otherwise, <c>False</c>. </returns>
     Public Function AnyLegacyScriptExists(ByVal node As NodeEntityBase) As Boolean
         If node IsNot Nothing Then
-            Return Me._legacyScripts.FindAnyScript(node, Me.Session)
+            Return Me._LegacyScripts.FindAnyScript(node, Me.Session)
         Else
             Return False
         End If
@@ -2706,8 +2737,8 @@ Public MustInherit Class ScriptManagerBase
             ' ignore error if nil
             If Not Me.TraceVisaDeviceOperationOkay(node.Number, "looking for script '{0}'. Ignoring error;. ", script.Name) Then
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' had error(s) looking for script {1} on node {2};. nothing to do.",
-                                   Me.ResourceName, script.Name, node.Number)
+                                  "Instrument '{0}' had error(s) looking for script {1} on node {2};. nothing to do.",
+                                  Me.ResourceNameCaption, script.Name, node.Number)
             End If
             ' return false, script does not exists.
             Return False
@@ -2717,8 +2748,8 @@ Public MustInherit Class ScriptManagerBase
             ' reading version requires an intact namespace. A missing name space may be missing, this might 
             ' indicate that referenced scripts were deleted or failed loading so this script should be deleted.
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' reports that some namespaces '{1}' on node {2} are nil;. script '{3}' will be deleted.",
-                               Me.ResourceName, script.Namespaces, node.Number, script.Name)
+                              "Instrument '{0}' reports that some namespaces '{1}' on node {2} are nil;. script '{3}' will be deleted.",
+                              Me.ResourceNameCaption, script.Namespaces, node.Number, script.Name)
             Return True
 
         ElseIf Not script.FirmwareVersionQueryCommandExists(node, Me.Session) Then
@@ -2726,8 +2757,8 @@ Public MustInherit Class ScriptManagerBase
             ' reading version requires a supported version function. Delete if a firmware version function is not
             ' defined.
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' firmware version function not defined;. script '{1}' will be deleted.",
-                               Me.ResourceName, script.Name)
+                              "Instrument '{0}' firmware version function not defined;. script '{1}' will be deleted.",
+                              Me.ResourceNameCaption, script.Name)
             Return True
 
         End If
@@ -2741,65 +2772,64 @@ Public MustInherit Class ScriptManagerBase
             Case FirmwareVersionStatus.None
 
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' '{1}' script firmware version on node {2} is irrelevant;. script will be deleted.",
-                                   Me.ResourceName, script.Name, node.Number)
+                                  "Instrument '{0}' '{1}' script firmware version on node {2} is irrelevant;. script will be deleted.",
+                                  Me.ResourceNameCaption, script.Name, node.Number)
                 Return True
 
             Case FirmwareVersionStatus.Current
 
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' script {1} on node {2} is up to date;. Nothing to do.",
-                                   Me.ResourceName, script.Name, node.Number)
+                                  "Instrument '{0}' script {1} on node {2} is up to date;. Nothing to do.",
+                                   Me.ResourceNameCaption, script.Name, node.Number)
                 Return False
 
             Case FirmwareVersionStatus.Missing
 
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' custom firmware '{1}' version on node {2} is not known;. script version function is not defined. Script will be deleted.",
-                                   Me.ResourceName, script.Name, node.Number)
+                                  "Instrument '{0}' custom firmware '{1}' version on node {2} is not known;. script version function is not defined. Script will be deleted.",
+                                  Me.ResourceNameCaption, script.Name, node.Number)
                 Return True
 
             Case FirmwareVersionStatus.Newer
 
                 If allowDeletingNewerScripts Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                       "Instrument '{0}' existing custom firmware '{1}' on node {2} version '{3}' is newer than the specified version '{4}';. The scripts will be deleted to allow uploading the older script.",
-                                       Me.ResourceName, script.Name, node.Number, script.EmbeddedFirmwareVersion, script.ReleasedFirmwareVersion)
+                                      "Instrument '{0}' existing custom firmware '{1}' on node {2} version '{3}' is newer than the specified version '{4}';. The scripts will be deleted to allow uploading the older script.",
+                                      Me.ResourceNameCaption, script.Name, node.Number, script.EmbeddedFirmwareVersion, script.ReleasedFirmwareVersion)
                     Return True
                 Else
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                       "Instrument '{0}' existing custom firmware '{1}' on node {2} version '{3}' is newer than the specified version '{4}';. A newer version of the program is required. Script will not be deleted.",
-                                       Me.ResourceName, script.Name, node.Number, script.EmbeddedFirmwareVersion, script.ReleasedFirmwareVersion)
+                                      "Instrument '{0}' existing custom firmware '{1}' on node {2} version '{3}' is newer than the specified version '{4}';. A newer version of the program is required. Script will not be deleted.",
+                                      Me.ResourceNameCaption, script.Name, node.Number, script.EmbeddedFirmwareVersion, script.ReleasedFirmwareVersion)
                     Return False
                 End If
 
             Case FirmwareVersionStatus.Older
 
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' existing custom firmware '{1}' on node {2} version '{3}' is older than the specified version '{4}';. Script will be deleted.",
-                                   Me.ResourceName, script.Name, node.Number, script.EmbeddedFirmwareVersion, script.ReleasedFirmwareVersion)
+                                  "Instrument '{0}' existing custom firmware '{1}' on node {2} version '{3}' is older than the specified version '{4}';. Script will be deleted.",
+                                  Me.ResourceNameCaption, script.Name, node.Number, script.EmbeddedFirmwareVersion, script.ReleasedFirmwareVersion)
                 Return True
 
             Case FirmwareVersionStatus.ReferenceUnknown
 
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                    "Instrument '{0}' custom firmware '{1}' released version not given;. Script will not be deleted.{2}{3}",
-                                   Me.ResourceName, script.Name,
-                    Environment.NewLine, New StackFrame(True).UserCallStack())
+                                   Me.ResourceNameCaption, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
                 Return False
 
             Case FirmwareVersionStatus.Unknown
 
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' firmware '{1}' on node {2} version was not read;. Script will be deleted.",
-                                   Me.ResourceName, script.Name, node.Number)
+                                  "Instrument '{0}' firmware '{1}' on node {2} version was not read;. Script will be deleted.",
+                                  Me.ResourceNameCaption, script.Name, node.Number)
                 Return True
 
             Case Else
 
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' encountered unhandled firmware version status {1} on node {2};. Nothing to do. Ignored.",
-                                   Me.ResourceName, validation, node.Number)
+                                  "Instrument '{0}' encountered unhandled firmware version status {1} on node {2};. Nothing to do. Ignored.",
+                                  Me.ResourceNameCaption, validation, node.Number)
                 Return False
 
         End Select
@@ -2906,8 +2936,8 @@ Public MustInherit Class ScriptManagerBase
             ' ignore error if nil
             If Not Me.TraceVisaDeviceOperationOkay(node.Number, "looking for script '{0}'. Ignoring error;. ", script.Name) Then
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' had error(s) looking for script {1} on node;. Nothing to do.",
-                                   Me.ResourceName, script.Name, node.Number)
+                                  "Instrument '{0}' had error(s) looking for script {1} on node;. Nothing to do.",
+                                  Me.ResourceNameCaption, script.Name, node.Number)
             End If
             script.IsDeleted = True
             Return True
@@ -2918,8 +2948,7 @@ Public MustInherit Class ScriptManagerBase
             Me.DeleteScript(script.Name, refreshScriptsCatalog)
             If Not Me.TraceVisaDeviceOperationOkay(False, "deleting {0};. ", script.Name) Then
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' had error(s) deleting script {1} on node {2};. ",
-                                   Me.ResourceName, script.Name, node.Number)
+                                  "Instrument '{0}' had error(s) deleting script {1} on node {2};. ", Me.ResourceNameCaption, script.Name, node.Number)
                 Return False
             End If
 
@@ -2932,8 +2961,7 @@ Public MustInherit Class ScriptManagerBase
 
                 If Not Me.TraceVisaDeviceOperationOkay(node.Number, "deleting script {0};. ", script.Name) Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                       "Instrument '{0}' had error(s) deleting {1} on node {2};. ",
-                                       Me.ResourceName, script.Name, node.Number)
+                                      "Instrument '{0}' had error(s) deleting {1} on node {2};. ", Me.ResourceNameCaption, script.Name, node.Number)
                     Return False
                 End If
 
@@ -2941,9 +2969,8 @@ Public MustInherit Class ScriptManagerBase
                 If Not Me.TraceVisaDeviceOperationOkay(node.Number, "deleting script {0};. ", script.Name, node.Number) Then
                     ' report failure if not an instrument or VISA error (handler returns Okay.)
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                       "Instrument '{0}' had error(s) deleting {1} on node {2};. {3}{4}",
-                                       Me.ResourceName, script.Name, node.Number,
-                                       Environment.NewLine, New StackFrame(True).UserCallStack())
+                                      "Instrument '{0}' had error(s) deleting {1} on node {2};. {3}{4}",
+                                      Me.ResourceNameCaption, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
                 End If
                 Return False
             End If
@@ -3005,9 +3032,8 @@ Public MustInherit Class ScriptManagerBase
                                 ' or if a script that existed no longer exists.
                                 scriptsDeleted = True
                             Else
-                                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                                   "failed deleting script '{1}' from node {2};. ",
-                                                   Me.ResourceName, script.Name, node.Number)
+                                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "failed deleting script '{1}' from node {2};. ",
+                                                  Me.ResourceNameCaption, script.Name, node.Number)
                                 success = False
                             End If
 
@@ -3018,12 +3044,11 @@ Public MustInherit Class ScriptManagerBase
                         Try
                             success = success AndAlso Me.Session.IsNil(script.Name)
                             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                               "Exception occurred deleting firmware {0} from node {1};. {2}",
-                                               script.Name, node.Number, ex.ToFullBlownString)
+                                              "Exception occurred deleting firmware {0} from node {1};. {2}", script.Name, node.Number, ex.ToFullBlownString)
                         Catch
                             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                                               "Exception occurred checking existence after attempting deletion of firmware {0} from node {1};. {2}",
-                                               script.Name, node.Number, ex.ToFullBlownString)
+                                              "Exception occurred checking existence after attempting deletion of firmware {0} from node {1};. {2}",
+                                              script.Name, node.Number, ex.ToFullBlownString)
                             success = False
                         End Try
 
@@ -3079,7 +3104,7 @@ Public MustInherit Class ScriptManagerBase
 
     ''' <summary> Loads and executes the specified TSP script from file. </summary>
     ''' <exception cref="ArgumentNullException">  Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="OperationFailedException"> Thrown when a Script Loading error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when a Script Loading error condition occurs. </exception>
     ''' <param name="script"> Specifies reference to a valid <see cref="ScriptEntity">script</see> </param>
     ''' <param name="node">   Specifies the node. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
@@ -3092,21 +3117,21 @@ Public MustInherit Class ScriptManagerBase
 
             If String.IsNullOrWhiteSpace(script.Source) AndAlso script.Source.Length > 10 Then
                 Me.DisplaySubsystem.DisplayLine(2, "Attempted loading empty script {0}:{1}", node.Number, script.Name)
-                Throw New OperationFailedException("Attempted loading empty script;. {0}:{1}", node.Number, script.Name)
+                Throw New VI.Pith.OperationFailedException("Attempted loading empty script;. {0}:{1}", node.Number, script.Name)
             End If
 
             If node.IsController Then
                 If Me.LoadUserScript(script) Then
                     If Not Me.RunUserScript(script) Then
-                        Throw New OperationFailedException("Failed running script;. {0}:{1}", node.Number, script.Name)
+                        Throw New VI.Pith.OperationFailedException("Failed running script;. {0}:{1}", node.Number, script.Name)
                     End If
                 Else
-                    Throw New OperationFailedException("Failed loading script;. {0}:{1}", node.Number, script.Name)
+                    Throw New VI.Pith.OperationFailedException("Failed loading script;. {0}:{1}", node.Number, script.Name)
                 End If
             Else
                 Me.LoadUserScript(node, script)
                 If Not Me.RunUserScript(node, script) Then
-                    Throw New OperationFailedException("Failed running script;. {0}:{1}", node.Number, script.Name)
+                    Throw New VI.Pith.OperationFailedException("Failed running script;. {0}:{1}", node.Number, script.Name)
                 End If
             End If
 
@@ -3282,8 +3307,8 @@ Public MustInherit Class ScriptManagerBase
 
     ''' <summary> Create a new script on the remote node. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <exception cref="NativeException"> Thrown when a Visa error condition occurs. </exception>
-    ''' <exception cref="DeviceException"> Thrown when a device error condition occurs. </exception>
+    ''' <exception cref="Pith.NativeException"> Thrown when a Visa error condition occurs. </exception>
+    ''' <exception cref="VI.Pith.DeviceException"> Thrown when a device error condition occurs. </exception>
     ''' <param name="node">   The node. </param>
     ''' <param name="script"> . </param>
     ''' <returns> <c>True</c> if okay; otherwise, <c>False</c>. </returns>
@@ -3312,7 +3337,7 @@ Public MustInherit Class ScriptManagerBase
                 Me.StatusSubsystem.EnableWaitComplete()
                 Me.StatusSubsystem.AwaitOperationCompleted(script.Timeout)
                 affirmative = Me.TraceVisaDeviceOperationOkay(node.Number, "loading script '{0}';. ", tempName)
-            Catch ex As NativeException
+            Catch ex As VI.Pith.NativeException
                 Me.TraceVisaOperation(ex, node.Number, "loading script '{0}';. ", tempName)
                 affirmative = False
             Catch ex As Exception
@@ -3327,7 +3352,7 @@ Public MustInherit Class ScriptManagerBase
                         Me.DeleteScript(tempName, False)
                     End If
                     Me.TraceVisaDeviceOperationOkay(node.Number, "deleting script '{0}';. ", tempName)
-                Catch ex As NativeException
+                Catch ex As VI.Pith.NativeException
                     Me.TraceVisaOperation(ex, node.Number, "deleting script '{0}';. ", tempName)
                 Catch ex As Exception
                     Me.TraceOperation(ex, node.Number, "deleting script '{0}';. ", tempName)
@@ -3353,9 +3378,8 @@ Public MustInherit Class ScriptManagerBase
         ' check if the script short name exists.
         If Me.Session.WaitNotNil(node.Number, script.Name, script.Timeout) Then
 
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' loaded script '{1}' to node {2};. ",
-                               Me.ResourceName, script.Name, node.Number)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Instrument '{0}' loaded script '{1}' to node {2};. ",
+                              Me.ResourceNameCaption, script.Name, node.Number)
 
             affirmative = True
 
@@ -3384,9 +3408,8 @@ Public MustInherit Class ScriptManagerBase
                 Else
 
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                       "failed referencing script '{1}' using '{2}' on node {3};. --new script not found on the remote node.{4}{5}",
-                                       Me.ResourceName, script.Name, fullName, node.Number,
-                                       Environment.NewLine, New StackFrame(True).UserCallStack())
+                                      "failed referencing script '{1}' using '{2}' on node {3};. --new script not found on the remote node.{4}{5}",
+                                      Me.ResourceNameCaption, script.Name, fullName, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
                     affirmative = False
 
                 End If
@@ -3394,9 +3417,8 @@ Public MustInherit Class ScriptManagerBase
 
                 ' if both long and short names not found, report failure.
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                   "failed uploading script '{1}' to node {2} from script '{3}';. --new script not found on the remote node.{4}{5}",
-                                   Me.ResourceName, fullName, node.Number, script.Name,
-                                   Environment.NewLine, New StackFrame(True).UserCallStack())
+                                  "failed uploading script '{1}' to node {2} from script '{3}';. --new script not found on the remote node.{4}{5}",
+                                  Me.ResourceNameCaption, fullName, node.Number, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
                 affirmative = False
 
             End If
@@ -3449,7 +3471,7 @@ Public MustInherit Class ScriptManagerBase
             Me.LinkSubsystem.EnableWaitComplete(0)
             Me.StatusSubsystem.AwaitOperationCompleted(timeout)
             affirmative = Me.TraceVisaDeviceOperationOkay(node.Number, "timeout uploading script '{0}';. ", scriptName)
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TraceVisaOperation(ex, node.Number, "timeout uploading script '{0}';. ", scriptName)
         Catch ex As Exception
             Me.TraceOperation(ex, node.Number, "timeout uploading script '{0}';. ", scriptName)
@@ -3474,8 +3496,7 @@ Public MustInherit Class ScriptManagerBase
         If Not Me.Session.IsNil(node.Number, script.Name) Then
             Me.DisplaySubsystem.DisplayLine(2, "{0}:{1} exists--nothing to do", node.Number, script.Name)
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' script {1} already exists on node {2};. Nothing to do.",
-                               Me.ResourceName, script.Name, node.Number)
+                              "Instrument '{0}' script {1} already exists on node {2};. Nothing to do.", Me.ResourceNameCaption, script.Name, node.Number)
             Return
         End If
 
@@ -3491,8 +3512,8 @@ Public MustInherit Class ScriptManagerBase
 
             Me.DisplaySubsystem.DisplayLine(2, "{0}:{1} not found after loading", node.Number, script.Name)
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                               "failed loading script '{1}' to node {2};. --new script not found on the remote node.{3}{4}",
-                               Me.ResourceName, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
+                              "failed loading script '{1}' to node {2};. --new script not found on the remote node.{3}{4}",
+                              Me.ResourceNameCaption, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             Return
 
         End If
@@ -3524,8 +3545,7 @@ Public MustInherit Class ScriptManagerBase
 
         If Not Me.Session.IsNil(script.Name) Then
 
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' script {1} already exists;. ", Me.ResourceName, script.Name)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Instrument '{0}' script {1} already exists;. ", Me.ResourceNameCaption, script.Name)
             Return True
 
         End If
@@ -3537,12 +3557,12 @@ Public MustInherit Class ScriptManagerBase
             If Not affirmative Then
                 ' report failure if not an instrument or VISA error (handler returns Okay.)
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' had error(s) before loading {1};. {2}Problem ignored @{3}",
-                                   Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                  "Instrument '{0}' had error(s) before loading {1};. {2}Problem ignored @{3}",
+                                  Me.ResourceNameCaption, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
             ' ignore device errors.
             affirmative = True
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TraceVisaOperation(ex, "Ready to load {0};. ", script.Name)
             affirmative = False
         Catch ex As Exception
@@ -3557,11 +3577,11 @@ Public MustInherit Class ScriptManagerBase
                 If Not affirmative Then
                     ' report failure if not an instrument or VISA error (handler returns Okay.)
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                       "Instrument '{0}' had error(s) loading {1};. {2}{3}",
-                                       Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                      "Instrument '{0}' had error(s) loading {1};. {2}{3}",
+                                      Me.ResourceNameCaption, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
                 End If
             End If
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TraceVisaOperation(ex, "loading {0};. ", script.Name)
             affirmative = False
         Catch ex As Exception
@@ -3574,12 +3594,11 @@ Public MustInherit Class ScriptManagerBase
             ' do a garbage collection
             If Not Me.StatusSubsystem.CollectGarbageWaitComplete(script.Timeout, "collecting garbage;. ") Then
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                   "Ignoring instrument '{0}' error(s) collecting garbage after loading {1};. {2}{3}",
-                                   Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                  "Ignoring instrument '{0}' error(s) collecting garbage after loading {1};. {2}{3}",
+                                  Me.ResourceNameCaption, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
 
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' {1} script loaded;. ", Me.ResourceName, script.Name)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Instrument '{0}' {1} script loaded;. ", Me.ResourceNameCaption, script.Name)
 
             Me.DisplaySubsystem.DisplayLine(2, "{0} Loaded", script.Name)
         End If
@@ -3613,8 +3632,8 @@ Public MustInherit Class ScriptManagerBase
 
         If Me.Session.IsNil(script.Name) Then
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                               "failed running {1} because it does not exist;. {2}{3}",
-                               Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
+                              "failed running {1} because it does not exist;. {2}{3}",
+                              Me.ResourceNameCaption, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
             Return False
         End If
 
@@ -3622,7 +3641,7 @@ Public MustInherit Class ScriptManagerBase
         If Not runAlways AndAlso script.Namespaces IsNot Nothing AndAlso
             script.Namespaces.Length > 0 AndAlso Not Me.Session.IsNil(script.Namespaces) Then
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' script {1} already run. Nothing to do;. ", Me.ResourceName, script.Name)
+                              "Instrument '{0}' script {1} already run. Nothing to do;. ", Me.ResourceNameCaption, script.Name)
             Return True
         End If
 
@@ -3635,10 +3654,10 @@ Public MustInherit Class ScriptManagerBase
             If Not affirmative Then
                 ' report failure if not an instrument or VISA error (handler returns Okay.)
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' had error(s) running {1};. {2}{3}",
-                                   Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                  "Instrument '{0}' had error(s) running {1};. {2}{3}",
+                                  Me.ResourceNameCaption, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.TraceVisaOperation(ex, "running {0};. ", script.Name)
             affirmative = False
         Catch ex As Exception
@@ -3653,8 +3672,8 @@ Public MustInherit Class ScriptManagerBase
             If Not Me.TraceVisaDeviceOperationOkay(False, "script {0} not found after running;. ", script.Name) Then
                 ' report failure if not an instrument or VISA error (handler returns Okay.)
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' had error(s) running script {1};. {2}{3}",
-                                   Me.ResourceName, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                  "Instrument '{0}' had error(s) running script {1};. {2}{3}",
+                                  Me.ResourceNameCaption, script.Name, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
             affirmative = False
 
@@ -3665,8 +3684,8 @@ Public MustInherit Class ScriptManagerBase
                 For Each value As String In script.Namespaces
                     If Me.Session.IsNil(value) Then
                         Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                           "Instrument '{0}' namespace {1} is nil;. {2}{3}",
-                                           Me.ResourceName, value, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                          "Instrument '{0}' namespace {1} is nil;. {2}{3}",
+                                          Me.ResourceNameCaption, value, Environment.NewLine, New StackFrame(True).UserCallStack())
                     End If
                 Next
             End If
@@ -3675,8 +3694,7 @@ Public MustInherit Class ScriptManagerBase
         Else
 
             Me.DisplaySubsystem.DisplayLine(2, "Done running {0}", script.Name)
-            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' {1} script run okay;. ", Me.ResourceName, script.Name)
+            Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Instrument '{0}' {1} script run okay;. ", Me.ResourceNameCaption, script.Name)
             affirmative = True
 
         End If
@@ -3710,16 +3728,16 @@ Public MustInherit Class ScriptManagerBase
 
         If Me.Session.IsNil(node.Number, script.Name) Then
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                               "failed running {1} because it does not exist on node {2};. {3}{4}",
-                               Me.ResourceName, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
+                              "failed running {1} because it does not exist on node {2};. {3}{4}",
+                              Me.ResourceNameCaption, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             Return False
         End If
 
         If Not runAlways AndAlso script.Namespaces IsNot Nothing AndAlso
             script.Namespaces.Length > 0 AndAlso Not Me.Session.IsNil(node.Number, script.Namespaces) Then
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' script {1} already run on node {2};. Nothing to do.",
-                               Me.ResourceName, script.Name, node.Number)
+                              "Instrument '{0}' script {1} already run on node {2};. Nothing to do.",
+                              Me.ResourceNameCaption, script.Name, node.Number)
             Return True
         End If
 
@@ -3741,16 +3759,16 @@ Public MustInherit Class ScriptManagerBase
                                                            "collecting garbage after running script {0};. ",
                                                            script.Name) Then
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                               "Ignoring instrument '{0}' error(s) collecting garbage after loading script {1} to node {2};. {3}{4}",
-                               Me.ResourceName, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
+                              "Ignoring instrument '{0}' error(s) collecting garbage after loading script {1} to node {2};. {3}{4}",
+                              Me.ResourceNameCaption, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
         End If
 
         If Me.Session.IsNil(node.Number, script.Name) Then
 
             If Not Me.TraceVisaDeviceOperationOkay(node.Number, "script {0} not found after running;. ", script.Name) Then
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' had error(s) loading script {1} to node {2};. {3}{4}",
-                                   Me.ResourceName, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                  "Instrument '{0}' had error(s) loading script {1} to node {2};. {3}{4}",
+                                  Me.ResourceNameCaption, script.Name, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
             Return False
 
@@ -3762,8 +3780,8 @@ Public MustInherit Class ScriptManagerBase
                 For Each value As String In script.Namespaces
                     If Me.Session.IsNil(value) Then
                         Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                           "Instrument '{0}' namespace {1} is nil on node {2};. {3}{4}",
-                                           Me.ResourceName, value, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                          "Instrument '{0}' namespace {1} is nil on node {2};. {3}{4}",
+                                          Me.ResourceNameCaption, value, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
                     End If
                 Next
             End If
@@ -3773,7 +3791,7 @@ Public MustInherit Class ScriptManagerBase
 
             Me.DisplaySubsystem.DisplayLine(2, "Done running {0}:{1}", node.Number, script.Name)
             Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' {1} script run on node {2};. ", Me.ResourceName, script.Name, node.Number)
+                              "Instrument '{0}' {1} script run on node {2};. ", Me.ResourceNameCaption, script.Name, node.Number)
             Return True
 
         End If
@@ -3858,8 +3876,8 @@ Public MustInherit Class ScriptManagerBase
 
         If Me.Session.IsNil(node.IsController, node.Number, scriptName) Then
             Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' custom firmware {1} not saved on node {2};. --it is not loaded. Error may be ignored.{3}{4}",
-                               Me.ResourceName, scriptName, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
+                              "Instrument '{0}' custom firmware {1} not saved on node {2};. --it is not loaded. Error may be ignored.{3}{4}",
+                              Me.ResourceNameCaption, scriptName, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             Return False
         End If
 
@@ -3876,8 +3894,8 @@ Public MustInherit Class ScriptManagerBase
                                                                "collecting garbage before saving script {0} on node {1};. ",
                                                                scriptName, node.Number) Then
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                   "Ignoring instrument '{0}' error(s) collecting garbage after loading {1} on node {2};. {3}{4}",
-                                   Me.ResourceName, scriptName, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                  "Ignoring instrument '{0}' error(s) collecting garbage after loading {1} on node {2};. {3}{4}",
+                                  Me.ResourceNameCaption, scriptName, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
             End If
 
 
@@ -3891,25 +3909,22 @@ Public MustInherit Class ScriptManagerBase
                 End If
 
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "Instrument '{0}' saved script {1} on node {2};. ", Me.ResourceName, scriptName, node.Number)
+                                  "Instrument '{0}' saved script {1} on node {2};. ", Me.ResourceNameCaption, scriptName, node.Number)
 
             Else
 
                 If Not Me.TraceVisaDeviceOperationOkay(node.Number, "saving script {0};. ", scriptName) Then
                     ' report failure if not an instrument or VISA error (handler returns Okay.)
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                       "Instrument '{0}' had error(s) saving script {1} on node {2};. {3}{4}",
-                                       Me.ResourceName, scriptName, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                      "Instrument '{0}' had error(s) saving script {1} on node {2};. {3}{4}",
+                                      Me.ResourceNameCaption, scriptName, node.Number, Environment.NewLine, New StackFrame(True).UserCallStack())
                 End If
                 Return False
 
             End If
 
         Else
-
-            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
-                               "Instrument '{0}' script {1} already saved on node {2};. ",
-                               Me.ResourceName, scriptName, node.Number)
+            Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Instrument '{0}' script {1} already saved on node {2};. ", Me.ResourceNameCaption, scriptName, node.Number)
         End If
 
         Return True
@@ -4004,9 +4019,9 @@ Public MustInherit Class ScriptManagerBase
         Dim prefix As String = ""
 
         If node.IsController Then
-            prefix = String.Format(Globalization.CultureInfo.CurrentCulture, "Instrument '{0}'", Me.ResourceName)
+            prefix = String.Format(Globalization.CultureInfo.CurrentCulture, "Instrument '{0}'", Me.ResourceNameCaption)
         Else
-            prefix = String.Format(Globalization.CultureInfo.CurrentCulture, "Instrument '{0}' node #{1}", Me.ResourceName, node.Number)
+            prefix = String.Format(Globalization.CultureInfo.CurrentCulture, "Instrument '{0}' node #{1}", Me.ResourceNameCaption, node.Number)
         End If
 
         ' run scripts so that we can read their version numbers. Scripts will run only if not ran, namely 
@@ -4016,13 +4031,12 @@ Public MustInherit Class ScriptManagerBase
             ' report any failure.
             If isSecondPass Then
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
-                                   "{0} failed running some firmware scripts because {1};. {2}{3}",
-                                   prefix, scripts.OutcomeDetails, Environment.NewLine, New StackFrame(True).UserCallStack())
+                                  "{0} failed running some firmware scripts because {1};. {2}{3}",
+                                  prefix, scripts.OutcomeDetails, Environment.NewLine, New StackFrame(True).UserCallStack())
                 Return False
             Else
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
-                                   "{0} failed running some firmware scripts because {1}--problem ignored;. ",
-                                   prefix, scripts.OutcomeDetails)
+                                  "{0} failed running some firmware scripts because {1}--problem ignored;. ", prefix, scripts.OutcomeDetails)
             End If
         End If
 

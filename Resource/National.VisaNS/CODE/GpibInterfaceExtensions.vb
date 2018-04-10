@@ -21,10 +21,10 @@ Public Module GpibInterfaceExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             ' Transmit the DCL command to the interface.
-            value.SendCommand(Ieee488.Syntax.BuildDeviceClear.ToArray)
+            value.SendCommand(VI.Pith.Ieee488.Syntax.BuildDeviceClear.ToArray)
         Catch ex As NationalInstruments.VisaNS.VisaException
             Dim nativeError As New NativeError(ex.ErrorCode, value.ResourceName, "@GPIB.DCL", "Clearing Devices")
-            Throw New NativeException(nativeError, ex)
+            Throw New VI.Pith.NativeException(nativeError, ex)
         End Try
     End Sub
 
@@ -37,10 +37,10 @@ Public Module GpibInterfaceExtensions
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         Try
             ' transmit the SDC command
-            value.SendCommand(Ieee488.Syntax.BuildSelectiveDeviceClear(CByte(gpibAddress)).ToArray)
+            value.SendCommand(VI.Pith.Ieee488.Syntax.BuildSelectiveDeviceClear(CByte(gpibAddress)).ToArray)
         Catch ex As NationalInstruments.VisaNS.VisaException
             Dim nativeError As New NativeError(ex.ErrorCode, value.ResourceName, "@GPIB.SDC", "Clearing Device")
-            Throw New NativeException(nativeError, ex)
+            Throw New VI.Pith.NativeException(nativeError, ex)
         End Try
     End Sub
 
@@ -52,7 +52,7 @@ Public Module GpibInterfaceExtensions
     Public Sub SelectiveDeviceClear(ByVal value As NationalInstruments.VisaNS.GpibInterface, ByVal resourceName As String)
         If value Is Nothing Then Throw New ArgumentNullException(NameOf(value))
         If String.IsNullOrWhiteSpace(resourceName) Then Throw New ArgumentNullException(NameOf(resourceName))
-        Dim parseResult As VI.ResourceParseResult = NationalInstruments.VisaNS.ResourceManager.GetLocalManager.ParseResource(resourceName)
+        Dim parseResult As VI.Pith.ResourceNameParseInfo = NationalInstruments.VisaNS.ResourceManager.GetLocalManager.ParseResource(resourceName)
         If parseResult.GpibAddress > 0 Then value.SelectiveDeviceClear(parseResult.GpibAddress)
     End Sub
 

@@ -14,7 +14,7 @@ Public MustInherit Class ProberSubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -89,8 +89,8 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.MessageFailedPattern) Then
-                Me._MessageFailedPattern = value
+            If Not String.Equals(value, Me.MessageFailedPattern, StringComparison.OrdinalIgnoreCase) OrElse
+                Me._MessageFailedPattern = value Then
                 Me.SafeSendPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
@@ -111,8 +111,8 @@ Public MustInherit Class ProberSubsystemBase
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.MessageCompletedPattern) Then
-                Me._MessageCompletedPattern = value
+            If Not String.Equals(value, Me.MessageCompletedPattern, StringComparison.OrdinalIgnoreCase) OrElse
+                Me._MessageCompletedPattern = value Then
                 Me.SafeSendPropertyChanged()
                 Windows.Forms.Application.DoEvents()
             End If
@@ -223,7 +223,7 @@ Public MustInherit Class ProberSubsystemBase
     End Sub
 
     ''' <summary> Synchronously writes and ASCII-encoded string data. Terminates the data with the 
-    '''           <see cref="SessionBase.Termination">termination character</see>. </summary>
+    '''           <see cref="VI.Pith.SessionBase.Termination">termination character</see>. </summary>
     ''' <param name="dataToWrite"> The data to write. </param>
     Public Sub Send(ByVal dataToWrite As String)
         Me.ProberTimer.Stop()
@@ -491,12 +491,12 @@ Public MustInherit Class ProberSubsystemBase
 #Region " READ "
 
     ''' <summary> Attempts to read from the given data. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="raiseException"> true to raise exception. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Function TryRead(ByVal raiseException As Boolean) As Boolean
         Dim affirmative As Boolean = False
-        Dim bits As ServiceRequests = Me.StatusSubsystem.MessageAvailableBits
+        Dim bits As VI.Pith.ServiceRequests = Me.StatusSubsystem.MessageAvailableBits
         Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Awaiting SRQ bits {0:X2}", CInt(bits))
         If Me.StatusSubsystem.TryAwaitServiceRequest(bits, TimeSpan.FromMilliseconds(1000), TimeSpan.FromMilliseconds(10)) Then
             Me.FetchAndParse()
@@ -504,20 +504,20 @@ Public MustInherit Class ProberSubsystemBase
                 affirmative = True
             ElseIf Me.MessageFailed Then
                 If raiseException Then
-                    Throw New OperationFailedException("Message Failed received attempting to read;. ")
+                    Throw New VI.Pith.OperationFailedException("Message Failed received attempting to read;. ")
                 Else
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Message Failed received attempting to read;. ")
                 End If
             Else
                 If raiseException Then
-                    Throw New OperationFailedException("Unexpected reply '{0}' when reading;. ", Me.LastReading)
+                    Throw New VI.Pith.OperationFailedException("Unexpected reply '{0}' when reading;. ", Me.LastReading)
                 Else
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Unexpected reply '{0}' when reading;. ", Me.LastReading)
                 End If
             End If
         Else
             If raiseException Then
-                Throw New OperationFailedException("Timeout waiting SRQ bits {0:X2} when reading;. ", CInt(bits))
+                Throw New VI.Pith.OperationFailedException("Timeout waiting SRQ bits {0:X2} when reading;. ", CInt(bits))
             Else
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, "Timeout waiting SRQ bits {0:X2} when reading;. ", CInt(bits))
             End If

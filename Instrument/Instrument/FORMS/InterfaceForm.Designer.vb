@@ -169,7 +169,7 @@ Partial Class InterfaceForm
     Private WithEvents _InterfaceTabPage As System.Windows.Forms.TabPage
     Private WithEvents _ConnectTabLayout As System.Windows.Forms.TableLayoutPanel
     Private WithEvents _InterfaceGroupBox As System.Windows.Forms.GroupBox
-    Private WithEvents _InterfacePanel As isr.VI.Instrument.InterfacePanel
+    Private WithEvents _InterfacePanel As VI.Instrument.InterfacePanel
     Private WithEvents _ToolTip As System.Windows.Forms.ToolTip
     Private WithEvents _StatusStrip As System.Windows.Forms.StatusStrip
     Private WithEvents _StatusLabel As System.Windows.Forms.ToolStripStatusLabel

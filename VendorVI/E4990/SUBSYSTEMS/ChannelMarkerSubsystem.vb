@@ -9,7 +9,7 @@
 ''' </para> </license>
 ''' <history date="7/6/2016" by="David" revision="4.0.6031"> Created. </history>
 Public Class ChannelMarkerSubsystem
-    Inherits VI.Scpi.ChannelMarkerSubsystemBase
+    Inherits VI.ChannelMarkerSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
@@ -17,12 +17,12 @@ Public Class ChannelMarkerSubsystem
     ''' Initializes a new instance of the <see cref="SourceChannelSubsystem" /> class.
     ''' </summary>
     ''' <param name="markerNumber">    The marker number. </param>
-    ''' <param name="channelNumber">   A reference to a <see cref="VI.StatusSubsystemBase">message
+    ''' <param name="channelNumber">   A reference to a <see cref="StatusSubsystemBase">message
     '''                                based session</see>. </param>
     ''' <param name="statusSubsystem"> The status subsystem. </param>
     Public Sub New(ByVal markerNumber As Integer, ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(markerNumber, channelNumber, statusSubsystem)
-        Me._readings = New MarkerReadings
+        Me.MarkerReadings = New MarkerReadings
     End Sub
 
 #End Region
@@ -47,16 +47,15 @@ Public Class ChannelMarkerSubsystem
     ''' </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me._Readings.Reset()
-        Me.MeasurementAvailable = False
+        Me.MarkerReadings.Reset()
     End Sub
 
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
     ''' <remarks> Use this method to customize the reset. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me._Readings.Initialize(ReadingTypes.Primary Or ReadingTypes.Secondary)
-        Me.SafePostPropertyChanged(NameOf(E4990.ChannelMarkerSubsystem.Readings))
+        Me.MarkerReadings.Initialize(ReadingTypes.Primary Or ReadingTypes.Secondary)
+        Me.SafePostPropertyChanged(NameOf(E4990.ChannelMarkerSubsystem.MarkerReadings))
     End Sub
 
 #End Region
@@ -120,31 +119,33 @@ Public Class ChannelMarkerSubsystem
 
 #Region " LATEST DATA "
 
+    Private _MarkerReadings As MarkerReadings
     ''' <summary> Returns the readings. </summary>
     ''' <returns> The readings. </returns>
-    Public ReadOnly Property Readings() As MarkerReadings
+    Public Property MarkerReadings() As MarkerReadings
+        Get
+            Return Me._MarkerReadings
+        End Get
+        Set(value As MarkerReadings)
+            Me._markerReadings = value
+            MyBase.AssignReadingAmounts(value)
+        End Set
+    End Property
+
 
     ''' <summary> Parses a new set of reading elements. </summary>
     ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
-    Public Overrides Sub ParseReading(ByVal reading As String)
-
-        ' check if we have units suffixes.
-        If (Me.Readings.Elements And isr.VI.ReadingTypes.Units) <> 0 Then
-            reading = ReadingEntity.TrimUnits(reading)
-        End If
-
-        ' Take a reading and parse the results
-        Me.Readings.TryParse(reading)
-
-    End Sub
+    Public Overrides Function ParseReading(ByVal reading As String) As Double?
+        Return MyBase.ParseReadingAmounts(reading)
+    End Function
 
     ''' <summary> Initializes the marker average. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="device"> The device. </param>
     Public Sub InitializeMarkerAverage(ByVal device As Device)
         If device Is Nothing Then Throw New ArgumentNullException(NameOf(device))
-        Me.Readings.Reset()
-        device.TriggerSubsystem.ApplyTriggerSource(TriggerSources.Bus)
+        Me.MarkerReadings.Reset()
+        device.TriggerSubsystem.ApplyTriggerSource(Scpi.TriggerSources.Bus)
         device.CalculateChannelSubsystem.ClearAverage()
         device.TriggerSubsystem.ApplyAveragingEnabled(True)
         device.TriggerSubsystem.Immediate()

@@ -241,16 +241,16 @@ Public Class DeviceUnderTest
         Get
             Dim value As String = DeviceUnderTest.BuildUniqueKey(Me.PartNumber, Me.SampleNumber)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me._uniqueKey) Then
-                Me._uniqueKey = value
+            If Not String.Equals(value, Me._UniqueKey, StringComparison.OrdinalIgnoreCase) Then
+                Me._UniqueKey = value
                 Me.SafePostPropertyChanged(NameOf(Ttm.DeviceUnderTest.UniqueKey))
             End If
             Return Me._uniqueKey
         End Get
         Protected Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.UniqueKey) Then
-                Me._uniqueKey = value
+            If Not String.Equals(value, Me.UniqueKey, StringComparison.OrdinalIgnoreCase) Then
+                Me._UniqueKey = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -308,7 +308,7 @@ Public Class DeviceUnderTest
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.PartNumber) Then
+            If Not String.Equals(value, Me.PartNumber, StringComparison.OrdinalIgnoreCase) Then
                 Me._PartNumber = value
                 Me.SafePostPropertyChanged()
             End If
@@ -324,7 +324,7 @@ Public Class DeviceUnderTest
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.LotId) Then
+            If Not String.Equals(value, Me.LotId, StringComparison.OrdinalIgnoreCase) Then
                 Me._LotId = value
                 Me.SafePostPropertyChanged()
             End If
@@ -340,7 +340,7 @@ Public Class DeviceUnderTest
         End Get
         Set(ByVal value As String)
             If String.IsNullOrWhiteSpace(value) Then value = ""
-            If Not value.Equals(Me.OperatorId) Then
+            If Not String.Equals(value, Me.OperatorId, StringComparison.OrdinalIgnoreCase) Then
                 Me._OperatorId = value
                 Me.SafePostPropertyChanged()
             End If

@@ -17,12 +17,20 @@ Public MustInherit Class MasterDeviceBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="MasterDeviceBase" /> class. </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Protected Sub New()
-        MyBase.New()
-        AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
+        Me.New(StatusSubsystem.Create)
     End Sub
 
-#Region " I Disposable Support"
+    ''' <summary> Specialized constructor for use only by derived class. </summary>
+    ''' <param name="statusSubsystem"> The Status Subsystem. </param>
+    Protected Sub New(ByVal statusSubsystem As StatusSubsystem)
+        MyBase.New(StatusSubsystem.Validated(statusSubsystem))
+        AddHandler My.Settings.PropertyChanged, AddressOf Me._Settings_PropertyChanged
+        Me.StatusSubsystem = statusSubsystem
+    End Sub
+
+#Region " I Disposable Support "
 
     ''' <summary>
     ''' Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control" />
@@ -39,7 +47,10 @@ Public MustInherit Class MasterDeviceBase
     Protected Overrides Sub Dispose(disposing As Boolean)
         Try
             If Not Me.IsDisposed AndAlso disposing Then
-                If Me.IsDeviceOpen Then Me.OnClosing(New isr.Core.Pith.CancelDetailsEventArgs)
+                If Me.IsDeviceOpen Then
+                    Me.OnClosing(New ComponentModel.CancelEventArgs)
+                    Me.StatusSubsystem = Nothing
+                End If
             End If
         Catch ex As Exception
             Debug.Assert(Not Debugger.IsAttached, "Exception disposing device", "Exception {0}", ex.ToFullBlownString)
@@ -70,7 +81,7 @@ Public MustInherit Class MasterDeviceBase
     ''' event handlers. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub OnClosing(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+    Protected Overrides Sub OnClosing(ByVal e As ComponentModel.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnClosing(e)
         If Not e.Cancel Then
@@ -89,17 +100,13 @@ Public MustInherit Class MasterDeviceBase
                     Debug.Assert(Not Debugger.IsAttached, "Exception disposing", "{0}", ex.ToFullBlownString)
                 End Try
             End If
-
-            If Me._StatusSubsystem IsNot Nothing Then
-                RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
-            End If
         End If
     End Sub
 
     ''' <summary> Allows the derived device to take actions before opening. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub OnOpening(ByVal e As isr.Core.Pith.CancelDetailsEventArgs)
+    Protected Overrides Sub OnOpening(ByVal e As ComponentModel.CancelEventArgs)
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnOpening(e)
         If Not e.Cancel Then
@@ -120,7 +127,7 @@ Public MustInherit Class MasterDeviceBase
             Me.InteractiveSubsystem.ProcessExecutionStateEnabled = True
 
             MyBase.OnOpened()
-            Me.StatusSubsystem.EnableServiceRequest(ServiceRequests.None)
+            Me.StatusSubsystem.EnableServiceRequest(VI.Pith.ServiceRequests.None)
 
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
@@ -148,32 +155,31 @@ Public MustInherit Class MasterDeviceBase
         Set(value As StatusSubsystem)
             If Me._StatusSubsystem IsNot Nothing Then
                 RemoveHandler Me.StatusSubsystem.PropertyChanged, AddressOf Me.StatusSubsystemPropertyChanged
-                Me.RemoveSubsystem(Me.StatusSubsystem)
-                Me.StatusSubsystem.Dispose()
                 Me._StatusSubsystem = Nothing
             End If
             Me._StatusSubsystem = value
             If Me._StatusSubsystem IsNot Nothing Then
                 AddHandler Me.StatusSubsystem.PropertyChanged, AddressOf StatusSubsystemPropertyChanged
-                Me.AddSubsystem(Me.StatusSubsystem)
             End If
-            Me.StatusSubsystemBase = value
         End Set
     End Property
 
-    ''' <summary> Executes the subsystem property changed action. </summary>
+    ''' <summary> Handles the subsystem property change. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Protected Overrides Sub OnPropertyChanged(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
-        Me.OnPropertyChanged(CType(subsystem, StatusSubsystem), propertyName)
+    Protected Overrides Sub HandlePropertyChange(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
+        MyBase.HandlePropertyChange(subsystem, propertyName)
+        If Me.StatusSubsystem IsNot Nothing And Not String.IsNullOrWhiteSpace(propertyName) Then
+            Me.HandlePropertyChange(CType(subsystem, StatusSubsystem), propertyName)
+        End If
     End Sub
 
-    ''' <summary> Executes the subsystem property changed action. </summary>
+    ''' <summary> Handles the subsystem property change. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")>
-    Protected Overloads Sub OnPropertyChanged(ByVal subsystem As StatusSubsystem, ByVal propertyName As String)
-        MyBase.OnPropertyChanged(subsystem, propertyName)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As StatusSubsystem, ByVal propertyName As String)
+        MyBase.HandlePropertyChange(subsystem, propertyName)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
         End Select
@@ -184,13 +190,16 @@ Public MustInherit Class MasterDeviceBase
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Protected Overloads Sub StatusSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
-        Dim subsystem As StatusSubsystem = TryCast(sender, StatusSubsystem)
-        If subsystem Is Nothing OrElse e Is Nothing Then Return
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(StatusSubsystem)}.{e.PropertyName} change"
         Try
-            Me.OnPropertyChanged(subsystem, e.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, StatusSubsystem), e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"{Me.ResourceName} exception handling {NameOf(StatusSubsystem)}.{e.PropertyName} change;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 
@@ -211,7 +220,7 @@ Public MustInherit Class MasterDeviceBase
     Public Property SourceMeasureUnit As VI.Tsp.SourceMeasureUnitBase
 
     ''' <summary> Gets or sets the contact subsystem. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <value> The contact subsystem. </value>
     Public Property ContactSubsystem As VI.Tsp.ContactSubsystemBase
 
@@ -224,12 +233,12 @@ Public MustInherit Class MasterDeviceBase
     Public Property SourceMeasureUnitMeasure As MeasureResistanceSubsystemBase
 
     ''' <summary> Gets or sets the link subsystem. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <value> The link subsystem. </value>
     Public Property LinkSubsystem As LinkSubsystemBase
 
     ''' <summary> Gets or sets the interactive subsystem. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <value> The interactive subsystem. </value>
     Public Property InteractiveSubsystem As LocalNodeSubsystemBase
 
@@ -241,9 +250,9 @@ Public MustInherit Class MasterDeviceBase
     Public Sub CheckContacts(ByVal threshold As Integer)
         Me.ContactSubsystem.CheckContacts(threshold)
         If Not Me.ContactSubsystem.ContactCheckOkay.HasValue Then
-            Throw New OperationFailedException("Failed Measuring contacts;. ")
+            Throw New VI.Pith.OperationFailedException("Failed Measuring contacts;. ")
         ElseIf Not Me.ContactSubsystem.ContactCheckOkay.Value Then
-            Throw New OperationFailedException("High contact resistances;. Values: '{0}'", Me.ContactSubsystem.ContactResistances)
+            Throw New VI.Pith.OperationFailedException("High contact resistances;. Values: '{0}'", Me.ContactSubsystem.ContactResistances)
         End If
     End Sub
 
@@ -295,14 +304,20 @@ Public MustInherit Class MasterDeviceBase
     ''' <summary> Applies the settings. </summary>
     Protected Overrides Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
-        Me.OnSettingsPropertyChanged(settings, NameOf(My.MySettings.TraceLogLevel))
-        Me.OnSettingsPropertyChanged(settings, NameOf(My.MySettings.TraceShowLevel))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.TraceLogLevel))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.TraceShowLevel))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.InitializeTimeout))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.ResetRefractoryPeriod))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.DeviceClearRefractoryPeriod))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.InitRefractoryPeriod))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.ClearRefractoryPeriod))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.SessionMessageNotificationLevel))
     End Sub
 
     ''' <summary> Handle the Platform property changed event. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Sub OnSettingsPropertyChanged(ByVal sender As My.MySettings, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal sender As My.MySettings, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(My.MySettings.TraceLogLevel)
@@ -334,12 +349,16 @@ Public MustInherit Class MasterDeviceBase
     ''' <param name="e">      Property Changed event information. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _Settings_PropertyChanged(sender As Object, e As ComponentModel.PropertyChangedEventArgs)
-        Dim settings As My.MySettings = TryCast(sender, My.MySettings)
-        If settings Is Nothing OrElse e Is Nothing Then Return
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(My.MySettings)}.{e.PropertyName} change"
         Try
-            Me.OnSettingsPropertyChanged(settings, e.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, My.MySettings), e.PropertyName)
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception handling Settings.{e.PropertyName} property;. {ex.ToFullBlownString}")
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
         End Try
     End Sub
 

@@ -71,7 +71,7 @@ Public Class ReadingValue
                 Me._Value = value
                 Return True
             Else
-                Me._Value = Scpi.Syntax.NotANumber
+                Me._Value = VI.Pith.Scpi.Syntax.NotANumber
                 Return False
             End If
         Else

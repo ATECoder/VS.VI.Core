@@ -42,10 +42,12 @@ Public Class TraceEventIdentities
     ''' <summary> Initializes before each test runs. </summary>
     <TestInitialize()> Public Sub MyTestInitialize()
         Assert.IsTrue(TestInfo.Exists, "App.Config not found")
+        TestInfo.ClearMessageQueue()
     End Sub
 
     ''' <summary> Cleans up after each test has run. </summary>
     <TestCleanup()> Public Sub MyTestCleanup()
+        TestInfo.AssertMessageQueue()
     End Sub
 
     '''<summary>
@@ -79,7 +81,7 @@ Public Class TraceEventIdentities
     Public Sub SaveTestEventIdentities()
         Dim fileName As String = TestInfo.TraceEventProjectIdentitiesFileName
         Dim values As New List(Of KeyValuePair(Of String, Integer))
-        For Each value As Global.isr.VI.My.ProjectTraceEventId In [Enum].GetValues(GetType(Global.isr.VI.My.ProjectTraceEventId))
+        For Each value As Global.isr.VI.Pith.My.ProjectTraceEventId In [Enum].GetValues(GetType(Global.isr.VI.Pith.My.ProjectTraceEventId))
             values.Add(New KeyValuePair(Of String, Integer)(isr.Core.Pith.EnumExtensions.Description(value), value))
         Next
         TraceEventIdentities.SaveTraceEventIdentities(fileName, OpenMode.Output, values)

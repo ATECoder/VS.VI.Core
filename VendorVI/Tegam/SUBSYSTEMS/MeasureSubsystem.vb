@@ -10,12 +10,12 @@ Imports isr.Core.Pith.EnumExtensions
 ''' </para> </license>
 ''' <history date="10/7/2013" by="David" revision=""> Created. </history>
 Public Class MeasureSubsystem
-    Inherits VI.R2D2.MeasureSubsystemBase
+    Inherits VI.MeasureSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="MeasureSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -37,7 +37,7 @@ Public Class MeasureSubsystem
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
         Me.LastReading = ""
-        Me.Resistance = New Double?
+        Me.MeasuredValue = New Double?
         Me.OverRangeOpenWire = New Boolean?
     End Sub
 
@@ -48,7 +48,7 @@ Public Class MeasureSubsystem
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me.LastReading = ""
-        Me.Resistance = New Double?
+        Me.MeasuredValue = New Double?
         Me.OverRangeOpenWire = New Boolean?
     End Sub
 
@@ -114,31 +114,20 @@ Public Class MeasureSubsystem
 
     ''' <summary> Fetches the data. </summary>
     ''' <remarks> the Tegam meter does not require issuing a read command. </remarks>
-    Public Overrides Sub Fetch()
-        Me.Read()
-    End Sub
+    Public Overrides Function Fetch() As Double?
+        Return Me.Read()
+    End Function
 
     ''' <summary> Fetches the data. </summary>
     ''' <remarks> the Tegam meter does not require issuing a read command. </remarks>
-    Public Overrides Sub Read()
-        Me.Read(False)
-    End Sub
-
-    ''' <summary> Fetches the data. </summary>
-    ''' <param name="syncNotifyMeasurementAvailable"> The synchronization notify measurement available
-    ''' to read. </param>
-    Public Overloads Sub Read(ByVal syncNotifyMeasurementAvailable As Boolean)
-        Me.LastReading = Me.Session.ReadLineTrimEnd
+    Public Overrides Function Read() As Double?
+        Dim value As String = Me.Session.ReadLineTrimEnd
         If Not String.IsNullOrWhiteSpace(Me.LastReading) Then
             ' the emulator will set the last reading. 
-            Me.ParseReading(Me.LastReading)
-            If syncNotifyMeasurementAvailable Then
-                Me.MeasurementAvailable = True
-            Else
-                Me.AsyncMeasurementAvailable(True)
-            End If
+            Me.MeasuredValue = Me.ParseReading(value)
         End If
-    End Sub
+        Return Me.MeasuredValue
+    End Function
 
 #End Region
 
@@ -158,21 +147,6 @@ Public Class MeasureSubsystem
 #End Region
 
 #Region " PARSE READING "
-
-    Private _Resistance As Double?
-
-    ''' <summary> Gets or sets the resistance. </summary>
-    ''' <value> The resistance. </value>
-    Public Property Resistance As Double?
-        Get
-            Return Me._resistance
-        End Get
-        Set(ByVal value As Double?)
-            Me._resistance = value
-            Me.SafePostPropertyChanged()
-            Windows.Forms.Application.DoEvents()
-        End Set
-    End Property
 
     ''' <summary> Parse scale. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
@@ -197,8 +171,7 @@ Public Class MeasureSubsystem
 
     ''' <summary> Parses a new set of reading elements. </summary>
     ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
-    Public Overrides Sub ParseReading(ByVal reading As String)
-
+    Private Shared Function ParseReadings(ByVal reading As String) As Tuple(Of Boolean?, Double?)
         Dim overRanges As String() = New String() {"2.9999", "29.999", "299.99", "2999.9", "29999"}
         Dim res As New Double?
         Dim overRange As New Boolean?
@@ -229,11 +202,18 @@ Public Class MeasureSubsystem
                 res = New Double?
             End If
         End If
-        ' update the resistance last as it is used when property changed.
-        Me.OverRangeOpenWire = overRange
-        Me.Resistance = res
+        Return New Tuple(Of Boolean?, Double?)(overRange, res)
+    End Function
+
+    ''' <summary> Parses the reading into the data elements. </summary>
+    ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
+    ''' <returns> A Double? </returns>
+    Public Overrides Function ParseReading(ByVal reading As String) As Double?
+        Dim result As Tuple(Of Boolean?, Double?) = MeasureSubsystem.ParseReadings(reading)
+        Me.OverRangeOpenWire = result.Item1
         Windows.Forms.Application.DoEvents()
-    End Sub
+        Return result.Item2
+    End Function
 
 #End Region
 
@@ -783,38 +763,34 @@ Public Class MeasureSubsystem
     Public Property EmulatedResistanceRange As Double = 0.1
 
     ''' <summary> Measures a resistance using the measurement sequence. </summary>
-    Public Sub Measure()
-
+    Public Overloads Sub Measure()
         Dim measurements As New List(Of Double?)
         Dim finalValue As Double? = New Double?
         Dim delayTime As TimeSpan = Me.InitialDelay
+        Dim resistance As Double? = New Double?
         Do
-            Me.Session.EmulatedStatusByte = VI.ServiceRequests.MeasurementEvent
+            Me.Session.EmulatedStatusByte = VI.Pith.ServiceRequests.MeasurementEvent
             Me.StatusSubsystem.ReadEventRegisters()
             Windows.Forms.Application.DoEvents()
             If Not Me.StatusSubsystem.ErrorAvailable Then
-                MeasureSubsystem.wait(delayTime, TimeSpan.FromMilliseconds(10))
+                MeasureSubsystem.Wait(delayTime, TimeSpan.FromMilliseconds(10))
                 delayTime = Me.MeasurementDelay
                 Me.Session.MakeEmulatedReply(Me.NewReading(Me.EmulatedResistanceAverage, Me.EmulatedResistanceRange))
                 Me.LastReading = Me.Session.ReadLineTrimEnd
                 Windows.Forms.Application.DoEvents()
                 If String.IsNullOrWhiteSpace(Me.LastReading) Then
                     Me.OverRangeOpenWire = False
-                    Me.Resistance = New Double?
+                    resistance = New Double?
                     Windows.Forms.Application.DoEvents()
                 Else
                     ' the emulator will set the last reading. 
-                    Me.ParseReading(Me.LastReading)
+                    resistance = Me.ParseReading(Me.LastReading)
                     Windows.Forms.Application.DoEvents()
                 End If
-                measurements.Add(Me.Resistance)
+                measurements.Add(resistance)
             End If
         Loop Until Me.StatusSubsystem.ErrorAvailable OrElse Me.AreMeasurementsDone(measurements, finalValue)
-        Me.Resistance = finalValue
-        Windows.Forms.Application.DoEvents()
-        Me.MeasurementAvailable = True
-        ' This caused cross-thread exception:
-        ' me.AsyncMeasurementAvailable(True)
+        Me.MeasuredValue = finalValue
         Windows.Forms.Application.DoEvents()
     End Sub
 
@@ -822,3 +798,24 @@ Public Class MeasureSubsystem
 
 End Class
 
+#Region " UNUSED "
+#If False Then
+Private _Resistance As Double?
+
+    ''' <summary> Gets or sets the resistance. </summary>
+    ''' <value> The resistance. </value>
+    Public Property Resistance As Double?
+        Get
+            Return Me._resistance
+        End Get
+        Set(ByVal value As Double?)
+            Me._Resistance = value
+            Me.MeasuredValue = value
+            Me.SafePostPropertyChanged()
+            Windows.Forms.Application.DoEvents()
+        End Set
+    End Property
+
+#End If
+
+#End Region

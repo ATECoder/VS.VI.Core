@@ -109,7 +109,7 @@ Partial Class E4990Control
         Me._MessagesTabPage = New System.Windows.Forms.TabPage()
         Me._LastErrorTextBox = New System.Windows.Forms.TextBox()
         Me._ReadingStatusStrip = New System.Windows.Forms.StatusStrip()
-        Me._FailureCodeToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me._FailureToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._ReadingToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._LastReadingTextBox = New System.Windows.Forms.TextBox()
         Me._Panel = New System.Windows.Forms.Panel()
@@ -1272,7 +1272,7 @@ Partial Class E4990Control
         Me._ReadingStatusStrip.Dock = System.Windows.Forms.DockStyle.Top
         Me._ReadingStatusStrip.Font = New System.Drawing.Font("Segoe UI", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ReadingStatusStrip.GripMargin = New System.Windows.Forms.Padding(0)
-        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._FailureCodeToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._StatusRegisterLabel, Me._StandardRegisterLabel})
+        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._FailureToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._StatusRegisterLabel, Me._StandardRegisterLabel})
         Me._ReadingStatusStrip.Location = New System.Drawing.Point(0, 0)
         Me._ReadingStatusStrip.Name = "_ReadingStatusStrip"
         Me._ReadingStatusStrip.Size = New System.Drawing.Size(364, 37)
@@ -1281,14 +1281,14 @@ Partial Class E4990Control
         '
         '_FailureCodeToolStripStatusLabel
         '
-        Me._FailureCodeToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._FailureCodeToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._FailureCodeToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
-        Me._FailureCodeToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
-        Me._FailureCodeToolStripStatusLabel.Name = "_FailureCodeToolStripStatusLabel"
-        Me._FailureCodeToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
-        Me._FailureCodeToolStripStatusLabel.Text = "C"
-        Me._FailureCodeToolStripStatusLabel.ToolTipText = "Compliance"
+        Me._FailureToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._FailureToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._FailureToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
+        Me._FailureToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
+        Me._FailureToolStripStatusLabel.Name = "_FailureCodeToolStripStatusLabel"
+        Me._FailureToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
+        Me._FailureToolStripStatusLabel.Text = "C"
+        Me._FailureToolStripStatusLabel.ToolTipText = "Compliance"
         '
         '_ReadingToolStripStatusLabel
         '
@@ -1433,7 +1433,7 @@ Partial Class E4990Control
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
-    Private WithEvents _FailureCodeToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _FailureToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _LastReadingTextBox As System.Windows.Forms.TextBox
     Private WithEvents _Panel As System.Windows.Forms.Panel

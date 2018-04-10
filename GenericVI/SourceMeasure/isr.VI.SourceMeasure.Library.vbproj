@@ -57,6 +57,7 @@
     <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
@@ -69,6 +70,9 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Pith\ShareMyLibrary_Log.vb">
+      <Link>My\ShareMyLibrary_Log.vb</Link>
+    </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
@@ -81,7 +85,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="My\MyLibraryInfo.vb" />
+    <Compile Include="My\MyLibrary_Info.vb" />
+    <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="PRIMITIVES\InsulationTest.vb" />
     <Compile Include="SUBSYSTEMS\ArmLayerSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\Calculate2Subsystem.vb" />
@@ -89,8 +94,7 @@
     <Compile Include="SUBSYSTEMS\ConstantsEnums.vb" />
     <Compile Include="SUBSYSTEMS\Device.vb" />
     <Compile Include="SUBSYSTEMS\FormatSubsystem.vb" />
-    <Compile Include="SUBSYSTEMS\Readings.vb" />
-    <Compile Include="SUBSYSTEMS\SenseSubsystemPartial.vb" />
+    <Compile Include="PRIMITIVES\Readings.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

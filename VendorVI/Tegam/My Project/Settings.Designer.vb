@@ -232,18 +232,31 @@ Namespace My
                 Me("InitRefractoryPeriod") = value
             End Set
         End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>  _
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>
         Public Property ClearRefractoryPeriod() As Global.System.TimeSpan
             Get
-                Return CType(Me("ClearRefractoryPeriod"),Global.System.TimeSpan)
+                Return CType(Me("ClearRefractoryPeriod"), Global.System.TimeSpan)
             End Get
             Set
                 Me("ClearRefractoryPeriod") = value
             End Set
         End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("0")>
+        Public Property SessionMessageNotificationLevel() As Integer
+            Get
+                Return CType(Me("SessionMessageNotificationLevel"), Integer)
+            End Get
+            Set
+                Me("SessionMessageNotificationLevel") = Value
+            End Set
+        End Property
+
     End Class
 End Namespace
 

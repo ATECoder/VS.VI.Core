@@ -14,12 +14,12 @@ Public Class SenseChannelSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SourceChannelSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(channelNumber, statusSubsystem)
-        Me.SupportedAdapterTypes = VI.AdapterType.E4M1 Or VI.AdapterType.E4M2 Or VI.AdapterType.None
-        Me.SupportedSweepTypes = VI.SweepType.Linear Or VI.SweepType.Logarithmic
+        Me.SupportedAdapterTypes = Scpi.AdapterType.E4M1 Or Scpi.AdapterType.E4M2 Or Scpi.AdapterType.None
+        Me.SupportedSweepTypes = Scpi.SweepType.Linear Or Scpi.SweepType.Logarithmic
     End Sub
 
 #End Region
@@ -43,12 +43,12 @@ Public Class SenseChannelSubsystem
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.ApertureRange = New isr.Core.Pith.RangeR(1, 5)
-        Me.AdapterType = VI.AdapterType.None
+        Me.AdapterType = Scpi.AdapterType.None
         Me.SweepPoints = 201
         Me.SweepStart = 20
         Me.SweepStop = 10000000.0
-        Me.SweepType = VI.SweepType.Linear
-        Me.FrequencyPointsType = VI.FrequencyPointsType.Fixed
+        Me.SweepType = Scpi.SweepType.Linear
+        Me.FrequencyPointsType = Scpi.FrequencyPointsType.Fixed
     End Sub
 
 #End Region

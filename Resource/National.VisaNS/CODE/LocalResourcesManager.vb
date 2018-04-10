@@ -10,12 +10,12 @@
 ''' </para> </license>
 ''' <history date="09/10/2013" by="David" revision="3.0.5001.x"> Created. </history>
 Public Class LocalResourcesManager
-        Inherits ResourcesManagerBase
+    Inherits VI.Pith.ResourcesManagerBase
 
 #Region " CONSTRUCTOR "
 
-        ''' <summary> Default constructor. </summary>
-        Public Sub New()
+    ''' <summary> Default constructor. </summary>
+    Public Sub New()
             MyBase.New
         End Sub
 
@@ -57,7 +57,7 @@ Public Class LocalResourcesManager
     ''' <summary> Parse resource. </summary>
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
-    Public Overrides Function ParseResource(ByVal resourceName As String) As VI.ResourceParseResult
+    Public Overrides Function ParseResource(ByVal resourceName As String) As VI.Pith.ResourceNameParseInfo
             Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.ParseResource(resourceName)
         End Function
 
@@ -128,7 +128,7 @@ Public Class LocalResourcesManager
         ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
         ''' <returns> The found interface resource names. </returns>
         Public Overrides Function FindInterfaces() As IEnumerable(Of String)
-            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindResources(VI.ResourceNamesManager.BuildInterfaceFilter)
+            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindResources(VI.Pith.ResourceNamesManager.BuildInterfaceFilter)
         End Function
 
         ''' <summary> Tries to find interfaces. </summary>
@@ -143,103 +143,103 @@ Public Class LocalResourcesManager
             Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInterfaces(resources)
         End Function
 
-        ''' <summary> Searches for the interfaces. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <param name="interfaceType"> Type of the interface. </param>
-        ''' <returns> The found interface resource names. </returns>
-        Public Overrides Function FindInterfaces(ByVal interfaceType As HardwareInterfaceType) As IEnumerable(Of String)
-            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindResources(VI.ResourceNamesManager.BuildInterfaceFilter(interfaceType))
-        End Function
+    ''' <summary> Searches for the interfaces. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="interfaceType"> Type of the interface. </param>
+    ''' <returns> The found interface resource names. </returns>
+    Public Overrides Function FindInterfaces(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
+        Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindResources(VI.Pith.ResourceNamesManager.BuildInterfaceFilter(interfaceType))
+    End Function
 
-        ''' <summary> Tries to find interfaces. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <param name="interfaceType"> Type of the interface. </param>
-        ''' <param name="resources">     [in,out] The resources. </param>
-        ''' <returns> <c>True</c> if interfaces were located or false if failed or no instrument resources were
-        ''' located. If exception occurred, the exception details are returned in the first element of the
-        ''' <paramref name="resources"/>. </returns>
-        <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="0#")>
-        Public Overrides Function TryFindInterfaces(ByVal interfaceType As HardwareInterfaceType, ByRef resources As IEnumerable(Of String)) As Boolean
-            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInterfaces(interfaceType, resources)
-        End Function
+    ''' <summary> Tries to find interfaces. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="interfaceType"> Type of the interface. </param>
+    ''' <param name="resources">     [in,out] The resources. </param>
+    ''' <returns> <c>True</c> if interfaces were located or false if failed or no instrument resources were
+    ''' located. If exception occurred, the exception details are returned in the first element of the
+    ''' <paramref name="resources"/>. </returns>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="0#")>
+    Public Overrides Function TryFindInterfaces(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByRef resources As IEnumerable(Of String)) As Boolean
+        Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInterfaces(interfaceType, resources)
+    End Function
 
 #End Region
 
 #Region " INSTRUMENTS  "
 
-        ''' <summary> Searches for the instrument. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <param name="resourceName"> The instrument resource name. </param>
-        ''' <returns> <c>True</c> if the instrument was located; Otherwise, <c>False</c>. </returns>
-        Public Overrides Function InstrumentExists(ByVal resourceName As String) As Boolean
-            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.InstrumentExists(resourceName)
-        End Function
+    ''' <summary> Searches for the instrument. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="resourceName"> The instrument resource name. </param>
+    ''' <returns> <c>True</c> if the instrument was located; Otherwise, <c>False</c>. </returns>
+    Public Overrides Function InstrumentExists(ByVal resourceName As String) As Boolean
+        Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.InstrumentExists(resourceName)
+    End Function
 
-        ''' <summary> Searches for instruments. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <returns> The found instrument resource names. </returns>
-        Public Overrides Function FindInstruments() As IEnumerable(Of String)
-            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindResources(VI.ResourceNamesManager.BuildInstrumentFilter())
-        End Function
+    ''' <summary> Searches for instruments. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <returns> The found instrument resource names. </returns>
+    Public Overrides Function FindInstruments() As IEnumerable(Of String)
+        Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindResources(VI.Pith.ResourceNamesManager.BuildInstrumentFilter())
+    End Function
 
-        ''' <summary> Tries to find instruments. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <param name="resources">     [in,out] The resources. </param>
-        ''' <returns> <c>True</c> if instruments were located or false if failed or no instrument resources were
-        ''' located. If exception occurred, the exception details are returned in the first element of the
-        ''' <paramref name="resources"/>. </returns>
-        <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="0#",
+    ''' <summary> Tries to find instruments. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="resources">     [in,out] The resources. </param>
+    ''' <returns> <c>True</c> if instruments were located or false if failed or no instrument resources were
+    ''' located. If exception occurred, the exception details are returned in the first element of the
+    ''' <paramref name="resources"/>. </returns>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="0#",
         Justification:="This is the normative implementation of this method.")>
-        Public Overrides Function TryFindInstruments(ByRef resources As IEnumerable(Of String)) As Boolean
-            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInstruments(resources)
-        End Function
+    Public Overrides Function TryFindInstruments(ByRef resources As IEnumerable(Of String)) As Boolean
+        Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInstruments(resources)
+    End Function
 
-        ''' <summary> Searches for instruments. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <param name="interfaceType"> Type of the interface. </param>
-        ''' <returns> The found instrument resource names. </returns>
-        Public Overrides Function FindInstruments(ByVal interfaceType As HardwareInterfaceType) As IEnumerable(Of String)
-            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindResources(VI.ResourceNamesManager.BuildInstrumentFilter(interfaceType))
-        End Function
+    ''' <summary> Searches for instruments. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="interfaceType"> Type of the interface. </param>
+    ''' <returns> The found instrument resource names. </returns>
+    Public Overrides Function FindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
+        Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindResources(VI.Pith.ResourceNamesManager.BuildInstrumentFilter(interfaceType))
+    End Function
 
-        ''' <summary> Tries to find instruments. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <param name="interfaceType"> Type of the interface. </param>
-        ''' <param name="resources">     [in,out] The resources. </param>
-        ''' <returns> <c>True</c> if instruments were located or false if failed or no instrument resources were
-        ''' located. If exception occurred, the exception details are returned in the first element of the
-        ''' <paramref name="resources"/>. </returns>
-        <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#",
+    ''' <summary> Tries to find instruments. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="interfaceType"> Type of the interface. </param>
+    ''' <param name="resources">     [in,out] The resources. </param>
+    ''' <returns> <c>True</c> if instruments were located or false if failed or no instrument resources were
+    ''' located. If exception occurred, the exception details are returned in the first element of the
+    ''' <paramref name="resources"/>. </returns>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#",
         Justification:="This is the normative implementation of this method.")>
-        Public Overrides Function TryFindInstruments(ByVal interfaceType As HardwareInterfaceType,
+    Public Overrides Function TryFindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                                      ByRef resources As IEnumerable(Of String)) As Boolean
-            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInstruments(interfaceType, resources)
-        End Function
+        Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInstruments(interfaceType, resources)
+    End Function
 
-        ''' <summary> Searches for instruments. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <param name="interfaceType"> Type of the interface. </param>
-        ''' <param name="boardNumber">   The board number. </param>
-        ''' <returns> The found instrument resource names. </returns>
-        Public Overrides Function FindInstruments(ByVal interfaceType As HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
-            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindResources(VI.ResourceNamesManager.BuildInstrumentFilter(interfaceType, boardNumber))
-        End Function
+    ''' <summary> Searches for instruments. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="interfaceType"> Type of the interface. </param>
+    ''' <param name="boardNumber">   The board number. </param>
+    ''' <returns> The found instrument resource names. </returns>
+    Public Overrides Function FindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
+        Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.FindResources(VI.Pith.ResourceNamesManager.BuildInstrumentFilter(interfaceType, boardNumber))
+    End Function
 
-        ''' <summary> Tries to find instruments. </summary>
-        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-        ''' <param name="interfaceType">   Type of the interface. </param>
-        ''' <param name="interfaceNumber"> The interface number (e.g., board or port number). </param>
-        ''' <param name="resources">       [in,out] The resources. </param>
-        ''' <returns> <c>True</c> if instruments were located or false if failed or no instrument resources were
-        ''' located. If exception occurred, the exception details are returned in the first element of the
-        ''' <paramref name="resources"/>. </returns>
-        <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="2#",
+    ''' <summary> Tries to find instruments. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="interfaceType">   Type of the interface. </param>
+    ''' <param name="interfaceNumber"> The interface number (e.g., board or port number). </param>
+    ''' <param name="resources">       [in,out] The resources. </param>
+    ''' <returns> <c>True</c> if instruments were located or false if failed or no instrument resources were
+    ''' located. If exception occurred, the exception details are returned in the first element of the
+    ''' <paramref name="resources"/>. </returns>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="2#",
         Justification:="This is the normative implementation of this method.")>
-        Public Overrides Function TryFindInstruments(ByVal interfaceType As HardwareInterfaceType,
+    Public Overrides Function TryFindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                                      ByVal interfaceNumber As Integer, ByRef resources As IEnumerable(Of String)) As Boolean
-            Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInstruments(interfaceType, interfaceNumber, resources)
-        End Function
+        Return NationalInstruments.VisaNS.ResourceManager.GetLocalManager.TryFindInstruments(interfaceType, interfaceNumber, resources)
+    End Function
 
 #End Region
 
-    End Class
+End Class

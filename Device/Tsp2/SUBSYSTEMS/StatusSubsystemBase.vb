@@ -16,14 +16,14 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
     ''' <param name="session"> A reference to a <see cref="Session">message based TSP session</see>. </param>
-    Protected Sub New(ByVal session As SessionBase)
+    Protected Sub New(ByVal session As VI.Pith.SessionBase)
         MyBase.New(session, TspSyntax.EventLog.NoErrorCompoundMessage)
 
         Me._VersionInfo = New VersionInfo
 
         ' check for query and other errors reported by the standard event register
-        Me.StandardDeviceErrorAvailableBits = StandardEvents.CommandError Or StandardEvents.DeviceDependentError Or
-                                              StandardEvents.ExecutionError Or StandardEvents.QueryError
+        Me.StandardDeviceErrorAvailableBits = VI.Pith.StandardEvents.CommandError Or VI.Pith.StandardEvents.DeviceDependentError Or
+                                              VI.Pith.StandardEvents.ExecutionError Or VI.Pith.StandardEvents.QueryError
     End Sub
 
     ''' <summary>
@@ -76,7 +76,7 @@ Public MustInherit Class StatusSubsystemBase
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Data discarded after turning prompts and errors off;. Data: {0}.", Me.Session.DiscardedData)
             End If
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
@@ -88,13 +88,13 @@ Public MustInherit Class StatusSubsystemBase
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId,
                                    "Unread data discarded after discarding unset data;. Data: {0}.", Me.Session.DiscardedData)
             End If
-        Catch ex As NativeException
+        Catch ex As VI.Pith.NativeException
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
                                "Exception ignored clearing read buffer;. {0}", ex.ToFullBlownString)
         End Try
 
         ' enable service request on all events
-        ' this is part of INIT already. Me.EnableServiceRequest(StandardEvents.All, ServiceRequests.All)
+        ' this is part of INIT already. Me.EnableServiceRequest(StandardEvents.All, VI.Pith.ServiceRequests.All)
         Me.OperationCompleted = Me.QueryOperationCompleted
 
     End Sub
@@ -125,11 +125,11 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets or sets the Language query command. </summary>
     ''' <value> The Language query command. </value>
-    Protected Overrides ReadOnly Property LanguageQueryCommand As String = Ieee488.Syntax.LanguageQueryCommand
+    Protected Overrides ReadOnly Property LanguageQueryCommand As String = VI.Pith.Ieee488.Syntax.LanguageQueryCommand
 
     ''' <summary> Gets or sets the Language command format. </summary>
     ''' <value> The Language command format. </value>
-    Protected Overrides ReadOnly Property LanguageCommandFormat As String = Ieee488.Syntax.LanguageCommandFormat
+    Protected Overrides ReadOnly Property LanguageCommandFormat As String = VI.Pith.Ieee488.Syntax.LanguageCommandFormat
 
 #End Region
 
@@ -137,24 +137,24 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>
-    Public Overrides ReadOnly Property ErrorAvailableBits As ServiceRequests = ServiceRequests.ErrorAvailable
+    Public Overrides ReadOnly Property ErrorAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.ErrorAvailable
 
     ''' <summary> Gets the bits that would be set for detecting if an Measurement is available. </summary>
     ''' <value> The Measurement available bits. </value>
-    Public Overrides ReadOnly Property MeasurementAvailableBits As ServiceRequests = ServiceRequests.MeasurementEvent
+    Public Overrides ReadOnly Property MeasurementAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MeasurementEvent
 
     ''' <summary> Gets the bits that would be set for detecting if an Message is available. </summary>
     ''' <value> The Message available bits. </value>
-    Public Overrides ReadOnly Property MessageAvailableBits As ServiceRequests = ServiceRequests.MessageAvailable
+    Public Overrides ReadOnly Property MessageAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MessageAvailable
 
     ''' <summary> Gets the bits that would be set for detecting if a Standard Event is available. </summary>
     ''' <value> The Standard Event available bits. </value>
-    Public Overrides ReadOnly Property StandardEventAvailableBits As ServiceRequests = ServiceRequests.StandardEvent
+    Public Overrides ReadOnly Property StandardEventAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.StandardEvent
 
     ''' <summary> Gets or sets the operation completed query command. </summary>
     ''' <value> The operation completed query command. </value>
     Protected Overrides ReadOnly Property OperationCompletedQueryCommand As String = LuaSyntax.OperationCompletedQueryCommand
-    ' Protected Overrides ReadOnly Property OperationCompletedQueryCommand As String = Ieee488.Syntax.OperationCompletedQueryCommand
+    ' Protected Overrides ReadOnly Property OperationCompletedQueryCommand As String = Vi.Pith.Ieee488.Syntax.OperationCompletedQueryCommand
 
     ''' <summary> Gets the standard service enable command format. </summary>
     ''' <value> The standard service enable command format. </value>
@@ -225,7 +225,7 @@ Public MustInherit Class StatusSubsystemBase
 
     ''' <summary> Gets the questionable status query command. </summary>
     ''' <value> The questionable status query command. </value>
-    Protected Overrides ReadOnly Property QuestionableStatusQueryCommand As String = Scpi.Syntax.QuestionableEventQueryCommand
+    Protected Overrides ReadOnly Property QuestionableStatusQueryCommand As String = VI.Pith.Scpi.Syntax.QuestionableEventQueryCommand
 
 #End Region
 
@@ -265,17 +265,21 @@ Public MustInherit Class StatusSubsystemBase
 
 #Region " DEVICE ERRORS "
 
-    ''' <summary> Gets the last error query command. </summary>
-    ''' <value> The last error query command. </value>
-    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = "" 'VI.Scpi.Syntax.LastSystemErrorQueryCommand
-
     ''' <summary> Gets or sets the clear error queue command. </summary>
     ''' <value> The clear error queue command. </value>
     Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = TspSyntax.EventLog.ClearEventLogCommand
 
+    ''' <summary> Gets the last error query command. </summary>
+    ''' <value> The last error query command. </value>
+    Protected Overrides ReadOnly Property DeviceErrorQueryCommand As String = "" 'VI.Pith.Scpi.Syntax.LastSystemErrorQueryCommand
+
+    ''' <summary> Gets or sets the 'Next Error' query command. </summary>
+    ''' <value> The error queue query command. </value>
+    Protected Overrides ReadOnly Property DequeueErrorQueryCommand As String = "" 'VI.Pith.Scpi.Syntax.LastSystemErrorQueryCommand
+
     ''' <summary> Gets the 'Next Error' query command. </summary>
     ''' <value> The error queue query command. </value>
-    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = TspSyntax.EventLog.NextErrorFormattedPrintCommand
+    Protected Overrides ReadOnly Property NextDeviceErrorQueryCommand As String = TspSyntax.EventLog.NextErrorFormattedPrintCommand
 
     ''' <summary> Enqueue device error. </summary>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>

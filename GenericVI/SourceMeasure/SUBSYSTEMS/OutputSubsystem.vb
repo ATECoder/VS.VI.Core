@@ -1,3 +1,5 @@
+Imports isr.Core.Pith
+Imports isr.Core.Pith.EnumExtensions
 ''' <summary> Defines a SCPI Output Subsystem for a generic Source Measure instrument. </summary>
 ''' <license>
 ''' (c) 2012 Integrated Scientific Resources, Inc.<para>
@@ -14,7 +16,7 @@ Public Class OutputSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="OutputSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -36,6 +38,23 @@ Public Class OutputSubsystem
 #End Region
 
 #Region " COMMAND SYNTAX "
+
+#Region " OFF MODE "
+
+    Protected Overrides ReadOnly Property OffModeQueryCommand As String = ":OUTP:SMOD?"
+
+
+    Protected Overrides ReadOnly Property OffModeCommandFormat As String = ":OUTP:SMOD {0}"
+
+#End Region
+
+#Region " ON/OFF STATE "
+
+    Protected Overrides ReadOnly Property OutputOnStateQueryCommand As String = ":OUTP:STAT?"
+
+    Protected Overrides ReadOnly Property OutputOnStateCommandFormat As String = ":OUTP:STAT {0:'1';'1';'0'}"
+
+#End Region
 
 #Region " TERMINAL MODE "
 

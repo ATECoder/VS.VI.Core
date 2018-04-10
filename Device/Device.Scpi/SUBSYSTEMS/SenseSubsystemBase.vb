@@ -18,7 +18,7 @@ Public MustInherit Class SenseSubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystemBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
@@ -30,36 +30,45 @@ Public MustInherit Class SenseSubsystemBase
     ''' <summary> Sets subsystem values to their known execution clear state. </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me.MeasurementAvailable = False
     End Sub
 
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.FunctionMode = SenseFunctionModes.VoltageDC
+        With Me.FunctionModeDecimalPlaces
+            .Clear()
+            For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+                .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
+            Next
+        End With
+        With Me.FunctionModeRanges
+            .Clear()
+            For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+                .Add(fmode, Core.Pith.RangeR.Full)
+            Next
+        End With
+        With Me.FunctionModeUnits
+            .Clear()
+            For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+                .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
+            Next
+            .Item(SenseFunctionModes.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(SenseFunctionModes.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(SenseFunctionModes.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(SenseFunctionModes.Continuity) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(SenseFunctionModes.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(SenseFunctionModes.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(SenseFunctionModes.Diode) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(SenseFunctionModes.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
+            .Item(SenseFunctionModes.Period) = Arebis.StandardUnits.TimeUnits.Second
+            .Item(SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
+        End With
     End Sub
 
 #End Region
 
 #Region " FUNCTION MODE "
-
-    ''' <summary> Converts a function Mode to a unit. </summary>
-    ''' <param name="functionMode"> The function mode. </param>
-    ''' <returns> Function Mode as a Unit. </returns>
-    Public Overrides Function ToUnit(ByVal functionMode As Integer) As Unit
-        Dim result As Arebis.TypedUnits.Unit = Arebis.StandardUnits.ElectricUnits.Volt
-        Select Case functionMode
-            Case VI.Scpi.SenseFunctionModes.CurrentDC, VI.Scpi.SenseFunctionModes.Current, VI.Scpi.SenseFunctionModes.CurrentAC
-                result = Arebis.StandardUnits.ElectricUnits.Ampere
-            Case VI.Scpi.SenseFunctionModes.VoltageDC, VI.Scpi.SenseFunctionModes.Voltage, VI.Scpi.SenseFunctionModes.VoltageAC
-                result = Arebis.StandardUnits.ElectricUnits.Volt
-            Case VI.Scpi.SenseFunctionModes.FourWireResistance
-                result = Arebis.StandardUnits.ElectricUnits.Ohm
-            Case VI.Scpi.SenseFunctionModes.Resistance
-                result = Arebis.StandardUnits.ElectricUnits.Ohm
-        End Select
-        Return result
-    End Function
 
     ''' <summary> Returns the <see cref="SenseFunctionModes"></see> from the specified value. </summary>
     ''' <param name="value"> The Modes. </param>
@@ -174,82 +183,10 @@ Public MustInherit Class SenseSubsystemBase
 
 #End Region
 
-#Region " LATEST DATA "
-
-    ''' <summary> Gets or sets the latest data query command. </summary>
-    ''' <value> The latest data query command. </value>
-    ''' <remarks> SCPI: ":SENSE:DATA:LAT?" </remarks>
-    Protected Overridable ReadOnly Property LatestDataQueryCommand As String
-
-    ''' <summary> Fetches the latest data and parses it. </summary>
-    ''' <remarks> Issues the ':SENSE:DATA:LAT?' query, which reads data stored in the Sample Buffer.. </remarks>
-    Public Overrides Sub FetchLatestData()
-        If Not String.IsNullOrWhiteSpace(Me.LatestDataQueryCommand) Then
-            Me.LastReading = Me.Session.QueryTrimEnd(LatestDataQueryCommand)
-        End If
-        If Not String.IsNullOrWhiteSpace(Me.LastReading) Then
-            ' the emulator will set the last reading. 
-            Me.ParseReading(Me.LastReading)
-            Me.MeasurementAvailable = True
-        End If
-    End Sub
-
-#End Region
-
-#Region " UNITS "
-
-    Private Shared _UnitParserHash As Dictionary(Of SenseFunctionModes, Arebis.TypedUnits.Unit)
-    ''' <summary> Builds Unit Parser hash. </summary>
-    ''' <returns> A Dictionary for translating SCPI unit names to <see cref="Arebis.StandardUnits">standard units</see>. </returns>
-    Public Shared Function BuildUnitParserHash() As Dictionary(Of SenseFunctionModes, Arebis.TypedUnits.Unit)
-        Dim dix2 As New Dictionary(Of SenseFunctionModes, Arebis.TypedUnits.Unit)
-        Dim dix3 As Dictionary(Of SenseFunctionModes, Arebis.TypedUnits.Unit) = dix2
-        dix3.Add(SenseFunctionModes.Current, Arebis.StandardUnits.ElectricUnits.Ampere)
-        dix3.Add(SenseFunctionModes.CurrentAC, Arebis.StandardUnits.ElectricUnits.Ampere)
-        dix3.Add(SenseFunctionModes.CurrentDC, Arebis.StandardUnits.ElectricUnits.Ampere)
-        dix3.Add(SenseFunctionModes.FourWireResistance, Arebis.StandardUnits.ElectricUnits.Ohm)
-        dix3.Add(SenseFunctionModes.Frequency, Arebis.StandardUnits.FrequencyUnits.Hertz)
-        dix3.Add(SenseFunctionModes.Period, Arebis.StandardUnits.TimeUnits.Second)
-        dix3.Add(SenseFunctionModes.Resistance, Arebis.StandardUnits.ElectricUnits.Ohm)
-        dix3.Add(SenseFunctionModes.Temperature, Arebis.StandardUnits.TemperatureUnits.DegreeCelsius)
-        dix3.Add(SenseFunctionModes.Voltage, Arebis.StandardUnits.ElectricUnits.Volt)
-        dix3.Add(SenseFunctionModes.VoltageAC, Arebis.StandardUnits.ElectricUnits.Volt)
-        dix3.Add(SenseFunctionModes.VoltageDC, Arebis.StandardUnits.ElectricUnits.Volt)
-        dix3 = Nothing
-        Return dix2
-    End Function
-
-    ''' <summary> Parses the Function Mode to create the corresponding units. 
-    '''           Assume a single function mode is defined. </summary>
-    ''' <param name="functionMode"> The function mode. </param>
-    ''' <param name="unit">         [in,out] The unit. </param>
-    ''' <returns><c>True</c> if parsed. </returns>
-                                       <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
-    Public Overloads Shared Function TryParse(ByVal functionMode As SenseFunctionModes, ByRef unit As Arebis.TypedUnits.Unit) As Boolean
-        unit = SenseSubsystemBase.ParseUnits(functionMode)
-        Return unit IsNot Nothing
-    End Function
-
-    ''' <summary> Parse units. </summary>
-    ''' <param name="functionMode"> The function mode. </param>
-    ''' <returns> An Arebis.TypedUnits.Unit. </returns>
-    Public Overloads Shared Function ParseUnits(ByVal functionMode As SenseFunctionModes) As Arebis.TypedUnits.Unit
-        Dim unit As Arebis.TypedUnits.Unit = Nothing
-        If SenseSubsystemBase._UnitParserHash Is Nothing Then
-            SenseSubsystemBase._UnitParserHash = SenseSubsystemBase.BuildUnitParserHash
-        End If
-        If SenseSubsystemBase._UnitParserHash.ContainsKey(functionMode) Then
-            unit = SenseSubsystemBase._UnitParserHash(functionMode)
-        End If
-        Return unit
-    End Function
-
-#End Region
-
 End Class
 
 ''' <summary>Specifies the sense function modes.</summary>
-                                           <System.Flags()> Public Enum SenseFunctionModes
+<System.Flags()> Public Enum SenseFunctionModes
     <ComponentModel.Description("Not specified")> None = 0
     <ComponentModel.Description("Voltage ('VOLT')")> Voltage = 1
     <ComponentModel.Description("Current ('CURR')")> Current = SenseFunctionModes.Voltage <<1

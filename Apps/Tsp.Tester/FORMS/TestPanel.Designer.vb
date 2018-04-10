@@ -1170,6 +1170,6 @@ Partial Class TestPanel
     Private WithEvents _InstrumentPanel3 As System.Windows.Forms.Panel
     Private WithEvents _RefreshUserScriptsListButton As System.Windows.Forms.Button
     Private WithEvents _RetainCodeOutlineToggle As System.Windows.Forms.CheckBox
-    Private WithEvents _ResourceSelectorConnector As isr.VI.Instrument.ResourceSelectorConnector
+    Private WithEvents _ResourceSelectorConnector As VI.Instrument.ResourceSelectorConnector
 
 End Class

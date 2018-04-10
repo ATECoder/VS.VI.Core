@@ -9,12 +9,12 @@
 ''' </para> </license>
 ''' <history date="9/26/2012" by="David" revision="1.0.4652"> Created. </history>
 Public Class SenseCurrentSubsystem
-    Inherits VI.Scpi.SenseCurrentSubsystemBase
+    Inherits VI.Scpi.SenseFunctionSubsystemBase
 
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseCurrentSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -38,17 +38,22 @@ Public Class SenseCurrentSubsystem
         Dim model As String = Me.StatusSubsystem.VersionInfo.Model
         Select Case True
             Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)
-                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 1.05)
+                Me.FunctionModeRanges(SenseFunctionModes.CurrentDC).SetRange(0.001, 1.05)
+                Me.FunctionModeRanges(SenseFunctionModes.VoltageDC).SetRange(0.001, 40)
             Case model.StartsWith("2410", StringComparison.OrdinalIgnoreCase)
-                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 1.05)
+                Me.FunctionModeRanges(SenseFunctionModes.CurrentDC).SetRange(0.001, 1.05)
+                Me.FunctionModeRanges(SenseFunctionModes.VoltageDC).SetRange(0.001, 500)
             Case model.StartsWith("242", StringComparison.OrdinalIgnoreCase)
-                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 3.05)
+                Me.FunctionModeRanges(SenseFunctionModes.CurrentDC).SetRange(0.001, 3.05)
             Case model.StartsWith("243", StringComparison.OrdinalIgnoreCase)
-                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 3.15)
+                Me.FunctionModeRanges(SenseFunctionModes.CurrentDC).SetRange(0.001, 3.15)
+                Me.FunctionModeRanges(SenseFunctionModes.VoltageDC).SetRange(0.001, 40)
             Case model.StartsWith("244", StringComparison.OrdinalIgnoreCase)
-                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 5.25)
+                Me.FunctionModeRanges(SenseFunctionModes.CurrentDC).SetRange(0.001, 5.25)
+                Me.FunctionModeRanges(SenseFunctionModes.VoltageDC).SetRange(0.001, 40)
             Case Else
-                Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 1.05)
+                Me.FunctionModeRanges(SenseFunctionModes.CurrentDC).SetRange(0.001, 1.05)
+                Me.FunctionModeRanges(SenseFunctionModes.VoltageDC).SetRange(0.001, 40)
         End Select
     End Sub
 

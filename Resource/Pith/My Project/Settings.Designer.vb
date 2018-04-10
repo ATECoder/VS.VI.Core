@@ -57,12 +57,12 @@ Namespace My
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("5.9.2008.0")>  _
-        Public Property FoundationSystemFileVersion() As String
+        Public Property FoundationSystemFileVersion64() As String
             Get
-                Return CType(Me("FoundationSystemFileVersion"),String)
+                Return CType(Me("FoundationSystemFileVersion64"),String)
             End Get
             Set
-                Me("FoundationSystemFileVersion") = value
+                Me("FoundationSystemFileVersion64") = value
             End Set
         End Property
         
@@ -89,6 +89,78 @@ Namespace My
                 Me("NatioalInsrumentVisaVersion") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("INSTR")>  _
+        Public Property DefaultResourceTitle() As String
+            Get
+                Return CType(Me("DefaultResourceTitle"),String)
+            End Get
+            Set
+                Me("DefaultResourceTitle") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("<closed>")>  _
+        Public Property DefaultClosedResourceCaption() As String
+            Get
+                Return CType(Me("DefaultClosedResourceCaption"),String)
+            End Get
+            Set
+                Me("DefaultClosedResourceCaption") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.1000000")>  _
+        Public Property SessionClosureRefractoryPeriod() As Global.System.TimeSpan
+            Get
+                Return CType(Me("SessionClosureRefractoryPeriod"),Global.System.TimeSpan)
+            End Get
+            Set
+                Me("SessionClosureRefractoryPeriod") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("{0}.{1}")>  _
+        Public Property DefaultOpenResourceTitleFormat() As String
+            Get
+                Return CType(Me("DefaultOpenResourceTitleFormat"),String)
+            End Get
+            Set
+                Me("DefaultOpenResourceTitleFormat") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("{0}")>  _
+        Public Property DefaultClosedResourceTitleFormat() As String
+            Get
+                Return CType(Me("DefaultClosedResourceTitleFormat"),String)
+            End Get
+            Set
+                Me("DefaultClosedResourceTitleFormat") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("17.5.0f0")>  _
+        Public Property FoundationSystemFileVersion32() As String
+            Get
+                Return CType(Me("FoundationSystemFileVersion32"),String)
+            End Get
+            Set
+                Me("FoundationSystemFileVersion32") = value
+            End Set
+        End Property
     End Class
 End Namespace
 
@@ -100,9 +172,9 @@ Namespace My
     Friend Module MySettingsProperty
         
         <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>  _
-        Friend ReadOnly Property Settings() As Global.isr.VI.My.MySettings
+        Friend ReadOnly Property Settings() As Global.isr.VI.Pith.My.MySettings
             Get
-                Return Global.isr.VI.My.MySettings.Default
+                Return Global.isr.VI.Pith.My.MySettings.Default
             End Get
         End Property
     End Module

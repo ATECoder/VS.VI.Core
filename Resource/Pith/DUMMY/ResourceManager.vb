@@ -76,8 +76,8 @@ Public Class DummyResourceManager
     ''' <param name="resourceName"> Name of the resource. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Public Function ParseResource(ByVal resourceName As String) As VI.ResourceParseResult
-        Return New VI.ResourceParseResult(resourceName)
+    Public Function ParseResource(ByVal resourceName As String) As ResourceNameParseInfo
+        Return New ResourceNameParseInfo(resourceName)
     End Function
 
 #End Region
@@ -170,8 +170,8 @@ Public Class DummyResourceManager
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The found interface resource names. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Public Function FindInterfaces(ByVal interfaceType As HardwareInterfaceType) As IEnumerable(Of String)
-        Return New String() {ResourceNamesManager.InterfaceBaseName(interfaceType)}
+    Public Function FindInterfaces(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
+        Return New String() {VI.Pith.ResourceNamesManager.InterfaceBaseName(interfaceType)}
     End Function
 
     ''' <summary> Tries to find interfaces. </summary>
@@ -183,8 +183,8 @@ Public Class DummyResourceManager
     ''' <paramref name="resources"/>. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
-    Public Function TryFindInterfaces(ByVal interfaceType As HardwareInterfaceType, ByRef resources As IEnumerable(Of String)) As Boolean
-        resources = New String() {ResourceNamesManager.InterfaceBaseName(interfaceType)}
+    Public Function TryFindInterfaces(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByRef resources As IEnumerable(Of String)) As Boolean
+        resources = New String() {VI.Pith.ResourceNamesManager.InterfaceBaseName(interfaceType)}
         Return True
     End Function
 
@@ -225,8 +225,8 @@ Public Class DummyResourceManager
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The found instrument resource names. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Public Function FindInstruments(ByVal interfaceType As HardwareInterfaceType) As IEnumerable(Of String)
-        Return New String() {ResourceNamesManager.InterfaceBaseName(interfaceType)}
+    Public Function FindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
+        Return New String() {VI.Pith.ResourceNamesManager.InterfaceBaseName(interfaceType)}
     End Function
 
     ''' <summary> Tries to find instruments. </summary>
@@ -239,9 +239,9 @@ Public Class DummyResourceManager
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#",
         Justification:="This is the normative implementation of this method.")>
-    Public Function TryFindInstruments(ByVal interfaceType As HardwareInterfaceType,
+    Public Function TryFindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                        ByRef resources As IEnumerable(Of String)) As Boolean
-        resources = New String() {ResourceNamesManager.InterfaceBaseName(interfaceType)}
+        resources = New String() {VI.Pith.ResourceNamesManager.InterfaceBaseName(interfaceType)}
         Return True
     End Function
 
@@ -251,8 +251,8 @@ Public Class DummyResourceManager
     ''' <param name="boardNumber">   The board number. </param>
     ''' <returns> The found instrument resource names. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Public Function FindInstruments(ByVal interfaceType As HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
-        Return New String() {$"{ResourceNamesManager.InterfaceBaseName(interfaceType)}{boardNumber}"}
+    Public Function FindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
+        Return New String() {$"{VI.Pith.ResourceNamesManager.InterfaceBaseName(interfaceType)}{boardNumber}"}
     End Function
 
     ''' <summary> Tries to find instruments. </summary>
@@ -266,9 +266,9 @@ Public Class DummyResourceManager
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="2#",
         Justification:="This is the normative implementation of this method.")>
-    Public Function TryFindInstruments(ByVal interfaceType As HardwareInterfaceType,
+    Public Function TryFindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                        ByVal interfaceNumber As Integer, ByRef resources As IEnumerable(Of String)) As Boolean
-        resources = New String() {$"{ResourceNamesManager.InterfaceBaseName(interfaceType)}{interfaceNumber}"}
+        resources = New String() {$"{VI.Pith.ResourceNamesManager.InterfaceBaseName(interfaceType)}{interfaceNumber}"}
         Return True
     End Function
 

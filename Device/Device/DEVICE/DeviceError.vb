@@ -19,7 +19,7 @@ Public Class DeviceError
         Me._NoErrorCompoundMessage = noErrorCompoundMessage
         Me._CompoundErrorMessage = noErrorCompoundMessage
         Me._ErrorNumber = 0
-        Me._errorMessage = Scpi.Syntax.NoErrorMessage
+        Me._errorMessage = VI.Pith.Scpi.Syntax.NoErrorMessage
         Me._Severity = TraceEventType.Verbose
     End Sub
 
@@ -28,9 +28,9 @@ Public Class DeviceError
     Public Sub New(ByVal value As DeviceError)
         MyBase.New()
         If value Is Nothing Then
-            Me._NoErrorCompoundMessage = Scpi.Syntax.NoErrorCompoundMessage
-            Me._CompoundErrorMessage = Scpi.Syntax.NoErrorCompoundMessage
-            Me._errorMessage = Scpi.Syntax.NoErrorMessage
+            Me._NoErrorCompoundMessage = VI.Pith.Scpi.Syntax.NoErrorCompoundMessage
+            Me._CompoundErrorMessage = VI.Pith.Scpi.Syntax.NoErrorCompoundMessage
+            Me._errorMessage = VI.Pith.Scpi.Syntax.NoErrorMessage
             Me._ErrorNumber = 0
         Else
             Me._NoErrorCompoundMessage = value.NoErrorCompoundMessage
@@ -42,7 +42,7 @@ Public Class DeviceError
 
     ''' <summary> Gets or sets the no error. </summary>
     ''' <value> The no error. </value>
-    Public Shared ReadOnly Property NoError As DeviceError = New DeviceError(Scpi.Syntax.NoErrorCompoundMessage)
+    Public Shared ReadOnly Property NoError As DeviceError = New DeviceError(VI.Pith.Scpi.Syntax.NoErrorCompoundMessage)
 
 
 #End Region

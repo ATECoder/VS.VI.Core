@@ -14,11 +14,27 @@ Public Class StatusSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal visaSession As VI.SessionBase)
+    Public Sub New(ByVal visaSession As VI.Pith.SessionBase)
         MyBase.New(visaSession)
     End Sub
+
+    ''' <summary> Creates a new StatusSubsystem. </summary>
+    ''' <returns> A StatusSubsystem. </returns>
+    Public Shared Function Create() As StatusSubsystem
+        Dim subsystem As StatusSubsystem = Nothing
+        Try
+            subsystem = New StatusSubsystem(isr.VI.SessionFactory.Get.Factory.CreateSession())
+        Catch
+            If subsystem IsNot Nothing Then
+                subsystem.Dispose()
+                subsystem = Nothing
+            End If
+            Throw
+        End Try
+        Return subsystem
+    End Function
 
 #End Region
 
@@ -41,7 +57,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the preset command. </summary>
     ''' <value> The preset command. </value>
-    Protected Overrides ReadOnly Property PresetCommand As String = VI.Scpi.Syntax.ScpiSyntax.StatusPresetCommand
+    Protected Overrides ReadOnly Property PresetCommand As String = VI.Pith.Scpi.Syntax.ScpiSyntax.StatusPresetCommand
 
 #End Region
 
@@ -50,7 +66,7 @@ Public Class StatusSubsystem
     ''' <summary> Gets the clear error queue command. </summary>
     ''' <value> The clear error queue command. </value>
     ''' <remarks> K7001 does not support this commend == *CLS clears the queue. </remarks>
-    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = Ieee488.Syntax.ClearExecutionStateCommand
+    Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = Vi.Pith.Ieee488.Syntax.ClearExecutionStateCommand
 
 #End Region
 
@@ -98,7 +114,7 @@ Public Class StatusSubsystem
         ' Me.Device.Session.Write(":STAT:OPER:ENAB 16")
         Me.ApplyOperationEventEnableBitmask(16)
         ' Me.Device.Session.Write("*SRE 128")
-        Me.EnableServiceRequest(ServiceRequests.OperationEvent) ' 128
+        Me.EnableServiceRequest(VI.Pith.ServiceRequests.OperationEvent) ' 128
 
     End Sub
 

@@ -14,7 +14,7 @@ Public MustInherit Class MeasureVoltageSubsystemBase
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="MeasureVoltageSubsystemBase" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
     End Sub
@@ -79,10 +79,21 @@ Public MustInherit Class MeasureVoltageSubsystemBase
         End Set
     End Property
 
-    ''' <summary> Measures the Voltage. Sets the <see cref="Level"/>. </summary>
-    ''' <remarks> Issues the 'MEAS:VOLT?' query. </remarks>
-    ''' <returns> System.Double. </returns>
-    Public MustOverride Function Measure() As Double?
+    ''' <summary> Gets or sets The Measure query command. </summary>
+    ''' <value> The Measure query command. </value>
+    Protected Overridable ReadOnly Property MeasureQueryCommand As String
+
+    ''' <summary> Reads a value and converts it to Double. </summary>
+    ''' <returns> The measured value or none if unknown. </returns>
+    Public Function MeasureValue() As Double?
+        Return Me.MeasureValue(Me.MeasureQueryCommand)
+    End Function
+
+    ''' <summary> Queries The reading. </summary>
+    ''' <returns> The reading or none if unknown. </returns>
+    Public Function Measure() As Double?
+        Return Me.Measure(Me.MeasureQueryCommand)
+    End Function
 
 #End Region
 

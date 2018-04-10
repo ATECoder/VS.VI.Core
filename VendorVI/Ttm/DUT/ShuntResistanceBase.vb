@@ -59,7 +59,7 @@ Public MustInherit Class ShuntResistanceBase
             If Not Me.ConfigurationEquals(other) Then
                 Dim format As String = "Unequal configuring--instrument {0}={1}.NE.{2}"
                 If Not Me.CurrentRange.Approximates(other.CurrentRange, 0.000001) Then
-                    Throw New isr.VI.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format,
+                    Throw New isr.VI.Pith.OperationFailedException(String.Format(Globalization.CultureInfo.CurrentCulture, format,
                                                                             "Current Range", Me.CurrentRange, other.CurrentRange))
                 Else
                     Debug.Assert(Not Debugger.IsAttached, "Failed logic")

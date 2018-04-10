@@ -14,15 +14,13 @@ Public Class SenseSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me.SupportedFunctionModes = VI.Scpi.SenseFunctionModes.CurrentDC Or
                                         VI.Scpi.SenseFunctionModes.VoltageDC Or
                                         VI.Scpi.SenseFunctionModes.FourWireResistance
-        ' the readings are initialized when the format system is reset.
-        Me._readings = New Readings
     End Sub
 
 #End Region
@@ -34,13 +32,44 @@ Public Class SenseSubsystem
     ''' </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me._readings.Reset()
+        Me.Readings?.Reset()
     End Sub
 
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
+        ' TO_DO: the readings are initialized when the format system is reset.
+        Me.Readings = New Readings
         Me.FunctionMode = VI.Scpi.SenseFunctionModes.VoltageDC
+        With Me.FunctionModeDecimalPlaces
+            .Clear()
+            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+                .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
+            Next
+        End With
+        With Me.FunctionModeRanges
+            .Clear()
+            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+                .Add(fmode, Core.Pith.RangeR.Full)
+            Next
+        End With
+        With Me.FunctionModeUnits
+            .Clear()
+            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+                .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
+            Next
+            .Item(Scpi.SenseFunctionModes.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(Scpi.SenseFunctionModes.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(Scpi.SenseFunctionModes.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(Scpi.SenseFunctionModes.Continuity) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(Scpi.SenseFunctionModes.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(Scpi.SenseFunctionModes.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(Scpi.SenseFunctionModes.Diode) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(Scpi.SenseFunctionModes.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
+            .Item(Scpi.SenseFunctionModes.Period) = Arebis.StandardUnits.TimeUnits.Second
+            .Item(Scpi.SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
+        End With
+
     End Sub
 
 #End Region
@@ -60,6 +89,43 @@ Public Class SenseSubsystem
 
 #Region " COMMAND SYNTAX "
 
+#Region " AUTO RANGE "
+
+    ''' <summary> Gets the automatic Range enabled command Format. </summary>
+    ''' <value> The automatic Range enabled query command. </value>
+    Protected Overrides ReadOnly Property AutoRangeEnabledCommandFormat As String = ":SENS:CURR:RANG:AUTO {0:'ON';'ON';'OFF'}"
+
+    ''' <summary> Gets the automatic Range enabled query command. </summary>
+    ''' <value> The automatic Range enabled query command. </value>
+    Protected Overrides ReadOnly Property AutoRangeEnabledQueryCommand As String = ":SENS:CURR:RANG:AUTO?"
+
+#End Region
+
+#Region " POWER LINE CYCLES "
+
+    ''' <summary> Gets The Power Line Cycles command format. </summary>
+    ''' <value> The Power Line Cycles command format. </value>
+    Protected Overrides ReadOnly Property PowerLineCyclesCommandFormat As String = ":SENS:CURR:NPLC {0}"
+
+    ''' <summary> Gets The Power Line Cycles query command. </summary>
+    ''' <value> The Power Line Cycles query command. </value>
+    Protected Overrides ReadOnly Property PowerLineCyclesQueryCommand As String = ":SENS:CURR:NPLC?"
+
+#End Region
+
+#Region " PROTECTION LEVEL "
+
+    ''' <summary> Gets the protection level command format. </summary>
+    ''' <value> the protection level command format. </value>
+    Protected Overrides ReadOnly Property ProtectionLevelCommandFormat As String = ":SENS:CURR:PROT {0}"
+
+    ''' <summary> Gets the protection level query command. </summary>
+    ''' <value> the protection level query command. </value>
+    Protected Overrides ReadOnly Property ProtectionLevelQueryCommand As String = ":SENS:CURR:PROT?"
+
+#End Region
+
+
 #Region " LATEST DATA "
 
     ''' <summary> Gets the latest data query command. </summary>
@@ -73,26 +139,23 @@ Public Class SenseSubsystem
 #Region " LATEST DATA "
 
     Private _Readings As Readings
-
-    ''' <summary> Returns the readings. </summary>
-    ''' <returns> The readings. </returns>
-    Public Function Readings() As Readings
-        Return Me._readings
-    End Function
+    ''' <summary> Gets or sets the readings. </summary>
+    ''' <value> The readings. </value>
+    Public Property Readings As Readings
+        Get
+            Return Me._Readings
+        End Get
+        Private Set(value As Readings)
+            Me._Readings = value
+            MyBase.AssignReadingAmounts(value)
+        End Set
+    End Property
 
     ''' <summary> Parses a new set of reading elements. </summary>
     ''' <param name="reading"> Specifies the measurement text to parse into the new reading. </param>
-    Public Overrides Sub ParseReading(ByVal reading As String)
-
-        ' check if we have units suffixes.
-        If (Me.Readings.Elements And isr.VI.ReadingTypes.Units) <> 0 Then
-            reading = ReadingEntity.TrimUnits(reading)
-        End If
-
-        ' Take a reading and parse the results
-        Me.Readings.TryParse(reading)
-
-    End Sub
+    Public Overrides Function ParseReading(ByVal reading As String) As Double?
+        Return MyBase.ParseReadingAmounts(reading)
+    End Function
 
 #End Region
 

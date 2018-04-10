@@ -76,7 +76,7 @@ Partial Class ThermostreamControl
         Me._ReadingStatusStrip = New System.Windows.Forms.StatusStrip()
         Me._StatusRegisterLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._StandardRegisterLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me._ComplianceToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me._FailureToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._ReadingToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._StatusStrip = New System.Windows.Forms.StatusStrip()
         Me._StatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
@@ -102,7 +102,7 @@ Partial Class ThermostreamControl
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
         Me._ServiceRequestEnableNumericLabel = New System.Windows.Forms.ToolStripLabel()
-        Me._ServiceRequestEnableNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
+        Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
         Me._Tabs.SuspendLayout()
         Me._ReadingTabPage.SuspendLayout()
         CType(Me._SrqRefratoryTimeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -919,23 +919,23 @@ Partial Class ThermostreamControl
         Me._ReadingStatusStrip.Dock = System.Windows.Forms.DockStyle.Top
         Me._ReadingStatusStrip.Font = New System.Drawing.Font("Segoe UI", 20.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ReadingStatusStrip.GripMargin = New System.Windows.Forms.Padding(0)
-        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ComplianceToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._StatusRegisterLabel, Me._StandardRegisterLabel})
+        Me._ReadingStatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._FailureToolStripStatusLabel, Me._ReadingToolStripStatusLabel, Me._StatusRegisterLabel, Me._StandardRegisterLabel})
         Me._ReadingStatusStrip.Location = New System.Drawing.Point(0, 16)
         Me._ReadingStatusStrip.Name = "_ReadingStatusStrip"
         Me._ReadingStatusStrip.Size = New System.Drawing.Size(364, 37)
         Me._ReadingStatusStrip.SizingGrip = False
         Me._ReadingStatusStrip.TabIndex = 1
         '
-        '_ComplianceToolStripStatusLabel
+        '_FailureToolStripStatusLabel
         '
-        Me._ComplianceToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ComplianceToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._ComplianceToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
-        Me._ComplianceToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
-        Me._ComplianceToolStripStatusLabel.Name = "_ComplianceToolStripStatusLabel"
-        Me._ComplianceToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
-        Me._ComplianceToolStripStatusLabel.Text = "C"
-        Me._ComplianceToolStripStatusLabel.ToolTipText = "Compliance"
+        Me._FailureToolStripStatusLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
+        Me._FailureToolStripStatusLabel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._FailureToolStripStatusLabel.ForeColor = System.Drawing.Color.Red
+        Me._FailureToolStripStatusLabel.Margin = New System.Windows.Forms.Padding(0)
+        Me._FailureToolStripStatusLabel.Name = "_FailureToolStripStatusLabel"
+        Me._FailureToolStripStatusLabel.Size = New System.Drawing.Size(16, 37)
+        Me._FailureToolStripStatusLabel.Text = "C"
+        Me._FailureToolStripStatusLabel.ToolTipText = "Compliance"
         '
         '_ReadingToolStripStatusLabel
         '
@@ -1080,7 +1080,7 @@ Partial Class ThermostreamControl
         '_SystemToolStrip
         '
         Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableNumericLabel, Me._ServiceRequestEnableNumeric})
+        Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableNumericLabel, Me._ServiceRequestEnableBitmaskNumeric})
         Me._SystemToolStrip.Location = New System.Drawing.Point(0, 242)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
         Me._SystemToolStrip.Size = New System.Drawing.Size(356, 28)
@@ -1171,11 +1171,11 @@ Partial Class ThermostreamControl
         '
         '_ServiceRequestEnableNumeric
         '
-        Me._ServiceRequestEnableNumeric.Name = "_ServiceRequestEnableNumeric"
-        Me._ServiceRequestEnableNumeric.Size = New System.Drawing.Size(41, 25)
-        Me._ServiceRequestEnableNumeric.Text = "99"
-        Me._ServiceRequestEnableNumeric.ToolTipText = "Service request enabled value"
-        Me._ServiceRequestEnableNumeric.Value = New Decimal(New Integer() {99, 0, 0, 0})
+        Me._ServiceRequestEnableBitmaskNumeric.Name = "_ServiceRequestEnableNumeric"
+        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(41, 25)
+        Me._ServiceRequestEnableBitmaskNumeric.Text = "99"
+        Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enabled value"
+        Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {99, 0, 0, 0})
         '
         '_LogTraceLevelComboBox
         '
@@ -1243,7 +1243,7 @@ Partial Class ThermostreamControl
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
     Private WithEvents _ReadingStatusStrip As System.Windows.Forms.StatusStrip
-    Private WithEvents _ComplianceToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
+    Private WithEvents _FailureToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _LastReadingTextBox As System.Windows.Forms.TextBox
     Private WithEvents _Panel As System.Windows.Forms.Panel
@@ -1313,7 +1313,7 @@ Partial Class ThermostreamControl
     Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ReadTerminalStateButton As Windows.Forms.ToolStripButton
     Private WithEvents _ServiceRequestEnableNumericLabel As Windows.Forms.ToolStripLabel
-    Private WithEvents _ServiceRequestEnableNumeric As Core.Controls.ToolStripNumericUpDown
+    Private WithEvents _ServiceRequestEnableBitmaskNumeric As Core.Controls.ToolStripNumericUpDown
     Private WithEvents _LogTraceLevelComboBox As Core.Controls.ToolStripComboBox
     Private WithEvents _DisplayTraceLevelComboBox As Core.Controls.ToolStripComboBox
     Private WithEvents _ResourceSelectorConnector As VI.Instrument.ResourceSelectorConnector

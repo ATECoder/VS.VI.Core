@@ -18,7 +18,7 @@ Public Class MeterColdResistance
     ''' <param name="statusSubsystem"> The status subsystem. </param>
     ''' <param name="resistance">      The cold resistance. </param>
     ''' <param name="meterEntity">     The meter entity type. </param>
-    Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase, ByVal resistance As ColdResistance, ByVal meterEntity As ThermalTransientMeterEntity)
+    Public Sub New(ByVal statusSubsystem As StatusSubsystemBase, ByVal resistance As ColdResistance, ByVal meterEntity As ThermalTransientMeterEntity)
         MyBase.New(statusSubsystem)
         Me.MeterEntity = meterEntity
         Me.ColdResistance = resistance

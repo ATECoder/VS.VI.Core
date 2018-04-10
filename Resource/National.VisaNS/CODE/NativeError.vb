@@ -10,7 +10,7 @@
 ''' </license>
 ''' <history date="11/24/2015" by="David" revision=""> Created. </history>
 Public Class NativeError
-    Inherits isr.VI.NativeErrorBase
+    Inherits VI.Pith.NativeErrorBase
 
     ''' <summary> Constructor. </summary>
     ''' <param name="errorCode"> The error code. </param>

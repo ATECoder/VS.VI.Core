@@ -14,14 +14,30 @@ Public Class StatusSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
-    ''' <param name="visaSession"> A reference to a <see cref="VI.SessionBase">message based
+    ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based
     ''' session</see>. </param>
-    Public Sub New(ByVal visaSession As VI.SessionBase)
+    Public Sub New(ByVal visaSession As VI.Pith.SessionBase)
         MyBase.New(visaSession)
-        Me.ServiceRequestEnableBitmask = CType(63, ServiceRequests)
+        Me.ServiceRequestEnableBitmask = CType(63, VI.Pith.ServiceRequests)
         Me.OperationCompleted = True
         Me._VersionInfo = New VersionInfo()
     End Sub
+
+    ''' <summary> Creates a new StatusSubsystem. </summary>
+    ''' <returns> A StatusSubsystem. </returns>
+    Public Shared Function Create() As StatusSubsystem
+        Dim subsystem As StatusSubsystem = Nothing
+        Try
+            subsystem = New StatusSubsystem(isr.VI.SessionFactory.Get.Factory.CreateSession())
+        Catch
+            If subsystem IsNot Nothing Then
+                subsystem.Dispose()
+                subsystem = Nothing
+            End If
+            Throw
+        End Try
+        Return subsystem
+    End Function
 
 #End Region
 
@@ -73,7 +89,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the bits that would be set for detecting if an error is available. </summary>
     ''' <value> The error available bits. </value>
-    Public Overrides ReadOnly Property ErrorAvailableBits As ServiceRequests = ServiceRequests.StandardEvent
+    Public Overrides ReadOnly Property ErrorAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.StandardEvent
 
     ''' <summary> Gets the identity query command. </summary>
     ''' <value> The identity query command. </value>
@@ -81,11 +97,11 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the bits that would be set for detecting if an Measurement is available. </summary>
     ''' <value> The Measurement available bits. </value>
-    Public Overrides ReadOnly Property MeasurementAvailableBits As ServiceRequests = ServiceRequests.MeasurementEvent
+    Public Overrides ReadOnly Property MeasurementAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.MeasurementEvent
 
     ''' <summary> Gets the bits that would be set for detecting if an Message is available. </summary>
     ''' <value> The Message available bits. </value>
-    Public Overrides ReadOnly Property MessageAvailableBits As ServiceRequests = ServiceRequests.None
+    Public Overrides ReadOnly Property MessageAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.None
 
     ''' <summary> Gets the operation completed query command. </summary>
     ''' <value> The operation completed query command. </value>
@@ -94,7 +110,7 @@ Public Class StatusSubsystem
 
     ''' <summary> Gets the bits that would be set for detecting if a Standard Event is available. </summary>
     ''' <value> The Standard Event available bits. </value>
-    Public Overrides ReadOnly Property StandardEventAvailableBits As ServiceRequests = ServiceRequests.None
+    Public Overrides ReadOnly Property StandardEventAvailableBits As VI.Pith.ServiceRequests = VI.Pith.ServiceRequests.None
 
     ''' <summary> Gets the standard event status query command. </summary>
     ''' <value> The standard event status query command. </value>
@@ -144,14 +160,18 @@ Public Class StatusSubsystem
     ''' <value> The clear error queue command. </value>
     Protected Overrides ReadOnly Property ClearErrorQueueCommand As String = ""
 
+    ''' <summary> Gets or sets the 'Next Error' query command. </summary>
+    ''' <value> The error queue query command. </value>
+    Protected Overrides ReadOnly Property DequeueErrorQueryCommand As String = ""
+
     ''' <summary> Gets the error queue query command. </summary>
     ''' <value> The error queue query command. </value>
     ''' <remarks> Last error supported </remarks>
-    Protected Overrides ReadOnly Property NextErrorQueryCommand As String = ""
+    Protected Overrides ReadOnly Property NextDeviceErrorQueryCommand As String = ""
 
     ''' <summary> Gets the last error query command. </summary>
     ''' <value> The last error query command. </value>
-    Protected Overrides ReadOnly Property LastErrorQueryCommand As String = "U1x"
+    Protected Overrides ReadOnly Property DeviceErrorQueryCommand As String = "U1x"
 
     ''' <summary> Queue device error. </summary>
     ''' <param name="compoundErrorMessage"> Message describing the compound error. </param>

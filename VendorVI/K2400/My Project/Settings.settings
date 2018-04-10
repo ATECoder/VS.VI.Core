@@ -8,5 +8,23 @@
     <Setting Name="TraceShowLevel" Type="System.Diagnostics.TraceEventType" Scope="User">
       <Value Profile="(Default)">Warning</Value>
     </Setting>
+    <Setting Name="InitializeTimeout" Type="System.String" Scope="User">
+      <Value Profile="(Default)">00:00:05</Value>
+    </Setting>
+    <Setting Name="DeviceClearRefractoryPeriod" Type="System.String" Scope="User">
+      <Value Profile="(Default)">00:00:01.0500000</Value>
+    </Setting>
+    <Setting Name="ResetRefractoryPeriod" Type="System.String" Scope="User">
+      <Value Profile="(Default)">00:00:00.2000000</Value>
+    </Setting>
+    <Setting Name="InitRefractoryPeriod" Type="System.String" Scope="User">
+      <Value Profile="(Default)">00:00:00.1000000</Value>
+    </Setting>
+    <Setting Name="ClearRefractoryPeriod" Type="System.String" Scope="User">
+      <Value Profile="(Default)">00:00:00.1000000</Value>
+    </Setting>
+    <Setting Name="SessionMessageNotificationLevel" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

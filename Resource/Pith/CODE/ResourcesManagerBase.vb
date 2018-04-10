@@ -21,7 +21,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <summary> Parse resource. </summary>
     ''' <param name="resourceName"> The resource name. </param>
     ''' <returns> A VI.ResourceParseResult. </returns>
-    Public MustOverride Function ParseResource(ByVal resourceName As String) As VI.ResourceParseResult
+    Public MustOverride Function ParseResource(ByVal resourceName As String) As ResourceNameParseInfo
 
 #End Region
 
@@ -90,7 +90,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The found interface resource names. </returns>
-    Public MustOverride Function FindInterfaces(ByVal interfaceType As HardwareInterfaceType) As IEnumerable(Of String)
+    Public MustOverride Function FindInterfaces(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
 
     ''' <summary> Tries to find interfaces. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
@@ -100,7 +100,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' located. If exception occurred, the exception details are returned in the first element of the
     ''' <paramref name="resources"/>. </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#")>
-    Public MustOverride Function TryFindInterfaces(ByVal interfaceType As HardwareInterfaceType, ByRef resources As IEnumerable(Of String)) As Boolean
+    Public MustOverride Function TryFindInterfaces(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByRef resources As IEnumerable(Of String)) As Boolean
 
 #End Region
 
@@ -131,7 +131,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <returns> The found instrument resource names. </returns>
-    Public MustOverride Function FindInstruments(ByVal interfaceType As HardwareInterfaceType) As IEnumerable(Of String)
+    Public MustOverride Function FindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType) As IEnumerable(Of String)
 
     ''' <summary> Tries to find instruments. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
@@ -142,7 +142,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <paramref name="resources"/>. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="1#",
         Justification:="This is the normative implementation of this method.")>
-    Public MustOverride Function TryFindInstruments(ByVal interfaceType As HardwareInterfaceType,
+    Public MustOverride Function TryFindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                                     ByRef resources As IEnumerable(Of String)) As Boolean
 
     ''' <summary> Searches for instruments. </summary>
@@ -150,7 +150,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <param name="interfaceType"> Type of the interface. </param>
     ''' <param name="boardNumber">   The board number. </param>
     ''' <returns> The found instrument resource names. </returns>
-    Public MustOverride Function FindInstruments(ByVal interfaceType As HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
+    Public MustOverride Function FindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType, ByVal boardNumber As Integer) As IEnumerable(Of String)
 
     ''' <summary> Tries to find instruments. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
@@ -162,7 +162,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <paramref name="resources"/>. </returns>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId:="2#",
         Justification:="This is the normative implementation of this method.")>
-    Public MustOverride Function TryFindInstruments(ByVal interfaceType As HardwareInterfaceType,
+    Public MustOverride Function TryFindInstruments(ByVal interfaceType As VI.Pith.HardwareInterfaceType,
                                                     ByVal interfaceNumber As Integer,
                                                     ByRef resources As IEnumerable(Of String)) As Boolean
 
@@ -211,21 +211,21 @@ Public MustInherit Class ResourcesManagerBase
     ''' <summary> Attempts to validate visa versions using settings versions. </summary>
     ''' <param name="e"> Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Shared Function TryValidateVisaVersions(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+    Public Shared Function TryValidateVisaVersions(ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        If Not isr.VI.ResourcesManagerBase.ValidateFoundationSystemFileVersion(e) Then
-        ElseIf Not isr.VI.ResourcesManagerBase.ValidateFoundationVisaAssemblyVersion(e) Then
-        ElseIf Not isr.VI.ResourcesManagerBase.ValidateVendorVersion(e) Then
+        If Not ResourcesManagerBase.ValidateFoundationSystemFileVersion(e) Then
+        ElseIf Not ResourcesManagerBase.ValidateFoundationVisaAssemblyVersion(e) Then
+        ElseIf Not ResourcesManagerBase.ValidateVendorVersion(e) Then
         End If
         Return Not e.Cancel
     End Function
 
     ''' <summary> Validates the visa versions. </summary>
-    ''' <exception cref="OperationFailedException"> Thrown when operation failed to execute. </exception>
+    ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     Public Shared Sub ValidateVisaVersions()
-        Dim e As New isr.Core.Pith.CancelDetailsEventArgs
+        Dim e As New isr.Core.Pith.ActionEventArgs
         If Not ResourcesManagerBase.TryValidateVisaVersions(e) Then
-            Throw New OperationFailedException($"Invalid VISA version: {e.Details}")
+            Throw New VI.Pith.OperationFailedException($"Invalid VISA version: {e.Details}")
         End If
     End Sub
 
@@ -250,7 +250,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <param name="expectedVersion"> The expected version. </param>
     ''' <param name="e">               Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Shared Function ValidateVendorVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+    Public Shared Function ValidateVendorVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim actualVersion As String = ResourcesManagerBase.ReadVendorVersion.ToString
         If Not ResourcesManagerBase.AreEqual(expectedVersion, actualVersion) Then
@@ -262,7 +262,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <summary> Validates the National Instruments vendor version. </summary>
     ''' <param name="e"> Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Shared Function ValidateVendorVersion(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+    Public Shared Function ValidateVendorVersion(ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
         Return ResourcesManagerBase.ValidateVendorVersion(My.Settings.NatioalInsrumentVisaVersion, e)
     End Function
 
@@ -292,7 +292,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <param name="expectedVersion"> The expected version. </param>
     ''' <param name="e">               Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Shared Function ValidateFoundationVisaAssemblyVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+    Public Shared Function ValidateFoundationVisaAssemblyVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim actualVersion As String = ResourcesManagerBase.ReadFoundationVisaAssemblyFileVersionInfo.FileVersion.ToString
         If Not ResourcesManagerBase.AreEqual(expectedVersion, actualVersion) Then
@@ -304,7 +304,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <summary> Validates the foundation visa Assembly version. </summary>
     ''' <param name="e"> Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Shared Function ValidateFoundationVisaAssemblyVersion(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+    Public Shared Function ValidateFoundationVisaAssemblyVersion(ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
         Return ResourcesManagerBase.ValidateFoundationVisaAssemblyVersion(My.Settings.FoundationVisaAssemblyVersion, e)
     End Function
 
@@ -334,7 +334,7 @@ Public MustInherit Class ResourcesManagerBase
     ''' <param name="expectedVersion"> The expected version. </param>
     ''' <param name="e">               Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Shared Function ValidateFoundationSystemFileVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
+    Public Shared Function ValidateFoundationSystemFileVersion(ByVal expectedVersion As String, ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim actualVersion As String = ResourcesManagerBase.ReadFoundationSystemFileVersionInfo.FileVersion.ToString
         If Not ResourcesManagerBase.AreEqual(expectedVersion, actualVersion) Then
@@ -343,11 +343,24 @@ Public MustInherit Class ResourcesManagerBase
         Return Not e.Cancel
     End Function
 
+    ''' <summary> Gets the expected foundation system file version. </summary>
+    ''' <value> The expected foundation system file version. </value>
+    Public Shared ReadOnly Property ExpectedFoundationSystemFileVersion As String
+        Get
+            If Environment.Is64BitProcess Then
+                Return My.Settings.FoundationSystemFileVersion64
+            Else
+                ' IDE is running in 32 bit mode.
+                Return My.Settings.FoundationSystemFileVersion32
+            End If
+        End Get
+    End Property
+
     ''' <summary> Validates the foundation system file version described by e. </summary>
     ''' <param name="e"> Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
-    Public Shared Function ValidateFoundationSystemFileVersion(ByVal e As isr.Core.Pith.CancelDetailsEventArgs) As Boolean
-        Return ResourcesManagerBase.ValidateFoundationSystemFileVersion(My.Settings.FoundationSystemFileVersion, e)
+    Public Shared Function ValidateFoundationSystemFileVersion(ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
+        Return ResourcesManagerBase.ValidateFoundationSystemFileVersion(ResourcesManagerBase.ExpectedFoundationSystemFileVersion, e)
     End Function
 
 #End Region

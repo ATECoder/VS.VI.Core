@@ -14,7 +14,7 @@ Public Class TriggerSubsystem
 #Region " CONSTRUCTORS  and  DESTRUCTORS "
 
     ''' <summary> Initializes a new instance of the <see cref="TriggerSubsystem" /> class. </summary>
-    ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based
+    ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
@@ -27,10 +27,10 @@ Public Class TriggerSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me.SupportedTriggerSources = TriggerSources.Bus Or TriggerSources.External Or
-                                     TriggerSources.Hold Or TriggerSources.Immediate Or
-                                     TriggerSources.Manual Or TriggerSources.Timer Or
-                                     TriggerSources.TriggerLink
+        Me.SupportedTriggerSources = Scpi.TriggerSources.Bus Or Scpi.TriggerSources.External Or
+                                     Scpi.TriggerSources.Hold Or Scpi.TriggerSources.Immediate Or
+                                     Scpi.TriggerSources.Manual Or Scpi.TriggerSources.Timer Or
+                                     Scpi.TriggerSources.TriggerLink
     End Sub
 
 #End Region
@@ -273,7 +273,7 @@ Public Class TriggerSubsystem
 
     Public Sub ApplyGradeBinning(ByVal count As Integer, ByVal startDelay As TimeSpan,
                                  ByVal failedBitPattern As Integer, ByVal passBitPattern As Integer,
-                                 ByVal openContactBitPattern As Integer, ByVal triggerSource As VI.TriggerSources)
+                                 ByVal openContactBitPattern As Integer, ByVal triggerSource As Scpi.TriggerSources)
 
         Dim block As Integer = 0
         Dim cmd As String = ""
@@ -307,15 +307,15 @@ Public Class TriggerSubsystem
         Dim repeatBlock As Integer = block + 1
         block += 1
         cmd = $":TRIG:BLOC:WAIT {block}, EXT"
-        If 0 <> (triggerSource And TriggerSources.Bus) Then
+        If 0 <> (triggerSource And Scpi.TriggerSources.Bus) Then
             cmd = $":TRIG:BLOC:WAIT {block}, COMM"
-        ElseIf 0 <> (triggerSource And TriggerSources.Manual) Then
+        ElseIf 0 <> (triggerSource And Scpi.TriggerSources.Manual) Then
             cmd = $":TRIG:BLOC:WAIT {block}, DISP"
-        ElseIf 0 <> (triggerSource And TriggerSources.TriggerLink) Then
+        ElseIf 0 <> (triggerSource And Scpi.TriggerSources.TriggerLink) Then
             cmd = $":TRIG:BLOC:WAIT {block}, TSPL(1)"
-        ElseIf 0 <> (triggerSource And TriggerSources.Timer) Then
+        ElseIf 0 <> (triggerSource And Scpi.TriggerSources.Timer) Then
             cmd = $":TRIG:BLOC:WAIT {block}, TIM(1)"
-        ElseIf 0 <> (triggerSource And TriggerSources.Digital) Then
+        ElseIf 0 <> (triggerSource And Scpi.TriggerSources.Digital) Then
             cmd = $":TRIG:BLOC:WAIT {block}, DIG(1)"
         End If
         Me.Write(cmd)
@@ -377,7 +377,7 @@ Public Class TriggerSubsystem
 
     Public Sub ApplyMeterCompleteFirstGradeBinning(ByVal count As Integer, ByVal startDelay As TimeSpan,
                                                    ByVal failedBitPattern As Integer, ByVal passBitPattern As Integer,
-                                                   ByVal openContactBitPattern As Integer, ByVal triggerSource As VI.TriggerSources)
+                                                   ByVal openContactBitPattern As Integer, ByVal triggerSource As Scpi.TriggerSources)
 
         Dim block As Integer = 0
         Dim cmd As String = ""
@@ -421,15 +421,15 @@ Public Class TriggerSubsystem
         ' Block 3: Wait for external trigger
         block += 1
         cmd = $":TRIG:BLOC:WAIT {block}, EXT"
-        If 0 <> (triggerSource And TriggerSources.Bus) Then
+        If 0 <> (triggerSource And Scpi.TriggerSources.Bus) Then
             cmd = $":TRIG:BLOC:WAIT {block}, COMM"
-        ElseIf 0 <> (triggerSource And TriggerSources.Manual) Then
+        ElseIf 0 <> (triggerSource And Scpi.TriggerSources.Manual) Then
             cmd = $":TRIG:BLOC:WAIT {block}, DISP"
-        ElseIf 0 <> (triggerSource And TriggerSources.TriggerLink) Then
+        ElseIf 0 <> (triggerSource And Scpi.TriggerSources.TriggerLink) Then
             cmd = $":TRIG:BLOC:WAIT {block}, TSPL(1)"
-        ElseIf 0 <> (triggerSource And TriggerSources.Timer) Then
+        ElseIf 0 <> (triggerSource And Scpi.TriggerSources.Timer) Then
             cmd = $":TRIG:BLOC:WAIT {block}, TIM(1)"
-        ElseIf 0 <> (triggerSource And TriggerSources.Digital) Then
+        ElseIf 0 <> (triggerSource And Scpi.TriggerSources.Digital) Then
             cmd = $":TRIG:BLOC:WAIT {block}, DIG(1)"
         End If
         Me.Write(cmd)
