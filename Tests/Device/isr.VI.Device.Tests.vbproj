@@ -88,18 +88,17 @@
     <Compile Include="..\..\..\..\Share\Bare\ShareAppSettingsReader.vb">
       <Link>My\ShareAppSettingsReader.vb</Link>
     </Compile>
+    <Compile Include="..\..\..\..\Share\TestInfo\ShareTestInfo_Class.vb">
+      <Link>My\ShareTestInfo_Class.vb</Link>
+    </Compile>
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="TestInfo\ConfigInfo.vb" />
-    <Compile Include="TestInfo\TestContextValidations.vb" />
-    <Compile Include="TestInfo\TestInfo.vb" />
-    <Compile Include="TestInfo\TestTrace.vb" />
+    <Compile Include="My\TestInfo_TraceMessagesQueueCollection.vb" />
     <Compile Include="Session\ResourceTests.vb" />
     <Compile Include="Session\SessionTests.vb" />
-    <Compile Include="TestInfo\TraceMessagesQueue.vb" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">

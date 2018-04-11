@@ -40,11 +40,11 @@ Partial Public NotInheritable Class TestInfo
 
 #Region " TRACE MESSAGE QUEUE COLLECTION "
 
-    Private Shared _TraceMessagesQueues As TraceMessasgeQueueCollection
-    Private Shared ReadOnly Property TraceMessagesQueues As TraceMessasgeQueueCollection
+    Private Shared _TraceMessagesQueues As TraceMessageQueueCollection
+    Private Shared ReadOnly Property TraceMessagesQueues As TraceMessageQueueCollection
         Get
             If TestInfo._TraceMessagesQueues Is Nothing Then
-                TestInfo._TraceMessagesQueues = New TraceMessasgeQueueCollection
+                TestInfo._TraceMessagesQueues = New TraceMessageQueueCollection
             End If
             Return TestInfo._TraceMessagesQueues
         End Get
@@ -61,7 +61,7 @@ Partial Public NotInheritable Class TestInfo
         Return TestInfo.TraceMessagesQueues.ClearMessageQueue()
     End Function
 
-    Private Class TraceMessasgeQueueCollection
+    Private Class TraceMessageQueueCollection
         Inherits ObjectModel.Collection(Of isr.Core.Pith.TraceMessagesQueue)
         Public Sub New()
             MyBase.New
@@ -87,7 +87,7 @@ Partial Public NotInheritable Class TestInfo
         Public Function ClearMessageQueue() As String
             Dim builder As New System.Text.StringBuilder
             For Each traceMessageQueue As isr.Core.Pith.TraceMessagesQueue In Me
-                TraceMessasgeQueueCollection.AppendLine(builder, traceMessageQueue.FetchContent())
+                TraceMessageQueueCollection.AppendLine(builder, traceMessageQueue.FetchContent())
             Next
             Return builder.ToString
         End Function

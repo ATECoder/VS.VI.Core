@@ -94,22 +94,22 @@
     <Compile Include="..\..\..\..\Share\Bare\ShareAppSettingsReader.vb">
       <Link>MY\ShareAppSettingsReader.vb</Link>
     </Compile>
+    <Compile Include="..\..\..\..\Share\TestInfo\ShareTestInfo_Class.vb">
+      <Link>TestInfo\ShareTestInfo_Class.vb</Link>
+    </Compile>
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>MY\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="MY\MyLibrary_Info.vb" />
     <Compile Include="MY\MySuppressions.vb" />
     <Compile Include="Resource\ResourceTests.vb" />
-    <Compile Include="TestInfo\ConfigInfo.vb" />
-    <Compile Include="TestInfo\TestContextValidations.vb" />
-    <Compile Include="TestInfo\TestInfo.vb" />
-    <Compile Include="TestInfo\TestTrace.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
-    <Compile Include="TestInfo\TraceMessagesQueue.vb" />
+    <Compile Include="TestInfo\TestInfo_Config.vb" />
+    <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
     <Compile Include="Trace\TraceEventIdentities.vb" />
   </ItemGroup>
   <ItemGroup>

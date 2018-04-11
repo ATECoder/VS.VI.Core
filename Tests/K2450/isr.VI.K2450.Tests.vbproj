@@ -91,6 +91,9 @@
     <Compile Include="..\..\..\..\Share\Bare\ShareAppSettingsReader.vb">
       <Link>My\ShareAppSettingsReader.vb</Link>
     </Compile>
+    <Compile Include="..\..\..\..\Share\TestInfo\ShareTestInfo_Class.vb">
+      <Link>TestInfo\ShareTestInfo_Class.vb</Link>
+    </Compile>
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
@@ -104,14 +107,10 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="TestInfo\ConfigInfo.vb" />
-    <Compile Include="TestInfo\TestContextValidations.vb" />
-    <Compile Include="TestInfo\TestInfo.vb" />
-    <Compile Include="TestInfo\TestTrace.vb" />
     <Compile Include="Measure\MeasureTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="Measure\MeasureTests_Info.vb" />
-    <Compile Include="TestInfo\TraceMessagesQueue.vb" />
+    <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
