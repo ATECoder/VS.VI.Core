@@ -1,6 +1,6 @@
 ﻿Imports System.Configuration
 
-Partial Public NotInheritable Class TestInfo
+Partial Friend NotInheritable Class TestInfo
 
 #Region " TRACE EVENT IDENTITY FILE "
 

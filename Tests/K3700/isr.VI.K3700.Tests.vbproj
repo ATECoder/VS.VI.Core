@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0D6FDFB9-17C6-46A2-83A6-C9E601583926}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>isr.VI.Tsp.K3700.Tests</RootNamespace>
+    <RootNamespace>isr.VI.Tsp</RootNamespace>
     <AssemblyName>isr.VI.K3700.Tests</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
@@ -88,6 +88,9 @@
     <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Bare\ShareApplicationSettingsBase.vb">
+      <Link>My\ShareApplicationSettingsBase.vb</Link>
+    </Compile>
     <Compile Include="..\..\..\..\Share\Bare\ShareAppSettingsReader.vb">
       <Link>My\ShareAppSettingsReader.vb</Link>
     </Compile>
@@ -97,20 +100,25 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="Common\CommonFunctions.vb" />
-    <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
-    <Compile Include="Device\DeviceTests.vb" />
+    <Compile Include="BridgeMeter\BridgeMeterTests.vb" />
+    <Compile Include="BridgeMeter\BridgeMeterTests_Info.vb" />
+    <Compile Include="Device\CommonFunctions.vb" />
     <Compile Include="Device\ControlTests.vb" />
+    <Compile Include="Device\DeviceTests.vb" />
+    <Compile Include="Device\DeviceTests_Info.vb" />
     <Compile Include="Device\ResourceControlTests.vb" />
-    <Compile Include="Measure\MeasureTests.vb" />
-    <Compile Include="Measure\MeasureTests_Info.vb" />
+    <Compile Include="Gage\GageBoardTests.vb" />
+    <Compile Include="Gage\GageBoardTests_Info.vb" />
+    <Compile Include="Resistance\ResistanceTests.vb" />
+    <Compile Include="Resistance\ResistanceTests_Info.vb" />
+    <Compile Include="TestInfo\K3700TestsInfo.vb" />
+    <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="My\MySuppressions.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="Common\CommonFunctions_Info.vb" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Resource\Pith\My\keyPair.snk">

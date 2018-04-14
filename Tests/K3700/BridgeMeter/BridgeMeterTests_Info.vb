@@ -1,127 +1,288 @@
 ﻿Imports System.Configuration
-Imports isr.VI.tsp.K3700
+Imports System.Data.Common
+Namespace K3700.Tests
 
-Partial Public NotInheritable Class TestInfo
+    Partial Friend NotInheritable Class Info
 
-#Region " BRIDGE METER INFORMATION "
+#Region " CONSTRUCTORS"
 
-    Public Shared ReadOnly Property R1ChannelList As String
-        Get
-            Return My.MyAppSettingsReader.AppSettingValue()
-        End Get
-    End Property
+        Private Shared _BridgeMeterTestInfo As BridgeMeterTestInfo
 
-    Public Shared ReadOnly Property R2ChannelList As String
-        Get
-            Return My.MyAppSettingsReader.AppSettingValue()
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property R3ChannelList As String
-        Get
-            Return My.MyAppSettingsReader.AppSettingValue()
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property R4ChannelList As String
-        Get
-            Return My.MyAppSettingsReader.AppSettingValue()
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property BridgeNumber As String
-        Get
-            Return If(TestInfo.TestLocation = TestLocation.Micron, TestInfo.MicronBridgeNumber, TestInfo.IsrBridgeNumber)
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property BridgeR1 As Double
-        Get
-            Return If(TestInfo.TestLocation = TestLocation.Micron, TestInfo.MicronBridgeR1, TestInfo.IsrBridgeR1)
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property BridgeR2 As Double
-        Get
-            Return If(TestInfo.TestLocation = TestLocation.Micron, TestInfo.MicronBridgeR2, TestInfo.IsrBridgeR2)
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property BridgeR3 As Double
-        Get
-            Return If(TestInfo.TestLocation = TestLocation.Micron, TestInfo.MicronBridgeR3, TestInfo.IsrBridgeR3)
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property BridgeR4 As Double
-        Get
-            Return If(TestInfo.TestLocation = TestLocation.Micron, TestInfo.MicronBridgeR4, TestInfo.IsrBridgeR4)
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property IsrBridgeNumber As String
-        Get
-            Return My.MyAppSettingsReader.AppSettingValue()
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property IsrBridgeR1 As Double
-        Get
-            Return My.MyAppSettingsReader.AppSettingDouble()
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property IsrBridgeR2 As Double
-        Get
-            Return My.MyAppSettingsReader.AppSettingDouble()
-        End Get
-    End Property
-    Public Shared ReadOnly Property IsrBridgeR3 As Double
-        Get
-            Return My.MyAppSettingsReader.AppSettingDouble()
-        End Get
-    End Property
-    Public Shared ReadOnly Property IsrBridgeR4 As Double
-        Get
-            Return My.MyAppSettingsReader.AppSettingDouble()
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property MicronBridgeNumber As String
-        Get
-            Return My.MyAppSettingsReader.AppSettingValue()
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property MicronBridgeR1 As Double
-        Get
-            Return My.MyAppSettingsReader.AppSettingDouble()
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property MicronBridgeR2 As Double
-        Get
-            Return My.MyAppSettingsReader.AppSettingDouble()
-        End Get
-    End Property
-    Public Shared ReadOnly Property MicronBridgeR3 As Double
-        Get
-            Return My.MyAppSettingsReader.AppSettingDouble()
-        End Get
-    End Property
-    Public Shared ReadOnly Property MicronBridgeR4 As Double
-        Get
-            Return My.MyAppSettingsReader.AppSettingDouble()
-        End Get
-    End Property
-
-    Public Shared ReadOnly Property BridgeMeterEpsilon As Double
-        Get
-            Return My.MyAppSettingsReader.AppSettingDouble()
-        End Get
-    End Property
+        ''' <summary> Gets the Bridge Meter Test Info. </summary>
+        ''' <value> The Bridge Meter Test Info. </value>
+        Public Shared ReadOnly Property BridgeMeterTestInfo As BridgeMeterTestInfo
+            Get
+                If Info._BridgeMeterTestInfo Is Nothing Then
+                    Info._BridgeMeterTestInfo = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New BridgeMeterTestInfo()), BridgeMeterTestInfo)
+                End If
+                Return Info._BridgeMeterTestInfo
+            End Get
+        End Property
 
 #End Region
 
-End Class
+    End Class
 
+    ''' <summary> A bridge meter Test Info. </summary>
+    ''' <license>
+    ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
+    ''' Licensed under The MIT License.</para><para>
+    ''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+    ''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    ''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    ''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+    ''' </license>
+    ''' <history date="2/12/2018" by="David" revision=""> Created. </history>
+    <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
+     Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
+    Friend Class BridgeMeterTestInfo
+        Inherits ApplicationSettingsBase
+
+#Region " CONFIGURATION INFORMATION "
+
+        ''' <summary> Gets the Model of the resource. </summary>
+        ''' <value> The Model of the resource. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("True")>
+        Public ReadOnly Property Exists As Boolean
+            Get
+                Return Me.AppSettingBoolean()
+            End Get
+        End Property
+
+        ''' <summary> Gets the verbose. </summary>
+        ''' <value> The verbose. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("False")>
+        Public ReadOnly Property Verbose As Boolean
+            Get
+                Return Me.AppSettingBoolean()
+            End Get
+        End Property
+
+#End Region
+
+#Region " MEASURE SUBSYSTEM INFORMATION "
+
+        ''' <summary> Gets the auto zero Enabled settings. </summary>
+        ''' <value> The auto zero settings. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property AutoZeroEnabled As Boolean
+            Get
+                Return Me.AppSettingBoolean
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property AutoRangeEnabled As Boolean
+            Get
+                Return Me.AppSettingBoolean
+            End Get
+        End Property
+
+        ''' <summary> Gets the Sense Function settings. </summary>
+        ''' <value> The Sense Function settings. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property SenseFunctionMode As VI.Tsp.MultimeterFunctionMode
+            Get
+                Return Me.AppSettingEnum(Of VI.Tsp.MultimeterFunctionMode)
+            End Get
+        End Property
+
+        ''' <summary> Gets the power line cycles settings. </summary>
+        ''' <value> The power line cycles settings. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property PowerLineCycles As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property FirstRtdChannelList As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property RtdAmbientResistance As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property RtdResistanceEpsilon As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property FirstGaugeChannelList As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property GaugeAmbientResistance As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property GaugeResistanceEpsilon As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+#End Region
+
+#Region " BRIDGE METER INFORMATION "
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property R1ChannelList As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property R2ChannelList As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property R3ChannelList As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property R4ChannelList As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property BridgeNumber As String
+            Get
+                Return If(TestInfo.TestLocation = TestLocation.Remote, Me.RemoteBridgeNumber, Me.LocalBridgeNumber)
+            End Get
+        End Property
+
+        Public ReadOnly Property BridgeR1 As Double
+            Get
+                Return If(TestInfo.TestLocation = TestLocation.Remote, Me.RemoteBridgeR1, Me.LocalBridgeR1)
+            End Get
+        End Property
+
+        Public ReadOnly Property BridgeR2 As Double
+            Get
+                Return If(TestInfo.TestLocation = TestLocation.Remote, Me.RemoteBridgeR2, Me.LocalBridgeR2)
+            End Get
+        End Property
+
+        Public ReadOnly Property BridgeR3 As Double
+            Get
+                Return If(TestInfo.TestLocation = TestLocation.Remote, Me.RemoteBridgeR3, Me.LocalBridgeR3)
+            End Get
+        End Property
+
+        Public ReadOnly Property BridgeR4 As Double
+            Get
+                Return If(TestInfo.TestLocation = TestLocation.Remote, Me.RemoteBridgeR4, Me.LocalBridgeR4)
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property LocalBridgeNumber As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property LocalBridgeR1 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property LocalBridgeR2 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property LocalBridgeR3 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property LocalBridgeR4 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property RemoteBridgeNumber As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property RemoteBridgeR1 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property RemoteBridgeR2 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property RemoteBridgeR3 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property RemoteBridgeR4 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property BridgeMeterEpsilon As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+#End Region
+
+    End Class
+
+End Namespace

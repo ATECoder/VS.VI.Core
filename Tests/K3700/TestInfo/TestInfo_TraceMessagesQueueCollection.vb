@@ -1,7 +1,7 @@
 ﻿
-Partial Public NotInheritable Class TestInfo
+Partial Friend NotInheritable Class TestInfo
 
-    Partial Private Class TraceMessageQueueCollection
+    Partial Public Class TraceMessageQueueCollection
         Inherits ObjectModel.Collection(Of isr.Core.Pith.TraceMessagesQueue)
         Public Sub New()
             MyBase.New

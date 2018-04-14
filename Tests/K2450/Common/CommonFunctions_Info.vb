@@ -1,5 +1,5 @@
 ﻿
-Partial Public NotInheritable Class TestInfo
+Partial Friend NotInheritable Class TestInfo
 
 #Region " DEVICE INFORMATION "
 
@@ -10,8 +10,6 @@ Partial Public NotInheritable Class TestInfo
             Return My.MyAppSettingsReader.AppSettingValue()
         End Get
     End Property
-
-    Public Shared Property TestLocation As TestLocation
 
     Private Shared _ResourceLocated As Boolean?
 
@@ -32,13 +30,10 @@ Partial Public NotInheritable Class TestInfo
             If String.IsNullOrWhiteSpace(TestInfo._resourceName) Then
                 If isr.VI.Pith.ResourceNamesManager.Ping(TestInfo.IsrResourceName) Then
                     TestInfo._resourceName = TestInfo.IsrResourceName
-                    TestInfo.TestLocation = TestLocation.Isr
                 ElseIf isr.VI.Pith.ResourceNamesManager.Ping(TestInfo.MicronResourceName) Then
                     TestInfo._resourceName = TestInfo.MicronResourceName
-                    TestInfo.TestLocation = TestLocation.Micron
                 Else
                     TestInfo._resourceName = ""
-                    TestInfo.TestLocation = TestLocation.None
                 End If
             End If
             Return TestInfo._resourceName
@@ -135,8 +130,3 @@ Partial Public NotInheritable Class TestInfo
 
 End Class
 
-Public Enum TestLocation
-    None
-    Micron
-    Isr
-End Enum

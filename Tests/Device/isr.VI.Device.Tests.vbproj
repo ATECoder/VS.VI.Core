@@ -9,7 +9,7 @@
     </SchemaVersion>
     <ProjectGuid>{4248F89B-B3A3-463D-A509-7A4C8FD59DD4}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>isr.VI.Device.Tests</RootNamespace>
+    <RootNamespace>isr.VI</RootNamespace>
     <AssemblyName>isr.VI.Device.Tests</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
@@ -89,14 +89,14 @@
       <Link>My\ShareAppSettingsReader.vb</Link>
     </Compile>
     <Compile Include="..\..\..\..\Share\TestInfo\ShareTestInfo_Class.vb">
-      <Link>My\ShareTestInfo_Class.vb</Link>
+      <Link>TestInfo\ShareTestInfo_Class.vb</Link>
     </Compile>
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="My\TestInfo_TraceMessagesQueueCollection.vb" />
+    <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
     <Compile Include="Session\ResourceTests.vb" />
     <Compile Include="Session\SessionTests.vb" />
   </ItemGroup>

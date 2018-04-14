@@ -1,5 +1,5 @@
 ﻿
-Partial Public NotInheritable Class TestInfo
+Partial Friend NotInheritable Class TestInfo
 
 #Region " DEVICE INFORMATION "
 
