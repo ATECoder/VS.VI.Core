@@ -89,10 +89,14 @@
         Public ReadOnly Property ResourceName As String
             Get
                 If String.IsNullOrWhiteSpace(Me._resourceName) Then
-                    If VI.Pith.ResourceNamesManager.Ping(Me.LocalResourceName) Then
-                        Me._resourceName = Me.LocalResourceName
-                    ElseIf VI.Pith.ResourceNamesManager.Ping(Me.RemoteResourceName) Then
-                        Me._resourceName = Me.RemoteResourceName
+                    If VI.Pith.ResourceNamesManager.Ping(Me.FirstResourceName) Then
+                        Me._resourceName = Me.FirstResourceName
+                    ElseIf VI.Pith.ResourceNamesManager.Ping(Me.SecondResourceName) Then
+                        Me._resourceName = Me.SecondResourceName
+                    ElseIf VI.Pith.ResourceNamesManager.Ping(Me.ThirdResourceName) Then
+                        Me._resourceName = Me.ThirdResourceName
+                    ElseIf VI.Pith.ResourceNamesManager.Ping(Me.FourthResourceName) Then
+                        Me._resourceName = Me.FourthResourceName
                     Else
                         Me._resourceName = ""
                     End If
@@ -104,14 +108,34 @@
         ''' <summary> Gets the name of the resource. </summary>
         ''' <value> The name of the resource. </value>
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property LocalResourceName As String
+        Public ReadOnly Property FirstResourceName As String
             Get
                 Return Me.AppSettingValue
             End Get
         End Property
 
+        ''' <summary> Gets the name of the second resource. </summary>
+        ''' <value> The name of the second resource. </value>
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property RemoteResourceName As String
+        Public ReadOnly Property SecondResourceName As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        ''' <summary> Gets the name of the third resource. </summary>
+        ''' <value> The name of the third resource. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property ThirdResourceName As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        ''' <summary> Gets the name of the fourth resource. </summary>
+        ''' <value> The name of the fourth resource. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property FourthResourceName As String
             Get
                 Return Me.AppSettingValue
             End Get

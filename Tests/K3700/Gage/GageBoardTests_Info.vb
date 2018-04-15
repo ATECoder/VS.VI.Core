@@ -139,6 +139,35 @@
             End Get
         End Property
 
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property TwoWireRtdSenseChannelList As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property TwoWireRtdSourceChannelList As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property TwoWireGageSenseChannelList As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property TwoWireGageSourceChannelList As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+
 #End Region
 
     End Class

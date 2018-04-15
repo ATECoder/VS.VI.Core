@@ -98,7 +98,7 @@ Namespace K3700.Tests
 
 #End Region
 
-#Region " GageBoard SUBSYSTEM TEST "
+#Region " GAGE BOARD SUBSYSTEM TEST "
 
         ''' <summary> Check GageBoard subsystem information. </summary>
         ''' <param name="device"> The device. </param>
@@ -160,6 +160,11 @@ Namespace K3700.Tests
             Dim actualFunction As MultimeterFunctionMode = device.MultimeterSubsystem.ApplyFunctionMode(expectedFunction).GetValueOrDefault(MultimeterFunctionMode.ResistanceFourWire)
             Assert.AreEqual(expectedFunction, actualFunction, $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.FunctionMode)} is {actualFunction} ; expected {expectedFunction}")
 
+            Dim expectedDetectorEnabled As Boolean = False
+            device.MultimeterSubsystem.ApplyOpenDetectorEnabled(expectedDetectorEnabled)
+            Assert.IsTrue(device.MultimeterSubsystem.OpenDetectorEnabled.HasValue, $"Detector enabled has value: {device.MultimeterSubsystem.OpenDetectorEnabled.HasValue}")
+            Dim detectorEnabled As Boolean = device.MultimeterSubsystem.OpenDetectorEnabled.Value
+            Assert.AreEqual(expectedDetectorEnabled, detectorEnabled, $"Detector enabled {device.MultimeterSubsystem.OpenDetectorEnabled.Value}")
         End Sub
 
         ''' <summary> GageBoard resistance. </summary>
@@ -180,12 +185,12 @@ Namespace K3700.Tests
             expectedChannelList = channelList
             actualChannelList = device.ChannelSubsystem.ApplyClosedChannels(expectedChannelList, TimeSpan.FromSeconds(2))
             Assert.AreEqual(expectedChannelList, actualChannelList,
-                            $"{NameOf(ChannelSubsystem)}.{NameOf(ChannelSubsystem.ClosedChannels)} is {actualChannelList}; expected {expectedChannelList}")
+                            $"{trialNumber} {NameOf(ChannelSubsystem)}.{NameOf(ChannelSubsystem.ClosedChannels)} is {actualChannelList}; expected {expectedChannelList}")
 
             Dim expectedResistance As Double = expectedValue
             Dim resistance As Double = device.MultimeterSubsystem.Measure.GetValueOrDefault(-1)
             Assert.AreEqual(expectedValue, resistance, epsilon,
-                            $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.MeasuredValue)} {channelList} is {resistance}; expected {expectedResistance } within {epsilon}")
+                            $"{trialNumber} {NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.MeasuredValue)} {channelList} is {resistance}; expected {expectedResistance } within {epsilon}")
 
         End Sub
 
@@ -203,6 +208,36 @@ Namespace K3700.Tests
                 expectedValue = Info.GageBoardTestInfo.GaugeAmbientResistance
                 epsilon = Info.GageBoardTestInfo.GaugeResistanceEpsilon
                 channelList = Info.GageBoardTestInfo.FirstGaugeChannelList
+                trialNumber += 1 : GageBoardTests.GageBoardResistance(trialNumber, device, expectedValue, epsilon, channelList)
+                K3700.Tests.Info.CloseSession(device)
+            End Using
+        End Sub
+
+        <TestMethod(), TestCategory("VI")>
+        Public Sub TwoWireCircuitTest()
+            Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
+                device.AddListener(TestInfo.TraceMessagesQueueListener)
+                K3700.Tests.Info.OpenSession(device)
+                GageBoardTests.PrepareGageBoardResistance(device)
+                Dim trialNumber As Integer = 0
+                Dim expectedValue As Double = Info.GageBoardTestInfo.RtdAmbientResistance
+                Dim epsilon As Double = Info.GageBoardTestInfo.RtdResistanceEpsilon
+                Dim channelList As String = Info.GageBoardTestInfo.TwoWireRtdSenseChannelList
+                trialNumber += 1 : GageBoardTests.GageBoardResistance(trialNumber, device, expectedValue, epsilon, channelList)
+
+                expectedValue = Info.GageBoardTestInfo.RtdAmbientResistance + Info.GageBoardTestInfo.GaugeAmbientResistance
+                epsilon = Info.GageBoardTestInfo.RtdResistanceEpsilon + Info.GageBoardTestInfo.GaugeResistanceEpsilon
+                channelList = Info.GageBoardTestInfo.TwoWireRtdSourceChannelList
+                trialNumber += 1 : GageBoardTests.GageBoardResistance(trialNumber, device, expectedValue, epsilon, channelList)
+
+                expectedValue = Info.GageBoardTestInfo.GaugeAmbientResistance
+                epsilon = Info.GageBoardTestInfo.GaugeResistanceEpsilon
+                channelList = Info.GageBoardTestInfo.TwoWireGageSenseChannelList
+                trialNumber += 1 : GageBoardTests.GageBoardResistance(trialNumber, device, expectedValue, epsilon, channelList)
+
+                expectedValue = 3 * Info.GageBoardTestInfo.GaugeAmbientResistance
+                epsilon = 3 * Info.GageBoardTestInfo.GaugeResistanceEpsilon
+                channelList = Info.GageBoardTestInfo.TwoWireGageSourceChannelList
                 trialNumber += 1 : GageBoardTests.GageBoardResistance(trialNumber, device, expectedValue, epsilon, channelList)
                 K3700.Tests.Info.CloseSession(device)
             End Using
