@@ -187,7 +187,6 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <param name="value"> The Aperture. </param>
     ''' <returns> The Aperture. </returns>
     Public Function WriteAperture(ByVal value As Double) As Double?
-        value = If(value > ApertureRange.Max, ApertureRange.Max, If(value < ApertureRange.Min, ApertureRange.Min, value))
         Me.Aperture = Me.Write(value, Me.ApertureCommandFormat)
         Return Me.Aperture
     End Function
@@ -395,7 +394,6 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <param name="value"> The Filter Count. </param>
     ''' <returns> The Filter Count. </returns>
     Public Function WriteFilterCount(ByVal value As Integer) As Integer?
-        value = If(value > FilterCountRange.Max, FilterCountRange.Max, If(value < FilterCountRange.Min, FilterCountRange.Min, value))
         Me.FilterCount = Me.Write(value, Me.FilterCountCommandFormat)
         Return Me.FilterCount
     End Function
@@ -578,7 +576,6 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <param name="value"> The Filter Window. </param>
     ''' <returns> The Filter Window. </returns>
     Public Function WriteFilterWindow(ByVal value As Double) As Double?
-        value = If(value > FilterWindowRange.Max, FilterWindowRange.Max, If(value < FilterWindowRange.Min, FilterWindowRange.Min, value))
         Me.FilterWindow = Me.Write(100 * value, Me.FilterWindowCommandFormat)
         Return Me.FilterWindow
     End Function
@@ -1305,7 +1302,6 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <param name="value"> The Power Line Cycles. </param>
     ''' <returns> The Power Line Cycles. </returns>
     Public Function WritePowerLineCycles(ByVal value As Double) As Double?
-        value = If(value > PowerLineCyclesRange.Max, PowerLineCyclesRange.Max, If(value < PowerLineCyclesRange.Min, PowerLineCyclesRange.Min, value))
         Me.PowerLineCycles = Me.Write(value, Me.PowerLineCyclesCommandFormat)
         Return Me.PowerLineCycles
     End Function
@@ -1361,7 +1357,6 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <param name="value"> The Range. </param>
     ''' <returns> The Range. </returns>
     Public Function WriteRange(ByVal value As Double) As Double?
-        value = If(value > FunctionRange.Max, FunctionRange.Max, If(value < FunctionRange.Min, FunctionRange.Min, value))
         Me.Range = Me.Write(value, Me.RangeCommandFormat)
         Return Me.Range
     End Function

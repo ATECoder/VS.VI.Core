@@ -325,7 +325,6 @@ Public MustInherit Class SenseSubsystemBase
     ''' <param name="value"> The Range. </param>
     ''' <returns> The Range. </returns>
     Public Function WriteRange(ByVal value As Double) As Double?
-        value = If(value > FunctionRange.Max, FunctionRange.Max, If(value < FunctionRange.Min, FunctionRange.Min, value))
         Me.Range = Me.Write(value, Me.RangeCommandFormat)
         Return Me.Range
     End Function
