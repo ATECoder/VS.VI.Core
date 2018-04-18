@@ -42,12 +42,16 @@ Public Class DeviceError
 
     ''' <summary> Gets or sets the no error. </summary>
     ''' <value> The no error. </value>
-    Public Shared ReadOnly Property NoError As DeviceError = New DeviceError(VI.Pith.Scpi.Syntax.NoErrorCompoundMessage)
-
+    Public Shared ReadOnly Property NoError As DeviceError 
+        Get
+            Return New DeviceError(VI.Pith.Scpi.Syntax.NoErrorCompoundMessage)
+        End Get
+    End Property
 
 #End Region
 
 #Region " PARSE "
+
 
     ''' <summary> Parses the error message </summary>
     ''' <param name="compoundError"> The compound error. </param>
