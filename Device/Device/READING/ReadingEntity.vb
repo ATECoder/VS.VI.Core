@@ -10,7 +10,7 @@
 ''' <history date="11/1/2013" by="David" revision=""> Created. </history>
 Public Class ReadingEntity
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary>
     ''' Constructs a measured value without specifying the value or its validity, which must be

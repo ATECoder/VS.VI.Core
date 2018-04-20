@@ -22,7 +22,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class T1750Control
     Inherits VI.Instrument.ResourceControlBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()

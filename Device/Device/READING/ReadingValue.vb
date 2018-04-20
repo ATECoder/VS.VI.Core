@@ -11,7 +11,7 @@
 Public Class ReadingValue
     Inherits ReadingEntity
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary>
     ''' Constructs a measured value without specifying the value or its validity, which must be

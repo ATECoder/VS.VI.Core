@@ -17,7 +17,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class K2000MeasureControl
     Inherits TalkerControlBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()

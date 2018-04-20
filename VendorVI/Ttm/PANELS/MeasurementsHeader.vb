@@ -15,7 +15,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class MeasurementsHeader
     Inherits MyUserControlBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> This constructor is public to allow using this as a startup form for the project. </summary>
     Public Sub New()

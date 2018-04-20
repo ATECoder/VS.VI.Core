@@ -104,6 +104,8 @@
     <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="PAYLOAD\RealValuePayload.vb" />
     <Compile Include="PRIMITIVES\ChannelListBuilder.vb" />
+    <Compile Include="PRIMITIVES\ChannelSourceMeasure.vb" />
+    <Compile Include="PRIMITIVES\ChannelResistor.vb" />
     <Compile Include="PRIMITIVES\Dictionaries.vb" />
     <Compile Include="PRIMITIVES\Extensions.vb" />
     <Compile Include="PRIMITIVES\InsulationResistance.vb" />

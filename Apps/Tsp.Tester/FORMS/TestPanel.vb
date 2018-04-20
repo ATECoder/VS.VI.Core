@@ -17,7 +17,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class TestPanel
     Inherits ListenerFormBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary>
     ''' Initializes a new instance of this class.

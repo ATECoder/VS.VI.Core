@@ -11,7 +11,7 @@
 Public Class ChannelSubsystem
     Inherits isr.VI.ChannelSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="ChannelSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based

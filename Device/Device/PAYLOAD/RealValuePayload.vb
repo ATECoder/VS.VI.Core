@@ -5,7 +5,7 @@
 Public Class RealValuePayload
     Inherits VI.Pith.PayloadBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary>
     ''' Constructor for this class.

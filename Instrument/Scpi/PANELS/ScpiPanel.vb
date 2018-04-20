@@ -21,7 +21,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class ScpiPanel
     Inherits ResourcePanelBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>

@@ -14,7 +14,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class MeasureSequencer
     Inherits PropertyNotifyBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     Public Sub New()
         MyBase.New()

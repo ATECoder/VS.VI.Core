@@ -11,7 +11,7 @@
 Public MustInherit Class MeasureVoltageSubsystemBase
     Inherits VI.MeasureVoltageSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="MeasureVoltageSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>

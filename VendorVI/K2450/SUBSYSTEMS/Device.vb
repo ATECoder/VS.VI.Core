@@ -14,7 +14,7 @@
 Public Class Device
     Inherits VI.DeviceBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="Device" /> class. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
@@ -527,7 +527,7 @@ Public Class Device
     ''' <summary> Measure subsystem property changed. </summary>
     ''' <param name="subsystem"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Overloads Sub HandlePropertyChange(ByVal subsystem As MeasureSubsystem, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As MeasureSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(K2450.MeasureSubsystem.MeasuredValue)
@@ -583,7 +583,7 @@ Public Class Device
     ''' <summary> Source subsystem property changed. </summary>
     ''' <param name="subsystem"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Overloads Sub HandlePropertyChange(ByVal subsystem As SourceSubsystem, ByVal propertyName As String)
+    Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As SourceSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(K2450.SourceSubsystem.Range)

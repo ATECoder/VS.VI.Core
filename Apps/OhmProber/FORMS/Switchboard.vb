@@ -13,7 +13,7 @@ Imports isr.Core.Pith.EnumExtensions
 Public Class Switchboard
     Inherits isr.Core.Pith.UserFormBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()

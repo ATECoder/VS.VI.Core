@@ -19,7 +19,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class CompensationWizard
     Inherits isr.Core.Pith.ListenerFormBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary>
     ''' Creates a new instance of the <see cref="CompensationWizard"/> class.

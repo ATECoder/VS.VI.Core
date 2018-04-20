@@ -18,7 +18,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class ServiceRequesterPanel
     Inherits TalkerControlBase
 
-#Region " CONSTRUCTORS AND DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     Public Sub New()
         MyBase.New()

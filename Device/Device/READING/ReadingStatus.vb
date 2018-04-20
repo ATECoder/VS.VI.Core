@@ -11,7 +11,7 @@
 Public Class ReadingStatus
     Inherits ReadingValue
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     Public Sub New(ByVal readingType As ReadingTypes)

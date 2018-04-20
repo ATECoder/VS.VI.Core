@@ -14,7 +14,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class TriggerSequencer
     Inherits PropertyNotifyBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     Public Sub New()
         MyBase.New()

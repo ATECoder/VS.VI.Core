@@ -19,7 +19,7 @@ Public MustInherit Class DeviceBase
     Inherits PropertyPublisherTalkerBase
     Implements IPresettablePropertyPublisher
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="DeviceBase" /> class. </summary>
     Private Sub New()

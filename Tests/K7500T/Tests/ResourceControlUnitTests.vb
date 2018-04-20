@@ -17,7 +17,7 @@ Imports isr.Core.Pith.StopwatchExtensions
 <TestClass()>
 Public Class ResourceControlUnitTests
 
-#Region " CONSTRUCTION AND CLEANUP "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> My class initialize. </summary>
     ''' <param name="testContext"> Gets or sets the test context which provides information about

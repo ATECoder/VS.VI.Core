@@ -13,7 +13,7 @@ Imports isr.Core.Pith.EnumExtensions
 Public MustInherit Class Calculate2SubsystemBase
     Inherits VI.Calculate2SubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="Calculate2SubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>

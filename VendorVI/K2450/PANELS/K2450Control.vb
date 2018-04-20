@@ -26,7 +26,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class K2450Control
     Inherits VI.Instrument.ResourceControlBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>

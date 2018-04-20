@@ -11,7 +11,7 @@
 Public Class Calculate2FourWireResistanceSubsystem
     Inherits VI.Scpi.Calculate2SubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="Calculate2FourWireResistanceSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based

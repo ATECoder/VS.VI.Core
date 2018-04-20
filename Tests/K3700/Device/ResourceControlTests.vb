@@ -14,7 +14,7 @@ Namespace K3700.Tests
     <TestClass()>
     Public Class ResourceControlTests
 
-#Region " CONSTRUCTION AND CLEANUP "
+#Region " CONSTRUCTION + CLEANUP "
 
         ''' <summary> My class initialize. </summary>
         ''' <param name="testContext"> Gets or sets the test context which provides information about

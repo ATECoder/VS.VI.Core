@@ -12,7 +12,7 @@
 <Serializable()> Public Class DeviceException
     Inherits ExceptionBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="VI.Pith.DeviceException"/> class. </summary>
     Public Sub New()

@@ -12,7 +12,7 @@
 Public Class ArmLayer2Subsystem
     Inherits VI.Scpi.ArmLayerSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="ArmLayer2Subsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based

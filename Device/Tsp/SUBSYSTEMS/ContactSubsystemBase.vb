@@ -13,7 +13,7 @@ Imports isr.Core.Pith.EnumExtensions
 Public Class ContactSubsystemBase
     Inherits SourceMeasureUnitBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="SourceSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp.StatusSubsystemBase">status subsystem</see>. </param>

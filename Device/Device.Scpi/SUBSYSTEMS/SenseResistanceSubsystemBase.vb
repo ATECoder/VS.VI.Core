@@ -12,7 +12,7 @@
 Public MustInherit Class SenseResistanceSubsystemBase
     Inherits VI.Scpi.SenseFunctionSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseResistanceSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>

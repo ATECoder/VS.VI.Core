@@ -12,7 +12,7 @@ Imports isr.VI.Pith.Scpi
 Public Class SenseSubsystem
     Inherits VI.Scpi.SenseSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based

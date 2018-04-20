@@ -121,7 +121,6 @@
     <Compile Include="SUBSYSTEMS\BridgeMeterDevice.vb" />
     <Compile Include="SUBSYSTEMS\BridgeMeter.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystem.vb" />
-    <Compile Include="SUBSYSTEMS\BridgeMeterResistor.vb" />
     <Compile Include="SUBSYSTEMS\SlotsSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SlotSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\MultimeterSubsystem.vb" />

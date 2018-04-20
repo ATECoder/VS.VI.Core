@@ -13,7 +13,7 @@ Imports isr.Core.Pith.EnumExtensions
 Public MustInherit Class ChannelMarkerSubsystemBase
     Inherits VI.ChannelMarkerSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary>
     ''' Initializes a new instance of the <see cref="Calculate2SubsystemBase" /> class.

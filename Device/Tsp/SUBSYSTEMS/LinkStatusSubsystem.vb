@@ -12,7 +12,7 @@
 Public Class LinkStatusSubsystem
     Inherits VI.StatusSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="LinkStatusSubsystem" /> class. </summary>
     ''' <param name="session"> The session. </param>

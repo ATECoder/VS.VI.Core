@@ -26,7 +26,7 @@ Imports isr.Core.Pith.ErrorProviderExtensions
 Public Class E4990Panel
     Inherits VI.Instrument.ResourcePanelBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     Private Property InitializingComponents As Boolean
     ''' <summary> Default constructor. </summary>

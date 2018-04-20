@@ -19,7 +19,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class InterfacePanel
     Inherits TalkerControlBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()

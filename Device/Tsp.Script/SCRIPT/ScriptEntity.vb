@@ -12,7 +12,7 @@
 Public Class ScriptEntity
     Inherits ScriptEntityBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Constructor that prevents a default instance of this class from being created. </summary>
     Private Sub New()

@@ -12,7 +12,7 @@ Imports isr.Core.Pith.EnumExtensions
 Public Class MeasureSubsystem
     Inherits VI.MeasureSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="MeasureSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based

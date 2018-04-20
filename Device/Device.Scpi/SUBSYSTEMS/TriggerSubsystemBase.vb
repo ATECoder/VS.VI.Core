@@ -14,7 +14,7 @@ Imports isr.VI.ComboBoxExtensions
 Public MustInherit Class TriggerSubsystemBase
     Inherits VI.TriggerSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="TriggerSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>

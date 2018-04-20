@@ -12,7 +12,7 @@ Imports isr.Core.Pith.StopwatchExtensions
 Public Class StatusSubsystem
     Inherits VI.Scpi.StatusSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
     ''' <param name="visaSession"> A reference to a <see cref="VI.Pith.SessionBase">message based

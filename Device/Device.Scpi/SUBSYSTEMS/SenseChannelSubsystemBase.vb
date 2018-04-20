@@ -14,7 +14,7 @@ Imports isr.VI.ComboBoxExtensions
 Public MustInherit Class SenseChannelSubsystemBase
     Inherits VI.SenseChannelSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystemBase" /> class. </summary>
     ''' <param name="channelNumber">   A reference to a <see cref="StatusSubsystemBase">status

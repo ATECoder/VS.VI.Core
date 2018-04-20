@@ -12,7 +12,7 @@ Imports isr.Core.Pith
 Public MustInherit Class ChannelMarkerSubsystemBase
     Inherits SubsystemPlusStatusBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary>
     ''' Initializes a new instance of the <see cref="Calculate2SubsystemBase" /> class.

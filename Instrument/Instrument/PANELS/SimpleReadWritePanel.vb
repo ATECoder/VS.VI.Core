@@ -18,7 +18,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class SimpleReadWritePanel
     Inherits TalkerControlBase
 
-#Region " CONSTRUCTORS AND DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Constructor that prevents a default instance of this class from being created. </summary>
     Public Sub New()

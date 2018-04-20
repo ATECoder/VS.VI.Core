@@ -15,7 +15,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class SimpleReadWriteForm
     Inherits ListenerFormBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()

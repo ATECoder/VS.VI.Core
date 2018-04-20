@@ -13,7 +13,7 @@ Public Class BinningInfo
     Inherits PropertyPublisherBase
     Implements IPresettablePropertyPublisher
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()

@@ -13,7 +13,7 @@ Imports isr.Core.Pith.EnumExtensions
 Public MustInherit Class ArmLayerSubsystemBase
     Inherits VI.ArmLayerSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="ArmLayerSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>

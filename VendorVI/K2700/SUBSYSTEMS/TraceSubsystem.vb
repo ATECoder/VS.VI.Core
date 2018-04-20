@@ -12,7 +12,7 @@ Imports isr.Core.Controls.DataGridViewExtensions
 Public Class TraceSubsystem
     Inherits VI.Scpi.TraceSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="TraceSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based

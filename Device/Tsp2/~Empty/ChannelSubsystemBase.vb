@@ -11,7 +11,7 @@
 Public MustInherit Class ChannelSubsystemBase
     Inherits SubsystemPlusStatusBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="DisplaySubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystemBase">status

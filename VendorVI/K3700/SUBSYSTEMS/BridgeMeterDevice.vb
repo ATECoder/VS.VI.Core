@@ -20,7 +20,7 @@ Public Class BridgeMeterDevice
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
         MyBase.New
-        Me._Bridge = New BridgeMeterResistorCollection
+        Me._Bridge = New ChannelResistorCollection
     End Sub
 
     ''' <summary> Validated the given value. </summary>
@@ -244,7 +244,7 @@ Public Class BridgeMeterDevice
 
     ''' <summary> Gets or sets the bridges. </summary>
     ''' <value> The bridge. </value>
-    Public ReadOnly Property Bridge As BridgeMeterResistorCollection
+    Public ReadOnly Property Bridge As ChannelResistorCollection
 
     ''' <summary> Configure meter. </summary>
     ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
@@ -298,7 +298,7 @@ Public Class BridgeMeterDevice
     '''                                             null. </exception>
     ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="resistor"> The resistor. </param>
-    Public Sub MeasureResistance(ByVal resistor As BridgeMeterResistor)
+    Public Sub MeasureResistance(ByVal resistor As ChannelResistor)
         If resistor Is Nothing Then Throw New ArgumentNullException(NameOf(resistor))
         Dim activity As String = $"measuring {resistor.Title}"
         If Me.IsDeviceOpen Then
@@ -333,7 +333,7 @@ Public Class BridgeMeterDevice
     ''' <param name="e">        Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Function TryMeasureResistance(ByVal resistor As BridgeMeterResistor, ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
+    Public Function TryMeasureResistance(ByVal resistor As ChannelResistor, ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If resistor Is Nothing Then Throw New ArgumentNullException(NameOf(resistor))
         Dim activity As String = $"measuring {resistor.Title}"
@@ -350,7 +350,7 @@ Public Class BridgeMeterDevice
     Public Sub MeasureBridge()
         Dim activity As String = $"Measuring bridge at {My.Settings.ResourceName}"
         If Me.IsDeviceOpen Then
-            For Each resistor As BridgeMeterResistor In Me.Bridge
+            For Each resistor As ChannelResistor In Me.Bridge
                 activity = $"Measuring {resistor.Title} at {My.Settings.ResourceName}"
                 Me.MeasureResistance(resistor)
             Next
@@ -390,3 +390,27 @@ Public Class BridgeMeterDevice
 
 End Class
 
+''' <summary> Collection of bridge meter resistors. </summary>
+''' <license>
+''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
+''' Licensed under The MIT License.</para><para>
+''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
+''' </license>
+''' <history date="4/18/2018" by="David" revision=""> Created. </history>
+Public Class BridgeMeterResistorCollection
+    Inherits ChannelResistorCollection
+
+    ''' <summary> Default constructor. </summary>
+    Public Sub New()
+        MyBase.New
+        Me.AddResistor("R1", My.Settings.R1ChannelList)
+        Me.AddResistor("R2", My.Settings.R2ChannelList)
+        Me.AddResistor("R3", My.Settings.R3ChannelList)
+        Me.AddResistor("R4", My.Settings.R4ChannelList)
+    End Sub
+
+End Class

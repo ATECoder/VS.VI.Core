@@ -13,7 +13,7 @@ Imports isr.VI.ExceptionExtensions
 Public MustInherit Class ScriptManagerBase
     Inherits VI.SubsystemPlusStatusBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="ScriptManagerBase" /> class. </summary>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)

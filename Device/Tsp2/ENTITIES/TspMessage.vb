@@ -55,7 +55,7 @@
 ''' <history date="03/12/2007" by="David" revision="1.15.2627.x"> Created. </history>
 Public Class TspMessage
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()

@@ -12,7 +12,7 @@
 Public Class DummySession
     Inherits VI.Pith.SessionBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the MessageBasedSession object from the specified
     ''' resource name. </summary>

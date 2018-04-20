@@ -12,7 +12,7 @@ Imports isr.VI.K7500
 Public Class SenseResistanceSubsystem
     Inherits VI.Scpi.SenseResistanceSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based

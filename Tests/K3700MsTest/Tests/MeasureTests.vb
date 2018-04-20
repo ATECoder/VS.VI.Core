@@ -17,7 +17,7 @@ Imports isr.VI.tsp.K3700
 <TestClass()>
 Public Class MeasureTests
 
-#Region " CONSTRUCTION AND CLEANUP "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> My class initialize. </summary>
     ''' <param name="testContext"> Gets or sets the test context which provides information about

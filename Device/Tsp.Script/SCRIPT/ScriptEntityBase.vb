@@ -11,7 +11,7 @@
 Public MustInherit Class ScriptEntityBase
     Implements IDisposable
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Specialized default constructor for use only by derived classes. </summary>
     Protected Sub New()

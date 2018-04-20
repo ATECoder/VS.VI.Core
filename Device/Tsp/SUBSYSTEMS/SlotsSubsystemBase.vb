@@ -13,7 +13,7 @@ Imports isr.VI.Tsp
 Public MustInherit Class SlotsSubsystemBase
     Inherits SubsystemPlusStatusBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary>
     ''' Initializes a new instance of the <see cref="DisplaySubsystemBase" /> class.

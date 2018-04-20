@@ -12,7 +12,7 @@ Imports isr.VI.ExceptionExtensions
 Public MustInherit Class StatusSubsystemBase
     Inherits VI.Scpi.StatusSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
     ''' <param name="session"> A reference to a <see cref="Session">message based TSP session</see>. </param>

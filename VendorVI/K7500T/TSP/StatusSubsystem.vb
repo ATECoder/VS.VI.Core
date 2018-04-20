@@ -11,7 +11,7 @@
 Public Class StatusSubsystem
     Inherits VI.StatusSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
     ''' <param name="session"> The session. </param>

@@ -108,6 +108,12 @@ Public Class SessionFactory
     End Property
 
     Private _EnumeratedResources As IEnumerable(Of String)
+
+    ''' <summary> Enumerates enumerated resources in this collection. </summary>
+    ''' <returns>
+    ''' An enumerator that allows for each to be used to process enumerated resources in this
+    ''' collection.
+    ''' </returns>
     Public Function EnumeratedResources() As IEnumerable(Of String)
         Return Me._EnumeratedResources
     End Function

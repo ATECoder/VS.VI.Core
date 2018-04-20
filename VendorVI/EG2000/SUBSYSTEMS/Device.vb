@@ -15,7 +15,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class Device
     Inherits VI.DeviceBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="Device" /> class. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>

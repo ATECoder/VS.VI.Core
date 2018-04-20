@@ -16,7 +16,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class ConfigurationPanelBase
     Inherits TalkerControlBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> A private constructor for this class making it not publicly creatable. This ensure
     ''' using the class as a singleton. </summary>

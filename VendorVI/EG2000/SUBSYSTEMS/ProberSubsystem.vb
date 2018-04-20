@@ -12,7 +12,7 @@ Imports System.ComponentModel
 Public Class ProberSubsystem
     Inherits VI.R2D2.ProberSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based

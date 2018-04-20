@@ -11,7 +11,7 @@
 Public Class MeasureVoltageSubsystemBase
     Inherits SourceMeasureUnitBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="StatusSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.Tsp.StatusSubsystemBase">status subsystem</see>. </param>

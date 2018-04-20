@@ -18,7 +18,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class MovingWindowMeter
     Inherits TalkerControlBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()

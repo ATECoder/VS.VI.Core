@@ -15,7 +15,7 @@ Imports isr.VI.ComboBoxExtensions
 Public MustInherit Class SenseSubsystemBase
     Inherits VI.SenseSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="SenseSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>

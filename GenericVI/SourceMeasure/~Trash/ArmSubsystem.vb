@@ -11,7 +11,7 @@
 Public Class ArmSubsystem
     Inherits VI.Scpi.ArmSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="ArmSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">message based

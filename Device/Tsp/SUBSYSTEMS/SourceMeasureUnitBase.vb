@@ -13,7 +13,7 @@
 Public MustInherit Class SourceMeasureUnitBase
     Inherits VI.SubsystemPlusStatusBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="SourceMeasureUnitBase" /> class. </summary>
     ''' <remarks> Note that the local node status clear command only clears the SMU status.  So, issue

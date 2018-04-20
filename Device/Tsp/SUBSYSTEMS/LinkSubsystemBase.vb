@@ -12,7 +12,7 @@ Imports isr.Core.Pith.StackTraceExtensions
 Public MustInherit Class LinkSubsystemBase
     Inherits VI.SubsystemPlusStatusBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="SystemSubsystemBase" /> class. </summary>
     ''' <param name="statusSubsystem"> A reference to a <see cref="statusSubsystem">TSP status

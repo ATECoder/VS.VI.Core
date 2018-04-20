@@ -29,7 +29,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class K2700Panel
     Inherits VI.Instrument.ResourcePanelBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>

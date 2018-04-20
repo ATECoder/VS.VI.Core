@@ -14,7 +14,7 @@ Imports isr.VI.Tsp
 Public Class MultimeterSubsystem
     Inherits isr.VI.Tsp.MultimeterSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="ChannelSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based

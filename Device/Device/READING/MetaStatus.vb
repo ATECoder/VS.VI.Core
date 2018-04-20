@@ -11,7 +11,7 @@ Imports isr.Core.Pith.NumericExtensions
 ''' <history date="11/1/2013" by="David" revision=""> Created. </history>
 Public Class MetaStatus
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Contracts this class setting the meta status to 0. </summary>
     Public Sub New()

@@ -14,7 +14,7 @@
 Public Class OperationFailedException
     Inherits ExceptionBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     Private Const defaultMessage As String = "Operation failed."
 

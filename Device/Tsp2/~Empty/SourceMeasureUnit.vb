@@ -16,7 +16,7 @@ Imports isr.Core.Pith.EnumExtensions
 Public MustInherit Class SourceMeasureUnit
     Inherits SourceMeasureUnitBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="SourceMeasureUnit" /> class. </summary>
     ''' <remarks> Note that the local node status clear command only clears the SMU status.  So, issue

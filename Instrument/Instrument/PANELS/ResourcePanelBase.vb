@@ -17,7 +17,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class ResourcePanelBase
     Inherits TalkerControlBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Specialized default constructor for use only by derived classes. </summary>
     Public Sub New()

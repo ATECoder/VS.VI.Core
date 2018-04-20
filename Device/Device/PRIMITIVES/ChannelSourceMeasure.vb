@@ -1,7 +1,6 @@
 ﻿Imports System.Drawing
 Imports System.Windows.Forms
-Imports isr.Core.Controls.DataGridViewExtensions
-''' <summary> A bridge meter resistor. </summary>
+''' <summary> A channel source measure elements. </summary>
 ''' <license>
 ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -12,7 +11,7 @@ Imports isr.Core.Controls.DataGridViewExtensions
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
 ''' </license>
 ''' <history date="1/13/2018" by="David" revision=""> Created. </history>
-Public Class BridgeMeterResistor
+Public Class ChannelSourceMeasure
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
     Public Sub New(ByVal title As String, ByVal channelList As String)
         MyBase.New()
@@ -21,10 +20,20 @@ Public Class BridgeMeterResistor
     End Sub
     Public ReadOnly Property Title As String
     Public ReadOnly Property ChannelList As String
-    Public Property Resistance As Double
+    Public ReadOnly Property Resistance As Double
+        Get
+            If Me.Current > 0 Then
+                Return Me.Voltage / Me.Current
+            Else
+                Return Double.NaN
+            End If
+        End Get
+    End Property
+    Public Property Voltage As Double
+    Public Property Current As Double
 End Class
 
-''' <summary> Bridge meter Resistor Collection: an ordered collection of resistors. </summary>
+''' <summary> Channel source measure Collection: an ordered collection of source measures. </summary>
 ''' <license>
 ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -35,17 +44,8 @@ End Class
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
 ''' </license>
 ''' <history date="1/13/2018" by="David" revision=""> Created. </history>
-Public Class BridgeMeterResistorCollection
-    Inherits ObjectModel.KeyedCollection(Of String, BridgeMeterResistor)
-
-    ''' <summary> Default constructor. </summary>
-    Public Sub New()
-        MyBase.New
-        Me.AddResistor("R1", My.Settings.R1ChannelList)
-        Me.AddResistor("R2", My.Settings.R2ChannelList)
-        Me.AddResistor("R3", My.Settings.R3ChannelList)
-        Me.AddResistor("R4", My.Settings.R4ChannelList)
-    End Sub
+Public Class ChannelSourceMeasureCollection
+    Inherits ObjectModel.KeyedCollection(Of String, ChannelSourceMeasure)
 
     ''' <summary>
     ''' When implemented in a derived class, extracts the key from the specified element.
@@ -53,16 +53,16 @@ Public Class BridgeMeterResistorCollection
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="item"> The element from which to extract the key. </param>
     ''' <returns> The key for the specified element. </returns>
-    Protected Overrides Function GetKeyForItem(item As BridgeMeterResistor) As String
+    Protected Overrides Function GetKeyForItem(item As ChannelSourceMeasure) As String
         If item Is Nothing Then Throw New ArgumentNullException(NameOf(item))
         Return item.Title
     End Function
 
-    ''' <summary> Adds a new resistor. </summary>
+    ''' <summary> Adds a new source measure. </summary>
     ''' <param name="title">       The title. </param>
     ''' <param name="channelList"> List of channels. </param>
-    Public Sub AddResistor(ByVal title As String, ByVal channelList As String)
-        Me.Add(New BridgeMeterResistor(title, channelList))
+    Public Sub AddSourceMeasure(ByVal title As String, ByVal channelList As String)
+        Me.Add(New ChannelSourceMeasure(title, channelList))
     End Sub
 
     ''' <summary> Configure display values. </summary>
@@ -96,8 +96,8 @@ Public Class BridgeMeterResistorCollection
         Try
             column = New DataGridViewTextBoxColumn()
             With column
-                .DataPropertyName = "Title"
-                .Name = "Title"
+                .DataPropertyName = NameOf(ChannelSourceMeasure.Title)
+                .Name = NameOf(ChannelSourceMeasure.Title)
                 .Visible = True
                 .DisplayIndex = displayIndex
             End With
@@ -107,8 +107,30 @@ Public Class BridgeMeterResistorCollection
             displayIndex += 1
             column = New DataGridViewTextBoxColumn()
             With column
-                .DataPropertyName = "Resistance"
-                .Name = "Resistance"
+                .DataPropertyName = NameOf(ChannelSourceMeasure.Voltage)
+                .Name = "Volt"
+                .Visible = True
+                .DisplayIndex = displayIndex
+                .Width = grid.Width - width
+                .DefaultCellStyle.Format = "G5"
+            End With
+
+            displayIndex += 1
+            column = New DataGridViewTextBoxColumn()
+            With column
+                .DataPropertyName = NameOf(ChannelSourceMeasure.Current)
+                .Name = "Ampere"
+                .Visible = True
+                .DisplayIndex = displayIndex
+                .Width = grid.Width - width
+                .DefaultCellStyle.Format = "G5"
+            End With
+
+            displayIndex += 1
+            column = New DataGridViewTextBoxColumn()
+            With column
+                .DataPropertyName = NameOf(ChannelSourceMeasure.Resistance)
+                .Name = "Ohm"
                 .Visible = True
                 .DisplayIndex = displayIndex
                 .Width = grid.Width - width
@@ -119,7 +141,6 @@ Public Class BridgeMeterResistorCollection
             Throw
         End Try
         grid.Columns.Add(column)
-        grid.ParseHeaderText()
         grid.Enabled = True
         If grid.Columns IsNot Nothing AndAlso grid.Columns.Count > 0 Then
             Return grid.Columns.Count
@@ -174,7 +195,6 @@ Public Class BridgeMeterResistorCollection
         grid.RowHeadersVisible = False
         grid.ReadOnly = True
         grid.DataSource = Me.ToArray
-        grid.ParseHeaderText()
         grid.Enabled = True
         If grid.Columns IsNot Nothing AndAlso grid.Columns.Count > 0 Then
             Return grid.Columns.Count

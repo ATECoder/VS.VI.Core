@@ -11,7 +11,7 @@
 Public Class ChannelListBuilder
     Implements IDisposable
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Constructs this class. </summary>
     Public Sub New()

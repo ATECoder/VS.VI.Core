@@ -1,10 +1,5 @@
 ﻿Imports System.ComponentModel
-Imports System.Drawing
 Imports System.Windows.Forms
-Imports isr.Core.Controls.ComboBoxExtensions
-Imports isr.Core.Controls.DataGridViewExtensions
-Imports isr.Core.Controls.SafeSetterExtensions
-Imports isr.Core.Controls.ToolStripExtensions
 Imports isr.Core.Pith
 Imports isr.VI.ExceptionExtensions
 
@@ -20,7 +15,7 @@ Imports isr.VI.ExceptionExtensions
 ''' </license>
 ''' <history date="3/22/2018" by="David" revision=""> Created. </history>
 Public Class BridgeMeter
-    Inherits isr.Core.Pith.PropertyPublisherTalkerBase
+    Inherits Core.Pith.PropertyPublisherTalkerBase
 
 #Region " CONSTRUCTORS "
 
@@ -43,7 +38,7 @@ Public Class BridgeMeter
     ''' <param name="isDeviceOwner"> True if is device owner, false if not. </param>
     Private Sub _New(ByVal device As Device, ByVal isDeviceOwner As Boolean)
         Me._AssignDevice(device, isDeviceOwner)
-        Me._Bridge = New BridgeMeterResistorCollection
+        Me._Bridge = New ChannelResistorCollection
     End Sub
 
     ''' <summary>
@@ -590,7 +585,7 @@ Public Class BridgeMeter
 
     ''' <summary> Gets or sets the bridges. </summary>
     ''' <value> The bridge. </value>
-    Public ReadOnly Property Bridge As BridgeMeterResistorCollection
+    Public ReadOnly Property Bridge As ChannelResistorCollection
 
     ''' <summary> Configure meter. </summary>
     ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
@@ -644,7 +639,7 @@ Public Class BridgeMeter
     '''                                             null. </exception>
     ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="resistor"> The resistor. </param>
-    Public Sub MeasureResistance(ByVal resistor As BridgeMeterResistor)
+    Public Sub MeasureResistance(ByVal resistor As ChannelResistor)
         If resistor Is Nothing Then Throw New ArgumentNullException(NameOf(resistor))
         Dim activity As String = $"measuring {resistor.Title}"
         If Me.Device.IsDeviceOpen Then
@@ -679,7 +674,7 @@ Public Class BridgeMeter
     ''' <param name="e">        Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Function TryMeasureResistance(ByVal resistor As BridgeMeterResistor, ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
+    Public Function TryMeasureResistance(ByVal resistor As ChannelResistor, ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         If resistor Is Nothing Then Throw New ArgumentNullException(NameOf(resistor))
         Dim activity As String = $"measuring {resistor.Title}"
@@ -696,7 +691,7 @@ Public Class BridgeMeter
     Public Sub MeasureBridge()
         Dim activity As String = $"Measuring bridge at {My.Settings.ResourceName}"
         If Me.IsDeviceOpen Then
-            For Each resistor As BridgeMeterResistor In Me.Bridge
+            For Each resistor As ChannelResistor In Me.Bridge
                 activity = $"Measuring {resistor.Title} at {My.Settings.ResourceName}"
                 Me.MeasureResistance(resistor)
             Next

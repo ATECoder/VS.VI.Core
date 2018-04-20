@@ -12,7 +12,7 @@ Imports isr.Core.Pith.EnumExtensions
 ''' <history date="11/2/2013" by="David" revision=""> Created. </history>
 Public MustInherit Class ReadingAmounts
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Constructs this class. </summary>
     ''' <remarks> Use this constructor to instantiate this class and set its properties. </remarks>

@@ -11,7 +11,7 @@
 Public Class Calculate2Subsystem
     Inherits VI.Scpi.Calculate2SubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="Calculate2Subsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="VI.StatusSubsystemBase">status subsystem</see>. </param>

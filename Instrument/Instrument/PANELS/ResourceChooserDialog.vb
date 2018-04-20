@@ -13,7 +13,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class ResourceChooserDialog
     Inherits isr.Core.Pith.TopDialogBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()

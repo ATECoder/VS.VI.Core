@@ -13,7 +13,7 @@ Imports isr.Core.Pith.EnumExtensions
 Public MustInherit Class MeasureSubsystemBase
     Inherits VI.MeasureSubsystemBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary>
     ''' Initializes a new instance of the <see cref="MeasureSubsystemBase" /> class.

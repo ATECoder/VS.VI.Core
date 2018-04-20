@@ -11,7 +11,7 @@
 Public Class ReadingAmount
     Inherits ReadingValue
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Constructs a measured value without specifying the value or its validity, which must
     ''' be specified for the value to be made valid. </summary>

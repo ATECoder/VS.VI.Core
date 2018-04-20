@@ -11,7 +11,7 @@
 Public Class SourceMeasureUnitDevice
     Inherits isr.VI.Tsp.SourceMeasureUnitBase
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Initializes a new instance of the <see cref="SourceMeasureUnitDevice" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based

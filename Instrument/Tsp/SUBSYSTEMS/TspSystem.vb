@@ -14,7 +14,7 @@ Imports isr.VI.ExceptionExtensions
 Public Class TspSystem
     Implements IDisposable
 
-#Region " CONSTRUCTORS  and  DESTRUCTORS "
+#Region " CONSTRUCTION + CLEANUP "
 
     ''' <summary> Constructor. </summary>
     ''' <param name="device"> The master device. </param>
