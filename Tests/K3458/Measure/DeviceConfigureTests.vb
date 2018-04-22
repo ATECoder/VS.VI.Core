@@ -47,7 +47,7 @@ Public Class DeviceConfigureTests
 
     ''' <summary> Initializes before each test runs. </summary>
     <TestInitialize()> Public Sub MyTestInitialize()
-        Assert.IsTrue(TestInfo.Exists, "App.Config not found")
+        Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
         TestInfo.ClearMessageQueue()
     End Sub
 

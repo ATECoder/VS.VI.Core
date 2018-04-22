@@ -46,12 +46,15 @@ Public Class ControlTests
 
     ''' <summary> Initializes before each test runs. </summary>
     <TestInitialize()> Public Sub MyTestInitialize()
-        Assert.IsTrue(TestInfo.Exists, "App.Config not found")
-    End Sub
+        Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
+            TestInfo.ClearMessageQueue()
+        End Sub
 
-    ''' <summary> Cleans up after each test has run. </summary>
-    <TestCleanup()> Public Sub MyTestCleanup()
-    End Sub
+        ''' <summary> Cleans up after each test has run. </summary>
+        <TestCleanup()> Public Sub MyTestCleanup()
+            TestInfo.AssertMessageQueue()
+        End Sub
+
 
     '''<summary>
     '''Gets or sets the test context which provides

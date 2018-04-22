@@ -1,26 +1,5 @@
 ﻿Namespace K3700.Tests
 
-    Partial Friend NotInheritable Class Info
-
-#Region " CONSTRUCTORS"
-
-        Private Shared _GageBoardTestInfo As GageBoardTestInfo
-
-        ''' <summary> Gets the Device Test Info. </summary>
-        ''' <value> The Device Test Info. </value>
-        Public Shared ReadOnly Property GageBoardTestInfo As GageBoardTestInfo
-            Get
-                If Info._GageBoardTestInfo Is Nothing Then
-                    Info._GageBoardTestInfo = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New GageBoardTestInfo()), GageBoardTestInfo)
-                End If
-                Return Info._GageBoardTestInfo
-            End Get
-        End Property
-
-#End Region
-
-    End Class
-
     ''' <summary> A Gauge Board Tests Info. </summary>
     ''' <license>
     ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
@@ -37,6 +16,54 @@
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
     Friend Class GageBoardTestInfo
         Inherits ApplicationSettingsBase
+
+#Region " SINGLETON "
+
+        Private Sub New()
+            MyBase.New
+        End Sub
+
+        ''' <summary> Opens the settings editor. </summary>
+        Public Shared Sub OpenSettingsEditor()
+            Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
+                f.Text = $"{GetType(GageBoardTestInfo)} Editor"
+                f.ShowDialog(GageBoardTestInfo.Get)
+            End Using
+        End Sub
+
+        ''' <summary> Gets the locking object to enforce thread safety when creating the singleton
+        ''' instance. </summary>
+        ''' <value> The sync locker. </value>
+        Private Shared Property _SyncLocker As New Object
+
+        ''' <summary> Gets the instance. </summary>
+        ''' <value> The instance. </value>
+        Private Shared Property _Instance As GageBoardTestInfo
+
+        ''' <summary> Instantiates the class. </summary>
+        ''' <remarks> Use this property to instantiate a single instance of this class. This class uses
+        ''' lazy instantiation, meaning the instance isn't created until the first time it's retrieved. </remarks>
+        ''' <returns> A new or existing instance of the class. </returns>
+        Public Shared Function [Get]() As GageBoardTestInfo
+            If _Instance Is Nothing Then
+                SyncLock _SyncLocker
+                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New GageBoardTestInfo()), GageBoardTestInfo)
+                End SyncLock
+            End If
+            Return _Instance
+        End Function
+
+        ''' <summary> Returns true if an instance of the class was created and not disposed. </summary>
+        ''' <value> <c>True</c> if instantiated; otherwise, <c>False</c>. </value>
+        Public Shared ReadOnly Property Instantiated() As Boolean
+            Get
+                SyncLock _SyncLocker
+                    Return _Instance IsNot Nothing
+                End SyncLock
+            End Get
+        End Property
+
+#End Region
 
 #Region " CONFIGURATION INFORMATION "
 

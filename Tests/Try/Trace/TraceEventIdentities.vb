@@ -41,7 +41,7 @@ Public Class TraceEventIdentities
 
     ''' <summary> Initializes before each test runs. </summary>
     <TestInitialize()> Public Sub MyTestInitialize()
-        Assert.IsTrue(TestInfo.Exists, "App.Config not found")
+        Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
         TestInfo.ClearMessageQueue()
     End Sub
 
@@ -57,6 +57,7 @@ Public Class TraceEventIdentities
     Public Property TestContext() As TestContext
 
 #End Region
+
 
 #Region " SAVE TRACE EVENT IDENTITIES "
 

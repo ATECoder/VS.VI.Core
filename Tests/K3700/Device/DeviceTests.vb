@@ -43,8 +43,8 @@
 
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
-            Assert.IsTrue(TestInfo.Exists, $"{NameOf(TestInfo)} not found in Configuration file")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.Info)}.{NameOf(Info.DeviceTestInfo)} not found in Configuration file")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.DeviceTestInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -66,23 +66,23 @@
         ''' <summary> (Unit Test Method) tests visa resource. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub VisaResourceTest()
-            If Not Info.DeviceTestInfo.ResourcePinged Then Assert.Inconclusive($"{Info.DeviceTestInfo.ResourceTitle} not found")
+            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
             Dim resourcesFilter As String = VI.Pith.ResourceNameInfo.BuildMinimalResourcesFilter
             Dim resources As String()
             Using rm As VI.Pith.ResourcesManagerBase = VI.SessionFactory.Get.Factory.CreateResourcesManager()
                 resources = rm.FindResources(resourcesFilter).ToArray
             End Using
             Assert.IsTrue(resources.Any, $"VISA Resources {If(resources.Any, "", "not")} found among {resourcesFilter}")
-            Assert.IsTrue(resources.Contains(Info.DeviceTestInfo.ResourceName), $"Resource {Info.DeviceTestInfo.ResourceName} not found among {resourcesFilter}")
+            Assert.IsTrue(resources.Contains(DeviceTestInfo.Get.ResourceName), $"Resource {DeviceTestInfo.Get.ResourceName} not found among {resourcesFilter}")
         End Sub
 
         ''' <summary> (Unit Test Method) tests device resource. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub DeviceResourceTest()
-            If Not Info.DeviceTestInfo.ResourcePinged Then Assert.Inconclusive($"{Info.DeviceTestInfo.ResourceTitle} not found")
+            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
-                Assert.IsTrue(VI.Tsp.K3700.Device.Find(Info.DeviceTestInfo.ResourceName, device.Session.ResourceNameInfo.ResourcesFilter),
-                          $"VISA Resource {Info.DeviceTestInfo.ResourceName} not found among {device.Session.ResourceNameInfo.ResourcesFilter}")
+                Assert.IsTrue(VI.Tsp.K3700.Device.Find(DeviceTestInfo.Get.ResourceName, device.Session.ResourceNameInfo.ResourcesFilter),
+                          $"VISA Resource {DeviceTestInfo.Get.ResourceName} not found among {device.Session.ResourceNameInfo.ResourcesFilter}")
             End Using
         End Sub
 
@@ -115,11 +115,11 @@
         ''' <summary> (Unit Test Method) tests open session. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub OpenSessionTest()
-            If Not Info.DeviceTestInfo.ResourcePinged Then Assert.Inconclusive($"{Info.DeviceTestInfo.ResourceTitle} not found")
+            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                Info.OpenSession(device)
-                Info.CloseSession(device)
+                Manager.OpenSession(device)
+                Manager.CloseSession(device)
             End Using
         End Sub
 
@@ -128,37 +128,37 @@
         '''</summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub OpenSessionCheckStatusTest()
-            If Not Info.DeviceTestInfo.ResourcePinged Then Assert.Inconclusive($"{Info.DeviceTestInfo.ResourceTitle} not found")
+            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                Info.OpenSession(device)
-                Info.CheckModel(device.StatusSubsystemBase)
-                Info.CheckDeviceErrors(device.StatusSubsystemBase)
-                Info.CheckTermination(device.Session)
-                Info.CheckLineFrequency(device.StatusSubsystem)
-                Info.CheckIntegrationPeriod(device.StatusSubsystem)
-                Info.CheckChannelSubsystemInfo(device.ChannelSubsystem)
-                Info.ClearSessionCheckDeviceErrors(device)
-                Info.CloseSession(device)
+                Manager.OpenSession(device)
+                Manager.CheckModel(device.StatusSubsystemBase)
+                Manager.CheckDeviceErrors(device.StatusSubsystemBase)
+                Manager.CheckTermination(device.Session)
+                Manager.CheckLineFrequency(device.StatusSubsystem)
+                Manager.CheckIntegrationPeriod(device.StatusSubsystem)
+                Manager.CheckChannelSubsystemInfo(device.ChannelSubsystem)
+                Manager.ClearSessionCheckDeviceErrors(device)
+                Manager.CloseSession(device)
             End Using
         End Sub
 
         ''' <summary> (Unit Test Method) tests open session read device errors. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub OpenSessionReadDeviceErrorsTest()
-            If Not Info.DeviceTestInfo.ResourcePinged Then Assert.Inconclusive($"{Info.DeviceTestInfo.ResourceTitle} not found")
+            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                Info.OpenSession(device)
-                Info.CheckModel(device.StatusSubsystemBase)
-                Info.CheckDeviceErrors(device.StatusSubsystemBase)
-                Info.CheckTermination(device.Session)
-                Info.CheckLineFrequency(device.StatusSubsystem)
-                Info.CheckIntegrationPeriod(device.StatusSubsystem)
-                Info.CheckChannelSubsystemInfo(device.ChannelSubsystem)
-                Info.ClearSessionCheckDeviceErrors(device)
-                Info.CheckReadingDeviceErrors(device)
-                Info.CloseSession(device)
+                Manager.OpenSession(device)
+                Manager.CheckModel(device.StatusSubsystemBase)
+                Manager.CheckDeviceErrors(device.StatusSubsystemBase)
+                Manager.CheckTermination(device.Session)
+                Manager.CheckLineFrequency(device.StatusSubsystem)
+                Manager.CheckIntegrationPeriod(device.StatusSubsystem)
+                Manager.CheckChannelSubsystemInfo(device.ChannelSubsystem)
+                Manager.ClearSessionCheckDeviceErrors(device)
+                Manager.CheckReadingDeviceErrors(device)
+                Manager.CloseSession(device)
             End Using
         End Sub
 

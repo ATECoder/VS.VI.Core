@@ -47,8 +47,8 @@
 
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
-            Assert.IsTrue(TestInfo.Exists, $"{NameOf(TestInfo)} not found in Configuration file")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.Info)}.{NameOf(Info.BridgeMeterTestInfo)} not found in Configuration file")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(BridgeMeterTestInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -75,11 +75,11 @@
         ''' <param name="trialNumber"> The trial number. </param>
         ''' <param name="control">     The control. </param>
         Private Shared Sub OpenSession(ByVal trialNumber As Integer, ByVal control As VI.Tsp.K3700.BridgeMeterControl)
-            If Not Info.DeviceTestInfo.ResourcePinged Then Assert.Inconclusive($"{Info.DeviceTestInfo.ResourceTitle} not found")
+            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
             Dim expectedBoolean As Boolean = True
             Dim actualBoolean As Boolean
             Dim e As New Core.Pith.ActionEventArgs
-            control.Device.TryOpenSession(Info.DeviceTestInfo.ResourceName, Info.DeviceTestInfo.ResourceTitle, e)
+            control.Device.TryOpenSession(DeviceTestInfo.Get.ResourceName, DeviceTestInfo.Get.ResourceTitle, e)
             actualBoolean = e.Cancel
             expectedBoolean = False
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{trialNumber} Connect canceled; {e.Details}")
@@ -93,7 +93,7 @@
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{trialNumber} Open not open {control.Device.ResourceNameCaption}")
 
             ' check the MODEL
-            Assert.AreEqual(Info.DeviceTestInfo.ResourceModel, control.Device.StatusSubsystem.VersionInfo.Model,
+            Assert.AreEqual(DeviceTestInfo.Get.ResourceModel, control.Device.StatusSubsystem.VersionInfo.Model,
                             $"Version Info Model {control.Device.ResourceNameCaption}", Globalization.CultureInfo.CurrentCulture)
 
         End Sub
@@ -102,7 +102,7 @@
         ''' <param name="trialNumber"> The trial number. </param>
         ''' <param name="control">     The control. </param>
         Private Shared Sub CloseSession(ByVal trialNumber As Integer, ByVal control As VI.Tsp.K3700.BridgeMeterControl)
-            If Not Info.DeviceTestInfo.ResourcePinged Then Assert.Inconclusive($"{Info.DeviceTestInfo.ResourceTitle} not found")
+            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
             Dim expectedBoolean As Boolean = True
             Dim actualBoolean As Boolean
             control.Device.TryCloseSession()
@@ -123,8 +123,8 @@
         ''' <summary> (Unit Test Method) tests selected resource name. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub SelectedResourceNameTest()
-            If Not Info.DeviceTestInfo.ResourcePinged Then Assert.Inconclusive($"{Info.DeviceTestInfo.ResourceTitle} not found")
-            Info.CheckSelectedResourceName(BridgeMeterTests.BridgeMeter)
+            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            K3700.Tests.Manager.CheckSelectedResourceName(BridgeMeterTests.BridgeMeter)
         End Sub
 
 #End Region
@@ -149,7 +149,7 @@
         Public Sub BridgeMeterConfigureTest()
             BridgeMeterTests.OpenSession(1, BridgeMeterTests.BridgeMeter)
             Dim e As New Core.Pith.ActionEventArgs
-            BridgeMeterTests.BridgeMeter.Device.TryConfigureMeter(Info.BridgeMeterTestInfo.PowerLineCycles, e)
+            BridgeMeterTests.BridgeMeter.Device.TryConfigureMeter(BridgeMeterTestInfo.Get.PowerLineCycles, e)
             TestInfo.AssertMessageQueue()
             Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
             BridgeMeterTests.CloseSession(1, BridgeMeterTests.BridgeMeter)
@@ -163,14 +163,14 @@
         ''' <param name="control"> The control. </param>
         Private Shared Sub BridgeMeterMeasureResistor(control As VI.Tsp.K3700.BridgeMeterControl)
             Dim e As New Core.Pith.ActionEventArgs
-            control.Device.TryConfigureMeter(Info.BridgeMeterTestInfo.PowerLineCycles, e)
+            control.Device.TryConfigureMeter(BridgeMeterTestInfo.Get.PowerLineCycles, e)
             Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
             TestInfo.AssertMessageQueue()
-            Dim resistor As VI.Tsp.K3700.BridgeMeterResistor = control.Device.Bridge(0)
+            Dim resistor As VI.ChannelResistor = control.Device.Bridge(0)
             control.Device.TryMeasureResistance(resistor, e)
             Assert.AreEqual(False, e.Cancel, $"Measuring resistor {resistor.Title} failed; {e.Details}")
-            Assert.AreEqual(Info.BridgeMeterTestInfo.BridgeR1, resistor.Resistance, Info.BridgeMeterTestInfo.BridgeMeterEpsilon,
-                            $"Measuring resistor resistance expected {Info.BridgeMeterTestInfo.BridgeR1:G5} actual {resistor.Resistance:G5}")
+            Assert.AreEqual(BridgeMeterTestInfo.Get.BridgeR1, resistor.Resistance, BridgeMeterTestInfo.Get.BridgeMeterEpsilon,
+                            $"Measuring resistor resistance expected {BridgeMeterTestInfo.Get.BridgeR1:G5} actual {resistor.Resistance:G5}")
             TestInfo.AssertMessageQueue()
         End Sub
 
@@ -187,25 +187,25 @@
 
         Private Shared Sub BridgeMeterMeasure(control As VI.Tsp.K3700.BridgeMeterControl)
             Dim e As New Core.Pith.ActionEventArgs
-            control.Device.TryConfigureMeter(Info.BridgeMeterTestInfo.PowerLineCycles, e)
+            control.Device.TryConfigureMeter(BridgeMeterTestInfo.Get.PowerLineCycles, e)
             Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
             TestInfo.AssertMessageQueue()
             control.Device.TryMeasureBridge(e)
-            Assert.AreEqual(False, e.Cancel, $"Measuring bridge {Info.BridgeMeterTestInfo.BridgeNumber} failed; {e.Details}")
+            Assert.AreEqual(False, e.Cancel, $"Measuring bridge {BridgeMeterTestInfo.Get.BridgeNumber} failed; {e.Details}")
             TestInfo.AssertMessageQueue()
-            Dim resistor As VI.Tsp.K3700.BridgeMeterResistor = control.Device.Bridge(0)
-            Dim expectedResistance As Double = Info.BridgeMeterTestInfo.BridgeR1
-            Assert.AreEqual(expectedResistance, resistor.Resistance, Info.BridgeMeterTestInfo.BridgeMeterEpsilon,
+            Dim resistor As VI.ChannelResistor = control.Device.Bridge(0)
+            Dim expectedResistance As Double = BridgeMeterTestInfo.Get.BridgeR1
+            Assert.AreEqual(expectedResistance, resistor.Resistance, BridgeMeterTestInfo.Get.BridgeMeterEpsilon,
                             $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
             resistor = control.Device.Bridge(1)
-            expectedResistance = Info.BridgeMeterTestInfo.BridgeR2
-            Assert.AreEqual(expectedResistance, resistor.Resistance, Info.BridgeMeterTestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
+            expectedResistance = BridgeMeterTestInfo.Get.BridgeR2
+            Assert.AreEqual(expectedResistance, resistor.Resistance, BridgeMeterTestInfo.Get.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
             resistor = control.Device.Bridge(2)
-            expectedResistance = Info.BridgeMeterTestInfo.BridgeR3
-            Assert.AreEqual(expectedResistance, resistor.Resistance, Info.BridgeMeterTestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
+            expectedResistance = BridgeMeterTestInfo.Get.BridgeR3
+            Assert.AreEqual(expectedResistance, resistor.Resistance, BridgeMeterTestInfo.Get.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
             resistor = control.Device.Bridge(3)
-            expectedResistance = Info.BridgeMeterTestInfo.BridgeR4
-            Assert.AreEqual(expectedResistance, resistor.Resistance, Info.BridgeMeterTestInfo.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
+            expectedResistance = BridgeMeterTestInfo.Get.BridgeR4
+            Assert.AreEqual(expectedResistance, resistor.Resistance, BridgeMeterTestInfo.Get.BridgeMeterEpsilon, $"Measuring resistor {resistor.Title} resistance expected {expectedResistance:G5} actual {resistor.Resistance:G5}")
         End Sub
 
         <TestMethod(), TestCategory("VI")>
@@ -221,7 +221,7 @@
 
         <TestMethod(), TestCategory("VI")>
         Public Sub AssignedDeviceMeasureResistorTest()
-            If Not Info.DeviceTestInfo.ResourcePinged Then Assert.Inconclusive($"{Info.DeviceTestInfo.ResourceTitle} not found")
+            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
             BridgeMeterTests.BridgeMeter.AssignDevice(BridgeMeterTests.MeterDevice, False)
             BridgeMeterTests.OpenSession(1, BridgeMeterTests.BridgeMeter)
             BridgeMeterTests.BridgeMeterMeasureResistor(BridgeMeterTests.BridgeMeter)
@@ -232,10 +232,10 @@
 
         <TestMethod(), TestCategory("VI")>
         Public Sub AssignedOpenDeviceMeasureResistorTest()
-            Info.OpenSession(BridgeMeterTests.MeterDevice)
+            K3700.Tests.Manager.OpenSession(BridgeMeterTests.MeterDevice)
             BridgeMeterTests.BridgeMeter.AssignDevice(BridgeMeterTests.MeterDevice, False)
             BridgeMeterTests.BridgeMeterMeasureResistor(BridgeMeterTests.BridgeMeter)
-            Info.CloseSession(BridgeMeterTests.MeterDevice)
+            K3700.Tests.Manager.CloseSession(BridgeMeterTests.MeterDevice)
             BridgeMeterTests.BridgeMeter.RestoreDevice()
             TestInfo.AssertMessageQueue()
         End Sub

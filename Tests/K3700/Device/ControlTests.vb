@@ -42,8 +42,8 @@
 
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
-            Assert.IsTrue(TestInfo.Exists, $"{NameOf(TestInfo)} not found in Configuration file")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.Info)}.{NameOf(Info.DeviceTestInfo)} not found in Configuration file")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.DeviceTestInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -68,7 +68,7 @@
                 Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                     device.AddListener(TestInfo.TraceMessagesQueueListener)
                     control.AssignDevice(device, False)
-                    Info.OpenCloseSession(1, control)
+                    Manager.OpenCloseSession(1, control)
                 End Using
             End Using
         End Sub
@@ -78,9 +78,9 @@
             Using control As VI.Tsp.K3700.K3700Control = New VI.Tsp.K3700.K3700Control()
                 Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                     device.AddListener(TestInfo.TraceMessagesQueueListener)
-                    Info.OpenSession(device)
+                    Manager.OpenSession(device)
                     control.AssignDevice(device, False)
-                    Info.OpenCloseSession(1, control)
+                    Manager.OpenCloseSession(1, control)
                 End Using
             End Using
         End Sub

@@ -1,26 +1,5 @@
 ﻿Namespace K3700.Tests
 
-    Partial Friend NotInheritable Class Info
-
-#Region " CONSTRUCTORS"
-
-        Private Shared _DeviceTestInfo As DeviceTestInfo
-
-        ''' <summary> Gets the Device Test Info. </summary>
-        ''' <value> The Device Test Info. </value>
-        Public Shared ReadOnly Property DeviceTestInfo As DeviceTestInfo
-            Get
-                If Info._DeviceTestInfo Is Nothing Then
-                    Info._DeviceTestInfo = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New DeviceTestInfo()), DeviceTestInfo)
-                End If
-                Return Info._DeviceTestInfo
-            End Get
-        End Property
-
-#End Region
-
-    End Class
-
     ''' <summary> A Device Test Info. </summary>
     ''' <license>
     ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
@@ -37,6 +16,54 @@
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
     Friend Class DeviceTestInfo
         Inherits ApplicationSettingsBase
+
+#Region " SINGLETON "
+
+        Private Sub New()
+            MyBase.New
+        End Sub
+
+        ''' <summary> Opens the settings editor. </summary>
+        Public Shared Sub OpenSettingsEditor()
+            Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
+                f.Text = $"{GetType(DeviceTestInfo)} Editor"
+                f.ShowDialog(DeviceTestInfo.Get)
+            End Using
+        End Sub
+
+        ''' <summary> Gets the locking object to enforce thread safety when creating the singleton
+        ''' instance. </summary>
+        ''' <value> The sync locker. </value>
+        Private Shared Property _SyncLocker As New Object
+
+        ''' <summary> Gets the instance. </summary>
+        ''' <value> The instance. </value>
+        Private Shared Property _Instance As DeviceTestInfo
+
+        ''' <summary> Instantiates the class. </summary>
+        ''' <remarks> Use this property to instantiate a single instance of this class. This class uses
+        ''' lazy instantiation, meaning the instance isn't created until the first time it's retrieved. </remarks>
+        ''' <returns> A new or existing instance of the class. </returns>
+        Public Shared Function [Get]() As DeviceTestInfo
+            If _Instance Is Nothing Then
+                SyncLock _SyncLocker
+                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New DeviceTestInfo()), DeviceTestInfo)
+                End SyncLock
+            End If
+            Return _Instance
+        End Function
+
+        ''' <summary> Returns true if an instance of the class was created and not disposed. </summary>
+        ''' <value> <c>True</c> if instantiated; otherwise, <c>False</c>. </value>
+        Public Shared ReadOnly Property Instantiated() As Boolean
+            Get
+                SyncLock _SyncLocker
+                    Return _Instance IsNot Nothing
+                End SyncLock
+            End Get
+        End Property
+
+#End Region
 
 #Region " CONFIGURATION INFORMATION "
 

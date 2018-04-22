@@ -111,7 +111,6 @@
     <Compile Include="Gage\GageBoardTests_Info.vb" />
     <Compile Include="Resistance\ResistanceTests.vb" />
     <Compile Include="Resistance\ResistanceTests_Info.vb" />
-    <Compile Include="TestInfo\K3700TestsInfo.vb" />
     <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>
