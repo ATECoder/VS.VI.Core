@@ -250,7 +250,7 @@ Public Class ResourcePanelBase
                 ResourcePanelBase.SafeToolTipTextSetter(Me.IdentityLabel, Me.ResourceName)
                 Me.SafePostPropertyChanged()
             End If
-            Me.Connector.SessionFactory.TrySelectResource(value, New isr.Core.Pith.ActionEventArgs)
+            If Not String.IsNullOrWhiteSpace(value) Then Me.Connector.SessionFactory.TrySelectResource(value, New isr.Core.Pith.ActionEventArgs)
         End Set
     End Property
 

@@ -418,7 +418,11 @@ logged to: {My.Application.Log.DefaultFileLogWriter.FullLogFileName};
             Me._ErrorProvider.Clear()
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
             activity = "selecting resource"
-            If Not Me.SessionFactory.TrySelectResource(resourceName, e) Then
+            If Me.SessionFactory.TrySelectResource(resourceName, e) Then
+                If e.HasOutcomeEvent AndAlso e.HasDetails Then
+                    activity = Me.Talker.Publish(e.OutcomeEvent, My.MyLibrary.TraceEventId, $"{activity} reported {e.Details}")
+                End If
+            Else
                 Me._ErrorProvider.Annunciate(Me._ResourceNamesComboBox, e.Details)
                 activity = Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Failed {activity};. {e.Details}")
             End If

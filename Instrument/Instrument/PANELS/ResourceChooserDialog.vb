@@ -61,7 +61,7 @@ Public Class ResourceChooserDialog
             Return Me._ResourceNameSelectorConnector.SessionFactory.SelectedResourceName
         End Get
         Set(ByVal Value As String)
-            Me._ResourceNameSelectorConnector.SessionFactory.TrySelectResource(Value, New isr.Core.Pith.ActionEventArgs)
+            If Not String.IsNullOrWhiteSpace(Value) Then Me._ResourceNameSelectorConnector.SessionFactory.TrySelectResource(Value, New isr.Core.Pith.ActionEventArgs)
         End Set
     End Property
 

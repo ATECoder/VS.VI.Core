@@ -12,12 +12,28 @@ Imports System.Windows.Forms
 ''' </license>
 ''' <history date="1/13/2018" by="David" revision=""> Created. </history>
 Public Class ChannelSourceMeasure
-    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")>
+
+    ''' <summary> Constructor. </summary>
+    ''' <param name="title">       The title. </param>
+    ''' <param name="channelList"> List of channels. </param>
     Public Sub New(ByVal title As String, ByVal channelList As String)
         MyBase.New()
         Me.Title = title
         Me.ChannelList = channelList
     End Sub
+
+    ''' <summary>  Cloning Constructor. </summary>
+    ''' <param name="channelSourceMeasure"> The channel source measure. </param>
+    Public Sub New(ByVal channelSourceMeasure As ChannelSourceMeasure)
+        MyBase.New()
+        If channelSourceMeasure IsNot Nothing Then
+            Me.Title = channelSourceMeasure.Title
+            Me.ChannelList = channelSourceMeasure.ChannelList
+            Me.Current = channelSourceMeasure.Current
+            Me.Voltage = channelSourceMeasure.Voltage
+        End If
+    End Sub
+
     Public ReadOnly Property Title As String
     Public ReadOnly Property ChannelList As String
     Public ReadOnly Property Resistance As Double

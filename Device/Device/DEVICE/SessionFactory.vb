@@ -277,7 +277,7 @@ Public Class SessionFactory
             activity = "checking if need to select the resource"
             If String.IsNullOrWhiteSpace(resourceName) Then
                 activity = "attempted to select an empty resource name"
-                e.RegisterCancellation(activity)
+                e.RegisterOutcomeEvent(TraceEventType.Information, activity)
             ElseIf Not String.Equals(resourceName, Me.SelectedResourceName, StringComparison.OrdinalIgnoreCase) OrElse
                    Not Me.SelectedResourceExists OrElse Not Me.OpenResourceSessionEnabled Then
                 activity = $"checking if selected resource {resourceName} exists"
