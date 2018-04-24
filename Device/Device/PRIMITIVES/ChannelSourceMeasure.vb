@@ -85,6 +85,7 @@ Public Class ChannelSourceMeasureCollection
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="grid"> The grid. </param>
     ''' <returns> An Integer. </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Function ConfigureDisplayValues(ByVal grid As DataGridView) As Integer
 
         If grid Is Nothing Then Throw New ArgumentNullException("grid")
@@ -119,7 +120,13 @@ Public Class ChannelSourceMeasureCollection
             End With
             grid.Columns.Add(column)
             width += column.Width
+        Catch
+            If column IsNot Nothing Then column.Dispose()
+            Throw
+        End Try
 
+        column = Nothing
+        Try
             displayIndex += 1
             column = New DataGridViewTextBoxColumn()
             With column
@@ -130,7 +137,13 @@ Public Class ChannelSourceMeasureCollection
                 .Width = grid.Width - width
                 .DefaultCellStyle.Format = "G5"
             End With
+        Catch
+            If column IsNot Nothing Then column.Dispose()
+            Throw
+        End Try
 
+        column = Nothing
+        Try
             displayIndex += 1
             column = New DataGridViewTextBoxColumn()
             With column
@@ -141,7 +154,13 @@ Public Class ChannelSourceMeasureCollection
                 .Width = grid.Width - width
                 .DefaultCellStyle.Format = "G5"
             End With
+        Catch
+            If column IsNot Nothing Then column.Dispose()
+            Throw
+        End Try
 
+        column = Nothing
+        Try
             displayIndex += 1
             column = New DataGridViewTextBoxColumn()
             With column
@@ -152,11 +171,13 @@ Public Class ChannelSourceMeasureCollection
                 .Width = grid.Width - width
                 .DefaultCellStyle.Format = "G5"
             End With
+            grid.Columns.Add(column)
         Catch
             If column IsNot Nothing Then column.Dispose()
             Throw
         End Try
-        grid.Columns.Add(column)
+
+        column = Nothing
         grid.Enabled = True
         If grid.Columns IsNot Nothing AndAlso grid.Columns.Count > 0 Then
             Return grid.Columns.Count
