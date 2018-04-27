@@ -155,11 +155,11 @@ Public Class MovingWindowMeter
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Public Property Window As RangeR
         Get
-            Return Me.MovingWindow.Window
+            Return Me.MovingWindow.RelativeWindow
         End Get
         Set(value As RangeR)
             If value <> Me.Window Then
-                Me.MovingWindow.Window = New RangeR(value)
+                Me.MovingWindow.RelativeWindow = New RangeR(value)
                 If value Is Nothing Then
                     Me._WindowTextBox.Text = ""
                 Else
@@ -523,7 +523,7 @@ Public Class MovingWindowMeter
                     Dim value As Double = 0
                     Dim hasReading As Boolean = Core.Engineering.MovingWindow.HasReading(ma.Status)
                     If hasReading Then value = ma.Mean
-                    Me.Window = ma.Window
+                    Me.Window = ma.RelativeWindow
                     Me.ReadingTimespan = ma.ReadingTimespan
                     Me.PercentProgress = percentProgress
                     Me.ElapsedTime = ma.ElapsedTime
@@ -770,7 +770,7 @@ Public Class MovingWindowMeter
         Try
             If button.Checked Then
                 Me.MovingWindow.Length = CInt(Me._LengthTextBox.Text)
-                Me.MovingWindow.Window = New RangeR(0.01 * CDbl(Me._WindowTextBox.Text))
+                Me.MovingWindow.RelativeWindow = New RangeR(0.01 * CDbl(Me._WindowTextBox.Text))
                 Me.MovingWindow.UpdateRule = Core.Engineering.MovingWindowUpdateRule.StopOnWithinWindow
                 Me.MovingWindow.TimeoutInterval = TimeSpan.FromSeconds(CDbl(Me._TimeoutTextBox.Text))
                 Me.StartMeasureAsync(SynchronizationContext.Current)
