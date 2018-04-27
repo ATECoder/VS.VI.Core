@@ -20,6 +20,8 @@ Public Class MovingWindowMeter
 
 #Region " CONSTRUCTION + CLEANUP "
 
+    Private Const DefaultMovingWindowLength As Integer = 40
+
     ''' <summary> Default constructor. </summary>
     Public Sub New()
         MyBase.New()
@@ -30,7 +32,7 @@ Public Class MovingWindowMeter
         Me.InitializingComponents = False
 
         Me._MeasurementFormatString = "G8"
-        Me._MovingWindow = New isr.Core.Engineering.MovingWindow
+        Me._MovingWindow = New isr.Core.Engineering.MovingWindow(MovingWindowMeter.DefaultMovingWindowLength)
 
         Me._ExpectedStopTimeout = TimeSpan.FromMilliseconds(100)
 
@@ -516,7 +518,7 @@ Public Class MovingWindowMeter
             Me.Invoke(New Action(Of isr.Core.Engineering.MovingWindow, Integer, TaskResult)(AddressOf ReportProgressChanged), New Object() {movingWindow, percentProgress, result})
         Else
             Dim ma As isr.Core.Engineering.MovingWindow = movingWindow
-            If ma IsNot Nothing AndAlso ma.ReadingsCount > 0 Then
+            If ma IsNot Nothing AndAlso ma.TotalReadingsCount > 0 Then
                 Try
                     Dim value As Double = 0
                     Dim hasReading As Boolean = Core.Engineering.MovingWindow.HasReading(ma.Status)
@@ -526,10 +528,10 @@ Public Class MovingWindowMeter
                     Me.PercentProgress = percentProgress
                     Me.ElapsedTime = ma.ElapsedTime
                     Me.Count = ma.Count
-                    Me.ReadingsCount = ma.ReadingsCount
+                    Me.ReadingsCount = ma.TotalReadingsCount
                     Me.MaximumReading = ma.Maximum
                     Me.MinimumReading = ma.Minimum
-                    Me.LastReading = ma.LastAddedReading
+                    Me.LastReading = ma.LastAmenableReading.Value
                     Me.ReadingStatus = ma.Status
                     If hasReading Then Me.Reading = value
                     ' this helps flash out exceptions:

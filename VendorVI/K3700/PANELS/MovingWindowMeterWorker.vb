@@ -51,7 +51,7 @@ Partial Public Class MovingWindowMeter
         Public ReadOnly Property PercentProgress As Integer
             Get
                 Dim baseCount As Integer = 0
-                Dim count As Integer = CType(Me.MovingAverage?.ReadingsCount, Integer?).GetValueOrDefault(0)
+                Dim count As Integer = CType(Me.MovingAverage?.TotalReadingsCount, Integer?).GetValueOrDefault(0)
                 If count < 2 * Me.MovingAverage.Length Then
                     baseCount = 2 * Me.MovingAverage.Length
                 ElseIf Me.EstimatedCountout > 0 Then
@@ -68,7 +68,7 @@ Partial Public Class MovingWindowMeter
         End Property
         Public ReadOnly Property LogPercentProgress As Integer
             Get
-                Dim count As Integer = CType(Me.MovingAverage?.ReadingsCount, Integer?).GetValueOrDefault(0)
+                Dim count As Integer = CType(Me.MovingAverage?.TotalReadingsCount, Integer?).GetValueOrDefault(0)
                 If Me.EstimatedCountout > 0 Then
                     Return CInt(100 * Math.Log(count) / Math.Log(Me.EstimatedCountout))
                 ElseIf Me.MovingAverage.TimeoutInterval > TimeSpan.Zero Then

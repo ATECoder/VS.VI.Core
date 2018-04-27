@@ -34,6 +34,12 @@ Namespace Scpi
             ''' <summary> Gets the SCPI caption for 'not-a-number' (NAN). </summary>
             Public Const NotANumberCaption As String = "9.91000E+37"
 
+            ''' <summary> Overflow range. </summary>
+            ''' <returns> A Core.Pith.RangeR. </returns>
+            Public Function OverflowRange() As Core.Pith.RangeR
+                Return New Core.Pith.RangeR(NegativeInfinity, Infinity)
+            End Function
+
 #End Region
 
 #Region " DEFAULT ERROR MESSAGES "
