@@ -174,23 +174,22 @@ Namespace K3700.Tests
         ''' <param name="epsilon">       The epsilon. </param>
         ''' <param name="channelList">   List of channels. </param>
         Private Shared Sub GageBoardResistance(ByVal trialNumber As Integer, ByVal device As VI.Tsp.K3700.Device,
-                                             ByVal expectedValue As Double, ByVal epsilon As Double,
-                                             ByVal channelList As String)
+                                             ByVal expectedValue As Double, ByVal epsilon As Double, ByVal channelList As String)
 
             Dim expectedChannelList As String = ""
             Dim actualChannelList As String = device.ChannelSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(2))
             Assert.AreEqual(expectedChannelList, actualChannelList,
-                            $"Open All {trialNumber} {NameOf(ChannelSubsystem)}.{NameOf(ChannelSubsystem.ClosedChannels)} is {actualChannelList}; expected {expectedChannelList}")
+                            $"Open All {trialNumber} {NameOf(ChannelSubsystem)}.{NameOf(ChannelSubsystem.ClosedChannels)}='{actualChannelList}'; expected {expectedChannelList}")
 
             expectedChannelList = channelList
             actualChannelList = device.ChannelSubsystem.ApplyClosedChannels(expectedChannelList, TimeSpan.FromSeconds(2))
             Assert.AreEqual(expectedChannelList, actualChannelList,
-                            $"{trialNumber} {NameOf(ChannelSubsystem)}.{NameOf(ChannelSubsystem.ClosedChannels)} is {actualChannelList}; expected {expectedChannelList}")
+                            $"{trialNumber} {NameOf(ChannelSubsystem)}.{NameOf(ChannelSubsystem.ClosedChannels)}='{actualChannelList}'; expected {expectedChannelList}")
 
             Dim expectedResistance As Double = expectedValue
             Dim resistance As Double = device.MultimeterSubsystem.Measure.GetValueOrDefault(-1)
             Assert.AreEqual(expectedValue, resistance, epsilon,
-                            $"{trialNumber} {NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.MeasuredValue)} {channelList} is {resistance}; expected {expectedResistance } within {epsilon}")
+                            $"{trialNumber} {NameOf(ChannelSubsystem)}.{NameOf(ChannelSubsystem.ClosedChannels)}='{actualChannelList}' {NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.MeasuredValue)} {channelList} is {resistance}; expected {expectedResistance } within {epsilon}")
 
         End Sub
 
