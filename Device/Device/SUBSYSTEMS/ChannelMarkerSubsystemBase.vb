@@ -179,22 +179,3 @@ Public MustInherit Class ChannelMarkerSubsystemBase
 
 End Class
 
-#Region " UNUSED "
-#If False Then
-    ''' <summary> <c>True</c> if Measurement available. </summary>
-    Private _MeasurementAvailable As Boolean
-
-    ''' <summary> Gets or sets a value indicating whether [Measurement available]. </summary>
-    ''' <value> <c>True</c> if [Measurement available]; otherwise, <c>False</c>. </value>
-    Public Property MeasurementAvailable As Boolean
-        Get
-            Return Me._MeasurementAvailable
-        End Get
-        Protected Set(ByVal value As Boolean)
-            Me._MeasurementAvailable = value
-            Me.SafeSendPropertyChanged()
-        End Set
-    End Property
-
-#End If
-#End Region
