@@ -2,7 +2,7 @@
 Imports System.Data.Common
 Namespace K3700.Tests
 
-    ''' <summary> A Measure Test Info. </summary>
+    ''' <summary> A K3720 Test Info. </summary>
     ''' <license>
     ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
     ''' Licensed under The MIT License.</para><para>
@@ -16,7 +16,7 @@ Namespace K3700.Tests
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
      Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Friend Class ResistanceTestInfo
+    Friend Class K3720TestInfo
         Inherits ApplicationSettingsBase
 
 #Region " SINGLETON "
@@ -28,8 +28,8 @@ Namespace K3700.Tests
         ''' <summary> Opens the settings editor. </summary>
         Public Shared Sub OpenSettingsEditor()
             Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
-                f.Text = $"{GetType(ResistanceTestInfo)} Editor"
-                f.ShowDialog(ResistanceTestInfo.Get)
+                f.Text = $"{GetType(K3720TestInfo)} Editor"
+                f.ShowDialog(K3720TestInfo.Get)
             End Using
         End Sub
 
@@ -40,16 +40,16 @@ Namespace K3700.Tests
 
         ''' <summary> Gets the instance. </summary>
         ''' <value> The instance. </value>
-        Private Shared Property _Instance As ResistanceTestInfo
+        Private Shared Property _Instance As K3720TestInfo
 
         ''' <summary> Instantiates the class. </summary>
         ''' <remarks> Use this property to instantiate a single instance of this class. This class uses
         ''' lazy instantiation, meaning the instance isn't created until the first time it's retrieved. </remarks>
         ''' <returns> A new or existing instance of the class. </returns>
-        Public Shared Function [Get]() As ResistanceTestInfo
+        Public Shared Function [Get]() As K3720TestInfo
             If _Instance Is Nothing Then
                 SyncLock _SyncLocker
-                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New ResistanceTestInfo()), ResistanceTestInfo)
+                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K3720TestInfo()), K3720TestInfo)
                 End SyncLock
             End If
             Return _Instance

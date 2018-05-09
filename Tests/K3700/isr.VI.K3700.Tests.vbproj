@@ -109,7 +109,11 @@
     <Compile Include="Device\ResourceControlTests.vb" />
     <Compile Include="Gage\GageBoardTests.vb" />
     <Compile Include="Gage\GageBoardTests_Info.vb" />
+    <Compile Include="Resistance\K3730Tests.vb" />
+    <Compile Include="Resistance\K3730Tests_Info.vb" />
     <Compile Include="Resistance\ResistanceTests.vb" />
+    <Compile Include="Resistance\K3720Tests.vb" />
+    <Compile Include="Resistance\K3720Tests_Info.vb" />
     <Compile Include="Resistance\ResistanceTests_Info.vb" />
     <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
     <Compile Include="My Project\Application.Designer.vb">

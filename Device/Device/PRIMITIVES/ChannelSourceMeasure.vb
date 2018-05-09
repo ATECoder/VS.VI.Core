@@ -34,8 +34,16 @@ Public Class ChannelSourceMeasure
         End If
     End Sub
 
+    ''' <summary> Gets the title. </summary>
+    ''' <value> The title. </value>
     Public ReadOnly Property Title As String
+
+    ''' <summary> Gets a list of channels. </summary>
+    ''' <value> A List of channels. </value>
     Public ReadOnly Property ChannelList As String
+
+    ''' <summary> Gets the resistance. </summary>
+    ''' <value> The resistance. </value>
     Public ReadOnly Property Resistance As Double
         Get
             If Me.Current > 0 Then
@@ -45,7 +53,13 @@ Public Class ChannelSourceMeasure
             End If
         End Get
     End Property
+
+    ''' <summary> Gets or sets the voltage. </summary>
+    ''' <value> The voltage. </value>
     Public Property Voltage As Double
+
+    ''' <summary> Gets or sets the current. </summary>
+    ''' <value> The current. </value>
     Public Property Current As Double
 End Class
 
