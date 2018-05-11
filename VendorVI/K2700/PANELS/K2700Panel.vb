@@ -7,7 +7,6 @@ Imports isr.Core.Controls.SafeSetterExtensions
 Imports isr.Core.Controls.ToolStripExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
-Imports isr.Core.Pith.EscapeSequencesExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
 Imports isr.Core.Pith.TimeSpanExtensions
 Imports isr.VI.ExceptionExtensions
@@ -96,7 +95,7 @@ Public Class K2700Panel
     Private Sub _AssignDevice(ByVal value As Device)
         Me._Device = value
         Me._Device.CaptureSyncContext(Threading.SynchronizationContext.Current)
-		Me._Device.AddPrivateListener(Me.TraceMessagesBox)
+        Me._Device.AddPrivateListener(Me.TraceMessagesBox)
         Me.OnDeviceOpenChanged(value)
     End Sub
 
@@ -136,11 +135,16 @@ Public Class K2700Panel
             Me._SimpleReadWriteControl.Disconnect()
         End If
         For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
-            If t IsNot Me._MessagesTabPage Then
-                For Each c As Windows.Forms.Control In t.Controls : Me.RecursivelyEnable(c, Me.IsDeviceOpen) : Next
-            End If
+            If t IsNot Me._MessagesTabPage Then Me.RecursivelyEnable(t.Controls, Me.IsDeviceOpen)
         Next
+        If Me.IsDeviceOpen Then
+            Me._ClearInterfaceMenuItem.Visible = Me.Device.StatusSubsystemBase.SupportsClearInterface
+            VI.Pith.SessionBase.ListNotificationLevels(Me._SessionNotificationLevelComboBox.ComboBox)
+            AddHandler Me._SessionNotificationLevelComboBox.ComboBox.SelectedIndexChanged, AddressOf Me._SessionNotificationLevelComboBox_SelectedIndexChanged
+            VI.Pith.SessionBase.SelectItem(Me._SessionNotificationLevelComboBox, NotifySyncLevel.None)
+        End If
     End Sub
+
 
     ''' <summary> Handles the device property changed event. </summary>
     ''' <param name="device">    The device. </param>
@@ -154,7 +158,7 @@ Public Class K2700Panel
             Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
             Case NameOf(isr.VI.DeviceBase.MessageNotificationLevel)
-                Me._SessionTraceEnabledMenuItem.Checked = device.MessageNotificationLevel <> NotifySyncLevel.None
+                VI.Pith.SessionBase.SelectItem(Me._SessionNotificationLevelComboBox, device.MessageNotificationLevel)
             Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
                 Dim value As VI.Pith.ServiceRequests = device.ServiceRequestEnableBitmask
                 Me._ServiceRequestEnableBitmaskNumeric.Value = value
@@ -221,7 +225,7 @@ Public Class K2700Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Overloads Sub HandlePropertyChange(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(VI.K2700.FormatSubsystem.Elements)
                 subsystem.ListElements(Me._ReadingComboBox.ComboBox, ReadingTypes.Units)
@@ -258,7 +262,7 @@ Public Class K2700Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Overloads Sub HandlePropertyChange(ByVal subsystem As MeasureSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(K2700.MeasureSubsystem.LastReading)
                 Dim value As String = subsystem.LastReading
@@ -449,7 +453,7 @@ Public Class K2700Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Overloads Sub HandlePropertyChange(ByVal subsystem As SenseVoltageSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -499,7 +503,7 @@ Public Class K2700Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Overloads Sub HandlePropertyChange(ByVal subsystem As SenseCurrentSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -549,7 +553,7 @@ Public Class K2700Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Private Overloads Sub HandlePropertyChange(ByVal subsystem As SenseFourWireResistanceSubsystem, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         ' Me._senseRangeTextBox.SafeTextSetter(Me.Device.SenseRange(VI.ResourceAccessLevels.Cache).ToString(Globalization.CultureInfo.CurrentCulture))
         ' Me._integrationPeriodTextBox.SafeTextSetter(Me.Device.SenseIntegrationPeriodCaption)
         Select Case propertyName
@@ -609,7 +613,7 @@ Public Class K2700Panel
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     Protected Overrides Sub HandlePropertyChange(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
-        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName)  Then Return
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.HandlePropertyChange(subsystem, propertyName)
         Select Case propertyName
             Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
@@ -698,7 +702,7 @@ Public Class K2700Panel
     ''' </summary>
     Friend ReadOnly Property ActualFunctionMode() As VI.Scpi.SenseFunctionModes
         Get
-            Return Me._actualFunctionMode
+            Return Me._ActualFunctionMode
         End Get
     End Property
 
@@ -708,7 +712,7 @@ Public Class K2700Panel
     Friend Sub ApplyFunctionMode(ByVal value As VI.Scpi.SenseFunctionModes)
         If Me.IsDeviceOpen AndAlso
                 ((Me._Device.SenseSubsystem.SupportedFunctionModes And value) <> 0) AndAlso
-                (value <> Me._actualFunctionMode) Then
+                (value <> Me._ActualFunctionMode) Then
             Me._Device.SenseSubsystem.ApplyFunctionMode(value)
         End If
     End Sub
@@ -763,7 +767,7 @@ Public Class K2700Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            updateChannelListComboBox()
+            UpdateChannelListComboBox()
             Me.Device.ClearExecutionState()
             Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyClosedChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(1))
@@ -783,7 +787,7 @@ Public Class K2700Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            updateChannelListComboBox()
+            UpdateChannelListComboBox()
             Me.Device.ClearExecutionState()
             Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyOpenChannels(Me._ChannelListComboBox.Text, TimeSpan.FromSeconds(1))
@@ -803,7 +807,7 @@ Public Class K2700Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            updateChannelListComboBox()
+            UpdateChannelListComboBox()
             Me.Device.ClearExecutionState()
             Me.Device.StatusSubsystem.EnableWaitComplete()
             Me.Device.RouteSubsystem.ApplyOpenAll(TimeSpan.FromSeconds(1))
@@ -853,7 +857,9 @@ Public Class K2700Panel
                 Me.Cursor = Cursors.WaitCursor
                 Me.ErrorProvider.Clear()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                Me.Device.SystemSubsystem.ClearInterface()
+                Me.StartElapsedStopwatch()
+                Me.Device.ClearInterface()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -870,14 +876,16 @@ Public Class K2700Panel
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ClearDeviceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs)
-        Dim activity As String = "clearing selective device"
+        Dim activity As String = "clearing device active state (SDC)"
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me.ErrorProvider.Clear()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                Me.Device.SystemSubsystem.ClearDevice()
+                Me.StartElapsedStopwatch()
+                Me.Device.ClearActiveState()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -902,7 +910,9 @@ Public Class K2700Panel
                 Me.Cursor = Cursors.WaitCursor
                 Me.ErrorProvider.Clear()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                Me.Device.SystemSubsystem.ClearExecutionState()
+                Me.StartElapsedStopwatch()
+                Me.Device.ClearExecutionState()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -925,10 +935,10 @@ Public Class K2700Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             If menuItem IsNot Nothing Then
-                If Me.IsDeviceOpen Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                    Me.Device.ResetKnownState()
-                End If
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                Me.StartElapsedStopwatch()
+                Me.Device.ResetKnownState()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -951,13 +961,13 @@ Public Class K2700Panel
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             If menuItem IsNot Nothing Then
-                If Me.IsDeviceOpen Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                    Me.Device.ResetKnownState()
-                    activity = "initializing known state"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                    Me.Device.InitKnownState()
-                End If
+                'Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                'Me.Device.ResetKnownState()
+                activity = "initializing known state"
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                Me.StartElapsedStopwatch()
+                Me.Device.InitKnownState()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -1034,28 +1044,44 @@ Public Class K2700Panel
 
 #Region " CONTROL EVENT HANDLERS: SESSION "
 
-    ''' <summary> Toggles session message tracing. </summary>
+    ''' <summary> Handles Reads Status Byte Menu Item click event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _SessionTraceEnabledMenuItem_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.Click
+    Private Sub _ReadStatusByteMenuItem_Click(ByVal sender As Object, e As System.EventArgs) Handles _ReadStatusByteMenuItem.Click
         If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
-        Dim activity As String = "toggling instrument message tracing"
+        Dim activity As String = "reading status byte"
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
-        If menuItem IsNot Nothing Then
-        End If
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
             If menuItem IsNot Nothing Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                If menuItem.Checked Then
-                    ' TODO: Change menu item to a drop down.
-                    Me.Device.MessageNotificationLevel = NotifySyncLevel.Async
-                Else
-                    Me.Device.MessageNotificationLevel = NotifySyncLevel.None
-                End If
+                Me.StartElapsedStopwatch()
+                Me.ReadServiceRequestStatus()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
+            End If
+        Catch ex As Exception
+            Me.ErrorProvider.Annunciate(sender, ex.ToString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
 
+    ''' <summary> Toggles session message tracing. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _SessionNotificationLevelComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles _SessionNotificationLevelComboBox.SelectedIndexChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = "selecting session notification level"
+        Dim combo As Core.Controls.ToolStripComboBox = CType(sender, Core.Controls.ToolStripComboBox)
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me.ErrorProvider.Clear()
+            If combo IsNot Nothing Then
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                Me.Device.MessageNotificationLevel = VI.Pith.SessionBase.SelectedValue(combo, NotifySyncLevel.None)
             End If
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
@@ -1379,7 +1405,7 @@ Public Class K2700Panel
         Dim format As String = "Range [{0}]:"
         Dim control As Windows.Forms.Control = TryCast(sender, Windows.Forms.Control)
         If control IsNot Nothing AndAlso control.Enabled Then
-            Select Case Me.selectedFunctionMode
+            Select Case Me.SelectedFunctionMode
                 Case VI.Scpi.SenseFunctionModes.Current, VI.Scpi.SenseFunctionModes.CurrentAC, VI.Scpi.SenseFunctionModes.CurrentDC
                     Me._SenseRangeNumericLabel.Text = String.Format(format, "A")
                 Case VI.Scpi.SenseFunctionModes.FourWireResistance, VI.Scpi.SenseFunctionModes.Resistance
@@ -1404,7 +1430,7 @@ Public Class K2700Panel
 
         Me.Device.ClearExecutionState()
 
-        Me.Device.SenseSubsystem.ApplyFunctionMode(Me.selectedFunctionMode)
+        Me.Device.SenseSubsystem.ApplyFunctionMode(Me.SelectedFunctionMode)
 
         If Me.Device.SenseSubsystem.FunctionMode = VI.Scpi.SenseFunctionModes.CurrentDC Then
 
@@ -1474,10 +1500,10 @@ Public Class K2700Panel
         Try
             Me.Cursor = Cursors.WaitCursor
             Me.ErrorProvider.Clear()
-            Me.applySenseSettings()
+            Me.ApplySenseSettings()
         Catch ex As Exception
             Me.ErrorProvider.Annunciate(sender, ex.ToString)
-                        Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
         Finally
 
             Me.Cursor = Cursors.Default

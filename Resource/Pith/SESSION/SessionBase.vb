@@ -318,21 +318,63 @@ Public MustInherit Class SessionBase
 
 #Region " MESSAGE EVENTS "
 
-    Private _MessageNotificationLevel As isr.Core.Pith.NotifySyncLevel
+    Private _MessageNotificationLevel As Core.Pith.NotifySyncLevel
 
     ''' <summary> Gets or sets the message notification level. </summary>
     ''' <value> The message notification level. </value>
-    Public Property MessageNotificationLevel As isr.Core.Pith.NotifySyncLevel
+    Public Property MessageNotificationLevel As Core.Pith.NotifySyncLevel
         Get
             Return Me._MessageNotificationLevel
         End Get
-        Set(value As isr.Core.Pith.NotifySyncLevel)
+        Set(value As Core.Pith.NotifySyncLevel)
             If value <> Me.MessageNotificationLevel Then
                 Me._MessageNotificationLevel = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
     End Property
+
+    ''' <summary> List notification levels. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="control"> The control. </param>
+    Public Shared Sub ListNotificationLevels(ByVal control As System.Windows.Forms.ComboBox)
+        If control Is Nothing Then Throw New ArgumentNullException(NameOf(control))
+        Dim comboEnabled As Boolean = control.Enabled
+        control.Enabled = False
+        control.DataSource = Nothing
+        control.ValueMember = "Key"
+        control.DisplayMember = "Value"
+        control.Items.Add(New KeyValuePair(Of Core.Pith.NotifySyncLevel, String)(Core.Pith.NotifySyncLevel.None, "None"))
+        control.Items.Add(New KeyValuePair(Of Core.Pith.NotifySyncLevel, String)(Core.Pith.NotifySyncLevel.Async, "Asynchronous"))
+        control.Items.Add(New KeyValuePair(Of Core.Pith.NotifySyncLevel, String)(Core.Pith.NotifySyncLevel.Sync, "Synchronous"))
+        control.Enabled = comboEnabled
+        control.Invalidate()
+    End Sub
+
+    ''' <summary> Select item. </summary>
+    ''' <param name="control"> The control. </param>
+    ''' <param name="value">   The value. </param>
+    Public Shared Sub SelectItem(ByVal control As Windows.Forms.ToolStripComboBox, ByVal value As Core.Pith.NotifySyncLevel)
+        If control IsNot Nothing Then
+            control.SelectedItem = New KeyValuePair(Of Core.Pith.NotifySyncLevel, String)(value, value.ToString)
+        End If
+    End Sub
+
+    ''' <summary> Selected value. </summary>
+    ''' <param name="control">      The control. </param>
+    ''' <param name="defaultValue"> The default value. </param>
+    ''' <returns> A Core.Pith.NotifySyncLevel. </returns>
+    Public Shared Function SelectedValue(ByVal control As Windows.Forms.ToolStripComboBox, ByVal defaultValue As Core.Pith.NotifySyncLevel) As Core.Pith.NotifySyncLevel
+        If control IsNot Nothing AndAlso control.SelectedItem IsNot Nothing Then
+            Dim kvp As KeyValuePair(Of Core.Pith.NotifySyncLevel, String) = CType(control.SelectedItem, KeyValuePair(Of Core.Pith.NotifySyncLevel, String))
+            If [Enum].IsDefined(GetType(Core.Pith.NotifySyncLevel), kvp.Key) Then
+                defaultValue = kvp.Key
+            End If
+        End If
+        Return defaultValue
+    End Function
+
+
 
     Private _LastMessageReceived As String
     ''' <summary> Gets or sets the last message Received. </summary>

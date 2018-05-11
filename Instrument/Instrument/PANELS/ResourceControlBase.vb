@@ -446,7 +446,7 @@ Public Class ResourceControlBase
 
 #End Region
 
-#Region " DEVICE "
+#Region " ELPASED TIME STOPWATCH "
 
     ''' <summary> Gets or sets the elapsed time stop watch. </summary>
     ''' <value> The elapsed time stop watch. </value>
@@ -454,14 +454,23 @@ Public Class ResourceControlBase
     Private ReadOnly Property ElapsedTimeStopwatch As Stopwatch
 
     ''' <summary> Reads elapsed time. </summary>
+    ''' <returns> The elapsed time. </returns>
+    Protected Function ReadElapsedTime() As TimeSpan
+        Dim result As TimeSpan = Me.ElapsedTimeStopwatch.Elapsed
+        Me.ElapsedTimeStopwatch.Stop()
+        Return result
+    End Function
+
+    ''' <summary> Reads elapsed time. </summary>
     ''' <param name="stopRequested"> True if stop requested. </param>
     ''' <returns> The elapsed time. </returns>
     Protected Function ReadElapsedTime(ByVal stopRequested As Boolean) As TimeSpan
+        Dim result As TimeSpan = Me.ElapsedTimeStopwatch.Elapsed
         If stopRequested AndAlso Me.ElapsedTimeStopwatch.IsRunning Then
             Me._ElapsedTimeCount -= 1
             If Me.ElapsedTimeCount <= 0 Then Me.ElapsedTimeStopwatch.Stop()
         End If
-        Return Me.ElapsedTimeStopwatch.Elapsed
+        Return result
     End Function
 
     Private _ElapsedTimeCount As Integer
@@ -480,10 +489,20 @@ Public Class ResourceControlBase
     End Property
 
     ''' <summary> Starts elapsed stopwatch. </summary>
+    Protected Sub StartElapsedStopwatch()
+        Me._ElapsedTimeCount = 0
+        Me.ElapsedTimeStopwatch.Restart()
+    End Sub
+
+    ''' <summary> Starts elapsed stopwatch. </summary>
     Protected Sub StartElapsedStopwatch(ByVal count As Integer)
         Me._ElapsedTimeCount = count
         Me.ElapsedTimeStopwatch.Restart()
     End Sub
+
+#End Region
+
+#Region " DEVICE "
 
     ''' <summary> Gets or sets the sentinel indicating if this panel owns the device and, therefore, needs to 
     '''           dispose of this device. </summary>
@@ -923,7 +942,7 @@ Public Class ResourceControlBase
     ''' <summary> Reads a service request status. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Protected Sub ReadServiceRequestStatus()
-        Dim activity As String = $"reading {Me.DeviceBase?.ResourceNameCaption} service request"
+        Dim activity As String = $"reading {Me.DeviceBase.ResourceNameCaption} service request"
         Try
             Me.DeviceBase.StatusSubsystemBase.ReadServiceRequestStatus()
         Catch ex As Exception

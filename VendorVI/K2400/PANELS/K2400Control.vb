@@ -2,7 +2,6 @@ Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports isr.Core.Controls.ComboBoxExtensions
 Imports isr.Core.Controls.CheckBoxExtensions
-Imports isr.Core.Controls.ControlExtensions
 Imports isr.Core.Controls.NumericUpDownExtensions
 Imports isr.Core.Controls.SafeSetterExtensions
 Imports isr.Core.Controls.ToolStripExtensions
@@ -201,6 +200,12 @@ Public Class K2400Control
         For Each t As Windows.Forms.TabPage In Me._Tabs.TabPages
             If t IsNot Me._MessagesTabPage Then Me.RecursivelyEnable(t.Controls, Me.IsDeviceOpen)
         Next
+        If Me.IsDeviceOpen Then
+            Me._ClearInterfaceMenuItem.Visible = Me.Device.StatusSubsystemBase.SupportsClearInterface
+            VI.Pith.SessionBase.ListNotificationLevels(Me._SessionNotificationLevelComboBox.ComboBox)
+            AddHandler Me._SessionNotificationLevelComboBox.ComboBox.SelectedIndexChanged, AddressOf Me._SessionNotificationLevelComboBox_SelectedIndexChanged
+            VI.Pith.SessionBase.SelectItem(Me._SessionNotificationLevelComboBox, NotifySyncLevel.None)
+        End If
     End Sub
 
     ''' <summary> Handles the device property changed event. </summary>
@@ -215,7 +220,7 @@ Public Class K2400Control
             Case NameOf(isr.VI.DeviceBase.DeviceServiceRequestHandlerAdded)
                 Me._DeviceServiceRequestHandlerEnabledMenuItem.Checked = device.DeviceServiceRequestHandlerAdded
             Case NameOf(isr.VI.DeviceBase.MessageNotificationLevel)
-                Me._SessionTraceEnabledMenuItem.Checked = device.MessageNotificationLevel <> NotifySyncLevel.None
+                VI.Pith.SessionBase.SelectItem(Me._SessionNotificationLevelComboBox, device.MessageNotificationLevel)
             Case NameOf(isr.VI.DeviceBase.ServiceRequestEnableBitmask)
                 Dim value As VI.Pith.ServiceRequests = device.ServiceRequestEnableBitmask
                 Me._ServiceRequestEnableBitmaskNumeric.Value = value
@@ -1564,7 +1569,7 @@ Public Class K2400Control
             Dim mode As Scpi.ArmSources = Me.Device.ArmLayerSubsystem.ArmSource.GetValueOrDefault(Scpi.ArmSources.None)
             If (mode = Scpi.ArmSources.Manual) AndAlso Me._MeterTimer.Enabled Then
                 Me.AssertTrigger()
-            ElseIf mode <> scpi.ArmSources.Manual Then
+            ElseIf mode <> Scpi.ArmSources.Manual Then
                 Me._InfoProvider.Annunciate(sender, $"Manual trigger ignored in '{mode.Description}' mode")
             ElseIf Not Me._MeterTimer.Enabled Then
                 Me._InfoProvider.Annunciate(sender, "Manual trigger ignored -- triggering is not active")
@@ -2515,7 +2520,9 @@ Public Class K2400Control
                 Me.Cursor = Cursors.WaitCursor
                 Me._InfoProvider.Clear()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                Me.Device.SystemSubsystem.ClearInterface()
+                Me.StartElapsedStopwatch()
+                Me.Device.ClearInterface()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
@@ -2532,14 +2539,16 @@ Public Class K2400Control
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ClearDeviceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs)
-        Dim activity As String = "clearing selective device"
+        Dim activity As String = "clearing device active state (SDC)"
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
                 Me._InfoProvider.Clear()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                Me.Device.SystemSubsystem.ClearDevice()
+                Me.StartElapsedStopwatch()
+                Me.Device.ClearActiveState()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
@@ -2564,7 +2573,9 @@ Public Class K2400Control
                 Me.Cursor = Cursors.WaitCursor
                 Me._InfoProvider.Clear()
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                Me.Device.SystemSubsystem.ClearExecutionState()
+                Me.StartElapsedStopwatch()
+                Me.Device.ClearExecutionState()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
@@ -2587,10 +2598,10 @@ Public Class K2400Control
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
-                If Me.IsDeviceOpen Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                    Me.Device.ResetKnownState()
-                End If
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                Me.StartElapsedStopwatch()
+                Me.Device.ResetKnownState()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
@@ -2606,20 +2617,20 @@ Public Class K2400Control
     '''                       <see cref="System.Windows.Forms.Control"/> </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _InitKnownStateMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InitKnowStateMenuItem.Click
+    Private Sub _InitKnownStateMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InitKnownStateMenuItem.Click
         Dim activity As String = "resetting known state"
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
-                If Me.IsDeviceOpen Then
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                    Me.Device.ResetKnownState()
-                    activity = "initializing known state"
-                    Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                    Me.Device.InitKnownState()
-                End If
+                'Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                'Me.Device.ResetKnownState()
+                activity = "initializing known state"
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                Me.StartElapsedStopwatch()
+                Me.Device.InitKnownState()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)
@@ -2696,28 +2707,44 @@ Public Class K2400Control
 
 #Region " CONTROL EVENT HANDLERS: SESSION "
 
-    ''' <summary> Toggles session message tracing. </summary>
+    ''' <summary> Handles Reads Status Byte Menu Item click event. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub _SessionTraceEnabledMenuItem_CheckedChanged(ByVal sender As Object, e As System.EventArgs) Handles _SessionServiceRequestHandlerEnabledMenuItem.Click
+    Private Sub _ReadStatusByteMenuItem_Click(ByVal sender As Object, e As System.EventArgs) Handles _ReadStatusByteMenuItem.Click
         If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
-        Dim activity As String = "toggling instrument message tracing"
+        Dim activity As String = "reading status byte"
         Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
-        If menuItem IsNot Nothing Then
-        End If
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
             If menuItem IsNot Nothing Then
-                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
-                If menuItem.Checked Then
-                    ' TODO: Change menu item to a drop down.
-                    Me.Device.MessageNotificationLevel = NotifySyncLevel.Async
-                Else
-                    Me.Device.MessageNotificationLevel = NotifySyncLevel.None
-                End If
+                Me.StartElapsedStopwatch()
+                Me.ReadServiceRequestStatus()
+                Me._TimingLabel.Text = Me.ReadElapsedTime.ToString("s\.ffff")
+            End If
+        Catch ex As Exception
+            Me._InfoProvider.Annunciate(sender, ex.ToString)
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"{Me.Title} exception {activity};. {ex.ToFullBlownString}")
+        Finally
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
 
+    ''' <summary> Toggles session message tracing. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub _SessionNotificationLevelComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles _SessionNotificationLevelComboBox.SelectedIndexChanged
+        If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = "selecting session notification level"
+        Dim combo As Core.Controls.ToolStripComboBox = CType(sender, Core.Controls.ToolStripComboBox)
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            Me._InfoProvider.Clear()
+            If combo IsNot Nothing Then
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Title} {activity};. {Me.Device.ResourceNameCaption}")
+                Me.Device.MessageNotificationLevel = VI.Pith.SessionBase.SelectedValue(combo, NotifySyncLevel.None)
             End If
         Catch ex As Exception
             Me._InfoProvider.Annunciate(sender, ex.ToString)

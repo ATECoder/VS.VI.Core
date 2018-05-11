@@ -588,6 +588,7 @@ Public Class Device
         Me.HandlePropertyChange(settings, NameOf(My.MySettings.InitializeTimeout))
         Me.HandlePropertyChange(settings, NameOf(My.MySettings.ResetRefractoryPeriod))
         Me.HandlePropertyChange(settings, NameOf(My.MySettings.DeviceClearRefractoryPeriod))
+        Me.HandlePropertyChange(settings, NameOf(My.MySettings.InterfaceClearRefractoryPeriod))
         Me.HandlePropertyChange(settings, NameOf(My.MySettings.InitRefractoryPeriod))
         Me.HandlePropertyChange(settings, NameOf(My.MySettings.ClearRefractoryPeriod))
         Me.HandlePropertyChange(settings, NameOf(My.MySettings.SessionMessageNotificationLevel))
@@ -614,6 +615,9 @@ Public Class Device
             Case NameOf(My.MySettings.DeviceClearRefractoryPeriod)
                 Me.StatusSubsystemBase.DeviceClearRefractoryPeriod = sender.DeviceClearRefractoryPeriod
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} set to {sender.DeviceClearRefractoryPeriod}")
+            Case NameOf(My.MySettings.InterfaceClearRefractoryPeriod)
+                Me.StatusSubsystemBase.InterfaceClearRefractoryPeriod = sender.InterfaceClearRefractoryPeriod
+                Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} set to {sender.InterfaceClearRefractoryPeriod}")
             Case NameOf(My.MySettings.InitRefractoryPeriod)
                 Me.StatusSubsystemBase.InitRefractoryPeriod = sender.InitRefractoryPeriod
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{propertyName} set to {sender.InitRefractoryPeriod}")

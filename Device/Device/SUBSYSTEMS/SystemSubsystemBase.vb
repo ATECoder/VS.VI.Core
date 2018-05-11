@@ -26,16 +26,19 @@ Public MustInherit Class SystemSubsystemBase
 
     ''' <summary> Supports clear interface. </summary>
     ''' <returns> <c>True</c> if supports clearing the interface. </returns>
+    <Obsolete("Use Status Subsystem Supports Clear Interface")>
     Public Function SupportsClearInterface() As Boolean
         Return Me.Session.SupportsClearInterface
     End Function
 
     ''' <summary> Clears the interface. </summary>
+    <Obsolete("Use Status Subsystem Clear Interface")>
     Public Sub ClearInterface()
         If Me.SupportsClearInterface Then Me.Session.ClearInterface()
     End Sub
 
     ''' <summary> Clears the device (SDC). </summary>
+    <Obsolete("Use Status Subsystem Clear Device or Status Subsystem Clear Active State")>
     Public Sub ClearDevice()
         Me.Session.ClearDevice()
     End Sub

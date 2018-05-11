@@ -44,5 +44,8 @@
     <Setting Name="SessionMessageNotificationLevel" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="InterfaceClearRefractoryPeriod" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:00:00.5000000</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

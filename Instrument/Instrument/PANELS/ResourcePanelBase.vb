@@ -1,5 +1,6 @@
 Imports System.ComponentModel
 Imports isr.Core.Pith
+Imports isr.Core.Controls.ControlExtensions
 Imports isr.VI.ExceptionExtensions
 ''' <summary> Provides a base user interface for a <see cref="isr.VI.DeviceBase">Visa Device</see>. </summary>
 ''' <license> (c) 2013 Integrated Scientific Resources, Inc.<para>
@@ -109,6 +110,19 @@ Public Class ResourcePanelBase
 #End Region
 
 #Region " SAFE SETTERS "
+
+    ''' <summary> Recursively enable. </summary>
+    ''' <param name="controls"> The controls. </param>
+    ''' <param name="value">    The value. </param>
+    Protected Sub RecursivelyEnable(ByVal controls As System.Windows.Forms.Control.ControlCollection, ByVal value As Boolean)
+        If controls IsNot Nothing Then
+            For Each c As System.Windows.Forms.Control In controls
+                If c IsNot Me.Connector Then
+                    c.RecursivelyEnable(value)
+                End If
+            Next
+        End If
+    End Sub
 
     ''' <summary> Recursively enable. </summary>
     ''' <param name="control"> The control. </param>
@@ -307,7 +321,7 @@ Public Class ResourcePanelBase
 
 #End Region
 
-#Region " DEVICE And CONNECTOR "
+#Region " ELPASED TIME STOPWATCH "
 
     ''' <summary> Gets or sets the elapsed time stop watch. </summary>
     ''' <value> The elapsed time stop watch. </value>
@@ -315,25 +329,55 @@ Public Class ResourcePanelBase
     Private ReadOnly Property ElapsedTimeStopwatch As Stopwatch
 
     ''' <summary> Reads elapsed time. </summary>
+    ''' <returns> The elapsed time. </returns>
+    Protected Function ReadElapsedTime() As TimeSpan
+        Dim result As TimeSpan = Me.ElapsedTimeStopwatch.Elapsed
+        Me.ElapsedTimeStopwatch.Stop()
+        Return result
+    End Function
+
+    ''' <summary> Reads elapsed time. </summary>
     ''' <param name="stopRequested"> True if stop requested. </param>
     ''' <returns> The elapsed time. </returns>
     Protected Function ReadElapsedTime(ByVal stopRequested As Boolean) As TimeSpan
+        Dim result As TimeSpan = Me.ElapsedTimeStopwatch.Elapsed
         If stopRequested AndAlso Me.ElapsedTimeStopwatch.IsRunning Then
             Me._ElapsedTimeCount -= 1
             If Me.ElapsedTimeCount <= 0 Then Me.ElapsedTimeStopwatch.Stop()
         End If
-        Return Me.ElapsedTimeStopwatch.Elapsed
+        Return result
     End Function
 
+    Private _ElapsedTimeCount As Integer
     ''' <summary> Gets the number of elapsed times. Some action require two cycles to get the full elapsed time. </summary>
     ''' <value> The number of elapsed times. </value>
-    Public ReadOnly Property ElapsedTimeCount As Integer
+    Public Property ElapsedTimeCount As Integer
+        Get
+            Return Me._ElapsedTimeCount
+        End Get
+        Protected Set(value As Integer)
+            If value <> Me.ElapsedTimeCount Then
+                Me._ElapsedTimeCount = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Starts elapsed stopwatch. </summary>
+    Protected Sub StartElapsedStopwatch()
+        Me._ElapsedTimeCount = 0
+        Me.ElapsedTimeStopwatch.Restart()
+    End Sub
 
     ''' <summary> Starts elapsed stopwatch. </summary>
     Protected Sub StartElapsedStopwatch(ByVal count As Integer)
         Me._ElapsedTimeCount = count
-        Me.StartElapsedStopwatch(0)
+        Me.ElapsedTimeStopwatch.Restart()
     End Sub
+
+#End Region
+
+#Region " DEVICE And CONNECTOR "
 
     ''' <summary> Gets or sets the sentinel indicating if this panel owns the device and, therefore, needs to 
     '''           dispose of this device. </summary>

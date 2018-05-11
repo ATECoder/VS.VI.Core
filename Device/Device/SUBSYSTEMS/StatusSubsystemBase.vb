@@ -49,6 +49,7 @@ Public MustInherit Class StatusSubsystemBase
 
         Me._InitializeTimeout = TimeSpan.FromMilliseconds(5000)
         Me._DeviceClearRefractoryPeriod = TimeSpan.FromMilliseconds(1050)
+        Me._InterfaceClearRefractoryPeriod = TimeSpan.FromMilliseconds(1050)
         Me._ResetRefractoryPeriod = TimeSpan.FromMilliseconds(200)
         Me._InitRefractoryPeriod = TimeSpan.FromMilliseconds(100)
         Me._ClearRefractoryPeriod = TimeSpan.FromMilliseconds(100)
@@ -110,12 +111,56 @@ Public MustInherit Class StatusSubsystemBase
 
     End Sub
 
+    ''' <summary> Supports clear interface. </summary>
+    ''' <returns> <c>True</c> if supports clearing the interface. </returns>
+    Public Function SupportsClearInterface() As Boolean
+        Return Me.Session.SupportsClearInterface
+    End Function
+
+    ''' <summary> Clears the interface. </summary>
+    Public Sub ClearInterface()
+        If Me.SupportsClearInterface Then
+            Me.Session.ClearInterface()
+            If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(Me.InterfaceClearRefractoryPeriod)
+        End If
+    End Sub
+
+    Private _InterfaceClearRefractoryPeriod As TimeSpan
+    ''' <summary> Gets the Interface clear refractory period. </summary>
+    ''' <value> The Interface clear refractory period. </value>
+    Public Property InterfaceClearRefractoryPeriod As TimeSpan
+        Get
+            Return Me._InterfaceClearRefractoryPeriod
+        End Get
+        Set(value As TimeSpan)
+            If Not value.Equals(Me.InterfaceClearRefractoryPeriod) Then
+                Me._InterfaceClearRefractoryPeriod = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
     ''' <summary> Clears the active state.
     '''           Issues selective device clear. Waits for the <see cref="DeviceClearRefractoryPeriod"/> before releasing control. </summary>
     Public Overridable Sub ClearActiveState()
-        Me.ClearService()
+        Me.ClearDevice()
         If Me.Session.IsSessionOpen Then Stopwatch.StartNew.Wait(Me.DeviceClearRefractoryPeriod)
     End Sub
+
+    Private _DeviceClearRefractoryPeriod As TimeSpan
+    ''' <summary> Gets the device clear refractory period. </summary>
+    ''' <value> The device clear refractory period. </value>
+    Public Property DeviceClearRefractoryPeriod As TimeSpan
+        Get
+            Return Me._DeviceClearRefractoryPeriod
+        End Get
+        Set(value As TimeSpan)
+            If Not value.Equals(Me.DeviceClearRefractoryPeriod) Then
+                Me._DeviceClearRefractoryPeriod = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     ''' <summary> Gets the clear execution state command. </summary>
     ''' <remarks> SCPI: "*CLS".
@@ -238,21 +283,6 @@ Public MustInherit Class StatusSubsystemBase
         End Set
     End Property
 
-    Private _DeviceClearRefractoryPeriod As TimeSpan
-    ''' <summary> Gets the device clear refractory period. </summary>
-    ''' <value> The device clear refractory period. </value>
-    Public Property DeviceClearRefractoryPeriod As TimeSpan
-        Get
-            Return Me._DeviceClearRefractoryPeriod
-        End Get
-        Set(value As TimeSpan)
-            If Not value.Equals(Me.DeviceClearRefractoryPeriod) Then
-                Me._DeviceClearRefractoryPeriod = value
-                Me.SafePostPropertyChanged()
-            End If
-        End Set
-    End Property
-
     Private _ResetRefractoryPeriod As TimeSpan
     ''' <summary> Gets the reset refractory period. </summary>
     ''' <value> The reset refractory period. </value>
@@ -350,7 +380,7 @@ Public MustInherit Class StatusSubsystemBase
 
 #Region " DEVICE CLEAR "
 
-    ''' <summary> Clears the device. </summary>
+    ''' <summary> Clears the device (CDC). </summary>
     ''' <remarks> When communicating with a message-based device, particularly when you
     ''' are first developing your program, you may need to tell the device to clear its I/O buffers
     ''' so that you can start again. In addition, if a device has more information than you need, you
@@ -368,7 +398,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' For more details on these clear commands, refer to your device documentation, the IEEE 488.1
     ''' standard, or the VXI bus specification. <para>
     ''' Source: NI-Visa HTML help.</para></remarks>
-    Public Sub ClearService()
+    Public Sub ClearDevice()
         Me.Session.Clear()
     End Sub
 
@@ -439,10 +469,16 @@ Public MustInherit Class StatusSubsystemBase
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         Dim activity As String = "reading device errors"
         Try
-            activity = "checking the error available bit and reading status"
-            If Me.IsErrorBitSet And Not Me.ReadingDeviceErrors Then
-                activity = "reading device errors"
-                Me.TryQueryExistingDeviceErrors(e)
+            activity = "checking the error available bit"
+            If Me.IsErrorBitSet Then
+                activity = "checking if already reading error"
+                If Not Me.ReadingDeviceErrors Then
+                    activity = "reading device errors"
+                    Me.TryQueryExistingDeviceErrors(e)
+                End If
+            Else
+                activity = "clearing error cache"
+                Me.ClearErrorCache()
             End If
         Catch ex As Exception
             e.RegisterCancellation($"Exception {activity};. {ex.ToFullBlownString}")

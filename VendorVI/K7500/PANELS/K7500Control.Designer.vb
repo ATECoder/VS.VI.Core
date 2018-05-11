@@ -19,11 +19,18 @@ Partial Class K7500Control
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ReadStatusByteMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._SessionTraceEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ResetMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ServiceRequestHandlersEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._TraceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._LogTraceLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._DisplayTraceLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionNotificationLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionNotificationLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadStatusByteMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -214,12 +221,13 @@ Partial Class K7500Control
         '_ResetSplitButton
         '
         Me._ResetSplitButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text
-        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._SessionTraceEnabledMenuItem, Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem, Me._ReadStatusByteMenuItem, Me._LogTraceLevelComboBox, Me._DisplayTraceLevelComboBox})
+        Me._ResetSplitButton.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetMenuItem, Me._ServiceRequestHandlersEnabledMenuItem, Me._TraceMenuItem})
         Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
         Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetSplitButton.Name = "_ResetSplitButton"
         Me._ResetSplitButton.Size = New System.Drawing.Size(51, 25)
         Me._ResetSplitButton.Text = "Reset"
+
         Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
         '
         '_ClearInterfaceMenuItem
@@ -227,6 +235,7 @@ Partial Class K7500Control
         Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
         Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._ClearInterfaceMenuItem.Text = "Clear Interface"
+        Me._ClearInterfaceMenuItem.ToolTipText = "Issues an interface clear command"
         '
         '_ClearDeviceMenuItem
         '
@@ -245,20 +254,75 @@ Partial Class K7500Control
         Me._InitKnownStateMenuItem.Name = "_InitKnownStateMenuItem"
         Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
         Me._InitKnownStateMenuItem.Text = "Init to Known State"
+        Me._InitKnownStateMenuItem.ToolTipText = "Initializes to custom known state"
         '
         '_ClearExecutionStateMenuItem
         '
         Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
         Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(217, 22)
+
         Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
         Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
         '
-        '_SessionTraceEnabledMenuItem
+        '_ReadStatusByteMenuItem
         '
-        Me._SessionTraceEnabledMenuItem.CheckOnClick = True
-        Me._SessionTraceEnabledMenuItem.Name = "_SessionTraceEnabledMenuItem"
-        Me._SessionTraceEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._SessionTraceEnabledMenuItem.Text = "Trace Instrument Messages"
+        Me._ReadStatusByteMenuItem.Name = "_ReadStatusByteMenuItem"
+        Me._ReadStatusByteMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ReadStatusByteMenuItem.Text = "Read Status Byte"
+        '
+        '_ResetMenuItem
+        '
+        Me._ResetMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._ReadStatusByteMenuItem})
+        Me._ResetMenuItem.Name = "_ResetMenuItem"
+        Me._ResetMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._ResetMenuItem.Text = "Reset..."
+        Me._ResetMenuItem.ToolTipText = "Opens the reset menus"
+        '
+        '_ServiceRequestHandlersEnabledMenuItem
+        '
+        Me._ServiceRequestHandlersEnabledMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
+        Me._ServiceRequestHandlersEnabledMenuItem.Name = "_ServiceRequestHandlersEnabledMenuItem"
+        Me._ServiceRequestHandlersEnabledMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._ServiceRequestHandlersEnabledMenuItem.Text = "SRQ Handlers Enable..."
+        Me._ServiceRequestHandlersEnabledMenuItem.ToolTipText = "Opens the SQR Handler Enable menu"
+        '
+        '_TraceMenuItem
+        '
+        Me._TraceMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SessionNotificationLevelMenuItem, Me._LogTraceLevelMenuItem, Me._DisplayTraceLevelMenuItem})
+        Me._TraceMenuItem.Name = "_TraceMenuItem"
+        Me._TraceMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._TraceMenuItem.Text = "Trace..."
+        Me._TraceMenuItem.ToolTipText = "Opens the trace menus"
+        '
+        '_SessionNotificationLevelMenuItem
+        '
+        Me._SessionNotificationLevelMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SessionNotificationLevelComboBox})
+        Me._SessionNotificationLevelMenuItem.Name = "_SessionNotificationLevelMenuItem"
+        Me._SessionNotificationLevelMenuItem.Size = New System.Drawing.Size(209, 22)
+        Me._SessionNotificationLevelMenuItem.Text = "Session Notification Level"
+        Me._SessionNotificationLevelMenuItem.ToolTipText = "Shows the session notification level selector"
+        '
+        '_SessionNotificationLevelComboBox
+        '
+        Me._SessionNotificationLevelComboBox.Name = "_SessionNotificationLevelComboBox"
+        Me._SessionNotificationLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._SessionNotificationLevelComboBox.ToolTipText = "Select the session notification level"
+        '
+        '_LogTraceLevelMenuItem
+        '
+        Me._LogTraceLevelMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._LogTraceLevelComboBox})
+        Me._LogTraceLevelMenuItem.Name = "_LogTraceLevelMenuItem"
+        Me._LogTraceLevelMenuItem.Size = New System.Drawing.Size(209, 22)
+        Me._LogTraceLevelMenuItem.Text = "Log Trace Level"
+        Me._LogTraceLevelMenuItem.ToolTipText = "Shows the log trace levels"
+        '
+        '_DisplayTraceLevelMenuItem
+        '
+        Me._DisplayTraceLevelMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._DisplayTraceLevelComboBox})
+        Me._DisplayTraceLevelMenuItem.Name = "_DisplayTraceLevelMenuItem"
+        Me._DisplayTraceLevelMenuItem.Size = New System.Drawing.Size(209, 22)
+        Me._DisplayTraceLevelMenuItem.Text = "Display Trace Level"
+        Me._DisplayTraceLevelMenuItem.ToolTipText = "Shows the display trace levels"
         '
         '_SessionServiceRequestHandlerEnabledMenuItem
         '
@@ -1073,7 +1137,7 @@ Partial Class K7500Control
         Me._TimingLabel.Margin = New System.Windows.Forms.Padding(0)
         Me._TimingLabel.Name = "_TimingLabel"
         Me._TimingLabel.Size = New System.Drawing.Size(0, 0)
-        Me._TimingLabel.ToolTipText = "Elapsed time"
+        Me._TimingLabel.ToolTipText = "Elapsed time, ms"
         '
         '_InfoProvider
         '
@@ -1309,10 +1373,17 @@ Partial Class K7500Control
     Private WithEvents _ResetSplitButton As Windows.Forms.ToolStripSplitButton
     Private WithEvents _ClearInterfaceMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ClearDeviceMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ReadStatusByteMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ResetKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _InitKnownStateMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ClearExecutionStateMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _SessionTraceEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ResetMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _ServiceRequestHandlersEnabledMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _TraceMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _DisplayTraceLevelMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _LogTraceLevelMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionNotificationLevelMenuItem As Windows.Forms.ToolStripMenuItem
+    Private WithEvents _SessionNotificationLevelComboBox As Core.Controls.ToolStripComboBox
     Private WithEvents _SessionServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _DeviceServiceRequestHandlerEnabledMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _ReadTerminalStateButton As Windows.Forms.ToolStripButton
@@ -1341,7 +1412,6 @@ Partial Class K7500Control
     Private WithEvents _InitiateTriggerPlanMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _TriggerStateLabel As Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadTriggerStateMenuItem As Windows.Forms.ToolStripMenuItem
-    Private WithEvents _ReadStatusByteMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _MonitorActiveTriggerPlanMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _InitMonitorReadRepeatMenuItem As Windows.Forms.ToolStripMenuItem
     Private WithEvents _RepeatMenuItem As Windows.Forms.ToolStripMenuItem

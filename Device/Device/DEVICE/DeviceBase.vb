@@ -99,9 +99,17 @@ Public MustInherit Class DeviceBase
 
 #Region " I PRESETTABLE "
 
+    ''' <summary> Clears the interface. </summary>
+    Public Sub ClearInterface()
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} clearing interface")
+        Me.StatusSubsystemBase.ClearInterface()
+        ' 20180105: report any errors
+        Me.PublishErrorEvent(TraceEventType.Warning)
+    End Sub
+
     ''' <summary> Applies default settings and clears the Device. Issues <see cref="StatusSubsystemBase.ClearActiveState">Selective device clear</see>. </summary>
     Public Overridable Sub ClearActiveState()
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} Clearing active state")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} clearing active state")
         Me.StatusSubsystemBase.ClearActiveState()
         ' 20180105: report any errors
         Me.PublishErrorEvent(TraceEventType.Warning)
@@ -112,7 +120,7 @@ Public MustInherit Class DeviceBase
     ''' </para> </summary>
     ''' <remarks> *CLS. </remarks>
     Public Overridable Sub ClearExecutionState() Implements IPresettable.ClearExecutionState
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} Clearing execution state")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} clearing execution state")
         Me.Subsystems.ClearExecutionState()
         ' 20180105: report any errors
         Me.PublishErrorEvent(TraceEventType.Warning)
@@ -121,7 +129,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Initializes the Device. Used after reset to set a desired initial state. </summary>
     ''' <remarks> Use this to customize the reset. </remarks>
     Public Overridable Sub InitKnownState() Implements IPresettable.InitKnownState
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} Initializing known state")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} initializing known state")
         Me.Subsystems.InitKnownState()
         Me.IsInitialized = True
         ' 20180105: report any errors
@@ -131,7 +139,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Resets the Device to its known state. </summary>
     ''' <remarks> *RST. </remarks>
     Public Overridable Sub PresetKnownState() Implements IPresettable.PresetKnownState
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} Presetting known state")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} presetting known state")
         Me.Subsystems.PresetKnownState()
         ' 20180105: report any errors
         Me.PublishErrorEvent(TraceEventType.Warning)
@@ -140,7 +148,7 @@ Public MustInherit Class DeviceBase
     ''' <summary> Resets the Device to its known state. </summary>
     ''' <remarks> *RST. </remarks>
     Public Overridable Sub ResetKnownState() Implements IPresettable.ResetKnownState
-        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} Resetting known state")
+        Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} resetting known state")
         Me.Subsystems.ResetKnownState()
         ' 20180105: report any errors
         Me.PublishErrorEvent(TraceEventType.Warning)
@@ -907,13 +915,8 @@ Public MustInherit Class DeviceBase
         Me.Subsystems.Add(value)
     End Sub
 
-    Private _Subsystems As SubsystemCollection
     ''' <summary> Enumerates the Presettable subsystems. </summary>
     Protected ReadOnly Property Subsystems As SubsystemCollection
-        Get
-            Return Me._Subsystems
-        End Get
-    End Property
 
     ''' <summary> Removes the subsystem described by value. </summary>
     ''' <param name="value"> The value. </param>
@@ -951,32 +954,32 @@ Public MustInherit Class DeviceBase
     Protected Overridable Overloads Sub HandlePropertyChange(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(StatusSubsystemBase.ErrorAvailable)
-            Case NameOf(StatusSubsystemBase.MessageAvailable)
+            Case NameOf(VI.StatusSubsystemBase.ErrorAvailable)
+            Case NameOf(VI.StatusSubsystemBase.MessageAvailable)
                 If subsystem.MessageAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Message available;. ")
                 End If
-            Case NameOf(StatusSubsystemBase.MeasurementAvailable)
+            Case NameOf(VI.StatusSubsystemBase.MeasurementAvailable)
                 If subsystem.MeasurementAvailable Then
                     Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, "Measurement available;. ")
                 End If
-            Case NameOf(StatusSubsystemBase.ReadingDeviceErrors)
+            Case NameOf(VI.StatusSubsystemBase.ReadingDeviceErrors)
                 If subsystem.ReadingDeviceErrors Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
                 End If
 
-            Case NameOf(StatusSubsystemBase.Identity)
+            Case NameOf(VI.StatusSubsystemBase.Identity)
                 If Not String.IsNullOrWhiteSpace(subsystem.Identity) Then
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} identified;. as {subsystem.Identity}")
                     If Not String.IsNullOrWhiteSpace(subsystem.VersionInfo?.Model) Then Me.Session.ResourceNameInfo.ResourceTitle = subsystem.VersionInfo.Model
                 End If
 
-            Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
+            Case NameOf(VI.StatusSubsystemBase.DeviceErrorsReport)
                 If Not String.IsNullOrWhiteSpace(subsystem.DeviceErrorsReport) Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} errors;. {subsystem.DeviceErrorsReport}")
                 End If
 
-            Case NameOf(StatusSubsystemBase.LastDeviceError)
+            Case NameOf(VI.StatusSubsystemBase.LastDeviceError)
                 If subsystem.LastDeviceError?.IsError Then
                     Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
                                        $"{Me.ResourceNameCaption} last error;. {subsystem.LastDeviceError.CompoundErrorMessage}")
@@ -1013,8 +1016,7 @@ Public MustInherit Class DeviceBase
     ''' <param name="eventType"> Type of the event. </param>
     Protected Overridable Sub PublishLastError(ByVal eventType As TraceEventType)
         If Me.StatusSubsystemBase.DeviceErrorQueue.Any Then
-            Me.Talker.Publish(eventType, My.MyLibrary.TraceEventId,
-                              $"{Me.ResourceNameCaption} last Error {Me.StatusSubsystemBase.LastDeviceError}")
+            Me.Talker.Publish(eventType, My.MyLibrary.TraceEventId, $"{Me.ResourceNameCaption} last Error {Me.StatusSubsystemBase.LastDeviceError}")
         End If
     End Sub
 

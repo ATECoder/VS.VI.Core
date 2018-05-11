@@ -1098,7 +1098,7 @@ Public Class TestPanel
             Me._errorProvider.Clear()
             Me.Talker.Publish(TraceEventType.Information, My.MyApplication.TraceEventId,
                                "Clearing interface @'{0}';. ", Me.TspSystem.Device.Session.ResourceName)
-            Me.TspSystem.Device.SystemSubsystem.ClearInterface()
+            Me.TspSystem.Device.ClearInterface()
         Catch ex As Exception
             Me._errorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
