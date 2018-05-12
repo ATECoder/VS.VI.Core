@@ -21,14 +21,10 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <param name="statusSubsystem"> The status subsystem. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me.ApertureRange = Core.Pith.RangeR.FullNonnegative
-        Me.FilterCountRange = Core.Pith.RangeI.FullNonnegative
-        Me.FilterWindowRange = Core.Pith.RangeR.FullNonnegative
-        Me.PowerLineCyclesRange = Core.Pith.RangeR.FullNonnegative
-        Me.FunctionUnit = Me.DefaultFunctionUnit
-        Me.FunctionRange = Me.DefaultFunctionRange
-        Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
         Me.DefaultMeasurementUnit = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.DefaultFunctionUnit = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.DefaultFunctionRange = isr.Core.Pith.RangeR.Full
+        Me.DefaultFunctionModeDecimalPlaces = 3
     End Sub
 
 #End Region
@@ -41,25 +37,28 @@ Public MustInherit Class MeasureSubsystemBase
         Me.AutoRangeState = OnOffState.On
         With Me.FunctionModeDecimalPlaces
             .Clear()
-            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+            For Each fmode As VI.Tsp2.MeasureFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.MeasureFunctionMode))
                 .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(MeasureSubsystemBase.FunctionModeDecimalPlaces))
         With Me.FunctionModeRanges
             .Clear()
-            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+            For Each fmode As VI.Tsp2.MeasureFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.MeasureFunctionMode))
                 .Add(fmode, Core.Pith.RangeR.Full)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(MeasureSubsystemBase.FunctionModeRanges))
         With Me.FunctionModeUnits
             .Clear()
-            For Each fmode As MeasureFunctionMode In [Enum].GetValues(GetType(MeasureFunctionMode))
+            For Each fmode As VI.Tsp2.MeasureFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.MeasureFunctionMode))
                 .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
             Next
-            .Item(MeasureFunctionMode.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
-            .Item(MeasureFunctionMode.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
-            .Item(MeasureFunctionMode.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.Tsp2.MeasureFunctionMode.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(VI.Tsp2.MeasureFunctionMode.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(VI.Tsp2.MeasureFunctionMode.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
         End With
+        Me.SafePostPropertyChanged(NameOf(MeasureSubsystemBase.FunctionModeUnits))
     End Sub
 
 

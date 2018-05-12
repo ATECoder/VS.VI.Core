@@ -2,7 +2,7 @@
 Imports System.Text
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
 Imports isr.Core.Pith.StopwatchExtensions
-Namespace K2450.Tests
+Namespace K2450K3700.Tests
 
     ''' <summary> K3700 Resource Control unit tests. </summary>
     ''' <license>
@@ -16,7 +16,7 @@ Namespace K2450.Tests
     ''' </license>
     ''' <history date="10/10/2017" by="David" revision=""> Created. </history>
     <TestClass()>
-    Public Class ResourceControlTests
+    Public Class K2450ResourceControlTests
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -48,7 +48,7 @@ Namespace K2450.Tests
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450.Tests.DeviceTestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450K3700.Tests.K2450TestInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -70,11 +70,11 @@ Namespace K2450.Tests
         ''' <summary> (Unit Test Method) tests selected resource name. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub SelectedResourceNameTest()
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            If Not K2450TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K2450TestInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
-                    Manager.CheckSelectedResourceName(control)
+                    K2450Manager.CheckSelectedResourceName(control)
                 End Using
             End Using
         End Sub
@@ -104,7 +104,7 @@ Namespace K2450.Tests
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
-                    Manager.OpenCloseSession(0, control)
+                    K2450Manager.OpenCloseSession(0, control)
                 End Using
             End Using
         End Sub
@@ -118,15 +118,15 @@ Namespace K2450.Tests
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
-                    Manager.OpenCloseSession(1, control)
+                    K2450Manager.OpenCloseSession(1, control)
                 End Using
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
-                    Manager.OpenCloseSession(2, control)
+                    K2450Manager.OpenCloseSession(2, control)
                 End Using
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
-                    Manager.OpenCloseSession(3, control)
+                    K2450Manager.OpenCloseSession(3, control)
                     sw.Wait(TimeSpan.FromMilliseconds(100))
-                    Manager.OpenCloseSession(4, control)
+                    K2450Manager.OpenCloseSession(4, control)
                 End Using
             End Using
         End Sub

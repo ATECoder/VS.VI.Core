@@ -46,6 +46,7 @@ Public MustInherit Class LinkSubsystemBase
         MyBase.ResetKnownState()
 
         Me._NodeEntities = New NodeEntityCollection()
+        Me.SafePostPropertyChanged(NameOf(LinkSubsystemBase.NodeEntities))
         Me.ControllerNodeNumber = New Integer?
         Me.ControllerNode = Nothing
 

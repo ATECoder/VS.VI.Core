@@ -2,9 +2,20 @@ Partial Public Class MeasureSubsystemBase
 
 #Region " MEASURED AMOUNT "
 
+    Private _Amount As MeasuredAmount
     ''' <summary> Gets or sets the amount. </summary>
     ''' <value> The amount. </value>
-    Public ReadOnly Property Amount As MeasuredAmount
+    Public Property Amount As MeasuredAmount
+        Get
+            Return Me._Amount
+        End Get
+        Protected Set(value As MeasuredAmount)
+            If Not MeasuredAmount.Equals(value, Me.Amount) Then
+                Me._Amount = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
 
     Private _LastReading As String
     ''' <summary> Gets or sets the last reading. </summary>

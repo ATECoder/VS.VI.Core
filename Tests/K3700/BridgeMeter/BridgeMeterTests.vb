@@ -75,11 +75,11 @@
         ''' <param name="trialNumber"> The trial number. </param>
         ''' <param name="control">     The control. </param>
         Private Shared Sub OpenSession(ByVal trialNumber As Integer, ByVal control As VI.Tsp.K3700.BridgeMeterControl)
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
             Dim expectedBoolean As Boolean = True
             Dim actualBoolean As Boolean
             Dim e As New Core.Pith.ActionEventArgs
-            control.Device.TryOpenSession(DeviceTestInfo.Get.ResourceName, DeviceTestInfo.Get.ResourceTitle, e)
+            control.Device.TryOpenSession(K3700TestInfo.Get.ResourceName, K3700TestInfo.Get.ResourceTitle, e)
             actualBoolean = e.Cancel
             expectedBoolean = False
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{trialNumber} Connect canceled; {e.Details}")
@@ -93,7 +93,7 @@
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{trialNumber} Open not open {control.Device.ResourceNameCaption}")
 
             ' check the MODEL
-            Assert.AreEqual(DeviceTestInfo.Get.ResourceModel, control.Device.StatusSubsystem.VersionInfo.Model,
+            Assert.AreEqual(K3700TestInfo.Get.ResourceModel, control.Device.StatusSubsystem.VersionInfo.Model,
                             $"Version Info Model {control.Device.ResourceNameCaption}", Globalization.CultureInfo.CurrentCulture)
 
         End Sub
@@ -102,7 +102,7 @@
         ''' <param name="trialNumber"> The trial number. </param>
         ''' <param name="control">     The control. </param>
         Private Shared Sub CloseSession(ByVal trialNumber As Integer, ByVal control As VI.Tsp.K3700.BridgeMeterControl)
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
             Dim expectedBoolean As Boolean = True
             Dim actualBoolean As Boolean
             control.Device.TryCloseSession()
@@ -123,8 +123,8 @@
         ''' <summary> (Unit Test Method) tests selected resource name. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub SelectedResourceNameTest()
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
-            K3700.Tests.Manager.CheckSelectedResourceName(BridgeMeterTests.BridgeMeter)
+            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
+            K3700.Tests.K3700Manager.CheckSelectedResourceName(BridgeMeterTests.BridgeMeter)
         End Sub
 
 #End Region
@@ -221,7 +221,7 @@
 
         <TestMethod(), TestCategory("VI")>
         Public Sub AssignedDeviceMeasureResistorTest()
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
             BridgeMeterTests.BridgeMeter.AssignDevice(BridgeMeterTests.MeterDevice, False)
             BridgeMeterTests.OpenSession(1, BridgeMeterTests.BridgeMeter)
             BridgeMeterTests.BridgeMeterMeasureResistor(BridgeMeterTests.BridgeMeter)
@@ -232,10 +232,10 @@
 
         <TestMethod(), TestCategory("VI")>
         Public Sub AssignedOpenDeviceMeasureResistorTest()
-            K3700.Tests.Manager.OpenSession(BridgeMeterTests.MeterDevice)
+            K3700.Tests.K3700Manager.OpenSession(BridgeMeterTests.MeterDevice)
             BridgeMeterTests.BridgeMeter.AssignDevice(BridgeMeterTests.MeterDevice, False)
             BridgeMeterTests.BridgeMeterMeasureResistor(BridgeMeterTests.BridgeMeter)
-            K3700.Tests.Manager.CloseSession(BridgeMeterTests.MeterDevice)
+            K3700.Tests.K3700Manager.CloseSession(BridgeMeterTests.MeterDevice)
             BridgeMeterTests.BridgeMeter.RestoreDevice()
             TestInfo.AssertMessageQueue()
         End Sub

@@ -50,7 +50,6 @@ Public MustInherit Class SystemSubsystemBase
         Me.AutoZeroEnabled = True
         Me.ContactCheckEnabled = False
         Me.ContactCheckResistance = 50
-
     End Sub
 
 #End Region

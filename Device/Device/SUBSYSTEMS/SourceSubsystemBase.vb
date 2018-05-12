@@ -20,21 +20,30 @@ Public MustInherit Class SourceSubsystemBase
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me._FunctionModeRanges = New RangeDictionary
-        Me._FunctionModeDecimalPlaces = New IntegerDictionary
-        Me._FunctionModeUnits = New UnitDictionary
-        Me.FunctionRange = Me.DefaultFunctionRange
-        Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
-        Me.Amount = New Arebis.TypedUnits.Amount(0, Arebis.StandardUnits.ElectricUnits.Volt)
+        Me.DefaultFunctionUnit = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.DefaultFunctionModeDecimalPlaces = 3
     End Sub
 
 #End Region
 
 #Region " I PRESETTABLE "
 
+    ''' <summary> Sets subsystem values to their known execution clear state. </summary>
+    Public Overrides Sub ClearExecutionState()
+        MyBase.ClearExecutionState()
+        Me.Level = New Double?
+    End Sub
+
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
+        Me.Amount = New Arebis.TypedUnits.Amount(0, Me.DefaultFunctionUnit)
+        Me.FunctionUnit = Me.DefaultFunctionUnit
+        Me._FunctionModeRanges = New RangeDictionary
+        Me._FunctionModeDecimalPlaces = New IntegerDictionary
+        Me._FunctionModeUnits = New UnitDictionary
+        Me._FunctionRange = Me.DefaultFunctionRange
+        Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
         Me.AutoClearEnabled = False
         Me.AutoDelayEnabled = True
         Me.Delay = TimeSpan.Zero

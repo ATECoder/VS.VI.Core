@@ -100,18 +100,18 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="Device\DeviceTests.vb" />
-    <Compile Include="Device\ControlTests.vb" />
-    <Compile Include="Device\DeviceTests_Info.vb" />
-    <Compile Include="Device\Manager.vb" />
-    <Compile Include="Device\ResourceControlTests.vb" />
-    <Compile Include="Measure\ResistanceTests_Info.vb" />
+    <Compile Include="Device\K2450Tests.vb" />
+    <Compile Include="Device\K2450ControlTests.vb" />
+    <Compile Include="Device\K2450Tests_Info.vb" />
+    <Compile Include="Device\K2450Manager.vb" />
+    <Compile Include="Device\K2450ResourceControlTests.vb" />
+    <Compile Include="Measure\K2450ResistanceTests_Info.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="Measure\ResistanceTests.vb" />
+    <Compile Include="Measure\K2450ResistanceTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
   </ItemGroup>

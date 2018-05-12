@@ -34,6 +34,79 @@ Public Class ReadingValue
 
 #End Region
 
+#Region " EQUALS "
+
+    ''' <summary> = casting operator. </summary>
+    ''' <param name="left">  The left hand side item to compare for equality. </param>
+    ''' <param name="right"> The left hand side item to compare for equality. </param>
+    ''' <returns> The result of the operation. </returns>
+    Public Overloads Shared Operator =(ByVal left As ReadingValue, ByVal right As ReadingValue) As Boolean
+        If left Is Nothing Then
+            Return right Is Nothing
+        ElseIf right Is Nothing Then
+            Return False
+        Else
+            Return ReadingValue.Equals(left, right)
+        End If
+    End Operator
+
+    ''' <summary> &lt;&gt; casting operator. </summary>
+    ''' <param name="left">  The left hand side item to compare for equality. </param>
+    ''' <param name="right"> The left hand side item to compare for equality. </param>
+    ''' <returns> The result of the operation. </returns>
+    Public Overloads Shared Operator <>(ByVal left As ReadingValue, ByVal right As ReadingValue) As Boolean
+        Return Not ReadingValue.Equals(left, right)
+    End Operator
+
+    ''' <summary> Returns True if equal. </summary>
+    ''' <remarks> Ranges are the same if the have the same
+    ''' <see cref="Type">min</see> and <see cref="Type">max</see> values. </remarks>
+    ''' <param name="left">  The left hand side item to compare for equality. </param>
+    ''' <param name="right"> The left hand side item to compare for equality. </param>
+    ''' <returns> <c>True</c> if equals. </returns>
+    Public Overloads Shared Function Equals(ByVal left As ReadingValue, ByVal right As ReadingValue) As Boolean
+        If left Is Nothing Then
+            Return right Is Nothing
+        ElseIf right Is Nothing Then
+            Return False
+        Else
+            Return Nullable.Equals(left.Value, right.Value) AndAlso String.Equals(left.ValueReading, right.ValueReading) AndAlso String.Equals(left.UnitsReading, right.UnitsReading)
+        End If
+    End Function
+
+    ''' <summary> Determines whether the specified <see cref="T:System.Object" /> is equal to the
+    ''' current <see cref="T:System.Object" />. </summary>
+    ''' <param name="obj"> The <see cref="T:System.Object" /> to compare with the current
+    ''' <see cref="T:System.Object" />. </param>
+    ''' <returns> <c>True</c> if the specified <see cref="T:System.Object" /> is equal to the current
+    ''' <see cref="T:System.Object" />; otherwise, <c>False</c>. </returns>
+    Public Overloads Overrides Function Equals(ByVal obj As Object) As Boolean
+        Return Me.Equals(TryCast(obj, ReadingValue))
+    End Function
+
+    ''' <summary> Returns True if the value of the <paramref name="other"/> equals to the instance
+    ''' value. </summary>
+    ''' <remarks> Ranges are the same if the have the same
+    ''' <see cref="Type">min</see> and <see cref="Type">max</see> values. </remarks>
+    ''' <param name="other"> The other <see cref="ReadingValue">Range</see> to compare for equality with this
+    ''' instance. </param>
+    ''' <returns> A Boolean data type. </returns>
+    Public Overloads Function Equals(ByVal other As ReadingValue) As Boolean
+        If other Is Nothing Then
+            Return False
+        Else
+            Return ReadingValue.Equals(Me, other)
+        End If
+    End Function
+
+    ''' <summary> Creates a unique hash code. </summary>
+    ''' <returns> An <see cref="System.Int32">Int32</see> value. </returns>
+    Public Overloads Overrides Function GetHashCode() As Int32
+        Return Me.Value.GetHashCode
+    End Function
+
+#End Region
+
 #Region " VALUE "
 
     ''' <summary> Gets or sets the value. </summary>
@@ -79,7 +152,6 @@ Public Class ReadingValue
             Return False
         End If
     End Function
-
 
 #End Region
 

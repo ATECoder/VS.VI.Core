@@ -50,6 +50,7 @@ Public MustInherit Class DigitalOutputBase
         Me.Level = 15
         Me.AutoClearEnabled = False
         Me._DelayRange = New Range(Of TimeSpan)(TimeSpan.Zero, TimeSpan.FromSeconds(60))
+        Me.SafePostPropertyChanged(NameOf(DigitalOutputBase.DelayRange))
         Me.Delay = TimeSpan.FromSeconds(0.0001)
     End Sub
 

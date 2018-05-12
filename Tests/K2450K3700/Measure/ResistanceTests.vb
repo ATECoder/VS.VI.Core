@@ -1,7 +1,7 @@
 ﻿Imports System.Data.Common
 Imports System.Text
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
-Namespace K2450.Tests
+Namespace K2450K3700.Tests
 
     ''' <summary> K2450 Resistance Measuremetn unit tests. </summary>
     ''' <license>
@@ -47,7 +47,7 @@ Namespace K2450.Tests
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450.Tests.ResistanceTestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450K3700.Tests.ResistanceTestInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -70,30 +70,30 @@ Namespace K2450.Tests
         ''' <param name="device"> The device. </param>
         Private Shared Sub ReadMeasureSubsystemInfo(ByVal device As VI.Tsp2.K2450.Device)
 
-            Dim expectedPowerLineCycles As Double = DeviceTestInfo.Get.InitialPowerLineCycles
+            Dim expectedPowerLineCycles As Double = K2450TestInfo.Get.InitialPowerLineCycles
             Dim actualPowerLineCycles As Double = device.MeasureSubsystem.QueryPowerLineCycles.GetValueOrDefault(0)
-            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, DeviceTestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
-                            $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
+            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K2450TestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
+                            $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
 
-            Dim expectedBoolean As Boolean = DeviceTestInfo.Get.InitialAutoRangeEnabled
+            Dim expectedBoolean As Boolean = K2450TestInfo.Get.InitialAutoRangeEnabled
             Dim actualBoolean As Boolean = device.MeasureSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(False)
-            Assert.IsTrue(actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.AutoRangeEnabled)} is {actualBoolean }; expected {True}")
+            Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.AutoRangeEnabled)} is {actualBoolean }; expected {True}")
 
-            expectedBoolean = DeviceTestInfo.Get.InitialAutoZeroEnabled
+            expectedBoolean = K2450TestInfo.Get.InitialAutoZeroEnabled
             actualBoolean = device.MeasureSubsystem.QueryAutoZeroEnabled.GetValueOrDefault(False)
-            Assert.IsTrue(actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.AutoZeroEnabled)} is {actualBoolean }; expected {True}")
+            Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.AutoZeroEnabled)} is {actualBoolean }; expected {True}")
 
-            expectedBoolean = DeviceTestInfo.Get.InitialFrontTerminalsSelected
+            expectedBoolean = K2450TestInfo.Get.InitialFrontTerminalsSelected
             actualBoolean = device.MeasureSubsystem.QueryFrontTerminalsSelected.GetValueOrDefault(False)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.FrontTerminalsSelected)} is {actualBoolean }; expected {expectedBoolean }")
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.FrontTerminalsSelected)} is {actualBoolean }; expected {expectedBoolean }")
 
-            expectedBoolean = DeviceTestInfo.Get.InitialRemoteSenseSelected
+            expectedBoolean = K2450TestInfo.Get.InitialRemoteSenseSelected
             actualBoolean = device.MeasureSubsystem.QueryRemoteSenseSelected.GetValueOrDefault(False)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.RemoteSenseSelected)} is {actualBoolean }; expected {expectedBoolean }")
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.RemoteSenseSelected)} is {actualBoolean }; expected {expectedBoolean }")
 
-            Dim senseFn As Tsp2.MeasureFunctionMode = device.MeasureSubsystem.QueryFunctionMode.GetValueOrDefault(MeasureFunctionMode.Resistance)
-            Dim expectedFunctionMode As Tsp2.MeasureFunctionMode = DeviceTestInfo.Get.InitialMeasureFunctionMode
-            Assert.AreEqual(expectedFunctionMode, senseFn, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.FunctionMode)} is {senseFn} ; expected {expectedFunctionMode}")
+            Dim senseFn As Tsp2.MeasureFunctionMode = device.MeasureSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.MeasureFunctionMode.Resistance)
+            Dim expectedFunctionMode As Tsp2.MeasureFunctionMode = K2450TestInfo.Get.InitialMeasureFunctionMode
+            Assert.AreEqual(expectedFunctionMode, senseFn, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.FunctionMode)} is {senseFn} ; expected {expectedFunctionMode}")
 
         End Sub
 
@@ -101,9 +101,9 @@ Namespace K2450.Tests
         Public Sub ReadMeasureSubsystemTest()
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K2450.Tests.Manager.OpenSession(device)
+                K2450K3700.Tests.K2450Manager.OpenSession(device)
                 ResistanceTests.ReadMeasureSubsystemInfo(device)
-                K2450.Tests.Manager.CloseSession(device)
+                K2450K3700.Tests.K2450Manager.CloseSession(device)
             End Using
         End Sub
 
@@ -115,33 +115,33 @@ Namespace K2450.Tests
         ''' <param name="device"> The device. </param>
         Private Shared Sub ReadSourceSubsystemInfo(ByVal device As VI.Tsp2.K2450.Device)
 
-            Dim expectedBoolean As Boolean = DeviceTestInfo.Get.InitialAutoRangeEnabled
+            Dim expectedBoolean As Boolean = K2450TestInfo.Get.InitialAutoRangeEnabled
             Dim actualBoolean As Boolean = device.SourceSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(Not expectedBoolean)
-            Assert.IsTrue(actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.AutoRangeEnabled)} is {actualBoolean }; expected {True}")
+            Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.AutoRangeEnabled)} is {actualBoolean }; expected {True}")
 
-            expectedBoolean = DeviceTestInfo.Get.InitialAutoDelayEnabled
+            expectedBoolean = K2450TestInfo.Get.InitialAutoDelayEnabled
             actualBoolean = device.SourceSubsystem.QueryAutoDelayEnabled.GetValueOrDefault(Not expectedBoolean)
-            Assert.IsTrue(actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.AutoDelayEnabled)} is {actualBoolean }; expected {True}")
+            Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.AutoDelayEnabled)} is {actualBoolean }; expected {True}")
 
             expectedBoolean = False
             actualBoolean = device.SourceSubsystem.QueryOutputEnabled.GetValueOrDefault(Not expectedBoolean)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.OutputEnabled)} is {actualBoolean}; expected {expectedBoolean}")
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.OutputEnabled)} is {actualBoolean}; expected {expectedBoolean}")
 
-            Dim functionMode As Tsp2.SourceFunctionMode = device.SourceSubsystem.QueryFunctionMode.GetValueOrDefault(SourceFunctionMode.None)
-            Dim expectedFunctionMode As Tsp2.SourceFunctionMode = DeviceTestInfo.Get.InitialSourceFunctionMode
-            Assert.AreEqual(expectedFunctionMode, functionMode, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.FunctionMode)} is {functionMode} ; expected {expectedFunctionMode}")
+            Dim functionMode As Tsp2.SourceFunctionMode = device.SourceSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.SourceFunctionMode.None)
+            Dim expectedFunctionMode As Tsp2.SourceFunctionMode = K2450TestInfo.Get.InitialSourceFunctionMode
+            Assert.AreEqual(expectedFunctionMode, functionMode, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.FunctionMode)} is {functionMode} ; expected {expectedFunctionMode}")
 
             expectedBoolean = False
             actualBoolean = device.SourceSubsystem.QueryLimitTripped.GetValueOrDefault(Not expectedBoolean)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.OutputEnabled)} is {actualBoolean}; expected {expectedBoolean}")
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.OutputEnabled)} is {actualBoolean}; expected {expectedBoolean}")
 
-            Dim expectedDouble As Double = DeviceTestInfo.Get.InitialSourceLevel
+            Dim expectedDouble As Double = K2450TestInfo.Get.InitialSourceLevel
             Dim actualDouble As Double = device.SourceSubsystem.QueryLevel.GetValueOrDefault(-1)
-            Assert.AreEqual(expectedDouble, actualDouble, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.Level)} is {actualDouble}; expected {expectedDouble}")
+            Assert.AreEqual(expectedDouble, actualDouble, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.Level)} is {actualDouble}; expected {expectedDouble}")
 
-            expectedDouble = DeviceTestInfo.Get.InitialSourceLimit
+            expectedDouble = K2450TestInfo.Get.InitialSourceLimit
             actualDouble = device.SourceSubsystem.QueryLimit.GetValueOrDefault(-1)
-            Assert.AreEqual(expectedDouble, actualDouble, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.Limit)} is {actualDouble}; expected {expectedDouble}")
+            Assert.AreEqual(expectedDouble, actualDouble, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.Limit)} is {actualDouble}; expected {expectedDouble}")
 
         End Sub
 
@@ -149,9 +149,9 @@ Namespace K2450.Tests
         Public Sub ReadSourceSubsystemTest()
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K2450.Tests.Manager.OpenSession(device)
+                K2450K3700.Tests.K2450Manager.OpenSession(device)
                 ResistanceTests.ReadSourceSubsystemInfo(device)
-                K2450.Tests.Manager.CloseSession(device)
+                K2450K3700.Tests.K2450Manager.CloseSession(device)
             End Using
         End Sub
 
@@ -165,50 +165,50 @@ Namespace K2450.Tests
 
             Dim expectedPowerLineCycles As Double = ResistanceTestInfo.Get.PowerLineCycles
             Dim actualPowerLineCycles As Double = device.MeasureSubsystem.ApplyPowerLineCycles(expectedPowerLineCycles).GetValueOrDefault(0)
-            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, DeviceTestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
-                        $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
+            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K2450TestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
+                        $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
 
             Dim expectedBoolean As Boolean = ResistanceTestInfo.Get.AutoRangeEnabled
             Dim actualBoolean As Boolean = device.MeasureSubsystem.ApplyAutoRangeEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
-            Assert.IsTrue(actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.AutoRangeEnabled)} is {actualBoolean}; expected {expectedBoolean}")
+            Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.AutoRangeEnabled)} is {actualBoolean}; expected {expectedBoolean}")
 
             expectedBoolean = ResistanceTestInfo.Get.AutoZeroEnabled
             actualBoolean = device.MeasureSubsystem.ApplyAutoZeroEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
-            Assert.IsTrue(actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.AutoZeroEnabled)} is {actualBoolean}; expected {expectedBoolean}")
+            Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.AutoZeroEnabled)} is {actualBoolean}; expected {expectedBoolean}")
 
             expectedBoolean = ResistanceTestInfo.Get.FrontTerminalsSelected
             actualBoolean = device.MeasureSubsystem.ApplyFrontTerminalsSelected(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.FrontTerminalsSelected)} is {actualBoolean}; expected {expectedBoolean}")
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.FrontTerminalsSelected)} is {actualBoolean}; expected {expectedBoolean}")
 
             Dim expectedFunctionMode As Tsp2.SourceFunctionMode = ResistanceTestInfo.Get.SourceFunction
-            Dim SourceFunction As SourceFunctionMode = device.SourceSubsystem.ApplyFunctionMode(expectedFunctionMode).GetValueOrDefault(SourceFunctionMode.None)
-            Assert.AreEqual(expectedFunctionMode, SourceFunction, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.FunctionMode)} is {SourceFunction} ; expected {expectedFunctionMode}")
+            Dim SourceFunction As VI.Tsp2.SourceFunctionMode = device.SourceSubsystem.ApplyFunctionMode(expectedFunctionMode).GetValueOrDefault(VI.Tsp2.SourceFunctionMode.None)
+            Assert.AreEqual(expectedFunctionMode, SourceFunction, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.FunctionMode)} is {SourceFunction} ; expected {expectedFunctionMode}")
 
 #If False Then
         ' USE SIMV(Ohm)
         Dim expectedDouble As Double = TestInfo.SourceLevel
         Dim actualDouble As Double = device.SourceSubsystem.ApplyLevel(expectedDouble).GetValueOrDefault(-expectedDouble)
-        Assert.AreEqual(expectedDouble, actualDouble, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.Level)} is {actualDouble}; expected {expectedDouble}")
+        Assert.AreEqual(expectedDouble, actualDouble, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.Level)} is {actualDouble}; expected {expectedDouble}")
 #End If
             Dim expectedMeasureFunctionMode As Tsp2.MeasureFunctionMode = ResistanceTestInfo.Get.SenseFunction
-            Dim measureFunction As MeasureFunctionMode = device.MeasureSubsystem.ApplyFunctionMode(expectedMeasureFunctionMode).GetValueOrDefault(MeasureFunctionMode.Resistance)
-            Assert.AreEqual(expectedMeasureFunctionMode, measureFunction, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.FunctionMode)} is {measureFunction} ; expected {expectedMeasureFunctionMode}")
+            Dim measureFunction As VI.Tsp2.MeasureFunctionMode = device.MeasureSubsystem.ApplyFunctionMode(expectedMeasureFunctionMode).GetValueOrDefault(VI.Tsp2.MeasureFunctionMode.Resistance)
+            Assert.AreEqual(expectedMeasureFunctionMode, measureFunction, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.FunctionMode)} is {measureFunction} ; expected {expectedMeasureFunctionMode}")
 
             expectedBoolean = ResistanceTestInfo.Get.RemoteSenseSelected
             actualBoolean = device.MeasureSubsystem.ApplyRemoteSenseSelected(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.RemoteSenseSelected)} is {actualBoolean }; expected {expectedBoolean }")
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.RemoteSenseSelected)} is {actualBoolean }; expected {expectedBoolean }")
 
             expectedBoolean = True
             actualBoolean = device.SourceSubsystem.ApplyOutputEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.OutputEnabled)} is {actualBoolean }; expected {expectedBoolean }")
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.OutputEnabled)} is {actualBoolean }; expected {expectedBoolean }")
 
             Dim resistance As Double = device.MeasureSubsystem.Measure.GetValueOrDefault(-1)
             Assert.AreEqual(ResistanceTestInfo.Get.ExpectedResistance, resistance, ResistanceTestInfo.Get.ExpectedResistanceEpsilon,
-                  $"{NameOf(MeasureSubsystem)}.{NameOf(MeasureSubsystem.MeasuredValue)} is {resistance}; expected {ResistanceTestInfo.Get.ExpectedResistance} within {ResistanceTestInfo.Get.ExpectedResistanceEpsilon}")
+                  $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.MeasuredValue)} is {resistance}; expected {ResistanceTestInfo.Get.ExpectedResistance} within {ResistanceTestInfo.Get.ExpectedResistanceEpsilon}")
 
             expectedBoolean = False
             actualBoolean = device.SourceSubsystem.ApplyOutputEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(SourceSubsystem)}.{NameOf(SourceSubsystem.OutputEnabled)} is {actualBoolean }; expected {expectedBoolean }")
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.OutputEnabled)} is {actualBoolean }; expected {expectedBoolean }")
 
 #If False Then
         SIMV(Ohms)
@@ -235,9 +235,9 @@ smu.source.output=smu.OFF
         Public Sub SourceCurrentMeasureResistanceUnitTest()
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K2450.Tests.Manager.OpenSession(device)
+                K2450K3700.Tests.K2450Manager.OpenSession(device)
                 ResistanceTests.SourceCurrentMeasureResistance(device)
-                K2450.Tests.Manager.CloseSession(device)
+                K2450K3700.Tests.K2450Manager.CloseSession(device)
             End Using
         End Sub
 

@@ -60,29 +60,30 @@ Public Class MultimeterSubsystem
         Me.MovingAverageFilterEnabled = False
         Me.OpenDetectorEnabled = False
         Me.FilterWindow = 0.001
-        For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+        For Each fmode As VI.Tsp2.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.MultimeterFunctionMode))
             Select Case fmode
-                Case MultimeterFunctionMode.CurrentDC, MultimeterFunctionMode.CurrentAC
+                Case VI.Tsp2.MultimeterFunctionMode.CurrentDC, VI.Tsp2.MultimeterFunctionMode.CurrentAC
                     Me.FunctionModeRanges(fmode).SetRange(0, 10)
-                Case MultimeterFunctionMode.VoltageDC
+                Case VI.Tsp2.MultimeterFunctionMode.VoltageDC
                     Me.FunctionModeRanges(fmode).SetRange(0, 1000)
-                Case MultimeterFunctionMode.VoltageAC
+                Case VI.Tsp2.MultimeterFunctionMode.VoltageAC
                     Me.FunctionModeRanges(fmode).SetRange(0, 700)
-                Case MultimeterFunctionMode.ResistanceTwoWire
+                Case VI.Tsp2.MultimeterFunctionMode.ResistanceTwoWire
                     Me.FunctionModeRanges(fmode).SetRange(0, 1000000000.0)
-                Case MultimeterFunctionMode.ResistanceFourWire
+                Case VI.Tsp2.MultimeterFunctionMode.ResistanceFourWire
                     Me.FunctionModeRanges(fmode).SetRange(0, 1000000000.0)
-                Case MultimeterFunctionMode.Continuity
+                Case VI.Tsp2.MultimeterFunctionMode.Continuity
                     Me.FunctionModeRanges(fmode).SetRange(0, 1000)
-                Case MultimeterFunctionMode.Diode
+                Case VI.Tsp2.MultimeterFunctionMode.Diode
                     Me.FunctionModeRanges(fmode).SetRange(0, 10)
-                Case MultimeterFunctionMode.Capacitance
+                Case VI.Tsp2.MultimeterFunctionMode.Capacitance
                     Me.FunctionModeRanges(fmode).SetRange(0, 0.001)
-                Case MultimeterFunctionMode.Ratio
+                Case VI.Tsp2.MultimeterFunctionMode.Ratio
                     Me.FunctionModeRanges(fmode).SetRange(0, 1000)
             End Select
         Next
-        Me.FunctionMode = MultimeterFunctionMode.VoltageDC
+        Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.FunctionModeRanges))
+        Me.FunctionMode = VI.Tsp2.MultimeterFunctionMode.VoltageDC
         Me.Range = 100
     End Sub
 

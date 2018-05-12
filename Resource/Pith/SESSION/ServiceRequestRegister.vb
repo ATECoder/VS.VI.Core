@@ -37,10 +37,8 @@ Partial Public Class SessionBase
             Return Me._ErrorAvailable
         End Get
         Protected Set(ByVal value As Boolean)
-            If value OrElse Not value.Equals(Me.ErrorAvailable) Then
-                Me._ErrorAvailable = value
-                Me.SafeSendPropertyChanged()
-            End If
+            Me._ErrorAvailable = value
+            Me.SafeSendPropertyChanged()
         End Set
     End Property
 
@@ -305,8 +303,21 @@ Partial Public Class SessionBase
         Me.EnableServiceRequest(StandardEvents.All And Not VI.Pith.StandardEvents.RequestControl, VI.Pith.ServiceRequests.StandardEvent)
     End Sub
 
-    ''' <summary> The service request status. </summary>
-    Private _ServiceRequestStatus As VI.Pith.ServiceRequests
+    ''' <summary> Applies the service request described by value. </summary>
+    ''' <param name="value"> The value. </param>
+    ''' <returns> The VI.Pith.ServiceRequests. </returns>
+    Private Function ApplyServiceRequest(ByVal value As VI.Pith.ServiceRequests) As VI.Pith.ServiceRequests
+        Dim isNewValue As Boolean = Not value.Equals(Me.ServiceRequestStatus)
+        Me._ServiceRequestStatus = value
+        Me.ErrorAvailable = (value And Me.ErrorAvailableBits) <> 0
+        Me.MessageAvailable = (value And Me.MessageAvailableBits) <> 0
+        Me.MeasurementAvailable = (value And Me.MeasurementAvailableBits) <> 0
+        Me.OperationAvailable = (value And Me.OperationAvailableBits) <> 0
+        Me.QuestionableAvailable = (value And Me.QuestionableAvailableBits) <> 0
+        Me.StandardEventAvailable = (value And Me.StandardEventAvailableBits) <> 0
+        If isNewValue Then Me.SafeSendPropertyChanged(NameOf(SessionBase.ServiceRequestStatus))
+        Return value
+    End Function
 
     ''' <summary> Gets or sets the cached service request Status. </summary>
     ''' <remarks> The service request status is posted to be parsed by the status subsystem that is
@@ -315,29 +326,13 @@ Partial Public Class SessionBase
     ''' fast enough to determine the next action. Not sure how to address this at this time. </remarks>
     ''' <value> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.ServiceRequests">Service
     ''' Requests</see>. </value>
-    Public Property ServiceRequestStatus() As VI.Pith.ServiceRequests
-        Get
-            Return Me._ServiceRequestStatus
-        End Get
-        Set(ByVal value As VI.Pith.ServiceRequests)
-            Dim isNewValue As Boolean = value <> VI.Pith.ServiceRequests.None OrElse Not value.Equals(Me.ServiceRequestStatus)
-            Me._ServiceRequestStatus = value
-            Me.ErrorAvailable = (value And Me.ErrorAvailableBits) <> 0
-            Me.MessageAvailable = (value And Me.MessageAvailableBits) <> 0
-            Me.MeasurementAvailable = (value And Me.MeasurementAvailableBits) <> 0
-            Me.OperationAvailable = (value And Me.OperationAvailableBits) <> 0
-            Me.QuestionableAvailable = (value And Me.QuestionableAvailableBits) <> 0
-            Me.StandardEventAvailable = (value And Me.StandardEventAvailableBits) <> 0
-            If isNewValue Then Me.SafeSendPropertyChanged()
-        End Set
-    End Property
+    Public ReadOnly Property ServiceRequestStatus() As VI.Pith.ServiceRequests
 
     ''' <summary> Reads the service request Status. </summary>
     ''' <returns> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.ServiceRequests">Service
     ''' Requests</see>. </returns>
     Public Function ReadServiceRequestStatus() As VI.Pith.ServiceRequests
-        Me.ServiceRequestStatus = Me.ReadStatusByte()
-        Return Me.ServiceRequestStatus
+        Return Me.ApplyServiceRequest(Me.ReadStatusByte())
     End Function
 
 #End Region

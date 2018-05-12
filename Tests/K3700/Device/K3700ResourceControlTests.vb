@@ -12,7 +12,7 @@ Namespace K3700.Tests
     ''' </license>
     ''' <history date="10/10/2017" by="David" revision=""> Created. </history>
     <TestClass()>
-    Public Class ResourceControlTests
+    Public Class K3700ResourceControlTests
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -44,7 +44,7 @@ Namespace K3700.Tests
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.DeviceTestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.K3700TestInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -66,11 +66,11 @@ Namespace K3700.Tests
         ''' <summary> (Unit Test Method) tests selected resource name. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub SelectedResourceNameTest()
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
-                    Manager.CheckSelectedResourceName(control)
+                    K3700Manager.CheckSelectedResourceName(control)
                 End Using
             End Using
         End Sub
@@ -100,7 +100,7 @@ Namespace K3700.Tests
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
-                    Manager.OpenCloseSession(0, control)
+                    K3700Manager.OpenCloseSession(0, control)
                 End Using
             End Using
         End Sub
@@ -114,15 +114,15 @@ Namespace K3700.Tests
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
-                    Manager.OpenCloseSession(1, control)
+                    K3700Manager.OpenCloseSession(1, control)
                 End Using
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
-                    Manager.OpenCloseSession(2, control)
+                    K3700Manager.OpenCloseSession(2, control)
                 End Using
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
-                    Manager.OpenCloseSession(3, control)
+                    K3700Manager.OpenCloseSession(3, control)
                     sw.Wait(TimeSpan.FromMilliseconds(100))
-                    Manager.OpenCloseSession(4, control)
+                    K3700Manager.OpenCloseSession(4, control)
                 End Using
             End Using
         End Sub

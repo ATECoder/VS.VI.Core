@@ -28,7 +28,8 @@ Public MustInherit Class SenseSubsystemBase
     ''' <summary> Sets subsystem values to their known execution clear state. </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me.Readings?.Reset()
+        Me.Readings.Reset()
+        Me.SafePostPropertyChanged(NameOf(SenseSubsystemBase.Readings))
     End Sub
 
     ''' <summary> Sets the subsystem to its reset state. </summary>
@@ -36,35 +37,38 @@ Public MustInherit Class SenseSubsystemBase
         MyBase.ResetKnownState()
         ' TO_DO: the readings are initialized when the format system is reset.
         Me.Readings = New Readings
-        Me.FunctionMode = SenseFunctionModes.VoltageDC
         With Me.FunctionModeDecimalPlaces
             .Clear()
-            For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+            For Each fmode As VI.SourceMeasure.SenseFunctionModes In [Enum].GetValues(GetType(VI.SourceMeasure.SenseFunctionModes))
                 .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(VI.SenseSubsystemBase.FunctionModeDecimalPlaces))
         With Me.FunctionModeRanges
             .Clear()
-            For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+            For Each fmode As VI.SourceMeasure.SenseFunctionModes In [Enum].GetValues(GetType(VI.SourceMeasure.SenseFunctionModes))
                 .Add(fmode, Core.Pith.RangeR.Full)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(VI.SenseSubsystemBase.FunctionModeRanges))
         With Me.FunctionModeUnits
             .Clear()
-            For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+            For Each fmode As VI.SourceMeasure.SenseFunctionModes In [Enum].GetValues(GetType(VI.SourceMeasure.SenseFunctionModes))
                 .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
             Next
-            .Item(SenseFunctionModes.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
-            .Item(SenseFunctionModes.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
-            .Item(SenseFunctionModes.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
-            .Item(SenseFunctionModes.Continuity) = Arebis.StandardUnits.ElectricUnits.Ohm
-            .Item(SenseFunctionModes.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
-            .Item(SenseFunctionModes.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
-            .Item(SenseFunctionModes.Diode) = Arebis.StandardUnits.ElectricUnits.Volt
-            .Item(SenseFunctionModes.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
-            .Item(SenseFunctionModes.Period) = Arebis.StandardUnits.TimeUnits.Second
-            .Item(SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
+            .Item(VI.SourceMeasure.SenseFunctionModes.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(VI.SourceMeasure.SenseFunctionModes.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(VI.SourceMeasure.SenseFunctionModes.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(VI.SourceMeasure.SenseFunctionModes.Continuity) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(VI.SourceMeasure.SenseFunctionModes.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.SourceMeasure.SenseFunctionModes.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.SourceMeasure.SenseFunctionModes.Diode) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.SourceMeasure.SenseFunctionModes.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
+            .Item(VI.SourceMeasure.SenseFunctionModes.Period) = Arebis.StandardUnits.TimeUnits.Second
+            .Item(VI.SourceMeasure.SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
         End With
+        Me.SafePostPropertyChanged(NameOf(VI.SenseSubsystemBase.FunctionModeUnits))
+        Me.FunctionMode = VI.SourceMeasure.SenseFunctionModes.VoltageDC
 
     End Sub
 

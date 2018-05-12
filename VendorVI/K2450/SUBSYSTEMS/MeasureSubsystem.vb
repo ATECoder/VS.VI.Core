@@ -56,11 +56,11 @@ Public Class MeasureSubsystem
         Me.MovingAverageFilterEnabled = False
         Me.OpenDetectorEnabled = False
         Me.FilterWindow = 0.001
-        Me.FunctionModeRanges(MeasureFunctionMode.CurrentDC).SetRange(0, 1)
-        Me.FunctionModeRanges(MeasureFunctionMode.VoltageDC).SetRange(0, 200)
-        Me.FunctionModeRanges(MeasureFunctionMode.Resistance).SetRange(0, 200000000.0)
-        Me.FunctionModeDecimalPlaces(MeasureFunctionMode.Resistance) = 0
-        Me.FunctionMode = MeasureFunctionMode.CurrentDC
+        Me.FunctionModeRanges(VI.Tsp2.MeasureFunctionMode.CurrentDC).SetRange(0, 1)
+        Me.FunctionModeRanges(VI.Tsp2.MeasureFunctionMode.VoltageDC).SetRange(0, 200)
+        Me.FunctionModeRanges(VI.Tsp2.MeasureFunctionMode.Resistance).SetRange(0, 200000000.0)
+        Me.FunctionModeDecimalPlaces(VI.Tsp2.MeasureFunctionMode.Resistance) = 0
+        Me.FunctionMode = VI.Tsp2.MeasureFunctionMode.CurrentDC
         Me.Range = 0.000001
     End Sub
 

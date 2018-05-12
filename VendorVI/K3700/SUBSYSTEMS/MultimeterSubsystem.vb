@@ -12,7 +12,7 @@ Imports isr.VI.Tsp
 ''' </para> </license>
 ''' <history date="01/15/2016" by="David" revision=""> Created. </history>
 Public Class MultimeterSubsystem
-    Inherits isr.VI.Tsp.MultimeterSubsystemBase
+    Inherits VI.Tsp.MultimeterSubsystemBase
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -48,20 +48,23 @@ Public Class MultimeterSubsystem
         Me.MovingAverageFilterEnabled = False
         Me.OpenDetectorEnabled = False
         Me.OpenDetectorKnownStates(MultimeterFunctionMode.ResistanceFourWire) = True
+        Me.SafePostPropertyChanged(NameOf(VI.Tsp.MultimeterSubsystemBase.OpenDetectorKnownStates))
         Me.FilterWindow = 0.001
-        For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+        For Each fmode As VI.Tsp.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp.MultimeterFunctionMode))
             Select Case fmode
-                Case MultimeterFunctionMode.CurrentAC, MultimeterFunctionMode.CurrentAC
+                Case VI.Tsp.MultimeterFunctionMode.CurrentAC, VI.Tsp.MultimeterFunctionMode.CurrentAC
                     Me.FunctionModeRanges(fmode).SetRange(0, 3.1)
-                Case MultimeterFunctionMode.VoltageAC, MultimeterFunctionMode.VoltageDC
+                Case VI.Tsp.MultimeterFunctionMode.VoltageAC, VI.Tsp.MultimeterFunctionMode.VoltageDC
                     Me.FunctionModeRanges(fmode).SetRange(0, 303)
-                Case MultimeterFunctionMode.ResistanceCommonWire, MultimeterFunctionMode.ResistanceTwoWire, MultimeterFunctionMode.ResistanceFourWire
+                Case VI.Tsp.MultimeterFunctionMode.ResistanceCommonWire, VI.Tsp.MultimeterFunctionMode.ResistanceTwoWire, VI.Tsp.MultimeterFunctionMode.ResistanceFourWire
                     Me.FunctionModeRanges(fmode).SetRange(0, 120000000.0)
             End Select
         Next
-        Me.FunctionModeDecimalPlaces(MultimeterFunctionMode.ResistanceCommonWire) = 0
-        Me.FunctionModeDecimalPlaces(MultimeterFunctionMode.ResistanceFourWire) = 0
-        Me.FunctionModeDecimalPlaces(MultimeterFunctionMode.ResistanceTwoWire) = 0
+        Me.SafePostPropertyChanged(NameOf(VI.Tsp.MultimeterSubsystemBase.FunctionModeRanges))
+        Me.FunctionModeDecimalPlaces(VI.Tsp.MultimeterFunctionMode.ResistanceCommonWire) = 0
+        Me.FunctionModeDecimalPlaces(VI.Tsp.MultimeterFunctionMode.ResistanceFourWire) = 0
+        Me.FunctionModeDecimalPlaces(VI.Tsp.MultimeterFunctionMode.ResistanceTwoWire) = 0
+        Me.SafePostPropertyChanged(NameOf(VI.Tsp.MultimeterSubsystemBase.FunctionModeDecimalPlaces))
 
         Me.FunctionMode = MultimeterFunctionMode.VoltageDC
         Me.Range = 303 'defaults volts range

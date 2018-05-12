@@ -28,24 +28,27 @@ Public MustInherit Class SenseFunctionSubsystemBase
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.FunctionModeRanges.Clear()
-        For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+        For Each fmode As VI.Scpi.SenseFunctionModes In [Enum].GetValues(GetType(VI.Scpi.SenseFunctionModes))
             Me.FunctionModeRanges.Add(fmode, Core.Pith.RangeR.Full)
         Next
+        Me.SafePostPropertyChanged(NameOf(SenseFunctionSubsystemBase.FunctionModeRanges))
         Me.FunctionModeDecimalPlaces.Clear()
-        For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+        For Each fmode As VI.Scpi.SenseFunctionModes In [Enum].GetValues(GetType(VI.Scpi.SenseFunctionModes))
             Me.FunctionModeDecimalPlaces.Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
         Next
+        Me.SafePostPropertyChanged(NameOf(SenseFunctionSubsystemBase.FunctionModeDecimalPlaces))
         Me.FunctionModeUnits.Clear()
-        For Each fmode As SenseFunctionModes In [Enum].GetValues(GetType(SenseFunctionModes))
+        For Each fmode As VI.Scpi.SenseFunctionModes In [Enum].GetValues(GetType(VI.Scpi.SenseFunctionModes))
             Me.FunctionModeUnits.Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
         Next
-        Me.FunctionModeUnits(SenseFunctionModes.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
-        Me.FunctionModeUnits(SenseFunctionModes.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
-        Me.FunctionModeUnits(SenseFunctionModes.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
-        Me.FunctionModeUnits(SenseFunctionModes.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
-        Me.FunctionModeUnits(SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
-        Me.FunctionModeUnits(SenseFunctionModes.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
-        Me.FunctionModeUnits(SenseFunctionModes.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.FunctionModeUnits(VI.Scpi.SenseFunctionModes.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
+        Me.FunctionModeUnits(VI.Scpi.SenseFunctionModes.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+        Me.FunctionModeUnits(VI.Scpi.SenseFunctionModes.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
+        Me.FunctionModeUnits(VI.Scpi.SenseFunctionModes.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
+        Me.FunctionModeUnits(VI.Scpi.SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
+        Me.FunctionModeUnits(VI.Scpi.SenseFunctionModes.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.FunctionModeUnits(VI.Scpi.SenseFunctionModes.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.SafePostPropertyChanged(NameOf(SenseFunctionSubsystemBase.FunctionModeUnits))
     End Sub
 
 #End Region

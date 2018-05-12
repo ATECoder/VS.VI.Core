@@ -90,9 +90,9 @@ Namespace K3700.Tests
         Public Sub ReadChannelSubsystemTest()
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K3700.Tests.Manager.OpenSession(device)
+                K3700.Tests.K3700Manager.OpenSession(device)
                 GageBoardTests.ReadChannelSubsystemInfo(device)
-                K3700.Tests.Manager.CloseSession(device)
+                K3700.Tests.K3700Manager.CloseSession(device)
             End Using
         End Sub
 
@@ -104,20 +104,20 @@ Namespace K3700.Tests
         ''' <param name="device"> The device. </param>
         Private Shared Sub ReadMultimeterSubsystemInfo(ByVal device As VI.Tsp.K3700.Device)
 
-            Dim expectedPowerLineCycles As Double = K3700.Tests.DeviceTestInfo.Get.InitialPowerLineCycles
+            Dim expectedPowerLineCycles As Double = K3700.Tests.K3700TestInfo.Get.InitialPowerLineCycles
             Dim actualPowerLineCycles As Double = device.MultimeterSubsystem.QueryPowerLineCycles.GetValueOrDefault(0)
-            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K3700.Tests.DeviceTestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
+            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K3700.Tests.K3700TestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
                             $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
 
-            Dim expectedBoolean As Boolean = K3700.Tests.DeviceTestInfo.Get.InitialAutoRangeEnabled
+            Dim expectedBoolean As Boolean = K3700.Tests.K3700TestInfo.Get.InitialAutoRangeEnabled
             Dim actualBoolean As Boolean = device.MultimeterSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(False)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.AutoRangeEnabled)} Is {actualBoolean }; expected {expectedBoolean}")
 
-            expectedBoolean = K3700.Tests.DeviceTestInfo.Get.InitialAutoZeroEnabled
+            expectedBoolean = K3700.Tests.K3700TestInfo.Get.InitialAutoZeroEnabled
             actualBoolean = device.MultimeterSubsystem.QueryAutoZeroEnabled.GetValueOrDefault(False)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.AutoZeroEnabled)} Is {actualBoolean }; expected {expectedBoolean }")
 
-            Dim expectedFunction As MultimeterFunctionMode = K3700.Tests.DeviceTestInfo.Get.InitialSenseFunctionMode
+            Dim expectedFunction As MultimeterFunctionMode = K3700.Tests.K3700TestInfo.Get.InitialSenseFunctionMode
             Dim senseFn As VI.Tsp.MultimeterFunctionMode = device.MultimeterSubsystem.QueryFunctionMode.GetValueOrDefault(MultimeterFunctionMode.ResistanceTwoWire)
             Assert.AreEqual(expectedFunction, senseFn,
                             $"{NameOf(MultimeterSubsystem)}.{NameOf(MultimeterSubsystem.FunctionMode)} Is {senseFn} ; expected {expectedFunction}")
@@ -129,9 +129,9 @@ Namespace K3700.Tests
         Public Sub ReadMultimeterSubsystemTest()
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K3700.Tests.Manager.OpenSession(device)
+                K3700.Tests.K3700Manager.OpenSession(device)
                 GageBoardTests.ReadMultimeterSubsystemInfo(device)
-                K3700.Tests.Manager.CloseSession(device)
+                K3700.Tests.K3700Manager.CloseSession(device)
             End Using
         End Sub
 
@@ -197,7 +197,7 @@ Namespace K3700.Tests
         Public Sub GageBoardResistanceUnitTest()
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K3700.Tests.Manager.OpenSession(device)
+                K3700.Tests.K3700Manager.OpenSession(device)
                 GageBoardTests.PrepareGageBoardResistance(device)
                 Dim trialNumber As Integer = 0
                 Dim expectedValue As Double = GageBoardTestInfo.Get.RtdAmbientResistance
@@ -208,7 +208,7 @@ Namespace K3700.Tests
                 epsilon = GageBoardTestInfo.Get.GaugeResistanceEpsilon
                 channelList = GageBoardTestInfo.Get.FirstGaugeChannelList
                 trialNumber += 1 : GageBoardTests.GageBoardResistance(trialNumber, device, expectedValue, epsilon, channelList)
-                K3700.Tests.Manager.CloseSession(device)
+                K3700.Tests.K3700Manager.CloseSession(device)
             End Using
         End Sub
 
@@ -216,7 +216,7 @@ Namespace K3700.Tests
         Public Sub TwoWireCircuitTest()
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K3700.Tests.Manager.OpenSession(device)
+                K3700.Tests.K3700Manager.OpenSession(device)
                 GageBoardTests.PrepareGageBoardResistance(device)
                 Dim trialNumber As Integer = 0
                 Dim expectedValue As Double = GageBoardTestInfo.Get.RtdAmbientResistance
@@ -238,7 +238,7 @@ Namespace K3700.Tests
                 epsilon = 3 * GageBoardTestInfo.Get.GaugeResistanceEpsilon
                 channelList = GageBoardTestInfo.Get.TwoWireGageSourceChannelList
                 trialNumber += 1 : GageBoardTests.GageBoardResistance(trialNumber, device, expectedValue, epsilon, channelList)
-                K3700.Tests.Manager.CloseSession(device)
+                K3700.Tests.K3700Manager.CloseSession(device)
             End Using
         End Sub
 

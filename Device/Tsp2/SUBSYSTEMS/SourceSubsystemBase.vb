@@ -41,27 +41,30 @@ Public Class SourceSubsystemBase
         Me.AutoDelayEnabled = True
         With Me.FunctionModeDecimalPlaces
             .Clear()
-            For Each fmode As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
+            For Each fmode As VI.Tsp2.SourceFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.SourceFunctionMode))
                 .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(SourceSubsystemBase.FunctionModeDecimalPlaces))
         With Me.FunctionModeRanges
             .Clear()
-            For Each fmode As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
+            For Each fmode As VI.Tsp2.SourceFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.SourceFunctionMode))
                 .Add(fmode, Core.Pith.RangeR.Full)
             Next
-            .Item(SourceFunctionMode.CurrentDC).SetRange(-1.05, 1.05)
-            .Item(SourceFunctionMode.VoltageDC).SetRange(-210, 210)
+            .Item(VI.Tsp2.SourceFunctionMode.CurrentDC).SetRange(-1.05, 1.05)
+            .Item(VI.Tsp2.SourceFunctionMode.VoltageDC).SetRange(-210, 210)
         End With
+        Me.SafePostPropertyChanged(NameOf(SourceSubsystemBase.FunctionModeRanges))
         With Me.FunctionModeUnits
             .Clear()
-            For Each fmode As SourceFunctionMode In [Enum].GetValues(GetType(SourceFunctionMode))
+            For Each fmode As VI.Tsp2.SourceFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.SourceFunctionMode))
                 .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
             Next
-            .Item(SourceFunctionMode.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
-            .Item(SourceFunctionMode.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.Tsp2.SourceFunctionMode.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(VI.Tsp2.SourceFunctionMode.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
         End With
-        Me.FunctionMode = SourceFunctionMode.VoltageDC
+        Me.SafePostPropertyChanged(NameOf(SourceSubsystemBase.FunctionModeUnits))
+        Me.FunctionMode = VI.Tsp2.SourceFunctionMode.VoltageDC
         Me.Range = 0.02
         Me.LimitTripped = False
         Me.OutputEnabled = False

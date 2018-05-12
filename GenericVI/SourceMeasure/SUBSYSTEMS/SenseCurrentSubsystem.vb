@@ -55,6 +55,7 @@ Public Class SenseCurrentSubsystem
                 Me.FunctionModeRanges(SenseFunctionModes.CurrentDC).SetRange(0.001, 1.05)
                 Me.FunctionModeRanges(SenseFunctionModes.VoltageDC).SetRange(0.001, 40)
         End Select
+        Me.SafePostPropertyChanged(NameOf(VI.Scpi.SenseFunctionSubsystemBase.FunctionModeRanges))
     End Sub
 
 #End Region

@@ -30,6 +30,8 @@ Public Class MeasureSubsystem
     ''' </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
+        Me.Readings.Reset()
+        Me.SafePostPropertyChanged(NameOf(MeasureSubsystem.Readings))
         Me.LastReading = ""
     End Sub
 
@@ -41,29 +43,32 @@ Public Class MeasureSubsystem
         Me.Readings = New Readings
         With Me.FunctionModeDecimalPlaces
             .Clear()
-            For Each fmode As SenseFunctionMode In [Enum].GetValues(GetType(SenseFunctionMode))
+            For Each fmode As VI.K3458.SenseFunctionMode In [Enum].GetValues(GetType(VI.K3458.SenseFunctionMode))
                 .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(VI.MeasureSubsystemBase.FunctionModeDecimalPlaces))
         With Me.FunctionModeRanges
             .Clear()
-            For Each fmode As SenseFunctionMode In [Enum].GetValues(GetType(SenseFunctionMode))
+            For Each fmode As VI.K3458.SenseFunctionMode In [Enum].GetValues(GetType(VI.K3458.SenseFunctionMode))
                 .Add(fmode, Core.Pith.RangeR.Full)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(VI.MeasureSubsystemBase.FunctionModeRanges))
         With Me.FunctionModeUnits
             .Clear()
-            For Each fmode As SenseFunctionMode In [Enum].GetValues(GetType(SenseFunctionMode))
+            For Each fmode As VI.K3458.SenseFunctionMode In [Enum].GetValues(GetType(VI.K3458.SenseFunctionMode))
                 .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
             Next
-            .Item(K3458.SenseFunctionMode.CurrentDirect) = Arebis.StandardUnits.ElectricUnits.Ampere
-            .Item(K3458.SenseFunctionMode.CurrentDirectAlternating) = Arebis.StandardUnits.ElectricUnits.Ampere
-            .Item(K3458.SenseFunctionMode.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
-            .Item(K3458.SenseFunctionMode.ResistanceFourWire) = Arebis.StandardUnits.ElectricUnits.Ohm
-            .Item(K3458.SenseFunctionMode.VoltageAlternating) = Arebis.StandardUnits.ElectricUnits.Volt
-            .Item(K3458.SenseFunctionMode.VoltageDirect) = Arebis.StandardUnits.ElectricUnits.Volt
-            .Item(K3458.SenseFunctionMode.VoltageDirectAlternating) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.K3458.SenseFunctionMode.CurrentDirect) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(VI.K3458.SenseFunctionMode.CurrentDirectAlternating) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(VI.K3458.SenseFunctionMode.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(VI.K3458.SenseFunctionMode.ResistanceFourWire) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(VI.K3458.SenseFunctionMode.VoltageAlternating) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.K3458.SenseFunctionMode.VoltageDirect) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.K3458.SenseFunctionMode.VoltageDirectAlternating) = Arebis.StandardUnits.ElectricUnits.Volt
         End With
+        Me.SafePostPropertyChanged(NameOf(VI.MeasureSubsystemBase.FunctionModeUnits))
     End Sub
 
 #End Region

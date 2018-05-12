@@ -9,7 +9,7 @@
 ''' SOFTWARE.</para> </license>
 ''' <history date="12/14/2013" by="David" revision=""> Created. </history>
 Public Class StatusSubsystem
-    Inherits VI.StatusSubsystemBase
+    Inherits isr.VI.Tsp2.StatusSubsystemBase
 
 #Region " CONSTRUCTION + CLEANUP "
 

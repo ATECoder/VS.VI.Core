@@ -29,7 +29,8 @@ Public Class MeasureSubsystem
     ''' </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me.Readings?.Reset()
+        Me.Readings.Reset()
+        Me.SafePostPropertyChanged(NameOf(MeasureSubsystem.Readings))
     End Sub
 
     ''' <summary> Sets the subsystem to its reset state. </summary>
@@ -39,33 +40,35 @@ Public Class MeasureSubsystem
         Me.Readings = New Readings
         With Me.FunctionModeDecimalPlaces
             .Clear()
-            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+            For Each fmode As VI.Scpi.SenseFunctionModes In [Enum].GetValues(GetType(VI.Scpi.SenseFunctionModes))
                 .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(VI.MeasureSubsystemBase.FunctionModeDecimalPlaces))
         With Me.FunctionModeRanges
             .Clear()
-            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+            For Each fmode As VI.Scpi.SenseFunctionModes In [Enum].GetValues(GetType(VI.Scpi.SenseFunctionModes))
                 .Add(fmode, Core.Pith.RangeR.Full)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(VI.MeasureSubsystemBase.FunctionModeRanges))
         With Me.FunctionModeUnits
             .Clear()
-            For Each fmode As Scpi.SenseFunctionModes In [Enum].GetValues(GetType(Scpi.SenseFunctionModes))
+            For Each fmode As VI.Scpi.SenseFunctionModes In [Enum].GetValues(GetType(VI.Scpi.SenseFunctionModes))
                 .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
             Next
-            .Item(Scpi.SenseFunctionModes.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
-            .Item(Scpi.SenseFunctionModes.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
-            .Item(Scpi.SenseFunctionModes.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
-            .Item(Scpi.SenseFunctionModes.Continuity) = Arebis.StandardUnits.ElectricUnits.Ohm
-            .Item(Scpi.SenseFunctionModes.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
-            .Item(Scpi.SenseFunctionModes.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
-            .Item(Scpi.SenseFunctionModes.Diode) = Arebis.StandardUnits.ElectricUnits.Volt
-            .Item(Scpi.SenseFunctionModes.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
-            .Item(Scpi.SenseFunctionModes.Period) = Arebis.StandardUnits.TimeUnits.Second
-            .Item(Scpi.SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
+            .Item(VI.Scpi.SenseFunctionModes.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(VI.Scpi.SenseFunctionModes.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(VI.Scpi.SenseFunctionModes.Resistance) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(VI.Scpi.SenseFunctionModes.Continuity) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(VI.Scpi.SenseFunctionModes.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.Scpi.SenseFunctionModes.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.Scpi.SenseFunctionModes.Diode) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.Scpi.SenseFunctionModes.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
+            .Item(VI.Scpi.SenseFunctionModes.Period) = Arebis.StandardUnits.TimeUnits.Second
+            .Item(VI.Scpi.SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
         End With
-
+        Me.SafePostPropertyChanged(NameOf(VI.MeasureSubsystemBase.FunctionModeUnits))
     End Sub
 
 

@@ -19,6 +19,10 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
+        Me.DefaultMeasurementUnit = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.DefaultFunctionUnit = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.DefaultFunctionRange = isr.Core.Pith.RangeR.Full
+        Me.DefaultFunctionModeDecimalPlaces = 3
     End Sub
 
 #End Region
@@ -29,8 +33,24 @@ Public MustInherit Class MeasureSubsystemBase
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
         Me.LastReading = ""
-        Me._Amount = New MeasuredAmount(ReadingTypes.Reading)
         Me.MeasuredValue = New Double?
+    End Sub
+
+    ''' <summary> Sets the subsystem to its initial post reset state. </summary>
+    ''' <remarks> Additional Actions: <para>
+    '''           Clears last reading.
+    '''           </para></remarks>
+    Public Overrides Sub InitKnownState()
+        MyBase.InitKnownState()
+        Me.LastReading = ""
+        Me.Amount = New MeasuredAmount(ReadingTypes.Reading)
+        Me.MeasuredValue = New Double?
+    End Sub
+
+    ''' <summary> Sets the subsystem to its reset state. </summary>
+    Public Overrides Sub ResetKnownState()
+        MyBase.ResetKnownState()
+        Me.Amount = New MeasuredAmount(ReadingTypes.Reading)
         Me._FunctionModeRanges = New RangeDictionary
         Me._FunctionModeDecimalPlaces = New IntegerDictionary
         Me._FunctionModeUnits = New UnitDictionary
@@ -44,22 +64,10 @@ Public MustInherit Class MeasureSubsystemBase
         Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
     End Sub
 
-    ''' <summary> Sets the subsystem to its initial post reset state. </summary>
-    ''' <remarks> Additional Actions: <para>
-    '''           Clears last reading.
-    '''           </para></remarks>
-    Public Overrides Sub InitKnownState()
-        MyBase.InitKnownState()
-        Me.LastReading = ""
-        Me._Amount = New MeasuredAmount(ReadingTypes.Reading)
-        Me.MeasuredValue = New Double?
-    End Sub
-
-
 
 #End Region
 
-#Region "  INIT, READ, FETCH, MEASURE "
+#Region " INIT, READ, FETCH, MEASURE "
 
     ''' <summary> Gets the fetch command. </summary>
     ''' <value> The fetch command. </value>

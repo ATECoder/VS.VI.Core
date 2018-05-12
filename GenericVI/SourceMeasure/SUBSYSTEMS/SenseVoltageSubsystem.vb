@@ -35,7 +35,6 @@ Public Class SenseVoltageSubsystem
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
         Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.01, 10)
-        Me.FunctionRange = New isr.Core.Pith.RangeR(0.001, 10)
         Dim model As String = Me.StatusSubsystem.VersionInfo.Model
         Select Case True
             Case model.StartsWith("2400", StringComparison.OrdinalIgnoreCase)

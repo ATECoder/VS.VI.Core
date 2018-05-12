@@ -16,7 +16,7 @@ Namespace K2450.Tests
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
      Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Friend Class ResistanceTestInfo
+    Friend Class K2450ResistanceTestInfo
         Inherits ApplicationSettingsBase
 
 #Region " SINGLETON "
@@ -28,8 +28,8 @@ Namespace K2450.Tests
         ''' <summary> Opens the settings editor. </summary>
         Public Shared Sub OpenSettingsEditor()
             Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
-                f.Text = $"{GetType(ResistanceTestInfo)} Editor"
-                f.ShowDialog(ResistanceTestInfo.Get)
+                f.Text = $"{GetType(K2450ResistanceTestInfo)} Editor"
+                f.ShowDialog(K2450ResistanceTestInfo.Get)
             End Using
         End Sub
 
@@ -40,16 +40,16 @@ Namespace K2450.Tests
 
         ''' <summary> Gets the instance. </summary>
         ''' <value> The instance. </value>
-        Private Shared Property _Instance As ResistanceTestInfo
+        Private Shared Property _Instance As K2450ResistanceTestInfo
 
         ''' <summary> Instantiates the class. </summary>
         ''' <remarks> Use this property to instantiate a single instance of this class. This class uses
         ''' lazy instantiation, meaning the instance isn't created until the first time it's retrieved. </remarks>
         ''' <returns> A new or existing instance of the class. </returns>
-        Public Shared Function [Get]() As ResistanceTestInfo
+        Public Shared Function [Get]() As K2450ResistanceTestInfo
             If _Instance Is Nothing Then
                 SyncLock _SyncLocker
-                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New ResistanceTestInfo()), ResistanceTestInfo)
+                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K2450ResistanceTestInfo()), K2450ResistanceTestInfo)
                 End SyncLock
             End If
             Return _Instance

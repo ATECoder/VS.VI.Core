@@ -34,6 +34,7 @@ Public Class SourceSubsystem
         Me.AutoDelayEnabled = True
         Me.FunctionModeRanges(SourceFunctionMode.CurrentDC).SetRange(-1.05, 1.05)
         Me.FunctionModeRanges(SourceFunctionMode.VoltageDC).SetRange(-210, 210)
+        Me.SafePostPropertyChanged(NameOf(SourceSubsystemBase.FunctionModeRanges))
         Me.FunctionMode = SourceFunctionMode.VoltageDC
         Me.Range = 0.02
         Me.LimitTripped = False

@@ -51,17 +51,17 @@ Public MustInherit Class ScriptManagerBase
     '''           </para></remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me._newProgramRequired = ""
+        Me._NewProgramRequired = ""
     End Sub
 
     ''' <summary> Reset known state of this instance. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        Me._FirmwareExists = New Boolean?
-        Me._supportfirmwareExists = New Boolean?
-        Me._lastFetchedSavedScripts = ""
-        Me._lastFetchedSavedRemoteScripts = ""
-        Me._lastFetchScriptSource = ""
+        Me.FirmwareExists = New Boolean?
+        Me._SupportfirmwareExists = New Boolean?
+        Me._LastFetchedSavedScripts = ""
+        Me._LastFetchedSavedRemoteScripts = ""
+        Me._LastFetchScriptSource = ""
     End Sub
 
 #End Region

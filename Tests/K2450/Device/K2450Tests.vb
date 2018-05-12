@@ -14,7 +14,7 @@ Namespace K2450.Tests
     ''' </license>
     ''' <history date="10/10/2017" by="David" revision=""> Created. </history>
     <TestClass()>
-    Public Class DeviceTests
+    Public Class K2450Tests
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -46,7 +46,7 @@ Namespace K2450.Tests
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450.Tests.DeviceTestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450.Tests.K2450TestInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -66,25 +66,27 @@ Namespace K2450.Tests
 #Region " VISA RESOURCE TESTS "
 
         ''' <summary> (Unit Test Method) tests visa resource. </summary>
+        ''' <remarks> Finds the resource using the session factory resources manager. </remarks>
         <TestMethod(), TestCategory("VI")>
         Public Sub VisaResourceTest()
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            If Not K2450TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K2450TestInfo.Get.ResourceTitle} not found")
             Dim resourcesFilter As String = VI.Pith.ResourceNameInfo.BuildMinimalResourcesFilter
             Dim resources As String()
             Using rm As VI.Pith.ResourcesManagerBase = VI.SessionFactory.Get.Factory.CreateResourcesManager()
                 resources = rm.FindResources(resourcesFilter).ToArray
             End Using
             Assert.IsTrue(resources.Any, $"VISA Resources {If(resources.Any, "", "not")} found among {resourcesFilter}")
-            Assert.IsTrue(resources.Contains(DeviceTestInfo.Get.ResourceName), $"Resource {DeviceTestInfo.Get.ResourceName} not found among {resourcesFilter}")
+            Assert.IsTrue(resources.Contains(K2450TestInfo.Get.ResourceName), $"Resource {K2450TestInfo.Get.ResourceName} not found among {resourcesFilter}")
         End Sub
 
         ''' <summary> (Unit Test Method) tests device resource. </summary>
+        ''' <remarks> Finds the resource using the device class. </remarks>
         <TestMethod(), TestCategory("VI")>
         Public Sub DeviceResourceTest()
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            If Not K2450TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K2450TestInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
-                Assert.IsTrue(VI.Tsp2.K2450.Device.Find(DeviceTestInfo.Get.ResourceName, device.Session.ResourceNameInfo.ResourcesFilter),
-                              $"VISA Resource {DeviceTestInfo.Get.ResourceName} not found among {device.Session.ResourceNameInfo.ResourcesFilter}")
+                Assert.IsTrue(VI.Tsp2.K2450.Device.Find(K2450TestInfo.Get.ResourceName, device.Session.ResourceNameInfo.ResourcesFilter),
+                              $"VISA Resource {K2450TestInfo.Get.ResourceName} not found among {device.Session.ResourceNameInfo.ResourcesFilter}")
             End Using
         End Sub
 
@@ -92,6 +94,8 @@ Namespace K2450.Tests
 
 #Region " DEVICE TESTS: OPEN, CLOSE, CHECK SUSBSYSTEMS "
 
+        ''' <summary> (Unit Test Method) tests device talker. </summary>
+        ''' <remarks> Checks if the device adds a trace message to a listener. </remarks>
         <TestMethod()>
         Public Sub DeviceTalkerTest()
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
@@ -115,13 +119,14 @@ Namespace K2450.Tests
         End Sub
 
         ''' <summary> (Unit Test Method) tests open session. </summary>
+        ''' <remarks> Tests opening and closing a VISA session. </remarks>
         <TestMethod(), TestCategory("VI")>
         Public Sub OpenSessionTest()
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            If Not K2450TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K2450TestInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                Manager.OpenSession(device)
-                Manager.CloseSession(device)
+                K2450Manager.OpenSession(device)
+                K2450Manager.CloseSession(device)
             End Using
         End Sub
 
@@ -130,39 +135,39 @@ Namespace K2450.Tests
         '''</summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub OpenSessionCheckStatusTest()
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            If Not K2450TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K2450TestInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                Manager.OpenSession(device)
-                Manager.CheckModel(device.StatusSubsystemBase)
-                Manager.CheckDeviceErrors(device.StatusSubsystemBase)
-                Manager.CheckTermination(device.Session)
-                Manager.CheckLineFrequency(device.StatusSubsystem)
-                Manager.CheckIntegrationPeriod(device.StatusSubsystem)
-                Manager.CheckMeasureSubsystemInfo(device.MeasureSubsystem)
-                Manager.CheckSourceSubsystemInfo(device.SourceSubsystem)
-                Manager.ClearSessionCheckDeviceErrors(device)
-                Manager.CloseSession(device)
+                K2450Manager.OpenSession(device)
+                K2450Manager.CheckModel(device.StatusSubsystemBase)
+                K2450Manager.CheckDeviceErrors(device.StatusSubsystemBase)
+                K2450Manager.CheckTermination(device.Session)
+                K2450Manager.CheckLineFrequency(device.StatusSubsystem)
+                K2450Manager.CheckIntegrationPeriod(device.StatusSubsystem)
+                K2450Manager.CheckMeasureSubsystemInfo(device.MeasureSubsystem)
+                K2450Manager.CheckSourceSubsystemInfo(device.SourceSubsystem)
+                K2450Manager.ClearSessionCheckDeviceErrors(device)
+                K2450Manager.CloseSession(device)
             End Using
         End Sub
 
         ''' <summary> (Unit Test Method) tests open session read device errors. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub OpenSessionReadDeviceErrorsTest()
-            If Not DeviceTestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{DeviceTestInfo.Get.ResourceTitle} not found")
+            If Not K2450TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K2450TestInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                Manager.OpenSession(device)
-                Manager.CheckModel(device.StatusSubsystemBase)
-                Manager.CheckDeviceErrors(device.StatusSubsystemBase)
-                Manager.CheckTermination(device.Session)
-                Manager.CheckLineFrequency(device.StatusSubsystem)
-                Manager.CheckIntegrationPeriod(device.StatusSubsystem)
-                Manager.CheckMeasureSubsystemInfo(device.MeasureSubsystem)
-                Manager.CheckSourceSubsystemInfo(device.SourceSubsystem)
-                Manager.ClearSessionCheckDeviceErrors(device)
-                Manager.CheckReadingDeviceErrors(device)
-                Manager.CloseSession(device)
+                K2450Manager.OpenSession(device)
+                K2450Manager.CheckModel(device.StatusSubsystemBase)
+                K2450Manager.CheckDeviceErrors(device.StatusSubsystemBase)
+                K2450Manager.CheckTermination(device.Session)
+                K2450Manager.CheckLineFrequency(device.StatusSubsystem)
+                K2450Manager.CheckIntegrationPeriod(device.StatusSubsystem)
+                K2450Manager.CheckMeasureSubsystemInfo(device.MeasureSubsystem)
+                K2450Manager.CheckSourceSubsystemInfo(device.SourceSubsystem)
+                K2450Manager.ClearSessionCheckDeviceErrors(device)
+                K2450Manager.CheckReadingDeviceErrors(device, TimeSpan.FromMilliseconds(300))
+                K2450Manager.CloseSession(device)
             End Using
         End Sub
 

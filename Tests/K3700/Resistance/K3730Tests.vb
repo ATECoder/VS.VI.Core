@@ -88,9 +88,9 @@
         Public Sub ReadChannelSubsystemTest()
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K3700.Tests.Manager.OpenSession(device)
+                K3700.Tests.K3700Manager.OpenSession(device)
                 K3730Tests.ReadChannelSubsystemInfo(device)
-                K3700.Tests.Manager.CloseSession(device)
+                K3700.Tests.K3700Manager.CloseSession(device)
             End Using
         End Sub
 
@@ -102,20 +102,20 @@
         ''' <param name="device"> The device. </param>
         Private Shared Sub ReadMultimeterSubsystemInfo(ByVal device As VI.Tsp.K3700.Device)
 
-            Dim expectedPowerLineCycles As Double = K3700.Tests.DeviceTestInfo.Get.InitialPowerLineCycles
+            Dim expectedPowerLineCycles As Double = K3700.Tests.K3700TestInfo.Get.InitialPowerLineCycles
             Dim actualPowerLineCycles As Double = device.MultimeterSubsystem.QueryPowerLineCycles.GetValueOrDefault(0)
-            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K3700.Tests.DeviceTestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
+            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K3700.Tests.K3700TestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
                             $"{GetType(VI.MultimeterSubsystemBase)}.{NameOf(VI.MultimeterSubsystemBase.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
 
-            Dim expectedBoolean As Boolean = K3700.Tests.DeviceTestInfo.Get.InitialAutoRangeEnabled
+            Dim expectedBoolean As Boolean = K3700.Tests.K3700TestInfo.Get.InitialAutoRangeEnabled
             Dim actualBoolean As Boolean = device.MultimeterSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(False)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.MultimeterSubsystemBase)}.{NameOf(VI.MultimeterSubsystemBase.AutoRangeEnabled)} Is {actualBoolean }; expected {expectedBoolean}")
 
-            expectedBoolean = K3700.Tests.DeviceTestInfo.Get.InitialAutoZeroEnabled
+            expectedBoolean = K3700.Tests.K3700TestInfo.Get.InitialAutoZeroEnabled
             actualBoolean = device.MultimeterSubsystem.QueryAutoZeroEnabled.GetValueOrDefault(False)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.MultimeterSubsystemBase)}.{NameOf(VI.MultimeterSubsystemBase.AutoZeroEnabled)} Is {actualBoolean }; expected {expectedBoolean }")
 
-            Dim expectedFunction As VI.Tsp.MultimeterFunctionMode = K3700.Tests.DeviceTestInfo.Get.InitialSenseFunctionMode
+            Dim expectedFunction As VI.Tsp.MultimeterFunctionMode = K3700.Tests.K3700TestInfo.Get.InitialSenseFunctionMode
             Dim senseFn As VI.Tsp.MultimeterFunctionMode = device.MultimeterSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp.MultimeterFunctionMode.ResistanceTwoWire)
             Assert.AreEqual(expectedFunction, senseFn,
                             $"{GetType(VI.MultimeterSubsystemBase)}.{NameOf(VI.Tsp.MultimeterSubsystemBase.FunctionMode)} Is {senseFn} ; expected {expectedFunction}")
@@ -127,9 +127,9 @@
         Public Sub ReadMultimeterSubsystemTest()
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K3700.Tests.Manager.OpenSession(device)
+                K3700.Tests.K3700Manager.OpenSession(device)
                 K3730Tests.ReadMultimeterSubsystemInfo(device)
-                K3700.Tests.Manager.CloseSession(device)
+                K3700.Tests.K3700Manager.CloseSession(device)
             End Using
         End Sub
 
@@ -191,7 +191,7 @@
         Public Sub MeasureResistanceUnitTest()
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K3700.Tests.Manager.OpenSession(device)
+                K3700.Tests.K3700Manager.OpenSession(device)
                 K3730Tests.PrepareMeasureResistance(device)
                 Dim trialNumber As Integer = 0
                 trialNumber += 1 : K3730Tests.MeasureResistance(trialNumber, device, 0, K3730TestInfo.Get.ExpectedShort32ResistanceEpsilon,
@@ -200,7 +200,7 @@
                                                                      K3730TestInfo.Get.ExpectedResistanceEpsilon, K3730TestInfo.Get.ResistorChannelList)
                 trialNumber += 1 : K3730Tests.MeasureResistance(trialNumber, device, K3730TestInfo.Get.ExpectedOpen,
                                                                      1, K3730TestInfo.Get.OpenChannelList)
-                K3700.Tests.Manager.CloseSession(device)
+                K3700.Tests.K3700Manager.CloseSession(device)
             End Using
         End Sub
 

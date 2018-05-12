@@ -75,13 +75,67 @@ Public Class ReadingEntity
 
 #Region " EQUALS "
 
-    ''' <summary> Returns True if the value of the <paramref name="obj" /> equals to the instance value. </summary>
-    ''' <param name="obj"> The object to compare for equality with this instance. This object should
-    ''' be type <see cref="ReadingAmount"/> </param>
-    ''' <returns> <c>True</c> if <paramref name="obj" /> and this instance are the same type and represent the
-    ''' same value; otherwise, <c>False</c>. </returns>
+    ''' <summary> = casting operator. </summary>
+    ''' <param name="left">  The left hand side item to compare for equality. </param>
+    ''' <param name="right"> The left hand side item to compare for equality. </param>
+    ''' <returns> The result of the operation. </returns>
+    Public Shared Operator =(ByVal left As ReadingEntity, ByVal right As ReadingEntity) As Boolean
+        If left Is Nothing Then
+            Return right Is Nothing
+        ElseIf right Is Nothing Then
+            Return False
+        Else
+            Return ReadingEntity.Equals(left, right)
+        End If
+    End Operator
+
+    ''' <summary> &lt;&gt; casting operator. </summary>
+    ''' <param name="left">  The left hand side item to compare for equality. </param>
+    ''' <param name="right"> The left hand side item to compare for equality. </param>
+    ''' <returns> The result of the operation. </returns>
+    Public Shared Operator <>(ByVal left As ReadingEntity, ByVal right As ReadingEntity) As Boolean
+        Return Not ReadingEntity.Equals(left, right)
+    End Operator
+
+    ''' <summary> Returns True if equal. </summary>
+    ''' <remarks> Ranges are the same if the have the same
+    ''' <see cref="Type">min</see> and <see cref="Type">max</see> values. </remarks>
+    ''' <param name="left">  The left hand side item to compare for equality. </param>
+    ''' <param name="right"> The left hand side item to compare for equality. </param>
+    ''' <returns> <c>True</c> if equals. </returns>
+    Public Overloads Shared Function Equals(ByVal left As ReadingEntity, ByVal right As ReadingEntity) As Boolean
+        If left Is Nothing Then
+            Return right Is Nothing
+        ElseIf right Is Nothing Then
+            Return False
+        Else
+            Return String.Equals(left.ValueReading, right.ValueReading) AndAlso String.Equals(left.UnitsReading, right.UnitsReading)
+        End If
+    End Function
+
+    ''' <summary> Determines whether the specified <see cref="T:System.Object" /> is equal to the
+    ''' current <see cref="T:System.Object" />. </summary>
+    ''' <param name="obj"> The <see cref="T:System.Object" /> to compare with the current
+    ''' <see cref="T:System.Object" />. </param>
+    ''' <returns> <c>True</c> if the specified <see cref="T:System.Object" /> is equal to the current
+    ''' <see cref="T:System.Object" />; otherwise, <c>False</c>. </returns>
     Public Overloads Overrides Function Equals(ByVal obj As Object) As Boolean
-        Return ReadingAmount.Equals(Me, TryCast(obj, ReadingAmount))
+        Return Me.Equals(TryCast(obj, ReadingEntity))
+    End Function
+
+    ''' <summary> Returns True if the value of the <paramref name="other"/> equals to the instance
+    ''' value. </summary>
+    ''' <remarks> Ranges are the same if the have the same
+    ''' <see cref="Type">min</see> and <see cref="Type">max</see> values. </remarks>
+    ''' <param name="other"> The other <see cref="ReadingEntity">Range</see> to compare for equality with this
+    ''' instance. </param>
+    ''' <returns> A Boolean data type. </returns>
+    Public Overloads Function Equals(ByVal other As ReadingEntity) As Boolean
+        If other Is Nothing Then
+            Return False
+        Else
+            Return ReadingEntity.Equals(Me, other)
+        End If
     End Function
 
     ''' <summary> Creates a unique hash code. </summary>

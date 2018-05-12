@@ -48,42 +48,45 @@ Public MustInherit Class MultimeterSubsystemBase
         MyBase.ResetKnownState()
         With Me.FunctionModeDecimalPlaces
             .Clear()
-            For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+            For Each fmode As VI.Tsp2.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.MultimeterFunctionMode))
                 .Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.FunctionModeDecimalPlaces))
         With Me.FunctionModeRanges
             .Clear()
-            For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+            For Each fmode As VI.Tsp2.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.MultimeterFunctionMode))
                 .Add(fmode, Core.Pith.RangeR.Full)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.FunctionModeRanges))
         With Me.OpenDetectorKnownStates
             .Clear()
-            For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+            For Each fmode As VI.Tsp2.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.MultimeterFunctionMode))
                 .Add(fmode, False)
             Next
         End With
+        Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.OpenDetectorKnownStates))
         With Me.FunctionModeUnits
             .Clear()
-            For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+            For Each fmode As VI.Tsp2.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.MultimeterFunctionMode))
                 .Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
             Next
-            .Item(MultimeterFunctionMode.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
-            .Item(MultimeterFunctionMode.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
-            .Item(MultimeterFunctionMode.ResistanceTwoWire) = Arebis.StandardUnits.ElectricUnits.Ohm
-            .Item(MultimeterFunctionMode.ResistanceFourWire) = Arebis.StandardUnits.ElectricUnits.Ohm
-            .Item(MultimeterFunctionMode.Continuity) = Arebis.StandardUnits.ElectricUnits.Ohm
-            .Item(MultimeterFunctionMode.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
-            .Item(MultimeterFunctionMode.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
-
-            .Item(MultimeterFunctionMode.Capacitance) = Arebis.StandardUnits.ElectricUnits.Farad
-            .Item(MultimeterFunctionMode.Diode) = Arebis.StandardUnits.ElectricUnits.Volt
-            .Item(MultimeterFunctionMode.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
-            .Item(MultimeterFunctionMode.Period) = Arebis.StandardUnits.TimeUnits.Second
-            .Item(MultimeterFunctionMode.Ratio) = Arebis.StandardUnits.UnitlessUnits.Ratio
-            .Item(MultimeterFunctionMode.Temperature) = Arebis.StandardUnits.TemperatureUnits.DegreeCelsius
+            .Item(VI.Tsp2.MultimeterFunctionMode.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(VI.Tsp2.MultimeterFunctionMode.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+            .Item(VI.Tsp2.MultimeterFunctionMode.ResistanceTwoWire) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(VI.Tsp2.MultimeterFunctionMode.ResistanceFourWire) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(VI.Tsp2.MultimeterFunctionMode.Continuity) = Arebis.StandardUnits.ElectricUnits.Ohm
+            .Item(VI.Tsp2.MultimeterFunctionMode.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.Tsp2.MultimeterFunctionMode.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.Tsp2.MultimeterFunctionMode.Capacitance) = Arebis.StandardUnits.ElectricUnits.Farad
+            .Item(VI.Tsp2.MultimeterFunctionMode.Diode) = Arebis.StandardUnits.ElectricUnits.Volt
+            .Item(VI.Tsp2.MultimeterFunctionMode.Frequency) = Arebis.StandardUnits.FrequencyUnits.Hertz
+            .Item(VI.Tsp2.MultimeterFunctionMode.Period) = Arebis.StandardUnits.TimeUnits.Second
+            .Item(VI.Tsp2.MultimeterFunctionMode.Ratio) = Arebis.StandardUnits.UnitlessUnits.Ratio
+            .Item(VI.Tsp2.MultimeterFunctionMode.Temperature) = Arebis.StandardUnits.TemperatureUnits.DegreeCelsius
         End With
+        Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.FunctionModeUnits))
     End Sub
 
 #End Region

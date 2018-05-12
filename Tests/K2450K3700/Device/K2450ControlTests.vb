@@ -1,5 +1,10 @@
-﻿Namespace K3700.Tests
-    ''' <summary> K3700 Resource Control unit tests. </summary>
+﻿Imports System.Data.Common
+Imports System.Text
+Imports Microsoft.VisualStudio.TestTools.UnitTesting
+Imports isr.Core.Pith.StopwatchExtensions
+Namespace K2450K3700.Tests
+
+    ''' <summary> K2450 Resource Control unit tests. </summary>
     ''' <license>
     ''' (c) 2017 Integrated Scientific Resources, Inc. All rights reserved.<para>
     ''' Licensed under The MIT License.</para><para>
@@ -11,7 +16,7 @@
     ''' </license>
     ''' <history date="10/10/2017" by="David" revision=""> Created. </history>
     <TestClass()>
-    Public Class ControlTests
+    Public Class K2450ControlTests
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -43,7 +48,7 @@
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.DeviceTestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450K3700.Tests.K2450TestInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -64,23 +69,23 @@
 
         <TestMethod(), TestCategory("VI")>
         Public Sub AssignDeviceTest()
-            Using control As VI.Tsp.K3700.K3700Control = New VI.Tsp.K3700.K3700Control
-                Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
+            Using control As VI.Tsp2.K2450.K2450Control = New VI.Tsp2.K2450.K2450Control
+                Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                     device.AddListener(TestInfo.TraceMessagesQueueListener)
                     control.AssignDevice(device, False)
-                    Manager.OpenCloseSession(1, control)
+                    K2450Manager.OpenCloseSession(1, control)
                 End Using
             End Using
         End Sub
 
         <TestMethod(), TestCategory("VI")>
         Public Sub AssignOpenDeviceTest()
-            Using control As VI.Tsp.K3700.K3700Control = New VI.Tsp.K3700.K3700Control()
-                Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
+            Using control As VI.Tsp2.K2450.K2450Control = New VI.Tsp2.K2450.K2450Control
+                Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                     device.AddListener(TestInfo.TraceMessagesQueueListener)
-                    Manager.OpenSession(device)
+                    K2450Manager.OpenSession(device)
                     control.AssignDevice(device, False)
-                    Manager.OpenCloseSession(1, control)
+                    K2450Manager.OpenCloseSession(1, control)
                 End Using
             End Using
         End Sub

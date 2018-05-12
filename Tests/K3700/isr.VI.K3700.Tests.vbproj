@@ -102,11 +102,11 @@
     </Compile>
     <Compile Include="BridgeMeter\BridgeMeterTests.vb" />
     <Compile Include="BridgeMeter\BridgeMeterTests_Info.vb" />
-    <Compile Include="Device\Manager.vb" />
-    <Compile Include="Device\ControlTests.vb" />
-    <Compile Include="Device\DeviceTests.vb" />
-    <Compile Include="Device\DeviceTests_Info.vb" />
-    <Compile Include="Device\ResourceControlTests.vb" />
+    <Compile Include="Device\K3700Manager.vb" />
+    <Compile Include="Device\K3700ControlTests.vb" />
+    <Compile Include="Device\K3700Tests.vb" />
+    <Compile Include="Device\K3700Tests_Info.vb" />
+    <Compile Include="Device\K3700ResourceControlTests.vb" />
     <Compile Include="Gage\GageBoardTests.vb" />
     <Compile Include="Gage\GageBoardTests_Info.vb" />
     <Compile Include="Resistance\K3730Tests.vb" />

@@ -14,7 +14,7 @@
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
      Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Friend Class DeviceTestInfo
+    Friend Class K3700TestInfo
         Inherits ApplicationSettingsBase
 
 #Region " SINGLETON "
@@ -26,8 +26,8 @@
         ''' <summary> Opens the settings editor. </summary>
         Public Shared Sub OpenSettingsEditor()
             Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
-                f.Text = $"{GetType(DeviceTestInfo)} Editor"
-                f.ShowDialog(DeviceTestInfo.Get)
+                f.Text = $"{GetType(K3700TestInfo)} Editor"
+                f.ShowDialog(K3700TestInfo.Get)
             End Using
         End Sub
 
@@ -38,16 +38,16 @@
 
         ''' <summary> Gets the instance. </summary>
         ''' <value> The instance. </value>
-        Private Shared Property _Instance As DeviceTestInfo
+        Private Shared Property _Instance As K3700TestInfo
 
         ''' <summary> Instantiates the class. </summary>
         ''' <remarks> Use this property to instantiate a single instance of this class. This class uses
         ''' lazy instantiation, meaning the instance isn't created until the first time it's retrieved. </remarks>
         ''' <returns> A new or existing instance of the class. </returns>
-        Public Shared Function [Get]() As DeviceTestInfo
+        Public Shared Function [Get]() As K3700TestInfo
             If _Instance Is Nothing Then
                 SyncLock _SyncLocker
-                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New DeviceTestInfo()), DeviceTestInfo)
+                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K3700TestInfo()), K3700TestInfo)
                 End SyncLock
             End If
             Return _Instance

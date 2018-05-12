@@ -45,28 +45,32 @@ Public MustInherit Class MultimeterSubsystemBase
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
         Me.FunctionModeRanges.Clear()
-        For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+        For Each fmode As VI.Tsp.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp.MultimeterFunctionMode))
             Me.FunctionModeRanges.Add(fmode, Core.Pith.RangeR.Full)
         Next
+        Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.FunctionModeRanges))
         Me.OpenDetectorKnownStates.Clear()
-        For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+        For Each fmode As VI.Tsp.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp.MultimeterFunctionMode))
             Me.OpenDetectorKnownStates.Add(fmode, False)
         Next
+        Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.OpenDetectorKnownStates))
         Me.FunctionModeDecimalPlaces.Clear()
-        For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+        For Each fmode As VI.Tsp.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp.MultimeterFunctionMode))
             Me.FunctionModeDecimalPlaces.Add(fmode, Me.DefaultFunctionModeDecimalPlaces)
         Next
+        Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.FunctionModeDecimalPlaces))
         Me.FunctionModeUnits.Clear()
-        For Each fmode As MultimeterFunctionMode In [Enum].GetValues(GetType(MultimeterFunctionMode))
+        For Each fmode As VI.Tsp.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp.MultimeterFunctionMode))
             Me.FunctionModeUnits.Add(fmode, Arebis.StandardUnits.UnitlessUnits.Ratio)
         Next
-        Me.FunctionModeUnits(MultimeterFunctionMode.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
-        Me.FunctionModeUnits(MultimeterFunctionMode.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
-        Me.FunctionModeUnits(MultimeterFunctionMode.ResistanceCommonWire) = Arebis.StandardUnits.ElectricUnits.Ohm
-        Me.FunctionModeUnits(MultimeterFunctionMode.ResistanceTwoWire) = Arebis.StandardUnits.ElectricUnits.Ohm
-        Me.FunctionModeUnits(MultimeterFunctionMode.ResistanceFourWire) = Arebis.StandardUnits.ElectricUnits.Ohm
-        Me.FunctionModeUnits(MultimeterFunctionMode.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
-        Me.FunctionModeUnits(MultimeterFunctionMode.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.FunctionModeUnits(VI.Tsp.MultimeterFunctionMode.CurrentAC) = Arebis.StandardUnits.ElectricUnits.Ampere
+        Me.FunctionModeUnits(VI.Tsp.MultimeterFunctionMode.CurrentDC) = Arebis.StandardUnits.ElectricUnits.Ampere
+        Me.FunctionModeUnits(VI.Tsp.MultimeterFunctionMode.ResistanceCommonWire) = Arebis.StandardUnits.ElectricUnits.Ohm
+        Me.FunctionModeUnits(VI.Tsp.MultimeterFunctionMode.ResistanceTwoWire) = Arebis.StandardUnits.ElectricUnits.Ohm
+        Me.FunctionModeUnits(VI.Tsp.MultimeterFunctionMode.ResistanceFourWire) = Arebis.StandardUnits.ElectricUnits.Ohm
+        Me.FunctionModeUnits(VI.Tsp.MultimeterFunctionMode.VoltageAC) = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.FunctionModeUnits(VI.Tsp.MultimeterFunctionMode.VoltageDC) = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.FunctionModeUnits))
     End Sub
 
 #End Region

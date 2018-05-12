@@ -1420,8 +1420,7 @@ Public MustInherit Class StatusSubsystemBase
     ''' <returns> <c>null</c> if value is not known; otherwise <see cref="VI.Pith.ServiceRequests">Service
     ''' Requests</see>. </returns>
     Public Function ReadServiceRequestStatus() As VI.Pith.ServiceRequests
-        Me.Session.ReadServiceRequestStatus()
-        Return Me.ServiceRequestStatus
+        Return Me.Session.ReadServiceRequestStatus()
     End Function
 
 #End Region
