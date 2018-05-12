@@ -102,7 +102,7 @@
     </Compile>
     <Compile Include="BridgeMeter\BridgeMeterTests.vb" />
     <Compile Include="BridgeMeter\BridgeMeterTests_Info.vb" />
-    <Compile Include="Device\CommonFunctions.vb" />
+    <Compile Include="Device\Manager.vb" />
     <Compile Include="Device\ControlTests.vb" />
     <Compile Include="Device\DeviceTests.vb" />
     <Compile Include="Device\DeviceTests_Info.vb" />

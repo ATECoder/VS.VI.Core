@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{7D610C62-995B-46ED-AA8A-C5085C246C31}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>isr.VI.Tsp2.K2450.Tests</RootNamespace>
+    <RootNamespace>isr.VI.Tsp2</RootNamespace>
     <AssemblyName>isr.VI.K2450.Tests</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
@@ -88,6 +88,9 @@
     <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Bare\ShareApplicationSettingsBase.vb">
+      <Link>My\ShareApplicationSettingsBase.vb</Link>
+    </Compile>
     <Compile Include="..\..\..\..\Share\Bare\ShareAppSettingsReader.vb">
       <Link>My\ShareAppSettingsReader.vb</Link>
     </Compile>
@@ -97,19 +100,19 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="Common\CommonFunctions.vb" />
-    <Compile Include="Common\CommonFunctions_Info.vb" />
     <Compile Include="Device\DeviceTests.vb" />
     <Compile Include="Device\ControlTests.vb" />
+    <Compile Include="Device\DeviceTests_Info.vb" />
+    <Compile Include="Device\Manager.vb" />
     <Compile Include="Device\ResourceControlTests.vb" />
+    <Compile Include="Measure\ResistanceTests_Info.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="Measure\MeasureTests.vb" />
+    <Compile Include="Measure\ResistanceTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="Measure\MeasureTests_Info.vb" />
     <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
   </ItemGroup>
   <ItemGroup>
