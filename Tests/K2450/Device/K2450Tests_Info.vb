@@ -19,6 +19,9 @@
 
 #Region " SINGLETON "
 
+        ''' <summary>
+        ''' Constructor that prevents a default instance of this class from being created.
+        ''' </summary>
         Private Sub New()
             MyBase.New
         End Sub
@@ -228,6 +231,37 @@
 
 #End Region
 
+#Region " DEVICE ERRORS "
+
+        ''' <summary> Gets the erroneous command. </summary>
+        ''' <value> The erroneous command. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property ErroneousCommand As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+        ''' <summary> Gets the error available milliseconds delay. </summary>
+        ''' <value> The error available milliseconds delay. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property ErrorAvailableMillisecondsDelay As Integer
+            Get
+                Return Me.AppSettingInt32
+            End Get
+        End Property
+
+        ''' <summary> Gets a message describing the expected error. </summary>
+        ''' <value> A message describing the expected error. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property ExpectedErrorMessage As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
+#End Region
+
 #Region " SOURCE MEASURE UNIT INFORMATION "
 
         ''' <summary> Gets the maximum output power of the instrument. </summary>
@@ -295,7 +329,6 @@
                 Return Me.AppSettingBoolean
             End Get
         End Property
-
 
 #End Region
 

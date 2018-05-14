@@ -35,7 +35,6 @@ Public MustInherit Class SenseSubsystemBase
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
-        ' TO_DO: the readings are initialized when the format system is reset.
         Me.Readings = New Readings
         With Me.FunctionModeDecimalPlaces
             .Clear()

@@ -130,14 +130,16 @@ Namespace K2450K3700.Tests
 
         ''' <summary> Check reading device errors. </summary>
         ''' <param name="device"> The device. </param>
-        Public Shared Sub CheckReadingDeviceErrors(ByVal device As VI.DeviceBase, ByVal postErrorPause As TimeSpan)
+        Public Shared Sub CheckReadingDeviceErrors(ByVal device As VI.DeviceBase)
             If device Is Nothing Then Throw New ArgumentNullException(NameOf(device))
             ' send an erroneous command
-            Dim erroneousCommand As String = "*CLL"
+            Dim erroneousCommand As String = K2450TestInfo.Get.ErroneousCommand
             device.StatusSubsystemBase.Write(erroneousCommand)
 
             ' a wait is necessary for the device to register the errors.
-            Stopwatch.StartNew.Wait(postErrorPause)
+            If K2450TestInfo.Get.ErrorAvailableMillisecondsDelay > 0 Then
+                Stopwatch.StartNew.Wait(TimeSpan.FromMilliseconds(K2450TestInfo.Get.ErrorAvailableMillisecondsDelay))
+            End If
 
             ' read the service request status; this should generate an error available 
             Dim value As Integer = device.StatusSubsystemBase.ReadServiceRequestStatus()
@@ -154,11 +156,12 @@ Namespace K2450K3700.Tests
             actualServiceRequest = device.StatusSubsystemBase.ServiceRequestStatus
             Assert.IsTrue((actualServiceRequest And expectedSeriveRequest) = expectedSeriveRequest, $"Error bits {expectedSeriveRequest:X} are expected in {NameOf(StatusSubsystemBase.ServiceRequestStatus)}: {actualServiceRequest:X}")
 
-
             Dim actualErrorAvailable As Boolean = device.StatusSubsystemBase.ErrorAvailable
             Assert.IsTrue(actualErrorAvailable, $"Error is expected")
+
             Dim actualLastError As String = device.StatusSubsystemBase.LastDeviceError.ToString
-            Dim ExpectedLastError As String = "-285,TSP Syntax error at line 1: unexpected symbol near `*',level=1"
+            '  "-285,TSP Syntax error at line 1: unexpected symbol near `*',level=1"
+            Dim ExpectedLastError As String = K2450TestInfo.Get.ExpectedErrorMessage
             Assert.AreEqual(ExpectedLastError, actualLastError, True, $"Expected error for erroneous command: {erroneousCommand}")
         End Sub
 

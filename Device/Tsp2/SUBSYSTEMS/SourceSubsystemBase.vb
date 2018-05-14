@@ -266,9 +266,8 @@ Public Class SourceSubsystemBase
     ''' <value> The limit query command. </value>
     Protected Overrides ReadOnly Property ModalityLimitQueryCommandFormat As String
         Get
-            Const printFormat As Decimal = 9.6D
-            Dim tspCommand As String = String.Format(LimitQueryCommandFormat, Me.LimitFunctionMode)
-            Return String.Format(LuaSyntax.PrintCommandStringFormat, printFormat, tspCommand)
+            Dim tspCommand As String = String.Format(Me.LimitQueryCommandFormat, Me.LimitFunctionMode)
+            Return String.Format(LuaSyntax.PrintCommandStringNumberFormat, "9.6", tspCommand)
         End Get
     End Property
 
@@ -301,7 +300,6 @@ Public Class SourceSubsystemBase
     End Property
 
 #End Region
-
 
 #End Region
 

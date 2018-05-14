@@ -196,19 +196,23 @@ Namespace K2450.Tests
 
             expectedBoolean = K2450ResistanceTestInfo.Get.RemoteSenseSelected
             actualBoolean = device.MeasureSubsystem.ApplyRemoteSenseSelected(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.RemoteSenseSelected)} is {actualBoolean }; expected {expectedBoolean }")
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.RemoteSenseSelected)} is {actualBoolean}; expected {expectedBoolean}")
 
-            expectedBoolean = True
-            actualBoolean = device.SourceSubsystem.ApplyOutputEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.OutputEnabled)} is {actualBoolean }; expected {expectedBoolean }")
+            ' set the reading to read resistance
+            device.MeasureSubsystem.Readings.Initialize(ReadingTypes.Resistance)
+            device.MeasureSubsystem.Readings.Reading.Unit = device.MeasureSubsystem.FunctionUnit
 
-            Dim resistance As Double = device.MeasureSubsystem.Measure.GetValueOrDefault(-1)
-            Assert.AreEqual(K2450ResistanceTestInfo.Get.ExpectedResistance, resistance, K2450ResistanceTestInfo.Get.ExpectedResistanceEpsilon,
-                  $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.MeasuredValue)} is {resistance}; expected {K2450ResistanceTestInfo.Get.ExpectedResistance} within {K2450ResistanceTestInfo.Get.ExpectedResistanceEpsilon}")
+            ' turn on the output
+            K2450Manager.ToggleOutput(device, True)
 
-            expectedBoolean = False
-            actualBoolean = device.SourceSubsystem.ApplyOutputEnabled(expectedBoolean).GetValueOrDefault(Not expectedBoolean)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.OutputEnabled)} is {actualBoolean }; expected {expectedBoolean }")
+            Dim measuredResistance As Double = device.MeasureSubsystem.MeasureValue.GetValueOrDefault(-1)
+            Dim expectedResistance As Double = K2450ResistanceTestInfo.Get.ExpectedResistance
+            Dim epsilon As Double = expectedResistance * K2450ResistanceTestInfo.Get.ResistanceTolerance
+            Assert.AreEqual(expectedResistance, measuredResistance, epsilon,
+                            $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.MeasuredValue)} is {measuredResistance}; expected {expectedResistance} within {epsilon}")
+
+            ' turn off the output
+            K2450Manager.ToggleOutput(device, False)
 
 #If False Then
         SIMV(Ohms)
@@ -236,7 +240,13 @@ smu.source.output=smu.OFF
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 K2450.Tests.K2450Manager.OpenSession(device)
-                K2450ResistanceTests.SourceCurrentMeasureResistance(device)
+                Try
+                    K2450ResistanceTests.SourceCurrentMeasureResistance(device)
+                Catch
+                    Throw
+                Finally
+                    K2450.Tests.K2450Manager.ToggleOutput(device, False)
+                End Try
                 K2450.Tests.K2450Manager.CloseSession(device)
             End Using
         End Sub

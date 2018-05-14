@@ -108,6 +108,12 @@ Public MustInherit Class MeasureSubsystemBase
         Return Me.Measure(Me.MeasureQueryCommand)
     End Function
 
+    ''' <summary> Query a measured value from the instrument. Does not use <see cref="MeasureSubsystemBase.ReadingAmounts"/>. </summary>
+    ''' <returns> The reading or none if unknown. </returns>
+    Public Overridable Function MeasureValue() As Double?
+        Return Me.MeasureValue(Me.MeasureQueryCommand)
+    End Function
+
 #End Region
 
 #Region " APERTURE "

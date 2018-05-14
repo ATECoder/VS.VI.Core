@@ -131,6 +131,10 @@
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
+      <Project>{d2c9a599-79dd-4cfa-8614-be3c444eb347}</Project>
+      <Name>Arebis.TypedUnits.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Device\Device.Scpi\isr.VI.Device.Scpi.Library.vbproj">
       <Project>{f6e68ae1-a1b8-43ce-bf8b-d1b8df65c366}</Project>
       <Name>isr.VI.Device.Scpi.Library</Name>

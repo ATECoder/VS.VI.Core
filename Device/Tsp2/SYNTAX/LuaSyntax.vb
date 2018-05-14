@@ -94,6 +94,7 @@
         Public Const PrintCommandStringFormat As String = "_G.print(string.format('{0}',{1}))"
 
         ''' <summary> The print command string number format. </summary>
+        ''' <remarks> _G.print(string.format('%9.6f',smu.source.ilimit.level))\n </remarks>
         Public Const PrintCommandStringNumberFormat As String = "_G.print(string.format('%{0}f',{1}))"
 
         ''' <summary> The print command string integer format. </summary>

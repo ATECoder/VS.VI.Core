@@ -1,4 +1,5 @@
-﻿Namespace K3700.Tests
+﻿Imports isr.Core.Pith.StopwatchExtensions
+Namespace K3700.Tests
 
     ''' <summary> K3700 Device unit tests. </summary>
     ''' <license>

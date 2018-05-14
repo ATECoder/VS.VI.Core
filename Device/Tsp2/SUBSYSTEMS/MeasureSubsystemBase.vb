@@ -61,7 +61,6 @@ Public MustInherit Class MeasureSubsystemBase
         Me.SafePostPropertyChanged(NameOf(MeasureSubsystemBase.FunctionModeUnits))
     End Sub
 
-
 #End Region
 
 #Region " AUTO RANGE STATE "
@@ -225,7 +224,6 @@ Public MustInherit Class MeasureSubsystemBase
     ''' <summary> Gets or sets the function mode command format. </summary>
     ''' <value> The function mode command format. </value>
     Protected Overridable ReadOnly Property FunctionModeCommandFormat As String
-
 
     ''' <summary> Writes the Measure Function Mode without reading back the value from the device. </summary>
     ''' <param name="value"> The Function Mode. </param>

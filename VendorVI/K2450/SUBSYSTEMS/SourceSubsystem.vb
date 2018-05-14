@@ -110,7 +110,7 @@ Public Class SourceSubsystem
 
     ''' <summary> Gets the level query command. </summary>
     ''' <value> The level query command. </value>
-    Protected Overrides ReadOnly Property LevelQueryCommand As String = "_G.smu.source.level"
+    Protected Overrides ReadOnly Property LevelQueryCommand As String = "_G.print(_G.smu.source.level)"
 
     ''' <summary> Gets the level command format. </summary>
     ''' <value> The level command format. </value>

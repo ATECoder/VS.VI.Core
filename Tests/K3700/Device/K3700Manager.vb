@@ -132,8 +132,14 @@
         Public Shared Sub CheckReadingDeviceErrors(ByVal device As VI.DeviceBase)
             If device Is Nothing Then Throw New ArgumentNullException(NameOf(device))
             ' send an erroneous command
-            Dim erroneousCommand As String = "*CLL"
+            Dim erroneousCommand As String = K3700TestInfo.Get.ErroneousCommand
             device.StatusSubsystemBase.Write(erroneousCommand)
+
+            ' allow the device time to register the error.
+            If K3700TestInfo.Get.ErrorAvailableMillisecondsDelay > 0 Then
+                Stopwatch.StartNew.Wait(TimeSpan.FromMilliseconds(K2450TestInfo.Get.ErrorAvailableMillisecondsDelay))
+            End If
+
             ' read the service request status; this should generate an error available 
             device.StatusSubsystemBase.ReadServiceRequestStatus()
             ' check the error bits

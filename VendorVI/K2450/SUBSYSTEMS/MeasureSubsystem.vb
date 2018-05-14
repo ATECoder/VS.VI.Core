@@ -29,16 +29,15 @@ Public Class MeasureSubsystem
     ''' </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me.Readings?.Reset()
+        Me.Readings.Reset()
+        Me.SafePostPropertyChanged(NameOf(MeasureSubsystem.Readings))
     End Sub
 
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
     ''' <remarks> Use this method to customize the reset. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        ' TO_DO: the readings are initialized when the format system is reset.
-        Me.Readings = New Readings
-        MyBase.InitKnownState()
+        Me.Readings.Initialize(ReadingTypes.Current)
         Me.ApertureRange = New isr.Core.Pith.RangeR(0.000166667, 0.166667)
         Me.FilterCountRange = New isr.Core.Pith.RangeI(1, 100)
         Me.FilterWindowRange = New isr.Core.Pith.RangeR(0, 0.1)
@@ -48,6 +47,7 @@ Public Class MeasureSubsystem
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
+        Me.Readings = New Readings
         Me.PowerLineCycles = 1
         Me.AutoRangeState = OnOffState.On
         Me.AutoZeroEnabled = True

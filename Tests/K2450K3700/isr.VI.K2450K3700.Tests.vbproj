@@ -100,11 +100,11 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="Device\K2450Tests.vb" />
-    <Compile Include="Device\K2450ControlTests.vb" />
-    <Compile Include="Device\K2450Tests_Info.vb" />
-    <Compile Include="Device\K2450Manager.vb" />
-    <Compile Include="Device\K2450ResourceControlTests.vb" />
+    <Compile Include="K2450\K2450Tests.vb" />
+    <Compile Include="K2450\K2450ControlTests.vb" />
+    <Compile Include="K2450\K2450Tests_Info.vb" />
+    <Compile Include="K2450\K2450Manager.vb" />
+    <Compile Include="K2450\K2450ResourceControlTests.vb" />
     <Compile Include="Measure\ResistanceTests_Info.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>

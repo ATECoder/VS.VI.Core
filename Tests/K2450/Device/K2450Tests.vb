@@ -166,7 +166,7 @@ Namespace K2450.Tests
                 K2450Manager.CheckMeasureSubsystemInfo(device.MeasureSubsystem)
                 K2450Manager.CheckSourceSubsystemInfo(device.SourceSubsystem)
                 K2450Manager.ClearSessionCheckDeviceErrors(device)
-                K2450Manager.CheckReadingDeviceErrors(device, TimeSpan.FromMilliseconds(300))
+                K2450Manager.CheckReadingDeviceErrors(device)
                 K2450Manager.CloseSession(device)
             End Using
         End Sub

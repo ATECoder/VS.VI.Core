@@ -126,20 +126,6 @@ Namespace K2450.Tests
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ExpectedResistance As Double
-            Get
-                Return Me.AppSettingDouble
-            End Get
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ExpectedResistanceEpsilon As Double
-            Get
-                Return Me.AppSettingDouble
-            End Get
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
         Public ReadOnly Property FrontTerminalsSelected As Boolean
             Get
                 Return Me.AppSettingBoolean
@@ -162,6 +148,24 @@ Namespace K2450.Tests
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
         Public ReadOnly Property SourceLevel As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+#End Region
+
+#Region " RESISTANCE INFORMATION "
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property ExpectedResistance As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property ResistanceTolerance As Double
             Get
                 Return Me.AppSettingDouble
             End Get
