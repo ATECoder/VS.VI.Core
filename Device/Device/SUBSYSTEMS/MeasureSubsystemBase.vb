@@ -21,7 +21,7 @@ Public MustInherit Class MeasureSubsystemBase
         MyBase.New(statusSubsystem)
         Me.DefaultMeasurementUnit = Arebis.StandardUnits.ElectricUnits.Volt
         Me.DefaultFunctionUnit = Arebis.StandardUnits.ElectricUnits.Volt
-        Me.DefaultFunctionRange = isr.Core.Pith.RangeR.Full
+        Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
         Me.DefaultFunctionModeDecimalPlaces = 3
     End Sub
 
@@ -55,10 +55,10 @@ Public MustInherit Class MeasureSubsystemBase
         Me._FunctionModeDecimalPlaces = New IntegerDictionary
         Me._FunctionModeUnits = New UnitDictionary
         Me._OpenDetectorKnownStates = New BooleanDictionary
-        Me.ApertureRange = Core.Pith.RangeR.FullNonnegative
-        Me.FilterCountRange = Core.Pith.RangeI.FullNonnegative
-        Me.FilterWindowRange = Core.Pith.RangeR.FullNonnegative
-        Me.PowerLineCyclesRange = Core.Pith.RangeR.FullNonnegative
+        Me.ApertureRange = DeviceBase.DefaultApertureRange
+        Me.FilterCountRange = DeviceBase.DefaultFilterCountRange
+        Me.FilterWindowRange = DeviceBase.DefaultFilterWindowRange
+        Me.PowerLineCyclesRange = DeviceBase.DefaultPowerLineCyclesRange
         Me.FunctionUnit = Me.DefaultFunctionUnit
         Me.FunctionRange = Me.DefaultFunctionRange
         Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces

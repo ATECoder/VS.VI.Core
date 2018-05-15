@@ -1,6 +1,7 @@
 Imports System.ComponentModel
 Imports System.Windows.Forms
 Imports isr.Core.Controls.ComboBoxExtensions
+Imports isr.Core.Controls.NumericUpDownExtensions
 Imports isr.Core.Pith
 Imports isr.Core.Pith.EnumExtensions
 Imports isr.Core.Pith.ErrorProviderExtensions
@@ -288,10 +289,7 @@ Public Class K3700Control
                     Me._SenseFunctionComboBox.SelectedItem = subsystem.FunctionMode.GetValueOrDefault(VI.Tsp.MultimeterFunctionMode.VoltageDC).ValueDescriptionPair()
                 End If
             Case NameOf(K3700.MultimeterSubsystem.FunctionRange)
-                With Me._SenseRangeNumeric
-                    .Maximum = CDec(subsystem.FunctionRange.Max)
-                    .Minimum = CDec(subsystem.FunctionRange.Min)
-                End With
+                Me._SenseRangeNumeric.RangeSetter(subsystem.FunctionRange.Min, subsystem.FunctionRange.Max)
             Case NameOf(K3700.MultimeterSubsystem.FunctionRangeDecimalPlaces)
                 Me._SenseRangeNumeric.DecimalPlaces = subsystem.DefaultFunctionModeDecimalPlaces
             Case NameOf(K3700.MultimeterSubsystem.FunctionUnit)
@@ -1078,7 +1076,7 @@ Public Class K3700Control
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ClearInterfaceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearInterfaceMenuItem.Click
         Dim activity As String = "clearing interface"
-        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
@@ -1104,7 +1102,7 @@ Public Class K3700Control
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ClearDeviceMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearDeviceMenuItem.Click
         Dim activity As String = "clearing device active state (CDC)"
-        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
@@ -1131,7 +1129,7 @@ Public Class K3700Control
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ClearExecutionStateMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ClearExecutionStateMenuItem.Click
         Dim activity As String = "clearing the execution state"
-        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             If menuItem IsNot Nothing Then
                 Me.Cursor = Cursors.WaitCursor
@@ -1157,7 +1155,7 @@ Public Class K3700Control
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _ResetKnownStateMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _ResetKnownStateMenuItem.Click
         Dim activity As String = "resetting known state"
-        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
@@ -1183,7 +1181,7 @@ Public Class K3700Control
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub _InitKnownStateMenuItem_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InitKnownStateMenuItem.Click
         Dim activity As String = "resetting known state"
-        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
@@ -1279,7 +1277,7 @@ Public Class K3700Control
     Private Sub _ReadStatusByteMenuItem_Click(ByVal sender As Object, e As System.EventArgs) Handles _ReadStatusByteMenuItem.Click
         If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "reading status byte"
-        Dim menuItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
+        Dim menuItem As ToolStripMenuItem = TryCast(sender, ToolStripMenuItem)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()
@@ -1303,7 +1301,7 @@ Public Class K3700Control
     Private Sub _SessionNotificationLevelComboBox_SelectedIndexChanged(sender As Object, e As EventArgs) Handles _SessionNotificationLevelComboBox.SelectedIndexChanged
         If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = "selecting session notification level"
-        Dim combo As Core.Controls.ToolStripComboBox = CType(sender, Core.Controls.ToolStripComboBox)
+        Dim combo As Core.Controls.ToolStripComboBox = TryCast(sender, Core.Controls.ToolStripComboBox)
         Try
             Me.Cursor = Cursors.WaitCursor
             Me._InfoProvider.Clear()

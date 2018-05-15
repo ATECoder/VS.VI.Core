@@ -173,5 +173,98 @@ Namespace K2450.Tests
 
 #End Region
 
+#Region " MEASURE SUBSYSTEM TEST "
+
+        ''' <summary> Check measure subsystem information. </summary>
+        ''' <param name="device"> The device. </param>
+        Private Shared Sub ReadMeasureSubsystemInfo(ByVal device As VI.Tsp2.K2450.Device)
+
+            Dim expectedPowerLineCycles As Double = K2450TestInfo.Get.InitialPowerLineCycles
+            Dim actualPowerLineCycles As Double = device.MeasureSubsystem.QueryPowerLineCycles.GetValueOrDefault(0)
+            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K2450TestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
+                            $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
+
+            Dim expectedBoolean As Boolean = K2450TestInfo.Get.InitialAutoRangeEnabled
+            Dim actualBoolean As Boolean = device.MeasureSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(False)
+            Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.AutoRangeEnabled)} is {actualBoolean }; expected {True}")
+
+            expectedBoolean = K2450TestInfo.Get.InitialAutoZeroEnabled
+            actualBoolean = device.MeasureSubsystem.QueryAutoZeroEnabled.GetValueOrDefault(False)
+            Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.AutoZeroEnabled)} is {actualBoolean }; expected {True}")
+
+            expectedBoolean = K2450TestInfo.Get.InitialFrontTerminalsSelected
+            actualBoolean = device.MeasureSubsystem.QueryFrontTerminalsSelected.GetValueOrDefault(False)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.FrontTerminalsSelected)} is {actualBoolean }; expected {expectedBoolean }")
+
+            expectedBoolean = K2450TestInfo.Get.InitialRemoteSenseSelected
+            actualBoolean = device.MeasureSubsystem.QueryRemoteSenseSelected.GetValueOrDefault(False)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.RemoteSenseSelected)} is {actualBoolean }; expected {expectedBoolean }")
+
+            Dim senseFn As Tsp2.MeasureFunctionMode = device.MeasureSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.MeasureFunctionMode.Resistance)
+            Dim expectedFunctionMode As Tsp2.MeasureFunctionMode = K2450TestInfo.Get.InitialMeasureFunctionMode
+            Assert.AreEqual(expectedFunctionMode, senseFn, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.FunctionMode)} is {senseFn} ; expected {expectedFunctionMode}")
+
+        End Sub
+
+        <TestMethod(), TestCategory("VI")>
+        Public Sub ReadMeasureSubsystemTest()
+            Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
+                device.AddListener(TestInfo.TraceMessagesQueueListener)
+                K2450.Tests.K2450Manager.OpenSession(device)
+                K2450Tests.ReadMeasureSubsystemInfo(device)
+                K2450.Tests.K2450Manager.CloseSession(device)
+            End Using
+        End Sub
+
+#End Region
+
+#Region " SOURCE SUBSYSTEM TEST "
+
+        ''' <summary> Check Source subsystem information. </summary>
+        ''' <param name="device"> The device. </param>
+        Private Shared Sub ReadSourceSubsystemInfo(ByVal device As VI.Tsp2.K2450.Device)
+
+            Dim expectedBoolean As Boolean = K2450TestInfo.Get.InitialAutoRangeEnabled
+            Dim actualBoolean As Boolean = device.SourceSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(Not expectedBoolean)
+            Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.AutoRangeEnabled)} is {actualBoolean }; expected {True}")
+
+            expectedBoolean = K2450TestInfo.Get.InitialAutoDelayEnabled
+            actualBoolean = device.SourceSubsystem.QueryAutoDelayEnabled.GetValueOrDefault(Not expectedBoolean)
+            Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.AutoDelayEnabled)} is {actualBoolean }; expected {True}")
+
+            expectedBoolean = False
+            actualBoolean = device.SourceSubsystem.QueryOutputEnabled.GetValueOrDefault(Not expectedBoolean)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.OutputEnabled)} is {actualBoolean}; expected {expectedBoolean}")
+
+            Dim functionMode As Tsp2.SourceFunctionMode = device.SourceSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.SourceFunctionMode.None)
+            Dim expectedFunctionMode As Tsp2.SourceFunctionMode = K2450TestInfo.Get.InitialSourceFunctionMode
+            Assert.AreEqual(expectedFunctionMode, functionMode, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.FunctionMode)} is {functionMode} ; expected {expectedFunctionMode}")
+
+            expectedBoolean = False
+            actualBoolean = device.SourceSubsystem.QueryLimitTripped.GetValueOrDefault(Not expectedBoolean)
+            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.OutputEnabled)} is {actualBoolean}; expected {expectedBoolean}")
+
+            Dim expectedDouble As Double = K2450TestInfo.Get.InitialSourceLevel
+            Dim actualDouble As Double = device.SourceSubsystem.QueryLevel.GetValueOrDefault(-1)
+            Assert.AreEqual(expectedDouble, actualDouble, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.Level)} is {actualDouble}; expected {expectedDouble}")
+
+            expectedDouble = K2450TestInfo.Get.InitialSourceLimit
+            actualDouble = device.SourceSubsystem.QueryLimit.GetValueOrDefault(-1)
+            Assert.AreEqual(expectedDouble, actualDouble, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.Limit)} is {actualDouble}; expected {expectedDouble}")
+
+        End Sub
+
+        <TestMethod(), TestCategory("VI")>
+        Public Sub ReadSourceSubsystemTest()
+            Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
+                device.AddListener(TestInfo.TraceMessagesQueueListener)
+                K2450.Tests.K2450Manager.OpenSession(device)
+                K2450Tests.ReadSourceSubsystemInfo(device)
+                K2450.Tests.K2450Manager.CloseSession(device)
+            End Using
+        End Sub
+
+#End Region
+
     End Class
 End Namespace

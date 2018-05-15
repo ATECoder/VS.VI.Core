@@ -49,7 +49,7 @@ Public Class SourceSubsystemBase
         With Me.FunctionModeRanges
             .Clear()
             For Each fmode As VI.Tsp2.SourceFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.SourceFunctionMode))
-                .Add(fmode, Core.Pith.RangeR.Full)
+                .Add(fmode, New Core.Pith.RangeR(Me.DefaultFunctionRange))
             Next
             .Item(VI.Tsp2.SourceFunctionMode.CurrentDC).SetRange(-1.05, 1.05)
             .Item(VI.Tsp2.SourceFunctionMode.VoltageDC).SetRange(-210, 210)

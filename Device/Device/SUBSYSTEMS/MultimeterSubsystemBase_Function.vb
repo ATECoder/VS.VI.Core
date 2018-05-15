@@ -8,7 +8,7 @@ Partial Public MustInherit Class MultimeterSubsystemBase
 
     ''' <summary> Gets or sets the default function range. </summary>
     ''' <value> The default function range. </value>
-    Public Property DefaultFunctionRange As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
+    Public Property DefaultFunctionRange As isr.Core.Pith.RangeR
 
     ''' <summary> Converts a functionMode to a range. </summary>
     ''' <param name="functionMode"> The function mode. </param>

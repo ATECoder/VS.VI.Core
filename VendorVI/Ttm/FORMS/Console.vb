@@ -1348,7 +1348,7 @@ Public Class Console
             If Me.lastNodeSelected IsNot Nothing Then
                 lastNodeSelected.BackColor = Me._NavigatorTreeView.BackColor
             End If
-            If sender IsNot Nothing AndAlso CType(sender, Control).Enabled AndAlso
+            If sender IsNot Nothing AndAlso TryCast(sender, Control).Enabled AndAlso
                 e IsNot Nothing AndAlso e.Node IsNot Nothing AndAlso e.Node.IsSelected Then
                 Me.lastNodeSelected = e.Node
                 e.Node.BackColor = System.Drawing.SystemColors.Highlight

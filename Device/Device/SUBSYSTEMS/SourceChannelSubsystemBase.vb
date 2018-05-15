@@ -22,7 +22,7 @@ Public MustInherit Class SourceChannelSubsystemBase
     Protected Sub New(ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me.ChannelNumber = channelNumber
-        Me.LevelRange = RangeR.Full
+        Me.LevelRange = DeviceBase.DefaultFullRange
     End Sub
 
 #End Region

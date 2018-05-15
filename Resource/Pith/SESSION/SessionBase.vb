@@ -122,7 +122,6 @@ Public MustInherit Class SessionBase
             }
         End If
         Me.IsDeviceOpen = True
-        Me.SafePostPropertyChanged(NameOf(SessionBase.IsSessionOpen))
         Me.ResourceNameInfo.HandleSessionOpen(resourceName, resourceTitle)
         Me.Timeouts.Push(Me.Timeout)
     End Sub
@@ -344,6 +343,7 @@ Public MustInherit Class SessionBase
         control.DataSource = Nothing
         control.ValueMember = "Key"
         control.DisplayMember = "Value"
+        control.Items.Clear()
         control.Items.Add(New KeyValuePair(Of Core.Pith.NotifySyncLevel, String)(Core.Pith.NotifySyncLevel.None, "None"))
         control.Items.Add(New KeyValuePair(Of Core.Pith.NotifySyncLevel, String)(Core.Pith.NotifySyncLevel.Async, "Asynchronous"))
         control.Items.Add(New KeyValuePair(Of Core.Pith.NotifySyncLevel, String)(Core.Pith.NotifySyncLevel.Sync, "Synchronous"))

@@ -113,6 +113,8 @@
     <Compile Include="My\MySuppressions.vb" />
     <Compile Include="Measure\K2450ResistanceTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="Source\K2450CurrentSourceTests_Info.vb" />
+    <Compile Include="Source\K2450CurrentSourceTests.vb" />
     <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
   </ItemGroup>
   <ItemGroup>
@@ -167,5 +169,6 @@
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

@@ -1,4 +1,5 @@
-﻿Namespace K3700.Tests
+﻿Imports isr.Core.Pith.StopwatchExtensions
+Namespace K3700.Tests
 
     ''' <summary>
     ''' Static class for managing the common functions.
@@ -137,7 +138,7 @@
 
             ' allow the device time to register the error.
             If K3700TestInfo.Get.ErrorAvailableMillisecondsDelay > 0 Then
-                Stopwatch.StartNew.Wait(TimeSpan.FromMilliseconds(K2450TestInfo.Get.ErrorAvailableMillisecondsDelay))
+                Stopwatch.StartNew.Wait(TimeSpan.FromMilliseconds(K3700TestInfo.Get.ErrorAvailableMillisecondsDelay))
             End If
 
             ' read the service request status; this should generate an error available 

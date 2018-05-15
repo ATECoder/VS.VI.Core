@@ -46,7 +46,7 @@ Public MustInherit Class SenseSubsystemBase
         With Me.FunctionModeRanges
             .Clear()
             For Each fmode As VI.SourceMeasure.SenseFunctionModes In [Enum].GetValues(GetType(VI.SourceMeasure.SenseFunctionModes))
-                .Add(fmode, Core.Pith.RangeR.Full)
+                .Add(fmode, New Core.Pith.RangeR(Me.DefaultFunctionRange))
             Next
         End With
         Me.SafePostPropertyChanged(NameOf(VI.SenseSubsystemBase.FunctionModeRanges))
@@ -73,7 +73,6 @@ Public MustInherit Class SenseSubsystemBase
 
 
 #End Region
-
 
 #Region " CONCURRENT SENSE FUNCTION MODE "
 
@@ -127,7 +126,7 @@ Public MustInherit Class SenseSubsystemBase
     ''' <param name="functionMode"> The function mode. </param>
     ''' <returns> FunctionMode as an isr.Core.Pith.RangeR. </returns>
     Public Overrides Function ToRange(ByVal functionMode As Integer) As isr.Core.Pith.RangeR
-        Dim result As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
+        Dim result As isr.Core.Pith.RangeR = New Core.Pith.RangeR(Me.DefaultFunctionRange)
         Select Case functionMode
             Case VI.SourceMeasure.SenseFunctionModes.CurrentDC, VI.SourceMeasure.SenseFunctionModes.Current, VI.SourceMeasure.SenseFunctionModes.CurrentAC
                 result = New Core.Pith.RangeR(0, 10)

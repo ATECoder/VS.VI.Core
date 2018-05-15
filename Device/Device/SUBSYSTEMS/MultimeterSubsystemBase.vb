@@ -23,11 +23,12 @@ Public MustInherit Class MultimeterSubsystemBase
         Me._FunctionModeDecimalPlaces = New IntegerDictionary
         Me._FunctionModeUnits = New UnitDictionary
         Me._OpenDetectorKnownStates = New BooleanDictionary
-        Me.ApertureRange = Core.Pith.RangeR.FullNonnegative
-        Me.FilterCountRange = Core.Pith.RangeI.FullNonnegative
-        Me.FilterWindowRange = Core.Pith.RangeR.FullNonnegative
-        Me.PowerLineCyclesRange = Core.Pith.RangeR.FullNonnegative
+        Me.ApertureRange = DeviceBase.DefaultApertureRange
+        Me.FilterCountRange = DeviceBase.DefaultFilterCountRange
+        Me.FilterWindowRange = DeviceBase.DefaultFilterWindowRange
+        Me.PowerLineCyclesRange = DeviceBase.DefaultPowerLineCyclesRange
         Me.FunctionUnit = Me.DefaultFunctionUnit
+        Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
         Me.FunctionRange = Me.DefaultFunctionRange
         Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
     End Sub

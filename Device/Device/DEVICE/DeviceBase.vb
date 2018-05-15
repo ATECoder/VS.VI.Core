@@ -210,6 +210,59 @@ Public MustInherit Class DeviceBase
 
 #End Region
 
+#Region " SHARED DEFAULTS "
+
+    ''' <summary> Gets a new instance of the default full range bound by the minimum decimal value and the maximum decimal value minus 1E+14. </summary>
+    Public Shared ReadOnly Property DefaultFullRange() As RangeR
+        Get
+            ' round off of the decimal range cause an exception when converting back. 
+            Return New RangeR(Decimal.MinValue, Decimal.MaxValue - 10000000000000.0)
+        End Get
+    End Property
+
+    ''' <summary> Gets the default full nonnegative range bound by maximum decimal value minus 1E+14. </summary>
+    ''' <value> The full nonnegative decimal. </value>
+    Public Shared ReadOnly Property DefaultFunctionRange() As RangeR
+        Get
+            Return New RangeR(0, Decimal.MaxValue - 10000000000000.0)
+        End Get
+    End Property
+
+    ''' <summary> Gets the default aperture range. </summary>
+    ''' <value> The default aperture range. </value>
+    Public Shared ReadOnly Property DefaultApertureRange As RangeR
+        Get
+            Return New RangeR(0.0001, 1)
+        End Get
+    End Property
+
+    ''' <summary> Gets the default filter window range. </summary>
+    ''' <value> The default filter window range. </value>
+    Public Shared ReadOnly Property DefaultFilterWindowRange As RangeR
+        Get
+            Return New RangeR(0.001, 0.1)
+        End Get
+    End Property
+
+    ''' <summary> Gets the default filter count range. </summary>
+    ''' <value> The default filter count range. </value>
+    Public Shared ReadOnly Property DefaultFilterCountRange As RangeI
+        Get
+            Return New RangeI(0, 100)
+        End Get
+    End Property
+
+    ''' <summary> Gets the default power line cycles range. </summary>
+    ''' <value> The default power line cycles range. </value>
+    Public Shared ReadOnly Property DefaultPowerLineCyclesRange As RangeR
+        Get
+            Const lineFrequency As Double = 50
+            Return New RangeR(lineFrequency * DeviceBase.DefaultApertureRange.Min, lineFrequency * DeviceBase.DefaultApertureRange.Max)
+        End Get
+    End Property
+
+#End Region
+
 #Region " RESOURCE NAME INFO "
 
     ''' <summary>

@@ -21,6 +21,7 @@ Public MustInherit Class SourceSubsystemBase
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me.DefaultFunctionUnit = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
         Me.DefaultFunctionModeDecimalPlaces = 3
     End Sub
 
@@ -411,7 +412,7 @@ Public MustInherit Class SourceSubsystemBase
     ''' <param name="value"> The Limit. </param>
     ''' <returns> The Source Limit. </returns>
     Public Overridable Function WriteLimit(ByVal value As Double) As Double?
-        Me.Write(Me.ModalityLimitCommandFormat, value)
+        Me.Write(value, Me.ModalityLimitCommandFormat)
         Me.Limit = value
         Return Me.Limit
     End Function
@@ -557,6 +558,166 @@ Public MustInherit Class SourceSubsystemBase
     Public Function WriteRange(ByVal value As Double) As Double?
         Me.Range = Me.Write(value, Me.RangeCommandFormat)
         Return Me.Range
+    End Function
+
+#End Region
+
+#Region " READ BACK ENABLED "
+
+    Private _LastReadBack As String
+    ''' <summary> Gets or sets the last ReadBack. </summary>
+    ''' <value> The last ReadBack. </value>
+    Public Property LastReadBack As String
+        Get
+            Return Me._LastReadBack
+        End Get
+        Set(value As String)
+            If Not String.Equals(value, Me.LastReadBack, StringComparison.OrdinalIgnoreCase) Then
+                Me._LastReadBack = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ReadBackCaption As String
+
+    ''' <summary> Gets or sets the ReadBack caption. </summary>
+    ''' <value> The ReadBack caption. </value>
+    Public Property ReadBackCaption As String
+        Get
+            Return Me._ReadBackCaption
+        End Get
+        Set(value As String)
+            If Not String.Equals(value, Me.ReadBackCaption, StringComparison.OrdinalIgnoreCase) Then
+                Me._ReadBackCaption = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ReadBackAmount As Arebis.TypedUnits.Amount
+    ''' <summary> Gets or sets the read back amount. </summary>
+    ''' <value> The amount. </value>
+    Public Property ReadBackAmount As Arebis.TypedUnits.Amount
+        Get
+            Return Me._ReadBackAmount
+        End Get
+        Set(value As Arebis.TypedUnits.Amount)
+            Me._ReadBackAmount = value
+            Me.SafePostPropertyChanged()
+            Me.HasReadBackAmount = value IsNot Nothing
+        End Set
+    End Property
+
+    Private _HasReadBackAmount As Boolean
+
+    ''' <summary> Gets or sets the has read back amount. </summary>
+    ''' <value> The has read back amount. </value>
+    Public Property HasReadBackAmount As Boolean
+        Get
+            Return Me._HasReadBackAmount
+        End Get
+        Set(value As Boolean)
+            Me._HasReadBackAmount = value
+            Me.SafePostPropertyChanged()
+        End Set
+    End Property
+
+    ''' <summary> Parse read back amount. </summary>
+    ''' <param name="value"> if set to <c>True</c> if enabling; False if disabling. </param>
+    Public Function ParseReadBackAmount(ByVal value As String) As Double
+        Const clear As String = ""
+        Dim result As Double = 0
+        Dim caption As String = clear
+        If String.IsNullOrWhiteSpace(value) Then
+            Me.ReadBackAmount = Nothing
+            caption = ($"-.---- {Me.Amount.Unit.ToString}")
+        ElseIf Double.TryParse(value, result) Then
+            Me.ReadBackAmount = New Arebis.TypedUnits.Amount(result, Me.Amount.Unit)
+            caption = $"{Me.ReadBackAmount.ToString} {Me.ReadBackAmount.Unit.ToString}"
+        Else
+            Me.ReadBackAmount = Nothing
+            caption = ($"-NAN- {Me.Amount.Unit.ToString}")
+        End If
+        Me.ReadBackCaption = caption
+        Me.LastReadBack = value
+        Return result
+    End Function
+
+    ''' <summary> Gets or sets the query source value command format. </summary>
+    ''' <value> The query source value command format. </value>
+    Protected Overridable ReadOnly Property QuerySourceValueCommandFormat As String = "_G.print(defbuffer1.sourcevalues[{0}])"
+
+    ''' <summary> Parse read back buffer amount. </summary>
+    ''' <param name="index"> Zero-based index of the. </param>
+    Public Function ParseReadBackBufferAmount(ByVal index As Integer) As Double
+        Dim value As String = Me.Query("", Me.QuerySourceValueCommandFormat, index)
+        Return Me.ParseReadBackAmount(value)
+    End Function
+
+    ''' <summary> Parse read back buffer amount. </summary>
+    ''' <returns> A Double. </returns>
+    Public Function ParseReadBackBufferAmount() As Double
+        Dim value As String = Me.Query("", Me.QuerySourceValueCommandFormat, "defbuffer1.n")
+        Return Me.ParseReadBackAmount(value)
+    End Function
+
+#End Region
+
+#Region " READ BACK ENABLED "
+
+    Private _ReadBackEnabled As Boolean?
+    ''' <summary> Gets or sets the cached Read Back Enabled sentinel. </summary>
+    ''' <value> <c>null</c> if Read Back Enabled is not known; <c>True</c> if output is on; otherwise,
+    ''' <c>False</c>. </value>
+    Public Property ReadBackEnabled As Boolean?
+        Get
+            Return Me._ReadBackEnabled
+        End Get
+        Protected Set(ByVal value As Boolean?)
+            If Not Boolean?.Equals(Me.ReadBackEnabled, value) Then
+                Me._ReadBackEnabled = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Writes and reads back the Read Back Enabled sentinel. </summary>
+    ''' <param name="value">  if set to <c>True</c> if enabling; False if disabling. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function ApplyReadBackEnabled(ByVal value As Boolean) As Boolean?
+        Me.WriteReadBackEnabled(value)
+        Return Me.QueryReadBackEnabled()
+    End Function
+
+    ''' <summary> Gets the Read Back enabled query command. </summary>
+    ''' <value> The Read Back enabled query command. </value>
+    ''' <remarks> SCPI: :SOUR:function:READ:BACK?
+    '''           TSP:  smu.source.readback
+    '''           </remarks>
+    Protected Overridable ReadOnly Property ReadBackEnabledQueryCommand As String
+
+    ''' <summary> Queries the Read Back Enabled sentinel. Also sets the
+    ''' <see cref="ReadBackEnabled">Enabled</see> sentinel. </summary>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function QueryReadBackEnabled() As Boolean?
+        Me.ReadBackEnabled = Me.Query(Me.ReadBackEnabled, Me.ReadBackEnabledQueryCommand)
+        Return Me.ReadBackEnabled
+    End Function
+
+    ''' <summary> Gets or sets the Read Back enabled command Format. </summary>
+    ''' <value> The Read Back enabled query command. </value>
+    ''' <remarks> SCPI: :SOU:function:READ:BACK {0:'ON';'ON';'OFF'}
+    '''           TSP: _G.smu.source.readback={0:'smu.ON';'smu.ON';'smu.OFF'}
+    '''          </remarks>
+    Protected Overridable ReadOnly Property ReadBackEnabledCommandFormat As String
+
+    ''' <summary> Writes the Read Back Enabled sentinel. Does not read back from the instrument. </summary>
+    ''' <param name="value"> if set to <c>True</c> is enabled. </param>
+    ''' <returns> <c>True</c> if enabled; otherwise <c>False</c>. </returns>
+    Public Function WriteReadBackEnabled(ByVal value As Boolean) As Boolean?
+        Me.ReadBackEnabled = Me.Write(value, Me.ReadBackEnabledCommandFormat)
+        Return Me.ReadBackEnabled
     End Function
 
 #End Region

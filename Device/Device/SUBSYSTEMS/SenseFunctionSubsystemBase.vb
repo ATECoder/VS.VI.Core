@@ -17,6 +17,8 @@ Public MustInherit Class SenseFunctionSubsystemBase
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
+        Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
+        Me.DefaultFunctionModeDecimalPlaces = 3
     End Sub
 
 #End Region
@@ -29,7 +31,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         Me.AutoZeroEnabled = True
         Me.AutoRangeEnabled = True
         Me.PowerLineCycles = 1
-        Me.PowerLineCyclesRange = isr.Core.Pith.RangeR.FullNonnegative
+        Me.PowerLineCyclesRange = DeviceBase.DefaultPowerLineCyclesRange
         Me.FunctionRange = Me.DefaultFunctionRange
         Me.FunctionUnit = Me.DefaultFunctionUnit
         Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces

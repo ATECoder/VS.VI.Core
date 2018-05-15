@@ -18,6 +18,8 @@ Public MustInherit Class SenseFunctionSubsystemBase
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
+        Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
+        Me.DefaultFunctionModeDecimalPlaces = 3
     End Sub
 
 #End Region
@@ -29,7 +31,7 @@ Public MustInherit Class SenseFunctionSubsystemBase
         MyBase.ResetKnownState()
         Me.FunctionModeRanges.Clear()
         For Each fmode As VI.Scpi.SenseFunctionModes In [Enum].GetValues(GetType(VI.Scpi.SenseFunctionModes))
-            Me.FunctionModeRanges.Add(fmode, Core.Pith.RangeR.Full)
+            Me.FunctionModeRanges.Add(fmode, New Core.Pith.RangeR(Me.DefaultFunctionRange))
         Next
         Me.SafePostPropertyChanged(NameOf(SenseFunctionSubsystemBase.FunctionModeRanges))
         Me.FunctionModeDecimalPlaces.Clear()

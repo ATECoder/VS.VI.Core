@@ -2,7 +2,7 @@
 Imports System.Data.Common
 Namespace K2450.Tests
 
-    ''' <summary> A Resistance measurement Test Info. </summary>
+    ''' <summary> Current Source Test Info. </summary>
     ''' <license>
     ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
     ''' Licensed under The MIT License.</para><para>
@@ -16,7 +16,7 @@ Namespace K2450.Tests
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
      Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Friend Class K2450ResistanceTestInfo
+    Friend Class K2450CurrentSourceTestInfo
         Inherits ApplicationSettingsBase
 
 #Region " SINGLETON "
@@ -28,8 +28,8 @@ Namespace K2450.Tests
         ''' <summary> Opens the settings editor. </summary>
         Public Shared Sub OpenSettingsEditor()
             Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
-                f.Text = $"{GetType(K2450ResistanceTestInfo)} Editor"
-                f.ShowDialog(K2450ResistanceTestInfo.Get)
+                f.Text = $"{GetType(K2450CurrentSourceTestInfo)} Editor"
+                f.ShowDialog(K2450CurrentSourceTestInfo.Get)
             End Using
         End Sub
 
@@ -40,16 +40,16 @@ Namespace K2450.Tests
 
         ''' <summary> Gets the instance. </summary>
         ''' <value> The instance. </value>
-        Private Shared Property _Instance As K2450ResistanceTestInfo
+        Private Shared Property _Instance As K2450CurrentSourceTestInfo
 
         ''' <summary> Instantiates the class. </summary>
         ''' <remarks> Use this property to instantiate a single instance of this class. This class uses
         ''' lazy instantiation, meaning the instance isn't created until the first time it's retrieved. </remarks>
         ''' <returns> A new or existing instance of the class. </returns>
-        Public Shared Function [Get]() As K2450ResistanceTestInfo
+        Public Shared Function [Get]() As K2450CurrentSourceTestInfo
             If _Instance Is Nothing Then
                 SyncLock _SyncLocker
-                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K2450ResistanceTestInfo()), K2450ResistanceTestInfo)
+                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K2450CurrentSourceTestInfo()), K2450CurrentSourceTestInfo)
                 End SyncLock
             End If
             Return _Instance
@@ -137,6 +137,13 @@ Namespace K2450.Tests
 #Region " SOURCE SUBSYSTEM INFORMATION "
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property SourceReadBackEnabled As Boolean
+            Get
+                Return Me.AppSettingBoolean
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
         Public ReadOnly Property FrontTerminalsSelected As Boolean
             Get
                 Return Me.AppSettingBoolean
@@ -162,14 +169,14 @@ Namespace K2450.Tests
 #Region " RESISTANCE INFORMATION "
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ExpectedResistance As Double
+        Public ReadOnly Property LoadResistance As Double
             Get
                 Return Me.AppSettingDouble
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ResistanceTolerance As Double
+        Public ReadOnly Property MeasurementTolerance As Double
             Get
                 Return Me.AppSettingDouble
             End Get

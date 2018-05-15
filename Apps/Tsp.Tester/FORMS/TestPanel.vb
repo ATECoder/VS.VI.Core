@@ -1100,7 +1100,7 @@ Public Class TestPanel
                                "Clearing interface @'{0}';. ", Me.TspSystem.Device.Session.ResourceName)
             Me.TspSystem.Device.ClearInterface()
         Catch ex As Exception
-            Me._errorProvider.SetError(CType(sender, Windows.Forms.Control), ex.ToString)
+            Me._errorProvider.SetError(TryCast(sender, Windows.Forms.Control), ex.ToString)
             Me.Talker.Publish(TraceEventType.Error, My.MyApplication.TraceEventId,
                                "Exception occurred clearing interface;. {0}", ex.ToFullBlownString)
         Finally

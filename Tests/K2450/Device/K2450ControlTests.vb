@@ -91,5 +91,6 @@ Namespace K2450.Tests
         End Sub
 
 #End Region
+
     End Class
 End Namespace

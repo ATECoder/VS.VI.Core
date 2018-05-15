@@ -46,7 +46,7 @@ Public MustInherit Class MultimeterSubsystemBase
         MyBase.ResetKnownState()
         Me.FunctionModeRanges.Clear()
         For Each fmode As VI.Tsp.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp.MultimeterFunctionMode))
-            Me.FunctionModeRanges.Add(fmode, Core.Pith.RangeR.Full)
+            Me.FunctionModeRanges.Add(fmode, New Core.Pith.RangeR(Me.DefaultFunctionRange))
         Next
         Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.FunctionModeRanges))
         Me.OpenDetectorKnownStates.Clear()

@@ -22,7 +22,7 @@ Public MustInherit Class SenseChannelSubsystemBase
     Protected Sub New(ByVal channelNumber As Integer, ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
         Me.ChannelNumber = channelNumber
-        Me.ApertureRange = RangeR.FullNonNegative
+        Me.ApertureRange = DeviceBase.DefaultApertureRange
     End Sub
 
 #End Region

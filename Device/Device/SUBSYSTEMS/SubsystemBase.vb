@@ -317,6 +317,15 @@ Public MustInherit Class SubsystemBase
         End If
     End Function
 
+    ''' <summary> Queries a <see cref="T:String">String</see> value. </summary>
+    ''' <param name="value">         The present value. </param>
+    ''' <param name="commandFormat"> The command format. </param>
+    ''' <param name="args">          A variable-length parameters list containing arguments. </param>
+    ''' <returns> The value. </returns>
+    Public Function Query(ByVal value As String, ByVal commandFormat As String, ByVal ParamArray args() As Object) As String
+        Return Me.Query(value, String.Format(commandFormat, args))
+    End Function
+
     ''' <summary> Write the value without reading back the value from the device. </summary>
     ''' <param name="commandFormat"> The command format. </param>
     ''' <param name="args">          A variable-length parameters list containing arguments. </param>

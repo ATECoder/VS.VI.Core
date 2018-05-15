@@ -18,13 +18,13 @@ Public MustInherit Class ThermostreamSubsystemBase
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me.CycleCountRange = Core.Pith.RangeI.FullNonNegative
-        Me.DeviceThermalConstantRange = Core.Pith.RangeI.FullNonNegative
-        Me.LowRampRateRange = Core.Pith.RangeR.FullNonNegative
-        Me.HighRampRateRange = Core.Pith.RangeR.FullNonNegative
+        Me.CycleCountRange = Core.Pith.RangeI.FullNonnegative
+        Me.DeviceThermalConstantRange = Core.Pith.RangeI.FullNonnegative
+        Me.LowRampRateRange = Core.Pith.RangeR.FullNonnegative
+        Me.HighRampRateRange = Core.Pith.RangeR.FullNonnegative
         Me.SetpointRange = Core.Pith.RangeR.Full
-        Me.SetpointNumberRange = Core.Pith.RangeI.FullNonNegative
-        Me.SetpointWindowRange = Core.Pith.RangeR.FullNonNegative
+        Me.SetpointNumberRange = Core.Pith.RangeI.FullNonnegative
+        Me.SetpointWindowRange = Core.Pith.RangeR.FullNonnegative
         Me.SoakTimeRange = Core.Pith.RangeI.FullNonNegative
         Me.MaximumTestTimeRange = Core.Pith.RangeI.FullNonNegative
     End Sub

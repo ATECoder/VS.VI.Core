@@ -160,6 +160,20 @@ Public Class SourceSubsystem
 
 #End Region
 
+#Region " READ BACK ENABLED "
+
+    ''' <summary> Gets the Read Back enabled command Format. </summary>
+    ''' <value> The Read Back enabled query command. </value>
+    Protected Overrides ReadOnly Property ReadBackEnabledCommandFormat As String = "_G.smu.source.readback={0:'smu.ON';'smu.ON';'smu.OFF'}"
+
+    ''' <summary> Gets the Read Back enabled query command. </summary>
+    ''' <value> The Read Back enabled query command. </value>
+    Protected Overrides ReadOnly Property ReadBackEnabledQueryCommand As String = "_G.print(_G.smu.source.readback==smu.ON)"
+
+#End Region
+
+
+
 #End Region
 
 

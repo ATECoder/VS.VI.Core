@@ -17,7 +17,7 @@ Public MustInherit Class SourceFunctionSubsystemBase
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me.LevelRange = Core.Pith.RangeR.Full
+        Me.LevelRange = DeviceBase.DefaultFullRange
     End Sub
 
 #End Region

@@ -55,7 +55,7 @@ Public Class SenseSubsystem
         With Me.FunctionModeRanges
             .Clear()
             For Each fmode As VI.Scpi.SenseFunctionModes In [Enum].GetValues(GetType(VI.Scpi.SenseFunctionModes))
-                .Add(fmode, Core.Pith.RangeR.Full)
+                .Add(fmode, New Core.Pith.RangeR(Me.DefaultFunctionRange))
             Next
         End With
         Me.SafePostPropertyChanged(NameOf(VI.Scpi.SenseSubsystemBase.FunctionModeRanges))
@@ -172,7 +172,7 @@ Public Class SenseSubsystem
     ''' <param name="functionMode"> The function mode. </param>
     ''' <returns> FunctionMode as an isr.Core.Pith.RangeR. </returns>
     Public Overrides Function ToRange(ByVal functionMode As Integer) As isr.Core.Pith.RangeR
-        Dim result As isr.Core.Pith.RangeR = isr.Core.Pith.RangeR.Full
+        Dim result As isr.Core.Pith.RangeR = New Core.Pith.RangeR(Me.DefaultFunctionRange)
         Select Case functionMode
             Case VI.Scpi.SenseFunctionModes.CurrentDC, VI.Scpi.SenseFunctionModes.Current, VI.Scpi.SenseFunctionModes.CurrentAC
                 result = New Core.Pith.RangeR(0, 10)

@@ -47,7 +47,7 @@ Public Class MeasureSubsystem
         With Me.FunctionModeRanges
             .Clear()
             For Each fmode As VI.SourceMeasure.SenseFunctionModes In [Enum].GetValues(GetType(VI.SourceMeasure.SenseFunctionModes))
-                .Add(fmode, Core.Pith.RangeR.Full)
+                .Add(fmode, New Core.Pith.RangeR(Me.DefaultFunctionRange))
             Next
         End With
         Me.SafePostPropertyChanged(NameOf(MeasureSubsystemBase.FunctionModeRanges))

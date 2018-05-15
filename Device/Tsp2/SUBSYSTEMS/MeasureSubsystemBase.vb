@@ -23,7 +23,7 @@ Public MustInherit Class MeasureSubsystemBase
         MyBase.New(statusSubsystem)
         Me.DefaultMeasurementUnit = Arebis.StandardUnits.ElectricUnits.Volt
         Me.DefaultFunctionUnit = Arebis.StandardUnits.ElectricUnits.Volt
-        Me.DefaultFunctionRange = isr.Core.Pith.RangeR.Full
+        Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
         Me.DefaultFunctionModeDecimalPlaces = 3
     End Sub
 
@@ -45,7 +45,7 @@ Public MustInherit Class MeasureSubsystemBase
         With Me.FunctionModeRanges
             .Clear()
             For Each fmode As VI.Tsp2.MeasureFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.MeasureFunctionMode))
-                .Add(fmode, Core.Pith.RangeR.Full)
+                .Add(fmode, New Core.Pith.RangeR(Me.DefaultFunctionRange))
             Next
         End With
         Me.SafePostPropertyChanged(NameOf(MeasureSubsystemBase.FunctionModeRanges))
