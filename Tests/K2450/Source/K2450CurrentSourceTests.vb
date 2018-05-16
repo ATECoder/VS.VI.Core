@@ -114,7 +114,7 @@ Namespace K2450.Tests
             Assert.IsTrue(actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.ReadBackEnabled)} is {actualBoolean}; expected {expectedBoolean}")
 
             ' set the reading to read voltage
-            device.MeasureSubsystem.Readings.Initialize(ReadingTypes.Voltage)
+            device.MeasureSubsystem.Readings.Initialize(VI.ReadingTypes.Voltage)
             device.MeasureSubsystem.Readings.Reading.Unit = device.MeasureSubsystem.FunctionUnit
 
             ' turn on the output

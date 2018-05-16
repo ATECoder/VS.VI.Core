@@ -134,7 +134,7 @@ Namespace K2450.Tests
 
             ' check the error available status
             actualServiceRequest = device.StatusSubsystemBase.ServiceRequestStatus
-            Assert.IsTrue((actualServiceRequest And expectedSeriveRequest) = expectedSeriveRequest, $"Error bits {expectedSeriveRequest:X} are expected in {NameOf(StatusSubsystemBase.ServiceRequestStatus)}: {actualServiceRequest:X}")
+            Assert.IsTrue((actualServiceRequest And expectedSeriveRequest) = expectedSeriveRequest, $"Error bits {expectedSeriveRequest:X} are expected in {NameOf(VI.StatusSubsystemBase.ServiceRequestStatus)}: {actualServiceRequest:X}")
 
             Dim actualErrorAvailable As Boolean = device.StatusSubsystemBase.ErrorAvailable
             Assert.IsTrue(actualErrorAvailable, $"Error is expected")

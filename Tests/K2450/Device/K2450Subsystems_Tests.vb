@@ -137,8 +137,8 @@ Namespace K2450.Tests
             actualBoolean = device.MeasureSubsystem.QueryRemoteSenseSelected.GetValueOrDefault(False)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.RemoteSenseSelected)} is {actualBoolean }; expected {expectedBoolean }")
 
-            Dim senseFn As Tsp2.MeasureFunctionMode = device.MeasureSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.MeasureFunctionMode.Resistance)
-            Dim expectedFunctionMode As Tsp2.MeasureFunctionMode = K2450SubsystemsInfo.Get.InitialMeasureFunctionMode
+            Dim senseFn As VI.Tsp2.MeasureFunctionMode = device.MeasureSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.MeasureFunctionMode.Resistance)
+            Dim expectedFunctionMode As VI.Tsp2.MeasureFunctionMode = K2450SubsystemsInfo.Get.InitialMeasureFunctionMode
             Assert.AreEqual(expectedFunctionMode, senseFn, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.FunctionMode)} is {senseFn} ; expected {expectedFunctionMode}")
 
         End Sub
@@ -173,8 +173,8 @@ Namespace K2450.Tests
             actualBoolean = device.SourceSubsystem.QueryOutputEnabled.GetValueOrDefault(Not expectedBoolean)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.OutputEnabled)} is {actualBoolean}; expected {expectedBoolean}")
 
-            Dim functionMode As Tsp2.SourceFunctionMode = device.SourceSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.SourceFunctionMode.None)
-            Dim expectedFunctionMode As Tsp2.SourceFunctionMode = K2450SubsystemsInfo.Get.InitialSourceFunctionMode
+            Dim functionMode As VI.Tsp2.SourceFunctionMode = device.SourceSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.SourceFunctionMode.None)
+            Dim expectedFunctionMode As VI.Tsp2.SourceFunctionMode = K2450SubsystemsInfo.Get.InitialSourceFunctionMode
             Assert.AreEqual(expectedFunctionMode, functionMode, $"{GetType(VI.Tsp2.SourceSubsystemBase)}.{NameOf(VI.Tsp2.SourceSubsystemBase.FunctionMode)} is {functionMode} ; expected {expectedFunctionMode}")
 
             expectedBoolean = False

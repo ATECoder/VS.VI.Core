@@ -100,7 +100,7 @@ Namespace K2450.Tests
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.RemoteSenseSelected)} is {actualBoolean}; expected {expectedBoolean}")
 
             ' set the reading to read resistance
-            device.MeasureSubsystem.Readings.Initialize(ReadingTypes.Resistance)
+            device.MeasureSubsystem.Readings.Initialize(VI.ReadingTypes.Resistance)
             device.MeasureSubsystem.Readings.Reading.Unit = device.MeasureSubsystem.FunctionUnit
 
             ' turn on the output
