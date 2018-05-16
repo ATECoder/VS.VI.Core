@@ -100,18 +100,43 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="K2450\K2450Tests.vb" />
-    <Compile Include="K2450\K2450ControlTests.vb" />
-    <Compile Include="K2450\K2450Tests_Info.vb" />
-    <Compile Include="K2450\K2450Manager.vb" />
-    <Compile Include="K2450\K2450ResourceControlTests.vb" />
-    <Compile Include="Measure\ResistanceTests_Info.vb" />
+    <Compile Include="..\K2450\Device\K2450Manager_Resource.vb">
+      <Link>K2450\K2450Manager_Resource.vb</Link>
+    </Compile>
+    <Compile Include="..\K2450\Device\K2450Resource_Info.vb">
+      <Link>K2450\K2450Resource_Info.vb</Link>
+    </Compile>
+    <Compile Include="..\K2450\Device\K2450Resource_Tests.vb">
+      <Link>K2450\K2450Resource_Tests.vb</Link>
+    </Compile>
+    <Compile Include="..\K2450\Source\K2450CurrentSourceTests.vb">
+      <Link>K2450\K2450CurrentSourceTests.vb</Link>
+    </Compile>
+    <Compile Include="..\K2450\Source\K2450CurrentSourceTests_Info.vb">
+      <Link>K2450\K2450CurrentSourceTests_Info.vb</Link>
+    </Compile>
+    <Compile Include="..\K3700\Device\K3700Manager_Resource.vb">
+      <Link>K3700\K3700Manager_Resource.vb</Link>
+    </Compile>
+    <Compile Include="..\K3700\Device\K3700Resource_Info.vb">
+      <Link>K3700\K3700Resource_Info.vb</Link>
+    </Compile>
+    <Compile Include="..\K3700\Device\K3700Resource_Tests.vb">
+      <Link>K3700\K3700Resource_Tests.vb</Link>
+    </Compile>
+    <Compile Include="..\K3700\Resistance\K3730Tests.vb">
+      <Link>K3700\K3730Tests.vb</Link>
+    </Compile>
+    <Compile Include="..\K3700\Resistance\K3730Tests_Info.vb">
+      <Link>K3700\K3730Tests_Info.vb</Link>
+    </Compile>
+    <Compile Include="Measure\StructureTests.vb" />
+    <Compile Include="Measure\StructureTests_Info.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="Measure\ResistanceTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="TestInfo\TestInfo_TraceMessagesQueueCollection.vb" />
   </ItemGroup>
@@ -130,6 +155,14 @@
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
       <Project>{1e7c1b27-638a-410e-8b8e-c24c6bce2a70}</Project>
       <Name>isr.Core.Pith.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\StandardUnits\Arebis.StandardUnits.Library.csproj">
+      <Project>{6a80136f-c0eb-4798-8bcf-569e249dd76a}</Project>
+      <Name>Arebis.StandardUnits.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Core\TypedUnits\TypedUnits\Arebis.TypedUnits.Library.csproj">
+      <Project>{d2c9a599-79dd-4cfa-8614-be3c444eb347}</Project>
+      <Name>Arebis.TypedUnits.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Device\Device.Scpi\isr.VI.Device.Scpi.Library.vbproj">
       <Project>{f6e68ae1-a1b8-43ce-bf8b-d1b8df65c366}</Project>
@@ -171,5 +204,6 @@
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

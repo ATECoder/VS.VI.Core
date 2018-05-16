@@ -20,7 +20,7 @@ Public Class BridgeMeterDevice
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
         MyBase.New
-        Me._Bridge = New ChannelResistorCollection
+        Me._Bridge = New BridgeMeterResistorCollection
     End Sub
 
     ''' <summary> Validated the given value. </summary>
@@ -244,7 +244,7 @@ Public Class BridgeMeterDevice
 
     ''' <summary> Gets or sets the bridges. </summary>
     ''' <value> The bridge. </value>
-    Public ReadOnly Property Bridge As ChannelResistorCollection
+    Public ReadOnly Property Bridge As BridgeMeterResistorCollection
 
     ''' <summary> Configure meter. </summary>
     ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>

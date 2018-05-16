@@ -1,6 +1,6 @@
 ﻿Namespace K2450.Tests
 
-    ''' <summary> A Device Test Info. </summary>
+    ''' <summary> The Subsystems Test Information. </summary>
     ''' <license>
     ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
     ''' Licensed under The MIT License.</para><para>
@@ -14,7 +14,7 @@
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
      Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Friend Class K2450TestInfo
+    Friend Class K2450SubsystemsInfo
         Inherits ApplicationSettingsBase
 
 #Region " SINGLETON "
@@ -29,8 +29,8 @@
         ''' <summary> Opens the settings editor. </summary>
         Public Shared Sub OpenSettingsEditor()
             Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
-                f.Text = $"{GetType(K2450TestInfo)} Editor"
-                f.ShowDialog(K2450TestInfo.Get)
+                f.Text = $"{GetType(K2450SubsystemsInfo)} Editor"
+                f.ShowDialog(K2450SubsystemsInfo.Get)
             End Using
         End Sub
 
@@ -41,16 +41,16 @@
 
         ''' <summary> Gets the instance. </summary>
         ''' <value> The instance. </value>
-        Private Shared Property _Instance As K2450TestInfo
+        Private Shared Property _Instance As K2450SubsystemsInfo
 
         ''' <summary> Instantiates the class. </summary>
         ''' <remarks> Use this property to instantiate a single instance of this class. This class uses
         ''' lazy instantiation, meaning the instance isn't created until the first time it's retrieved. </remarks>
         ''' <returns> A new or existing instance of the class. </returns>
-        Public Shared Function [Get]() As K2450TestInfo
+        Public Shared Function [Get]() As K2450SubsystemsInfo
             If _Instance Is Nothing Then
                 SyncLock _SyncLocker
-                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K2450TestInfo()), K2450TestInfo)
+                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K2450SubsystemsInfo()), K2450SubsystemsInfo)
                 End SyncLock
             End If
             Return _Instance
@@ -90,95 +90,7 @@
 
 #End Region
 
-#Region " DEVICE RESOURCE INFORMATION "
-
-        ''' <summary> Gets the Model of the resource. </summary>
-        ''' <value> The Model of the resource. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ResourceModel As String
-            Get
-                Return Me.AppSettingValue
-            End Get
-        End Property
-
-        Private _ResourcePinged As Boolean?
-
-        ''' <summary> Gets the resource pinged. </summary>
-        ''' <value> The resource pinged. </value>
-        Public ReadOnly Property ResourcePinged As Boolean
-            Get
-                If Not Me._ResourcePinged.HasValue Then
-                    Me._ResourcePinged = Not String.IsNullOrWhiteSpace(Me.ResourceName)
-                End If
-                Return Me._ResourcePinged.Value
-            End Get
-        End Property
-
-        ''' <summary> Name of the resource. </summary>
-        Private _resourceName As String
-        Public ReadOnly Property ResourceName As String
-            Get
-                If String.IsNullOrWhiteSpace(Me._resourceName) Then
-                    If VI.Pith.ResourceNamesManager.Ping(Me.FirstResourceName) Then
-                        Me._resourceName = Me.FirstResourceName
-                    ElseIf VI.Pith.ResourceNamesManager.Ping(Me.SecondResourceName) Then
-                        Me._resourceName = Me.SecondResourceName
-                    ElseIf VI.Pith.ResourceNamesManager.Ping(Me.ThirdResourceName) Then
-                        Me._resourceName = Me.ThirdResourceName
-                    ElseIf VI.Pith.ResourceNamesManager.Ping(Me.FourthResourceName) Then
-                        Me._resourceName = Me.FourthResourceName
-                    Else
-                        Me._resourceName = ""
-                    End If
-                End If
-                Return Me._resourceName
-            End Get
-        End Property
-
-        ''' <summary> Gets the name of the resource. </summary>
-        ''' <value> The name of the resource. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property FirstResourceName As String
-            Get
-                Return Me.AppSettingValue
-            End Get
-        End Property
-
-        ''' <summary> Gets the name of the second resource. </summary>
-        ''' <value> The name of the second resource. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property SecondResourceName As String
-            Get
-                Return Me.AppSettingValue
-            End Get
-        End Property
-
-        ''' <summary> Gets the name of the third resource. </summary>
-        ''' <value> The name of the third resource. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ThirdResourceName As String
-            Get
-                Return Me.AppSettingValue
-            End Get
-        End Property
-
-        ''' <summary> Gets the name of the fourth resource. </summary>
-        ''' <value> The name of the fourth resource. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property FourthResourceName As String
-            Get
-                Return Me.AppSettingValue
-            End Get
-        End Property
-
-        ''' <summary> Gets the Title of the resource. </summary>
-        ''' <value> The Title of the resource. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ResourceTitle As String
-            Get
-                Return Me.AppSettingValue
-            End Get
-        End Property
+#Region " DEVICE SESSION INFORMATION "
 
         ''' <summary> Gets the keep alive query command. </summary>
         ''' <value> The keep alive query command. </value>

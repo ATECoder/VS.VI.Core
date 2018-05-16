@@ -68,6 +68,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft SQL Server Compact Edition\v4.0\Desktop\System.Data.SqlServerCe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -100,10 +101,14 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="Device\K2450Tests.vb" />
+    <Compile Include="Device\K2450Manager_Controls.vb" />
+    <Compile Include="Device\K2450Manager_Resource.vb" />
+    <Compile Include="Device\K2450Resource_Tests.vb" />
+    <Compile Include="Device\K2450Subsystems_Tests.vb" />
     <Compile Include="Device\K2450ControlTests.vb" />
-    <Compile Include="Device\K2450Tests_Info.vb" />
-    <Compile Include="Device\K2450Manager.vb" />
+    <Compile Include="Device\K2450Resource_Info.vb" />
+    <Compile Include="Device\K2450Subsystems_Info.vb" />
+    <Compile Include="Device\K2450Manager_Subsystems.vb" />
     <Compile Include="Device\K2450ResourceControlTests.vb" />
     <Compile Include="Measure\K2450ResistanceTests_Info.vb" />
     <Compile Include="My Project\Application.Designer.vb">

@@ -96,45 +96,6 @@
 
 #End Region
 
-#Region " RESISTANCE SUBSYSTEM TEST "
-
-        ''' <summary> Check Resistance subsystem information. </summary>
-        ''' <param name="device"> The device. </param>
-        Private Shared Sub ReadMultimeterSubsystemInfo(ByVal device As VI.Tsp.K3700.Device)
-
-            Dim expectedPowerLineCycles As Double = K3700.Tests.K3700TestInfo.Get.InitialPowerLineCycles
-            Dim actualPowerLineCycles As Double = device.MultimeterSubsystem.QueryPowerLineCycles.GetValueOrDefault(0)
-            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K3700.Tests.K3700TestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
-                            $"{GetType(VI.MultimeterSubsystemBase)}.{NameOf(VI.MultimeterSubsystemBase.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
-
-            Dim expectedBoolean As Boolean = K3700.Tests.K3700TestInfo.Get.InitialAutoRangeEnabled
-            Dim actualBoolean As Boolean = device.MultimeterSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(False)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.MultimeterSubsystemBase)}.{NameOf(VI.MultimeterSubsystemBase.AutoRangeEnabled)} Is {actualBoolean }; expected {expectedBoolean}")
-
-            expectedBoolean = K3700.Tests.K3700TestInfo.Get.InitialAutoZeroEnabled
-            actualBoolean = device.MultimeterSubsystem.QueryAutoZeroEnabled.GetValueOrDefault(False)
-            Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.MultimeterSubsystemBase)}.{NameOf(VI.MultimeterSubsystemBase.AutoZeroEnabled)} Is {actualBoolean }; expected {expectedBoolean }")
-
-            Dim expectedFunction As VI.Tsp.MultimeterFunctionMode = K3700.Tests.K3700TestInfo.Get.InitialSenseFunctionMode
-            Dim senseFn As VI.Tsp.MultimeterFunctionMode = device.MultimeterSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp.MultimeterFunctionMode.ResistanceTwoWire)
-            Assert.AreEqual(expectedFunction, senseFn,
-                            $"{GetType(VI.MultimeterSubsystemBase)}.{NameOf(VI.Tsp.MultimeterSubsystemBase.FunctionMode)} Is {senseFn} ; expected {expectedFunction}")
-
-        End Sub
-
-        ''' <summary> (Unit Test Method) tests read multimeter subsystem. </summary>
-        <TestMethod(), TestCategory("VI")>
-        Public Sub ReadMultimeterSubsystemTest()
-            Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
-                device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K3700.Tests.K3700Manager.OpenSession(device)
-                K3730Tests.ReadMultimeterSubsystemInfo(device)
-                K3700.Tests.K3700Manager.CloseSession(device)
-            End Using
-        End Sub
-
-#End Region
-
 #Region " MEASURE RESISTANCE "
 
         ''' <summary> Prepare Resistance measurement. </summary>

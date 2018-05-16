@@ -1,6 +1,6 @@
 ﻿Namespace K3700.Tests
 
-    ''' <summary> A Device Test Info. </summary>
+    ''' <summary> The 3700 Resource Information. </summary>
     ''' <license>
     ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
     ''' Licensed under The MIT License.</para><para>
@@ -14,7 +14,7 @@
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
      Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Friend Class K3700TestInfo
+    Friend Class K3700ResourceInfo
         Inherits ApplicationSettingsBase
 
 #Region " SINGLETON "
@@ -26,8 +26,8 @@
         ''' <summary> Opens the settings editor. </summary>
         Public Shared Sub OpenSettingsEditor()
             Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
-                f.Text = $"{GetType(K3700TestInfo)} Editor"
-                f.ShowDialog(K3700TestInfo.Get)
+                f.Text = $"{GetType(K3700ResourceInfo)} Editor"
+                f.ShowDialog(K3700ResourceInfo.Get)
             End Using
         End Sub
 
@@ -38,16 +38,16 @@
 
         ''' <summary> Gets the instance. </summary>
         ''' <value> The instance. </value>
-        Private Shared Property _Instance As K3700TestInfo
+        Private Shared Property _Instance As K3700ResourceInfo
 
         ''' <summary> Instantiates the class. </summary>
         ''' <remarks> Use this property to instantiate a single instance of this class. This class uses
         ''' lazy instantiation, meaning the instance isn't created until the first time it's retrieved. </remarks>
         ''' <returns> A new or existing instance of the class. </returns>
-        Public Shared Function [Get]() As K3700TestInfo
+        Public Shared Function [Get]() As K3700ResourceInfo
             If _Instance Is Nothing Then
                 SyncLock _SyncLocker
-                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K3700TestInfo()), K3700TestInfo)
+                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K3700ResourceInfo()), K3700ResourceInfo)
                 End SyncLock
             End If
             Return _Instance
@@ -87,7 +87,7 @@
 
 #End Region
 
-#Region " DEVICE RESOURCE INFORMATION "
+#Region " RESOURCE INFORMATION "
 
         ''' <summary> Gets the Model of the resource. </summary>
         ''' <value> The Model of the resource. </value>
@@ -174,154 +174,6 @@
         Public ReadOnly Property ResourceTitle As String
             Get
                 Return Me.AppSettingValue
-            End Get
-        End Property
-
-        ''' <summary> Gets the keep alive query command. </summary>
-        ''' <value> The keep alive query command. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property KeepAliveQueryCommand As String
-            Get
-                Return Me.AppSettingValue
-            End Get
-        End Property
-
-        ''' <summary> Gets the keep alive command. </summary>
-        ''' <value> The keep alive command. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property KeepAliveCommand As String
-            Get
-                Return Me.AppSettingValue
-            End Get
-        End Property
-
-        ''' <summary> Gets the read termination enabled. </summary>
-        ''' <value> The read termination enabled. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ReadTerminationEnabled As Boolean
-            Get
-                Return Me.AppSettingBoolean
-            End Get
-        End Property
-
-        ''' <summary> Gets the termination character. </summary>
-        ''' <value> The termination character. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property TerminationCharacter As Integer
-            Get
-                Return Me.AppSettingInt32
-            End Get
-        End Property
-
-#End Region
-
-#Region " STATUS SUBSYSTEM INFORMATION "
-
-        ''' <summary> Gets the Initial power line cycles settings. </summary>
-        ''' <value> The power line cycles settings. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property InitialPowerLineCycles As Double
-            Get
-                Return Me.AppSettingDouble
-            End Get
-        End Property
-
-#End Region
-
-#Region " DEVICE ERRORS "
-
-        ''' <summary> Gets the erroneous command. </summary>
-        ''' <value> The erroneous command. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ErroneousCommand As String
-            Get
-                Return Me.AppSettingValue
-            End Get
-        End Property
-
-        ''' <summary> Gets the error available milliseconds delay. </summary>
-        ''' <value> The error available milliseconds delay. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ErrorAvailableMillisecondsDelay As Integer
-            Get
-                Return Me.AppSettingInt32
-            End Get
-        End Property
-
-        ''' <summary> Gets a message describing the expected error. </summary>
-        ''' <value> A message describing the expected error. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ExpectedErrorMessage As String
-            Get
-                Return Me.AppSettingValue
-            End Get
-        End Property
-
-#End Region
-
-#Region " SOURCE MEASURE UNIT INFORMATION "
-
-        ''' <summary> Gets the maximum output power of the instrument. </summary>
-        ''' <value> The maximum output power . </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property MaximumOutputPower As Double
-            Get
-                Return Me.AppSettingDouble
-            End Get
-        End Property
-
-        ''' <summary> Gets the line frequency. </summary>
-        ''' <value> The line frequency. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property LineFrequency As Double
-            Get
-                Return Me.AppSettingDouble
-            End Get
-        End Property
-
-#End Region
-
-#Region " MEASURE SUBSYSTEM INFORMATION "
-
-        ''' <summary> Gets the Initial auto Delay Enabled settings. </summary>
-        ''' <value> The auto Delay settings. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property InitialAutoDelayEnabled As Boolean
-            Get
-                Return Me.AppSettingBoolean
-            End Get
-        End Property
-
-        ''' <summary> Gets the Initial auto Range enabled settings. </summary>
-        ''' <value> The auto Range settings. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property InitialAutoRangeEnabled As Boolean
-            Get
-                Return Me.AppSettingBoolean
-            End Get
-        End Property
-
-        ''' <summary> Gets the Initial auto zero Enabled settings. </summary>
-        ''' <value> The auto zero settings. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property InitialAutoZeroEnabled As Boolean
-            Get
-                Return Me.AppSettingBoolean
-            End Get
-        End Property
-
-        Public ReadOnly Property InitialSenseFunctionMode As VI.Tsp.MultimeterFunctionMode
-            Get
-                Return CType(Me.InitialSenseFunction, VI.Tsp.MultimeterFunctionMode)
-            End Get
-        End Property
-
-        ''' <summary> Gets the Initial Sense Function settings. </summary>
-        ''' <value> The Sense Function settings. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property InitialSenseFunction As Integer
-            Get
-                Return Me.AppSettingInt32
             End Get
         End Property
 

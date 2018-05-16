@@ -44,7 +44,7 @@ Namespace K3700.Tests
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.K3700TestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.K3700SubsystemsInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -66,7 +66,7 @@ Namespace K3700.Tests
         ''' <summary> (Unit Test Method) tests selected resource name. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub SelectedResourceNameTest()
-            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
+            If Not K3700ResourceInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700ResourceInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)

@@ -72,7 +72,7 @@ Namespace K2450.Tests
 
             Dim expectedPowerLineCycles As Double = K2450CurrentSourceTestInfo.Get.PowerLineCycles
             Dim actualPowerLineCycles As Double = device.MeasureSubsystem.ApplyPowerLineCycles(expectedPowerLineCycles).GetValueOrDefault(0)
-            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K2450TestInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
+            Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, device.StatusSubsystem.LineFrequency.Value / TimeSpan.TicksPerSecond,
                         $"{GetType(VI.Tsp2.MeasureSubsystemBase)}.{NameOf(VI.Tsp2.MeasureSubsystemBase.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
 
             Dim expectedBoolean As Boolean = K2450CurrentSourceTestInfo.Get.AutoRangeEnabled

@@ -1,7 +1,10 @@
-﻿Imports isr.Core.Pith.StopwatchExtensions
+﻿Imports System.Data.Common
+Imports System.Text
+Imports Microsoft.VisualStudio.TestTools.UnitTesting
+Imports isr.Core.Pith.StopwatchExtensions
 Namespace K3700.Tests
 
-    ''' <summary> K3700 Device unit tests. </summary>
+    ''' <summary> K3700 Device Resource unit tests. </summary>
     ''' <license>
     ''' (c) 2017 Integrated Scientific Resources, Inc. All rights reserved.<para>
     ''' Licensed under The MIT License.</para><para>
@@ -13,7 +16,7 @@ Namespace K3700.Tests
     ''' </license>
     ''' <history date="10/10/2017" by="David" revision=""> Created. </history>
     <TestClass()>
-    Public Class K3700Tests
+    Public Class K3700ResourceTests
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -45,7 +48,7 @@ Namespace K3700.Tests
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.K3700TestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.K3700ResourceInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -68,30 +71,30 @@ Namespace K3700.Tests
         ''' <remarks> Finds the resource using the session factory resources manager. </remarks>
         <TestMethod(), TestCategory("VI")>
         Public Sub VisaResourceTest()
-            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
+            If Not K3700ResourceInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700ResourceInfo.Get.ResourceTitle} not found")
             Dim resourcesFilter As String = VI.Pith.ResourceNameInfo.BuildMinimalResourcesFilter
             Dim resources As String()
             Using rm As VI.Pith.ResourcesManagerBase = VI.SessionFactory.Get.Factory.CreateResourcesManager()
                 resources = rm.FindResources(resourcesFilter).ToArray
             End Using
             Assert.IsTrue(resources.Any, $"VISA Resources {If(resources.Any, "", "not")} found among {resourcesFilter}")
-            Assert.IsTrue(resources.Contains(K3700TestInfo.Get.ResourceName), $"Resource {K3700TestInfo.Get.ResourceName} not found among {resourcesFilter}")
+            Assert.IsTrue(resources.Contains(K3700ResourceInfo.Get.ResourceName), $"Resource {K3700ResourceInfo.Get.ResourceName} not found among {resourcesFilter}")
         End Sub
 
         ''' <summary> (Unit Test Method) tests device resource. </summary>
         ''' <remarks> Finds the resource using the device class. </remarks>
         <TestMethod(), TestCategory("VI")>
         Public Sub DeviceResourceTest()
-            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
+            If Not K3700ResourceInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700ResourceInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
-                Assert.IsTrue(VI.Tsp.K3700.Device.Find(K3700TestInfo.Get.ResourceName, device.Session.ResourceNameInfo.ResourcesFilter),
-                          $"VISA Resource {K3700TestInfo.Get.ResourceName} not found among {device.Session.ResourceNameInfo.ResourcesFilter}")
+                Assert.IsTrue(VI.Tsp.K3700.Device.Find(K3700ResourceInfo.Get.ResourceName, device.Session.ResourceNameInfo.ResourcesFilter),
+                          $"VISA Resource {K3700ResourceInfo.Get.ResourceName} not found among {device.Session.ResourceNameInfo.ResourcesFilter}")
             End Using
         End Sub
 
 #End Region
 
-#Region " DEVICE TESTS: OPEN, CLOSE, CHECK SUSBSYSTEMS "
+#Region " RESOURCE TESTS "
 
         ''' <summary> (Unit Test Method) tests device talker. </summary>
         ''' <remarks> Checks if the device adds a trace message to a listener. </remarks>
@@ -121,49 +124,10 @@ Namespace K3700.Tests
         ''' <remarks> Tests opening and closing a VISA session. </remarks>
         <TestMethod(), TestCategory("VI")>
         Public Sub OpenSessionTest()
-            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
+            If Not K3700ResourceInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700ResourceInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 K3700Manager.OpenSession(device)
-                K3700Manager.CloseSession(device)
-            End Using
-        End Sub
-
-        '''<summary>
-        '''A test for Open Session and status
-        '''</summary>
-        <TestMethod(), TestCategory("VI")>
-        Public Sub OpenSessionCheckStatusTest()
-            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
-            Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
-                device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K3700Manager.OpenSession(device)
-                K3700Manager.CheckModel(device.StatusSubsystemBase)
-                K3700Manager.CheckDeviceErrors(device.StatusSubsystemBase)
-                K3700Manager.CheckTermination(device.Session)
-                K3700Manager.CheckLineFrequency(device.StatusSubsystem)
-                K3700Manager.CheckIntegrationPeriod(device.StatusSubsystem)
-                K3700Manager.CheckChannelSubsystemInfo(device.ChannelSubsystem)
-                K3700Manager.ClearSessionCheckDeviceErrors(device)
-                K3700Manager.CloseSession(device)
-            End Using
-        End Sub
-
-        ''' <summary> (Unit Test Method) tests open session read device errors. </summary>
-        <TestMethod(), TestCategory("VI")>
-        Public Sub OpenSessionReadDeviceErrorsTest()
-            If Not K3700TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700TestInfo.Get.ResourceTitle} not found")
-            Using device As VI.Tsp.K3700.Device = VI.Tsp.K3700.Device.Create
-                device.AddListener(TestInfo.TraceMessagesQueueListener)
-                K3700Manager.OpenSession(device)
-                K3700Manager.CheckModel(device.StatusSubsystemBase)
-                K3700Manager.CheckDeviceErrors(device.StatusSubsystemBase)
-                K3700Manager.CheckTermination(device.Session)
-                K3700Manager.CheckLineFrequency(device.StatusSubsystem)
-                K3700Manager.CheckIntegrationPeriod(device.StatusSubsystem)
-                K3700Manager.CheckChannelSubsystemInfo(device.ChannelSubsystem)
-                K3700Manager.ClearSessionCheckDeviceErrors(device)
-                K3700Manager.CheckReadingDeviceErrors(device)
                 K3700Manager.CloseSession(device)
             End Using
         End Sub

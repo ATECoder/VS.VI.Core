@@ -68,6 +68,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft SQL Server Compact Edition\v4.0\Desktop\System.Data.SqlServerCe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -102,10 +103,14 @@
     </Compile>
     <Compile Include="BridgeMeter\BridgeMeterTests.vb" />
     <Compile Include="BridgeMeter\BridgeMeterTests_Info.vb" />
-    <Compile Include="Device\K3700Manager.vb" />
+    <Compile Include="Device\K3700Manager_Resource.vb" />
+    <Compile Include="Device\K3700Manager_Control.vb" />
+    <Compile Include="Device\K3700Manager_Subsystems.vb" />
     <Compile Include="Device\K3700ControlTests.vb" />
-    <Compile Include="Device\K3700Tests.vb" />
-    <Compile Include="Device\K3700Tests_Info.vb" />
+    <Compile Include="Device\K3700Resource_Tests.vb" />
+    <Compile Include="Device\K3700Subsystems_Tests.vb" />
+    <Compile Include="Device\K3700Resource_Info.vb" />
+    <Compile Include="Device\K3700Subsystems_Info.vb" />
     <Compile Include="Device\K3700ResourceControlTests.vb" />
     <Compile Include="Gage\GageBoardTests.vb" />
     <Compile Include="Gage\GageBoardTests_Info.vb" />

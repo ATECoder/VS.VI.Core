@@ -48,7 +48,7 @@ Namespace K2450.Tests
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450.Tests.K2450TestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450.Tests.K2450SubsystemsInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -70,7 +70,7 @@ Namespace K2450.Tests
         ''' <summary> (Unit Test Method) tests selected resource name. </summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub SelectedResourceNameTest()
-            If Not K2450TestInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K2450TestInfo.Get.ResourceTitle} not found")
+            If Not K2450ResourceInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K2450ResourceInfo.Get.ResourceTitle} not found")
             Using device As VI.Tsp2.K2450.Device = VI.Tsp2.K2450.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)

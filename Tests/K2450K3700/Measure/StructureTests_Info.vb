@@ -2,7 +2,7 @@
 Imports System.Data.Common
 Namespace K2450K3700.Tests
 
-    ''' <summary> A Resistance measurement Test Info. </summary>
+    ''' <summary> A structure tests Info. </summary>
     ''' <license>
     ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
     ''' Licensed under The MIT License.</para><para>
@@ -16,7 +16,7 @@ Namespace K2450K3700.Tests
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
      Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Friend Class ResistanceTestInfo
+    Friend Class StructureTestInfo
         Inherits ApplicationSettingsBase
 
 #Region " SINGLETON "
@@ -28,8 +28,8 @@ Namespace K2450K3700.Tests
         ''' <summary> Opens the settings editor. </summary>
         Public Shared Sub OpenSettingsEditor()
             Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
-                f.Text = $"{GetType(ResistanceTestInfo)} Editor"
-                f.ShowDialog(ResistanceTestInfo.Get)
+                f.Text = $"{GetType(StructureTestInfo)} Editor"
+                f.ShowDialog(StructureTestInfo.Get)
             End Using
         End Sub
 
@@ -40,16 +40,16 @@ Namespace K2450K3700.Tests
 
         ''' <summary> Gets the instance. </summary>
         ''' <value> The instance. </value>
-        Private Shared Property _Instance As ResistanceTestInfo
+        Private Shared Property _Instance As StructureTestInfo
 
         ''' <summary> Instantiates the class. </summary>
         ''' <remarks> Use this property to instantiate a single instance of this class. This class uses
         ''' lazy instantiation, meaning the instance isn't created until the first time it's retrieved. </remarks>
         ''' <returns> A new or existing instance of the class. </returns>
-        Public Shared Function [Get]() As ResistanceTestInfo
+        Public Shared Function [Get]() As StructureTestInfo
             If _Instance Is Nothing Then
                 SyncLock _SyncLocker
-                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New ResistanceTestInfo()), ResistanceTestInfo)
+                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New StructureTestInfo()), StructureTestInfo)
                 End SyncLock
             End If
             Return _Instance
@@ -89,56 +89,10 @@ Namespace K2450K3700.Tests
 
 #End Region
 
-#Region " MEASURE SUBSYSTEM INFORMATION "
+#Region " SOURCE INFORMATION "
 
         ''' <summary> Gets the auto zero Enabled settings. </summary>
         ''' <value> The auto zero settings. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property AutoZeroEnabled As Boolean
-            Get
-                Return Me.AppSettingBoolean
-            End Get
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property AutoRangeEnabled As Boolean
-            Get
-                Return Me.AppSettingBoolean
-            End Get
-        End Property
-
-        ''' <summary> Gets the Sense Function settings. </summary>
-        ''' <value> The Sense Function settings. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property SenseFunction As VI.Tsp2.MeasureFunctionMode
-            Get
-                Return Me.AppSettingEnum(Of VI.Tsp2.MeasureFunctionMode)
-            End Get
-        End Property
-
-        ''' <summary> Gets the power line cycles settings. </summary>
-        ''' <value> The power line cycles settings. </value>
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property PowerLineCycles As Double
-            Get
-                Return Me.AppSettingDouble
-            End Get
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ExpectedResistance As Double
-            Get
-                Return Me.AppSettingDouble
-            End Get
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property ExpectedResistanceEpsilon As Double
-            Get
-                Return Me.AppSettingDouble
-            End Get
-        End Property
-
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
         Public ReadOnly Property FrontTerminalsSelected As Boolean
             Get
@@ -146,22 +100,85 @@ Namespace K2450K3700.Tests
             End Get
         End Property
 
+#End Region
+
+#Region " STRUCTURE MEASUREMENTS "
+
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property RemoteSenseSelected As Boolean
+        Public ReadOnly Property SlotNumber As Integer
             Get
-                Return Me.AppSettingBoolean
+                Return Me.AppSettingInt32
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property SourceFunction As VI.Tsp2.SourceFunctionMode
+        Public ReadOnly Property ResistanceTolerance As Double
             Get
-                Return Me.AppSettingEnum(Of VI.Tsp2.SourceFunctionMode)
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        Public ReadOnly Property R1 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        Public ReadOnly Property R2 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        Public ReadOnly Property R3 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        Public ReadOnly Property R4 As Double
+            Get
+                Return Me.AppSettingDouble
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property SourceLevel As Double
+        Public ReadOnly Property R5 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property R6 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property R7 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property R8 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property R9 As Double
+            Get
+                Return Me.AppSettingDouble
+            End Get
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property R10 As Double
             Get
                 Return Me.AppSettingDouble
             End Get

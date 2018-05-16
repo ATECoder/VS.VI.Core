@@ -48,7 +48,7 @@ Namespace K2450.Tests
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450.Tests.K2450TestInfo)} settings not found")
+            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450.Tests.K2450SubsystemsInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
