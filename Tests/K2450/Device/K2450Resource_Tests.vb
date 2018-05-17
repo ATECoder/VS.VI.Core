@@ -46,12 +46,13 @@ Namespace K2450.Tests
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K2450.Tests.K2450ResourceInfo)} settings not found")
+            Assert.IsTrue(K2450.Tests.K2450ResourceInfo.Get.Exists, $"{GetType(K2450.Tests.K2450ResourceInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
         ''' <summary> Cleans up after each test has run. </summary>
         <TestCleanup()> Public Sub MyTestCleanup()
+
             TestInfo.AssertMessageQueue()
         End Sub
 

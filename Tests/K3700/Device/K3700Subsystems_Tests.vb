@@ -45,8 +45,8 @@ Namespace K3700.Tests
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.K3700ResourceInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700.Tests.K3700SubsystemsInfo)} settings not found")
+            Assert.IsTrue(K3700.Tests.K3700ResourceInfo.Get.Exists, $"{GetType(K3700.Tests.K3700ResourceInfo)} settings not found")
+            Assert.IsTrue(K3700.Tests.K3700SubsystemsInfo.Get.Exists, $"{GetType(K3700.Tests.K3700SubsystemsInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 

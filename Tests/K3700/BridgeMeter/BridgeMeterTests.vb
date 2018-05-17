@@ -48,8 +48,8 @@
         ''' <summary> Initializes before each test runs. </summary>
         <TestInitialize()> Public Sub MyTestInitialize()
             Assert.IsTrue(TestInfo.Exists, $"{GetType(TestInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(K3700ResourceInfo)} settings not found")
-            Assert.IsTrue(TestInfo.Exists, $"{GetType(BridgeMeterTestInfo)} settings not found")
+            Assert.IsTrue(K3700ResourceInfo.Get.Exists, $"{GetType(K3700ResourceInfo)} settings not found")
+            Assert.IsTrue(BridgeMeterTestInfo.Get.Exists, $"{GetType(BridgeMeterTestInfo)} settings not found")
             TestInfo.ClearMessageQueue()
         End Sub
 
@@ -57,7 +57,6 @@
         <TestCleanup()> Public Sub MyTestCleanup()
             TestInfo.AssertMessageQueue()
         End Sub
-
 
         '''<summary>
         '''Gets or sets the test context which provides
@@ -75,7 +74,7 @@
         ''' <summary> Opens a session. </summary>
         ''' <param name="trialNumber"> The trial number. </param>
         ''' <param name="control">     The control. </param>
-        Private Shared Sub OpenSession(ByVal trialNumber As Integer, ByVal control As VI.Tsp.K3700.BridgeMeterControl)
+        Friend Shared Sub OpenSession(ByVal trialNumber As Integer, ByVal control As VI.Tsp.K3700.BridgeMeterControl)
             If Not K3700ResourceInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700ResourceInfo.Get.ResourceTitle} not found")
             Dim expectedBoolean As Boolean = True
             Dim actualBoolean As Boolean
@@ -102,7 +101,7 @@
         ''' <summary> Closes a session. </summary>
         ''' <param name="trialNumber"> The trial number. </param>
         ''' <param name="control">     The control. </param>
-        Private Shared Sub CloseSession(ByVal trialNumber As Integer, ByVal control As VI.Tsp.K3700.BridgeMeterControl)
+        Friend Shared Sub CloseSession(ByVal trialNumber As Integer, ByVal control As VI.Tsp.K3700.BridgeMeterControl)
             If Not K3700ResourceInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K3700ResourceInfo.Get.ResourceTitle} not found")
             Dim expectedBoolean As Boolean = True
             Dim actualBoolean As Boolean
