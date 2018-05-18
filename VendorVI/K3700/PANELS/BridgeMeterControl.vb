@@ -30,7 +30,7 @@ Public Class BridgeMeterControl
     ''' <param name="device">        The device. </param>
     ''' <param name="isDeviceOwner"> True if is device owner, false if not. </param>
     Public Sub New(ByVal device As BridgeMeterDevice, ByVal isDeviceOwner As Boolean)
-        MyBase.New(device, isDeviceOwner)
+        MyBase.New()
         Me._New(device, isDeviceOwner)
     End Sub
 
@@ -44,7 +44,7 @@ Public Class BridgeMeterControl
         Me.InitializingComponents = False
 
         Me._BottomToolStrip.Renderer = New CustomProfessionalRenderer
-        MyBase.AssignConnector(Me._ResourceSelectorConnector, True)
+        MyBase.AssignConnector(device, Me._ResourceSelectorConnector, True)
         Me._AssignDevice(device, isDeviceOwner)
 
         Me._MeasureGroupBox.Enabled = False

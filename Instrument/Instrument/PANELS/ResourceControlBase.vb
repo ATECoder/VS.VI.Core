@@ -21,6 +21,28 @@ Public Class ResourceControlBase
 
 #Region " CONSTRUCTION + CLEANUP "
 
+    ''' <summary> Default constructor. </summary>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
+    Public Sub New()
+        Me.New(ResourceSelectorConnector.Create, True)
+    End Sub
+
+    ''' <summary> Specialized default constructor for use only by derived classes. </summary>
+    ''' <param name="connector"> The connector. </param>
+    Protected Sub New(ByVal connector As ResourceSelectorConnector, ByVal isConnectorOwner As Boolean)
+        MyBase.New()
+        Me.InitializingComponents = True
+        Me.InitializeComponent()
+        Me.InitializingComponents = False
+        Me.AssignConnector(connector, isConnectorOwner)
+        Me.Initialize()
+    End Sub
+
+#Region " REMOVE? "
+    ' these cause the device to get disposed if incorrectly instantiated in the parent class.
+    ' the fix is to change how the control is created and use the connector assignment with reference to the device.
+#If False Then
+
     ''' <summary> Specialized default constructor for use only by derived classes. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Protected Sub New(ByVal device As VI.DeviceBase, ByVal isDeviceOwner As Boolean)
@@ -38,6 +60,8 @@ Public Class ResourceControlBase
         Me.AssignDevice(device, isDeviceOwner)
         Me.Initialize()
     End Sub
+#End If
+#End Region
 
     Private Sub Initialize()
         Me._ElapsedTimeStopwatch = New Stopwatch
@@ -47,23 +71,6 @@ Public Class ResourceControlBase
         Me._ClosedResourceTitleFormat = Me.DefaultClosedResourceTitleFormat
         Me._DefaultResourceTitle = "<closed>"
         Me._DefaultResourceTitle = VI.Pith.My.MySettings.Default.DefaultResourceTitle
-    End Sub
-
-    ''' <summary> Default constructor. </summary>
-    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
-    Public Sub New()
-        Me.New(ResourceSelectorConnector.Create, True)
-    End Sub
-
-    ''' <summary> Specialized default constructor for use only by derived classes. </summary>
-    ''' <param name="connector"> The connector. </param>
-    Protected Sub New(ByVal connector As ResourceSelectorConnector, ByVal isConnectorOwner As Boolean)
-        MyBase.New()
-        Me.InitializingComponents = True
-        Me.InitializeComponent()
-        Me.InitializingComponents = False
-        Me.AssignConnector(connector, isConnectorOwner)
-        Me.Initialize()
     End Sub
 
     ''' <summary>
@@ -1113,6 +1120,18 @@ Public Class ResourceControlBase
         Me.IsConnectorOwner = isConnectorOwner
     End Sub
 
+    ''' <summary> Assign connector and apply the device talker. </summary>
+    ''' <param name="device">           The device. </param>
+    ''' <param name="value">            The connector value. </param>
+    ''' <param name="isConnectorOwner"> The is connector owner. </param>
+    ''' <remarks> Must be used to assign a connector so as to prevent disposing of the device. </remarks>
+    Protected Sub AssignConnector(ByVal device As DeviceBase, ByVal value As ResourceSelectorConnector, ByVal isConnectorOwner As Boolean)
+        Me.AssignConnector(value, isConnectorOwner)
+        Me.Connector.IsConnected = device.IsDeviceOpen
+        Me.Connector.AssignTalker(device.Talker)
+        Me.Connector.ApplyListenerTraceLevel(ListenerType.Display, device.Talker.TraceShowLevel)
+    End Sub
+
     ''' <summary> Attempts to connect from the given data. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Cancel details event information. </param>
@@ -1485,7 +1504,8 @@ Public Class ResourceControlBase
     Friend Shared Function Create(ByVal device As VI.DeviceBase, ByVal isDeviceOwner As Boolean) As ResourceControlBase
         Dim result As ResourceControlBase = Nothing
         Try
-            result = New ResourceControlBase(device, isDeviceOwner)
+            result = New ResourceControlBase(ResourceSelectorConnector.Create, True)
+            result.AssignDevice(device, isDeviceOwner)
         Catch ex As Exception
             If result IsNot Nothing Then
                 result.Dispose()

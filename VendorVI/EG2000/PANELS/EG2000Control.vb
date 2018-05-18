@@ -47,7 +47,6 @@ Public Class EG2000Control
 
         Me._ToolStripPanel.Renderer = New CustomProfessionalRenderer
         MyBase.AssignConnector(Me._ResourceSelectorConnector, True)
-
         Me._AssignDevice(device, isDeviceOwner)
         ' note that the caption is not set if this is run inside the On Load function.
         With Me._TraceMessagesBox
