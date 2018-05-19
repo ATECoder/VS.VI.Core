@@ -222,18 +222,10 @@
             End Get
         End Property
 
-        Public ReadOnly Property InitialSenseFunctionMode As VI.Tsp.MultimeterFunctionMode
-            Get
-                Return CType(Me.InitialSenseFunction, VI.Tsp.MultimeterFunctionMode)
-            End Get
-        End Property
-
-        ''' <summary> Gets the Initial Sense Function settings. </summary>
-        ''' <value> The Sense Function settings. </value>
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property InitialSenseFunction As Integer
+        Public ReadOnly Property InitialSenseFunction As VI.Tsp.MultimeterFunctionMode
             Get
-                Return Me.AppSettingInt32
+                Return Me.AppSettingEnum(Of VI.Tsp.MultimeterFunctionMode)
             End Get
         End Property
 

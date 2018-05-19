@@ -19,8 +19,36 @@ Public Class ChannelSourceMeasure
     Public Sub New(ByVal title As String, ByVal channelList As String)
         MyBase.New()
         Me.Title = title
-        Me.ChannelList = channelList
+        Me.ChannelList = Me.ToSortedList(channelList)
     End Sub
+
+    Private Function ToSortedList(ByVal list As String) As String
+        Return Me.ToSortedList(list, Me.ChannelListDelimiter(list))
+    End Function
+
+    Private Function ChannelListDelimiter(ByVal list As String) As Char
+        Dim result As Char = ";"c
+        If Not list.Contains(result) Then
+            result = ","c
+        End If
+        Return result
+    End Function
+
+    ''' <summary> Converts this object to a sorted list. </summary>
+    ''' <param name="list">      The list. </param>
+    ''' <param name="delimiter"> The delimiter. </param>
+    ''' <returns> The given data converted to a String. </returns>
+    Private Function ToSortedList(ByVal list As String, ByVal delimiter As Char) As String
+        Dim result As New System.Text.StringBuilder
+        Dim l As New List(Of String)(list.Split(delimiter))
+        l.Sort()
+        For Each s As String In l
+            If result.Length > 0 Then result.Append(delimiter)
+            result.Append(s)
+        Next
+        Return result.ToString
+    End Function
+
 
     ''' <summary>  Cloning Constructor. </summary>
     ''' <param name="channelSourceMeasure"> The channel source measure. </param>
