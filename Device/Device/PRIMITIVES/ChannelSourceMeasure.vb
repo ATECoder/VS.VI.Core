@@ -22,6 +22,23 @@ Public Class ChannelSourceMeasure
         Me.ChannelList = Me.ToSortedList(channelList)
     End Sub
 
+    ''' <summary> Constructor. </summary>
+    ''' <param name="channelSourceMeasure"> The channel source measure. </param>
+    Public Sub New(ByVal channelSourceMeasure As ChannelSourceMeasure)
+        Me.New(ChannelSourceMeasure.Validated(channelSourceMeasure).Title, channelSourceMeasure.ChannelList)
+        Me.Current = channelSourceMeasure.Current
+        Me.Voltage = channelSourceMeasure.Voltage
+    End Sub
+
+    ''' <summary> Validated the given channel source measure. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <param name="channelSourceMeasure"> The channel source measure. </param>
+    ''' <returns> A ChannelSourceMeasure. </returns>
+    Public Shared Function Validated(ByVal channelSourceMeasure As ChannelSourceMeasure) As ChannelSourceMeasure
+        If channelSourceMeasure Is Nothing Then Throw New ArgumentNullException(NameOf(channelSourceMeasure))
+        Return channelSourceMeasure
+    End Function
+
     Private Function ToSortedList(ByVal list As String) As String
         Return Me.ToSortedList(list, Me.ChannelListDelimiter(list))
     End Function
@@ -49,19 +66,6 @@ Public Class ChannelSourceMeasure
         Return result.ToString
     End Function
 
-
-    ''' <summary>  Cloning Constructor. </summary>
-    ''' <param name="channelSourceMeasure"> The channel source measure. </param>
-    Public Sub New(ByVal channelSourceMeasure As ChannelSourceMeasure)
-        MyBase.New()
-        If channelSourceMeasure IsNot Nothing Then
-            Me.Title = channelSourceMeasure.Title
-            Me.ChannelList = channelSourceMeasure.ChannelList
-            Me.Current = channelSourceMeasure.Current
-            Me.Voltage = channelSourceMeasure.Voltage
-        End If
-    End Sub
-
     ''' <summary> Gets the title. </summary>
     ''' <value> The title. </value>
     Public ReadOnly Property Title As String
@@ -70,11 +74,19 @@ Public Class ChannelSourceMeasure
     ''' <value> A List of channels. </value>
     Public ReadOnly Property ChannelList As String
 
+    ''' <summary> Gets the sentinel indicating if the measure has a non zero current value. </summary>
+    ''' <value> The sentinel indicating if the measure has a non zero current value. </value>
+    Public ReadOnly Property HasValue As Boolean
+        Get
+            Return Me.Current <> 0
+        End Get
+    End Property
+
     ''' <summary> Gets the resistance. </summary>
-    ''' <value> The resistance. </value>
+    ''' <value> The sheet resistance or <see cref="Double.NaN"/> if not <see cref="HasValue"/>. </value>
     Public ReadOnly Property Resistance As Double
         Get
-            If Me.Current > 0 Then
+            If Me.HasValue Then
                 Return Me.Voltage / Me.Current
             Else
                 Return Double.NaN
