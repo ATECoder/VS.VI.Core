@@ -61,7 +61,7 @@ Public Class ChannelResistorCollection
     ''' <returns> An Integer. </returns>
     Public Function ConfigureDisplayValues(ByVal grid As DataGridView) As Integer
 
-        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
         Dim wasEnabled As Boolean = grid.Enabled
         grid.Enabled = False
@@ -101,7 +101,7 @@ Public Class ChannelResistorCollection
                 .Name = NameOf(ChannelResistor.Resistance)
                 .Visible = True
                 .DisplayIndex = displayIndex
-                .Width = grid.Width - width
+                .Width = grid.Width - width - grid.Columns.Count
                 .DefaultCellStyle.Format = "G5"
             End With
         Catch
@@ -124,7 +124,7 @@ Public Class ChannelResistorCollection
     ''' <returns> An Integer. </returns>
     Public Function DisplayValues(ByVal grid As DataGridView) As Integer
 
-        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
         Dim wasEnabled As Boolean = grid.Enabled
         grid.Enabled = False
@@ -147,7 +147,7 @@ Public Class ChannelResistorCollection
     ''' <returns> An Integer. </returns>
     Public Function ConfigureDisplay(ByVal grid As DataGridView) As Integer
 
-        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
         Dim wasEnabled As Boolean = grid.Enabled
         grid.Enabled = False
@@ -178,7 +178,7 @@ Public Class ChannelResistorCollection
     ''' <returns> An Integer. </returns>
     Public Function Display(ByVal grid As DataGridView) As Integer
 
-        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
         Dim wasEnabled As Boolean = grid.Enabled
         grid.Enabled = False

@@ -910,7 +910,7 @@ Public Class Device
     End Sub
 
     ''' <summary> Applies the settings. </summary>
-    Protected Overrides Sub ApplySettings()
+    Public Overrides Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
         Me.HandlePropertyChange(settings, NameOf(My.MySettings .TraceLogLevel))
         Me.HandlePropertyChange(settings, NameOf(My.MySettings .TraceShowLevel))

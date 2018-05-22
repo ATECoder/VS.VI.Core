@@ -164,14 +164,14 @@
         Private Shared Sub BridgeMeterMeasureResistor(control As VI.Tsp.K3700.BridgeMeterControl)
             Dim e As New Core.Pith.ActionEventArgs
             control.Device.TryConfigureMeter(BridgeMeterTestInfo.Get.PowerLineCycles, e)
-            Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
             TestInfo.AssertMessageQueue()
+            Assert.AreEqual(False, e.Cancel, $"Configuring bridge meter failed; {e.Details}")
             Dim resistor As VI.ChannelResistor = control.Device.Bridge(0)
             control.Device.TryMeasureResistance(resistor, e)
+            TestInfo.AssertMessageQueue()
             Assert.AreEqual(False, e.Cancel, $"Measuring resistor {resistor.Title} failed; {e.Details}")
             Assert.AreEqual(BridgeMeterTestInfo.Get.BridgeR1, resistor.Resistance, BridgeMeterTestInfo.Get.BridgeMeterEpsilon,
                             $"Measuring resistor resistance expected {BridgeMeterTestInfo.Get.BridgeR1:G5} actual {resistor.Resistance:G5}")
-            TestInfo.AssertMessageQueue()
         End Sub
 
         <TestMethod(), TestCategory("VI")>

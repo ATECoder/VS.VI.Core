@@ -115,7 +115,7 @@
             actualBoolean = device.MultimeterSubsystem.QueryAutoZeroEnabled.GetValueOrDefault(False)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.MultimeterSubsystemBase)}.{NameOf(VI.MultimeterSubsystemBase.AutoZeroEnabled)} Is {actualBoolean }; expected {expectedBoolean }")
 
-            Dim expectedFunction As VI.Tsp.MultimeterFunctionMode = K3700.Tests.K3700SubsystemsInfo.Get.InitialSenseFunctionMode
+            Dim expectedFunction As VI.Tsp.MultimeterFunctionMode = K3700.Tests.K3700SubsystemsInfo.Get.InitialSenseFunction
             Dim senseFn As VI.Tsp.MultimeterFunctionMode = device.MultimeterSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp.MultimeterFunctionMode.ResistanceTwoWire)
             Assert.AreEqual(expectedFunction, senseFn,
                             $"{GetType(VI.MultimeterSubsystemBase)}.{NameOf(VI.Tsp.MultimeterSubsystemBase.FunctionMode)} Is {senseFn} ; expected {expectedFunction}")

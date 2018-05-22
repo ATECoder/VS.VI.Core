@@ -1358,7 +1358,7 @@ Public MustInherit Class DeviceBase
 #Region " MY SETTINGS "
 
     ''' <summary> Applies the settings. </summary>
-    Protected MustOverride Sub ApplySettings()
+    Public MustOverride Sub ApplySettings()
 
 #End Region
 

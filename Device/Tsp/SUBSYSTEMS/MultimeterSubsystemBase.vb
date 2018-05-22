@@ -152,7 +152,11 @@ Public MustInherit Class MultimeterSubsystemBase
         ' changing the function mode changes range, auto delay mode and open detector enabled. 
         Me.QueryRange()
         Me.QueryAutoDelayMode()
-        If Me.FunctionMode.GetValueOrDefault(MultimeterFunctionMode.None) = MultimeterFunctionMode.ResistanceFourWire Then Me.QueryOpenDetectorEnabled()
+        If Me.FunctionMode.GetValueOrDefault(MultimeterFunctionMode.None) = MultimeterFunctionMode.ResistanceFourWire Then
+            Me.QueryOpenDetectorEnabled()
+        Else
+            Me.OpenDetectorEnabled = False
+        End If
         Return Me.FunctionMode
     End Function
 

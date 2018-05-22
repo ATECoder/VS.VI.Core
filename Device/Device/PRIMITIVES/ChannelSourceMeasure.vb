@@ -142,7 +142,7 @@ Public Class ChannelSourceMeasureCollection
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Function ConfigureDisplayValues(ByVal grid As DataGridView) As Integer
 
-        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
         Dim wasEnabled As Boolean = grid.Enabled
         grid.Enabled = False
@@ -188,7 +188,7 @@ Public Class ChannelSourceMeasureCollection
                 .Name = "Volt"
                 .Visible = True
                 .DisplayIndex = displayIndex
-                .Width = grid.Width - width
+                .Width = grid.Width - width - grid.Columns.Count
                 .DefaultCellStyle.Format = "G5"
             End With
         Catch
@@ -205,7 +205,7 @@ Public Class ChannelSourceMeasureCollection
                 .Name = "Ampere"
                 .Visible = True
                 .DisplayIndex = displayIndex
-                .Width = grid.Width - width
+                .Width = grid.Width - width - grid.Columns.Count
                 .DefaultCellStyle.Format = "G5"
             End With
         Catch
@@ -222,7 +222,7 @@ Public Class ChannelSourceMeasureCollection
                 .Name = "Ohm"
                 .Visible = True
                 .DisplayIndex = displayIndex
-                .Width = grid.Width - width
+                .Width = grid.Width - width - grid.Columns.Count
                 .DefaultCellStyle.Format = "G5"
             End With
             grid.Columns.Add(column)
@@ -247,7 +247,7 @@ Public Class ChannelSourceMeasureCollection
     ''' <returns> An Integer. </returns>
     Public Function DisplayValues(ByVal grid As DataGridView) As Integer
 
-        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
         Dim wasEnabled As Boolean = grid.Enabled
         grid.Enabled = False
@@ -270,7 +270,7 @@ Public Class ChannelSourceMeasureCollection
     ''' <returns> An Integer. </returns>
     Public Function ConfigureDisplay(ByVal grid As DataGridView) As Integer
 
-        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
         Dim wasEnabled As Boolean = grid.Enabled
         grid.Enabled = False
@@ -301,7 +301,7 @@ Public Class ChannelSourceMeasureCollection
     ''' <returns> An Integer. </returns>
     Public Function Display(ByVal grid As DataGridView) As Integer
 
-        If grid Is Nothing Then Throw New ArgumentNullException("grid")
+        If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
         Dim wasEnabled As Boolean = grid.Enabled
         grid.Enabled = False

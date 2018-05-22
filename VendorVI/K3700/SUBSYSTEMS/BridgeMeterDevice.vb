@@ -82,10 +82,10 @@ Public Class BridgeMeterDevice
 #Region " DEVICE "
 
     ''' <summary>
-    ''' Allows the derived device to take actions after opening. Adds subsystems and event handlers.
+    ''' Allows the derived device to take actions after initialization is completed.
     ''' </summary>
-    Protected Overrides Sub OnOpened()
-        MyBase.OnOpened()
+    Protected Overrides Sub OnInitialized()
+        MyBase.OnInitialized()
         If Me.IsDeviceOpen Then
             Dim e As New isr.Core.Pith.ActionEventArgs
             If Not Me.TryConfigureMeter(My.MySettings.Default.BridgeMeterPowerLineCycles, e) Then

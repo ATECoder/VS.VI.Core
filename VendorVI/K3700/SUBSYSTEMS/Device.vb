@@ -435,7 +435,7 @@ Public Class Device
             If Me._MultimeterSubsystem IsNot Nothing Then
                 RemoveHandler Me.MultimeterSubsystem.PropertyChanged, AddressOf Me.MultimeterSubsystemPropertyChanged
                 Me.RemoveSubsystem(Me.MultimeterSubsystem)
-                Me.MultimeterSubsystem.Dispose()
+                Me._MultimeterSubsystem.Dispose()
                 Me._MultimeterSubsystem = Nothing
             End If
             Me._MultimeterSubsystem = value
@@ -581,7 +581,7 @@ Public Class Device
     End Sub
 
     ''' <summary> Applies the settings. </summary>
-    Protected Overrides Sub ApplySettings()
+    Public Overrides Sub ApplySettings()
         Dim settings As My.MySettings = My.MySettings.Default
         Me.HandlePropertyChange(settings, NameOf(My.MySettings.TraceLogLevel))
         Me.HandlePropertyChange(settings, NameOf(My.MySettings.TraceShowLevel))
