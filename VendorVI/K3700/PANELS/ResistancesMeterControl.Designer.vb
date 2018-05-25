@@ -1,6 +1,6 @@
 ﻿Imports System.Windows.Forms
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class BridgeMeterControl
+Partial Class ResistancesMeterControl
 
     'Required by the Windows Form Designer
     Private components As System.ComponentModel.IContainer

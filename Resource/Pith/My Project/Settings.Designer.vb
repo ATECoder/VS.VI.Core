@@ -15,7 +15,7 @@ Option Explicit On
 Namespace My
     
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
-     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.6.0.0"),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0"),  _
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
     Partial Public NotInheritable Class MySettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
@@ -68,25 +68,13 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("5.8.908.0")>  _
-        Public Property FoundationVisaAssemblyVersion() As String
-            Get
-                Return CType(Me("FoundationVisaAssemblyVersion"),String)
-            End Get
-            Set
-                Me("FoundationVisaAssemblyVersion") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("17.5.0")>  _
-        Public Property NatioalInsrumentVisaVersion() As String
+        Public Property NationalInsrumentVisaVersion() As String
             Get
-                Return CType(Me("NatioalInsrumentVisaVersion"),String)
+                Return CType(Me("NationalInsrumentVisaVersion"),String)
             End Get
             Set
-                Me("NatioalInsrumentVisaVersion") = value
+                Me("NationalInsrumentVisaVersion") = value
             End Set
         End Property
         
@@ -159,6 +147,18 @@ Namespace My
             End Get
             Set
                 Me("FoundationSystemFileVersion32") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("5.8.908.0")>  _
+        Public Property FoundationVisaAssemblyVersion() As String
+            Get
+                Return CType(Me("FoundationVisaAssemblyVersion"),String)
+            End Get
+            Set
+                Me("FoundationVisaAssemblyVersion") = value
             End Set
         End Property
     End Class

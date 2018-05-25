@@ -145,9 +145,11 @@ Public Class SessionFactory
     Public Shared Sub DisplayResourceNames(ByVal comboBox As Windows.Forms.ComboBox, ByVal resourceNames As IEnumerable(Of String))
         If comboBox Is Nothing Then Throw New ArgumentNullException(NameOf(comboBox))
         If resourceNames.Any Then
+            Dim resourceName As String = comboBox.Text
             comboBox.DataSource = Nothing
             comboBox.Items.Clear()
             comboBox.DataSource = resourceNames
+            If resourceNames.Contains(resourceName) Then comboBox.Text = resourceName
         End If
     End Sub
 

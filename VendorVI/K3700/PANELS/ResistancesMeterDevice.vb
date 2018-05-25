@@ -1,6 +1,6 @@
 ﻿Imports isr.VI.ExceptionExtensions
 
-''' <summary> A bridge meter device using the K3700 instrument. </summary>
+''' <summary> A resistances meter device using the K3700 instrument. </summary>
 ''' <license>
 ''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
@@ -11,7 +11,7 @@
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
 ''' </license>
 ''' <history date="3/22/2018" by="David" revision=""> Created. </history>
-Public Class BridgeMeterDevice
+Public Class ResistancesMeterDevice
     Inherits Device
 
 #Region " CONSTRUCTORS "
@@ -20,24 +20,24 @@ Public Class BridgeMeterDevice
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
         MyBase.New
-        Me._Bridge = New BridgeMeterResistorCollection
+        Me._Resistors = New ChannelResistorCollection
     End Sub
 
     ''' <summary> Validated the given value. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
-    ''' <param name="bridgeMeterDevice"> The value. </param>
-    ''' <returns> A BridgeMeterDevice. </returns>
-    Public Overloads Shared Function Validated(ByVal bridgeMeterDevice As BridgeMeterDevice) As BridgeMeterDevice
-        If bridgeMeterDevice Is Nothing Then Throw New ArgumentNullException(NameOf(bridgeMeterDevice))
-        Return bridgeMeterDevice
+    ''' <param name="device"> The device. </param>
+    ''' <returns> A ResistancesMeterDevice. </returns>
+    Public Overloads Shared Function Validated(ByVal device As ResistancesMeterDevice) As ResistancesMeterDevice
+        If device Is Nothing Then Throw New ArgumentNullException(NameOf(device))
+        Return device
     End Function
 
     ''' <summary> Creates a new Me. </summary>
     ''' <returns> A Me. </returns>
-    Public Overloads Shared Function Create() As BridgeMeterDevice
-        Dim device As BridgeMeterDevice = Nothing
+    Public Overloads Shared Function Create() As ResistancesMeterDevice
+        Dim device As ResistancesMeterDevice = Nothing
         Try
-            device = New BridgeMeterDevice
+            device = New ResistancesMeterDevice
         Catch
             If device IsNot Nothing Then device.Dispose()
             device = Nothing
@@ -45,24 +45,6 @@ Public Class BridgeMeterDevice
         End Try
         Return device
     End Function
-
-    ''' <summary>
-    ''' Releases the unmanaged resources used by the isr.VI.Instrument.ResourcePanelBase and
-    ''' optionally releases the managed resources.
-    ''' </summary>
-    ''' <param name="disposing"> true to release both managed and unmanaged resources; false to
-    '''                          release only unmanaged resources. </param>
-    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    <System.Diagnostics.DebuggerNonUserCode()>
-    Protected Overrides Sub Dispose(ByVal disposing As Boolean)
-        Try
-            If Not Me.IsDisposed AndAlso disposing Then
-                Me.Bridge?.Clear()
-            End If
-        Finally
-            MyBase.Dispose(disposing)
-        End Try
-    End Sub
 
 #End Region
 
@@ -88,12 +70,12 @@ Public Class BridgeMeterDevice
         MyBase.OnInitialized()
         If Me.IsDeviceOpen Then
             Dim e As New isr.Core.Pith.ActionEventArgs
-            If Not Me.TryConfigureMeter(My.MySettings.Default.BridgeMeterPowerLineCycles, e) Then
+            If Not Me.TryConfigureMeter(Me.MultimeterSubsystem.PowerLineCycles.GetValueOrDefault(1), e) Then
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Files configuring meter;. Details: {e.Details}")
             End If
         End If
         Me.EnableMeasurements()
-        Me.SafeSendPropertyChanged(NameOf(BridgeMeterDevice.HasBridgeValues))
+        Me.SafeSendPropertyChanged(NameOf(ResistancesMeterDevice.Resistors))
     End Sub
 
 #End Region
@@ -234,23 +216,21 @@ Public Class BridgeMeterDevice
 
 #Region " MEASURE "
 
-    ''' <summary> Gets the has values. </summary>
-    ''' <value> The has values. </value>
-    Public ReadOnly Property HasBridgeValues As Boolean
-        Get
-            Return Me.Bridge.Any
-        End Get
-    End Property
+    ''' <summary> Populates the given resistors. </summary>
+    ''' <param name="resistors"> The resistors. </param>
+    Public Sub Populate(ByVal resistors As ChannelResistorCollection)
+        Me._Resistors = resistors
+    End Sub
 
-    ''' <summary> Gets or sets the bridges. </summary>
-    ''' <value> The bridge. </value>
-    Public ReadOnly Property Bridge As BridgeMeterResistorCollection
+    ''' <summary> Gets or sets the resistors. </summary>
+    ''' <value> The resistors. </value>
+    Public ReadOnly Property Resistors As ChannelResistorCollection
 
     ''' <summary> Configure meter. </summary>
     ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="powerLineCycles"> The power line cycles. </param>
     Public Sub ConfigureMeter(ByVal powerLineCycles As Double)
-        Dim activity As String = $"Checking {My.Settings.ResourceName} is open"
+        Dim activity As String = $"Checking {Me.Session.ResourceName} is open"
         If Me.IsDeviceOpen Then
             activity = $"Configuring function mode {MultimeterFunctionMode.ResistanceFourWire}"
             Dim expectedMeasureFunction As MultimeterFunctionMode = MultimeterFunctionMode.ResistanceFourWire
@@ -284,7 +264,7 @@ Public Class BridgeMeterDevice
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Public Function TryConfigureMeter(ByVal powerLineCycles As Double, ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        Dim activity As String = $"Configuring bridge meter {My.Settings.ResourceName}"
+        Dim activity As String = $"Configuring resistances meter {Me.Session.ResourceName}"
         Try
             Me.ConfigureMeter(powerLineCycles)
         Catch ex As Exception
@@ -345,31 +325,31 @@ Public Class BridgeMeterDevice
         Return Not e.Cancel
     End Function
 
-    ''' <summary> Measure bridge. </summary>
+    ''' <summary> Measure resistors. </summary>
     ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
-    Public Sub MeasureBridge()
-        Dim activity As String = $"Measuring bridge at {My.Settings.ResourceName}"
+    Public Sub MeasureResistors()
+        Dim activity As String = $"Measuring resistors at {Me.Session.ResourceName}"
         If Me.IsDeviceOpen Then
-            For Each resistor As ChannelResistor In Me.Bridge
-                activity = $"Measuring {resistor.Title} at {My.Settings.ResourceName}"
+            For Each resistor As ChannelResistor In Me.Resistors
+                activity = $"Measuring {resistor.Title} at {Me.Session.ResourceName}"
                 Me.MeasureResistance(resistor)
             Next
-            Me.SafeSendPropertyChanged(NameOf(BridgeMeterDevice.HasBridgeValues))
+            Me.SafeSendPropertyChanged(NameOf(ResistancesMeterDevice.Resistors))
         Else
             Throw New VI.Pith.OperationFailedException($"Failed {activity}; VISA session to this device is not open")
         End If
     End Sub
 
-    ''' <summary> Attempts to measure bridge from the given data. </summary>
+    ''' <summary> Attempts to measure resistors from the given data. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="e"> Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Public Function TryMeasureBridge(ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
+    Public Function TryMeasureResistors(ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
-        Dim activity As String = $"Measuring bridge at {My.Settings.ResourceName}"
+        Dim activity As String = $"Measuring resistors at {Me.Session.ResourceName}"
         Try
-            Me.MeasureBridge()
+            Me.MeasureResistors()
         Catch ex As Exception
             e.RegisterCancellation(Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}"))
         End Try
@@ -390,27 +370,3 @@ Public Class BridgeMeterDevice
 
 End Class
 
-''' <summary> Collection of bridge meter resistors. </summary>
-''' <license>
-''' (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
-''' Licensed under The MIT License.</para><para>
-''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
-''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-''' NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
-''' </license>
-''' <history date="4/18/2018" by="David" revision=""> Created. </history>
-Public Class BridgeMeterResistorCollection
-    Inherits ChannelResistorCollection
-
-    ''' <summary> Default constructor. </summary>
-    Public Sub New()
-        MyBase.New
-        Me.AddResistor("R1", My.Settings.R1ChannelList)
-        Me.AddResistor("R2", My.Settings.R2ChannelList)
-        Me.AddResistor("R3", My.Settings.R3ChannelList)
-        Me.AddResistor("R4", My.Settings.R4ChannelList)
-    End Sub
-
-End Class

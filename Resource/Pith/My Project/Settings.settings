@@ -5,10 +5,7 @@
     <Setting Name="FoundationSystemFileVersion64" Type="System.String" Scope="User">
       <Value Profile="(Default)">5.9.2008.0</Value>
     </Setting>
-    <Setting Name="FoundationVisaAssemblyVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">5.8.908.0</Value>
-    </Setting>
-    <Setting Name="NatioalInsrumentVisaVersion" Type="System.String" Scope="User">
+    <Setting Name="NationalInsrumentVisaVersion" Type="System.String" Scope="User">
       <Value Profile="(Default)">17.5.0</Value>
     </Setting>
     <Setting Name="DefaultResourceTitle" Type="System.String" Scope="User">
@@ -28,6 +25,9 @@
     </Setting>
     <Setting Name="FoundationSystemFileVersion32" Type="System.String" Scope="User">
       <Value Profile="(Default)">17.5.0f0</Value>
+    </Setting>
+    <Setting Name="FoundationVisaAssemblyVersion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">5.8.908.0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

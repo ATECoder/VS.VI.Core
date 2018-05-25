@@ -15,7 +15,7 @@ Imports isr.VI.ExceptionExtensions
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</para>
 ''' </license>
 ''' <history date="10/9/2017" by="David" revision=""> Created. </history>
-Public Class BridgeMeterControl
+Public Class ResistancesMeterControl
     Inherits isr.VI.Instrument.ResourceControlBase
 
 #Region " CONSTRUCTORS "
@@ -23,13 +23,13 @@ Public Class BridgeMeterControl
     ''' <summary> Default constructor. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Sub New()
-        Me.New(BridgeMeterDevice.Create, True)
+        Me.New(ResistancesMeterDevice.Create, True)
     End Sub
 
     ''' <summary> Constructor. </summary>
     ''' <param name="device">        The device. </param>
     ''' <param name="isDeviceOwner"> True if is device owner, false if not. </param>
-    Public Sub New(ByVal device As BridgeMeterDevice, ByVal isDeviceOwner As Boolean)
+    Public Sub New(ByVal device As ResistancesMeterDevice, ByVal isDeviceOwner As Boolean)
         MyBase.New()
         Me._New(device, isDeviceOwner)
     End Sub
@@ -37,7 +37,7 @@ Public Class BridgeMeterControl
     ''' <summary> Constructor. </summary>
     ''' <param name="device">        The device. </param>
     ''' <param name="isDeviceOwner"> True if is device owner, false if not. </param>
-    Private Sub _New(ByVal device As BridgeMeterDevice, ByVal isDeviceOwner As Boolean)
+    Private Sub _New(ByVal device As ResistancesMeterDevice, ByVal isDeviceOwner As Boolean)
         Me.InitializingComponents = True
         ' This call is required by the designer.
         InitializeComponent()
@@ -91,11 +91,11 @@ Public Class BridgeMeterControl
 
 #Region " DEVICE "
 
-    Private _Device As BridgeMeterDevice
+    Private _Device As ResistancesMeterDevice
     ''' <summary> Gets or sets the device. </summary>
     ''' <value> The device. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Public ReadOnly Property Device As BridgeMeterDevice
+    Public ReadOnly Property Device As ResistancesMeterDevice
         Get
             Return Me._Device
         End Get
@@ -103,7 +103,7 @@ Public Class BridgeMeterControl
 
     ''' <summary> Assign device. </summary>
     ''' <param name="value"> The value. </param>
-    Private Sub _AssignDevice(ByVal value As BridgeMeterDevice, ByVal isDeviceOwner As Boolean)
+    Private Sub _AssignDevice(ByVal value As ResistancesMeterDevice, ByVal isDeviceOwner As Boolean)
         If Me._Device IsNot Nothing OrElse MyBase.DeviceBase IsNot Nothing Then
             Me._ReleaseDevice()
         End If
@@ -117,7 +117,7 @@ Public Class BridgeMeterControl
 
     ''' <summary> Assigns a device. </summary>
     ''' <param name="value"> True to show or False to hide the control. </param>
-    Public Overloads Sub AssignDevice(ByVal value As BridgeMeterDevice, ByVal isDeviceOwner As Boolean)
+    Public Overloads Sub AssignDevice(ByVal value As ResistancesMeterDevice, ByVal isDeviceOwner As Boolean)
         Me._AssignDevice(value, isDeviceOwner)
     End Sub
 
@@ -136,7 +136,7 @@ Public Class BridgeMeterControl
     ''' <summary> Releases the device and reassigns the default device. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     Public Overrides Sub RestoreDevice()
-        Me.AssignDevice(BridgeMeterDevice.Create, True)
+        Me.AssignDevice(ResistancesMeterDevice.Create, True)
     End Sub
 
 #End Region
@@ -176,21 +176,21 @@ Public Class BridgeMeterControl
     ''' <param name="sender">    The sender. </param>
     ''' <param name="propertyName"> Name of the property. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")>
-    Private Overloads Sub HandlePropertyChange(ByVal sender As BridgeMeterDevice, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal sender As ResistancesMeterDevice, ByVal propertyName As String)
         If sender Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(isr.VI.DeviceBase.ResourceNameCaption)
                 Me._ReadingLabel.Text = Me.Device.ResourceNameCaption
-            Case NameOf(BridgeMeterDevice.IsDeviceOpen)
+            Case NameOf(ResistancesMeterDevice.IsDeviceOpen)
                 Me._ConfigureGroupBox.Enabled = Me.IsDeviceOpen
                 Me._ReadingLabel.Text = Me.Device.ResourceNameCaption
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{Me.Device.StatusSubsystem.VersionInfo.Model} is {If(IsDeviceOpen, "open", "close")}")
-            Case NameOf(BridgeMeterDevice.PowerLineCycles)
+            Case NameOf(ResistancesMeterDevice.PowerLineCycles)
                 '  Me.PowerLineCycles = sender.PowerLineCycles
-            Case NameOf(BridgeMeterDevice.MeasurementEnabled)
+            Case NameOf(ResistancesMeterDevice.MeasurementEnabled)
                 Me._MeasureGroupBox.Enabled = sender.MeasurementEnabled
-            Case NameOf(BridgeMeterDevice.HasBridgeValues)
-                sender.Bridge.DisplayValues(Me._DataGrid)
+            Case NameOf(ResistancesMeterDevice.Resistors)
+                sender.Resistors?.DisplayValues(Me._DataGrid)
         End Select
     End Sub
 
@@ -200,12 +200,12 @@ Public Class BridgeMeterControl
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub BridgeMeterDevicePropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         If Me.InitializingComponents OrElse sender Is Nothing OrElse e Is Nothing Then Return
-        Dim activity As String = $"handling {NameOf(K3700.BridgeMeterDevice)}.{e.PropertyName} change"
+        Dim activity As String = $"handling {NameOf(K3700.ResistancesMeterDevice)}.{e.PropertyName} change"
         Try
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me.BridgeMeterDevicePropertyChanged), New Object() {sender, e})
             Else
-                Me.HandlePropertyChange(TryCast(sender, K3700.BridgeMeterDevice), e.PropertyName)
+                Me.HandlePropertyChange(TryCast(sender, K3700.ResistancesMeterDevice), e.PropertyName)
             End If
         Catch ex As Exception
             If Me.Talker Is Nothing Then
@@ -453,7 +453,7 @@ Public Class BridgeMeterControl
         Try
             Me.Cursor = Cursors.WaitCursor
             Dim args As New isr.Core.Pith.ActionEventArgs
-            If Not Me.Device.TryMeasureBridge(args) Then
+            If Not Me.Device.TryMeasureResistors(args) Then
                 Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId, $"Failed {activity};. {args.Details}")
             End If
         Finally

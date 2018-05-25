@@ -932,7 +932,6 @@ Public Class ResourceControlBase
                 Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
             End If
         End Try
-
     End Sub
 
     ''' <summary> Executes the title changed action. </summary>

@@ -263,12 +263,20 @@ Public MustInherit Class ResourcesManagerBase
     ''' <param name="e"> Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Shared Function ValidateVendorVersion(ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
-        Return ResourcesManagerBase.ValidateVendorVersion(My.Settings.NatioalInsrumentVisaVersion, e)
+        Return ResourcesManagerBase.ValidateVendorVersion(ResourcesManagerBase.ExpectedVendorVersion, e)
     End Function
+
+    ''' <summary> Gets the expected vendor version. </summary>
+    ''' <value> The expected vendor version. </value>
+    Public Shared ReadOnly Property ExpectedVendorVersion As String
+        Get
+            Return My.Settings.NationalInsrumentVisaVersion
+        End Get
+    End Property
 
 #End Region
 
-#Region " FOUNDATION .NET VISA FILE VERSION "
+#Region " FOUNDATION IVI VISA DLL FILE VERSION "
 
     ''' <summary> Gets or sets the filename of the foundation .NET VISA file. </summary>
     ''' <value> The filename of the foundation .NET VISA file. </value>
@@ -305,8 +313,14 @@ Public MustInherit Class ResourcesManagerBase
     ''' <param name="e"> Cancel details event information. </param>
     ''' <returns> <c>true</c> if it succeeds; otherwise <c>false</c> </returns>
     Public Shared Function ValidateFoundationVisaAssemblyVersion(ByVal e As isr.Core.Pith.ActionEventArgs) As Boolean
-        Return ResourcesManagerBase.ValidateFoundationVisaAssemblyVersion(My.Settings.FoundationVisaAssemblyVersion, e)
+        Return ResourcesManagerBase.ValidateFoundationVisaAssemblyVersion(ResourcesManagerBase.ExpectedFoundationVisaAssemblyVersion, e)
     End Function
+
+    Public Shared ReadOnly Property ExpectedFoundationVisaAssemblyVersion As String
+        Get
+            Return My.Settings.FoundationVisaAssemblyVersion
+        End Get
+    End Property
 
 #End Region
 

@@ -101,8 +101,8 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="BridgeMeter\BridgeMeterTests.vb" />
-    <Compile Include="BridgeMeter\BridgeMeterTests_Info.vb" />
+    <Compile Include="ResistancesMeter\ResistancesMeterTests.vb" />
+    <Compile Include="ResistancesMeter\ResistancesMeterTests_Info.vb" />
     <Compile Include="Device\K3700Manager_Resource.vb" />
     <Compile Include="Device\K3700Manager_Control.vb" />
     <Compile Include="Device\K3700Manager_Subsystems.vb" />

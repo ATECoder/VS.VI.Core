@@ -396,6 +396,14 @@ logged to: {My.Application.Log.DefaultFileLogWriter.FullLogFileName};
         End Try
     End Sub
 
+    ''' <summary> Displays the resource name. </summary>
+    Public Sub DisplayResourceName(ByVal resourceName As String)
+        Dim init As Boolean = Me.InitializingComponents
+        Me.InitializingComponents = False
+        Me._ResourceNamesComboBox.Text = resourceName
+        Me.InitializingComponents = init
+    End Sub
+
     ''' <summary> Displays the search patterns. </summary>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Protected Sub DisplayResourceNamePatterns()
@@ -477,9 +485,6 @@ logged to: {My.Application.Log.DefaultFileLogWriter.FullLogFileName};
     ''' <summary> Raises the FindNames event. </summary>
     ''' <param name="e"> Event information to send to registered event handlers. </param>
     Protected Sub OnFindNames(ByVal e As EventArgs)
-        ' clear the selected resource to make sure a new selection is 
-        ' made after find.
-        Me._ResourceNamesComboBox.Text = ""
         Dim evt As EventHandler(Of EventArgs) = Me.FindNamesEvent
         evt?.Invoke(Me, e)
     End Sub

@@ -91,10 +91,10 @@
     <Compile Include="My\MyLibrary_Info.vb" />
     <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="My\MySuppressions.vb" />
-    <Compile Include="PANELS\BridgeMeterControl.Designer.vb">
-      <DependentUpon>BridgeMeterControl.vb</DependentUpon>
+    <Compile Include="PANELS\ResistancesMeterControl.Designer.vb">
+      <DependentUpon>ResistancesMeterControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="PANELS\BridgeMeterControl.vb">
+    <Compile Include="PANELS\ResistancesMeterControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PANELS\K3700Control.Designer.vb">
@@ -118,8 +118,7 @@
     <Compile Include="PANELS\MovingWindowMeterWorker.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SUBSYSTEMS\BridgeMeterDevice.vb" />
-    <Compile Include="SUBSYSTEMS\BridgeMeter.vb" />
+    <Compile Include="PANELS\ResistancesMeterDevice.vb" />
     <Compile Include="SUBSYSTEMS\DisplaySubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SlotsSubsystem.vb" />
     <Compile Include="SUBSYSTEMS\SlotSubsystem.vb" />
@@ -134,8 +133,8 @@
     <EmbeddedResource Include="FORMS\MovingWindowForm.resx">
       <DependentUpon>MovingWindowForm.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PANELS\BridgeMeterControl.resx">
-      <DependentUpon>BridgeMeterControl.vb</DependentUpon>
+    <EmbeddedResource Include="PANELS\ResistancesMeterControl.resx">
+      <DependentUpon>ResistancesMeterControl.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PANELS\K3700Control.resx">
       <DependentUpon>K3700Control.vb</DependentUpon>
@@ -154,7 +153,7 @@
     <CodeAnalysisDictionary Include="My\MyDictionary.xml">
       <SubType>Designer</SubType>
     </CodeAnalysisDictionary>
-    <Content Include="PANELS\BridgeMeterControl.bmp" />
+    <Content Include="PANELS\ResistancesMeterControl.bmp" />
     <EmbeddedResource Include="PANELS\K3700Control.bmp" />
     <EmbeddedResource Include="PANELS\MovingWindowMeter.bmp" />
     <EmbeddedResource Include="PANELS\K3700Panel.bmp" />
