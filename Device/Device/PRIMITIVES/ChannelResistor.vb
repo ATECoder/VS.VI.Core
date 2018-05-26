@@ -76,24 +76,31 @@ Public Class ChannelResistorCollection
         grid.AutoGenerateColumns = False
         grid.RowHeadersVisible = False
         grid.ReadOnly = True
-        grid.DataSource = Me.ToArray
+        grid.DataSource = Me
 
         grid.Columns.Clear()
         grid.Refresh()
         Dim displayIndex As Integer = 0
-        Dim width As Integer = 30
+        Dim width As Integer = 0
         Dim column As DataGridViewTextBoxColumn = Nothing
         Try
+            displayIndex = 0
             column = New DataGridViewTextBoxColumn()
             With column
                 .DataPropertyName = NameOf(ChannelResistor.Title)
                 .Name = NameOf(ChannelSourceMeasure.Title)
                 .Visible = True
+                .Width = 50
                 .DisplayIndex = displayIndex
             End With
             grid.Columns.Add(column)
             width += column.Width
+        Catch
+            If column IsNot Nothing Then column.Dispose()
+            Throw
+        End Try
 
+        Try
             displayIndex += 1
             column = New DataGridViewTextBoxColumn()
             With column
@@ -104,11 +111,12 @@ Public Class ChannelResistorCollection
                 .Width = grid.Width - width - grid.Columns.Count
                 .DefaultCellStyle.Format = "G5"
             End With
+            grid.Columns.Add(column)
         Catch
             If column IsNot Nothing Then column.Dispose()
             Throw
         End Try
-        grid.Columns.Add(column)
+
         grid.Enabled = True
         If grid.Columns IsNot Nothing AndAlso grid.Columns.Count > 0 Then
             Return grid.Columns.Count
@@ -135,7 +143,7 @@ Public Class ChannelResistorCollection
             Application.DoEvents()
         End If
 
-        grid.DataSource = Me
+        grid.DataSource = Me.ToArray
         Application.DoEvents()
         Return grid.Columns.Count
 
@@ -162,7 +170,7 @@ Public Class ChannelResistorCollection
         grid.AutoGenerateColumns = True
         grid.RowHeadersVisible = False
         grid.ReadOnly = True
-        grid.DataSource = Me.ToArray
+        grid.DataSource = Me
         grid.Enabled = True
         If grid.Columns IsNot Nothing AndAlso grid.Columns.Count > 0 Then
             Return grid.Columns.Count
@@ -189,7 +197,7 @@ Public Class ChannelResistorCollection
             Application.DoEvents()
         End If
 
-        grid.DataSource = Me
+        grid.DataSource = Me.ToArray
         Application.DoEvents()
         Return grid.Columns.Count
 

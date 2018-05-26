@@ -398,10 +398,14 @@ logged to: {My.Application.Log.DefaultFileLogWriter.FullLogFileName};
 
     ''' <summary> Displays the resource name. </summary>
     Public Sub DisplayResourceName(ByVal resourceName As String)
-        Dim init As Boolean = Me.InitializingComponents
-        Me.InitializingComponents = False
-        Me._ResourceNamesComboBox.Text = resourceName
-        Me.InitializingComponents = init
+        If Me.InvokeRequired Then
+            Me.Invoke(New Action(Of String)(AddressOf Me.DisplayResourceName), New Object() {resourceName})
+        Else
+            Dim init As Boolean = Me.InitializingComponents
+            Me.InitializingComponents = False
+            Me._ResourceNamesComboBox.Text = resourceName
+            Me.InitializingComponents = init
+        End If
     End Sub
 
     ''' <summary> Displays the search patterns. </summary>

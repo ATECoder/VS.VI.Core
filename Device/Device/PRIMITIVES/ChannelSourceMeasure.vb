@@ -157,19 +157,22 @@ Public Class ChannelSourceMeasureCollection
         grid.AutoGenerateColumns = False
         grid.RowHeadersVisible = False
         grid.ReadOnly = True
-        grid.DataSource = Me.ToArray
+        grid.DataSource = Me
 
         grid.Columns.Clear()
         grid.Refresh()
         Dim displayIndex As Integer = 0
-        Dim width As Integer = 30
+        Dim width As Integer = 0
         Dim column As DataGridViewTextBoxColumn = Nothing
+
         Try
+            displayIndex = 0
             column = New DataGridViewTextBoxColumn()
             With column
                 .DataPropertyName = NameOf(ChannelSourceMeasure.Title)
                 .Name = NameOf(ChannelSourceMeasure.Title)
                 .Visible = True
+                .Width = 50
                 .DisplayIndex = displayIndex
             End With
             grid.Columns.Add(column)
@@ -188,9 +191,11 @@ Public Class ChannelSourceMeasureCollection
                 .Name = "Volt"
                 .Visible = True
                 .DisplayIndex = displayIndex
-                .Width = grid.Width - width - grid.Columns.Count
+                .Width = 80
                 .DefaultCellStyle.Format = "G5"
             End With
+            grid.Columns.Add(column)
+            width += column.Width
         Catch
             If column IsNot Nothing Then column.Dispose()
             Throw
@@ -205,9 +210,11 @@ Public Class ChannelSourceMeasureCollection
                 .Name = "Ampere"
                 .Visible = True
                 .DisplayIndex = displayIndex
-                .Width = grid.Width - width - grid.Columns.Count
+                .Width = 80
                 .DefaultCellStyle.Format = "G5"
             End With
+            grid.Columns.Add(column)
+            width += column.Width
         Catch
             If column IsNot Nothing Then column.Dispose()
             Throw
@@ -258,7 +265,7 @@ Public Class ChannelSourceMeasureCollection
             Application.DoEvents()
         End If
 
-        grid.DataSource = Me
+        grid.DataSource = Me.ToArray
         Application.DoEvents()
         Return grid.Columns.Count
 
@@ -285,7 +292,7 @@ Public Class ChannelSourceMeasureCollection
         grid.AutoGenerateColumns = True
         grid.RowHeadersVisible = False
         grid.ReadOnly = True
-        grid.DataSource = Me.ToArray
+        grid.DataSource = Me
         grid.Enabled = True
         If grid.Columns IsNot Nothing AndAlso grid.Columns.Count > 0 Then
             Return grid.Columns.Count
@@ -295,11 +302,11 @@ Public Class ChannelSourceMeasureCollection
 
     End Function
 
-    ''' <summary> Displays the given grid. </summary>
+    ''' <summary> Displays the given grid using default configuration. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="grid"> The grid. </param>
     ''' <returns> An Integer. </returns>
-    Public Function Display(ByVal grid As DataGridView) As Integer
+    Public Function DisplayDefault(ByVal grid As DataGridView) As Integer
 
         If grid Is Nothing Then Throw New ArgumentNullException(NameOf(grid))
 
@@ -312,7 +319,7 @@ Public Class ChannelSourceMeasureCollection
             Application.DoEvents()
         End If
 
-        grid.DataSource = Me
+        grid.DataSource = Me.ToArray
         Application.DoEvents()
         Return grid.Columns.Count
 

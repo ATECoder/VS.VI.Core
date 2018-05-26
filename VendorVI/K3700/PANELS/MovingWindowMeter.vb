@@ -307,7 +307,7 @@ Public Class MovingWindowMeter
 
 #End Region
 
-#Region " TASK Start "
+#Region " TASK START "
 
     ''' <summary> Gets or sets the task start notification timeout. </summary>
     ''' <value> The task start notification timeout. </value>
