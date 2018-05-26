@@ -66,7 +66,6 @@ Public MustInherit Class SenseSubsystemBase
             .Item(VI.Scpi.SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
         End With
         Me.SafePostPropertyChanged(NameOf(SenseSubsystemBase.FunctionModeUnits))
-        Me.FunctionMode = VI.Scpi.SenseFunctionModes.VoltageDC
     End Sub
 
 #End Region

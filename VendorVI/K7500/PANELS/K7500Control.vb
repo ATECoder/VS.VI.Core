@@ -804,12 +804,10 @@ Public Class K7500Control
 
 #Region " STATUS "
 
-    ''' <summary> Reports the last error. </summary>
-    Protected Overrides Sub OnLastError(ByVal lastError As DeviceError)
-        If lastError IsNot Nothing Then
-            Me._LastErrorTextBox.ForeColor = If(lastError.IsError, Drawing.Color.OrangeRed, Drawing.Color.Aquamarine)
-            Me._LastErrorTextBox.Text = lastError.CompoundErrorMessage
-        End If
+    ''' <summary> Displays the last error. </summary>
+    ''' <param name="lastError"> The last error. </param>
+    Protected Overrides Sub DisplayLastError(ByVal lastError As DeviceError)
+        VI.Instrument.ResourceControlBase.DisplayLastError(Me._LastErrorTextBox, lastError)
     End Sub
 
     ''' <summary> Handle the Status subsystem property changed event. </summary>
@@ -818,17 +816,6 @@ Public Class K7500Control
     Protected Overrides Sub HandlePropertyChange(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.HandlePropertyChange(subsystem, propertyName)
-        Select Case propertyName
-            Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
-                OnLastError(subsystem.LastDeviceError)
-            Case NameOf(StatusSubsystemBase.LastDeviceError)
-                OnLastError(subsystem.LastDeviceError)
-            Case NameOf(StatusSubsystemBase.ErrorAvailable)
-            Case NameOf(StatusSubsystemBase.ServiceRequestStatus)
-                Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(StatusSubsystemBase.StandardEventStatus)
-                Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
-        End Select
     End Sub
 
     ''' <summary> Status subsystem property changed. </summary>
@@ -1101,6 +1088,7 @@ Public Class K7500Control
             End If
         End Set
     End Property
+
     Private _StandardRegisterCaption As String
     ''' <summary> Gets or sets the standard register caption. </summary>
     ''' <value> The status register caption. </value>
@@ -2711,17 +2699,17 @@ Public Class K7500Control
 
 #Region " READ AND WRITE "
 
-    ''' <summary> Executes the property changed action. </summary>
+    ''' <summary> Handles the property changed action. </summary>
     ''' <param name="sender">       Source of the event. </param>
     ''' <param name="propertyName"> Name of the property. </param>
-    Private Overloads Sub OnPropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChanged(ByVal sender As Instrument.SimpleReadWriteControl, ByVal propertyName As String)
         If sender IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(propertyName) Then
             Select Case propertyName
                 Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
                     Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
                     Me._StatusLabel.ToolTipText = sender.StatusMessage
                 Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
-                    Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
+                    Me.DisplayStatusRegisterStatus(sender.ServiceRequestValue)
             End Select
         End If
     End Sub
@@ -2736,7 +2724,7 @@ Public Class K7500Control
             If Me.InvokeRequired Then
                 Me.Invoke(New Action(Of Object, PropertyChangedEventArgs)(AddressOf Me._SimpleReadWriteControl_PropertyChanged), New Object() {sender, e})
             Else
-                Me.OnPropertyChanged(TryCast(sender, Instrument.SimpleReadWriteControl), e?.PropertyName)
+                Me.HandlePropertyChanged(TryCast(sender, Instrument.SimpleReadWriteControl), e?.PropertyName)
             End If
         Catch ex As Exception
             Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,

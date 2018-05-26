@@ -14,13 +14,21 @@ Public Class DeviceError
 
     ''' <summary> Initializes a new instance of the <see cref="DeviceError" /> class 
     '''           specifying no error. </summary>
+    Public Sub New()
+        Me.New(VI.Pith.Scpi.Syntax.NoErrorCompoundMessage)
+    End Sub
+
+    ''' <summary> Initializes a new instance of the <see cref="DeviceError" /> class 
+    '''           specifying no error. </summary>
     Public Sub New(ByVal noErrorCompoundMessage As String)
         MyBase.New()
         Me._NoErrorCompoundMessage = noErrorCompoundMessage
         Me._CompoundErrorMessage = noErrorCompoundMessage
         Me._ErrorNumber = 0
-        Me._errorMessage = VI.Pith.Scpi.Syntax.NoErrorMessage
+        Me._ErrorLevel = 0
+        Me._ErrorMessage = VI.Pith.Scpi.Syntax.NoErrorMessage
         Me._Severity = TraceEventType.Verbose
+        Me._Timestamp = DateTime.Now
     End Sub
 
     ''' <summary> Initializes a new instance of the <see cref="DeviceError" /> class. </summary>
@@ -37,6 +45,8 @@ Public Class DeviceError
             Me._CompoundErrorMessage = value.CompoundErrorMessage
             Me._errorMessage = value.ErrorMessage
             Me._ErrorNumber = value.ErrorNumber
+            Me._ErrorLevel = value.ErrorLevel
+            Me._Timestamp = value.Timestamp
         End If
     End Sub
 
@@ -52,14 +62,15 @@ Public Class DeviceError
 
 #Region " PARSE "
 
-
     ''' <summary> Parses the error message </summary>
     ''' <param name="compoundError"> The compound error. </param>
     Public Overridable Sub Parse(ByVal compoundError As String)
+        Me.Timestamp = DateTime.Now
         If String.IsNullOrWhiteSpace(compoundError) Then
             Me.CompoundErrorMessage = ""
             Me.ErrorNumber = 0
             Me.ErrorMessage = ""
+            Me.ErrorLevel = 0
             Me._Severity = TraceEventType.Verbose
         Else
             Me._CompoundErrorMessage = compoundError
@@ -75,7 +86,30 @@ Public Class DeviceError
                 Me.ErrorNumber = 0
                 Me.ErrorMessage = compoundError
             End If
+            Me.ParseErrorMessage(Me.ErrorMessage)
             Me._Severity = TraceEventType.Error
+        End If
+    End Sub
+
+    ''' <summary> Parse error message. </summary>
+    ''' <param name="message"> The message. </param>
+    Private Sub ParseErrorMessage(ByVal message As String)
+        Dim errorDelimiter As Char = ";"c
+        If Not String.IsNullOrWhiteSpace(message) AndAlso message.Contains(errorDelimiter) Then
+            Dim parts As New Queue(Of String)(message.Split(errorDelimiter))
+            If parts.Count > 0 Then
+                Me.ErrorMessage = parts.Dequeue
+            End If
+            If parts.Count > 0 Then
+                If Not Integer.TryParse(parts.Dequeue, Me.ErrorLevel) Then
+                    Me.ErrorLevel = 0
+                End If
+            End If
+            If parts.Count > 0 Then
+                If Not DateTime.TryParse(parts.Dequeue, Me.Timestamp) Then
+                    Me.Timestamp = DateTime.Now
+                End If
+            End If
         End If
     End Sub
 
@@ -108,6 +142,20 @@ Public Class DeviceError
         Get
             Return Me.ErrorNumber <> 0
         End Get
+    End Property
+
+    ''' <summary> The error Level. </summary>
+    Private _ErrorLevel As Integer
+
+    ''' <summary> Gets or sets (protected) the error Level. </summary>
+    ''' <value> The error Level. </value>
+    Public Property ErrorLevel As Integer
+        Get
+            Return Me._ErrorLevel
+        End Get
+        Protected Set(ByVal value As Integer)
+            Me._ErrorLevel = value
+        End Set
     End Property
 
     ''' <summary> The error number. </summary>
@@ -170,6 +218,20 @@ Public Class DeviceError
     Public Overrides Function ToString() As String
         Return Me.CompoundErrorMessage
     End Function
+
+    ''' <summary> The error Level. </summary>
+    Private _Timestamp As DateTime
+
+    ''' <summary> Gets or sets the timestamp. </summary>
+    ''' <value> The timestamp. </value>
+    Public Property Timestamp As DateTime
+        Get
+            Return Me._Timestamp
+        End Get
+        Protected Set(ByVal value As DateTime)
+            Me._Timestamp = value
+        End Set
+    End Property
 
 #End Region
 

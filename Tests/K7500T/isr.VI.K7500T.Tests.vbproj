@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9E9B10CD-FAF4-4392-B660-589FFAE748D5}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>isr.VI.Tsp2.K7500.Tests</RootNamespace>
+    <RootNamespace>isr.VI.Tsp2</RootNamespace>
     <AssemblyName>isr.VI.Tsp2.K7500.Tests</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
@@ -88,6 +88,9 @@
     <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Bare\ShareApplicationSettingsBase.vb">
+      <Link>My\ShareApplicationSettingsBase.vb</Link>
+    </Compile>
     <Compile Include="..\..\..\..\Share\Bare\ShareAppSettingsReader.vb">
       <Link>My\ShareAppSettingsReader.vb</Link>
     </Compile>
@@ -97,10 +100,6 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="Common\CommonFunctions.vb" />
-    <Compile Include="Common\CommonFunctions_Info.vb" />
-    <Compile Include="Device\DeviceTests.vb" />
-    <Compile Include="Device\ResourceControlTests.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -119,9 +118,6 @@
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
     <None Include="My\isr.VI.Tsp2.K7500.Tests.History.rtf" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">
@@ -159,6 +155,9 @@
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="K7510\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

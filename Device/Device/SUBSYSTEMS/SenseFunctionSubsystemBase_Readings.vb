@@ -295,6 +295,5 @@ Partial Public Class SenseFunctionSubsystemBase
 
 #End Region
 
-
 End Class
 

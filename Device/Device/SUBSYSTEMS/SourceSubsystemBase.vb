@@ -23,6 +23,14 @@ Public MustInherit Class SourceSubsystemBase
         Me.DefaultFunctionUnit = Arebis.StandardUnits.ElectricUnits.Volt
         Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
         Me.DefaultFunctionModeDecimalPlaces = 3
+        Me.DefaultFunctionModeDecimalPlaces = 3
+        Me._Amount = New Arebis.TypedUnits.Amount(0, Me.DefaultFunctionUnit)
+        Me._FunctionModeRanges = New RangeDictionary
+        Me._FunctionModeDecimalPlaces = New IntegerDictionary
+        Me._FunctionModeUnits = New UnitDictionary
+        Me.FunctionUnit = Me.DefaultFunctionUnit
+        Me.FunctionRange = Me.DefaultFunctionRange
+        Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
     End Sub
 
 #End Region

@@ -37,7 +37,7 @@ Partial Public MustInherit Class SenseFunctionSubsystemBase
 
     ''' <summary> Gets or sets the default decimal places. </summary>
     ''' <value> The default decimal places. </value>
-    Public Property DefaultFunctionModeDecimalPlaces As Integer = 3
+    Public Property DefaultFunctionModeDecimalPlaces As Integer
 
     ''' <summary> Gets or sets the function mode decimal places. </summary>
     ''' <value> The function mode decimal places. </value>
@@ -72,7 +72,7 @@ Partial Public MustInherit Class SenseFunctionSubsystemBase
 
     ''' <summary> Gets or sets the default unit. </summary>
     ''' <value> The default unit. </value>
-    Public Property DefaultFunctionUnit As Arebis.TypedUnits.Unit = Arebis.StandardUnits.ElectricUnits.Volt
+    Public Property DefaultFunctionUnit As Arebis.TypedUnits.Unit
 
     ''' <summary> Gets or sets the function mode decimal places. </summary>
     ''' <value> The function mode decimal places. </value>

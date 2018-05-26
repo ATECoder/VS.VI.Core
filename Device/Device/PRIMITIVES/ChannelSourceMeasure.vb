@@ -40,10 +40,13 @@ Public Class ChannelSourceMeasure
     End Function
 
     Private Function ToSortedList(ByVal list As String) As String
-        Return Me.ToSortedList(list, Me.ChannelListDelimiter(list))
+        Return ChannelSourceMeasure.ToSortedList(list, ChannelSourceMeasure.ChannelListDelimiter(list))
     End Function
 
-    Private Function ChannelListDelimiter(ByVal list As String) As Char
+    ''' <summary> Channel list delimiter. </summary>
+    ''' <param name="list"> The list. </param>
+    ''' <returns> A Char. </returns>
+    Private Shared Function ChannelListDelimiter(ByVal list As String) As Char
         Dim result As Char = ";"c
         If Not list.Contains(result) Then
             result = ","c
@@ -55,7 +58,7 @@ Public Class ChannelSourceMeasure
     ''' <param name="list">      The list. </param>
     ''' <param name="delimiter"> The delimiter. </param>
     ''' <returns> The given data converted to a String. </returns>
-    Private Function ToSortedList(ByVal list As String, ByVal delimiter As Char) As String
+    Private Shared Function ToSortedList(ByVal list As String, ByVal delimiter As Char) As String
         Dim result As New System.Text.StringBuilder
         Dim l As New List(Of String)(list.Split(delimiter))
         l.Sort()

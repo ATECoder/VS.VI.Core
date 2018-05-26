@@ -26,10 +26,10 @@ Public Class DeviceError
         If value Is Nothing Then
             Me.CompoundErrorMessage = TspSyntax.NoErrorCompoundMessage
             Me.ErrorMessage = TspSyntax.NoErrorMessage
-            Me._ErrorLevel = TspErrorLevel.None
+            Me.ErrorLevel = TspErrorLevel.None
             Me._NodeNumber = 0
         Else
-            Me._ErrorLevel = value.ErrorLevel
+            Me.ErrorLevel = value.ErrorLevel
             Me._NodeNumber = value.NodeNumber
         End If
     End Sub
@@ -54,14 +54,14 @@ Public Class DeviceError
     Public Overrides Sub Parse(ByVal compoundError As String)
         MyBase.Parse(compoundError)
         If String.IsNullOrWhiteSpace(compoundError) Then
-            Me._ErrorLevel = TspErrorLevel.None
+            Me.ErrorLevel = TspErrorLevel.None
             Me._NodeNumber = 0
         Else
             Dim parts() As String = compoundError.Split(","c)
             Dim value As Integer = 0
             If parts.Length > 2 Then
                 If Integer.TryParse(parts(2), value) Then
-                    Me._ErrorLevel = CType(value, TspErrorLevel)
+                    Me.ErrorLevel = CType(value, TspErrorLevel)
                 End If
             End If
             If parts.Length > 3 Then
@@ -90,13 +90,19 @@ Public Class DeviceError
 
 #Region " TSP ERROR "
 
-    Private _ErrorLevel As TspErrorLevel
-
     ''' <summary> Gets the error level. </summary>
     ''' <value> The error level. </value>
-    Public ReadOnly Property ErrorLevel As TspErrorLevel
+    Public ReadOnly Property TspErrorLevel As TspErrorLevel
         Get
-            Return Me._ErrorLevel
+            If [Enum].IsDefined(GetType(TspErrorLevel), Me.ErrorLevel) Then
+                Return CType(Me.ErrorLevel, TspErrorLevel)
+            Else
+                If Me.ErrorLevel > 0 Then
+                    Return Tsp.TspErrorLevel.Serious
+                Else
+                    Return Tsp.TspErrorLevel.None
+                End If
+            End If
         End Get
     End Property
 
@@ -118,8 +124,8 @@ Public Class DeviceError
 
     ''' <summary> Builds error message. </summary>
     ''' <returns> A String. </returns>
-    Public Overloads Shared Function BuildErrorMessage(ByVal errorNumber As Integer, ByVal errorMessage As String, ByVal errorLevel As TspErrorLevel, ByVal nodeNumber As Integer) As String
-        Return String.Format(Globalization.CultureInfo.CurrentCulture, "{0},{1},{2},{3}", errorNumber, errorMessage, CInt(errorLevel), nodeNumber)
+    Public Overloads Shared Function BuildErrorMessage(ByVal errorNumber As Integer, ByVal errorMessage As String, ByVal errorLevel As Integer, ByVal nodeNumber As Integer) As String
+        Return String.Format(Globalization.CultureInfo.CurrentCulture, $"{errorNumber},{errorMessage},{errorLevel},{nodeNumber}")
     End Function
 
 #End Region

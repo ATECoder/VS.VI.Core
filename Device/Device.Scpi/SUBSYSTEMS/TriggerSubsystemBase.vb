@@ -159,7 +159,9 @@ Public MustInherit Class TriggerSubsystemBase
         If comboBox Is Nothing Then Throw New ArgumentNullException(NameOf(comboBox))
         With comboBox
             .DataSource = Nothing
-            .Items.Clear()
+            .Invalidate() : Windows.Forms.Application.DoEvents()
+            ' unit tests caused an exception in internal Check No Data Source method even though, clearly, the data source was set to nothing 
+            If .DataSource Is Nothing Then .Items.Clear()
             .DataSource = GetType(TriggerSources).ValueNamePairs(Me.SupportedTriggerSources)
             .DisplayMember = "Value"
             .ValueMember = "Key"

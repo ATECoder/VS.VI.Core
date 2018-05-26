@@ -18,12 +18,6 @@ Public Class SenseSubsystem
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
-        Me.SupportedFunctionModes = VI.Scpi.SenseFunctionModes.CurrentDC Or
-                                    VI.Scpi.SenseFunctionModes.VoltageDC Or
-                                    VI.Scpi.SenseFunctionModes.Resistance Or
-                                    VI.Scpi.SenseFunctionModes.FourWireResistance
-        ' the readings are initialized when the format system is reset.
-        Me._readings = New Readings
     End Sub
 
 #End Region
@@ -76,6 +70,10 @@ Public Class SenseSubsystem
             .Item(VI.Scpi.SenseFunctionModes.Temperature) = Arebis.StandardUnits.TemperatureUnits.Kelvin
         End With
         Me.SafePostPropertyChanged(NameOf(VI.Scpi.SenseSubsystemBase.FunctionModeUnits))
+        Me.SupportedFunctionModes = VI.Scpi.SenseFunctionModes.CurrentDC Or
+                                    VI.Scpi.SenseFunctionModes.VoltageDC Or
+                                    VI.Scpi.SenseFunctionModes.Resistance Or
+                                    VI.Scpi.SenseFunctionModes.FourWireResistance
     End Sub
 
 #End Region

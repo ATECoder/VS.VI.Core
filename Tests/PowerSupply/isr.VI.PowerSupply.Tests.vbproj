@@ -110,9 +110,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
   </ItemGroup>
   <ItemGroup>

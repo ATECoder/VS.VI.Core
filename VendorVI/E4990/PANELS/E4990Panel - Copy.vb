@@ -1673,7 +1673,7 @@ Public Class E4990Panel
                 Case NameOf(Instrument.SimpleReadWriteControl.StatusMessage)
                     Me.StatusLabel.Text = sender.StatusMessage
                 Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
-                    Me.StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
+                    Me.DisplayStatusRegisterStatus(sender.ServiceRequestValue)
                 Case NameOf(Instrument.SimpleReadWriteControl.ElapsedTime)
             End Select
         End If

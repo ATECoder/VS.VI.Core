@@ -177,6 +177,15 @@
             End Get
         End Property
 
+        ''' <summary> Gets the language. </summary>
+        ''' <value> The language. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property Language As String
+            Get
+                Return Me.AppSettingValue
+            End Get
+        End Property
+
 #End Region
 
     End Class

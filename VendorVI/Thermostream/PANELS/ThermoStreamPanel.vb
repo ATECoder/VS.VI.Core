@@ -321,6 +321,14 @@ Public Class ThermostreamPanel
 
 #Region " STATUS "
 
+    ''' <summary> Displays the status register status using hex format. </summary>
+    ''' <param name="value"> The register value. </param>
+    Public Overrides Sub DisplayStatusRegisterStatus(ByVal value As Integer)
+        Me._StatusByteLabel.Text = $"{Convert.ToString(value, 2),8}".Replace(" ", "0")
+        MyBase.DisplayStatusRegisterStatus(value)
+        Application.DoEvents()
+    End Sub
+
     ''' <summary> Reports the last error. </summary>
     Private Sub OnLastError(ByVal lastError As DeviceError)
         If lastError?.IsError Then
@@ -331,14 +339,6 @@ Public Class ThermostreamPanel
         Me._LastErrorTextBox.Text = lastError.CompoundErrorMessage
     End Sub
 
-    ''' <summary> Displays the status register status using hex format. </summary>
-    ''' <param name="value"> The register value. </param>
-    Public Overrides Sub DisplayStatusRegisterStatus(ByVal value As Integer)
-        Me._StatusByteLabel.Text = $"{Convert.ToString(value, 2),8}".Replace(" ", "0")
-        MyBase.DisplayStatusRegisterStatus(value)
-        Application.DoEvents()
-    End Sub
-
     ''' <summary> Handle the Status subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
     ''' <param name="propertyName"> Name of the property. </param>
@@ -347,14 +347,13 @@ Public Class ThermostreamPanel
         MyBase.HandlePropertyChange(subsystem, propertyName)
         Select Case propertyName
             Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
-                OnLastError(subsystem.LastDeviceError)
+                Me.OnLastError(subsystem.LastDeviceError)
             Case NameOf(StatusSubsystemBase.LastDeviceError)
-                OnLastError(subsystem.LastDeviceError)
-            Case NameOf(StatusSubsystemBase.ErrorAvailable)
+                Me.OnLastError(subsystem.LastDeviceError)
             Case NameOf(StatusSubsystemBase.ServiceRequestStatus)
-                'Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
+                Me.DisplayStatusRegisterStatus(subsystem.ServiceRequestStatus)
             Case NameOf(StatusSubsystemBase.StandardEventStatus)
-                'Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
+                Me.DisplayStandardRegisterStatus(subsystem.StandardEventStatus)
         End Select
     End Sub
 

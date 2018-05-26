@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D9B58490-B396-4597-A47C-7685B91BED93}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>isr.VI.K7500.Tests</RootNamespace>
+    <RootNamespace>isr.VI</RootNamespace>
     <AssemblyName>isr.VI.K7500.Tests</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
@@ -88,6 +88,9 @@
     <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Share\Bare\ShareApplicationSettingsBase.vb">
+      <Link>My\ShareApplicationSettingsBase.vb</Link>
+    </Compile>
     <Compile Include="..\..\..\..\Share\Bare\ShareAppSettingsReader.vb">
       <Link>My\ShareAppSettingsReader.vb</Link>
     </Compile>
@@ -97,11 +100,15 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="Common\CommonFunctions.vb" />
-    <Compile Include="Common\CommonFunctions_Info.vb" />
-    <Compile Include="Device\ControlTests.vb" />
-    <Compile Include="Device\DeviceTests.vb" />
-    <Compile Include="Device\ResourceControlTests.vb" />
+    <Compile Include="K7510\K7510ControlTests.vb" />
+    <Compile Include="K7510\K7510Manager_Controls.vb" />
+    <Compile Include="K7510\K7510Manager_Resource.vb" />
+    <Compile Include="K7510\K7510Manager_Subsystems.vb" />
+    <Compile Include="K7510\K7510ResourceControlTests.vb" />
+    <Compile Include="K7510\K7510Resource_Tests.vb" />
+    <Compile Include="K7510\K7510Subsystems_Info.vb" />
+    <Compile Include="K7510\K7510Subsystems_Tests.vb" />
+    <Compile Include="K7510\K7510Resource_Info.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -120,9 +127,6 @@
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
     <None Include="My\isr.VI.k7500.Tests.History.rtf" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Core\Core\Pith\isr.Core.Pith.Library.vbproj">

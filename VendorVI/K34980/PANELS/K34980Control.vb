@@ -775,13 +775,12 @@ Public Class K34980Control
 
 #Region " STATUS "
 
-    ''' <summary> Reports the last error. </summary>
-    Protected Overrides Sub OnLastError(ByVal lastError As DeviceError)
-        If lastError IsNot Nothing Then
-            Me._LastErrorTextBox.ForeColor = If(lastError.IsError, Drawing.Color.OrangeRed, Drawing.Color.Aquamarine)
-            Me._LastErrorTextBox.Text = lastError.CompoundErrorMessage
-        End If
+    ''' <summary> Displays the last error. </summary>
+    ''' <param name="lastError"> The last error. </param>
+    Protected Overrides Sub DisplayLastError(ByVal lastError As DeviceError)
+        VI.Instrument.ResourceControlBase.DisplayLastError(Me._LastErrorTextBox, lastError)
     End Sub
+
 
     ''' <summary> Handle the Status subsystem property changed event. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
@@ -789,17 +788,6 @@ Public Class K34980Control
     Protected Overrides Sub HandlePropertyChange(ByVal subsystem As VI.StatusSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         MyBase.HandlePropertyChange(subsystem, propertyName)
-        Select Case propertyName
-            Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
-                OnLastError(subsystem.LastDeviceError)
-            Case NameOf(StatusSubsystemBase.LastDeviceError)
-                OnLastError(subsystem.LastDeviceError)
-            Case NameOf(StatusSubsystemBase.ErrorAvailable)
-            Case NameOf(StatusSubsystemBase.ServiceRequestStatus)
-                Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
-            Case NameOf(StatusSubsystemBase.StandardEventStatus)
-                Me._StandardRegisterLabel.Text = $"0x{subsystem.StandardEventStatus:X2}"
-        End Select
     End Sub
 
     ''' <summary> Status subsystem property changed. </summary>
@@ -1698,7 +1686,7 @@ Public Class K34980Control
                     Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
                     Me._StatusLabel.ToolTipText = sender.StatusMessage
                 Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
-                    Me._StatusRegisterLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
+                    Me.DisplayStatusRegisterStatus(sender.ServiceRequestValue)
             End Select
         End If
     End Sub

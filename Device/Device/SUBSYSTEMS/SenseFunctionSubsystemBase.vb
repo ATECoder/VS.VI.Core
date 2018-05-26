@@ -17,8 +17,18 @@ Public MustInherit Class SenseFunctionSubsystemBase
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">status subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
+        Me.DefaultFunctionUnit = Arebis.StandardUnits.ElectricUnits.Volt
         Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
         Me.DefaultFunctionModeDecimalPlaces = 3
+        Me._Amount = New MeasuredAmount(ReadingTypes.Reading)
+        Me._FunctionModeRanges = New RangeDictionary
+        Me._FunctionModeDecimalPlaces = New IntegerDictionary
+        Me._FunctionModeUnits = New UnitDictionary
+        Me.PowerLineCyclesRange = DeviceBase.DefaultPowerLineCyclesRange
+        Me.FunctionUnit = Me.DefaultFunctionUnit
+        Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
+        Me.FunctionRange = Me.DefaultFunctionRange
+        Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
     End Sub
 
 #End Region

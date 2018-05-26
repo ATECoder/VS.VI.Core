@@ -216,7 +216,7 @@ Public Class SimpleReadWritePanel
                     Me._StatusLabel.Text = isr.Core.Pith.CompactExtensions.Compact(sender.StatusMessage, Me._StatusLabel)
                     Me._StatusLabel.ToolTipText = sender.StatusMessage
                 Case NameOf(Instrument.SimpleReadWriteControl.ServiceRequestValue)
-                    Me._ServiceRequestStatusLabel.Text = $"0x{sender.ServiceRequestValue:X2}"
+                    Me._ServiceRequestStatusLabel.Text = String.Format("Ox{0:X2}", sender.ServiceRequestValue)
             End Select
         End If
     End Sub

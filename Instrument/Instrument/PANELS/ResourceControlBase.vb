@@ -147,30 +147,23 @@ Public Class ResourceControlBase
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected Overridable Property StatusRegisterCaption As String
 
-    Private _StatusRegisterStatus As Integer
-
     ''' <summary> Gets or sets the status register status. </summary>
     ''' <value> The status register status. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Protected Property StatusRegisterStatus As Integer
-        Get
-            Return Me._StatusRegisterStatus
-        End Get
-        Set(value As Integer)
-            If value <> Me.StatusRegisterStatus Then
-                Me._StatusRegisterStatus = value
-                Me.DisplayStatusRegisterStatus(value)
-            End If
-        End Set
-    End Property
+    Protected ReadOnly Property StatusRegisterStatus As Integer
 
     ''' <summary> Displays the status register status. </summary>
     ''' <param name="value">  The register value. </param>
     ''' <param name="format"> The format. </param>
     Protected Sub DisplayStatusRegisterStatus(ByVal value As Integer, ByVal format As String)
-        If Not value.Equals(Me._StatusRegisterStatus) Then
+        If Not value.Equals(Me.StatusRegisterStatus) Then
+            If value = ResourceControlBase.UnknownRegisterValue Then
+                Me.StatusRegisterCaption = ResourceControlBase.UnknownRegisterValueCaption
+            Else
+                Me.StatusRegisterCaption = String.Format(format, value)
+            End If
             Me._StatusRegisterStatus = value
-            Me.StatusRegisterCaption = String.Format(format, value)
+            Me.SafePostPropertyChanged(NameOf(ResourceControlBase.StatusRegisterStatus))
         End If
     End Sub
 
@@ -189,11 +182,7 @@ Public Class ResourceControlBase
     ''' <summary> Displays the status register status using hex format. </summary>
     ''' <param name="value"> The register value. </param>
     Protected Overridable Sub DisplayStatusRegisterStatus(ByVal value As Integer)
-        If value = ResourceControlBase.UnknownRegisterValue Then
-            Me.StatusRegisterCaption = ResourceControlBase.UnknownRegisterValueCaption
-        Else
-            Me.DisplayStatusRegisterStatus(value, ResourceControlBase.DefaultRegisterValueFormat)
-        End If
+        Me.DisplayStatusRegisterStatus(value, ResourceControlBase.DefaultRegisterValueFormat)
     End Sub
 
     ''' <summary> Gets or sets the standard register caption. </summary>
@@ -201,44 +190,30 @@ Public Class ResourceControlBase
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
     Protected Overridable Property StandardRegisterCaption As String
 
-    Private _StandardRegisterStatus As Integer?
     ''' <summary> Gets or sets the standard register status. </summary>
     ''' <value> The standard register status. </value>
     <DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Browsable(False)>
-    Protected Property StandardRegisterStatus As Integer?
-        Get
-            Return Me._StandardRegisterStatus
-        End Get
-        Set(value As Integer?)
-            If Not Nullable.Equals(value, Me.StandardRegisterStatus) Then
-                Me._StandardRegisterStatus = value
-                Me.DisplayStandardRegisterStatus(value)
-            End If
-        End Set
-    End Property
+    Protected ReadOnly Property StandardRegisterStatus As Integer?
 
     ''' <summary> Displays the status register status. </summary>
     ''' <param name="value">  The register value. </param>
     ''' <param name="format"> The format. </param>
     Protected Sub DisplayStandardRegisterStatus(ByVal value As Integer, ByVal format As String)
-        If Not value.Equals(Me._StandardRegisterStatus) Then
+        If Not value.Equals(Me.StandardRegisterStatus) Then
+            If value = ResourceControlBase.UnknownRegisterValue Then
+                Me.StandardRegisterCaption = ResourceControlBase.UnknownRegisterValueCaption
+            Else
+                Me.StandardRegisterCaption = String.Format(format, value)
+            End If
             Me._StandardRegisterStatus = value
-            Me.StandardRegisterCaption = String.Format(format, value)
+            Me.SafePostPropertyChanged(NameOf(ResourceControlBase.StandardRegisterStatus))
         End If
     End Sub
 
     ''' <summary> Displays the status register status using hex format. </summary>
     ''' <param name="value"> The register value. </param>
     Protected Overridable Sub DisplayStandardRegisterStatus(ByVal value As Integer?)
-        If value.HasValue Then
-            If value = ResourceControlBase.UnknownRegisterValue Then
-                Me.StandardRegisterCaption = ResourceControlBase.UnknownRegisterValueCaption
-            Else
-                Me.DisplayStandardRegisterStatus(value.Value, ResourceControlBase.DefaultRegisterValueFormat)
-            End If
-        Else
-            Me.StandardRegisterCaption = ResourceControlBase.UnknownRegisterValueCaption
-        End If
+        Me.DisplayStandardRegisterStatus(value.GetValueOrDefault(ResourceControlBase.UnknownRegisterValue), ResourceControlBase.DefaultRegisterValueFormat)
     End Sub
 
     ''' <summary> The unknown register value caption. </summary>
@@ -1125,6 +1100,7 @@ Public Class ResourceControlBase
     ''' <param name="isConnectorOwner"> The is connector owner. </param>
     ''' <remarks> Must be used to assign a connector so as to prevent disposing of the device. </remarks>
     Protected Sub AssignConnector(ByVal device As DeviceBase, ByVal value As ResourceSelectorConnector, ByVal isConnectorOwner As Boolean)
+        If device Is Nothing Then Throw New ArgumentNullException(NameOf(device))
         Me.AssignConnector(value, isConnectorOwner)
         Me.Connector.IsConnected = device.IsDeviceOpen
         Me.Connector.AssignTalker(device.Talker)
@@ -1371,9 +1347,49 @@ Public Class ResourceControlBase
         End Set
     End Property
 
-    ''' <summary> Reports the last error. </summary>
-    Protected Overridable Sub OnLastError(ByVal lastError As DeviceError)
+    ''' <summary> Displays the last error. </summary>
+    Protected Overridable Sub DisplayLastError(ByVal lastError As DeviceError)
     End Sub
+
+    ''' <summary> Displays the last error. </summary>
+    ''' <param name="textBox">      The text box control. </param>
+    ''' <param name="isError">      True if is error, false if not. </param>
+    ''' <param name="errorMessage"> Message describing the error. </param>
+    Public Shared Sub DisplayLastError(ByVal textBox As Windows.Forms.TextBox, ByVal isError As Boolean, ByVal errorMessage As String)
+        If textBox IsNot Nothing Then
+            textBox.ForeColor = If(isError, ResourceControlBase.ErrorDisplayErrorForeColor, ResourceControlBase.ErrorDisplayForeColor)
+            textBox.Text = errorMessage
+        End If
+    End Sub
+
+    ''' <summary> Displays the last error. </summary>
+    ''' <param name="textBox">   The text box control. </param>
+    ''' <param name="lastError"> The last error. </param>
+    Protected Shared Sub DisplayLastError(ByVal textBox As Windows.Forms.TextBox, ByVal lastError As VI.DeviceError)
+        If lastError IsNot Nothing Then ResourceControlBase.DisplayLastError(textBox, lastError.IsError, lastError.CompoundErrorMessage)
+    End Sub
+
+    ''' <summary> Displays the last error. </summary>
+    ''' <param name="toolStripItem"> The tool strip item or label. </param>
+    ''' <param name="isError">        True if is error, false if not. </param>
+    ''' <param name="errorMessage">   Message describing the error. </param>
+    Public Shared Sub DisplayLastError(ByVal toolStripItem As Windows.Forms.ToolStripItem, ByVal isError As Boolean, ByVal errorMessage As String)
+        If toolStripItem IsNot Nothing Then
+            toolStripItem.ForeColor = If(isError, ResourceControlBase.ErrorDisplayErrorForeColor, ResourceControlBase.ErrorDisplayForeColor)
+            toolStripItem.Text = isr.Core.Pith.CompactExtensions.Compact(errorMessage, toolStripItem)
+            toolStripItem.ToolTipText = errorMessage
+        End If
+    End Sub
+
+    ''' <summary> Gets the color of the error display error foreground. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <value> The color of the error display error foreground. </value>
+    Public Shared Property ErrorDisplayErrorForeColor As Drawing.Color = Drawing.Color.OrangeRed
+
+    ''' <summary> Gets the color of the error display foreground. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <value> The color of the error display foreground. </value>
+    Public Shared Property ErrorDisplayForeColor As Drawing.Color = Drawing.Color.Aquamarine
 
     ''' <summary> Handles the subsystem property change. </summary>
     ''' <param name="subsystem">    The subsystem. </param>
@@ -1397,13 +1413,13 @@ Public Class ResourceControlBase
                     message = New TraceMessage(TraceEventType.Information, My.MyLibrary.TraceEventId, "Reading device errors;. ")
                 End If
             Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
-                Me.OnLastError(subsystem.LastDeviceError)
+                Me.DisplayLastError(subsystem.LastDeviceError)
             Case NameOf(StatusSubsystemBase.LastDeviceError)
-                OnLastError(subsystem.LastDeviceError)
+                Me.DisplayLastError(subsystem.LastDeviceError)
             Case NameOf(StatusSubsystemBase.ServiceRequestStatus)
-                Me.StatusRegisterStatus = subsystem.ServiceRequestStatus
+                Me.DisplayStatusRegisterStatus(subsystem.ServiceRequestStatus)
             Case NameOf(StatusSubsystemBase.StandardEventStatus)
-                Me.StandardRegisterStatus = subsystem.StandardEventStatus
+                Me.DisplayStandardRegisterStatus(subsystem.ServiceRequestStatus)
         End Select
         If message IsNot Nothing Then Me.Talker?.Publish(message)
     End Sub
@@ -1499,17 +1515,19 @@ Public Class ResourceControlBase
     ''' <param name="device">        The device. </param>
     ''' <param name="isDeviceOwner"> The is device owner. </param>
     ''' <returns> A ResourceControlBase. </returns>
+    <CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Friend Shared Function Create(ByVal device As VI.DeviceBase, ByVal isDeviceOwner As Boolean) As ResourceControlBase
         Dim result As ResourceControlBase = Nothing
         Try
             result = New ResourceControlBase(ResourceSelectorConnector.Create, True)
             result.AssignDevice(device, isDeviceOwner)
-        Catch ex As Exception
+        Catch
             If result IsNot Nothing Then
                 result.Dispose()
                 result = Nothing
             End If
+            Throw
         End Try
         Return result
     End Function

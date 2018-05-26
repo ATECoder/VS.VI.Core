@@ -1,4 +1,4 @@
-﻿Namespace K2450.Tests
+﻿Namespace K7500.Tests
 
     ''' <summary> The 2450 Resource Info. </summary>
     ''' <license>
@@ -14,7 +14,7 @@
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
      Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Friend Class K2450ResourceInfo
+    Friend Class K7510ResourceInfo
         Inherits ApplicationSettingsBase
 
 #Region " SINGLETON "
@@ -29,8 +29,8 @@
         ''' <summary> Opens the settings editor. </summary>
         Public Shared Sub OpenSettingsEditor()
             Using f As Core.Pith.ConfigurationEditor = Core.Pith.ConfigurationEditor.Get
-                f.Text = $"{GetType(K2450ResourceInfo)} Editor"
-                f.ShowDialog(K2450ResourceInfo.Get)
+                f.Text = $"{GetType(K7510ResourceInfo)} Editor"
+                f.ShowDialog(K7510ResourceInfo.Get)
             End Using
         End Sub
 
@@ -41,16 +41,16 @@
 
         ''' <summary> Gets the instance. </summary>
         ''' <value> The instance. </value>
-        Private Shared Property _Instance As K2450ResourceInfo
+        Private Shared Property _Instance As K7510ResourceInfo
 
         ''' <summary> Instantiates the class. </summary>
         ''' <remarks> Use this property to instantiate a single instance of this class. This class uses
         ''' lazy instantiation, meaning the instance isn't created until the first time it's retrieved. </remarks>
         ''' <returns> A new or existing instance of the class. </returns>
-        Public Shared Function [Get]() As K2450ResourceInfo
+        Public Shared Function [Get]() As K7510ResourceInfo
             If _Instance Is Nothing Then
                 SyncLock _SyncLocker
-                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K2450ResourceInfo()), K2450ResourceInfo)
+                    _Instance = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New K7510ResourceInfo()), K7510ResourceInfo)
                 End SyncLock
             End If
             Return _Instance

@@ -18,6 +18,9 @@ Public MustInherit Class MultimeterSubsystemBase
     ''' Subsystem</see>. </param>
     Protected Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
+        Me.DefaultFunctionUnit = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
+        Me.DefaultFunctionModeDecimalPlaces = 3
         Me._Amount = New MeasuredAmount(ReadingTypes.Reading)
         Me._FunctionModeRanges = New RangeDictionary
         Me._FunctionModeDecimalPlaces = New IntegerDictionary
@@ -28,7 +31,6 @@ Public MustInherit Class MultimeterSubsystemBase
         Me.FilterWindowRange = DeviceBase.DefaultFilterWindowRange
         Me.PowerLineCyclesRange = DeviceBase.DefaultPowerLineCyclesRange
         Me.FunctionUnit = Me.DefaultFunctionUnit
-        Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
         Me.FunctionRange = Me.DefaultFunctionRange
         Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
     End Sub

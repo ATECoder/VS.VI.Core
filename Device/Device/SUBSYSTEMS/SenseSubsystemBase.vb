@@ -19,18 +19,16 @@ Public MustInherit Class SenseSubsystemBase
         MyBase.New(statusSubsystem)
         Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
         Me.DefaultFunctionModeDecimalPlaces = 3
-        Me.FunctionRange = Me.DefaultFunctionRange
+        Me.DefaultFunctionUnit = Arebis.StandardUnits.ElectricUnits.Volt
+        Me.DefaultFunctionRange = DeviceBase.DefaultFunctionRange
+        Me.DefaultFunctionModeDecimalPlaces = 3
+        Me._Amount = New MeasuredAmount(ReadingTypes.Reading)
+        Me._FunctionModeRanges = New RangeDictionary
+        Me._FunctionModeDecimalPlaces = New IntegerDictionary
+        Me._FunctionModeUnits = New UnitDictionary
         Me.FunctionUnit = Me.DefaultFunctionUnit
+        Me.FunctionRange = Me.DefaultFunctionRange
         Me.FunctionRangeDecimalPlaces = Me.DefaultFunctionModeDecimalPlaces
-    End Sub
-
-#End Region
-
-#Region " I PRESETTABLE "
-
-    ''' <summary> Sets subsystem values to their known execution clear state. </summary>
-    Public Overrides Sub ClearExecutionState()
-        MyBase.ClearExecutionState()
     End Sub
 
 #End Region

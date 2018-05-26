@@ -483,9 +483,9 @@ Public Class CompensationWizard
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(StatusSubsystemBase.DeviceErrorsReport)
-                onLastError(subsystem.LastDeviceError)
+                Me.OnLastError(subsystem.LastDeviceError)
             Case NameOf(StatusSubsystemBase.LastDeviceError)
-                onLastError(subsystem.LastDeviceError)
+                Me.OnLastError(subsystem.LastDeviceError)
             Case NameOf(StatusSubsystemBase.OperationCompleted)
             Case NameOf(StatusSubsystemBase.ServiceRequestStatus)
                 'Me._StatusRegisterLabel.Text = $"0x{subsystem.ServiceRequestStatus:X2}"
