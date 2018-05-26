@@ -100,6 +100,12 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
+    <Compile Include="K7510\K7510Manager_Controls.vb" />
+    <Compile Include="K7510\K7510Manager_Resource.vb" />
+    <Compile Include="K7510\K7510Manager_Subsystems.vb" />
+    <Compile Include="K7510\K7510Resource_Info.vb" />
+    <Compile Include="K7510\K7510Resource_Tests.vb" />
+    <Compile Include="K7510\K7510Subsystems_Info.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -156,8 +162,6 @@
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="K7510\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
