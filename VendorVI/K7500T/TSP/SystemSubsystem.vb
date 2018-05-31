@@ -9,7 +9,7 @@
 ''' SOFTWARE.</para> </license>
 ''' <history date="12/14/2013" by="David" revision=""> Created. </history>
 Public Class SystemSubsystem
-    Inherits SystemSubsystemBase
+    Inherits VI.Tsp2.SystemSubsystemBase
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -32,6 +32,36 @@ Public Class SystemSubsystem
             Next
         End If
     End Sub
+
+#End Region
+
+#Region " BEEPER IMMEDIATE "
+
+    ''' <summary> Commands the instrument to issue a Beep on the instrument. </summary>
+    ''' <param name="frequency"> Specifies the frequency of the beep. </param>
+    ''' <param name="duration">  Specifies the duration of the beep. </param>
+    Public Sub BeepImmediately(ByVal frequency As Integer, ByVal duration As Single)
+        Me.Write("beeper.beep({0},{1})", frequency, duration)
+    End Sub
+
+#End Region
+
+#Region " FAN LEVEL "
+
+    ''' <summary> Converts the specified value to string. </summary>
+    ''' <param name="value"> The <see cref="P:isr.VI.SystemSubsystemBase.FanLevel">Fan Level</see>. </param>
+    ''' <returns> A String. </returns>
+    Protected Overrides Function FromFanLevel(ByVal value As FanLevel) As String
+        Return If(value = VI.FanLevel.Normal, "fan.LEVEL_NORMAL", "fan.LEVEL_QUIET")
+    End Function
+
+    ''' <summary> Gets the Fan Level query command. </summary>
+    ''' <value> The Fan Level command. </value>
+    Protected Overrides ReadOnly Property FanLevelQueryCommand As String = "_G.print(_G.fan.level)"
+
+    ''' <summary> Gets the Fan Level command format. </summary>
+    ''' <value> The Fan Level command format. </value>
+    Protected Overrides ReadOnly Property FanLevelCommandFormat As String = "_G.fan.level={0}"
 
 #End Region
 

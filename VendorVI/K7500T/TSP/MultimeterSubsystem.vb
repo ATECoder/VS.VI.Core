@@ -29,16 +29,15 @@ Public Class MultimeterSubsystem
     ''' </summary>
     Public Overrides Sub ClearExecutionState()
         MyBase.ClearExecutionState()
-        Me.Readings?.Reset()
+        Me.Readings.Reset()
+        Me.SafePostPropertyChanged(NameOf(MultimeterSubsystem.Readings))
     End Sub
 
     ''' <summary> Performs a reset and additional custom setting for the subsystem. </summary>
     ''' <remarks> Use this method to customize the reset. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        ' TO_DO: the readings are initialized when the format system is reset.
-        Me.Readings = New Readings
-        MyBase.InitKnownState()
+        Me.Readings.Initialize(ReadingTypes.Current)
         Dim lineFrequency As Double = Me.StatusSubsystem.LineFrequency.GetValueOrDefault(60)
         If lineFrequency = 50 Then
             Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.0005, 12)
@@ -46,11 +45,14 @@ Public Class MultimeterSubsystem
             Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.0005, 15)
         End If
         Me.ApertureRange = New isr.Core.Pith.RangeR(Me.PowerLineCyclesRange.Min / lineFrequency, Me.PowerLineCyclesRange.Max / lineFrequency)
+        Me.FilterCountRange = New isr.Core.Pith.RangeI(1, 100)
+        Me.FilterWindowRange = New isr.Core.Pith.RangeR(0, 0.1)
     End Sub
 
     ''' <summary> Sets the subsystem to its reset state. </summary>
     Public Overrides Sub ResetKnownState()
         MyBase.ResetKnownState()
+        Me.Readings = New Readings
         Me.FilterCountRange = New isr.Core.Pith.RangeI(1, 100)
         Me.FilterWindowRange = New isr.Core.Pith.RangeR(0, 0.1)
         Me.PowerLineCycles = 0.5
@@ -60,28 +62,16 @@ Public Class MultimeterSubsystem
         Me.MovingAverageFilterEnabled = False
         Me.OpenDetectorEnabled = False
         Me.FilterWindow = 0.001
-        For Each fmode As VI.Tsp2.MultimeterFunctionMode In [Enum].GetValues(GetType(VI.Tsp2.MultimeterFunctionMode))
-            Select Case fmode
-                Case VI.Tsp2.MultimeterFunctionMode.CurrentDC, VI.Tsp2.MultimeterFunctionMode.CurrentAC
-                    Me.FunctionModeRanges(fmode).SetRange(0, 10)
-                Case VI.Tsp2.MultimeterFunctionMode.VoltageDC
-                    Me.FunctionModeRanges(fmode).SetRange(0, 1000)
-                Case VI.Tsp2.MultimeterFunctionMode.VoltageAC
-                    Me.FunctionModeRanges(fmode).SetRange(0, 700)
-                Case VI.Tsp2.MultimeterFunctionMode.ResistanceTwoWire
-                    Me.FunctionModeRanges(fmode).SetRange(0, 1000000000.0)
-                Case VI.Tsp2.MultimeterFunctionMode.ResistanceFourWire
-                    Me.FunctionModeRanges(fmode).SetRange(0, 1000000000.0)
-                Case VI.Tsp2.MultimeterFunctionMode.Continuity
-                    Me.FunctionModeRanges(fmode).SetRange(0, 1000)
-                Case VI.Tsp2.MultimeterFunctionMode.Diode
-                    Me.FunctionModeRanges(fmode).SetRange(0, 10)
-                Case VI.Tsp2.MultimeterFunctionMode.Capacitance
-                    Me.FunctionModeRanges(fmode).SetRange(0, 0.001)
-                Case VI.Tsp2.MultimeterFunctionMode.Ratio
-                    Me.FunctionModeRanges(fmode).SetRange(0, 1000)
-            End Select
-        Next
+        Me.FunctionModeRanges(MultimeterFunctionMode.CurrentAC).SetRange(0, 10)
+        Me.FunctionModeRanges(MultimeterFunctionMode.CurrentDC).SetRange(0, 10)
+        Me.FunctionModeRanges(MultimeterFunctionMode.VoltageDC).SetRange(0, 1000)
+        Me.FunctionModeRanges(MultimeterFunctionMode.VoltageAC).SetRange(0, 700)
+        Me.FunctionModeRanges(MultimeterFunctionMode.ResistanceTwoWire).SetRange(0, 1000000000.0)
+        Me.FunctionModeRanges(MultimeterFunctionMode.ResistanceFourWire).SetRange(0, 1000000000.0)
+        Me.FunctionModeRanges(MultimeterFunctionMode.Continuity).SetRange(0, 1000)
+        Me.FunctionModeRanges(MultimeterFunctionMode.Diode).SetRange(0, 10)
+        Me.FunctionModeRanges(MultimeterFunctionMode.Capacitance).SetRange(0, 0.001)
+        Me.FunctionModeRanges(MultimeterFunctionMode.Ratio).SetRange(0, 1000)
         Me.SafePostPropertyChanged(NameOf(MultimeterSubsystemBase.FunctionModeRanges))
         Me.FunctionMode = VI.Tsp2.MultimeterFunctionMode.VoltageDC
         Me.Range = 100

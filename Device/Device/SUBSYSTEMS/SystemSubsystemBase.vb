@@ -64,11 +64,11 @@ Public MustInherit Class SystemSubsystemBase
 
 #Region " FAN LEVEL "
 
-    ''' <summary> The Route Fan Level. </summary>
+    ''' <summary> The Fan Level. </summary>
     Private _FanLevel As FanLevel?
 
-    ''' <summary> Gets or sets the cached Route Fan Level. </summary>
-    ''' <value> The Route Fan Level or null if unknown. </value>
+    ''' <summary> Gets or sets the cached Fan Level. </summary>
+    ''' <value> The Fan Level or null if unknown. </value>
     Public Property FanLevel As FanLevel?
         Get
             Return Me._FanLevel
@@ -81,9 +81,27 @@ Public MustInherit Class SystemSubsystemBase
         End Set
     End Property
 
-    ''' <summary> Writes and reads back the Route Fan Level. </summary>
+    ''' <summary> Converts the specified value to string. </summary>
+    ''' <param name="value"> The <see cref="FanLevel">Fan Level</see>. </param>
+    ''' <returns> A String. </returns>
+    Protected Overridable Function FromFanLevel(ByVal value As FanLevel) As String
+        Return If(value = VI.FanLevel.Normal, "NORM", "QUIET")
+    End Function
+
+    ''' <summary> Converts a value to a fan level. </summary>
     ''' <param name="value"> The <see cref="FanLevel">Route Fan Level</see>. </param>
-    ''' <returns> The Route Fan Level or null if unknown. </returns>
+    ''' <returns> Value as a FanLevel. </returns>
+    Private Function ToFanLevel(ByVal value As String) As FanLevel
+        If value.StartsWith(Me.FromFanLevel(VI.FanLevel.Quiet), StringComparison.OrdinalIgnoreCase) Then
+            Return VI.FanLevel.Quiet
+        Else
+            Return VI.FanLevel.Normal
+        End If
+    End Function
+
+    ''' <summary> Writes and reads back the Fan Level. </summary>
+    ''' <param name="value"> The <see cref="FanLevel">Fan Level</see>. </param>
+    ''' <returns> The Fan Level or null if unknown. </returns>
     Public Function ApplyFanLevel(ByVal value As FanLevel) As FanLevel?
         Me.WriteFanLevel(value)
         Return Me.QueryFanLevel()
@@ -93,23 +111,23 @@ Public MustInherit Class SystemSubsystemBase
     ''' <value> The Fan Level command. </value>
     Protected Overridable ReadOnly Property FanLevelQueryCommand As String
 
-    ''' <summary> Queries the Route Fan Level. Also sets the <see cref="FanLevel">output
+    ''' <summary> Queries the Fan Level. Also sets the <see cref="FanLevel">output
     ''' on</see> sentinel. </summary>
-    ''' <returns> The Route Fan Level or null if unknown. </returns>
+    ''' <returns> The Fan Level or null if unknown. </returns>
     Public Function QueryFanLevel() As FanLevel?
-        Me.FanLevel = Me.Query(Of FanLevel)(Me.FanLevelQueryCommand, Me.FanLevel)
-        Return Me.FanLevel
+        Return Me.ToFanLevel(Me.Query(Me.FromFanLevel(Me.FanLevel.GetValueOrDefault(VI.FanLevel.Normal)), Me.FanLevelQueryCommand))
     End Function
 
     ''' <summary> Gets the Fan Level command format. </summary>
     ''' <value> The Fan Level command format. </value>
     Protected Overridable ReadOnly Property FanLevelCommandFormat As String
 
-    ''' <summary> Writes the Route Fan Level. Does not read back from the instrument. </summary>
+    ''' <summary> Writes the Fan Level. Does not read back from the instrument. </summary>
     ''' <param name="value"> The Fan Level. </param>
-    ''' <returns> The Route Fan Level or null if unknown. </returns>
+    ''' <returns> The Fan Level or null if unknown. </returns>
     Public Function WriteFanLevel(ByVal value As FanLevel) As FanLevel?
-        Me.FanLevel = Me.Write(Of FanLevel)(Me.FanLevelCommandFormat, value)
+        Me.Write(Me.FanLevelCommandFormat, Me.FromFanLevel(value))
+        Me.FanLevel = value
         Return Me.FanLevel
     End Function
 
@@ -182,7 +200,6 @@ Public MustInherit Class SystemSubsystemBase
 End Class
 
 Public Enum FanLevel
-    <Description("Not Specified")> NotSpecified
     <Description("Normal")> Normal
     <Description("Quiet")> Quiet
 End Enum

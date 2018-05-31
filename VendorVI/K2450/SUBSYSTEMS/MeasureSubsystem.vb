@@ -9,7 +9,7 @@
 ''' SOFTWARE.</para> </license>
 ''' <history date="01/03/2018" by="David" revision=""> Created. </history>
 Public Class MeasureSubsystem
-    Inherits MeasureSubsystemBase
+    Inherits VI.Tsp2.MeasureSubsystemBase
 
 #Region " CONSTRUCTION + CLEANUP "
 

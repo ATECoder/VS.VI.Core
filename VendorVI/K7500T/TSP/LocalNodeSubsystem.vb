@@ -9,7 +9,7 @@
 ''' SOFTWARE.</para> </license>
 ''' <history date="1/4/2018" by="David" revision=""> Created. </history>
 Public Class LocalNodeSubsystem
-    Inherits LocalNodeSubsystemBase
+    Inherits VI.Tsp2.LocalNodeSubsystemBase
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -34,13 +34,5 @@ Public Class LocalNodeSubsystem
     End Sub
 
 #End Region
-
-#Region " COMMAND SYNTAX "
-
-#Region "  "
-#End Region
-
-#End Region
-
 
 End Class

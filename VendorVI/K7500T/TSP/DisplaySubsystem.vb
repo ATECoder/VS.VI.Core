@@ -9,7 +9,7 @@
 ''' SOFTWARE.</para> </license>
 ''' <history date="12/14/2013" by="David" revision=""> Created. </history>
 Public Class DisplaySubsystem
-    Inherits DisplaySubsystemBase
+    Inherits VI.Tsp2.DisplaySubsystemBase
 
 #Region " CONSTRUCTION + CLEANUP "
 

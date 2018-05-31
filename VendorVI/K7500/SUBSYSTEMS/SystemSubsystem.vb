@@ -75,7 +75,7 @@ Public Class SystemSubsystem
     ''' <param name="frequency"> Specifies the frequency of the beep. </param>
     ''' <param name="duration">  Specifies the duration of the beep. </param>
     Public Sub BeepImmediately(ByVal frequency As Integer, ByVal duration As Single)
-        Me.Session.WriteLine(":SYST:BEEP:IMM {0}, {1}", frequency, duration)
+        Me.Write(":SYST:BEEP:IMM {0}, {1}", frequency, duration)
     End Sub
 
 #End Region
@@ -85,6 +85,13 @@ Public Class SystemSubsystem
     ''' <summary> Gets the Fan Level query command. </summary>
     ''' <value> The Fan Level command. </value>
     Protected Overrides ReadOnly Property FanLevelQueryCommand As String = ""
+
+    ''' <summary> Converts the specified value to string. </summary>
+    ''' <param name="value"> The <see cref="P:isr.VI.SystemSubsystemBase.FanLevel">Fan Level</see>. </param>
+    ''' <returns> A String. </returns>
+    Protected Overrides Function FromFanLevel(ByVal value As FanLevel) As String
+        Return If(value = VI.FanLevel.Normal, "NORM", "QUIET")
+    End Function
 
     ''' <summary> Gets the Fan Level command format. </summary>
     ''' <value> The Fan Level command format. </value>

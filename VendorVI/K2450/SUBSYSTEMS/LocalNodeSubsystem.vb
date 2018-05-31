@@ -35,12 +35,4 @@ Public Class LocalNodeSubsystem
 
 #End Region
 
-#Region " COMMAND SYNTAX "
-
-#Region "  "
-#End Region
-
-#End Region
-
-
 End Class

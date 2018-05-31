@@ -9,7 +9,7 @@
 ''' SOFTWARE.</para> </license>
 ''' <history date="12/14/2013" by="David" revision=""> Created. </history>
 Public Class DisplaySubsystem
-    Inherits DisplaySubsystemBase
+    Inherits VI.DisplaySubsystemBase
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -92,7 +92,6 @@ Public Class DisplaySubsystem
     Protected Overrides ReadOnly Property DisplayLineCommandFormat As String = ":DISP:USER{0}:TEXT ""{1}"""
 
 #End Region
-
 
 #End Region
 
