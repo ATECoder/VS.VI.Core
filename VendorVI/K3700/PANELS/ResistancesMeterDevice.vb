@@ -24,6 +24,7 @@ Public Class ResistancesMeterDevice
         Me._MultimeterSenseChannel = 912
         Me._MultimeterSourceChannel = 921
         Me.SlotCapacity = 30
+        Me.ResistorPrefix = "R"
     End Sub
 
     ''' <summary> Validated the given value. </summary>
@@ -250,8 +251,9 @@ Public Class ResistancesMeterDevice
     End Property
 
     Private _SlotCapacity As Integer
-    ''' <summary> Gets or sets a list of multimeter channels. </summary>
-    ''' <value> A List of multimeter channels. </value>
+
+    ''' <summary> Gets or sets the slot capacity. </summary>
+    ''' <value> The slot capacity. </value>
     Public Property SlotCapacity As Integer
         Get
             Return Me._SlotCapacity
@@ -259,6 +261,22 @@ Public Class ResistancesMeterDevice
         Set(value As Integer)
             If Not Integer.Equals(Me.SlotCapacity, value) Then
                 Me._SlotCapacity = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _ResistorPrefix As String
+
+    ''' <summary> Gets or sets the resistor prefix. </summary>
+    ''' <value> The resistor prefix. </value>
+    Public Property ResistorPrefix As String
+        Get
+            Return Me._ResistorPrefix
+        End Get
+        Set(value As String)
+            If Not String.Equals(Me.ResistorPrefix, value) Then
+                Me._ResistorPrefix = value
                 Me.SafePostPropertyChanged()
             End If
         End Set
@@ -283,7 +301,7 @@ Public Class ResistancesMeterDevice
     ''' <param name="ordinalNumber"> The ordinal number within the set. </param>
     ''' <param name="setSize">       Number of elements in a set. </param>
     ''' <returns> An Integer. </returns>
-    Public Function LinearRelayNumber(ByVal setNumber As Integer, ByVal ordinalNumber As Integer, ByVal setSize As Integer) As Integer
+    Public Shared Function LinearRelayNumber(ByVal setNumber As Integer, ByVal ordinalNumber As Integer, ByVal setSize As Integer) As Integer
         Return ordinalNumber + (setNumber - 1) * setSize
     End Function
 
@@ -295,7 +313,7 @@ Public Class ResistancesMeterDevice
     ''' <param name="setSize">       Number of. </param>
     ''' <returns> An Integer. </returns>
     Public Function SlotNumber(ByVal setNumber As Integer, ByVal ordinalNumber As Integer, ByVal setSize As Integer) As Integer
-        Return 1 + CInt(Math.Floor(Me.LinearRelayNumber(setNumber, ordinalNumber, setSize) / Me.SlotNetCapacity(setSize)))
+        Return 1 + CInt(Math.Floor(ResistancesMeterDevice.LinearRelayNumber(setNumber, ordinalNumber, setSize) / Me.SlotNetCapacity(setSize)))
     End Function
 
     ''' <summary> Relay number. </summary>
@@ -304,7 +322,7 @@ Public Class ResistancesMeterDevice
     ''' <param name="setSize">       Number of elements in a set. </param>
     ''' <returns> An Integer. </returns>
     Public Function SenseRelayNumber(ByVal setNumber As Integer, ByVal ordinalNumber As Integer, ByVal setSize As Integer) As Integer
-        Return Me.LinearRelayNumber(setNumber, ordinalNumber, setSize) Mod Me.SlotNetCapacity(setSize)
+        Return ResistancesMeterDevice.LinearRelayNumber(setNumber, ordinalNumber, setSize) Mod Me.SlotNetCapacity(setSize)
     End Function
 
     ''' <summary> Source relay number. </summary>
@@ -323,9 +341,18 @@ Public Class ResistancesMeterDevice
     ''' <returns> A String. </returns>
     Public Function BuildChannelList(ByVal setNumber As Integer, ByVal ordinalNumber As Integer, ByVal setSize As Integer) As String
         Dim slotBaseNumber As Integer = 1000 * Me.SlotNumber(setNumber, ordinalNumber, setSize)
-        Dim builder As New System.Text.StringBuilder
+        Dim relayNumbers As New List(Of Integer) From {
+            slotBaseNumber + Me.SenseRelayNumber(setNumber, ordinalNumber, setSize),
+            slotBaseNumber + Me.SourceRelayNumber(setNumber, ordinalNumber, setSize),
+            slotBaseNumber + Me.MultimeterSenseChannel,
+            slotBaseNumber + Me.MultimeterSourceChannel
+            }
+        relayNumbers.Sort()
+        Dim builder As New System.Text.StringBuilder(relayNumbers(0).ToString)
         Dim delimiter As String = ";"
-        builder.Append($"{slotBaseNumber + Me.SenseRelayNumber(setNumber, ordinalNumber, setSize)}{delimiter}")
+        For i As Integer = 1 To relayNumbers.Count - 1
+            builder.Append($"{delimiter}{relayNumbers(i).ToString}")
+        Next
         Return builder.ToString
     End Function
 

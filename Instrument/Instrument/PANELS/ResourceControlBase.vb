@@ -294,6 +294,28 @@ Public Class ResourceControlBase
 
 #Region " RESOURCE NAME "
 
+    ''' <summary> Select resource names. </summary>
+    ''' <returns> A Task. </returns>
+    Public Async Function SelectResourceName(ByVal resourceName As String) As Threading.Tasks.Task
+        Await Threading.Tasks.Task.Run(Sub() Me._SelectResourceName(resourceName))
+    End Function
+
+    Protected Overridable Sub SelectingResourceName(ByVal resourceName As String)
+    End Sub
+
+    Protected Overridable Sub DoneSelectingResourceName(ByVal resourceName As String, ByVal e As Core.Pith.ActionEventArgs)
+    End Sub
+
+    ''' <summary> Select resource name. </summary>
+    ''' <param name="resourceName"> The name of the resource. </param>
+    Private Sub _SelectResourceName(ByVal resourceName As String)
+        Me.SelectingResourceName(resourceName)
+        Me.Connector.DisplayResourceName(resourceName)
+        Dim e As New Core.Pith.ActionEventArgs
+        Me.TrySelectResourceName(resourceName, e)
+        Me.DoneSelectingResourceName(resourceName, e)
+    End Sub
+
     ''' <summary> Attempts to select resource name from the given data. </summary>
     ''' <param name="resourceName"> The name of the resource. </param>
     ''' <param name="e">            Cancel details event information. </param>

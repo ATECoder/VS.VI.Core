@@ -105,6 +105,27 @@ Public Class K3700Control
         End Try
     End Sub
 
+    ''' <summary> Selecting resource name. </summary>
+    ''' <param name="resourceName"> Name of the resource. </param>
+    Protected Overrides Sub SelectingResourceName(ByVal resourceName As String)
+        Dim activity As String = "Selecting resource name..."
+        Core.Controls.ToolStripExtensions.SafeTextSetter(Me._StatusLabel, activity)
+    End Sub
+
+    ''' <summary> Done selecting resource name. </summary>
+    ''' <param name="resourceName"> Name of the resource. </param>
+    ''' <param name="e">            Action event information. </param>
+    Protected Overrides Sub DoneSelectingResourceName(ByVal resourceName As String, ByVal e As Core.Pith.ActionEventArgs)
+        Dim activity As String = ""
+        If e?.Cancel Then
+            activity = "Failed selecting instrument"
+            Core.Controls.ToolStripExtensions.SafeToolTipTextSetter(Me._StatusLabel, $"{activity}; {e?.Details}")
+        Else
+            activity = "Ready to connect instrument"
+        End If
+        Core.Controls.ToolStripExtensions.SafeTextSetter(Me._StatusLabel, activity)
+    End Sub
+
 #End Region
 
 #Region " DEVICE "
