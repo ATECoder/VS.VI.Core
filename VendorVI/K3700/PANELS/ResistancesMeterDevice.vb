@@ -21,6 +21,9 @@ Public Class ResistancesMeterDevice
     Public Sub New()
         MyBase.New
         Me._Resistors = New ChannelResistorCollection
+        Me._MultimeterSenseChannel = 912
+        Me._MultimeterSourceChannel = 921
+        Me.SlotCapacity = 30
     End Sub
 
     ''' <summary> Validated the given value. </summary>
@@ -216,6 +219,127 @@ Public Class ResistancesMeterDevice
 
 #Region " MEASURE "
 
+    Private _MultimeterSenseChannel As Integer
+    ''' <summary> Gets or sets a list of multimeter channels. </summary>
+    ''' <value> A List of multimeter channels. </value>
+    Public Property MultimeterSenseChannel As Integer
+        Get
+            Return Me._MultimeterSenseChannel
+        End Get
+        Set(value As Integer)
+            If Not String.Equals(Me.MultimeterSenseChannel, value) Then
+                Me._MultimeterSenseChannel = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _MultimeterSourceChannel As Integer
+    ''' <summary> Gets or sets a list of multimeter channels. </summary>
+    ''' <value> A List of multimeter channels. </value>
+    Public Property MultimeterSourceChannel As Integer
+        Get
+            Return Me._MultimeterSourceChannel
+        End Get
+        Set(value As Integer)
+            If Not String.Equals(Me.MultimeterSourceChannel, value) Then
+                Me._MultimeterSourceChannel = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    Private _SlotCapacity As Integer
+    ''' <summary> Gets or sets a list of multimeter channels. </summary>
+    ''' <value> A List of multimeter channels. </value>
+    Public Property SlotCapacity As Integer
+        Get
+            Return Me._SlotCapacity
+        End Get
+        Set(value As Integer)
+            If Not Integer.Equals(Me.SlotCapacity, value) Then
+                Me._SlotCapacity = value
+                Me.SafePostPropertyChanged()
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Gets the number of sets of <paramref name="setSize"/> size that fits in a slot. </summary>
+    ''' <param name="setSize"> Number of elements in a set. </param>
+    ''' <returns> An Integer. </returns>
+    Public Function SlotSetCapacity(ByVal setSize As Integer) As Integer
+        Return CInt(Math.Floor(Me.SlotCapacity / setSize))
+    End Function
+
+    ''' <summary> Slot net capacity. </summary>
+    ''' <param name="setSize"> Number of elements in a set. </param>
+    ''' <returns> An Integer. </returns>
+    Public Function SlotNetCapacity(ByVal setSize As Integer) As Integer
+        Return setSize * Me.SlotSetCapacity(setSize)
+    End Function
+
+    ''' <summary> Linear relay number. </summary>
+    ''' <param name="setNumber">     The set number. </param>
+    ''' <param name="ordinalNumber"> The ordinal number within the set. </param>
+    ''' <param name="setSize">       Number of elements in a set. </param>
+    ''' <returns> An Integer. </returns>
+    Public Function LinearRelayNumber(ByVal setNumber As Integer, ByVal ordinalNumber As Integer, ByVal setSize As Integer) As Integer
+        Return ordinalNumber + (setNumber - 1) * setSize
+    End Function
+
+    ''' <summary>
+    ''' Get the slot number for the specified resistance set ordinal number and set size.
+    ''' </summary>
+    ''' <param name="setNumber">     The set number. </param>
+    ''' <param name="ordinalNumber"> The ordinal number within the set. </param>
+    ''' <param name="setSize">       Number of. </param>
+    ''' <returns> An Integer. </returns>
+    Public Function SlotNumber(ByVal setNumber As Integer, ByVal ordinalNumber As Integer, ByVal setSize As Integer) As Integer
+        Return 1 + CInt(Math.Floor(Me.LinearRelayNumber(setNumber, ordinalNumber, setSize) / Me.SlotNetCapacity(setSize)))
+    End Function
+
+    ''' <summary> Relay number. </summary>
+    ''' <param name="setNumber">     The set number. </param>
+    ''' <param name="ordinalNumber"> The ordinal number within the set. </param>
+    ''' <param name="setSize">       Number of elements in a set. </param>
+    ''' <returns> An Integer. </returns>
+    Public Function SenseRelayNumber(ByVal setNumber As Integer, ByVal ordinalNumber As Integer, ByVal setSize As Integer) As Integer
+        Return Me.LinearRelayNumber(setNumber, ordinalNumber, setSize) Mod Me.SlotNetCapacity(setSize)
+    End Function
+
+    ''' <summary> Source relay number. </summary>
+    ''' <param name="setNumber">     The set number. </param>
+    ''' <param name="ordinalNumber"> The ordinal number within the set. </param>
+    ''' <param name="setSize">       Number of elements in a set. </param>
+    ''' <returns> An Integer. </returns>
+    Public Function SourceRelayNumber(ByVal setNumber As Integer, ByVal ordinalNumber As Integer, ByVal setSize As Integer) As Integer
+        Return Me.SlotCapacity + Me.SenseRelayNumber(setNumber, ordinalNumber, setSize)
+    End Function
+
+    ''' <summary> Builds channel list. </summary>
+    ''' <param name="setNumber">     The set number. </param>
+    ''' <param name="ordinalNumber"> The ordinal number within the set. </param>
+    ''' <param name="setSize">       Number of elements in a set. </param>
+    ''' <returns> A String. </returns>
+    Public Function BuildChannelList(ByVal setNumber As Integer, ByVal ordinalNumber As Integer, ByVal setSize As Integer) As String
+        Dim slotBaseNumber As Integer = 1000 * Me.SlotNumber(setNumber, ordinalNumber, setSize)
+        Dim builder As New System.Text.StringBuilder
+        Dim delimiter As String = ";"
+        builder.Append($"{slotBaseNumber + Me.SenseRelayNumber(setNumber, ordinalNumber, setSize)}{delimiter}")
+        Return builder.ToString
+    End Function
+
+    ''' <summary> Populates the given resistors. </summary>
+    ''' <param name="prefix">    The prefix. </param>
+    ''' <param name="setNumber"> The set number. </param>
+    ''' <param name="setSize">   Number of elements in a set. </param>
+    Public Sub Populate(ByVal prefix As String, ByVal setNumber As Integer, ByVal setSize As Integer)
+        Me._Resistors.Clear()
+        For ordinalNumber As Integer = 1 To setSize
+            Me._Resistors.Add(New ChannelResistor($"{prefix}{ordinalNumber}", Me.BuildChannelList(setNumber, ordinalNumber, setSize)))
+        Next
+    End Sub
+
     ''' <summary> Populates the given resistors. </summary>
     ''' <param name="resistors"> The resistors. </param>
     Public Sub Populate(ByVal resistors As ChannelResistorCollection)
@@ -230,7 +354,7 @@ Public Class ResistancesMeterDevice
     ''' <exception cref="VI.Pith.OperationFailedException"> Thrown when operation failed to execute. </exception>
     ''' <param name="powerLineCycles"> The power line cycles. </param>
     Public Sub ConfigureMeter(ByVal powerLineCycles As Double)
-        Dim activity As String = $"Checking {Me.Session.ResourceName} is open"
+        Dim activity As String = $"Checking {Me.Session.ResourceName} Is open"
         If Me.IsDeviceOpen Then
             activity = $"Configuring function mode {MultimeterFunctionMode.ResistanceFourWire}"
             Dim expectedMeasureFunction As MultimeterFunctionMode = MultimeterFunctionMode.ResistanceFourWire
@@ -252,7 +376,7 @@ Public Class ResistancesMeterDevice
                 Throw New VI.Pith.OperationFailedException($"Failed {activity}--no value set")
             End If
         Else
-            Throw New VI.Pith.OperationFailedException($"Failed {activity}; VISA session to this device is not open")
+            Throw New VI.Pith.OperationFailedException($"Failed {activity}; VISA session to this device Is Not open")
         End If
     End Sub
 
