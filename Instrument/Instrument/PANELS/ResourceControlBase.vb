@@ -107,6 +107,7 @@ Public Class ResourceControlBase
                 End If
                 Me._ElapsedTimeStopwatch = Nothing
                 Me.AssignConnector(Nothing, True)
+                Me.AwaitResourceNameSelection()
             End If
         Finally
             MyBase.Dispose(disposing)
@@ -294,9 +295,33 @@ Public Class ResourceControlBase
 
 #Region " RESOURCE NAME "
 
+    ''' <summary> Gets or sets the default resource name selection timeout. </summary>
+    ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+    ''' <value> The default resource name selection timeout. </value>
+    Public Shared Property DefaultResourceNameSelectionTimeout As TimeSpan = TimeSpan.FromSeconds(5)
+
+    Private _ResourceNameSelectionTask As Threading.Tasks.Task
+
+    ''' <summary> Await resource name selection. </summary>
+    ''' <param name="timeout"> The timeout. </param>
+    Public Sub AwaitResourceNameSelection(ByVal timeout As TimeSpan)
+        Me._ResourceNameSelectionTask?.Wait(timeout)
+    End Sub
+
+    ''' <summary> Await resource name selection. </summary>
+    Public Sub AwaitResourceNameSelection()
+        Me.AwaitResourceNameSelection(ResourceControlBase.DefaultResourceNameSelectionTimeout)
+    End Sub
+
+    ''' <summary> Asynchronous select resource name. </summary>
+    ''' <param name="resourceName"> The name of the resource. </param>
+    Public Sub AsyncSelectResourceName(ByVal resourceName As String)
+        Me._ResourceNameSelectionTask = Me.SelectResourceName(resourceName)
+    End Sub
+
     ''' <summary> Select resource names. </summary>
     ''' <returns> A Task. </returns>
-    Public Async Function SelectResourceName(ByVal resourceName As String) As Threading.Tasks.Task
+    Private Async Function SelectResourceName(ByVal resourceName As String) As Threading.Tasks.Task
         Await Threading.Tasks.Task.Run(Sub() Me._SelectResourceName(resourceName))
     End Function
 
