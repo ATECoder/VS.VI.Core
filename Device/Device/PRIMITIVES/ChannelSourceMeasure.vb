@@ -14,18 +14,21 @@ Imports System.Windows.Forms
 Public Class ChannelSourceMeasure
 
     ''' <summary> Constructor. </summary>
-    ''' <param name="title">       The title. </param>
-    ''' <param name="channelList"> List of channels. </param>
-    Public Sub New(ByVal title As String, ByVal channelList As String)
+    ''' <param name="title">              The title. </param>
+    ''' <param name="sourceChannelList">  A List of source channels. </param>
+    ''' <param name="measureChannelList"> A List of measure channels. </param>
+    Public Sub New(ByVal title As String, ByVal sourceChannelList As String, ByVal measureChannelList As String)
         MyBase.New()
         Me.Title = title
-        Me.ChannelList = Me.ToSortedList(channelList)
+        Me.SourceChannelList = ChannelSourceMeasure.ToSortedList(sourceChannelList)
+        Me.MeasureChannelList = ChannelSourceMeasure.ToSortedList(measureChannelList)
+        Me.MergeChannelLists()
     End Sub
 
     ''' <summary> Constructor. </summary>
     ''' <param name="channelSourceMeasure"> The channel source measure. </param>
     Public Sub New(ByVal channelSourceMeasure As ChannelSourceMeasure)
-        Me.New(ChannelSourceMeasure.Validated(channelSourceMeasure).Title, channelSourceMeasure.ChannelList)
+        Me.New(ChannelSourceMeasure.Validated(channelSourceMeasure).Title, channelSourceMeasure.SourceChannelList, channelSourceMeasure.MeasureChannelList)
         Me.Current = channelSourceMeasure.Current
         Me.Voltage = channelSourceMeasure.Voltage
     End Sub
@@ -39,7 +42,10 @@ Public Class ChannelSourceMeasure
         Return channelSourceMeasure
     End Function
 
-    Private Function ToSortedList(ByVal list As String) As String
+    ''' <summary> Converts this object to a sorted list. </summary>
+    ''' <param name="list"> The list. </param>
+    ''' <returns> The given data converted to a String. </returns>
+    Private Shared Function ToSortedList(ByVal list As String) As String
         Return ChannelSourceMeasure.ToSortedList(list, ChannelSourceMeasure.ChannelListDelimiter(list))
     End Function
 
@@ -72,6 +78,35 @@ Public Class ChannelSourceMeasure
     ''' <summary> Gets the title. </summary>
     ''' <value> The title. </value>
     Public ReadOnly Property Title As String
+
+    ''' <summary> Gets a list of source channels. </summary>
+    ''' <value> A List of source channels. </value>
+    Public ReadOnly Property SourceChannelList As String
+
+    ''' <summary> Gets a list of measure channels. </summary>
+    ''' <value> A List of measure channels. </value>
+    Public ReadOnly Property MeasureChannelList As String
+
+    ''' <summary> Merge channel lists. </summary>
+    Private Sub MergeChannelLists()
+        If String.IsNullOrWhiteSpace(Me.SourceChannelList) Then
+            If String.IsNullOrWhiteSpace(Me.MeasureChannelList) Then
+                Me._ChannelList = ""
+            Else
+                Me._ChannelList = ChannelSourceMeasure.ToSortedList(Me.MeasureChannelList)
+            End If
+        Else
+            If String.IsNullOrWhiteSpace(Me.MeasureChannelList) Then
+                Me._ChannelList = ChannelSourceMeasure.ToSortedList(Me.SourceChannelList)
+            Else
+                Dim builder As New System.Text.StringBuilder
+                builder.Append(Me.SourceChannelList)
+                builder.Append(ChannelSourceMeasure.ChannelListDelimiter(builder.ToString))
+                builder.Append(Me.MeasureChannelList)
+                Me._ChannelList = ChannelSourceMeasure.ToSortedList(builder.ToString)
+            End If
+        End If
+    End Sub
 
     ''' <summary> Gets a list of channels. </summary>
     ''' <value> A List of channels. </value>
@@ -132,10 +167,11 @@ Public Class ChannelSourceMeasureCollection
     End Function
 
     ''' <summary> Adds a new source measure. </summary>
-    ''' <param name="title">       The title. </param>
-    ''' <param name="channelList"> List of channels. </param>
-    Public Sub AddSourceMeasure(ByVal title As String, ByVal channelList As String)
-        Me.Add(New ChannelSourceMeasure(title, channelList))
+    ''' <param name="title">              The title. </param>
+    ''' <param name="sourceChannelList">  List of channels. </param>
+    ''' <param name="measureChannelList"> List of measure channels. </param>
+    Public Sub AddSourceMeasure(ByVal title As String, ByVal sourceChannelList As String, ByVal measureChannelList As String)
+        Me.Add(New ChannelSourceMeasure(title, sourceChannelList, measureChannelList))
     End Sub
 
     ''' <summary> Configure display values. </summary>
