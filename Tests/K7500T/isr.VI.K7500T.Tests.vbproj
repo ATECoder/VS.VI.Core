@@ -101,9 +101,11 @@
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
     <Compile Include="K7510\K7510Manager_Resource.vb" />
+    <Compile Include="K7510\K7510Manager_Subsystems.vb" />
     <Compile Include="K7510\K7510Resource_Info.vb" />
     <Compile Include="K7510\K7510Resource_Tests.vb" />
     <Compile Include="K7510\K7510Subsystems_Info.vb" />
+    <Compile Include="K7510\K7510Subsystems_Tests.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <DependentUpon>Application.myapp</DependentUpon>
       <AutoGen>True</AutoGen>

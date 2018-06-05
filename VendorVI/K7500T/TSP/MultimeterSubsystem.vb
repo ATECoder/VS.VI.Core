@@ -9,7 +9,7 @@
 ''' SOFTWARE.</para> </license>
 ''' <history date="01/03/2018" by="David" revision=""> Created. </history>
 Public Class MultimeterSubsystem
-    Inherits MultimeterSubsystemBase
+    Inherits VI.Tsp2.MultimeterSubsystemBase
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -230,7 +230,7 @@ Public Class MultimeterSubsystem
 
     ''' <summary> Gets or sets the front terminals selected command format. </summary>
     ''' <value> The front terminals selected command format. </value>
-    Protected Overrides ReadOnly Property FrontTerminalsSelectedCommandFormat As String = "_G.dmm.terminals={0:'dmm.TERMINALS_FRONT';'dmm.TERMINALS_FRONT';'dmm.TERMINALS_REAR'}"
+    Protected Overrides ReadOnly Property FrontTerminalsSelectedCommandFormat As String = ""
 
     ''' <summary> Gets or sets the front terminals selected query command. </summary>
     ''' <value> The front terminals selected query command. </value>

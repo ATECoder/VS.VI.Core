@@ -46,7 +46,7 @@ Public MustInherit Class BufferSubsystemBase
 
 #End Region
 
-#Region " Fill Once ENABLED "
+#Region " FILL ONCE ENABLED "
 
     ''' <summary> Fill Once enabled. </summary>
     Private _FillOnceEnabled As Boolean?
@@ -133,7 +133,7 @@ Public MustInherit Class BufferSubsystemBase
 
     ''' <summary> Gets or sets the points count query command. </summary>
     ''' <value> The points count query command. </value>
-    ''' <remarks> SCPI: ":TRAC:POIN:COUN?" </remarks>
+    ''' <remarks> SCPI: :TRAC:POIN:COUN? </remarks>
     Protected Overridable ReadOnly Property CapacityQueryCommand As String
 
     ''' <summary> Queries the current Capacity. </summary>
@@ -147,7 +147,7 @@ Public MustInherit Class BufferSubsystemBase
 
     ''' <summary> Gets or sets the points count command format. </summary>
     ''' <value> The points count query command format. </value>
-    ''' <remarks> SCPI: ":TRAC:POIN:COUN {0}" </remarks>
+    ''' <remarks> SCPI: :TRAC:POIN:COUN {0} </remarks>
     Protected Overridable ReadOnly Property CapacityCommandFormat As String
 
     ''' <summary> Write the Buffer Capacity without reading back the value from the device. </summary>
@@ -186,7 +186,7 @@ Public MustInherit Class BufferSubsystemBase
 
     ''' <summary> Gets or sets the ActualPoint count query command. </summary>
     ''' <value> The ActualPoint count query command. </value>
-    ''' <remarks> SCPI: ":TRAC:ACT?" </remarks>
+    ''' <remarks> SCPI: :TRAC:ACT? </remarks>
     Protected Overridable ReadOnly Property ActualPointCountQueryCommand As String
 
     ''' <summary> Queries the current ActualPointCount. </summary>
@@ -223,7 +223,7 @@ Public MustInherit Class BufferSubsystemBase
 
     ''' <summary> Gets or sets The First Point Number query command. </summary>
     ''' <value> The First Point Number query command. </value>
-    ''' <remarks> SCPI: ":TRAC:ACT:STA?" </remarks>
+    ''' <remarks> SCPI: :TRAC:ACT:STA? </remarks>
     Protected Overridable ReadOnly Property FirstPointNumberQueryCommand As String
 
     ''' <summary> Queries the current FirstPointNumber. </summary>
@@ -260,7 +260,7 @@ Public MustInherit Class BufferSubsystemBase
 
     ''' <summary> Gets or sets The Last Point Number query command. </summary>
     ''' <value> The Last Point Number query command. </value>
-    ''' <remarks> SCPI: ":TRAC:ACT:END?" </remarks>
+    ''' <remarks> SCPI: :TRAC:ACT:END? </remarks>
     Protected Overridable ReadOnly Property LastPointNumberQueryCommand As String
 
     ''' <summary> Queries the current Last Point Number. </summary>
@@ -337,14 +337,16 @@ Public MustInherit Class BufferSubsystemBase
         End If
     End Function
 
-    Public ReadOnly Property DefaultBuffer1ReadCommandFormat As String = ":TRAC:DATA? {0},{1},'defbuffer1',READ,TST,STAT,UNIT"
+    ''' <summary> Gets the buffer read command format. </summary>
+    ''' <value> The buffer read command format. </value>
+    Public Overridable ReadOnly Property BufferReadCommandFormat As String = ":TRAC:DATA? {0},{1},'defbuffer1',READ,TST,STAT,UNIT"
 
     ''' <summary> Queries the current Data. </summary>
     ''' <param name="firstIndex"> Zero-based index of the first. </param>
     ''' <param name="lastIndex">  Zero-based index of the last. </param>
     ''' <returns> The Data or empty if none. </returns>
     Public Function QueryBufferReadings(ByVal firstIndex As Integer, ByVal lastIndex As Integer) As IEnumerable(Of BufferReading)
-        Me.QueryData(String.Format(Me.DefaultBuffer1ReadCommandFormat, firstIndex, lastIndex))
+        Me.QueryData(String.Format(Me.BufferReadCommandFormat, firstIndex, lastIndex))
         Dim q As New Queue(Of String)(Data.Split(","c))
         Dim l As New List(Of BufferReading)
         Do While q.Any
@@ -409,7 +411,6 @@ Public MustInherit Class BufferSubsystemBase
         Loop
         Return result
     End Function
-
 
     ''' <summary> Stream buffer. </summary>
     ''' <param name="triggerSubsystem"> The trigger subsystem. </param>

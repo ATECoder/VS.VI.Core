@@ -26,6 +26,7 @@
       <Word>smub</Word>
       <Word>waitcomplete</Word>
       <Word>isr</Word>
+      <Word>Lan</Word>
       <Word>Lua</Word>
       <Word>Multimeter</Word>
       <Word>nilify</Word>
@@ -34,6 +35,7 @@
       <Word>nilifying</Word>
       <Word>pcall</Word>
       <Word>printf</Word>
+      <Word>printbuffer</Word>
       <Word>scpi</Word>
       <Word>Smu</Word>
       <Word>Smus</Word>

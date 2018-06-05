@@ -729,15 +729,16 @@ Public MustInherit Class TriggerSubsystemBase
 
 End Class
 
-''' <summary> Values that represent trigger state. </summary>
+''' <summary> Values that represent trigger status. </summary>
 Public Enum TriggerState
-    <ComponentModel.Description("No Defined")> None
-    <ComponentModel.Description("Building")> Building
-    <ComponentModel.Description("Empty")> Empty
-    <ComponentModel.Description("Idle")> Idle
-    <ComponentModel.Description("Running")> Running
-    <ComponentModel.Description("Waiting")> Waiting
-    <ComponentModel.Description("Failed")> Failed
-    <ComponentModel.Description("Aborting")> Aborting
-    <ComponentModel.Description("Aborted")> Aborted
+    <ComponentModel.Description("Idle (trigger.STATE_NONE)")> None
+    <ComponentModel.Description("Idle (trigger.STATE_IDLE)")> Idle
+    <ComponentModel.Description("Running (trigger.STATE_RUNNING)")> Running
+    <ComponentModel.Description("Waiting (trigger.STATE_WAITING)")> Waiting
+    <ComponentModel.Description("Empty (trigger.STATE_EMPTY)")> Empty
+    <ComponentModel.Description("Building (trigger.STATE_BUILDING)")> Building
+    <ComponentModel.Description("Failed (trigger.STATE_FAILED)")> Failed
+    <ComponentModel.Description("Aborting (trigger.STATE_ABORTING)")> Aborting
+    <ComponentModel.Description("Aborted (trigger.STATE_ABORTED)")> Aborted
 End Enum
+

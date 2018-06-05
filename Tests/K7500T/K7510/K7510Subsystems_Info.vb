@@ -195,7 +195,7 @@
 
 #End Region
 
-#Region " SOURCE MEASURE UNIT INFORMATION "
+#Region " LOCAL NODE INFORMATION "
 
         ''' <summary> Gets the maximum output power of the instrument. </summary>
         ''' <value> The maximum output power . </value>
@@ -217,7 +217,7 @@
 
 #End Region
 
-#Region " SENSE SUBSYSTEM INFORMATION "
+#Region " MULTIMETER SUBSYSTEM INFORMATION "
 
         ''' <summary> Gets the Initial auto Range enabled settings. </summary>
         ''' <value> The auto Range settings. </value>
@@ -239,38 +239,56 @@
 
         ''' <summary> Gets the initial sense function mode. </summary>
         ''' <value> The initial sense function mode. </value>
-        Public ReadOnly Property InitialSenseFunctionMode As VI.Scpi.SenseFunctionModes
+        Public ReadOnly Property InitialSenseFunctionMode As Tsp2.MultimeterFunctionMode
             Get
-                Return CType(Me.InitialSenseFunction, VI.Scpi.SenseFunctionModes)
+                Return CType(Me.InitialMultimeterFunction, Tsp2.MultimeterFunctionMode)
             End Get
         End Property
 
         ''' <summary> Gets the Initial Sense Function settings. </summary>
         ''' <value> The Sense Function settings. </value>
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property InitialSenseFunction As Integer
+        Public ReadOnly Property InitialMultimeterFunction As Integer
             Get
                 Return Me.AppSettingInt32
             End Get
         End Property
 
-        ''' <summary> Gets the initial remote sense selected. </summary>
-        ''' <value> The initial remote sense selected. </value>
+#End Region
+
+#Region " BUFFER SUBSYSTEM INFORMATION "
+
+        ''' <summary> Gets the buffer capacity. </summary>
+        ''' <value> The buffer capacity. </value>
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property InitialRemoteSenseSelected As Boolean
+        Public ReadOnly Property BufferCapacity As Integer
             Get
-                Return Me.AppSettingBoolean
+                Return Me.AppSettingInt32
             End Get
         End Property
 
-#End Region
-
-#Region " SENSE SUBSYSTEM INFORMATION "
-
-        ''' <summary> Gets the initial front terminals selected. </summary>
-        ''' <value> The initial front terminals selected. </value>
+        ''' <summary> Gets the buffer first point number. </summary>
+        ''' <value> The buffer first point number. </value>
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property InitialFrontTerminalsSelected As Boolean
+        Public ReadOnly Property BufferFirstPointNumber As Integer
+            Get
+                Return Me.AppSettingInt32
+            End Get
+        End Property
+
+        ''' <summary> Gets the buffer last point number. </summary>
+        ''' <value> The buffer last point number. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property BufferLastPointNumber As Integer
+            Get
+                Return Me.AppSettingInt32
+            End Get
+        End Property
+
+        ''' <summary> Gets the buffer fill once enabled. </summary>
+        ''' <value> The buffer fill once enabled. </value>
+        <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
+        Public ReadOnly Property BufferFillOnceEnabled As Boolean
             Get
                 Return Me.AppSettingBoolean
             End Get

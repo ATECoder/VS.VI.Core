@@ -9,7 +9,7 @@
 ''' </para> </license>
 ''' <history date="9/22/2013" by="David" revision="3.0.5013"> Created. </history>
 Public Class VersionInfo
-    Inherits isr.VI.VersionInfo
+    Inherits VI.VersionInfo
 
     ''' <summary> Default constructor. </summary>
     Public Sub New()

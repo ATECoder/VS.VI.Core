@@ -94,12 +94,14 @@
     <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="My\MySuppressions.vb" />
     <Compile Include="TSP\Device.vb" />
+    <Compile Include="TSP\BufferSubsystem.vb" />
     <Compile Include="TSP\DisplaySubsystem.vb" />
     <Compile Include="TSP\LocalNodeSubsystem.vb" />
     <Compile Include="TSP\MultimeterSubsystem.vb" />
     <Compile Include="TSP\Readings.vb" />
     <Compile Include="TSP\StatusSubsystem.vb" />
     <Compile Include="TSP\SystemSubsystem.vb" />
+    <Compile Include="TSP\TriggerSubsystem.vb" />
     <Compile Include="TSP\VersionInfo.vb" />
   </ItemGroup>
   <ItemGroup>

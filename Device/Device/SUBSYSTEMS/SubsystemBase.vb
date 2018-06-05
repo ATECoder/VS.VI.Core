@@ -409,6 +409,13 @@ Public MustInherit Class SubsystemBase
         If Not String.IsNullOrWhiteSpace(command) Then Me.Session.Execute(command)
     End Sub
 
+    ''' <summary> Executes the command. </summary>
+    ''' <param name="commandFormat"> The command format. </param>
+    ''' <param name="args">    A variable-length parameters list containing arguments. </param>
+    Public Sub Execute(ByVal commandFormat As String, ByVal ParamArray args() As Object)
+        If Not String.IsNullOrWhiteSpace(Command) Then Me.Session.Execute(String.Format(commandFormat, args))
+    End Sub
+
 #End Region
 
 #End Region

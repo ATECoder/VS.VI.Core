@@ -25,7 +25,7 @@
     <DocumentationFile>VI.Device.Console.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
-    <DefineConstants>E4990z,K2000x,K2400x,K2450,K3700x,K3700cx,K3700bmx,K7000x,K7500x,K34980x,TTMx</DefineConstants>
+    <DefineConstants>E4990z,K2000x,K2400x,K2450x,K3700x,K3700cx,K3700bmx,K7000x,K7500x,K34980x,TTMx</DefineConstants>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

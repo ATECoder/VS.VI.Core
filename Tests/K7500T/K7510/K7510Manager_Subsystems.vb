@@ -103,12 +103,24 @@ Namespace K7500.Tests
             Assert.AreEqual(CByte(AscW(session.Termination(0))), session.TerminationCharacter, $"First termination character value")
         End Sub
 
-        Public Shared Sub CheckSenseSubsystemInfo(ByVal subsystem As VI.SenseSubsystemBase)
+        Public Shared Sub CheckMultimeterSubsystemInfo(ByVal subsystem As VI.MultimeterSubsystemBase)
             If subsystem Is Nothing Then Throw New ArgumentNullException(NameOf(subsystem))
         End Sub
 
-        Public Shared Sub CheckMeasureSubsystemInfo(ByVal subsystem As VI.MeasureSubsystemBase)
+        Public Shared Sub CheckBufferSubsystemInfo(ByVal subsystem As VI.BufferSubsystemBase)
             If subsystem Is Nothing Then Throw New ArgumentNullException(NameOf(subsystem))
+            Dim actualCapacilty As Integer = subsystem.QueryCapacity.GetValueOrDefault(-1)
+            Dim expectedcapacilty As Integer = K7510SubsystemsInfo.Get.BufferCapacity
+            Assert.AreEqual(expectedcapacilty, actualCapacilty, $"Buffer capacity")
+            Dim actualFirstPointNumber As Integer = subsystem.QueryFirstPointNumber.GetValueOrDefault(-1)
+            Dim expectedFirstPointNumber As Integer = K7510SubsystemsInfo.Get.BufferFirstPointNumber
+            Assert.AreEqual(expectedcapacilty, actualCapacilty, $"Buffer First Point Number")
+            Dim actualLastPointNumber As Integer = subsystem.QueryLastPointNumber.GetValueOrDefault(-1)
+            Dim expectedLastPointNumber As Integer = K7510SubsystemsInfo.Get.BufferLastPointNumber
+            Assert.AreEqual(expectedcapacilty, actualCapacilty, $"Buffer Last Point Number")
+            Dim expectedFillOnceEnabled As Boolean = K7510SubsystemsInfo.Get.BufferFillOnceEnabled
+            Dim actualFillOnceEnabled As Boolean = subsystem.FillOnceEnabled.GetValueOrDefault(Not expectedFillOnceEnabled)
+            Assert.AreEqual(expectedFillOnceEnabled, actualFillOnceEnabled, $"Initial fill once enabled")
         End Sub
 
         ''' <summary> Check reading device errors. </summary>

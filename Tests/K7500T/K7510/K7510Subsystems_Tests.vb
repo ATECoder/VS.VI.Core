@@ -72,7 +72,7 @@ Namespace K7500.Tests
         ''' <param name="readErrorEnabled"> True to enable, false to disable the read error. </param>
         Public Shared Sub OpenSessionCheckStatus(ByVal readErrorEnabled As Boolean)
             If Not K7510ResourceInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K7510ResourceInfo.Get.ResourceTitle} not found")
-            Using device As VI.K7500.Device = VI.K7500.Device.Create
+            Using device As VI.Tsp2.K7500.Device = VI.Tsp2.K7500.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 K7510Manager.CheckSession(device.Session)
                 K7510Manager.OpenSession(device)
@@ -81,8 +81,8 @@ Namespace K7500.Tests
                 K7510Manager.CheckTermination(device.Session)
                 K7510Manager.CheckLineFrequency(device.StatusSubsystem)
                 K7510Manager.CheckIntegrationPeriod(device.StatusSubsystem)
-                K7510Manager.CheckMeasureSubsystemInfo(device.MeasureSubsystem)
-                K7510Manager.CheckSenseSubsystemInfo(device.SenseSubsystem)
+                K7510Manager.CheckMultimeterSubsystemInfo(device.MultimeterSubsystem)
+                K7510Manager.CheckBufferSubsystemInfo(device.Buffer1Subsystem)
                 K7510Manager.ClearSessionCheckDeviceErrors(device)
                 If readErrorEnabled Then K7510Manager.CheckReadingDeviceErrors(device)
                 K7510Manager.CloseSession(device)
@@ -109,25 +109,25 @@ Namespace K7500.Tests
 
         ''' <summary> Check measure subsystem information. </summary>
         ''' <param name="device"> The device. </param>
-        Private Shared Sub ReadSenseSubsystemInfo(ByVal device As VI.K7500.Device)
+        Private Shared Sub ReadSenseSubsystemInfo(ByVal device As VI.Tsp2.K7500.Device)
 
             Dim expectedPowerLineCycles As Double = K7510SubsystemsInfo.Get.InitialPowerLineCycles
-            Dim actualPowerLineCycles As Double = device.SenseSubsystem.QueryPowerLineCycles.GetValueOrDefault(0)
+            Dim actualPowerLineCycles As Double = device.MultimeterSubsystem.QueryPowerLineCycles.GetValueOrDefault(0)
             Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K7510SubsystemsInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
                             $"{GetType(VI.SenseSubsystemBase)}.{NameOf(VI.SenseSubsystemBase.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
 
             Dim expectedBoolean As Boolean = K7510SubsystemsInfo.Get.InitialAutoRangeEnabled
-            Dim actualBoolean As Boolean = device.SenseSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(False)
+            Dim actualBoolean As Boolean = device.MultimeterSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(False)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.SenseSubsystemBase)}.{NameOf(VI.SenseSubsystemBase.AutoRangeEnabled)} is {actualBoolean }; expected {expectedBoolean}")
 
-            Dim senseFn As VI.Scpi.SenseFunctionModes = device.SenseSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Scpi.SenseFunctionModes.Resistance)
-            Dim expectedFunctionMode As VI.Scpi.SenseFunctionModes = K7510SubsystemsInfo.Get.InitialSenseFunctionMode
+            Dim senseFn As Tsp2.MultimeterFunctionMode = device.MultimeterSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.MultimeterFunctionMode.Capacitance)
+            Dim expectedFunctionMode As VI.Tsp2.MultimeterFunctionMode = K7510SubsystemsInfo.Get.InitialSenseFunctionMode
             Assert.AreEqual(expectedFunctionMode, senseFn, $"{GetType(VI.SenseSubsystemBase)}.{NameOf(VI.Scpi.SenseSubsystemBase.FunctionMode)} is {senseFn} ; expected {expectedFunctionMode}")
         End Sub
 
         <TestMethod(), TestCategory("VI")>
         Public Sub ReadSenseSubsystemTest()
-            Using device As VI.K7500.Device = VI.K7500.Device.Create
+            Using device As VI.Tsp2.K7500.Device = VI.Tsp2.K7500.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 K7500.Tests.K7510Manager.OpenSession(device)
                 K7510SubsystemsTests.ReadSenseSubsystemInfo(device)

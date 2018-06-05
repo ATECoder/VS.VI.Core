@@ -1,5 +1,5 @@
-﻿''' <summary> Local Node subsystem. </summary>
-''' <license> (c) 2018 Integrated Scientific Resources, Inc. All rights reserved.<para>
+﻿''' <summary> Buffer subsystem. </summary>
+''' <license> (c) 2013 Integrated Scientific Resources, Inc. All rights reserved.<para>
 ''' Licensed under The MIT License.</para><para>
 ''' THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
 ''' BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -7,17 +7,24 @@
 ''' DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ''' OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ''' SOFTWARE.</para> </license>
-''' <history date="1/4/2018" by="David" revision=""> Created. </history>
-Public Class LocalNodeSubsystem
-    Inherits VI.Tsp2.LocalNodeSubsystemBase
+''' <history date="12/14/2013" by="David" revision=""> Created. </history>
+Public Class BufferSubsystem
+    Inherits VI.Tsp2.BufferSubsystemBase
 
 #Region " CONSTRUCTION + CLEANUP "
 
-    ''' <summary> Initializes a new instance of the <see cref="DisplaySubsystem" /> class. </summary>
+    ''' <summary> Initializes a new instance of the <see cref="BufferSubsystem" /> class. </summary>
     ''' <param name="statusSubsystem "> A reference to a <see cref="StatusSubsystemBase">message based
     ''' session</see>. </param>
     Public Sub New(ByVal statusSubsystem As VI.StatusSubsystemBase)
         MyBase.New(statusSubsystem)
+    End Sub
+
+    ''' <summary> Constructor. </summary>
+    ''' <param name="bufferName">      Name of the buffer. </param>
+    ''' <param name="statusSubsystem"> The status subsystem. </param>
+    Public Sub New(ByVal bufferName As String, ByVal statusSubsystem As VI.StatusSubsystemBase)
+        MyBase.New(bufferName, statusSubsystem)
     End Sub
 
 #End Region

@@ -122,17 +122,9 @@ Public Class Device
         If e Is Nothing Then Throw New ArgumentNullException(NameOf(e))
         MyBase.OnClosing(e)
         If Not e.Cancel Then
-            'Me.MeasureSubsystem = Nothing
-            'Me.FormatSubsystem = Nothing
-            'Me.Calculate2FourWireResistanceSubsystem = Nothing
-            'Me.RouteSubsystem = Nothing
-            'Me.SenseSubsystem = Nothing
-            'Me.SenseVoltageSubsystem = Nothing
-            'Me.SenseCurrentSubsystem = Nothing
-            'Me.SenseResistanceSubsystem = Nothing
-            'Me.SenseFourWireResistanceSubsystem = Nothing
-            'Me.TraceSubsystem = Nothing
-            'Me.TriggerSubsystem = Nothing
+            Me.TriggerSubsystem = Nothing
+            Me.Buffer1Subsystem = Nothing
+            Me.MultimeterSubsystem = Nothing
             Me.DisplaySubsystem = Nothing
             Me.LocalNodeSubsystem = Nothing
             Me.SystemSubsystem = Nothing
@@ -161,21 +153,10 @@ Public Class Device
             If Not e.Cancel Then
                 Me.SystemSubsystem = New SystemSubsystem(Me.StatusSubsystem)
                 Me.LocalNodeSubsystem = New LocalNodeSubsystem(Me.StatusSubsystem)
-
                 Me.DisplaySubsystem = New DisplaySubsystem(Me.StatusSubsystem)
-                ' better add before the format subsystem, which reset initializes the readings.
-                'Me.MeasureSubsystem = New MeasureSubsystem(Me.StatusSubsystem)
-                ' the measure subsystem readings are set when the format system is reset.
-                'Me.FormatSubsystem = New FormatSubsystem(Me.StatusSubsystem)
-                'Me.Calculate2FourWireResistanceSubsystem = New Calculate2FourWireResistanceSubsystem(Me.StatusSubsystem)
-                'Me.RouteSubsystem = New RouteSubsystem(Me.StatusSubsystem)
-                'Me.SenseSubsystem = New SenseSubsystem(Me.StatusSubsystem)
-                'Me.SenseVoltageSubsystem = New SenseVoltageSubsystem(Me.StatusSubsystem)
-                'Me.SenseCurrentSubsystem = New SenseCurrentSubsystem(Me.StatusSubsystem)
-                'Me.SenseResistanceSubsystem = New SenseResistanceSubsystem(Me.StatusSubsystem)
-                'Me.SenseFourWireResistanceSubsystem = New SenseFourWireResistanceSubsystem(Me.StatusSubsystem)
-                'Me.TraceSubsystem = New TraceSubsystem(Me.StatusSubsystem)
-                'Me.TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
+                Me.MultimeterSubsystem = New MultimeterSubsystem(Me.StatusSubsystem)
+                Me.TriggerSubsystem = New TriggerSubsystem(Me.StatusSubsystem)
+                Me.Buffer1Subsystem = New BufferSubsystem(VI.Tsp2.BufferSubsystemBase.DefaultBuffer1Name, Me.StatusSubsystem)
             End If
         End If
     End Sub
@@ -227,250 +208,51 @@ Public Class Device
 
 #Region " SUBSYSTEMS "
 
-#If False Then
+#Region " BUFFER1 "
 
-    Private _Calculate2FourWireResistanceSubsystem As Calculate2FourWireResistanceSubsystem
-    ''' <summary> Gets or sets the Calculate2 Four Wire Resistance Subsystem. </summary>
-    ''' <value> The Calculate2 Four Wire Resistance Subsystem. </value>
-    Public Property Calculate2FourWireResistanceSubsystem As Calculate2FourWireResistanceSubsystem
-        Get
-            Return Me._Calculate2FourWireResistanceSubsystem
-        End Get
-        Set(value As Calculate2FourWireResistanceSubsystem)
-            If Me._Calculate2FourWireResistanceSubsystem IsNot Nothing Then
-                Me.RemoveSubsystem(Me.Calculate2FourWireResistanceSubsystem)
-                Me.Calculate2FourWireResistanceSubsystem.Dispose()
-                Me._Calculate2FourWireResistanceSubsystem = Nothing
-            End If
-            Me._Calculate2FourWireResistanceSubsystem = value
-            If Me._Calculate2FourWireResistanceSubsystem IsNot Nothing Then
-                Me.AddSubsystem(Me.Calculate2FourWireResistanceSubsystem)
-            End If
-        End Set
-    End Property
-
-    Private _MeasureSubsystem As MeasureSubsystem
+    Private _Buffer1Subsystem As BufferSubsystem
     ''' <summary>
-    ''' Gets or sets the Measure Subsystem.
+    ''' Gets or sets the Buffer1 Subsystem.
     ''' </summary>
-    ''' <value>The Measure Subsystem.</value>
-    Public Property MeasureSubsystem As MeasureSubsystem
+    ''' <value>The Buffer1 Subsystem.</value>
+    Public Property Buffer1Subsystem As BufferSubsystem
         Get
-            Return Me._MeasureSubsystem
+            Return Me._Buffer1Subsystem
         End Get
-        Set(value As MeasureSubsystem)
-            If Me._MeasureSubsystem IsNot Nothing Then
-                Me.RemoveSubsystem(Me.MeasureSubsystem)
-                Me.MeasureSubsystem.Dispose()
-                Me._MeasureSubsystem = Nothing
+        Set(value As BufferSubsystem)
+            If Me._Buffer1Subsystem IsNot Nothing Then
+                RemoveHandler Me.Buffer1Subsystem.PropertyChanged, AddressOf Me.Buffer1SubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.Buffer1Subsystem)
+                Me.Buffer1Subsystem.Dispose()
+                Me._Buffer1Subsystem = Nothing
             End If
-            Me._MeasureSubsystem = value
-            If Me._MeasureSubsystem IsNot Nothing Then
-                Me.AddSubsystem(Me.MeasureSubsystem)
+            Me._Buffer1Subsystem = value
+            If Me._Buffer1Subsystem IsNot Nothing Then
+                AddHandler Me.Buffer1Subsystem.PropertyChanged, AddressOf Buffer1SubsystemPropertyChanged
+                Me.AddSubsystem(Me.Buffer1Subsystem)
             End If
         End Set
     End Property
 
-    Private _RouteSubsystem As RouteSubsystem
-    ''' <summary>
-    ''' Gets or sets the Route Subsystem.
-    ''' </summary>
-    ''' <value>The Route Subsystem.</value>
-    Public Property RouteSubsystem As RouteSubsystem
-        Get
-            Return Me._RouteSubsystem
-        End Get
-        Set(value As RouteSubsystem)
-            If Me._RouteSubsystem IsNot Nothing Then
-                Me.RemoveSubsystem(Me.RouteSubsystem)
-                Me.RouteSubsystem.Dispose()
-                Me._RouteSubsystem = Nothing
-            End If
-            Me._RouteSubsystem = value
-            If Me._RouteSubsystem IsNot Nothing Then
-                Me.AddSubsystem(Me.RouteSubsystem)
-            End If
-        End Set
-    End Property
-
-    Private _SenseVoltageSubsystem As SenseVoltageSubsystem
-    ''' <summary>
-    ''' Gets or sets the Sense Voltage Subsystem.
-    ''' </summary>
-    ''' <value>The Sense Voltage Subsystem.</value>
-    Public Property SenseVoltageSubsystem As SenseVoltageSubsystem
-        Get
-            Return Me._SenseVoltageSubsystem
-        End Get
-        Set(value As SenseVoltageSubsystem)
-            If Me._SenseVoltageSubsystem IsNot Nothing Then
-                Me.RemoveSubsystem(Me.SenseVoltageSubsystem)
-                Me.SenseVoltageSubsystem.Dispose()
-                Me._SenseVoltageSubsystem = Nothing
-            End If
-            Me._SenseVoltageSubsystem = value
-            If Me._SenseVoltageSubsystem IsNot Nothing Then
-                Me.AddSubsystem(Me.SenseVoltageSubsystem)
-            End If
-        End Set
-    End Property
-
-    Private _SenseCurrentSubsystem As SenseCurrentSubsystem
-    ''' <summary>
-    ''' Gets or sets the Sense Current Subsystem.
-    ''' </summary>
-    ''' <value>The Sense Current Subsystem.</value>
-    Public Property SenseCurrentSubsystem As SenseCurrentSubsystem
-        Get
-            Return Me._SenseCurrentSubsystem
-        End Get
-        Set(value As SenseCurrentSubsystem)
-            If Me._SenseCurrentSubsystem IsNot Nothing Then
-                Me.RemoveSubsystem(Me.SenseCurrentSubsystem)
-                Me.SenseCurrentSubsystem.Dispose()
-                Me._SenseCurrentSubsystem = Nothing
-            End If
-            Me._SenseCurrentSubsystem = value
-            If Me._SenseCurrentSubsystem IsNot Nothing Then
-                Me.AddSubsystem(Me.SenseCurrentSubsystem)
-            End If
-        End Set
-    End Property
-
-    Private _SenseFourWireResistanceSubsystem As SenseFourWireResistanceSubsystem
-    ''' <summary>
-    ''' Gets or sets the Sense Four Wire Resistance Subsystem.
-    ''' </summary>
-    ''' <value>The Sense Four Wire Resistance Subsystem.</value>
-    Public Property SenseFourWireResistanceSubsystem As SenseFourWireResistanceSubsystem
-        Get
-            Return Me._SenseFourWireResistanceSubsystem
-        End Get
-        Set(value As SenseFourWireResistanceSubsystem)
-            If Me._SenseFourWireResistanceSubsystem IsNot Nothing Then
-                Me.RemoveSubsystem(Me.SenseFourWireResistanceSubsystem)
-                Me.SenseFourWireResistanceSubsystem.Dispose()
-                Me._SenseFourWireResistanceSubsystem = Nothing
-            End If
-            Me._SenseFourWireResistanceSubsystem = value
-            If Me._SenseFourWireResistanceSubsystem IsNot Nothing Then
-                Me.AddSubsystem(Me.SenseFourWireResistanceSubsystem)
-            End If
-        End Set
-    End Property
-
-    Private _SenseResistanceSubsystem As SenseResistanceSubsystem
-    ''' <summary>
-    ''' Gets or sets the Sense Resistance Subsystem.
-    ''' </summary>
-    ''' <value>The SenseResistance Subsystem.</value>
-    Public Property SenseResistanceSubsystem As SenseResistanceSubsystem
-        Get
-            Return Me._SenseResistanceSubsystem
-        End Get
-        Set(value As SenseResistanceSubsystem)
-            If Me._SenseResistanceSubsystem IsNot Nothing Then
-                Me.RemoveSubsystem(Me.SenseResistanceSubsystem)
-                Me.SenseResistanceSubsystem.Dispose()
-                Me._SenseResistanceSubsystem = Nothing
-            End If
-            Me._SenseResistanceSubsystem = value
-            If Me._SenseResistanceSubsystem IsNot Nothing Then
-                Me.AddSubsystem(Me.SenseResistanceSubsystem)
-            End If
-        End Set
-    End Property
-
-    Private _TraceSubsystem As TraceSubsystem
-    ''' <summary>
-    ''' Gets or sets the Trace Subsystem.
-    ''' </summary>
-    ''' <value>The Trace Subsystem.</value>
-    Public Property TraceSubsystem As TraceSubsystem
-        Get
-            Return Me._TraceSubsystem
-        End Get
-        Set(value As TraceSubsystem)
-            If Me._TraceSubsystem IsNot Nothing Then
-                Me.RemoveSubsystem(Me.TraceSubsystem)
-                Me.TraceSubsystem.Dispose()
-                Me._TraceSubsystem = Nothing
-            End If
-            Me._TraceSubsystem = value
-            If Me._TraceSubsystem IsNot Nothing Then
-                Me.AddSubsystem(Me.TraceSubsystem)
-            End If
-        End Set
-    End Property
-
-    Private _TriggerSubsystem As TriggerSubsystem
-    ''' <summary>
-    ''' Gets or sets the Trigger Subsystem.
-    ''' </summary>
-    ''' <value>The Trigger Subsystem.</value>
-    Public Property TriggerSubsystem As TriggerSubsystem
-        Get
-            Return Me._TriggerSubsystem
-        End Get
-        Set(value As TriggerSubsystem)
-            If Me._TriggerSubsystem IsNot Nothing Then
-                Me.RemoveSubsystem(Me.TriggerSubsystem)
-                Me.TriggerSubsystem.Dispose()
-                Me._TriggerSubsystem = Nothing
-            End If
-            Me._TriggerSubsystem = value
-            If Me._TriggerSubsystem IsNot Nothing Then
-                Me.AddSubsystem(Me.TriggerSubsystem)
-            End If
-        End Set
-    End Property
-
-#Region " FORMAT "
-
-    Private _FormatSubsystem As FormatSubsystem
-    ''' <summary>
-    ''' Gets or sets the Format Subsystem.
-    ''' </summary>
-    ''' <value>The Format Subsystem.</value>
-    Public Property FormatSubsystem As FormatSubsystem
-        Get
-            Return Me._FormatSubsystem
-        End Get
-        Set(value As FormatSubsystem)
-            If Me._FormatSubsystem IsNot Nothing Then
-                RemoveHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
-                Me.RemoveSubsystem(Me.FormatSubsystem)
-                Me.FormatSubsystem.Dispose()
-                Me._FormatSubsystem = Nothing
-            End If
-            Me._FormatSubsystem = value
-            If Me._FormatSubsystem IsNot Nothing Then
-                AddHandler Me.FormatSubsystem.PropertyChanged, AddressOf Me.FormatSubsystemPropertyChanged
-                Me.AddSubsystem(Me.FormatSubsystem)
-            End If
-        End Set
-    End Property
-
-    ''' <summary> Handle the Format subsystem property changed event. </summary>
-    ''' <param name="subsystem">    The subsystem. </param>
-    ''' <param name="propertyName"> Name of the property. </param>
-    Private Overloads Sub HandlePropertyChange(ByVal subsystem As FormatSubsystem, ByVal propertyName As String)
+    ''' <summary> Buffer1 subsystem property changed. </summary>
+    ''' <param name="subsystem"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As VI.BufferSubsystemBase, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
-            Case NameOf(K7500.FormatSubsystem.Elements)
-                Me.MeasureSubsystem.Readings.Initialize(subsystem.Elements)
+            Case NameOf(K7500.BufferSubsystem.ActualPointCount)
         End Select
     End Sub
 
-    ''' <summary> Format subsystem property changed. </summary>
+    ''' <summary> Buffer1 subsystem property changed. </summary>
     ''' <param name="sender"> Source of the event. </param>
     ''' <param name="e">      Property Changed event information. </param>
     <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Private Sub FormatSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+    Private Sub Buffer1SubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
         If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
-        Dim activity As String = $"handling {NameOf(FormatSubsystem)}.{e.PropertyName} change"
+        Dim activity As String = $"handling {NameOf(Device.Buffer1Subsystem)}.{e.PropertyName} change"
         Try
-            Me.HandlePropertyChange(TryCast(sender, FormatSubsystem), e.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, VI.BufferSubsystemBase), e.PropertyName)
         Catch ex As Exception
             If Me.Talker Is Nothing Then
                 My.MyLibrary.LogUnpublishedException(activity, ex)
@@ -481,7 +263,6 @@ Public Class Device
     End Sub
 
 #End Region
-#End If
 
 #Region " DISPLAY "
 
@@ -595,6 +376,117 @@ Public Class Device
 
 #End Region
 
+#Region " MULTIMETER "
+
+    Private _MultimeterSubsystem As MultimeterSubsystem
+    ''' <summary>
+    ''' Gets or sets the Multimeter Subsystem.
+    ''' </summary>
+    ''' <value>The Multimeter Subsystem.</value>
+    Public Property MultimeterSubsystem As MultimeterSubsystem
+        Get
+            Return Me._MultimeterSubsystem
+        End Get
+        Set(value As MultimeterSubsystem)
+            If Me._MultimeterSubsystem IsNot Nothing Then
+                RemoveHandler Me.MultimeterSubsystem.PropertyChanged, AddressOf Me.MultimeterSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.MultimeterSubsystem)
+                Me.MultimeterSubsystem.Dispose()
+                Me._MultimeterSubsystem = Nothing
+            End If
+            Me._MultimeterSubsystem = value
+            If Me._MultimeterSubsystem IsNot Nothing Then
+                AddHandler Me.MultimeterSubsystem.PropertyChanged, AddressOf MultimeterSubsystemPropertyChanged
+                Me.AddSubsystem(Me.MultimeterSubsystem)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Multimeter subsystem property changed. </summary>
+    ''' <param name="subsystem"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As VI.MultimeterSubsystemBase, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(VI.MultimeterSubsystemBase.PowerLineCycles)
+        End Select
+    End Sub
+
+    ''' <summary> Multimeter subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub MultimeterSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Device.MultimeterSubsystem)}.{e.PropertyName} change"
+        Try
+            Me.HandlePropertyChange(TryCast(sender, VI.MultimeterSubsystemBase), e.PropertyName)
+        Catch ex As Exception
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
+        End Try
+    End Sub
+
+#End Region
+
+#Region " TRIGGER "
+
+    Private _TriggerSubsystem As TriggerSubsystem
+    ''' <summary>
+    ''' Gets or sets the Trigger Subsystem.
+    ''' </summary>
+    ''' <value>The Trigger Subsystem.</value>
+    Public Property TriggerSubsystem As TriggerSubsystem
+        Get
+            Return Me._TriggerSubsystem
+        End Get
+        Set(value As TriggerSubsystem)
+            If Me._TriggerSubsystem IsNot Nothing Then
+                RemoveHandler Me.TriggerSubsystem.PropertyChanged, AddressOf Me.TriggerSubsystemPropertyChanged
+                Me.RemoveSubsystem(Me.TriggerSubsystem)
+                Me.TriggerSubsystem.Dispose()
+                Me._TriggerSubsystem = Nothing
+            End If
+            Me._TriggerSubsystem = value
+            If Me._TriggerSubsystem IsNot Nothing Then
+                AddHandler Me.TriggerSubsystem.PropertyChanged, AddressOf TriggerSubsystemPropertyChanged
+                Me.AddSubsystem(Me.TriggerSubsystem)
+            End If
+        End Set
+    End Property
+
+    ''' <summary> Trigger subsystem property changed. </summary>
+    ''' <param name="subsystem"> Source of the event. </param>
+    <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As VI.TriggerSubsystemBase, ByVal propertyName As String)
+        If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
+        Select Case propertyName
+            Case NameOf(VI.TriggerSubsystemBase.Delay)
+        End Select
+    End Sub
+
+    ''' <summary> Trigger subsystem property changed. </summary>
+    ''' <param name="sender"> Source of the event. </param>
+    ''' <param name="e">      Property Changed event information. </param>
+    <System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
+    Private Sub TriggerSubsystemPropertyChanged(ByVal sender As Object, ByVal e As System.ComponentModel.PropertyChangedEventArgs)
+        If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
+        Dim activity As String = $"handling {NameOf(Device.TriggerSubsystem)}.{e.PropertyName} change"
+        Try
+            Me.HandlePropertyChange(TryCast(sender, VI.TriggerSubsystemBase), e.PropertyName)
+        Catch ex As Exception
+            If Me.Talker Is Nothing Then
+                My.MyLibrary.LogUnpublishedException(activity, ex)
+            Else
+                Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception {activity};. {ex.ToFullBlownString}")
+            End If
+        End Try
+    End Sub
+
+#End Region
 #Region " STATUS "
 
     Private _StatusSubsystem As StatusSubsystem
