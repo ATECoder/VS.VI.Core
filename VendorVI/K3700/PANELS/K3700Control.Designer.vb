@@ -25,7 +25,15 @@ Partial Class K3700Control
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
         Me._ResetMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ReadStatusByteMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ServiceRequestHandlersEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._TraceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionNotificationLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._SessionNotificationLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
@@ -33,14 +41,6 @@ Partial Class K3700Control
         Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._DisplayTraceLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
-        Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._ReadStatusByteMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
         Me._ServiceRequestEnableBitmaskNumericLabel = New System.Windows.Forms.ToolStripLabel()
         Me._ServiceRequestEnableBitmaskNumeric = New isr.Core.Controls.ToolStripNumericUpDown()
@@ -233,7 +233,7 @@ Partial Class K3700Control
         Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableBitmaskNumericLabel, Me._ServiceRequestEnableBitmaskNumeric})
         Me._SystemToolStrip.Location = New System.Drawing.Point(3, 0)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
-        Me._SystemToolStrip.Size = New System.Drawing.Size(203, 26)
+        Me._SystemToolStrip.Size = New System.Drawing.Size(133, 28)
         Me._SystemToolStrip.TabIndex = 21
         Me._SystemToolStrip.Text = "System Tools"
         Me._TipsToolTip.SetToolTip(Me._SystemToolStrip, "System operations")
@@ -245,7 +245,7 @@ Partial Class K3700Control
         Me._ResetSplitButton.Image = CType(resources.GetObject("_ResetSplitButton.Image"), System.Drawing.Image)
         Me._ResetSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ResetSplitButton.Name = "_ResetSplitButton"
-        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 23)
+        Me._ResetSplitButton.Size = New System.Drawing.Size(51, 25)
         Me._ResetSplitButton.Text = "Reset"
         Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
         '
@@ -253,23 +253,77 @@ Partial Class K3700Control
         '
         Me._ResetMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._ReadStatusByteMenuItem})
         Me._ResetMenuItem.Name = "_ResetMenuItem"
-        Me._ResetMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._ResetMenuItem.Size = New System.Drawing.Size(193, 22)
         Me._ResetMenuItem.Text = "Reset..."
         Me._ResetMenuItem.ToolTipText = "Opens the reset menus"
+        '
+        '_ClearInterfaceMenuItem
+        '
+        Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
+        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._ClearInterfaceMenuItem.Text = "Clear Interface"
+        Me._ClearInterfaceMenuItem.ToolTipText = "Issues an interface clear command"
+        '
+        '_ClearDeviceMenuItem
+        '
+        Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
+        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
+        '
+        '_ResetKnownStateMenuItem
+        '
+        Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
+        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._ResetKnownStateMenuItem.Text = "Reset to Known State (RST)"
+        '
+        '_InitKnownStateMenuItem
+        '
+        Me._InitKnownStateMenuItem.Name = "_InitKnownStateMenuItem"
+        Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._InitKnownStateMenuItem.Text = "Init to Known State"
+        Me._InitKnownStateMenuItem.ToolTipText = "Initializes to custom known state"
+        '
+        '_ClearExecutionStateMenuItem
+        '
+        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
+        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
+        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
+        '
+        '_ReadStatusByteMenuItem
+        '
+        Me._ReadStatusByteMenuItem.Name = "_ReadStatusByteMenuItem"
+        Me._ReadStatusByteMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._ReadStatusByteMenuItem.Text = "Read Status Byte"
         '
         '_ServiceRequestHandlersEnabledMenuItem
         '
         Me._ServiceRequestHandlersEnabledMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
         Me._ServiceRequestHandlersEnabledMenuItem.Name = "_ServiceRequestHandlersEnabledMenuItem"
-        Me._ServiceRequestHandlersEnabledMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._ServiceRequestHandlersEnabledMenuItem.Size = New System.Drawing.Size(193, 22)
         Me._ServiceRequestHandlersEnabledMenuItem.Text = "SRQ Handlers Enable..."
         Me._ServiceRequestHandlersEnabledMenuItem.ToolTipText = "Opens the SQR Handler Enable menu"
+        '
+        '_SessionServiceRequestHandlerEnabledMenuItem
+        '
+        Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(186, 22)
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
+        '
+        '_DeviceServiceRequestHandlerEnabledMenuItem
+        '
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(186, 22)
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
         '
         '_TraceMenuItem
         '
         Me._TraceMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SessionNotificationLevelMenuItem, Me._LogTraceLevelMenuItem, Me._DisplayTraceLevelMenuItem})
         Me._TraceMenuItem.Name = "_TraceMenuItem"
-        Me._TraceMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._TraceMenuItem.Size = New System.Drawing.Size(193, 22)
         Me._TraceMenuItem.Text = "Trace..."
         Me._TraceMenuItem.ToolTipText = "Opens the trace menus"
         '
@@ -317,61 +371,6 @@ Partial Class K3700Control
         Me._DisplayTraceLevelComboBox.Text = "Warning"
         Me._DisplayTraceLevelComboBox.ToolTipText = "Display trace level"
         '
-        '_ClearDeviceMenuItem
-        '
-        Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
-        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
-        '
-        '_ResetKnownStateMenuItem
-        '
-        Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
-        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me._ResetKnownStateMenuItem.Text = "Reset to Known State (RST)"
-        '
-        '_InitKnownStateMenuItem
-        '
-        Me._InitKnownStateMenuItem.Name = "_InitKnownStateMenuItem"
-        Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me._InitKnownStateMenuItem.Text = "Init to Known State"
-        Me._InitKnownStateMenuItem.ToolTipText = "Initializes to custom known state"
-        '
-        '_ClearExecutionStateMenuItem
-        '
-        Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
-        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(216, 22)
-
-        Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
-        Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
-        '
-        '_ReadStatusByteMenuItem
-        '
-        Me._ReadStatusByteMenuItem.Name = "_ReadStatusByteMenuItem"
-        Me._ReadStatusByteMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me._ReadStatusByteMenuItem.Text = "Read Status Byte"
-        '
-        '_SessionServiceRequestHandlerEnabledMenuItem
-        '
-        Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
-        Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
-        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
-        Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
-        '
-        '_DeviceServiceRequestHandlerEnabledMenuItem
-        '
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
-        '
-        '_ClearInterfaceMenuItem
-        '
-        Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
-        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me._ClearInterfaceMenuItem.Text = "Clear Interface"
-        Me._ClearInterfaceMenuItem.ToolTipText = "Issues an interface clear command"
-        '
         '_ReadTerminalStateButton
         '
         Me._ReadTerminalStateButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
@@ -379,7 +378,7 @@ Partial Class K3700Control
         Me._ReadTerminalStateButton.Image = CType(resources.GetObject("_ReadTerminalStateButton.Image"), System.Drawing.Image)
         Me._ReadTerminalStateButton.ImageTransparentColor = System.Drawing.Color.Magenta
         Me._ReadTerminalStateButton.Name = "_ReadTerminalStateButton"
-        Me._ReadTerminalStateButton.Size = New System.Drawing.Size(39, 23)
+        Me._ReadTerminalStateButton.Size = New System.Drawing.Size(39, 25)
         Me._ReadTerminalStateButton.Text = "Front"
         Me._ReadTerminalStateButton.ToolTipText = "Reads terminal state"
         Me._ReadTerminalStateButton.Visible = False
@@ -387,13 +386,13 @@ Partial Class K3700Control
         '_ServiceRequestEnableBitmaskNumericLabel
         '
         Me._ServiceRequestEnableBitmaskNumericLabel.Name = "_ServiceRequestEnableBitmaskNumericLabel"
-        Me._ServiceRequestEnableBitmaskNumericLabel.Size = New System.Drawing.Size(29, 23)
+        Me._ServiceRequestEnableBitmaskNumericLabel.Size = New System.Drawing.Size(29, 25)
         Me._ServiceRequestEnableBitmaskNumericLabel.Text = "SRE:"
         '
         '_ServiceRequestEnableBitmaskNumeric
         '
         Me._ServiceRequestEnableBitmaskNumeric.Name = "_ServiceRequestEnableBitmaskNumeric"
-        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(41, 23)
+        Me._ServiceRequestEnableBitmaskNumeric.Size = New System.Drawing.Size(41, 25)
         Me._ServiceRequestEnableBitmaskNumeric.Text = "0"
         Me._ServiceRequestEnableBitmaskNumeric.ToolTipText = "Service request enable bitmask"
         Me._ServiceRequestEnableBitmaskNumeric.Value = New Decimal(New Integer() {0, 0, 0, 0})

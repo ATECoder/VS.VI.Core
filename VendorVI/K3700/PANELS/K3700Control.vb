@@ -283,22 +283,16 @@ Public Class K3700Control
             Case NameOf(K3700.MultimeterSubsystem.FilterCount)
                 If subsystem.FilterCount.HasValue Then Me._FilterCountNumeric.Value = subsystem.FilterCount.Value
             Case NameOf(K3700.MultimeterSubsystem.FilterCountRange)
-                With Me._FilterCountNumeric
-                    .Maximum = CDec(subsystem.FilterCountRange.Max)
-                    .Minimum = CDec(subsystem.FilterCountRange.Min)
-                    .DecimalPlaces = 0
-                End With
+                Me._FilterCountNumeric.RangeSetter(subsystem.FilterCountRange)
+                Me._FilterCountNumeric.DecimalPlaces = 0
             Case NameOf(K3700.MultimeterSubsystem.FilterEnabled)
                 If subsystem.FilterEnabled.HasValue Then Me._FilterEnabledCheckBox.Checked = subsystem.FilterEnabled.Value
                 If Me._FilterEnabledCheckBox.Checked <> Me._FilterGroupBox.Enabled Then Me._FilterGroupBox.Enabled = Me._FilterEnabledCheckBox.Checked
             Case NameOf(K3700.MultimeterSubsystem.FilterWindow)
                 If subsystem.FilterWindow.HasValue Then Me._FilterWindowNumeric.Value = CDec(100 * subsystem.FilterWindow.Value)
             Case NameOf(K3700.MultimeterSubsystem.FilterWindowRange)
-                With Me._FilterWindowNumeric
-                    .Maximum = 100 * CDec(subsystem.FilterWindowRange.Max)
-                    .Minimum = 100 * CDec(subsystem.FilterWindowRange.Min)
-                    .DecimalPlaces = 0
-                End With
+                Me._FilterWindowNumeric.RangeSetter(subsystem.FilterWindowRange.TransposedRange(0, 100))
+                Me._FilterWindowNumeric.DecimalPlaces = 0
             Case NameOf(K3700.MultimeterSubsystem.MovingAverageFilterEnabled)
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._MovingAverageRadioButton.Checked = subsystem.MovingAverageFilterEnabled.Value
                 If subsystem.MovingAverageFilterEnabled.HasValue Then Me._RepeatingAverageRadioButton.Checked = Not subsystem.MovingAverageFilterEnabled.Value
@@ -321,11 +315,10 @@ Public Class K3700Control
             Case NameOf(K3700.MultimeterSubsystem.PowerLineCycles)
                 If subsystem.PowerLineCycles.HasValue Then Me._PowerLineCyclesNumeric.Value = CDec(subsystem.PowerLineCycles.Value)
             Case NameOf(K3700.MultimeterSubsystem.PowerLineCyclesRange)
-                With Me._PowerLineCyclesNumeric
-                    .Maximum = CDec(subsystem.PowerLineCyclesRange.Max)
-                    .Minimum = CDec(subsystem.PowerLineCyclesRange.Min)
-                    .DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
-                End With
+                Me._PowerLineCyclesNumeric.RangeSetter(subsystem.PowerLineCyclesRange)
+                Me._PowerLineCyclesNumeric.DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
+            Case NameOf(K3700.MultimeterSubsystem.PowerLineCyclesDecimalPlaces)
+                Me._PowerLineCyclesNumeric.DecimalPlaces = subsystem.PowerLineCyclesDecimalPlaces
             Case NameOf(K3700.MultimeterSubsystem.Range)
                 If subsystem.Range.HasValue Then Me.SenseRangeSetter(subsystem.Range.Value)
             Case NameOf(K3700.MultimeterSubsystem.LastReading)
@@ -999,8 +992,6 @@ Public Class K3700Control
                 .ApplyFilterWindow(0.01 * Me._FilterWindowNumeric.Value)
             End If
         End With
-
-
     End Sub
 
     ''' <summary> Event handler. Called by ApplySenseSettingsButton for click events. </summary>

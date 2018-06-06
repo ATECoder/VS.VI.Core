@@ -18,22 +18,22 @@ Partial Class K7500Control
         Me._ToolStripPanel = New System.Windows.Forms.ToolStripPanel()
         Me._SystemToolStrip = New System.Windows.Forms.ToolStrip()
         Me._ResetSplitButton = New System.Windows.Forms.ToolStripSplitButton()
+        Me._ResetMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearInterfaceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._ReadStatusByteMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearDeviceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ResetKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._InitKnownStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ClearExecutionStateMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._ResetMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._ReadStatusByteMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._ServiceRequestHandlersEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._TraceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._LogTraceLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._DisplayTraceLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._SessionNotificationLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._SessionNotificationLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._SessionServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DeviceServiceRequestHandlerEnabledMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._TraceMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionNotificationLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me._SessionNotificationLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._LogTraceLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._LogTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
+        Me._DisplayTraceLevelMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._DisplayTraceLevelComboBox = New isr.Core.Controls.ToolStripComboBox()
         Me._ReadTerminalStateButton = New System.Windows.Forms.ToolStripButton()
         Me._ServiceRequestEnableNumericLabel = New System.Windows.Forms.ToolStripLabel()
@@ -57,19 +57,19 @@ Partial Class K7500Control
         Me._InitMonitorReadRepeatMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._RepeatMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me._StreamBufferMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me._SenseTabPage = New System.Windows.Forms.TabPage()
+        Me._MeasureTabPage = New System.Windows.Forms.TabPage()
         Me._OpenLeadsDetectionCheckBox = New System.Windows.Forms.CheckBox()
         Me._ApplyFunctionModeButton = New System.Windows.Forms.Button()
-        Me._SenseMeasureDelayNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._SenseRangeNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._MeasureDelayNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._MeasureRangeNumeric = New System.Windows.Forms.NumericUpDown()
         Me._PowerLineCyclesNumeric = New System.Windows.Forms.NumericUpDown()
         Me._TriggerDelayNumericLabel = New System.Windows.Forms.Label()
-        Me._SenseRangeNumericLabel = New System.Windows.Forms.Label()
+        Me._MeasureRangeNumericLabel = New System.Windows.Forms.Label()
         Me._PowerLineCyclesNumericLabel = New System.Windows.Forms.Label()
-        Me._SenseFunctionComboBox = New System.Windows.Forms.ComboBox()
-        Me._SenseFunctionComboBoxLabel = New System.Windows.Forms.Label()
-        Me._SenseAutoRangeToggle = New System.Windows.Forms.CheckBox()
-        Me._ApplySenseSettingsButton = New System.Windows.Forms.Button()
+        Me._MeasureFunctionComboBox = New System.Windows.Forms.ComboBox()
+        Me._MeasureFunctionComboBoxLabel = New System.Windows.Forms.Label()
+        Me._MeasureAutoRangeToggle = New System.Windows.Forms.CheckBox()
+        Me._ApplyMeasureSettingsButton = New System.Windows.Forms.Button()
         Me._TriggerTabPage = New System.Windows.Forms.TabPage()
         Me._TriggerToolStripPanel = New System.Windows.Forms.ToolStripPanel()
         Me._TriggerDelayToolStrip = New System.Windows.Forms.ToolStrip()
@@ -138,9 +138,9 @@ Partial Class K7500Control
         Me._SystemToolStrip.SuspendLayout()
         Me._BufferToolStrip.SuspendLayout()
         Me._ReadingToolStrip.SuspendLayout()
-        Me._SenseTabPage.SuspendLayout()
-        CType(Me._SenseMeasureDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._SenseRangeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._MeasureTabPage.SuspendLayout()
+        CType(Me._MeasureDelayNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me._MeasureRangeNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._PowerLineCyclesNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         Me._TriggerTabPage.SuspendLayout()
         Me._TriggerToolStripPanel.SuspendLayout()
@@ -161,7 +161,7 @@ Partial Class K7500Control
         '_Tabs
         '
         Me._Tabs.Controls.Add(Me._ReadingTabPage)
-        Me._Tabs.Controls.Add(Me._SenseTabPage)
+        Me._Tabs.Controls.Add(Me._MeasureTabPage)
         Me._Tabs.Controls.Add(Me._TriggerTabPage)
         Me._Tabs.Controls.Add(Me._ReadWriteTabPage)
         Me._Tabs.Controls.Add(Me._MessagesTabPage)
@@ -193,7 +193,7 @@ Partial Class K7500Control
         Me._BufferDataGridView.Dock = System.Windows.Forms.DockStyle.Fill
         Me._BufferDataGridView.Location = New System.Drawing.Point(0, 53)
         Me._BufferDataGridView.Name = "_BufferDataGridView"
-        Me._BufferDataGridView.Size = New System.Drawing.Size(356, 252)
+        Me._BufferDataGridView.Size = New System.Drawing.Size(356, 224)
         Me._BufferDataGridView.TabIndex = 9
         Me._TipsToolTip.SetToolTip(Me._BufferDataGridView, "Buffer data")
         '
@@ -201,19 +201,19 @@ Partial Class K7500Control
         '
         Me._ToolStripPanel.Controls.Add(Me._SystemToolStrip)
         Me._ToolStripPanel.Dock = System.Windows.Forms.DockStyle.Bottom
-        Me._ToolStripPanel.Location = New System.Drawing.Point(0, 305)
+        Me._ToolStripPanel.Location = New System.Drawing.Point(0, 277)
         Me._ToolStripPanel.Name = "_ToolStripPanel"
         Me._ToolStripPanel.Orientation = System.Windows.Forms.Orientation.Horizontal
         Me._ToolStripPanel.RowMargin = New System.Windows.Forms.Padding(3, 0, 0, 0)
-        Me._ToolStripPanel.Size = New System.Drawing.Size(356, 0)
+        Me._ToolStripPanel.Size = New System.Drawing.Size(356, 28)
         '
         '_SystemToolStrip
         '
         Me._SystemToolStrip.Dock = System.Windows.Forms.DockStyle.None
         Me._SystemToolStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ResetSplitButton, Me._ReadTerminalStateButton, Me._ServiceRequestEnableNumericLabel, Me._ServiceRequestEnableBitmaskNumeric})
-        Me._SystemToolStrip.Location = New System.Drawing.Point(0, 237)
+        Me._SystemToolStrip.Location = New System.Drawing.Point(3, 0)
         Me._SystemToolStrip.Name = "_SystemToolStrip"
-        Me._SystemToolStrip.Size = New System.Drawing.Size(356, 28)
+        Me._SystemToolStrip.Size = New System.Drawing.Size(172, 28)
         Me._SystemToolStrip.TabIndex = 21
         Me._SystemToolStrip.Text = "System Tools"
         Me._TipsToolTip.SetToolTip(Me._SystemToolStrip, "System operations")
@@ -227,70 +227,84 @@ Partial Class K7500Control
         Me._ResetSplitButton.Name = "_ResetSplitButton"
         Me._ResetSplitButton.Size = New System.Drawing.Size(51, 25)
         Me._ResetSplitButton.Text = "Reset"
-
         Me._ResetSplitButton.ToolTipText = "Reset, Clear, etc."
+        '
+        '_ResetMenuItem
+        '
+        Me._ResetMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._ReadStatusByteMenuItem})
+        Me._ResetMenuItem.Name = "_ResetMenuItem"
+        Me._ResetMenuItem.Size = New System.Drawing.Size(193, 22)
+        Me._ResetMenuItem.Text = "Reset..."
+        Me._ResetMenuItem.ToolTipText = "Opens the reset menus"
         '
         '_ClearInterfaceMenuItem
         '
         Me._ClearInterfaceMenuItem.Name = "_ClearInterfaceMenuItem"
-        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearInterfaceMenuItem.Size = New System.Drawing.Size(216, 22)
         Me._ClearInterfaceMenuItem.Text = "Clear Interface"
         Me._ClearInterfaceMenuItem.ToolTipText = "Issues an interface clear command"
         '
         '_ClearDeviceMenuItem
         '
         Me._ClearDeviceMenuItem.Name = "_ClearDeviceMenuItem"
-        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ClearDeviceMenuItem.Size = New System.Drawing.Size(216, 22)
         Me._ClearDeviceMenuItem.Text = "Clear Device (SDC)"
         '
         '_ResetKnownStateMenuItem
         '
         Me._ResetKnownStateMenuItem.Name = "_ResetKnownStateMenuItem"
-        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ResetKnownStateMenuItem.Size = New System.Drawing.Size(216, 22)
         Me._ResetKnownStateMenuItem.Text = "Reset to Known State (RST)"
         '
         '_InitKnownStateMenuItem
         '
         Me._InitKnownStateMenuItem.Name = "_InitKnownStateMenuItem"
-        Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._InitKnownStateMenuItem.Size = New System.Drawing.Size(216, 22)
         Me._InitKnownStateMenuItem.Text = "Init to Known State"
         Me._InitKnownStateMenuItem.ToolTipText = "Initializes to custom known state"
         '
         '_ClearExecutionStateMenuItem
         '
         Me._ClearExecutionStateMenuItem.Name = "_ClearExecutionStateMenuItem"
-        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(217, 22)
-
+        Me._ClearExecutionStateMenuItem.Size = New System.Drawing.Size(216, 22)
         Me._ClearExecutionStateMenuItem.Text = "Clear Execution State (CLS)"
         Me._ClearExecutionStateMenuItem.ToolTipText = "Clears the execution state"
         '
         '_ReadStatusByteMenuItem
         '
         Me._ReadStatusByteMenuItem.Name = "_ReadStatusByteMenuItem"
-        Me._ReadStatusByteMenuItem.Size = New System.Drawing.Size(217, 22)
+        Me._ReadStatusByteMenuItem.Size = New System.Drawing.Size(216, 22)
         Me._ReadStatusByteMenuItem.Text = "Read Status Byte"
-        '
-        '_ResetMenuItem
-        '
-        Me._ResetMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._ClearInterfaceMenuItem, Me._ClearDeviceMenuItem, Me._ResetKnownStateMenuItem, Me._InitKnownStateMenuItem, Me._ClearExecutionStateMenuItem, Me._ReadStatusByteMenuItem})
-        Me._ResetMenuItem.Name = "_ResetMenuItem"
-        Me._ResetMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me._ResetMenuItem.Text = "Reset..."
-        Me._ResetMenuItem.ToolTipText = "Opens the reset menus"
+        Me._ReadStatusByteMenuItem.ToolTipText = "Reads the status byte"
         '
         '_ServiceRequestHandlersEnabledMenuItem
         '
         Me._ServiceRequestHandlersEnabledMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SessionServiceRequestHandlerEnabledMenuItem, Me._DeviceServiceRequestHandlerEnabledMenuItem})
         Me._ServiceRequestHandlersEnabledMenuItem.Name = "_ServiceRequestHandlersEnabledMenuItem"
-        Me._ServiceRequestHandlersEnabledMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._ServiceRequestHandlersEnabledMenuItem.Size = New System.Drawing.Size(193, 22)
         Me._ServiceRequestHandlersEnabledMenuItem.Text = "SRQ Handlers Enable..."
         Me._ServiceRequestHandlersEnabledMenuItem.ToolTipText = "Opens the SQR Handler Enable menu"
+        '
+        '_SessionServiceRequestHandlerEnabledMenuItem
+        '
+        Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(186, 22)
+        Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
+        Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
+        '
+        '_DeviceServiceRequestHandlerEnabledMenuItem
+        '
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(186, 22)
+        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
         '
         '_TraceMenuItem
         '
         Me._TraceMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._SessionNotificationLevelMenuItem, Me._LogTraceLevelMenuItem, Me._DisplayTraceLevelMenuItem})
         Me._TraceMenuItem.Name = "_TraceMenuItem"
-        Me._TraceMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me._TraceMenuItem.Size = New System.Drawing.Size(193, 22)
         Me._TraceMenuItem.Text = "Trace..."
         Me._TraceMenuItem.ToolTipText = "Opens the trace menus"
         '
@@ -316,6 +330,13 @@ Partial Class K7500Control
         Me._LogTraceLevelMenuItem.Text = "Log Trace Level"
         Me._LogTraceLevelMenuItem.ToolTipText = "Shows the log trace levels"
         '
+        '_LogTraceLevelComboBox
+        '
+        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
+        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
+        Me._LogTraceLevelComboBox.Text = "Verbose"
+        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
+        '
         '_DisplayTraceLevelMenuItem
         '
         Me._DisplayTraceLevelMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me._DisplayTraceLevelComboBox})
@@ -323,35 +344,6 @@ Partial Class K7500Control
         Me._DisplayTraceLevelMenuItem.Size = New System.Drawing.Size(209, 22)
         Me._DisplayTraceLevelMenuItem.Text = "Display Trace Level"
         Me._DisplayTraceLevelMenuItem.ToolTipText = "Shows the display trace levels"
-        '
-        '_SessionServiceRequestHandlerEnabledMenuItem
-        '
-        Me._SessionServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
-        Me._SessionServiceRequestHandlerEnabledMenuItem.Name = "_SessionServiceRequestHandlerEnabledMenuItem"
-        Me._SessionServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._SessionServiceRequestHandlerEnabledMenuItem.Text = "Session SRQ Handled"
-        Me._SessionServiceRequestHandlerEnabledMenuItem.ToolTipText = "Check to handle Device service requests"
-        '
-        '_DeviceServiceRequestHandlerEnabledMenuItem
-        '
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.CheckOnClick = True
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.Name = "_DeviceServiceRequestHandlerEnabledMenuItem"
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._DeviceServiceRequestHandlerEnabledMenuItem.Text = "Device SRQ Handled"
-        '
-        '_ReadStatusByteMenuItem
-        '
-        Me._ReadStatusByteMenuItem.Name = "_ReadStatusByteMenuItem"
-        Me._ReadStatusByteMenuItem.Size = New System.Drawing.Size(217, 22)
-        Me._ReadStatusByteMenuItem.Text = "Read Status Byte"
-        Me._ReadStatusByteMenuItem.ToolTipText = "Reads the status byte"
-        '
-        '_LogTraceLevelComboBox
-        '
-        Me._LogTraceLevelComboBox.Name = "_LogTraceLevelComboBox"
-        Me._LogTraceLevelComboBox.Size = New System.Drawing.Size(100, 22)
-        Me._LogTraceLevelComboBox.Text = "Verbose"
-        Me._LogTraceLevelComboBox.ToolTipText = "Log Trace Level"
         '
         '_DisplayTraceLevelComboBox
         '
@@ -545,26 +537,26 @@ Partial Class K7500Control
         Me._StreamBufferMenuItem.Text = "Stream Buffer"
         Me._StreamBufferMenuItem.ToolTipText = "Continuously reads new values while a trigger plan is active"
         '
-        '_SenseTabPage
+        '_MeasureTabPage
         '
-        Me._SenseTabPage.Controls.Add(Me._OpenLeadsDetectionCheckBox)
-        Me._SenseTabPage.Controls.Add(Me._ApplyFunctionModeButton)
-        Me._SenseTabPage.Controls.Add(Me._SenseMeasureDelayNumeric)
-        Me._SenseTabPage.Controls.Add(Me._SenseRangeNumeric)
-        Me._SenseTabPage.Controls.Add(Me._PowerLineCyclesNumeric)
-        Me._SenseTabPage.Controls.Add(Me._TriggerDelayNumericLabel)
-        Me._SenseTabPage.Controls.Add(Me._SenseRangeNumericLabel)
-        Me._SenseTabPage.Controls.Add(Me._PowerLineCyclesNumericLabel)
-        Me._SenseTabPage.Controls.Add(Me._SenseFunctionComboBox)
-        Me._SenseTabPage.Controls.Add(Me._SenseFunctionComboBoxLabel)
-        Me._SenseTabPage.Controls.Add(Me._SenseAutoRangeToggle)
-        Me._SenseTabPage.Controls.Add(Me._ApplySenseSettingsButton)
-        Me._SenseTabPage.Location = New System.Drawing.Point(4, 26)
-        Me._SenseTabPage.Name = "_SenseTabPage"
-        Me._SenseTabPage.Size = New System.Drawing.Size(356, 305)
-        Me._SenseTabPage.TabIndex = 4
-        Me._SenseTabPage.Text = "Sense"
-        Me._SenseTabPage.UseVisualStyleBackColor = True
+        Me._MeasureTabPage.Controls.Add(Me._OpenLeadsDetectionCheckBox)
+        Me._MeasureTabPage.Controls.Add(Me._ApplyFunctionModeButton)
+        Me._MeasureTabPage.Controls.Add(Me._MeasureDelayNumeric)
+        Me._MeasureTabPage.Controls.Add(Me._MeasureRangeNumeric)
+        Me._MeasureTabPage.Controls.Add(Me._PowerLineCyclesNumeric)
+        Me._MeasureTabPage.Controls.Add(Me._TriggerDelayNumericLabel)
+        Me._MeasureTabPage.Controls.Add(Me._MeasureRangeNumericLabel)
+        Me._MeasureTabPage.Controls.Add(Me._PowerLineCyclesNumericLabel)
+        Me._MeasureTabPage.Controls.Add(Me._MeasureFunctionComboBox)
+        Me._MeasureTabPage.Controls.Add(Me._MeasureFunctionComboBoxLabel)
+        Me._MeasureTabPage.Controls.Add(Me._MeasureAutoRangeToggle)
+        Me._MeasureTabPage.Controls.Add(Me._ApplyMeasureSettingsButton)
+        Me._MeasureTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._MeasureTabPage.Name = "_MeasureTabPage"
+        Me._MeasureTabPage.Size = New System.Drawing.Size(356, 305)
+        Me._MeasureTabPage.TabIndex = 4
+        Me._MeasureTabPage.Text = "Measure"
+        Me._MeasureTabPage.UseVisualStyleBackColor = True
         '
         '_OpenLeadsDetectionCheckBox
         '
@@ -588,28 +580,28 @@ Partial Class K7500Control
         Me._TipsToolTip.SetToolTip(Me._ApplyFunctionModeButton, "Selects this function mode")
         Me._ApplyFunctionModeButton.UseVisualStyleBackColor = True
         '
-        '_SenseMeasureDelayNumeric
+        '_MeasureDelayNumeric
         '
-        Me._SenseMeasureDelayNumeric.DecimalPlaces = 3
-        Me._SenseMeasureDelayNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SenseMeasureDelayNumeric.Location = New System.Drawing.Point(106, 141)
-        Me._SenseMeasureDelayNumeric.Name = "_SenseMeasureDelayNumeric"
-        Me._SenseMeasureDelayNumeric.Size = New System.Drawing.Size(76, 25)
-        Me._SenseMeasureDelayNumeric.TabIndex = 8
-        Me._TipsToolTip.SetToolTip(Me._SenseMeasureDelayNumeric, "Sense measure delay")
-        Me._SenseMeasureDelayNumeric.Visible = False
+        Me._MeasureDelayNumeric.DecimalPlaces = 3
+        Me._MeasureDelayNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._MeasureDelayNumeric.Location = New System.Drawing.Point(106, 141)
+        Me._MeasureDelayNumeric.Name = "_MeasureDelayNumeric"
+        Me._MeasureDelayNumeric.Size = New System.Drawing.Size(76, 25)
+        Me._MeasureDelayNumeric.TabIndex = 8
+        Me._TipsToolTip.SetToolTip(Me._MeasureDelayNumeric, "Measure delay")
+        Me._MeasureDelayNumeric.Visible = False
         '
-        '_SenseRangeNumeric
+        '_MeasureRangeNumeric
         '
-        Me._SenseRangeNumeric.DecimalPlaces = 3
-        Me._SenseRangeNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._SenseRangeNumeric.Location = New System.Drawing.Point(106, 80)
-        Me._SenseRangeNumeric.Maximum = New Decimal(New Integer() {1010, 0, 0, 0})
-        Me._SenseRangeNumeric.Name = "_SenseRangeNumeric"
-        Me._SenseRangeNumeric.Size = New System.Drawing.Size(76, 25)
-        Me._SenseRangeNumeric.TabIndex = 5
-        Me._TipsToolTip.SetToolTip(Me._SenseRangeNumeric, "Range")
-        Me._SenseRangeNumeric.Value = New Decimal(New Integer() {105, 0, 0, 196608})
+        Me._MeasureRangeNumeric.DecimalPlaces = 3
+        Me._MeasureRangeNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._MeasureRangeNumeric.Location = New System.Drawing.Point(106, 80)
+        Me._MeasureRangeNumeric.Maximum = New Decimal(New Integer() {1010, 0, 0, 0})
+        Me._MeasureRangeNumeric.Name = "_MeasureRangeNumeric"
+        Me._MeasureRangeNumeric.Size = New System.Drawing.Size(76, 25)
+        Me._MeasureRangeNumeric.TabIndex = 5
+        Me._TipsToolTip.SetToolTip(Me._MeasureRangeNumeric, "Range")
+        Me._MeasureRangeNumeric.Value = New Decimal(New Integer() {105, 0, 0, 196608})
         '
         '_PowerLineCyclesNumeric
         '
@@ -636,15 +628,15 @@ Partial Class K7500Control
         Me._TriggerDelayNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         Me._TriggerDelayNumericLabel.Visible = False
         '
-        '_SenseRangeNumericLabel
+        '_MeasureRangeNumericLabel
         '
-        Me._SenseRangeNumericLabel.AutoSize = True
-        Me._SenseRangeNumericLabel.Location = New System.Drawing.Point(36, 84)
-        Me._SenseRangeNumericLabel.Name = "_SenseRangeNumericLabel"
-        Me._SenseRangeNumericLabel.Size = New System.Drawing.Size(68, 17)
-        Me._SenseRangeNumericLabel.TabIndex = 4
-        Me._SenseRangeNumericLabel.Text = "Range [V]:"
-        Me._SenseRangeNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._MeasureRangeNumericLabel.AutoSize = True
+        Me._MeasureRangeNumericLabel.Location = New System.Drawing.Point(36, 84)
+        Me._MeasureRangeNumericLabel.Name = "_MeasureRangeNumericLabel"
+        Me._MeasureRangeNumericLabel.Size = New System.Drawing.Size(68, 17)
+        Me._MeasureRangeNumericLabel.TabIndex = 4
+        Me._MeasureRangeNumericLabel.Text = "Range [V]:"
+        Me._MeasureRangeNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         '_PowerLineCyclesNumericLabel
         '
@@ -656,48 +648,48 @@ Partial Class K7500Control
         Me._PowerLineCyclesNumericLabel.Text = "Aperture [nplc]:"
         Me._PowerLineCyclesNumericLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        '_SenseFunctionComboBox
+        '_MeasureFunctionComboBox
         '
-        Me._SenseFunctionComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+        Me._MeasureFunctionComboBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._SenseFunctionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me._SenseFunctionComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._SenseFunctionComboBox.Items.AddRange(New Object() {"I", "V"})
-        Me._SenseFunctionComboBox.Location = New System.Drawing.Point(106, 12)
-        Me._SenseFunctionComboBox.Name = "_SenseFunctionComboBox"
-        Me._SenseFunctionComboBox.Size = New System.Drawing.Size(198, 25)
-        Me._SenseFunctionComboBox.TabIndex = 1
+        Me._MeasureFunctionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me._MeasureFunctionComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._MeasureFunctionComboBox.Items.AddRange(New Object() {"I", "V"})
+        Me._MeasureFunctionComboBox.Location = New System.Drawing.Point(106, 12)
+        Me._MeasureFunctionComboBox.Name = "_MeasureFunctionComboBox"
+        Me._MeasureFunctionComboBox.Size = New System.Drawing.Size(198, 25)
+        Me._MeasureFunctionComboBox.TabIndex = 1
         '
-        '_SenseFunctionComboBoxLabel
+        '_MeasureFunctionComboBoxLabel
         '
-        Me._SenseFunctionComboBoxLabel.AutoSize = True
-        Me._SenseFunctionComboBoxLabel.Location = New System.Drawing.Point(45, 16)
-        Me._SenseFunctionComboBoxLabel.Name = "_SenseFunctionComboBoxLabel"
-        Me._SenseFunctionComboBoxLabel.Size = New System.Drawing.Size(59, 17)
-        Me._SenseFunctionComboBoxLabel.TabIndex = 0
-        Me._SenseFunctionComboBoxLabel.Text = "Function:"
-        Me._SenseFunctionComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._MeasureFunctionComboBoxLabel.AutoSize = True
+        Me._MeasureFunctionComboBoxLabel.Location = New System.Drawing.Point(45, 16)
+        Me._MeasureFunctionComboBoxLabel.Name = "_MeasureFunctionComboBoxLabel"
+        Me._MeasureFunctionComboBoxLabel.Size = New System.Drawing.Size(59, 17)
+        Me._MeasureFunctionComboBoxLabel.TabIndex = 0
+        Me._MeasureFunctionComboBoxLabel.Text = "Function:"
+        Me._MeasureFunctionComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
-        '_SenseAutoRangeToggle
+        '_MeasureAutoRangeToggle
         '
-        Me._SenseAutoRangeToggle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._SenseAutoRangeToggle.Location = New System.Drawing.Point(188, 82)
-        Me._SenseAutoRangeToggle.Name = "_SenseAutoRangeToggle"
-        Me._SenseAutoRangeToggle.Size = New System.Drawing.Size(103, 21)
-        Me._SenseAutoRangeToggle.TabIndex = 6
-        Me._SenseAutoRangeToggle.Text = "Auto Range"
-        Me._SenseAutoRangeToggle.UseVisualStyleBackColor = True
+        Me._MeasureAutoRangeToggle.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._MeasureAutoRangeToggle.Location = New System.Drawing.Point(188, 82)
+        Me._MeasureAutoRangeToggle.Name = "_MeasureAutoRangeToggle"
+        Me._MeasureAutoRangeToggle.Size = New System.Drawing.Size(103, 21)
+        Me._MeasureAutoRangeToggle.TabIndex = 6
+        Me._MeasureAutoRangeToggle.Text = "Auto Range"
+        Me._MeasureAutoRangeToggle.UseVisualStyleBackColor = True
         '
-        '_ApplySenseSettingsButton
+        '_ApplyMeasureSettingsButton
         '
-        Me._ApplySenseSettingsButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me._ApplySenseSettingsButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
-        Me._ApplySenseSettingsButton.Location = New System.Drawing.Point(283, 260)
-        Me._ApplySenseSettingsButton.Name = "_ApplySenseSettingsButton"
-        Me._ApplySenseSettingsButton.Size = New System.Drawing.Size(58, 30)
-        Me._ApplySenseSettingsButton.TabIndex = 9
-        Me._ApplySenseSettingsButton.Text = "&Apply"
-        Me._ApplySenseSettingsButton.UseVisualStyleBackColor = True
+        Me._ApplyMeasureSettingsButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me._ApplyMeasureSettingsButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._ApplyMeasureSettingsButton.Location = New System.Drawing.Point(283, 260)
+        Me._ApplyMeasureSettingsButton.Name = "_ApplyMeasureSettingsButton"
+        Me._ApplyMeasureSettingsButton.Size = New System.Drawing.Size(58, 30)
+        Me._ApplyMeasureSettingsButton.TabIndex = 9
+        Me._ApplyMeasureSettingsButton.Text = "&Apply"
+        Me._ApplyMeasureSettingsButton.UseVisualStyleBackColor = True
         '
         '_TriggerTabPage
         '
@@ -1019,7 +1011,7 @@ Partial Class K7500Control
         Me._ReadWriteTabPage.Controls.Add(Me._SimpleReadWriteControl)
         Me._ReadWriteTabPage.Location = New System.Drawing.Point(4, 26)
         Me._ReadWriteTabPage.Name = "_ReadWriteTabPage"
-        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 243)
+        Me._ReadWriteTabPage.Size = New System.Drawing.Size(356, 305)
         Me._ReadWriteTabPage.TabIndex = 5
         Me._ReadWriteTabPage.Text = "R/W"
         Me._ReadWriteTabPage.UseVisualStyleBackColor = True
@@ -1033,7 +1025,7 @@ Partial Class K7500Control
         Me._SimpleReadWriteControl.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._SimpleReadWriteControl.Name = "_SimpleReadWriteControl"
         Me._SimpleReadWriteControl.ReadEnabled = False
-        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 243)
+        Me._SimpleReadWriteControl.Size = New System.Drawing.Size(356, 305)
         Me._SimpleReadWriteControl.TabIndex = 0
         '
         '_MessagesTabPage
@@ -1041,7 +1033,7 @@ Partial Class K7500Control
         Me._MessagesTabPage.Controls.Add(Me._TraceMessagesBox)
         Me._MessagesTabPage.Location = New System.Drawing.Point(4, 26)
         Me._MessagesTabPage.Name = "_MessagesTabPage"
-        Me._MessagesTabPage.Size = New System.Drawing.Size(356, 243)
+        Me._MessagesTabPage.Size = New System.Drawing.Size(356, 305)
         Me._MessagesTabPage.TabIndex = 3
         Me._MessagesTabPage.Text = "Log"
         Me._MessagesTabPage.UseVisualStyleBackColor = True
@@ -1061,13 +1053,13 @@ Partial Class K7500Control
         Me._TraceMessagesBox.ReadOnly = True
         Me._TraceMessagesBox.ResetCount = 1000
         Me._TraceMessagesBox.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me._TraceMessagesBox.Size = New System.Drawing.Size(356, 243)
+        Me._TraceMessagesBox.Size = New System.Drawing.Size(356, 305)
         Me._TraceMessagesBox.TabIndex = 1
+        Me._TraceMessagesBox.TraceLevel = System.Diagnostics.TraceEventType.Verbose
         '
         '_ResourceSelectorConnector
         '
         Me._ResourceSelectorConnector.BackColor = System.Drawing.Color.Transparent
-        Me._ResourceSelectorConnector.ClearToolTipText = "Clear device state"
         Me._ResourceSelectorConnector.Dock = System.Windows.Forms.DockStyle.Bottom
         Me._ResourceSelectorConnector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._ResourceSelectorConnector.Location = New System.Drawing.Point(0, 281)
@@ -1279,10 +1271,10 @@ Partial Class K7500Control
         Me._BufferToolStrip.PerformLayout()
         Me._ReadingToolStrip.ResumeLayout(False)
         Me._ReadingToolStrip.PerformLayout()
-        Me._SenseTabPage.ResumeLayout(False)
-        Me._SenseTabPage.PerformLayout()
-        CType(Me._SenseMeasureDelayNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._SenseRangeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._MeasureTabPage.ResumeLayout(False)
+        Me._MeasureTabPage.PerformLayout()
+        CType(Me._MeasureDelayNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me._MeasureRangeNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me._PowerLineCyclesNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         Me._TriggerTabPage.ResumeLayout(False)
         Me._TriggerTabPage.PerformLayout()
@@ -1313,14 +1305,14 @@ Partial Class K7500Control
 
     End Sub
     Private WithEvents _ReadingTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _SenseTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _ApplySenseSettingsButton As System.Windows.Forms.Button
+    Private WithEvents _MeasureTabPage As System.Windows.Forms.TabPage
+    Private WithEvents _ApplyMeasureSettingsButton As System.Windows.Forms.Button
     Private WithEvents _MessagesTabPage As System.Windows.Forms.TabPage
-    Private WithEvents _SenseAutoRangeToggle As System.Windows.Forms.CheckBox
-    Private WithEvents _SenseFunctionComboBox As System.Windows.Forms.ComboBox
-    Private WithEvents _SenseFunctionComboBoxLabel As System.Windows.Forms.Label
+    Private WithEvents _MeasureAutoRangeToggle As System.Windows.Forms.CheckBox
+    Private WithEvents _MeasureFunctionComboBox As System.Windows.Forms.ComboBox
+    Private WithEvents _MeasureFunctionComboBoxLabel As System.Windows.Forms.Label
     Private WithEvents _PowerLineCyclesNumericLabel As System.Windows.Forms.Label
-    Private WithEvents _SenseRangeNumericLabel As System.Windows.Forms.Label
+    Private WithEvents _MeasureRangeNumericLabel As System.Windows.Forms.Label
     Private WithEvents _TriggerDelayNumericLabel As System.Windows.Forms.Label
     Private WithEvents _Tabs As System.Windows.Forms.TabControl
     Private WithEvents _LastErrorTextBox As System.Windows.Forms.TextBox
@@ -1328,8 +1320,8 @@ Partial Class K7500Control
     Private WithEvents _FailureToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _ReadingToolStripStatusLabel As System.Windows.Forms.ToolStripStatusLabel
     Private WithEvents _LastReadingTextBox As System.Windows.Forms.TextBox
-    Private WithEvents _SenseMeasureDelayNumeric As System.Windows.Forms.NumericUpDown
-    Private WithEvents _SenseRangeNumeric As System.Windows.Forms.NumericUpDown
+    Private WithEvents _MeasureDelayNumeric As System.Windows.Forms.NumericUpDown
+    Private WithEvents _MeasureRangeNumeric As System.Windows.Forms.NumericUpDown
     Private WithEvents _PowerLineCyclesNumeric As System.Windows.Forms.NumericUpDown
     Private WithEvents _Panel As System.Windows.Forms.Panel
     Private WithEvents _Layout As System.Windows.Forms.TableLayoutPanel

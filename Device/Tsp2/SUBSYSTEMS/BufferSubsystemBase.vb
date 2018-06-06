@@ -86,7 +86,7 @@ Public MustInherit Class BufferSubsystemBase
     ''' <value> The points count query command. </value>
     Protected Overrides ReadOnly Property CapacityQueryCommand As String
         Get
-            Return $"_G.print(String.Format('%d',{Me.BufferName}.capacity))"
+            Return $"_G.print(string.format('%d',{Me.BufferName}.capacity))"
         End Get
     End Property
 
@@ -107,7 +107,7 @@ Public MustInherit Class BufferSubsystemBase
     ''' <value> The automatic Delay enabled query command. </value>
     Protected Overrides ReadOnly Property FillOnceEnabledQueryCommand As String
         Get
-            Return $"_G.print({Me.BufferName}.fillmode=buffer.FILL_ONCE"
+            Return $"_G.print({Me.BufferName}.fillmode==buffer.FILL_ONCE)"
         End Get
     End Property
 
@@ -125,15 +125,27 @@ Public MustInherit Class BufferSubsystemBase
 
     ''' <summary> Gets or sets the ActualPoint count query command. </summary>
     ''' <value> The ActualPoint count query command. </value>
-    Protected Overrides ReadOnly Property ActualPointCountQueryCommand As String = $"_G.print(String.Format('%d',{Me.BufferName}.n))"
+    Protected Overrides ReadOnly Property ActualPointCountQueryCommand As String
+        Get
+            Return $"_G.print(string.format('%d',{Me.BufferName}.n))"
+        End Get
+    End Property
 
     ''' <summary> Gets or sets The First Point Number (1-based) query command. </summary>
     ''' <value> The First Point Number query command. </value>
-    Protected Overrides ReadOnly Property FirstPointNumberQueryCommand As String = $"_G.print(String.Format('%d',{Me.BufferName}.startindex))"
+    Protected Overrides ReadOnly Property FirstPointNumberQueryCommand As String
+        Get
+            Return $"_G.print(string.format('%d',{Me.BufferName}.startindex))"
+        End Get
+    End Property
 
     ''' <summary> Gets or sets The Last Point Number (1-based) query command. </summary>
     ''' <value> The Last Point Number query command. </value>
-    Protected Overrides ReadOnly Property LastPointNumberQueryCommand As String = $"_G.print(String.Format('%d',{Me.BufferName}.endindex))"
+    Protected Overrides ReadOnly Property LastPointNumberQueryCommand As String
+        Get
+            Return $"_G.print(string.format('%d',{Me.BufferName}.endindex))"
+        End Get
+    End Property
 
 #End Region
 

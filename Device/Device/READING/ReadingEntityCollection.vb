@@ -60,7 +60,6 @@ Public Class ReadingEntityCollection
         End If
     End Sub
 
-
     ''' <summary> Returns the total length of the reading elements including delimiters. </summary>
     ''' <value> The length of the elements. </value>
     Public ReadOnly Property ReadingsLength() As Integer
@@ -80,6 +79,41 @@ Public Class ReadingEntityCollection
             values.Add(readingItem.ValueReading)
         Next
         Return values.ToArray
+    End Function
+
+    ''' <summary> Returns the meta status or new if does not exist. </summary>
+    ''' <returns> The MetaStatus. </returns>
+    Public Function MetaStatus(ByVal readingType As ReadingTypes) As MetaStatus
+        Dim result As MetaStatus = New MetaStatus
+        If Me.Contains(readingType) Then
+            Dim amount As MeasuredAmount = TryCast(Me(readingType), MeasuredAmount)
+            If amount IsNot Nothing Then result = amount.MetaStatus
+        End If
+        Return result
+    End Function
+
+    ''' <summary> Reading amount. </summary>
+    ''' <param name="readingType"> Type of the reading. </param>
+    ''' <returns> A ReadingAmount. </returns>
+    Public Function ReadingAmount(ByVal readingType As ReadingTypes) As ReadingAmount
+        Dim result As ReadingAmount = Nothing
+        If Me.Contains(readingType) Then
+            result = TryCast(Me(readingType), ReadingAmount)
+        End If
+        If result Is Nothing Then result = New ReadingAmount(readingType)
+        Return result
+    End Function
+
+    ''' <summary> Reading status. </summary>
+    ''' <param name="readingType"> Type of the reading. </param>
+    ''' <returns> The ReadingStatus. </returns>
+    Public Function ReadingStatus(ByVal readingType As ReadingTypes) As ReadingStatus
+        Dim result As ReadingStatus = Nothing
+        If Me.Contains(readingType) Then
+            result = TryCast(Me(readingType), ReadingStatus)
+        End If
+        If result Is Nothing Then result = New ReadingStatus(readingType)
+        Return result
     End Function
 
 End Class

@@ -37,7 +37,7 @@ Public Class MultimeterSubsystem
     ''' <remarks> Use this method to customize the reset. </remarks>
     Public Overrides Sub InitKnownState()
         MyBase.InitKnownState()
-        Me.Readings.Initialize(ReadingTypes.Current)
+        Me.Readings.Initialize(ReadingTypes.Voltage Or ReadingTypes.Timestamp Or ReadingTypes.Status Or ReadingTypes.Units)
         Dim lineFrequency As Double = Me.StatusSubsystem.LineFrequency.GetValueOrDefault(60)
         If lineFrequency = 50 Then
             Me.PowerLineCyclesRange = New isr.Core.Pith.RangeR(0.0005, 12)
@@ -212,7 +212,7 @@ Public Class MultimeterSubsystem
 
 #End Region
 
-#Region " FILTER Window "
+#Region " FILTER WINDOW "
 
     ''' <summary> Gets the Filter Window query command. </summary>
     ''' <value> The FilterWindow query command. </value>
@@ -239,6 +239,31 @@ Public Class MultimeterSubsystem
 #End Region
 
 #Region " FUNCTION MODE "
+
+    Public Function SelectReadingType(ByVal value As VI.Tsp2.MultimeterFunctionMode) As ReadingTypes
+        Dim result As ReadingTypes = ReadingTypes.Reading
+        Select Case value
+            Case MultimeterFunctionMode.Capacitance
+            Case MultimeterFunctionMode.Continuity
+            Case MultimeterFunctionMode.CurrentAC
+            Case MultimeterFunctionMode.CurrentDC
+            Case MultimeterFunctionMode.Diode
+            Case MultimeterFunctionMode.Frequency
+            Case MultimeterFunctionMode.None
+            Case MultimeterFunctionMode.Period
+            Case MultimeterFunctionMode.Ratio
+            Case MultimeterFunctionMode.ResistanceFourWire
+            Case MultimeterFunctionMode.ResistanceTwoWire
+            Case MultimeterFunctionMode.VoltageAC
+            Case MultimeterFunctionMode.VoltageDC
+        End Select
+        Return result
+    End Function
+
+    Public Sub SelectFunctionMode(ByVal value As VI.Tsp2.MultimeterFunctionMode)
+        Me.Readings.Initialize(Me.SelectReadingType(value) Or ReadingTypes.Timestamp Or ReadingTypes.Status Or ReadingTypes.Units)
+    End Sub
+
 
     ''' <summary> Gets or sets the function mode query command. </summary>
     ''' <value> The function mode query command. </value>

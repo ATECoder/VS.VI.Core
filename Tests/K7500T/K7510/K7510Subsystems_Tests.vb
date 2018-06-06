@@ -81,8 +81,6 @@ Namespace K7500.Tests
                 K7510Manager.CheckTermination(device.Session)
                 K7510Manager.CheckLineFrequency(device.StatusSubsystem)
                 K7510Manager.CheckIntegrationPeriod(device.StatusSubsystem)
-                K7510Manager.CheckMultimeterSubsystemInfo(device.MultimeterSubsystem)
-                K7510Manager.CheckBufferSubsystemInfo(device.Buffer1Subsystem)
                 K7510Manager.ClearSessionCheckDeviceErrors(device)
                 If readErrorEnabled Then K7510Manager.CheckReadingDeviceErrors(device)
                 K7510Manager.CloseSession(device)
@@ -105,32 +103,67 @@ Namespace K7500.Tests
 
 #End Region
 
-#Region " SENSE SUBSYSTEM TEST "
+#Region " BUFFER SUBSYSTEM TEST "
 
-        ''' <summary> Check measure subsystem information. </summary>
-        ''' <param name="device"> The device. </param>
-        Private Shared Sub ReadSenseSubsystemInfo(ByVal device As VI.Tsp2.K7500.Device)
+        ''' <summary> Reads buffer subsystem information. </summary>
+        ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
+        ''' <param name="subsystem"> The subsystem. </param>
+        Public Shared Sub ReadBufferSubsystemInfo(ByVal subsystem As VI.BufferSubsystemBase)
+            If subsystem Is Nothing Then Throw New ArgumentNullException(NameOf(subsystem))
+            Dim actualCapacilty As Integer = subsystem.QueryCapacity.GetValueOrDefault(-1)
+            Dim expectedcapacilty As Integer = K7510SubsystemsInfo.Get.BufferCapacity
+            Assert.AreEqual(expectedcapacilty, actualCapacilty, $"Buffer capacity")
+            Dim actualFirstPointNumber As Integer = subsystem.QueryFirstPointNumber.GetValueOrDefault(-1)
+            Dim expectedFirstPointNumber As Integer = K7510SubsystemsInfo.Get.BufferFirstPointNumber
+            Assert.AreEqual(expectedFirstPointNumber, actualFirstPointNumber, $"Buffer First Point Number")
+            Dim actualLastPointNumber As Integer = subsystem.QueryLastPointNumber.GetValueOrDefault(-1)
+            Dim expectedLastPointNumber As Integer = K7510SubsystemsInfo.Get.BufferLastPointNumber
+            Assert.AreEqual(expectedLastPointNumber, actualLastPointNumber, $"Buffer Last Point Number")
+            Dim expectedFillOnceEnabled As Boolean = K7510SubsystemsInfo.Get.BufferFillOnceEnabled
+            Dim actualFillOnceEnabled As Boolean = subsystem.QueryFillOnceEnabled.GetValueOrDefault(Not expectedFillOnceEnabled)
+            Assert.AreEqual(expectedFillOnceEnabled, actualFillOnceEnabled, $"Initial fill once enabled")
+        End Sub
+
+        ''' <summary> (Unit Test Method) tests buffer subsystem initial values. </summary>
+        <TestMethod(), TestCategory("VI")>
+        Public Sub BufferSubsystemInitialValuesTest()
+            Using device As VI.Tsp2.K7500.Device = VI.Tsp2.K7500.Device.Create
+                device.AddListener(TestInfo.TraceMessagesQueueListener)
+                K7500.Tests.K7510Manager.OpenSession(device)
+                K7510SubsystemsTests.ReadBufferSubsystemInfo(device.Buffer1Subsystem)
+                K7500.Tests.K7510Manager.CloseSession(device)
+            End Using
+        End Sub
+
+#End Region
+
+#Region " MULTIMETER SUBSYSTEM TEST "
+
+        ''' <summary> Check multimeter subsystem information. </summary>
+        Private Shared Sub ReadMultimeterSubsystemInfo(ByVal subsystem As VI.Tsp2.MultimeterSubsystemBase)
 
             Dim expectedPowerLineCycles As Double = K7510SubsystemsInfo.Get.InitialPowerLineCycles
-            Dim actualPowerLineCycles As Double = device.MultimeterSubsystem.QueryPowerLineCycles.GetValueOrDefault(0)
+            Dim actualPowerLineCycles As Double = subsystem.QueryPowerLineCycles.GetValueOrDefault(0)
             Assert.AreEqual(expectedPowerLineCycles, actualPowerLineCycles, K7510SubsystemsInfo.Get.LineFrequency / TimeSpan.TicksPerSecond,
                             $"{GetType(VI.SenseSubsystemBase)}.{NameOf(VI.SenseSubsystemBase.PowerLineCycles)} is {actualPowerLineCycles:G5}; expected {expectedPowerLineCycles:G5}")
 
             Dim expectedBoolean As Boolean = K7510SubsystemsInfo.Get.InitialAutoRangeEnabled
-            Dim actualBoolean As Boolean = device.MultimeterSubsystem.QueryAutoRangeEnabled.GetValueOrDefault(False)
+            Dim actualBoolean As Boolean = subsystem.QueryAutoRangeEnabled.GetValueOrDefault(False)
             Assert.AreEqual(expectedBoolean, actualBoolean, $"{GetType(VI.SenseSubsystemBase)}.{NameOf(VI.SenseSubsystemBase.AutoRangeEnabled)} is {actualBoolean }; expected {expectedBoolean}")
 
-            Dim senseFn As Tsp2.MultimeterFunctionMode = device.MultimeterSubsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.MultimeterFunctionMode.Capacitance)
+            Dim actualFunctionMode As Tsp2.MultimeterFunctionMode = subsystem.QueryFunctionMode.GetValueOrDefault(VI.Tsp2.MultimeterFunctionMode.Capacitance)
             Dim expectedFunctionMode As VI.Tsp2.MultimeterFunctionMode = K7510SubsystemsInfo.Get.InitialSenseFunctionMode
-            Assert.AreEqual(expectedFunctionMode, senseFn, $"{GetType(VI.SenseSubsystemBase)}.{NameOf(VI.Scpi.SenseSubsystemBase.FunctionMode)} is {senseFn} ; expected {expectedFunctionMode}")
+            Assert.AreEqual(expectedFunctionMode, actualFunctionMode,
+                            $"{GetType(VI.SenseSubsystemBase)}.{NameOf(VI.Scpi.SenseSubsystemBase.FunctionMode)} is {actualFunctionMode} ; expected {expectedFunctionMode}")
         End Sub
 
+        ''' <summary> (Unit Test Method) tests multimeter subsystem initial values. </summary>
         <TestMethod(), TestCategory("VI")>
-        Public Sub ReadSenseSubsystemTest()
+        Public Sub MultimeterSubsystemInitialValuesTest()
             Using device As VI.Tsp2.K7500.Device = VI.Tsp2.K7500.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 K7500.Tests.K7510Manager.OpenSession(device)
-                K7510SubsystemsTests.ReadSenseSubsystemInfo(device)
+                K7510SubsystemsTests.ReadMultimeterSubsystemInfo(device.MultimeterSubsystem)
                 K7500.Tests.K7510Manager.CloseSession(device)
             End Using
         End Sub

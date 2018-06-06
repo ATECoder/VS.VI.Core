@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class InstrumentInterfaceForm
+Partial Class ResourceConsoleControl
 
     'Required by the Windows Form Designer
     Private components As System.ComponentModel.IContainer
@@ -22,7 +22,6 @@ Partial Class InstrumentInterfaceForm
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(InstrumentInterfaceForm))
         Me._ToolTip = New System.Windows.Forms.ToolTip(Me.components)
         Me._SendButton = New System.Windows.Forms.Button()
         Me._ReceiveButton = New System.Windows.Forms.Button()
@@ -31,16 +30,22 @@ Partial Class InstrumentInterfaceForm
         Me._PollRadioButton = New System.Windows.Forms.RadioButton()
         Me._ServiceRequestReceiveOptionRadioButton = New System.Windows.Forms.RadioButton()
         Me._DisconnectCommandsTextBox = New System.Windows.Forms.TextBox()
+        Me._SreCommandLabel = New System.Windows.Forms.Label()
+        Me._SrqBitsNumeric = New System.Windows.Forms.NumericUpDown()
+        Me._SreCommandComboBox = New System.Windows.Forms.ComboBox()
+        Me._MessageAvailableBitsNumeric = New System.Windows.Forms.NumericUpDown()
         Me._Tabs = New System.Windows.Forms.TabControl()
-        Me._connectTabPage = New System.Windows.Forms.TabPage()
+        Me._ConnectTabPage = New System.Windows.Forms.TabPage()
         Me._ConnectTabLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._connectGroupBox = New System.Windows.Forms.GroupBox()
+        Me._ConnectGroupBox = New System.Windows.Forms.GroupBox()
         Me._InterfacePanel = New isr.VI.Instrument.InterfacePanel()
-        Me._settingsGroupBox = New System.Windows.Forms.GroupBox()
+        Me._SettingsGroupBox = New System.Windows.Forms.GroupBox()
         Me._SendDisconnectCommandsCheckBox = New System.Windows.Forms.CheckBox()
         Me._SendReceiveTabPage = New System.Windows.Forms.TabPage()
-        Me._sendReceiveLayout = New System.Windows.Forms.TableLayoutPanel()
-        Me._sendReceiveControlPanel = New System.Windows.Forms.Panel()
+        Me._SendReceiveLayout = New System.Windows.Forms.TableLayoutPanel()
+        Me._SendReceiveControlPanel = New System.Windows.Forms.Panel()
+        Me._MessageAvailableBitsLabel = New System.Windows.Forms.Label()
+        Me._SrqBitsLabel = New System.Windows.Forms.Label()
         Me._ReceiveOptionsGroupBox = New System.Windows.Forms.GroupBox()
         Me._PollIntervalUnitsLabel = New System.Windows.Forms.Label()
         Me._PollIntervalNumericUpDown = New System.Windows.Forms.NumericUpDown()
@@ -48,42 +53,36 @@ Partial Class InstrumentInterfaceForm
         Me._CommandsComboBox = New System.Windows.Forms.ComboBox()
         Me._CommandsComboBoxLabel = New System.Windows.Forms.Label()
         Me._TspTipLabel = New System.Windows.Forms.Label()
-        Me._sendReceiveSplitContainer = New System.Windows.Forms.SplitContainer()
+        Me._SendReceiveSplitContainer = New System.Windows.Forms.SplitContainer()
         Me._SendGroupBox = New System.Windows.Forms.GroupBox()
         Me._InputTextBox = New System.Windows.Forms.TextBox()
         Me._ReceiveGroupBox = New System.Windows.Forms.GroupBox()
         Me._OutputTextBox = New System.Windows.Forms.TextBox()
-        Me._messagesTabPage = New System.Windows.Forms.TabPage()
+        Me._MessagesTabPage = New System.Windows.Forms.TabPage()
         Me._TraceMessagesBox = New isr.Core.Pith.TraceMessagesBox()
-        Me._statusBar = New System.Windows.Forms.StatusStrip()
+        Me._StatusBar = New System.Windows.Forms.StatusStrip()
         Me._StatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me._StatusRegisterLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me._SreCommandLabel = New System.Windows.Forms.Label()
-        Me._SrqBitsNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._SrqBitsLabel = New System.Windows.Forms.Label()
-        Me._SreCommandComboBox = New System.Windows.Forms.ComboBox()
-        Me._MessageAvailableBitsLabel = New System.Windows.Forms.Label()
-        Me._MessageAvailableBitsNumeric = New System.Windows.Forms.NumericUpDown()
-        Me._Tabs.SuspendLayout()
-        Me._connectTabPage.SuspendLayout()
-        Me._ConnectTabLayout.SuspendLayout()
-        Me._connectGroupBox.SuspendLayout()
-        Me._settingsGroupBox.SuspendLayout()
-        Me._SendReceiveTabPage.SuspendLayout()
-        Me._sendReceiveLayout.SuspendLayout()
-        Me._sendReceiveControlPanel.SuspendLayout()
-        Me._ReceiveOptionsGroupBox.SuspendLayout()
-        CType(Me._PollIntervalNumericUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me._sendReceiveSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me._sendReceiveSplitContainer.Panel1.SuspendLayout()
-        Me._sendReceiveSplitContainer.Panel2.SuspendLayout()
-        Me._sendReceiveSplitContainer.SuspendLayout()
-        Me._SendGroupBox.SuspendLayout()
-        Me._ReceiveGroupBox.SuspendLayout()
-        Me._messagesTabPage.SuspendLayout()
-        Me._statusBar.SuspendLayout()
         CType(Me._SrqBitsNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me._MessageAvailableBitsNumeric, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._Tabs.SuspendLayout()
+        Me._ConnectTabPage.SuspendLayout()
+        Me._ConnectTabLayout.SuspendLayout()
+        Me._ConnectGroupBox.SuspendLayout()
+        Me._SettingsGroupBox.SuspendLayout()
+        Me._SendReceiveTabPage.SuspendLayout()
+        Me._SendReceiveLayout.SuspendLayout()
+        Me._SendReceiveControlPanel.SuspendLayout()
+        Me._ReceiveOptionsGroupBox.SuspendLayout()
+        CType(Me._PollIntervalNumericUpDown, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me._SendReceiveSplitContainer, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me._SendReceiveSplitContainer.Panel1.SuspendLayout()
+        Me._SendReceiveSplitContainer.Panel2.SuspendLayout()
+        Me._SendReceiveSplitContainer.SuspendLayout()
+        Me._SendGroupBox.SuspendLayout()
+        Me._ReceiveGroupBox.SuspendLayout()
+        Me._MessagesTabPage.SuspendLayout()
+        Me._StatusBar.SuspendLayout()
         Me.SuspendLayout()
         '
         '_ToolTip
@@ -95,7 +94,7 @@ Partial Class InstrumentInterfaceForm
         Me._SendButton.BackColor = System.Drawing.SystemColors.Control
         Me._SendButton.Cursor = System.Windows.Forms.Cursors.Default
         Me._SendButton.Enabled = False
-        Me._SendButton.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._SendButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._SendButton.ForeColor = System.Drawing.SystemColors.ControlText
         Me._SendButton.Location = New System.Drawing.Point(13, 12)
         Me._SendButton.Name = "_SendButton"
@@ -111,7 +110,7 @@ Partial Class InstrumentInterfaceForm
         Me._ReceiveButton.BackColor = System.Drawing.SystemColors.Control
         Me._ReceiveButton.Cursor = System.Windows.Forms.Cursors.Default
         Me._ReceiveButton.Enabled = False
-        Me._ReceiveButton.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._ReceiveButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._ReceiveButton.ForeColor = System.Drawing.SystemColors.ControlText
         Me._ReceiveButton.Location = New System.Drawing.Point(122, 12)
         Me._ReceiveButton.Name = "_ReceiveButton"
@@ -127,7 +126,7 @@ Partial Class InstrumentInterfaceForm
         Me._ReadStatusRegisterButton.BackColor = System.Drawing.SystemColors.Control
         Me._ReadStatusRegisterButton.Cursor = System.Windows.Forms.Cursors.Default
         Me._ReadStatusRegisterButton.Enabled = False
-        Me._ReadStatusRegisterButton.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._ReadStatusRegisterButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._ReadStatusRegisterButton.ForeColor = System.Drawing.SystemColors.ControlText
         Me._ReadStatusRegisterButton.Location = New System.Drawing.Point(213, 12)
         Me._ReadStatusRegisterButton.Name = "_ReadStatusRegisterButton"
@@ -143,7 +142,7 @@ Partial Class InstrumentInterfaceForm
         Me._SendComboCommandButton.BackColor = System.Drawing.SystemColors.Control
         Me._SendComboCommandButton.Cursor = System.Windows.Forms.Cursors.Default
         Me._SendComboCommandButton.Enabled = False
-        Me._SendComboCommandButton.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._SendComboCommandButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._SendComboCommandButton.ForeColor = System.Drawing.SystemColors.ControlText
         Me._SendComboCommandButton.Location = New System.Drawing.Point(287, 71)
         Me._SendComboCommandButton.Name = "_SendComboCommandButton"
@@ -157,7 +156,7 @@ Partial Class InstrumentInterfaceForm
         '_PollRadioButton
         '
         Me._PollRadioButton.AutoSize = True
-        Me._PollRadioButton.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._PollRadioButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._PollRadioButton.Location = New System.Drawing.Point(14, 50)
         Me._PollRadioButton.Name = "_PollRadioButton"
         Me._PollRadioButton.Size = New System.Drawing.Size(58, 21)
@@ -170,7 +169,7 @@ Partial Class InstrumentInterfaceForm
         '_ServiceRequestReceiveOptionRadioButton
         '
         Me._ServiceRequestReceiveOptionRadioButton.AutoSize = True
-        Me._ServiceRequestReceiveOptionRadioButton.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._ServiceRequestReceiveOptionRadioButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._ServiceRequestReceiveOptionRadioButton.Location = New System.Drawing.Point(14, 75)
         Me._ServiceRequestReceiveOptionRadioButton.Name = "_ServiceRequestReceiveOptionRadioButton"
         Me._ServiceRequestReceiveOptionRadioButton.Size = New System.Drawing.Size(67, 21)
@@ -184,7 +183,7 @@ Partial Class InstrumentInterfaceForm
         Me._DisconnectCommandsTextBox.AcceptsReturn = True
         Me._DisconnectCommandsTextBox.BackColor = System.Drawing.SystemColors.Window
         Me._DisconnectCommandsTextBox.Cursor = System.Windows.Forms.Cursors.IBeam
-        Me._DisconnectCommandsTextBox.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._DisconnectCommandsTextBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._DisconnectCommandsTextBox.ForeColor = System.Drawing.SystemColors.WindowText
         Me._DisconnectCommandsTextBox.Location = New System.Drawing.Point(21, 57)
         Me._DisconnectCommandsTextBox.MaxLength = 0
@@ -197,11 +196,58 @@ Partial Class InstrumentInterfaceForm
         Me._DisconnectCommandsTextBox.Text = "localnode.prompts = 0"
         Me._ToolTip.SetToolTip(Me._DisconnectCommandsTextBox, "Lists the commands to send to the instrument when closing the session.")
         '
+        '_SreCommandLabel
+        '
+        Me._SreCommandLabel.AutoSize = True
+        Me._SreCommandLabel.Location = New System.Drawing.Point(439, 17)
+        Me._SreCommandLabel.Name = "_SreCommandLabel"
+        Me._SreCommandLabel.Size = New System.Drawing.Size(97, 17)
+        Me._SreCommandLabel.TabIndex = 6
+        Me._SreCommandLabel.Text = "SRE Command:"
+        Me._SreCommandLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        Me._ToolTip.SetToolTip(Me._SreCommandLabel, "Service Request Enable command")
+        '
+        '_SrqBitsNumeric
+        '
+        Me._SrqBitsNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._SrqBitsNumeric.Hexadecimal = True
+        Me._SrqBitsNumeric.Location = New System.Drawing.Point(538, 44)
+        Me._SrqBitsNumeric.Maximum = New Decimal(New Integer() {128, 0, 0, 0})
+        Me._SrqBitsNumeric.Name = "_SrqBitsNumeric"
+        Me._SrqBitsNumeric.Size = New System.Drawing.Size(43, 25)
+        Me._SrqBitsNumeric.TabIndex = 9
+        Me._ToolTip.SetToolTip(Me._SrqBitsNumeric, "Service Requested Bits")
+        Me._SrqBitsNumeric.Value = New Decimal(New Integer() {64, 0, 0, 0})
+        '
+        '_SreCommandComboBox
+        '
+        Me._SreCommandComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._SreCommandComboBox.FormattingEnabled = True
+        Me._SreCommandComboBox.Items.AddRange(New Object() {"*SRE 16", "M63x"})
+        Me._SreCommandComboBox.Location = New System.Drawing.Point(538, 13)
+        Me._SreCommandComboBox.Name = "_SreCommandComboBox"
+        Me._SreCommandComboBox.Size = New System.Drawing.Size(121, 25)
+        Me._SreCommandComboBox.TabIndex = 7
+        Me._SreCommandComboBox.Text = "*SRE 16"
+        Me._ToolTip.SetToolTip(Me._SreCommandComboBox, "Service request Enable command")
+        '
+        '_MessageAvailableBitsNumeric
+        '
+        Me._MessageAvailableBitsNumeric.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._MessageAvailableBitsNumeric.Hexadecimal = True
+        Me._MessageAvailableBitsNumeric.Location = New System.Drawing.Point(538, 75)
+        Me._MessageAvailableBitsNumeric.Maximum = New Decimal(New Integer() {128, 0, 0, 0})
+        Me._MessageAvailableBitsNumeric.Name = "_MessageAvailableBitsNumeric"
+        Me._MessageAvailableBitsNumeric.Size = New System.Drawing.Size(43, 25)
+        Me._MessageAvailableBitsNumeric.TabIndex = 11
+        Me._ToolTip.SetToolTip(Me._MessageAvailableBitsNumeric, "Message Available Bits")
+        Me._MessageAvailableBitsNumeric.Value = New Decimal(New Integer() {16, 0, 0, 0})
+        '
         '_Tabs
         '
-        Me._Tabs.Controls.Add(Me._connectTabPage)
+        Me._Tabs.Controls.Add(Me._ConnectTabPage)
         Me._Tabs.Controls.Add(Me._SendReceiveTabPage)
-        Me._Tabs.Controls.Add(Me._messagesTabPage)
+        Me._Tabs.Controls.Add(Me._MessagesTabPage)
         Me._Tabs.Dock = System.Windows.Forms.DockStyle.Fill
         Me._Tabs.ItemSize = New System.Drawing.Size(42, 22)
         Me._Tabs.Location = New System.Drawing.Point(0, 0)
@@ -209,18 +255,17 @@ Partial Class InstrumentInterfaceForm
         Me._Tabs.SelectedIndex = 0
         Me._Tabs.Size = New System.Drawing.Size(875, 538)
         Me._Tabs.TabIndex = 1
-
         '
-        '_connectTabPage
+        '_ConnectTabPage
         '
-        Me._connectTabPage.Controls.Add(Me._ConnectTabLayout)
-        Me._connectTabPage.Location = New System.Drawing.Point(4, 22)
-        Me._connectTabPage.Name = "_connectTabPage"
-        Me._connectTabPage.Padding = New System.Windows.Forms.Padding(3)
-        Me._connectTabPage.Size = New System.Drawing.Size(867, 512)
-        Me._connectTabPage.TabIndex = 3
-        Me._connectTabPage.Text = "CONNECT"
-        Me._connectTabPage.UseVisualStyleBackColor = True
+        Me._ConnectTabPage.Controls.Add(Me._ConnectTabLayout)
+        Me._ConnectTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._ConnectTabPage.Name = "_ConnectTabPage"
+        Me._ConnectTabPage.Padding = New System.Windows.Forms.Padding(3)
+        Me._ConnectTabPage.Size = New System.Drawing.Size(867, 508)
+        Me._ConnectTabPage.TabIndex = 3
+        Me._ConnectTabPage.Text = "CONNECT"
+        Me._ConnectTabPage.UseVisualStyleBackColor = True
         '
         '_ConnectTabLayout
         '
@@ -229,8 +274,8 @@ Partial Class InstrumentInterfaceForm
         Me._ConnectTabLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
         Me._ConnectTabLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle())
         Me._ConnectTabLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
-        Me._ConnectTabLayout.Controls.Add(Me._connectGroupBox, 1, 1)
-        Me._ConnectTabLayout.Controls.Add(Me._settingsGroupBox, 2, 1)
+        Me._ConnectTabLayout.Controls.Add(Me._ConnectGroupBox, 1, 1)
+        Me._ConnectTabLayout.Controls.Add(Me._SettingsGroupBox, 2, 1)
         Me._ConnectTabLayout.Dock = System.Windows.Forms.DockStyle.Fill
         Me._ConnectTabLayout.Location = New System.Drawing.Point(3, 3)
         Me._ConnectTabLayout.Name = "_ConnectTabLayout"
@@ -239,46 +284,46 @@ Partial Class InstrumentInterfaceForm
         Me._ConnectTabLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
         Me._ConnectTabLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50.0!))
         Me._ConnectTabLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24.0!))
-        Me._ConnectTabLayout.Size = New System.Drawing.Size(861, 506)
+        Me._ConnectTabLayout.Size = New System.Drawing.Size(861, 502)
         Me._ConnectTabLayout.TabIndex = 26
         '
-        '_connectGroupBox
+        '_ConnectGroupBox
         '
-        Me._connectGroupBox.Controls.Add(Me._InterfacePanel)
-        Me._connectGroupBox.Location = New System.Drawing.Point(56, 74)
-        Me._connectGroupBox.Name = "_connectGroupBox"
-        Me._connectGroupBox.Size = New System.Drawing.Size(408, 357)
-        Me._connectGroupBox.TabIndex = 27
-        Me._connectGroupBox.TabStop = False
-        Me._connectGroupBox.Text = "CONNECT:"
+        Me._ConnectGroupBox.Controls.Add(Me._InterfacePanel)
+        Me._ConnectGroupBox.Location = New System.Drawing.Point(56, 72)
+        Me._ConnectGroupBox.Name = "_ConnectGroupBox"
+        Me._ConnectGroupBox.Size = New System.Drawing.Size(408, 357)
+        Me._ConnectGroupBox.TabIndex = 27
+        Me._ConnectGroupBox.TabStop = False
+        Me._ConnectGroupBox.Text = "CONNECT:"
         '
         '_InterfacePanel
         '
         Me._InterfacePanel.BackColor = System.Drawing.Color.Transparent
         Me._InterfacePanel.Enabled = False
-        Me._InterfacePanel.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._InterfacePanel.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._InterfacePanel.Location = New System.Drawing.Point(13, 23)
         Me._InterfacePanel.Name = "_InterfacePanel"
         Me._InterfacePanel.Size = New System.Drawing.Size(368, 311)
         Me._InterfacePanel.TabIndex = 0
         '
-        '_settingsGroupBox
+        '_SettingsGroupBox
         '
-        Me._settingsGroupBox.Controls.Add(Me._DisconnectCommandsTextBox)
-        Me._settingsGroupBox.Controls.Add(Me._SendDisconnectCommandsCheckBox)
-        Me._settingsGroupBox.Location = New System.Drawing.Point(470, 74)
-        Me._settingsGroupBox.Name = "_settingsGroupBox"
-        Me._settingsGroupBox.Size = New System.Drawing.Size(335, 355)
-        Me._settingsGroupBox.TabIndex = 29
-        Me._settingsGroupBox.TabStop = False
-        Me._settingsGroupBox.Text = "SETTINGS: "
+        Me._SettingsGroupBox.Controls.Add(Me._DisconnectCommandsTextBox)
+        Me._SettingsGroupBox.Controls.Add(Me._SendDisconnectCommandsCheckBox)
+        Me._SettingsGroupBox.Location = New System.Drawing.Point(470, 72)
+        Me._SettingsGroupBox.Name = "_SettingsGroupBox"
+        Me._SettingsGroupBox.Size = New System.Drawing.Size(335, 355)
+        Me._SettingsGroupBox.TabIndex = 29
+        Me._SettingsGroupBox.TabStop = False
+        Me._SettingsGroupBox.Text = "SETTINGS: "
         '
         '_SendDisconnectCommandsCheckBox
         '
         Me._SendDisconnectCommandsCheckBox.AutoSize = True
         Me._SendDisconnectCommandsCheckBox.BackColor = System.Drawing.Color.Transparent
         Me._SendDisconnectCommandsCheckBox.Cursor = System.Windows.Forms.Cursors.Default
-        Me._SendDisconnectCommandsCheckBox.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._SendDisconnectCommandsCheckBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._SendDisconnectCommandsCheckBox.ForeColor = System.Drawing.SystemColors.ControlText
         Me._SendDisconnectCommandsCheckBox.Location = New System.Drawing.Point(21, 28)
         Me._SendDisconnectCommandsCheckBox.Name = "_SendDisconnectCommandsCheckBox"
@@ -290,55 +335,75 @@ Partial Class InstrumentInterfaceForm
         '
         '_SendReceiveTabPage
         '
-        Me._SendReceiveTabPage.Controls.Add(Me._sendReceiveLayout)
-        Me._SendReceiveTabPage.Location = New System.Drawing.Point(4, 22)
+        Me._SendReceiveTabPage.Controls.Add(Me._SendReceiveLayout)
+        Me._SendReceiveTabPage.Location = New System.Drawing.Point(4, 26)
         Me._SendReceiveTabPage.Name = "_SendReceiveTabPage"
-        Me._SendReceiveTabPage.Size = New System.Drawing.Size(867, 512)
+        Me._SendReceiveTabPage.Size = New System.Drawing.Size(867, 508)
         Me._SendReceiveTabPage.TabIndex = 0
         Me._SendReceiveTabPage.Text = "SEND / RECEIVE"
         Me._SendReceiveTabPage.UseVisualStyleBackColor = True
         '
-        '_sendReceiveLayout
+        '_SendReceiveLayout
         '
-        Me._sendReceiveLayout.ColumnCount = 3
-        Me._sendReceiveLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 12.0!))
-        Me._sendReceiveLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me._sendReceiveLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 12.0!))
-        Me._sendReceiveLayout.Controls.Add(Me._sendReceiveControlPanel, 1, 2)
-        Me._sendReceiveLayout.Controls.Add(Me._sendReceiveSplitContainer, 1, 1)
-        Me._sendReceiveLayout.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._sendReceiveLayout.Location = New System.Drawing.Point(0, 0)
-        Me._sendReceiveLayout.Name = "_sendReceiveLayout"
-        Me._sendReceiveLayout.RowCount = 4
-        Me._sendReceiveLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5.0!))
-        Me._sendReceiveLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
-        Me._sendReceiveLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
-        Me._sendReceiveLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5.0!))
-        Me._sendReceiveLayout.Size = New System.Drawing.Size(867, 512)
-        Me._sendReceiveLayout.TabIndex = 0
+        Me._SendReceiveLayout.ColumnCount = 3
+        Me._SendReceiveLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 12.0!))
+        Me._SendReceiveLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me._SendReceiveLayout.ColumnStyles.Add(New System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 12.0!))
+        Me._SendReceiveLayout.Controls.Add(Me._SendReceiveControlPanel, 1, 2)
+        Me._SendReceiveLayout.Controls.Add(Me._SendReceiveSplitContainer, 1, 1)
+        Me._SendReceiveLayout.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._SendReceiveLayout.Location = New System.Drawing.Point(0, 0)
+        Me._SendReceiveLayout.Name = "_SendReceiveLayout"
+        Me._SendReceiveLayout.RowCount = 4
+        Me._SendReceiveLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5.0!))
+        Me._SendReceiveLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100.0!))
+        Me._SendReceiveLayout.RowStyles.Add(New System.Windows.Forms.RowStyle())
+        Me._SendReceiveLayout.RowStyles.Add(New System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 5.0!))
+        Me._SendReceiveLayout.Size = New System.Drawing.Size(867, 508)
+        Me._SendReceiveLayout.TabIndex = 0
         '
-        '_sendReceiveControlPanel
+        '_SendReceiveControlPanel
         '
-        Me._sendReceiveControlPanel.Controls.Add(Me._SreCommandComboBox)
-        Me._sendReceiveControlPanel.Controls.Add(Me._MessageAvailableBitsNumeric)
-        Me._sendReceiveControlPanel.Controls.Add(Me._MessageAvailableBitsLabel)
-        Me._sendReceiveControlPanel.Controls.Add(Me._SrqBitsNumeric)
-        Me._sendReceiveControlPanel.Controls.Add(Me._SrqBitsLabel)
-        Me._sendReceiveControlPanel.Controls.Add(Me._SendButton)
-        Me._sendReceiveControlPanel.Controls.Add(Me._SendComboCommandButton)
-        Me._sendReceiveControlPanel.Controls.Add(Me._ReceiveOptionsGroupBox)
-        Me._sendReceiveControlPanel.Controls.Add(Me._SreCommandLabel)
-        Me._sendReceiveControlPanel.Controls.Add(Me._CommandsComboBox)
-        Me._sendReceiveControlPanel.Controls.Add(Me._CommandsComboBoxLabel)
-        Me._sendReceiveControlPanel.Controls.Add(Me._ReadStatusRegisterButton)
-        Me._sendReceiveControlPanel.Controls.Add(Me._TspTipLabel)
-        Me._sendReceiveControlPanel.Controls.Add(Me._ReceiveButton)
-        Me._sendReceiveControlPanel.Dock = System.Windows.Forms.DockStyle.Top
-        Me._sendReceiveControlPanel.Enabled = False
-        Me._sendReceiveControlPanel.Location = New System.Drawing.Point(15, 378)
-        Me._sendReceiveControlPanel.Name = "_sendReceiveControlPanel"
-        Me._sendReceiveControlPanel.Size = New System.Drawing.Size(837, 126)
-        Me._sendReceiveControlPanel.TabIndex = 0
+        Me._SendReceiveControlPanel.Controls.Add(Me._SreCommandComboBox)
+        Me._SendReceiveControlPanel.Controls.Add(Me._MessageAvailableBitsNumeric)
+        Me._SendReceiveControlPanel.Controls.Add(Me._MessageAvailableBitsLabel)
+        Me._SendReceiveControlPanel.Controls.Add(Me._SrqBitsNumeric)
+        Me._SendReceiveControlPanel.Controls.Add(Me._SrqBitsLabel)
+        Me._SendReceiveControlPanel.Controls.Add(Me._SendButton)
+        Me._SendReceiveControlPanel.Controls.Add(Me._SendComboCommandButton)
+        Me._SendReceiveControlPanel.Controls.Add(Me._ReceiveOptionsGroupBox)
+        Me._SendReceiveControlPanel.Controls.Add(Me._SreCommandLabel)
+        Me._SendReceiveControlPanel.Controls.Add(Me._CommandsComboBox)
+        Me._SendReceiveControlPanel.Controls.Add(Me._CommandsComboBoxLabel)
+        Me._SendReceiveControlPanel.Controls.Add(Me._ReadStatusRegisterButton)
+        Me._SendReceiveControlPanel.Controls.Add(Me._TspTipLabel)
+        Me._SendReceiveControlPanel.Controls.Add(Me._ReceiveButton)
+        Me._SendReceiveControlPanel.Dock = System.Windows.Forms.DockStyle.Top
+        Me._SendReceiveControlPanel.Enabled = False
+        Me._SendReceiveControlPanel.Location = New System.Drawing.Point(15, 374)
+        Me._SendReceiveControlPanel.Name = "_SendReceiveControlPanel"
+        Me._SendReceiveControlPanel.Size = New System.Drawing.Size(837, 126)
+        Me._SendReceiveControlPanel.TabIndex = 0
+        '
+        '_MessageAvailableBitsLabel
+        '
+        Me._MessageAvailableBitsLabel.AutoSize = True
+        Me._MessageAvailableBitsLabel.Location = New System.Drawing.Point(476, 79)
+        Me._MessageAvailableBitsLabel.Name = "_MessageAvailableBitsLabel"
+        Me._MessageAvailableBitsLabel.Size = New System.Drawing.Size(59, 17)
+        Me._MessageAvailableBitsLabel.TabIndex = 10
+        Me._MessageAvailableBitsLabel.Text = "MAV Bits"
+        Me._MessageAvailableBitsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
+        '_SrqBitsLabel
+        '
+        Me._SrqBitsLabel.AutoSize = True
+        Me._SrqBitsLabel.Location = New System.Drawing.Point(479, 48)
+        Me._SrqBitsLabel.Name = "_SrqBitsLabel"
+        Me._SrqBitsLabel.Size = New System.Drawing.Size(57, 17)
+        Me._SrqBitsLabel.TabIndex = 8
+        Me._SrqBitsLabel.Text = "SRQ Bits"
+        Me._SrqBitsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         '_ReceiveOptionsGroupBox
         '
@@ -365,7 +430,7 @@ Partial Class InstrumentInterfaceForm
         '
         '_PollIntervalNumericUpDown
         '
-        Me._PollIntervalNumericUpDown.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._PollIntervalNumericUpDown.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._PollIntervalNumericUpDown.Location = New System.Drawing.Point(87, 49)
         Me._PollIntervalNumericUpDown.Maximum = New Decimal(New Integer() {999, 0, 0, 0})
         Me._PollIntervalNumericUpDown.Minimum = New Decimal(New Integer() {10, 0, 0, 0})
@@ -378,7 +443,7 @@ Partial Class InstrumentInterfaceForm
         '
         Me._ReadManualRadioButton.AutoSize = True
         Me._ReadManualRadioButton.Checked = True
-        Me._ReadManualRadioButton.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._ReadManualRadioButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._ReadManualRadioButton.Location = New System.Drawing.Point(14, 24)
         Me._ReadManualRadioButton.Name = "_ReadManualRadioButton"
         Me._ReadManualRadioButton.Size = New System.Drawing.Size(82, 21)
@@ -391,7 +456,7 @@ Partial Class InstrumentInterfaceForm
         '
         Me._CommandsComboBox.BackColor = System.Drawing.SystemColors.Window
         Me._CommandsComboBox.Cursor = System.Windows.Forms.Cursors.Default
-        Me._CommandsComboBox.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._CommandsComboBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._CommandsComboBox.ForeColor = System.Drawing.SystemColors.WindowText
         Me._CommandsComboBox.Items.AddRange(New Object() {"print( Me._VERSION )", "localnode.prompts = 1", "localnode.errorqueue.clear()", "localnode.reset()", "*RST", "*CLS", "*IDN?", "M63x", "U0x", "U1x"})
         Me._CommandsComboBox.Location = New System.Drawing.Point(15, 76)
@@ -426,23 +491,23 @@ Partial Class InstrumentInterfaceForm
         Me._TspTipLabel.TabIndex = 21
         Me._TspTipLabel.Text = "Receiving the prompt after a print() or *IDN causes error 420.  "
         '
-        '_sendReceiveSplitContainer
+        '_SendReceiveSplitContainer
         '
-        Me._sendReceiveSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._sendReceiveSplitContainer.Location = New System.Drawing.Point(15, 8)
-        Me._sendReceiveSplitContainer.Name = "_sendReceiveSplitContainer"
+        Me._SendReceiveSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._SendReceiveSplitContainer.Location = New System.Drawing.Point(15, 8)
+        Me._SendReceiveSplitContainer.Name = "_SendReceiveSplitContainer"
         '
-        '_sendReceiveSplitContainer.Panel1
+        '_SendReceiveSplitContainer.Panel1
         '
-        Me._sendReceiveSplitContainer.Panel1.Controls.Add(Me._SendGroupBox)
+        Me._SendReceiveSplitContainer.Panel1.Controls.Add(Me._SendGroupBox)
         '
-        '_sendReceiveSplitContainer.Panel2
+        '_SendReceiveSplitContainer.Panel2
         '
-        Me._sendReceiveSplitContainer.Panel2.Controls.Add(Me._ReceiveGroupBox)
-        Me._sendReceiveSplitContainer.Size = New System.Drawing.Size(837, 364)
-        Me._sendReceiveSplitContainer.SplitterDistance = 278
-        Me._sendReceiveSplitContainer.SplitterWidth = 5
-        Me._sendReceiveSplitContainer.TabIndex = 26
+        Me._SendReceiveSplitContainer.Panel2.Controls.Add(Me._ReceiveGroupBox)
+        Me._SendReceiveSplitContainer.Size = New System.Drawing.Size(837, 360)
+        Me._SendReceiveSplitContainer.SplitterDistance = 278
+        Me._SendReceiveSplitContainer.SplitterWidth = 5
+        Me._SendReceiveSplitContainer.TabIndex = 26
         '
         '_SendGroupBox
         '
@@ -450,7 +515,7 @@ Partial Class InstrumentInterfaceForm
         Me._SendGroupBox.Dock = System.Windows.Forms.DockStyle.Fill
         Me._SendGroupBox.Location = New System.Drawing.Point(0, 0)
         Me._SendGroupBox.Name = "_SendGroupBox"
-        Me._SendGroupBox.Size = New System.Drawing.Size(278, 364)
+        Me._SendGroupBox.Size = New System.Drawing.Size(278, 360)
         Me._SendGroupBox.TabIndex = 0
         Me._SendGroupBox.TabStop = False
         Me._SendGroupBox.Text = "SENT TO INSTRUMENT"
@@ -461,7 +526,7 @@ Partial Class InstrumentInterfaceForm
         Me._InputTextBox.BackColor = System.Drawing.SystemColors.Window
         Me._InputTextBox.Cursor = System.Windows.Forms.Cursors.IBeam
         Me._InputTextBox.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._InputTextBox.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._InputTextBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._InputTextBox.ForeColor = System.Drawing.SystemColors.WindowText
         Me._InputTextBox.Location = New System.Drawing.Point(3, 21)
         Me._InputTextBox.MaxLength = 0
@@ -469,7 +534,7 @@ Partial Class InstrumentInterfaceForm
         Me._InputTextBox.Name = "_InputTextBox"
         Me._InputTextBox.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me._InputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me._InputTextBox.Size = New System.Drawing.Size(272, 340)
+        Me._InputTextBox.Size = New System.Drawing.Size(272, 336)
         Me._InputTextBox.TabIndex = 0
         '
         '_ReceiveGroupBox
@@ -478,7 +543,7 @@ Partial Class InstrumentInterfaceForm
         Me._ReceiveGroupBox.Dock = System.Windows.Forms.DockStyle.Fill
         Me._ReceiveGroupBox.Location = New System.Drawing.Point(0, 0)
         Me._ReceiveGroupBox.Name = "_ReceiveGroupBox"
-        Me._ReceiveGroupBox.Size = New System.Drawing.Size(554, 364)
+        Me._ReceiveGroupBox.Size = New System.Drawing.Size(554, 360)
         Me._ReceiveGroupBox.TabIndex = 0
         Me._ReceiveGroupBox.TabStop = False
         Me._ReceiveGroupBox.Text = "RECEIVED FROM INSTRUMENT: "
@@ -489,7 +554,7 @@ Partial Class InstrumentInterfaceForm
         Me._OutputTextBox.BackColor = System.Drawing.SystemColors.Window
         Me._OutputTextBox.Cursor = System.Windows.Forms.Cursors.IBeam
         Me._OutputTextBox.Dock = System.Windows.Forms.DockStyle.Fill
-        Me._OutputTextBox.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
+        Me._OutputTextBox.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
         Me._OutputTextBox.ForeColor = System.Drawing.SystemColors.WindowText
         Me._OutputTextBox.Location = New System.Drawing.Point(3, 21)
         Me._OutputTextBox.MaxLength = 0
@@ -497,48 +562,56 @@ Partial Class InstrumentInterfaceForm
         Me._OutputTextBox.Name = "_OutputTextBox"
         Me._OutputTextBox.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me._OutputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me._OutputTextBox.Size = New System.Drawing.Size(548, 340)
+        Me._OutputTextBox.Size = New System.Drawing.Size(548, 336)
         Me._OutputTextBox.TabIndex = 0
         '
-        '_messagesTabPage
+        '_MessagesTabPage
         '
-        Me._messagesTabPage.Controls.Add(Me._TraceMessagesBox)
-        Me._messagesTabPage.Location = New System.Drawing.Point(4, 22)
-        Me._messagesTabPage.Name = "_messagesTabPage"
-        Me._messagesTabPage.Size = New System.Drawing.Size(867, 512)
-        Me._messagesTabPage.TabIndex = 2
+        Me._MessagesTabPage.Controls.Add(Me._TraceMessagesBox)
+        Me._MessagesTabPage.Location = New System.Drawing.Point(4, 26)
+        Me._MessagesTabPage.Name = "_MessagesTabPage"
+        Me._MessagesTabPage.Size = New System.Drawing.Size(867, 508)
+        Me._MessagesTabPage.TabIndex = 2
         Me._MessagesTabPage.Text = "Log"
-        Me._messagesTabPage.UseVisualStyleBackColor = True
+        Me._MessagesTabPage.UseVisualStyleBackColor = True
         '
-        '_MessagesTextBox
+        '_TraceMessagesBox
         '
         Me._TraceMessagesBox.AcceptsReturn = True
+        Me._TraceMessagesBox.AlertLevel = System.Diagnostics.TraceEventType.Warning
         Me._TraceMessagesBox.BackColor = System.Drawing.SystemColors.Window
+        Me._TraceMessagesBox.CaptionFormat = "{0} ≡"
+        Me._TraceMessagesBox.CausesValidation = False
         Me._TraceMessagesBox.Cursor = System.Windows.Forms.Cursors.IBeam
         Me._TraceMessagesBox.Dock = System.Windows.Forms.DockStyle.Fill
+        Me._TraceMessagesBox.Font = New System.Drawing.Font("Consolas", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._TraceMessagesBox.ForeColor = System.Drawing.SystemColors.WindowText
         Me._TraceMessagesBox.Location = New System.Drawing.Point(0, 0)
         Me._TraceMessagesBox.MaxLength = 0
         Me._TraceMessagesBox.Multiline = True
-        Me._TraceMessagesBox.Name = "_MessagesTextBox"
+        Me._TraceMessagesBox.Name = "_TraceMessagesBox"
+        Me._TraceMessagesBox.PresetCount = 100
+        Me._TraceMessagesBox.ReadOnly = True
+        Me._TraceMessagesBox.ResetCount = 200
         Me._TraceMessagesBox.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me._TraceMessagesBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me._TraceMessagesBox.Size = New System.Drawing.Size(867, 512)
+        Me._TraceMessagesBox.Size = New System.Drawing.Size(867, 508)
         Me._TraceMessagesBox.TabIndex = 15
+        Me._TraceMessagesBox.TraceLevel = System.Diagnostics.TraceEventType.Verbose
         '
-        '_statusBar
+        '_StatusBar
         '
-        Me._statusBar.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
-        Me._statusBar.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._StatusLabel, Me._StatusRegisterLabel})
-        Me._statusBar.Location = New System.Drawing.Point(0, 538)
-        Me._statusBar.Name = "_statusBar"
-        Me._statusBar.Padding = New System.Windows.Forms.Padding(1, 0, 16, 0)
-        Me._statusBar.ShowItemToolTips = True
-        Me._statusBar.Size = New System.Drawing.Size(875, 25)
-        Me._statusBar.TabIndex = 0
-        Me._statusBar.Text = "Ready"
+        Me._StatusBar.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._StatusBar.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me._StatusLabel, Me._StatusRegisterLabel})
+        Me._StatusBar.Location = New System.Drawing.Point(0, 538)
+        Me._StatusBar.Name = "_StatusBar"
+        Me._StatusBar.Padding = New System.Windows.Forms.Padding(1, 0, 16, 0)
+        Me._StatusBar.ShowItemToolTips = True
+        Me._StatusBar.Size = New System.Drawing.Size(875, 25)
+        Me._StatusBar.TabIndex = 0
+        Me._StatusBar.Text = "Ready"
         '
-        '_statusStatusBarPanel
+        '_StatusLabel
         '
         Me._StatusLabel.AutoSize = False
         Me._StatusLabel.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
@@ -546,7 +619,7 @@ Partial Class InstrumentInterfaceForm
             Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
         Me._StatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter
         Me._StatusLabel.Margin = New System.Windows.Forms.Padding(0)
-        Me._StatusLabel.Name = "_statusStatusBarPanel"
+        Me._StatusLabel.Name = "_StatusLabel"
         Me._StatusLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never
         Me._StatusLabel.Size = New System.Drawing.Size(822, 25)
         Me._StatusLabel.Spring = True
@@ -554,123 +627,52 @@ Partial Class InstrumentInterfaceForm
         Me._StatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         Me._StatusLabel.ToolTipText = "Status"
         '
-        '_statusRegisterLabel
+        '_StatusRegisterLabel
         '
         Me._StatusRegisterLabel.AutoToolTip = True
-        Me._StatusRegisterLabel.Name = "_statusRegisterLabel"
+        Me._StatusRegisterLabel.Name = "_StatusRegisterLabel"
         Me._StatusRegisterLabel.Size = New System.Drawing.Size(36, 20)
         Me._StatusRegisterLabel.Text = "0x00"
         Me._StatusRegisterLabel.ToolTipText = "Status Register value"
         '
-        '_SreCommandLabel
-        '
-        Me._SreCommandLabel.AutoSize = True
-        Me._SreCommandLabel.Location = New System.Drawing.Point(439, 17)
-        Me._SreCommandLabel.Name = "_SreCommandLabel"
-        Me._SreCommandLabel.Size = New System.Drawing.Size(97, 17)
-        Me._SreCommandLabel.TabIndex = 6
-        Me._SreCommandLabel.Text = "SRE Command:"
-        Me._SreCommandLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me._ToolTip.SetToolTip(Me._SreCommandLabel, "Service Request Enable command")
-        '
-        '_SrqBitsNumeric
-        '
-        Me._SrqBitsNumeric.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
-        Me._SrqBitsNumeric.Hexadecimal = True
-        Me._SrqBitsNumeric.Location = New System.Drawing.Point(538, 44)
-        Me._SrqBitsNumeric.Maximum = New Decimal(New Integer() {128, 0, 0, 0})
-        Me._SrqBitsNumeric.Name = "_SrqBitsNumeric"
-        Me._SrqBitsNumeric.Size = New System.Drawing.Size(43, 25)
-        Me._SrqBitsNumeric.TabIndex = 9
-        Me._ToolTip.SetToolTip(Me._SrqBitsNumeric, "Service Requested Bits")
-        Me._SrqBitsNumeric.Value = New Decimal(New Integer() {64, 0, 0, 0})
-        '
-        '_SrqBitsLabel
-        '
-        Me._SrqBitsLabel.AutoSize = True
-        Me._SrqBitsLabel.Location = New System.Drawing.Point(479, 48)
-        Me._SrqBitsLabel.Name = "_SrqBitsLabel"
-        Me._SrqBitsLabel.Size = New System.Drawing.Size(57, 17)
-        Me._SrqBitsLabel.TabIndex = 8
-        Me._SrqBitsLabel.Text = "SRQ Bits"
-        Me._SrqBitsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        '_SreCommandComboBox
-        '
-        Me._SreCommandComboBox.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
-        Me._SreCommandComboBox.FormattingEnabled = True
-        Me._SreCommandComboBox.Items.AddRange(New Object() {"*SRE 16", "M63x"})
-        Me._SreCommandComboBox.Location = New System.Drawing.Point(538, 13)
-        Me._SreCommandComboBox.Name = "_SreCommandComboBox"
-        Me._SreCommandComboBox.Size = New System.Drawing.Size(121, 25)
-        Me._SreCommandComboBox.TabIndex = 7
-        Me._SreCommandComboBox.Text = "*SRE 16"
-        Me._ToolTip.SetToolTip(Me._SreCommandComboBox, "Service request Enable command")
-        '
-        '_MessageAvailableBitsLabel
-        '
-        Me._MessageAvailableBitsLabel.AutoSize = True
-        Me._MessageAvailableBitsLabel.Location = New System.Drawing.Point(476, 79)
-        Me._MessageAvailableBitsLabel.Name = "_MessageAvailableBitsLabel"
-        Me._MessageAvailableBitsLabel.Size = New System.Drawing.Size(60, 17)
-        Me._MessageAvailableBitsLabel.TabIndex = 10
-        Me._MessageAvailableBitsLabel.Text = "MAV Bits"
-        Me._MessageAvailableBitsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-        '
-        '_MessageAvailableBitsNumeric
-        '
-        Me._MessageAvailableBitsNumeric.Font = New System.Drawing.Font(Me.Font, System.Drawing.FontStyle.Bold)
-        Me._MessageAvailableBitsNumeric.Hexadecimal = True
-        Me._MessageAvailableBitsNumeric.Location = New System.Drawing.Point(538, 75)
-        Me._MessageAvailableBitsNumeric.Maximum = New Decimal(New Integer() {128, 0, 0, 0})
-        Me._MessageAvailableBitsNumeric.Name = "_MessageAvailableBitsNumeric"
-        Me._MessageAvailableBitsNumeric.Size = New System.Drawing.Size(43, 25)
-        Me._MessageAvailableBitsNumeric.TabIndex = 11
-        Me._ToolTip.SetToolTip(Me._MessageAvailableBitsNumeric, "Message Available Bits")
-        Me._MessageAvailableBitsNumeric.Value = New Decimal(New Integer() {16, 0, 0, 0})
-        '
-        'MessageBasedVisaPanel
+        'InstrumentInterfaceForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 17.0!)
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(875, 563)
         Me.Controls.Add(Me._Tabs)
-        Me.Controls.Add(Me._statusBar)
-        Me.Cursor = System.Windows.Forms.Cursors.Default
-        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
+        Me.Controls.Add(Me._StatusBar)
         Me.Location = New System.Drawing.Point(297, 150)
-        Me.MaximizeBox = False
-        Me.Name = "MessageBasedVisaPanel"
+        Me.Name = "InstrumentInterfaceForm"
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
         Me.Text = "Mini VISA Tester"
+        CType(Me._SrqBitsNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me._MessageAvailableBitsNumeric, System.ComponentModel.ISupportInitialize).EndInit()
         Me._Tabs.ResumeLayout(False)
-        Me._connectTabPage.ResumeLayout(False)
+        Me._ConnectTabPage.ResumeLayout(False)
         Me._ConnectTabLayout.ResumeLayout(False)
-        Me._connectGroupBox.ResumeLayout(False)
-        Me._settingsGroupBox.ResumeLayout(False)
-        Me._settingsGroupBox.PerformLayout()
+        Me._ConnectGroupBox.ResumeLayout(False)
+        Me._SettingsGroupBox.ResumeLayout(False)
+        Me._SettingsGroupBox.PerformLayout()
         Me._SendReceiveTabPage.ResumeLayout(False)
-        Me._sendReceiveLayout.ResumeLayout(False)
-        Me._sendReceiveControlPanel.ResumeLayout(False)
-        Me._sendReceiveControlPanel.PerformLayout()
+        Me._SendReceiveLayout.ResumeLayout(False)
+        Me._SendReceiveControlPanel.ResumeLayout(False)
+        Me._SendReceiveControlPanel.PerformLayout()
         Me._ReceiveOptionsGroupBox.ResumeLayout(False)
         Me._ReceiveOptionsGroupBox.PerformLayout()
         CType(Me._PollIntervalNumericUpDown, System.ComponentModel.ISupportInitialize).EndInit()
-        Me._sendReceiveSplitContainer.Panel1.ResumeLayout(False)
-        Me._sendReceiveSplitContainer.Panel2.ResumeLayout(False)
-        CType(Me._sendReceiveSplitContainer, System.ComponentModel.ISupportInitialize).EndInit()
-        Me._sendReceiveSplitContainer.ResumeLayout(False)
+        Me._SendReceiveSplitContainer.Panel1.ResumeLayout(False)
+        Me._SendReceiveSplitContainer.Panel2.ResumeLayout(False)
+        CType(Me._SendReceiveSplitContainer, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._SendReceiveSplitContainer.ResumeLayout(False)
         Me._SendGroupBox.ResumeLayout(False)
         Me._SendGroupBox.PerformLayout()
         Me._ReceiveGroupBox.ResumeLayout(False)
         Me._ReceiveGroupBox.PerformLayout()
-        Me._messagesTabPage.ResumeLayout(False)
-        Me._messagesTabPage.PerformLayout()
-        Me._statusBar.ResumeLayout(False)
-        Me._statusBar.PerformLayout()
-        CType(Me._SrqBitsNumeric, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me._MessageAvailableBitsNumeric, System.ComponentModel.ISupportInitialize).EndInit()
+        Me._MessagesTabPage.ResumeLayout(False)
+        Me._MessagesTabPage.PerformLayout()
+        Me._StatusBar.ResumeLayout(False)
+        Me._StatusBar.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

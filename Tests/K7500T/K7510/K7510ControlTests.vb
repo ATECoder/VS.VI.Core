@@ -70,8 +70,8 @@ Namespace K7500.Tests
 
         <TestMethod(), TestCategory("VI")>
         Public Sub AssignDeviceTest()
-            Using control As VI.K7500.K7500Control = New VI.K7500.K7500Control
-                Using device As VI.K7500.Device = VI.K7500.Device.Create
+            Using control As VI.Tsp2.K7500.K7500Control = New VI.Tsp2.K7500.K7500Control
+                Using device As VI.Tsp2.K7500.Device = VI.Tsp2.K7500.Device.Create
                     device.AddListener(TestInfo.TraceMessagesQueueListener)
                     control.AssignDevice(device, False)
                     K7510Manager.OpenCloseSession(1, control)
@@ -81,8 +81,8 @@ Namespace K7500.Tests
 
         <TestMethod(), TestCategory("VI")>
         Public Sub AssignOpenDeviceTest()
-            Using control As VI.K7500.K7500Control = New VI.K7500.K7500Control
-                Using device As VI.K7500.Device = VI.K7500.Device.Create
+            Using control As VI.Tsp2.K7500.K7500Control = New VI.Tsp2.K7500.K7500Control
+                Using device As VI.Tsp2.K7500.Device = VI.Tsp2.K7500.Device.Create
                     device.AddListener(TestInfo.TraceMessagesQueueListener)
                     K7510Manager.OpenSession(device)
                     control.AssignDevice(device, False)

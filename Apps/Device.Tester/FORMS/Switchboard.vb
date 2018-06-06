@@ -21,7 +21,7 @@ Public Class Switchboard
         Me.InitializeComponent()
         ' turn off saving to prevent exception reported due to access from two programs
         Me.SaveSettingsOnClosing = False
-        Me._OpenForms = New Instrument.InstrumentPanelFormCollection
+        Me._OpenForms = New Core.Pith.ConsoleFormCollection
     End Sub
 
     ''' <summary>
@@ -154,7 +154,7 @@ Public Class Switchboard
         <System.ComponentModel.Description("Instrument Interface Panel")> InstrumentInterfacePanel
     End Enum
 
-    Private _OpenForms As Instrument.InstrumentPanelFormCollection
+    Private _OpenForms As Core.Pith.ConsoleFormCollection
     ''' <summary> Open selected items. </summary>
     ''' <param name="sender"> <see cref="Object"/> instance of this
     ''' <see cref="Form"/> </param>
@@ -163,15 +163,15 @@ Public Class Switchboard
                                   Justification:="Disposed when closed as part for the forms collection")>
     Private Sub _OpenButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _OpenButton.Click
         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-        Select Case Me.selectedAction
+        Select Case Me.SelectedAction
             Case ActionOption.InterfaceForm
-                Me._OpenForms.ShowNew(New Instrument.InterfaceForm, My.Application.MyLog)
+                Me._OpenForms.ShowNew("INTERFACE", New Core.Pith.ConsoleForm, New Instrument.InterfacePanel, My.Application.MyLog, True)
             Case ActionOption.SimpleReadAndWrite
-                Me._OpenForms.ShowNew(New Instrument.SimpleReadWriteForm, My.Application.MyLog)
+                Me._OpenForms.ShowNew("R/W", New Core.Pith.ConsoleForm, New Instrument.SimpleReadWritePanel, My.Application.MyLog, True)
             Case ActionOption.ServiceRequester
-                Me._OpenForms.ShowNew(New Instrument.ServiceRequesterForm, My.Application.MyLog)
+                Me._OpenForms.ShowNew("SRQ", New Core.Pith.ConsoleForm, New Instrument.ServiceRequesterPanel, My.Application.MyLog, True)
             Case ActionOption.InstrumentInterfacePanel
-                Me._OpenForms.ShowNew(New Instrument.InstrumentInterfaceForm, My.Application.MyLog)
+                Me._OpenForms.ShowNew("VISA", New Core.Pith.ConsoleForm, New Instrument.ResourceConsoleControl, My.Application.MyLog, True)
         End Select
         Me.Cursor = System.Windows.Forms.Cursors.Default
     End Sub

@@ -72,12 +72,6 @@
     <Compile Include="..\..\resource\pith\my\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="FORMS\MovingWindowForm.Designer.vb">
-      <DependentUpon>MovingWindowForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="FORMS\MovingWindowForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -91,6 +85,12 @@
     <Compile Include="My\MyLibrary_Info.vb" />
     <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="My\MySuppressions.vb" />
+    <Compile Include="PANELS\MovingWindowControl.Designer.vb">
+      <DependentUpon>MovingWindowControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\MovingWindowControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PANELS\ResistancesMeterControl.Designer.vb">
       <DependentUpon>ResistancesMeterControl.vb</DependentUpon>
     </Compile>
@@ -130,8 +130,8 @@
     <Compile Include="SUBSYSTEMS\SystemSubsystem.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FORMS\MovingWindowForm.resx">
-      <DependentUpon>MovingWindowForm.vb</DependentUpon>
+    <EmbeddedResource Include="PANELS\MovingWindowControl.resx">
+      <DependentUpon>MovingWindowControl.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PANELS\ResistancesMeterControl.resx">
       <DependentUpon>ResistancesMeterControl.vb</DependentUpon>

@@ -309,16 +309,13 @@ Public MustInherit Class ReadingAmounts
     ''' <summary> Returns the meta status of the active reading. </summary>
     ''' <returns> The MetaStatus. </returns>
     Public Function ActiveMetaStatus() As MetaStatus
-        Dim result As MetaStatus = New MetaStatus
-        Dim amount As MeasuredAmount = TryCast(Me.Readings(Me.ActiveReadingType), MeasuredAmount)
-        If amount IsNot Nothing Then result = amount.MetaStatus
-        Return result
+        Return Me.Readings.MetaStatus(Me.ActiveReadingType)
     End Function
 
     ''' <summary> Active reading amount. </summary>
     ''' <returns> A ReadingAmount. </returns>
     Public Function ActiveReadingAmount() As ReadingAmount
-        Return TryCast(Me.Readings(Me.ActiveReadingType), ReadingAmount)
+        Return Me.Readings.ReadingAmount(Me.ActiveReadingType)
     End Function
 
     ''' <summary> Active reading unit symbol. </summary>
@@ -341,7 +338,7 @@ Public MustInherit Class ReadingAmounts
             If Me.IsEmpty Then
                 result = "0x------- "
             Else
-                Dim value As ReadingStatus = TryCast(Me.Readings(Me.ActiveReadingType), ReadingStatus)
+                Dim value As ReadingStatus = Me.Readings.ReadingStatus(Me.ActiveReadingType)
                 If value Is Nothing Then
                     result = "-.------- :("
                 Else

@@ -159,93 +159,93 @@ Namespace K3700.Tests
 
         Public ReadOnly Property R1 As Double
             Get
-                Return If(TestInfo.TestLocation = TestLocation.Remote, Me.RemoteR1, Me.LocalR1)
+                Return If(TestInfo.TestLocation = TestLocation.Second, Me.SecondR1, Me.FirstR1)
             End Get
         End Property
 
         Public ReadOnly Property R2 As Double
             Get
-                Return If(TestInfo.TestLocation = TestLocation.Remote, Me.RemoteR2, Me.LocalR2)
+                Return If(TestInfo.TestLocation = TestLocation.Second, Me.SecondR2, Me.FirstR2)
             End Get
         End Property
 
         Public ReadOnly Property R3 As Double
             Get
-                Return If(TestInfo.TestLocation = TestLocation.Remote, Me.RemoteR3, Me.LocalR3)
+                Return If(TestInfo.TestLocation = TestLocation.Second, Me.SecondR3, Me.FirstR3)
             End Get
         End Property
 
         Public ReadOnly Property R4 As Double
             Get
-                Return If(TestInfo.TestLocation = TestLocation.Remote, Me.RemoteR4, Me.LocalR4)
+                Return If(TestInfo.TestLocation = TestLocation.Second, Me.SecondR4, Me.FirstR4)
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property LocalNumber As String
+        Public ReadOnly Property FirstNumber As String
             Get
                 Return Me.AppSettingValue
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property LocalR1 As Double
+        Public ReadOnly Property FirstR1 As Double
             Get
                 Return Me.AppSettingDouble
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property LocalR2 As Double
+        Public ReadOnly Property FirstR2 As Double
             Get
                 Return Me.AppSettingDouble
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property LocalR3 As Double
+        Public ReadOnly Property FirstR3 As Double
             Get
                 Return Me.AppSettingDouble
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property LocalR4 As Double
+        Public ReadOnly Property FirstR4 As Double
             Get
                 Return Me.AppSettingDouble
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property RemoteNumber As String
+        Public ReadOnly Property SecondNumber As String
             Get
                 Return Me.AppSettingValue
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property RemoteR1 As Double
+        Public ReadOnly Property SecondR1 As Double
             Get
                 Return Me.AppSettingDouble
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property RemoteR2 As Double
+        Public ReadOnly Property SecondR2 As Double
             Get
                 Return Me.AppSettingDouble
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property RemoteR3 As Double
+        Public ReadOnly Property SecondR3 As Double
             Get
                 Return Me.AppSettingDouble
             End Get
         End Property
 
         <Global.System.Configuration.UserScopedSettingAttribute(), Global.System.Configuration.DefaultSettingValueAttribute("")>
-        Public ReadOnly Property RemoteR4 As Double
+        Public ReadOnly Property SecondR4 As Double
             Get
                 Return Me.AppSettingDouble
             End Get

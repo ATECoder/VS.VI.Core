@@ -14,9 +14,9 @@ Option Explicit On
 Namespace My
 
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
-     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.6.0.0"),
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
-    Partial Friend NotInheritable Class MySettings
+    Partial Public NotInheritable Class MySettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
 
         Private Shared defaultInstance As MySettings = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New MySettings()), MySettings)
@@ -149,10 +149,19 @@ Namespace My
             End Set
         End Property
 
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.5000000")>
+        Public Property InterfaceClearRefractoryPeriod() As Global.System.TimeSpan
+            Get
+                Return CType(Me("InterfaceClearRefractoryPeriod"), Global.System.TimeSpan)
+            End Get
+            Set
+                Me("InterfaceClearRefractoryPeriod") = Value
+            End Set
+        End Property
     End Class
-
 End Namespace
-
 
 Namespace My
 
@@ -160,7 +169,6 @@ Namespace My
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>
     Friend Module MySettingsProperty
-
         <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>
         Friend ReadOnly Property Settings() As Global.isr.VI.K7500.My.MySettings
             Get

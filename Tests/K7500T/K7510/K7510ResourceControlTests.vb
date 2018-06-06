@@ -72,7 +72,7 @@ Namespace K7500.Tests
         <TestMethod(), TestCategory("VI")>
         Public Sub SelectedResourceNameTest()
             If Not K7510ResourceInfo.Get.ResourcePinged Then Assert.Inconclusive($"{K7510ResourceInfo.Get.ResourceTitle} not found")
-            Using device As VI.K7500.Device = VI.K7500.Device.Create
+            Using device As VI.Tsp2.K7500.Device = VI.Tsp2.K7500.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
                     K7510Manager.CheckSelectedResourceName(control)
@@ -83,7 +83,7 @@ Namespace K7500.Tests
         ''' <summary> (Unit Test Method) tests control talker. </summary>
         <TestMethod()>
         Public Sub ControlTalkerTest()
-            Using device As VI.K7500.Device = VI.K7500.Device.Create
+            Using device As VI.Tsp2.K7500.Device = VI.Tsp2.K7500.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
                     Dim payload As String = "Control message"
@@ -102,7 +102,7 @@ Namespace K7500.Tests
         '''</summary>
         <TestMethod(), TestCategory("VI")>
         Public Sub OpenSessionTest()
-            Using device As VI.K7500.Device = VI.K7500.Device.Create
+            Using device As VI.Tsp2.K7500.Device = VI.Tsp2.K7500.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
                     K7510Manager.OpenCloseSession(0, control)
@@ -116,7 +116,7 @@ Namespace K7500.Tests
         <TestMethod(), TestCategory("VI")>
         Public Sub OpenSessionTwiceTest()
             Dim sw As Stopwatch = Stopwatch.StartNew
-            Using device As VI.K7500.Device = VI.K7500.Device.Create
+            Using device As VI.Tsp2.K7500.Device = VI.Tsp2.K7500.Device.Create
                 device.AddListener(TestInfo.TraceMessagesQueueListener)
                 Using control As VI.Instrument.ResourceControlBase = VI.Instrument.ResourceControlBase.Create(device, False)
                     K7510Manager.OpenCloseSession(1, control)

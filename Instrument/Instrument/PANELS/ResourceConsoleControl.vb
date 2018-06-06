@@ -14,8 +14,8 @@ Imports isr.VI.ExceptionExtensions
 ''' </para> </license>
 ''' <history date="02/07/2005" by="David" revision="2.0.2597.x"> Created. </history>
 <CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")>
-Public Class InstrumentInterfaceForm
-    Inherits ListenerFormBase
+Public Class ResourceConsoleControl
+    Inherits TalkerControlBase
 
 #Region " CONSTRUCTION + CLEANUP "
 
@@ -47,9 +47,10 @@ Public Class InstrumentInterfaceForm
                 Me._InterfacePanel?.RemovePrivateListeners()
 
                 ' Free managed resources when explicitly called
-                If Me.Session IsNot Nothing Then
-                    Me.CloseInstrumentSession()
-                End If
+                If Me.Session IsNot Nothing Then Me.CloseInstrumentSession()
+
+                Me.StopPollTimer()
+
                 If Me._InstrumentChooser IsNot Nothing Then Me._InstrumentChooser.Dispose() : Me._InstrumentChooser = Nothing
 
                 ' unable to use null conditional because it is not seen by code analysis
@@ -113,21 +114,21 @@ Public Class InstrumentInterfaceForm
             Me.ReceiveBuffer = String.Empty
             Me.TransmitBuffer = String.Empty
 
-            LastAction = "Initializing driver"
+            lastAction = "Initializing driver"
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId,
                                $"{lastAction};. ".ToString(Globalization.CultureInfo.CurrentCulture))
             Dim resourceName As String = Me._InterfacePanel.InstrumentChooser.SessionFactory.SelectedResourceName
 
-            LastAction = $"Opening a VISA Session to {resourceName}"
+            lastAction = $"Opening a VISA Session to {resourceName}"
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.Session = isr.VI.SessionFactory.Get.Factory.CreateSession()
             Me.Session.OpenSession(resourceName, Threading.SynchronizationContext.Current)
 
             If Me.IsOpen Then
-                LastAction = "Clearing the device"
+                lastAction = "Clearing the device"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.Clear()
-                LastAction = $"Connected to {Me.Session.ResourceName}"
+                lastAction = $"Connected to {Me.Session.ResourceName}"
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Else
                 Me.Talker.Publish(TraceEventType.Warning, My.MyLibrary.TraceEventId,
@@ -169,7 +170,7 @@ Public Class InstrumentInterfaceForm
 
             If Me.IsOpen Then
 
-                LastAction = "Disconnecting Instrument"
+                lastAction = "Disconnecting Instrument"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
 
                 If _SendDisconnectCommandsCheckBox.Checked Then
@@ -178,7 +179,7 @@ Public Class InstrumentInterfaceForm
                         For Each command As String In Me._DisconnectCommandsTextBox.Lines
                             command = command.Trim
                             If Not String.IsNullOrWhiteSpace(command) Then
-                                LastAction = $"Sending '{command}'"
+                                lastAction = $"Sending '{command}'"
                                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                                 Try
                                     Me.Session.WriteLine(command)
@@ -191,15 +192,15 @@ Public Class InstrumentInterfaceForm
                     End If
                 End If
 
-                LastAction = "Clearing the device"
+                lastAction = "Clearing the device"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.Clear()
 
-                LastAction = "Disabling service request events if any"
+                lastAction = "Disabling service request events if any"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.DisableServiceRequestEventHandler()
 
-                LastAction = "Ending the VISA session"
+                lastAction = "Ending the VISA session"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.Dispose()
                 Try
@@ -210,7 +211,7 @@ Public Class InstrumentInterfaceForm
                     Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
                 End Try
 
-                LastAction = "Session closed"
+                lastAction = "Session closed"
                 Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
 
             End If
@@ -252,30 +253,7 @@ Public Class InstrumentInterfaceForm
 
 #End Region
 
-#Region " FORM EVENT HANDLERS "
-
-    ''' <summary> Raises the <see cref="E:System.Windows.Forms.Form.Closing" /> event. Releases all
-    ''' publishers. </summary>
-    ''' <param name="e"> A <see cref="T:System.ComponentModel.CancelEventArgs" /> that contains the
-    ''' event data. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub OnClosing(ByVal e As System.ComponentModel.CancelEventArgs)
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Me._StatusLabel.Text = "CLOSING."
-            Me.CloseInstrumentSession()
-            Me.StopPollTimer()
-            If e IsNot Nothing Then
-                e.Cancel = False
-            End If
-        Catch ex As Exception
-            Debug.Assert(Not Debugger.IsAttached, ex.ToFullBlownString)
-        Finally
-            Application.DoEvents()
-            MyBase.OnClosing(e)
-            Me.Cursor = Cursors.Default
-        End Try
-    End Sub
+#Region " CONTROL EVENT HANDLERS "
 
     ''' <summary> Called upon receiving the <see cref="E:System.Windows.Forms.Form.Load" /> event. </summary>
     ''' <param name="e"> An <see cref="T:System.EventArgs" /> that contains the event data. </param>
@@ -284,38 +262,6 @@ Public Class InstrumentInterfaceForm
         Try
             Me.Cursor = Cursors.WaitCursor
             Trace.CorrelationManager.StartLogicalOperation(Reflection.MethodInfo.GetCurrentMethod.Name)
-
-            ' set the form caption
-            Me.Text = My.Application.Info.ProductName & " release " & My.Application.Info.Version.ToString
-
-            ' default to center screen.
-            Me.CenterToScreen()
-
-        Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
-                               $"Exception loading the instrument interface form;. {ex.ToFullBlownString}")
-            If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
-                                                    MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-                                                    MessageBoxOptions.DefaultDesktopOnly) Then
-                Application.Exit()
-            End If
-        Finally
-            MyBase.OnLoad(e)
-            Trace.CorrelationManager.StopLogicalOperation()
-            Me.Cursor = Cursors.Default
-        End Try
-    End Sub
-
-    ''' <summary> Called upon receiving the <see cref="E:System.Windows.Forms.Form.Shown" /> event. </summary>
-    ''' <param name="e"> A <see cref="T:System.EventArgs" /> that contains the event data. </param>
-    <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
-    Protected Overrides Sub OnShown(e As System.EventArgs)
-        Try
-            Me.Cursor = Cursors.WaitCursor
-            Trace.CorrelationManager.StartLogicalOperation(Reflection.MethodInfo.GetCurrentMethod.Name)
-
-            ' allow form rendering time to complete: process all messages currently in the queue.
-            Application.DoEvents()
 
             If Not Me.DesignMode Then
 
@@ -335,20 +281,21 @@ Public Class InstrumentInterfaceForm
                     Me._CommandsComboBox.SelectedIndex = 0
                 End If
             End If
+
         Catch ex As Exception
-            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId, $"Exception showing the instrument interface form;. {ex.ToFullBlownString}")
+            Me.Talker.Publish(TraceEventType.Error, My.MyLibrary.TraceEventId,
+                               $"Exception loading the instrument interface form;. {ex.ToFullBlownString}")
             If DialogResult.Abort = MessageBox.Show(ex.ToFullBlownString, "Exception Occurred", MessageBoxButtons.AbortRetryIgnore,
                                                     MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
                                                     MessageBoxOptions.DefaultDesktopOnly) Then
                 Application.Exit()
             End If
         Finally
-            MyBase.OnShown(e)
+            MyBase.OnLoad(e)
             Trace.CorrelationManager.StopLogicalOperation()
             Me.Cursor = Cursors.Default
         End Try
     End Sub
-
 
 #End Region
 
@@ -361,7 +308,7 @@ Public Class InstrumentInterfaceForm
     Private Sub _InstrumentChooser_Clear(ByVal sender As Object, ByVal e As System.EventArgs) Handles _InstrumentChooser.Clear
         Dim lastAction As String = "N/A"
         Try
-            LastAction = "Clearing the device"
+            lastAction = "Clearing the device"
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.Session.Clear()
         Catch ex As VI.Pith.NativeException
@@ -492,13 +439,6 @@ Public Class InstrumentInterfaceForm
 
 #Region " CONTROL EVENT HANDLERS "
 
-    ''' <summary> Event handler. Called by _ExitButton for click events. </summary>
-    ''' <param name="eventSender"> The event sender. </param>
-    ''' <param name="eventArgs">   Event information. </param>
-    Private Sub _ExitButton_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
-        Me.Close()
-    End Sub
-
     ''' <summary> Reads status register. </summary>
     <CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")>
     Private Sub ReadStatusRegister()
@@ -506,7 +446,7 @@ Public Class InstrumentInterfaceForm
         Dim lastAction As String = "N/A"
         Try
 
-            LastAction = "Reading SRQ"
+            lastAction = "Reading SRQ"
             Me._StatusRegisterLabel.Text = ""
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.ServiceRequestBits = Me.Session.ReadServiceRequestStatus
@@ -537,7 +477,7 @@ Public Class InstrumentInterfaceForm
 
         Dim lastAction As String = "N/A"
         Try
-            LastAction = "Receiving data"
+            lastAction = "Receiving data"
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
 
             ReceiveBuffer = Me.Session.ReadLine()
@@ -550,15 +490,16 @@ Public Class InstrumentInterfaceForm
                 With Me._OutputTextBox
                     .SelectionStart = .Text.Length
                     .SelectionLength = 0
-                    .SelectedText = InstrumentInterfaceForm.BuildTimeStampLine(ReceiveBuffer)
+                    .SelectedText = ResourceConsoleControl.BuildTimeStampLine(ReceiveBuffer)
                     .SelectionStart = .Text.Length
                 End With
                 Me._ReceiveButton.Enabled = False
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, "Received '{0}'.", ReceiveBuffer)
             End If
 
+
             ' update the status register information
-            LastAction = "Reading status register"
+            lastAction = "Reading status register"
             Me.Talker.Publish(TraceEventType.Verbose, My.MyLibrary.TraceEventId, $"{lastAction};. ")
             Me.ReadStatusRegister()
 
@@ -586,7 +527,7 @@ Public Class InstrumentInterfaceForm
             If Not String.IsNullOrWhiteSpace(value) Then
                 TransmitBuffer = value.ReplaceCommonEscapeSequences
                 If Not String.IsNullOrWhiteSpace(TransmitBuffer) Then
-                    LastAction = $"Sending '{TransmitBuffer}'"
+                    lastAction = $"Sending '{TransmitBuffer}'"
                     Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction };. ")
                     Me.Session.WriteLine(TransmitBuffer)
                 End If
@@ -614,7 +555,7 @@ Public Class InstrumentInterfaceForm
 
             TransmitBuffer = Me._CommandsComboBox.Text.Trim
             If Not String.IsNullOrWhiteSpace(TransmitBuffer) Then
-                LastAction = $"Sending '{TransmitBuffer}'"
+                lastAction = $"Sending '{TransmitBuffer}'"
                 Me.Talker.Publish(TraceEventType.Information, My.MyLibrary.TraceEventId, $"{lastAction};. ")
                 Me.Session.WriteLine(TransmitBuffer)
             End If
@@ -777,8 +718,8 @@ Public Class InstrumentInterfaceForm
     ''' <param name="e">      Event information. </param>
     Private Sub _PollIntervalNumericUpDown_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles _PollIntervalNumericUpDown.ValueChanged
 
-        If Me._pollTimer IsNot Nothing Then
-            Me._pollTimer.Interval = CInt(Me._PollIntervalNumericUpDown.Value)
+        If Me._PollTimer IsNot Nothing Then
+            Me._PollTimer.Interval = CInt(Me._PollIntervalNumericUpDown.Value)
         End If
 
     End Sub
@@ -823,8 +764,6 @@ Public Class InstrumentInterfaceForm
         ' this should apply only to the listeners associated with this form
         MyBase.ApplyListenerTraceLevel(listenerType, value)
     End Sub
-
-
 
     ''' <summary> Applies the trace level type to all talkers. </summary>
     ''' <param name="listenerType"> Type of the trace level. </param>
@@ -875,21 +814,3 @@ Public Class InstrumentInterfaceForm
 
 End Class
 
-#Region " UNUUSED "
-#If False Then
-    ''' <summary> Updates the trace log level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overrides Sub UpdateTraceLogLevel(ByVal traceLevel As TraceEventType)
-        MyBase.UpdateTraceLogLevel(traceLevel)
-        Me._InterfacePanel.UpdateTraceLogLevel(traceLevel)
-    End Sub
-
-    ''' <summary> Updates the trace show level described by traceLevel. </summary>
-    ''' <param name="traceLevel"> The trace level. </param>
-    Public Overrides Sub UpdateTraceShowLevel(ByVal traceLevel As TraceEventType)
-        MyBase.UpdateTraceShowLevel(traceLevel)
-        Me._InterfacePanel.UpdateTraceShowLevel(traceLevel)
-    End Sub
-
-#End If
-#End Region

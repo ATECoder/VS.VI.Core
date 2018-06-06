@@ -405,7 +405,7 @@ Public Class Device
     ''' <summary> Multimeter subsystem property changed. </summary>
     ''' <param name="subsystem"> Source of the event. </param>
     <CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")>
-    Private Overloads Sub HandlePropertyChange(ByVal subsystem As VI.MultimeterSubsystemBase, ByVal propertyName As String)
+    Private Overloads Sub HandlePropertyChange(ByVal subsystem As VI.Tsp2.K7500.MultimeterSubsystem, ByVal propertyName As String)
         If subsystem Is Nothing OrElse String.IsNullOrWhiteSpace(propertyName) Then Return
         Select Case propertyName
             Case NameOf(VI.MultimeterSubsystemBase.PowerLineCycles)
@@ -420,7 +420,7 @@ Public Class Device
         If Me.IsDisposed OrElse sender Is Nothing OrElse e Is Nothing Then Return
         Dim activity As String = $"handling {NameOf(Device.MultimeterSubsystem)}.{e.PropertyName} change"
         Try
-            Me.HandlePropertyChange(TryCast(sender, VI.MultimeterSubsystemBase), e.PropertyName)
+            Me.HandlePropertyChange(TryCast(sender, VI.Tsp2.K7500.MultimeterSubsystem), e.PropertyName)
         Catch ex As Exception
             If Me.Talker Is Nothing Then
                 My.MyLibrary.LogUnpublishedException(activity, ex)
@@ -487,6 +487,7 @@ Public Class Device
     End Sub
 
 #End Region
+
 #Region " STATUS "
 
     Private _StatusSubsystem As StatusSubsystem

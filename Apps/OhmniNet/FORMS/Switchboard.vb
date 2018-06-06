@@ -21,7 +21,7 @@ Public Class Switchboard
         Me.InitializeComponent()
         ' turn off saving to prevent exception reported due to access from two programs
         Me.SaveSettingsOnClosing = False
-        Me._OpenForms = New Instrument.InstrumentPanelFormCollection
+        Me._OpenForms = New Core.Pith.ConsoleFormCollection
     End Sub
 
     ''' <summary>
@@ -155,7 +155,7 @@ Public Class Switchboard
         <System.ComponentModel.Description("Thermostream")> ThermostreamForm
     End Enum
 
-    Private _OpenForms As Instrument.InstrumentPanelFormCollection
+    Private _OpenForms As Core.Pith.ConsoleFormCollection
     ''' <summary> Open selected items. </summary>
     ''' <param name="sender"> <see cref="System.Object"/> instance of this
     ''' <see cref="System.Windows.Forms.Form"/> </param>
@@ -166,17 +166,17 @@ Public Class Switchboard
         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
         Select Case Me.selectedAction
             Case ActionOption.InterfaceForm
-                Me._OpenForms.ShowNew(New Instrument.InterfaceForm, My.Application.MyLog)
+                Me._OpenForms.ShowNew("INTERFACE", New Core.Pith.ConsoleForm, New Instrument.InterfacePanel, My.Application.MyLog, True)
             Case ActionOption.SimpleReadAndWrite
-                Me._OpenForms.ShowNew(New Instrument.SimpleReadWriteForm, My.Application.MyLog)
+                Me._OpenForms.ShowNew("R/W", New Core.Pith.ConsoleForm, New Instrument.SimpleReadWritePanel, My.Application.MyLog, True)
             Case ActionOption.ServiceRequester
-                Me._OpenForms.ShowNew(New Instrument.ServiceRequesterForm, My.Application.MyLog)
+                Me._OpenForms.ShowNew("SRQ", New Core.Pith.ConsoleForm, New Instrument.ServiceRequesterPanel, My.Application.MyLog, True)
             Case ActionOption.Keithley2002
-                Me._OpenForms.ShowNew("Meter", New Instrument.InstrumentPanelForm, New K2000.K2000Panel, My.Application.MyLog, True)
+                Me._OpenForms.ShowNew("Meter", New Core.Pith.ConsoleForm, New K2000.K2000Panel, My.Application.MyLog, True)
             Case ActionOption.Keithley7001
-                Me._OpenForms.ShowNew("Switch", New Instrument.InstrumentPanelForm, New K7000.K7000Panel, My.Application.MyLog, True)
+                Me._OpenForms.ShowNew("Switch", New Core.Pith.ConsoleForm, New K7000.K7000Panel, My.Application.MyLog, True)
             Case ActionOption.ThermostreamForm
-                Me._OpenForms.ShowNew("Thermo", New Instrument.InstrumentPanelForm, New Thermostream.ThermostreamPanel, My.Application.MyLog, True)
+                Me._OpenForms.ShowNew("Thermo", New Core.Pith.ConsoleForm, New Thermostream.ThermostreamPanel, My.Application.MyLog, True)
         End Select
         Me.Cursor = System.Windows.Forms.Cursors.Default
     End Sub

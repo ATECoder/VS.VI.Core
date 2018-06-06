@@ -14,7 +14,7 @@ Option Explicit On
 Namespace My
 
     <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
-     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0"),
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0"),
      Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>
     Partial Public NotInheritable Class MySettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
@@ -38,6 +38,7 @@ Namespace My
 
         Public Shared ReadOnly Property [Default]() As MySettings
             Get
+
 #If _MyType = "WindowsForms" Then
                If Not addedHandler Then
                     SyncLock addedHandlerLockObject
@@ -135,8 +136,35 @@ Namespace My
                 Me("ClearRefractoryPeriod") = Value
             End Set
         End Property
-    End Class
 
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("0")>
+        Public Property SessionMessageNotificationLevel() As Integer
+            Get
+                Return CType(Me("SessionMessageNotificationLevel"), Integer)
+            End Get
+            Set
+                Me("SessionMessageNotificationLevel") = Value
+            End Set
+        End Property
+
+        <Global.System.Configuration.UserScopedSettingAttribute(),
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
+         Global.System.Configuration.DefaultSettingValueAttribute("00:00:00.5000000")>
+        Public Property InterfaceClearRefractoryPeriod() As Global.System.TimeSpan
+            Get
+                Return CType(Me("InterfaceClearRefractoryPeriod"), Global.System.TimeSpan)
+            End Get
+            Set
+                Me("InterfaceClearRefractoryPeriod") = Value
+            End Set
+        End Property
+    End Class
+End Namespace
+
+
+Namespace My
     <Global.Microsoft.VisualBasic.HideModuleNameAttribute(),
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>

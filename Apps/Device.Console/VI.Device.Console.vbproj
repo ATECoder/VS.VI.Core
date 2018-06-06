@@ -25,7 +25,7 @@
     <DocumentationFile>VI.Device.Console.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <CodeAnalysisRuleSet>..\..\..\..\Share\CodeAnalysisRules\AllRules2017.ruleset</CodeAnalysisRuleSet>
-    <DefineConstants>E4990z,K2000x,K2400x,K2450x,K3700x,K3700cx,K3700bmx,K7000x,K7500x,K34980x,TTMx</DefineConstants>
+    <DefineConstants>E4990z,K2000x,K2400x,K2450x,K3700x,K3700cx,K3700bmx,K7000x,K7500x,K7500T,K34980x,TTMx</DefineConstants>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -55,6 +55,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\Resource\Pith\My\keyPair.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>My\favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -121,7 +124,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="My\MyLogo.ico" />
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
     <None Include="..\..\Resource\Pith\My\keyPair.snk">
       <Link>My\keyPair.snk</Link>
@@ -137,6 +139,7 @@
     </None>
     <None Include="App.config" />
     <None Include="My\VI.Device.Console.History.rtf" />
+    <Content Include="My\favicon.ico" />
     <Content Include="My\Readme.rtf" />
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +194,10 @@
     <ProjectReference Include="..\..\VendorVI\K7000\isr.VI.K7000.Library.vbproj">
       <Project>{698b037f-c21d-4f0b-bda3-fa511ce3b8f7}</Project>
       <Name>isr.VI.K7000.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VendorVI\K7500T\isr.VI.K7500T.Library.vbproj">
+      <Project>{72604c42-0a65-405f-9d46-f8b50d285132}</Project>
+      <Name>isr.VI.K7500T.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\VendorVI\K7500\isr.VI.K7500.Library.vbproj">
       <Project>{b76a1d03-a4bc-437b-bda5-4da180725d26}</Project>

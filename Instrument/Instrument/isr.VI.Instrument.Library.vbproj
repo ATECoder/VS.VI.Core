@@ -79,36 +79,6 @@
     <Compile Include="..\..\Resource\Pith\My\SolutionInfo.vb">
       <Link>My\SolutionInfo.vb</Link>
     </Compile>
-    <Compile Include="FORMS\InstrumentPanelForm.Designer.vb">
-      <DependentUpon>InstrumentPanelForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="FORMS\InstrumentPanelForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FORMS\InstrumentInterfaceForm.Designer.vb">
-      <DependentUpon>InstrumentInterfaceForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="FORMS\InstrumentInterfaceForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FORMS\InterfaceForm.Designer.vb">
-      <DependentUpon>InterfaceForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="FORMS\InterfaceForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FORMS\ServiceRequesterForm.Designer.vb">
-      <DependentUpon>ServiceRequesterForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="FORMS\ServiceRequesterForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FORMS\SimpleReadWriteForm.Designer.vb">
-      <DependentUpon>SimpleReadWriteForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="FORMS\SimpleReadWriteForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="My Project\Resources.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -123,6 +93,12 @@
     </Compile>
     <Compile Include="My\MyLibrary_Log.vb" />
     <Compile Include="PANELS\DeviceConnector.vb" />
+    <Compile Include="PANELS\ResourceConsoleControl.Designer.vb">
+      <DependentUpon>ResourceConsoleControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PANELS\ResourceConsoleControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="PANELS\ResourceControlBase.Designer.vb">
       <DependentUpon>ResourceControlBase.vb</DependentUpon>
     </Compile>
@@ -181,26 +157,15 @@
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="My\MyDictionary.xml" />
+    <EmbeddedResource Include="PANELS\ResourceConsoleControl.resx">
+      <DependentUpon>ResourceConsoleControl.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PANELS\ResourceControlBase.bmp" />
+    <Content Include="My\favicon.ico" />
     <Content Include="RESOURCES\Disconnect-22x22.png" />
     <Content Include="RESOURCES\Connect-22x22.png" />
     <Content Include="RESOURCES\Clear-22x22.png" />
     <Content Include="RESOURCES\Find-22x22.png" />
-    <EmbeddedResource Include="FORMS\InstrumentPanelForm.resx">
-      <DependentUpon>InstrumentPanelForm.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FORMS\InstrumentInterfaceForm.resx">
-      <DependentUpon>InstrumentInterfaceForm.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FORMS\InterfaceForm.resx">
-      <DependentUpon>InterfaceForm.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FORMS\ServiceRequesterForm.resx">
-      <DependentUpon>ServiceRequesterForm.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FORMS\SimpleReadWriteForm.resx">
-      <DependentUpon>SimpleReadWriteForm.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
