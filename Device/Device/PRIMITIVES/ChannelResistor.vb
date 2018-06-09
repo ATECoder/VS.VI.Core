@@ -55,6 +55,18 @@ Public Class ChannelResistorCollection
         Me.Add(New ChannelResistor(title, channelList))
     End Sub
 
+    ''' <summary> Gets the resistances. </summary>
+    ''' <value> The resistances. </value>
+    Public ReadOnly Property Resistances As IEnumerable(Of Double)
+        Get
+            Dim l As New List(Of Double)
+            For Each resistor As ChannelResistor In Me
+                l.Add(resistor.Resistance)
+            Next
+            Return l
+        End Get
+    End Property
+
     ''' <summary> Configure display values. </summary>
     ''' <exception cref="ArgumentNullException"> Thrown when one or more required arguments are null. </exception>
     ''' <param name="grid"> The grid. </param>
