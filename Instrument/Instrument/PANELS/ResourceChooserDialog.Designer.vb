@@ -10,7 +10,7 @@ Partial Class ResourceChooserDialog
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me._ResourceNameSelectorConnector = New ResourceSelectorConnector()
+        Me._ResourceNameSelectorConnector = New isr.VI.Instrument.ResourceSelectorConnector()
         Me._CancelButton = New System.Windows.Forms.Button()
         Me._AcceptButton = New System.Windows.Forms.Button()
         Me._ResourceNameSelectorConnectorLabel = New System.Windows.Forms.Label()
@@ -18,22 +18,25 @@ Partial Class ResourceChooserDialog
         '
         '_ResourceNameSelectorConnector
         '
+        Me._ResourceNameSelectorConnector.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._ResourceNameSelectorConnector.BackColor = System.Drawing.Color.Transparent
         Me._ResourceNameSelectorConnector.Clearable = False
         Me._ResourceNameSelectorConnector.Connectable = False
-        Me._ResourceNameSelectorConnector.Location = New System.Drawing.Point(2, 35)
+        Me._ResourceNameSelectorConnector.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me._ResourceNameSelectorConnector.Location = New System.Drawing.Point(0, 35)
         Me._ResourceNameSelectorConnector.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me._ResourceNameSelectorConnector.Name = "_ResourceNameSelectorConnector"
         Me._ResourceNameSelectorConnector.Searchable = False
-        Me._ResourceNameSelectorConnector.Size = New System.Drawing.Size(308, 32)
+        Me._ResourceNameSelectorConnector.Size = New System.Drawing.Size(338, 28)
         Me._ResourceNameSelectorConnector.TabIndex = 28
         '
         '_CancelButton
         '
         Me._CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me._CancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System
-        Me._CancelButton.Font = New System.Drawing.Font(Me.Font, FontStyle.Bold)
-        Me._CancelButton.Location = New System.Drawing.Point(62, 70)
+        Me._CancelButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._CancelButton.Location = New System.Drawing.Point(79, 70)
         Me._CancelButton.Name = "_CancelButton"
         Me._CancelButton.Size = New System.Drawing.Size(87, 33)
         Me._CancelButton.TabIndex = 27
@@ -41,10 +44,11 @@ Partial Class ResourceChooserDialog
         '
         '_AcceptButton
         '
+        Me._AcceptButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._AcceptButton.Enabled = False
         Me._AcceptButton.FlatStyle = System.Windows.Forms.FlatStyle.System
-        Me._AcceptButton.Font = New System.Drawing.Font(Me.Font, FontStyle.Bold)
-        Me._AcceptButton.Location = New System.Drawing.Point(165, 70)
+        Me._AcceptButton.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Bold)
+        Me._AcceptButton.Location = New System.Drawing.Point(173, 70)
         Me._AcceptButton.Name = "_AcceptButton"
         Me._AcceptButton.Size = New System.Drawing.Size(87, 33)
         Me._AcceptButton.TabIndex = 26
@@ -60,7 +64,7 @@ Partial Class ResourceChooserDialog
         Me._ResourceNameSelectorConnectorLabel.Location = New System.Drawing.Point(0, 0)
         Me._ResourceNameSelectorConnectorLabel.Name = "_ResourceNameSelectorConnectorLabel"
         Me._ResourceNameSelectorConnectorLabel.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._ResourceNameSelectorConnectorLabel.Size = New System.Drawing.Size(314, 34)
+        Me._ResourceNameSelectorConnectorLabel.Size = New System.Drawing.Size(340, 34)
         Me._ResourceNameSelectorConnectorLabel.TabIndex = 25
         Me._ResourceNameSelectorConnectorLabel.Text = "Click the search button and then select a resource  from the drop down list"
         Me._ResourceNameSelectorConnectorLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter
@@ -68,8 +72,9 @@ Partial Class ResourceChooserDialog
         'ResourceChooserDialog
         '
         Me.AcceptButton = Me._AcceptButton
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 17.0!)
         Me.CancelButton = Me._CancelButton
-        Me.ClientSize = New System.Drawing.Size(314, 108)
+        Me.ClientSize = New System.Drawing.Size(340, 108)
         Me.Controls.Add(Me._ResourceNameSelectorConnector)
         Me.Controls.Add(Me._CancelButton)
         Me.Controls.Add(Me._AcceptButton)
@@ -77,6 +82,7 @@ Partial Class ResourceChooserDialog
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.Name = "ResourceChooserDialog"
         Me.Text = "Select a board"
+        Me.TopMost = True
         Me.ResumeLayout(False)
 
     End Sub
