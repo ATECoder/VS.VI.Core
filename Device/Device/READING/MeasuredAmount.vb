@@ -64,6 +64,20 @@ Public Class MeasuredAmount
     ''' <value> The measured value status. </value>
     Public Property MetaStatus() As MetaStatus
 
+    ''' <summary> Attempts to evaluate using the applied reading and given status. </summary>
+    ''' <param name="reading"> The reading. </param>
+    ''' <returns> <c>True</c> if evaluated. </returns>
+    Public Overrides Function TryEvaluate(ByVal reading As Double) As Boolean
+        MyBase.TryEvaluate(reading)
+        If reading >= VI.Pith.Scpi.Syntax.Infinity Then
+            Me.MetaStatus.Infinity = True
+        ElseIf reading <= VI.Pith.Scpi.Syntax.NegativeInfinity Then
+            Me.MetaStatus.NegativeInfinity = True
+        End If
+        Return Me.MetaStatus.IsValid
+    End Function
+
+
 #End Region
 
 #Region " STATUS "
@@ -108,9 +122,13 @@ Public Class MeasuredAmount
     Public Overrides Function TryApplyReading(ByVal valueReading As String) As Boolean
         Me.MetaStatus.Reset()
         Me.MetaStatus.IsValid = MyBase.TryApplyReading(valueReading)
+        If Me.MetaStatus.IsValid Then Me.TryEvaluate(Me.Value.Value)
         Return Me.MetaStatus.IsValid
     End Function
 
+    ''' <summary> Attempts to evaluate using the applied reading and given status. </summary>
+    ''' <param name="status"> The status. </param>
+    ''' <returns> <c>True</c> if evaluated. </returns>
     Public Overrides Function TryEvaluate(ByVal status As Long) As Boolean
         ' update the status to preserve the validity state.
         Me.MetaStatus.Preset(Me.MetaStatus.Value Or status)

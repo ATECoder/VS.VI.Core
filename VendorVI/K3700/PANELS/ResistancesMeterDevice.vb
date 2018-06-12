@@ -449,7 +449,8 @@ Public Class ResistancesMeterDevice
 
             activity = $"measuring {resistor.Title}"
             If Me.MultimeterSubsystem.Measure.HasValue Then
-                resistor.Resistance = Me.MultimeterSubsystem.MeasuredValue.GetValueOrDefault(-1)
+                resistor.Resistance = Me.MultimeterSubsystem.Amount.Value.GetValueOrDefault(-1)
+                resistor.Status = Me.MultimeterSubsystem.Amount.MetaStatus
             Else
                 Throw New VI.Pith.OperationFailedException($"Failed {activity}; driver returned nothing")
             End If

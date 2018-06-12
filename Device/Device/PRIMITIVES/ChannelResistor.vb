@@ -21,6 +21,7 @@ Public Class ChannelResistor
     Public ReadOnly Property Title As String
     Public ReadOnly Property ChannelList As String
     Public Property Resistance As Double
+    Public Property Status As MetaStatus
 End Class
 
 ''' <summary> channel Resistor Collection: an ordered collection of resistors. </summary>
@@ -64,6 +65,18 @@ Public Class ChannelResistorCollection
                 l.Add(resistor.Resistance)
             Next
             Return l
+        End Get
+    End Property
+
+    ''' <summary> Gets the status. </summary>
+    ''' <value> The status. </value>
+    Public ReadOnly Property Status As MetaStatus
+        Get
+            Dim result As New MetaStatus
+            For Each r As ChannelResistor In Me
+                result.Append(r.Status)
+            Next
+            Return result
         End Get
     End Property
 

@@ -185,6 +185,13 @@ Public Class ReadingEntity
     End Function
 
     ''' <summary> Attempts to evaluate using the applied reading and given status. </summary>
+    ''' <param name="reading"> The reading. </param>
+    ''' <returns> <c>True</c> if evaluated. </returns>
+    Public Overridable Function TryEvaluate(ByVal reading As Double) As Boolean
+        Return True
+    End Function
+
+    ''' <summary> Attempts to evaluate using the applied reading and given status. </summary>
     ''' <returns> <c>True</c> if evaluated. </returns>
     Public Overridable Function TryEvaluate(ByVal status As Long) As Boolean
         Return True

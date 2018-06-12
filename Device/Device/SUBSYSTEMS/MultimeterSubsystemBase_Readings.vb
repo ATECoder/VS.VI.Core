@@ -296,6 +296,5 @@ Partial Public Class MultimeterSubsystemBase
 
 #End Region
 
-
 End Class
 

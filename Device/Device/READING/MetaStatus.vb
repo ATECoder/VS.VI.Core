@@ -51,6 +51,20 @@ Public Class MetaStatus
         Me._Value = value
     End Sub
 
+    ''' <summary> Appends a value. </summary>
+    ''' <param name="value"> The value. </param>
+    Public Sub Append(ByVal value As Long)
+        Me._Value = Me._Value Or value
+    End Sub
+
+    ''' <summary> Appends a value. </summary>
+    ''' <param name="status"> The status to append. </param>
+    Public Sub Append(ByVal status As MetaStatus)
+        If status IsNot Nothing AndAlso status.Value <> 0 Then
+            Me._Value = Me._Value Or status.Value
+        End If
+    End Sub
+
 #End Region
 
 #Region " PROPERTIES "
@@ -87,6 +101,8 @@ Public Class MetaStatus
             result = "vp"
         ElseIf Me.Infinity Then
             result = Convert.ToChar(&H221E) ' 236)
+        ElseIf Me.NegativeInfinity Then
+            result = $"-{Convert.ToChar(&H221E)}"
         Else
             ' if we do not return a value, raise an exception
             Debug.Assert(Not Debugger.IsAttached, "Unhandled case in determining two-char code.")
@@ -127,6 +143,8 @@ Public Class MetaStatus
             result = "volt"
         ElseIf Me.Infinity Then
             result = "inf"
+        ElseIf Me.NegativeInfinity Then
+            result = "-inf"
         Else
             ' if we do not return a value, raise an exception
             Debug.Assert(Not Debugger.IsAttached, "Unhandled case in determining code.")
@@ -166,6 +184,8 @@ Public Class MetaStatus
             result = "Voltage protection"
         ElseIf Me.Infinity Then
             result = "infinity"
+        ElseIf Me.NegativeInfinity Then
+            result = "-infinity"
         Else
             ' if we do not return a value, raise an exception
             Debug.Assert(Not Debugger.IsAttached, "Unhandled case in determining long outcome.")
