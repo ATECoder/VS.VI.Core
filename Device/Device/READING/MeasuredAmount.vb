@@ -19,6 +19,10 @@ Public Class MeasuredAmount
         MyBase.New(readingType)
         Me._MetaStatus = New MetaStatus()
         Me._ComplianceLimitMargin = 0.001
+        Me._HighLimit = VI.Pith.Scpi.Syntax.Infinity
+        Me._LowLimit = VI.Pith.Scpi.Syntax.NegativeInfinity
+        Me._ComplianceLimit = 0
+        Me._InfinityUncertainty = 1
     End Sub
 
     ''' <summary> Constructs a copy of an existing value. </summary>
@@ -60,6 +64,10 @@ Public Class MeasuredAmount
 
 #Region " META STATUS "
 
+    ''' <summary> Gets the infinity uncertainty. Allows the value to be close infinity for triggering the infinity status. </summary>
+    ''' <value> The infinity uncertainty. </value>
+    Public Property InfinityUncertainty As Double
+
     ''' <summary> Gets or sets the measured value meta status. </summary>
     ''' <value> The measured value status. </value>
     Public Property MetaStatus() As MetaStatus
@@ -69,14 +77,29 @@ Public Class MeasuredAmount
     ''' <returns> <c>True</c> if evaluated. </returns>
     Public Overrides Function TryEvaluate(ByVal reading As Double) As Boolean
         MyBase.TryEvaluate(reading)
-        If reading >= VI.Pith.Scpi.Syntax.Infinity Then
-            Me.MetaStatus.Infinity = True
-        ElseIf reading <= VI.Pith.Scpi.Syntax.NegativeInfinity Then
-            Me.MetaStatus.NegativeInfinity = True
-        End If
+        Me.MetaStatus.HasValue = True
+        Me.MetaStatus.Infinity = Math.Abs(reading - VI.Pith.Scpi.Syntax.Infinity) < Me.InfinityUncertainty
+        If Me.MetaStatus.Infinity Then Return Me.MetaStatus.IsValid
+        Me.MetaStatus.NegativeInfinity = Math.Abs(reading - VI.Pith.Scpi.Syntax.NegativeInfinity) < Me.InfinityUncertainty
+        If Me.MetaStatus.NegativeInfinity Then Return Me.MetaStatus.IsValid
+        Me.MetaStatus.NotANumber = Math.Abs(reading - VI.Pith.Scpi.Syntax.NotANumber) < Me.InfinityUncertainty
+        If Me.MetaStatus.NotANumber Then Return Me.MetaStatus.IsValid
+        Me.MetaStatus.HitLevelCompliance = Not (reading >= Me.ComplianceLimitLevel) Xor (Me._ComplianceLimit > 0)
+        If Me.MetaStatus.HitLevelCompliance Then Return Me.MetaStatus.IsValid
+        Me.MetaStatus.IsHigh = Me.Value.Value.CompareTo(Me.HighLimit) > 0
+        Me.MetaStatus.IsLow = Me.Value.Value.CompareTo(Me.LowLimit) < 0
         Return Me.MetaStatus.IsValid
     End Function
 
+    ''' <summary> Attempts to evaluate using the applied reading and given status. </summary>
+    ''' <param name="status"> The status. </param>
+    ''' <returns> <c>True</c> if evaluated. </returns>
+    Public Overrides Function TryEvaluate(ByVal status As Long) As Boolean
+        ' update the status to preserve the validity state.
+        Me.MetaStatus.Preset(Me.MetaStatus.Value Or status)
+        If Me.MetaStatus.IsValid Then Me.TryEvaluate(Me.Value.Value)
+        Return Me.MetaStatus.IsValid
+    End Function
 
 #End Region
 
@@ -101,6 +124,16 @@ Public Class MeasuredAmount
     ''' <value> A <see cref="System.Double">Double</see> value. </value>
     Public Property ComplianceLimitMargin() As Double
 
+    ''' <summary> Gets or sets the compliance limit deviation. The factor by which to reduce the complaince limit for checking complaince. </summary>
+    ''' <value> The compliance limit deviation. </value>
+    Public Property ComplianceLimitDeviation() As Double
+
+    Public ReadOnly Property ComplianceLimitLevel() As Double
+        Get
+            Return Me.ComplianceLimit * (1 - Me.ComplianceLimitDeviation)
+        End Get
+    End Property
+
 #End Region
 
 #Region " AMOUNT "
@@ -123,33 +156,6 @@ Public Class MeasuredAmount
         Me.MetaStatus.Reset()
         Me.MetaStatus.IsValid = MyBase.TryApplyReading(valueReading)
         If Me.MetaStatus.IsValid Then Me.TryEvaluate(Me.Value.Value)
-        Return Me.MetaStatus.IsValid
-    End Function
-
-    ''' <summary> Attempts to evaluate using the applied reading and given status. </summary>
-    ''' <param name="status"> The status. </param>
-    ''' <returns> <c>True</c> if evaluated. </returns>
-    Public Overrides Function TryEvaluate(ByVal status As Long) As Boolean
-        ' update the status to preserve the validity state.
-        Me.MetaStatus.Preset(Me.MetaStatus.Value Or status)
-        If Me.MetaStatus.IsValid Then
-            Dim newValue As Double = Me.Value.Value
-
-            Me.MetaStatus.ToggleBit(MetaStatusBit.Infinity, Math.Abs(newValue - VI.Pith.Scpi.Syntax.Infinity) < 1)
-            If Me.MetaStatus.IsBit(MetaStatusBit.Infinity) Then Return Me.MetaStatus.IsValid
-
-            Me.MetaStatus.ToggleBit(MetaStatusBit.NegativeInfinity, Math.Abs(newValue - VI.Pith.Scpi.Syntax.NegativeInfinity) < 1)
-            If Me.MetaStatus.IsBit(MetaStatusBit.NegativeInfinity) Then Return Me.MetaStatus.IsValid
-
-            Me.MetaStatus.ToggleBit(MetaStatusBit.NotANumber, Math.Abs(newValue - VI.Pith.Scpi.Syntax.NotANumber) < 1)
-            If Me.MetaStatus.IsBit(MetaStatusBit.NotANumber) Then Return Me.MetaStatus.IsValid
-
-            Me.MetaStatus.HitLevelCompliance = Not (newValue >= Me._ComplianceLimit) Xor (Me._ComplianceLimit > 0)
-            If Me.MetaStatus.HitLevelCompliance Then Return Me.MetaStatus.IsValid
-
-            Me.MetaStatus.IsHigh = Me.Value.Value.CompareTo(Me.HighLimit) > 0
-            Me.MetaStatus.IsLow = Me.Value.Value.CompareTo(Me.LowLimit) < 0
-        End If
         Return Me.MetaStatus.IsValid
     End Function
 

@@ -68,6 +68,16 @@ Public Class ChannelResistorCollection
         End Get
     End Property
 
+    ''' <summary> Builds status report. </summary>
+    ''' <returns> A String. </returns>
+    Public Function BuildStatusReport() As String
+        Dim infoBuilder As New System.Text.StringBuilder
+        For Each r As ChannelResistor In Me
+            infoBuilder.AppendLine($"{r.Title}:{r.Status.ToLongDescription("")}")
+        Next
+        Return infoBuilder.ToString.TrimEnd(Environment.NewLine.ToCharArray)
+    End Function
+
     ''' <summary> Gets the status. </summary>
     ''' <value> The status. </value>
     Public ReadOnly Property Status As MetaStatus

@@ -409,7 +409,7 @@ Public Class MetaStatus
             Return Me.IsBit(MetaStatusBit.Infinity)
         End Get
         Set(ByVal value As Boolean)
-            ToggleBit(MetaStatusBit.Infinity, value)
+            Me.ToggleBit(MetaStatusBit.Infinity, value)
         End Set
     End Property
 
