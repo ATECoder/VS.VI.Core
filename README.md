@@ -73,3 +73,4 @@ This project is licensed under the MIT License - see the [LICENSE.md] file at (h
 * Version 4.1.6438	08/17/17	Updates trace message talkers to ensure trace levels are correctly updated.
 * Version 4.0.6123	10/06/16	Throws Format exceptions
 * Version 4.0.6123	10/06/16	Throws Format exceptions on failure to parse values with information about the instrument resource and the invalid values. 
+* Version 5.0.6657	03/24/18	Refactor for better model/view separation.
